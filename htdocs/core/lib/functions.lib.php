@@ -357,7 +357,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			}
 			if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-			    if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
+				if (!empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
 				{
 					// Now search in setup to overwrite default values
 					if (!empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -629,22 +629,22 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 if (!function_exists('dol_getprefix'))
 {
-    /**
-     *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
-     *  or two instances in same virtual servers.
-     *
-     *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
-     *  @return	string                          A calculated prefix
-     */
-    function dol_getprefix($mode = '')
-    {
-        global $conf;
+	/**
+	 *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
+	 *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
+	 *  or two instances in same virtual servers.
+	 *
+	 *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
+	 *  @return	string                          A calculated prefix
+	 */
+	function dol_getprefix($mode = '')
+	{
+		global $conf;
 
 		// If prefix is for email
 		if ($mode == 'email')
 		{
-		    if (!empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+			if (!empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
 			{
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				elseif (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
@@ -907,7 +907,7 @@ function dol_string_unaccent($str)
 		return rawurldecode($string);
 	} else {
 		// See http://www.ascii-code.com/
-        $string = strtr(
+		$string = strtr(
 			$str,
 			"\xC0\xC1\xC2\xC3\xC4\xC5\xC7
 			\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
@@ -1057,7 +1057,7 @@ function dol_strtoupper($utf8_string)
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '', $logcontext = null)
 {
-    global $conf, $user, $debugbar;
+	global $conf, $user, $debugbar;
 
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
@@ -1091,9 +1091,9 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 
 		// If adding log inside HTML page is required
 		if ((!empty($_REQUEST['logtohtml']) && !empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
-		    || (!empty($user->rights->debugbar->read) && is_object($debugbar)))
+			|| (!empty($user->rights->debugbar->read) && is_object($debugbar)))
 		{
-		    $conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
+			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -1523,7 +1523,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (!$phototoshow)      // Show No photo link (picto of object)
 			{
-			    $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width = 80;
@@ -1872,23 +1872,23 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-	    dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
-	    return '';
+		dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
+		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg))    // Still available to solve problems in extrafields of type date
 	{
-	    // This part of code should not be used.
-	    dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
-	    //if (function_exists('debug_print_backtrace')) debug_print_backtrace();
-	    // Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
-	    $syear	= (!empty($reg[1]) ? $reg[1] : '');
-	    $smonth = (!empty($reg[2]) ? $reg[2] : '');
-	    $sday	= (!empty($reg[3]) ? $reg[3] : '');
-	    $shour	= (!empty($reg[4]) ? $reg[4] : '');
-	    $smin	= (!empty($reg[5]) ? $reg[5] : '');
-	    $ssec	= (!empty($reg[6]) ? $reg[6] : '');
+		// This part of code should not be used.
+		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
+		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
+		$syear	= (!empty($reg[1]) ? $reg[1] : '');
+		$smonth = (!empty($reg[2]) ? $reg[2] : '');
+		$sday	= (!empty($reg[3]) ? $reg[3] : '');
+		$shour	= (!empty($reg[4]) ? $reg[4] : '');
+		$smin	= (!empty($reg[5]) ? $reg[5] : '');
+		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
-	    $time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-	    $ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
+		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
+		$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
 	} else {
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
@@ -2233,23 +2233,23 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
  */
 function getArrayOfSocialNetworks()
 {
-    global $conf, $db;
-    $sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-    $sql .= " WHERE entity=".$conf->entity;
-    $socialnetworks = array();
-    $resql = $db->query($sql);
-    if ($resql) {
-        while ($obj = $db->fetch_object($resql)) {
-            $socialnetworks[$obj->code] = array(
-                'rowid' => $obj->rowid,
-                'label' => $obj->label,
-                'url' => $obj->url,
-                'icon' => $obj->icon,
-                'active' => $obj->active,
-            );
-        }
-    }
-    return $socialnetworks;
+	global $conf, $db;
+	$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+	$sql .= " WHERE entity=".$conf->entity;
+	$socialnetworks = array();
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$socialnetworks[$obj->code] = array(
+				'rowid' => $obj->rowid,
+				'label' => $obj->label,
+				'url' => $obj->url,
+				'icon' => $obj->icon,
+				'active' => $obj->active,
+			);
+		}
+	}
+	return $socialnetworks;
 }
 
 /**
@@ -2436,7 +2436,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	} elseif (strtoupper($countrycode) == "MU")
 	{
-        //Maurice
+		//Maurice
 		if (dol_strlen($phone) == 11)
 		{//ex: +230_ABC_DE_FG
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
@@ -2566,10 +2566,10 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	} elseif (strtoupper($countrycode) == "AU")
 	{
-        //Australie
+		//Australie
 		if (dol_strlen($phone) == 12)
 		{
-            //ex: +61_A_BCDE_FGHI
+			//ex: +61_A_BCDE_FGHI
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 4);
 		}
 	}
@@ -3004,39 +3004,39 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$fullpathpicto = $picto;
 		$reg = array();
 		if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
-		    $morecss .= ($morecss ? ' ' : '').$reg[1];
-		    $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
+			$morecss .= ($morecss ? ' ' : '').$reg[1];
+			$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
-        		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
-        		'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
-        		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
-        		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
-        		'intervention', 'label', 'language', 'list', 'listlight', 'lot',
-        		'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
-        		'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
-	        	'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
-        		'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
-        		'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
-        		'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
-        		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
-        		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
-        		'object_recruitmentjobposition', 'object_recruitmentcandidature',
-        		'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
-        		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-        		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
-        		'off', 'on', 'order',
-        		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
+				'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
+				'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
+				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
+				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
+				'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
+				'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
+				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
+				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
+				'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
+				'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
+				'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
+				'object_recruitmentjobposition', 'object_recruitmentcandidature',
+				'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
+				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
+				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
+				'off', 'on', 'order',
+				'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-        		'home', 'hrm', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'members', 'ticket', 'generic',
-        		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
-        		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
+				'home', 'hrm', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'members', 'ticket', 'generic',
+				'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
 			$fakey = $pictowithouttext;
@@ -3051,41 +3051,41 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
-		    $arrayconvpictotofa = array(
-		    	'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'address'=> 'address-book',
-		    	'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical', 'bom'=>'cubes',
-		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
-		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
-		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
-		    	'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
-		    	'email'=>'at',
-		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
-		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
-		    	'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
-		    	'sign-out'=>'sign-out-alt',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
-		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
-		    	'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
-		    	'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
-		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
-		    	'other'=>'square',
-		    	'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
-		    	'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
-		    	'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-		    	'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
-		    	'resource'=>'laptop-house',
-		    	'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
-		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
-		    	'title_agenda'=>'calendar-alt',
-		    	'uparrow'=>'mail-forward', 'vcard'=>'address-card',
-		    	'jabber'=>'comment-o',
-		    	'website'=>'globe-americas'
-		    );
+			$arrayconvpictotofa = array(
+				'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'address'=> 'address-book',
+				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical', 'bom'=>'cubes',
+				'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
+				'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
+				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+				'email'=>'at',
+				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
+				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
+				'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
+				'sign-out'=>'sign-out-alt',
+				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
+				'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
+				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarmonth'=>'calendar-alt', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
+				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
+				'other'=>'square',
+				'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
+				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
+				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'resource'=>'laptop-house',
+				'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+				'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
+				'title_agenda'=>'calendar-alt',
+				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
+				'jabber'=>'comment-o',
+				'website'=>'globe-americas'
+			);
 			if ($pictowithouttext == 'off') {
-			    $fakey = 'fa-square';
+				$fakey = 'fa-square';
 				$fasize = '1.3em';
 			} elseif ($pictowithouttext == 'on') {
-			    $fakey = 'fa-check-square';
+				$fakey = 'fa-check-square';
 				$fasize = '1.3em';
 			} elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
@@ -3094,12 +3094,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
 			} elseif ($pictowithouttext == 'note') {
-			    $fakey = 'fa-sticky-note';
+				$fakey = 'fa-sticky-note';
 				$marginleftonlyshort = 1;
 			} elseif (in_array($pictowithouttext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
-			    $convertarray = array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
-			    $fakey = 'fa-'.$convertarray[$pictowithouttext];
-			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
+				$convertarray = array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
+				$fakey = 'fa-'.$convertarray[$pictowithouttext];
+				if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			} elseif (!empty($arrayconvpictotofa[$pictowithouttext]))
 			{
@@ -3162,20 +3162,20 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 
 			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
-            // class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
-            $reg = array();
+			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
+			$reg = array();
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
-                $morecss .= ($morecss ? ' ' : '').$reg[1];
-                $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
-            }
-            if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
-                $morestyle = ' '.$reg[1];
-                $moreatt = str_replace('style="'.$reg[1].'"', '', $moreatt);
-            }
-            $moreatt = trim($moreatt);
+				$morecss .= ($morecss ? ' ' : '').$reg[1];
+				$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
+			}
+			if (preg_match('/style="([^"]+)"/', $moreatt, $reg)) {
+				$morestyle = ' '.$reg[1];
+				$moreatt = str_replace('style="'.$reg[1].'"', '', $moreatt);
+			}
+			$moreatt = trim($moreatt);
 
-            $enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
-            $enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
+			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
+			$enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml .= $titlealt;
 			}
@@ -3224,7 +3224,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		return $fullpathpicto;
 	}
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-    return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -3832,7 +3832,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$langs->load("main");
 	}
 	// Load translation files required by the page
-    $langs->loadLangs(array('main', 'errors'));
+	$langs->loadLangs(array('main', 'errors'));
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
@@ -3868,7 +3868,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 
 	if (!empty($conf->modules))
 	{
-	    $out .= "<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
+		$out .= "<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
 	}
 
 	if (is_object($db))
@@ -4542,7 +4542,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
-		    $cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
+			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
 		} else {
 			$tmpcur = $outlangs->getCurrencySymbol($currency_code);
 			$cursymbolafter .= ($tmpcur == $currency_code ? ' '.$tmpcur : $tmpcur);
@@ -5368,7 +5368,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
 		//var_dump($modulepart);
-        if (in_array($modulepart, array('thirdparty', 'contact', 'member', 'propal', 'proposal', 'commande', 'order', 'facture', 'invoice',
+		if (in_array($modulepart, array('thirdparty', 'contact', 'member', 'propal', 'proposal', 'commande', 'order', 'facture', 'invoice',
 			'supplier_order', 'supplier_proposal', 'shipment', 'contract', 'expensereport', 'ficheinter')))
 		{
 			$path = ($object->ref ? $object->ref : $object->id);
@@ -5875,18 +5875,18 @@ function dol_textishtml($msg, $option = 0)
  */
 function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 {
-    if (!empty($invert))
-    {
-            $tmp = $text1;
-            $text1 = $text2;
-            $text2 = $tmp;
-    }
+	if (!empty($invert))
+	{
+			$tmp = $text1;
+			$text1 = $text2;
+			$text2 = $tmp;
+	}
 
-    $ret = '';
-    $ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text1, 0, 1, '', 1), 0, $forxml) : $text1;
-    $ret .= (!empty($text1) && !empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2)) ? ($forxml ? "<br \>\n" : "<br>\n") : "\n") : "";
-    $ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text2, 0, 1, '', 1), 0, $forxml) : $text2;
-    return $ret;
+	$ret = '';
+	$ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text1, 0, 1, '', 1), 0, $forxml) : $text1;
+	$ret .= (!empty($text1) && !empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2)) ? ($forxml ? "<br \>\n" : "<br>\n") : "\n") : "";
+	$ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text2, 0, 1, '', 1), 0, $forxml) : $text2;
+	return $ret;
 }
 
 
@@ -5917,11 +5917,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		)
 			);
 
-        $substitutionarray = array_merge($substitutionarray, array(
+		$substitutionarray = array_merge($substitutionarray, array(
 		'__USER_ID__' => (string) $user->id,
 		'__USER_LOGIN__' => (string) $user->login,
-        '__USER_EMAIL__' => (string) $user->email,
-        '__USER_LASTNAME__' => (string) $user->lastname,
+		'__USER_EMAIL__' => (string) $user->email,
+		'__USER_LASTNAME__' => (string) $user->lastname,
 		'__USER_FIRSTNAME__' => (string) $user->firstname,
 		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
 		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
@@ -5931,7 +5931,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
-        $substitutionarray = array_merge($substitutionarray, array(
+		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
@@ -5947,8 +5947,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
-        	'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
-        	'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
+			'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
+			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
 
@@ -6031,7 +6031,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping'))
 			{
-			    $substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tacking number';
+				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tacking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 			}
 		} else {
@@ -6286,7 +6286,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$tmp4 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 		$tmp5 = dol_get_next_month($tmp['mon'], $tmp['year']);
 
-        $substitutionarray = array_merge($substitutionarray, array(
+		$substitutionarray = array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']), // Monday
 			'__DAY_TEXT_SHORT__' => $outputlangs->trans($tmp['weekday'].'Min'), // Mon
@@ -6515,11 +6515,11 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 		$ret .= $lastname;
 	} elseif ($nameorder == 2 || $nameorder == 3)
 	{
-	    $ret .= $firstname;
-	    if (empty($ret) && $nameorder == 3)
-	    {
-	    	$ret .= $lastname;
-	    }
+		$ret .= $firstname;
+		if (empty($ret) && $nameorder == 3)
+		{
+			$ret .= $lastname;
+		}
 	} else {
 		$ret .= $lastname;
 		if ($firstname && $lastname) $ret .= ' ';
@@ -6821,12 +6821,12 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 				}
 			}
 
-            if (!$natsort) {
-                ($order == 'asc') ? asort($temp) : arsort($temp);
-            } else {
-                ($case_sensitive) ? natsort($temp) : natcasesort($temp);
-                if ($order != 'asc') $temp = array_reverse($temp, true);
-            }
+			if (!$natsort) {
+				($order == 'asc') ? asort($temp) : arsort($temp);
+			} else {
+				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if ($order != 'asc') $temp = array_reverse($temp, true);
+			}
 
 			$sorted = array();
 
@@ -7256,18 +7256,18 @@ function getLanguageCodeFromCountryCode($countrycode)
 
 	if (function_exists('locale_get_primary_language') && function_exists('locale_get_region'))    // Need extension php-intl
 	{
-	    foreach ($locales as $locale)
-    	{
-    		$locale_language = locale_get_primary_language($locale);
-    		$locale_region = locale_get_region($locale);
-    		if (strtoupper($countrycode) == $locale_region)
-    		{
-    			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
-    			return strtolower($locale_language).'_'.strtoupper($locale_region);
-    		}
-    	}
+		foreach ($locales as $locale)
+		{
+			$locale_language = locale_get_primary_language($locale);
+			$locale_region = locale_get_region($locale);
+			if (strtoupper($countrycode) == $locale_region)
+			{
+				//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+				return strtolower($locale_language).'_'.strtoupper($locale_region);
+			}
+		}
 	} else {
-        dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
+		dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
 	}
 
 	return null;
@@ -7377,7 +7377,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 		if ($reshook > 0)
 		{
 			$head = $hookmanager->resArray;
-            $h = count($head);
+			$h = count($head);
 		}
 	}
 }
@@ -7560,15 +7560,15 @@ function printCommonFooter($zone = 'private')
 		// Add Xdebug coverage of code
 		if (defined('XDEBUGCOVERAGE'))
 		{
-		    print_r(xdebug_get_code_coverage());
+			print_r(xdebug_get_code_coverage());
 		}
 
 		// Add DebugBar data
-	    if (!empty($user->rights->debugbar->read) && is_object($debugbar))
-	    {
-	        $debugbar['time']->stopMeasure('pageaftermaster');
-	        print '<!-- Output debugbar data -->'."\n";
-		    print $debugbar->getRenderer()->render();
+		if (!empty($user->rights->debugbar->read) && is_object($debugbar))
+		{
+			$debugbar['time']->stopMeasure('pageaftermaster');
+			print '<!-- Output debugbar data -->'."\n";
+			print $debugbar->getRenderer()->render();
 		} elseif (count($conf->logbuffer))    // If there is some logs in buffer to show
 		{
 			print "\n";
@@ -7736,30 +7736,30 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				if ($mode == -3) $newres .= ' OR '.$field.' IS NULL';
 			} elseif ($mode == 4)
 			{
-			    $tmparray = explode(',', trim($crit));
-			    if (count($tmparray))
-			    {
-			        $listofcodes = '';
-			        foreach ($tmparray as $val)
-			        {
-			            if ($val)
-			            {
-			                $newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape(trim($val)).',%\'';
-			                $newres .= ' OR '.$field.' = \''.$db->escape(trim($val)).'\'';
-			                $newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).'\'';
-			                $newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).',%\'';
-			                $newres .= ')';
-			                $i2++;
-			            }
-			        }
-			    }
+				$tmparray = explode(',', trim($crit));
+				if (count($tmparray))
+				{
+					$listofcodes = '';
+					foreach ($tmparray as $val)
+					{
+						if ($val)
+						{
+							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape(trim($val)).',%\'';
+							$newres .= ' OR '.$field.' = \''.$db->escape(trim($val)).'\'';
+							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).'\'';
+							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).',%\'';
+							$newres .= ')';
+							$i2++;
+						}
+					}
+				}
 			} else // $mode=0
 			{
 				$tmpcrits = explode('|', $crit);
 				$i3 = 0;
 				foreach ($tmpcrits as $tmpcrit)
 				{
-                    if ($tmpcrit !== '0' && empty($tmpcrit)) continue;
+					if ($tmpcrit !== '0' && empty($tmpcrit)) continue;
 
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
@@ -7937,19 +7937,19 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	if (preg_match('/\.tsv$/i', $tmpfile)) { $mime = 'text/tab-separated-values'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.(cf|conf|log)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.ini$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'ini'; $famime = 'file-text-o'; }
-    if (preg_match('/\.md$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'md'; $famime = 'file-text-o'; }
+	if (preg_match('/\.md$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'md'; $famime = 'file-text-o'; }
 	if (preg_match('/\.css$/i', $tmpfile)) { $mime = 'text/css'; $imgmime = 'css.png'; $srclang = 'css'; $famime = 'file-text-o'; }
 	// Certificate files
 	if (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	// XML based (HTML/XML/XAML)
 	if (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) { $mime = 'text/html'; $imgmime = 'html.png'; $srclang = 'html'; $famime = 'file-text-o'; }
 	if (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) { $mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xml'; $famime = 'file-text-o'; }
-    if (preg_match('/\.xaml$/i', $tmpfile)) { $mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xaml'; $famime = 'file-text-o'; }
+	if (preg_match('/\.xaml$/i', $tmpfile)) { $mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xaml'; $famime = 'file-text-o'; }
 	// Languages
 	if (preg_match('/\.bas$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'bas'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(c)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'c'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(cpp)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cpp'; $famime = 'file-code-o'; }
-    if (preg_match('/\.cs$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs'; $famime = 'file-code-o'; }
+	if (preg_match('/\.cs$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(h)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'h'; $famime = 'file-code-o'; }
 	if (preg_match('/\.(java|jsp)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'java'; $famime = 'file-code-o'; }
 	if (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o'; }
@@ -8079,7 +8079,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
  */
 function colorIsLight($stringcolor)
 {
-    $stringcolor = str_replace('#', '', $stringcolor);
+	$stringcolor = str_replace('#', '', $stringcolor);
 	$res = -1;
 	if (!empty($stringcolor))
 	{
@@ -8162,28 +8162,28 @@ function roundUpToNextMultiple($n, $x = 5)
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
-    $attr = array(
-    	'class'=>'badge '.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
-    );
+	$attr = array(
+		'class'=>'badge '.(!empty($mode) ? ' badge-'.$mode : '').(!empty($type) ? ' badge-'.$type : '').(empty($params['css']) ? '' : ' '.$params['css'])
+	);
 
-    if (empty($html)) {
-        $html = $label;
-    }
+	if (empty($html)) {
+		$html = $label;
+	}
 
-    if (!empty($url)) {
-        $attr['href'] = $url;
-    }
+	if (!empty($url)) {
+		$attr['href'] = $url;
+	}
 
-    if ($mode === 'dot') {
-        $attr['class'] .= ' classfortooltip';
-        $attr['title'] = $html;
-        $attr['aria-label'] = $label;
-        $html = '';
-    }
+	if ($mode === 'dot') {
+		$attr['class'] .= ' classfortooltip';
+		$attr['title'] = $html;
+		$attr['aria-label'] = $label;
+		$html = '';
+	}
 
-    // Override attr
-    if (!empty($params['attr']) && is_array($params['attr'])) {
-        foreach ($params['attr']as $key => $value) {
+	// Override attr
+	if (!empty($params['attr']) && is_array($params['attr'])) {
+		foreach ($params['attr']as $key => $value) {
 			if ($key == 'class') {
 				$attr['class'] .= ' '.$value;
 			} elseif ($key == 'classOverride') {
@@ -8191,24 +8191,24 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 			} else {
 				$attr[$key] = $value;
 			}
-        }
-    }
+		}
+	}
 
-    // TODO: add hook
+	// TODO: add hook
 
-    // escape all attribute
-    $attr = array_map('dol_escape_htmltag', $attr);
+	// escape all attribute
+	$attr = array_map('dol_escape_htmltag', $attr);
 
-    $TCompiledAttr = array();
-    foreach ($attr as $key => $value) {
-        $TCompiledAttr[] = $key.'="'.$value.'"';
-    }
+	$TCompiledAttr = array();
+	foreach ($attr as $key => $value) {
+		$TCompiledAttr[] = $key.'="'.$value.'"';
+	}
 
-    $compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
+	$compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
 
-    $tag = !empty($url) ? 'a' : 'span';
+	$tag = !empty($url) ? 'a' : 'span';
 
-    return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
 }
 
 
@@ -8226,82 +8226,82 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
-    global $conf;
+	global $conf;
 
-    $return = '';
-    $dolGetBadgeParams = array();
+	$return = '';
+	$dolGetBadgeParams = array();
 
-    if (!empty($params['badgeParams'])) {
-        $dolGetBadgeParams = $params['badgeParams'];
-    }
+	if (!empty($params['badgeParams'])) {
+		$dolGetBadgeParams = $params['badgeParams'];
+	}
 
-    // TODO : add a hook
-    if ($displayMode == 0) {
-    	$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
-    } elseif ($displayMode == 1) {
-    	$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
-    } // Use status with images (for backward compatibility)
-    elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
-    	$return = '';
-        $htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
-        $htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
+	// TODO : add a hook
+	if ($displayMode == 0) {
+		$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
+	} elseif ($displayMode == 1) {
+		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
+	} // Use status with images (for backward compatibility)
+	elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
+		$return = '';
+		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
+		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
-        // For small screen, we always use the short label instead of long label.
-        if (!empty($conf->dol_optimize_smallscreen))
-        {
-        	if ($displayMode == 0) $displayMode = 1;
-        	elseif ($displayMode == 4) $displayMode = 2;
-        	elseif ($displayMode == 6) $displayMode = 5;
-        }
+		// For small screen, we always use the short label instead of long label.
+		if (!empty($conf->dol_optimize_smallscreen))
+		{
+			if ($displayMode == 0) $displayMode = 1;
+			elseif ($displayMode == 4) $displayMode = 2;
+			elseif ($displayMode == 6) $displayMode = 5;
+		}
 
-        // For backward compatibility. Image's filename are still in French, so we use this array to convert
-        $statusImg = array(
-        	'status0' => 'statut0',
-        	'status1' => 'statut1',
-        	'status2' => 'statut2',
-        	'status3' => 'statut3',
-        	'status4' => 'statut4',
-        	'status5' => 'statut5',
-        	'status6' => 'statut6',
-        	'status7' => 'statut7',
-        	'status8' => 'statut8',
-        	'status9' => 'statut9'
-        );
+		// For backward compatibility. Image's filename are still in French, so we use this array to convert
+		$statusImg = array(
+			'status0' => 'statut0',
+			'status1' => 'statut1',
+			'status2' => 'statut2',
+			'status3' => 'statut3',
+			'status4' => 'statut4',
+			'status5' => 'statut5',
+			'status6' => 'statut6',
+			'status7' => 'statut7',
+			'status8' => 'statut8',
+			'status9' => 'statut9'
+		);
 
-        if (!empty($statusImg[$statusType])) {
-            $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
-        } else {
-            $htmlImg = img_picto($statusLabel, $statusType);
-        }
+		if (!empty($statusImg[$statusType])) {
+			$htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
+		} else {
+			$htmlImg = img_picto($statusLabel, $statusType);
+		}
 
-        if ($displayMode === 2) {
-            $return = $htmlImg.' '.$htmlLabelShort;
-        } elseif ($displayMode === 3) {
-            $return = $htmlImg;
-        } elseif ($displayMode === 4) {
-            $return = $htmlImg.' '.$htmlLabel;
-        } elseif ($displayMode === 5) {
-            $return = $htmlLabelShort.' '.$htmlImg;
-        } else { // $displayMode >= 6
-            $return = $htmlLabel.' '.$htmlImg;
-        }
-    } // Use new badge
-    elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
-    	$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
+		if ($displayMode === 2) {
+			$return = $htmlImg.' '.$htmlLabelShort;
+		} elseif ($displayMode === 3) {
+			$return = $htmlImg;
+		} elseif ($displayMode === 4) {
+			$return = $htmlImg.' '.$htmlLabel;
+		} elseif ($displayMode === 5) {
+			$return = $htmlLabelShort.' '.$htmlImg;
+		} else { // $displayMode >= 6
+			$return = $htmlLabel.' '.$htmlImg;
+		}
+	} // Use new badge
+	elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
+		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
 		$dolGetBadgeParams['attr']['title'] = $statusLabel;
 
-        if ($displayMode == 3) {
-        	$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
-        } elseif ($displayMode === 5) {
-            $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
-        } else {
-        	$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
-        }
-    }
+		if ($displayMode == 3) {
+			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
+		} elseif ($displayMode === 5) {
+			$return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
+		} else {
+			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
+		}
+	}
 
-    return $return;
+	return $return;
 }
 
 
@@ -8319,63 +8319,63 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  */
 function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
-    $class = 'butAction';
-    if ($actionType == 'danger' || $actionType == 'delete') {
-        $class = 'butActionDelete';
-    }
+	$class = 'butAction';
+	if ($actionType == 'danger' || $actionType == 'delete') {
+		$class = 'butActionDelete';
+	}
 
-    $attr = array(
-        'class' => $class
-        ,'href' => empty($url) ? '' : $url
-    );
+	$attr = array(
+		'class' => $class
+		,'href' => empty($url) ? '' : $url
+	);
 
-    if (empty($html)) {
-        $html = $label;
-    } else {
-        $attr['aria-label'] = $label;
-    }
+	if (empty($html)) {
+		$html = $label;
+	} else {
+		$attr['aria-label'] = $label;
+	}
 
-    if (empty($userRight)) {
-        $attr['class'] = 'butActionRefused';
-        $attr['href'] = '';
-    }
+	if (empty($userRight)) {
+		$attr['class'] = 'butActionRefused';
+		$attr['href'] = '';
+	}
 
-    if (!empty($id)) {
-        $attr['id'] = $id;
-    }
+	if (!empty($id)) {
+		$attr['id'] = $id;
+	}
 
-    // Override attr
-    if (!empty($params['attr']) && is_array($params['attr'])) {
-        foreach ($params['attr'] as $key => $value) {
-            if ($key == 'class') {
-                $attr['class'] .= ' '.$value;
-            } elseif ($key == 'classOverride') {
-                $attr['class'] = $value;
-            } else {
-                $attr[$key] = $value;
-            }
-        }
-    }
+	// Override attr
+	if (!empty($params['attr']) && is_array($params['attr'])) {
+		foreach ($params['attr'] as $key => $value) {
+			if ($key == 'class') {
+				$attr['class'] .= ' '.$value;
+			} elseif ($key == 'classOverride') {
+				$attr['class'] = $value;
+			} else {
+				$attr[$key] = $value;
+			}
+		}
+	}
 
-    if (isset($attr['href']) && empty($attr['href'])) {
-        unset($attr['href']);
-    }
+	if (isset($attr['href']) && empty($attr['href'])) {
+		unset($attr['href']);
+	}
 
-    // TODO : add a hook
+	// TODO : add a hook
 
-    // escape all attribute
-    $attr = array_map('dol_escape_htmltag', $attr);
+	// escape all attribute
+	$attr = array_map('dol_escape_htmltag', $attr);
 
-    $TCompiledAttr = array();
-    foreach ($attr as $key => $value) {
-        $TCompiledAttr[] = $key.'="'.$value.'"';
-    }
+	$TCompiledAttr = array();
+	foreach ($attr as $key => $value) {
+		$TCompiledAttr[] = $key.'="'.$value.'"';
+	}
 
-    $compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
+	$compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
 
-    $tag = !empty($attr['href']) ? 'a' : 'span';
+	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-    return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+	return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
 }
 
 /**
@@ -8392,85 +8392,85 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  */
 function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
 {
-    global $langs, $conf, $user;
+	global $langs, $conf, $user;
 
-    // Actually this conf is used in css too for external module compatibility and smooth transition to this function
-    if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin) && $status <= 0) {
-        return '';
-    }
+	// Actually this conf is used in css too for external module compatibility and smooth transition to this function
+	if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin) && $status <= 0) {
+		return '';
+	}
 
-    $class = 'btnTitle';
-    if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
+	$class = 'btnTitle';
+	if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
 
-    if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];
+	if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];
 
-    $attr = array(
-        'class' => $class
-        ,'href' => empty($url) ? '' : $url
-    );
+	$attr = array(
+		'class' => $class
+		,'href' => empty($url) ? '' : $url
+	);
 
-    if (!empty($helpText)) {
-        $attr['title'] = dol_escape_htmltag($helpText);
-    }
+	if (!empty($helpText)) {
+		$attr['title'] = dol_escape_htmltag($helpText);
+	}
 
-    if ($status <= 0) {
-        $attr['class'] .= ' refused';
+	if ($status <= 0) {
+		$attr['class'] .= ' refused';
 
-        $attr['href'] = '';
+		$attr['href'] = '';
 
-        if ($status == -1) { // disable
-            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
-        } elseif ($status == 0) { // Not enough permissions
-            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
-        }
-    }
+		if ($status == -1) { // disable
+			$attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+		} elseif ($status == 0) { // Not enough permissions
+			$attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+		}
+	}
 
-    if (!empty($attr['title'])) {
-        $attr['class'] .= ' classfortooltip';
-    }
+	if (!empty($attr['title'])) {
+		$attr['class'] .= ' classfortooltip';
+	}
 
-    if (!empty($id)) {
-        $attr['id'] = $id;
-    }
+	if (!empty($id)) {
+		$attr['id'] = $id;
+	}
 
-    // Override attr
-    if (!empty($params['attr']) && is_array($params['attr'])) {
-        foreach ($params['attr'] as $key => $value) {
-            if ($key == 'class') {
-                $attr['class'] .= ' '.$value;
-            } elseif ($key == 'classOverride') {
-                $attr['class'] = $value;
-            } else {
-                $attr[$key] = $value;
-            }
-        }
-    }
+	// Override attr
+	if (!empty($params['attr']) && is_array($params['attr'])) {
+		foreach ($params['attr'] as $key => $value) {
+			if ($key == 'class') {
+				$attr['class'] .= ' '.$value;
+			} elseif ($key == 'classOverride') {
+				$attr['class'] = $value;
+			} else {
+				$attr[$key] = $value;
+			}
+		}
+	}
 
-    if (isset($attr['href']) && empty($attr['href'])) {
-        unset($attr['href']);
-    }
+	if (isset($attr['href']) && empty($attr['href'])) {
+		unset($attr['href']);
+	}
 
-    // TODO : add a hook
+	// TODO : add a hook
 
-    // escape all attribute
-    $attr = array_map('dol_escape_htmltag', $attr);
+	// escape all attribute
+	$attr = array_map('dol_escape_htmltag', $attr);
 
-    $TCompiledAttr = array();
-    foreach ($attr as $key => $value) {
-        $TCompiledAttr[] = $key.'="'.$value.'"';
-    }
+	$TCompiledAttr = array();
+	foreach ($attr as $key => $value) {
+		$TCompiledAttr[] = $key.'="'.$value.'"';
+	}
 
-    $compiledAttributes = (empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr));
+	$compiledAttributes = (empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr));
 
-    $tag = (empty($attr['href']) ? 'span' : 'a');
+	$tag = (empty($attr['href']) ? 'span' : 'a');
 
-    $button = '';
-    $button .= '<'.$tag.' '.$compiledAttributes.' >';
-    $button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
-    $button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
-    $button .= '</'.$tag.'>';
+	$button = '';
+	$button .= '<'.$tag.' '.$compiledAttributes.' >';
+	$button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
+	$button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
+	$button .= '</'.$tag.'>';
 
-    return $button;
+	return $button;
 }
 
 /**
@@ -8635,12 +8635,12 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  */
 function isAFileWithExecutableContent($filename)
 {
-    if (preg_match('/\.(htm|html|js|phar|php|php\d+|phtml|pht|pl|py|cgi|ksh|sh|shtml|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
-    {
-        return true;
-    }
+	if (preg_match('/\.(htm|html|js|phar|php|php\d+|phtml|pht|pl|py|cgi|ksh|sh|shtml|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
+	{
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 /**

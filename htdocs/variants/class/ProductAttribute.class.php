@@ -54,11 +54,11 @@ class ProductAttribute extends CommonObject
 	 */
 	public $rang;
 
-    /**
-     * Constructor
-     *
-     * @param   DoliDB $db     Database handler
-     */
+	/**
+	 * Constructor
+	 *
+	 * @param   DoliDB $db     Database handler
+	 */
 	public function __construct(DoliDB $db)
 	{
 		global $conf;
@@ -111,15 +111,15 @@ class ProductAttribute extends CommonObject
 		$query = $this->db->query($sql);
 		if ($query)
 		{
-    		while ($result = $this->db->fetch_object($query)) {
-    			$tmp = new ProductAttribute($this->db);
-    			$tmp->id = $result->rowid;
-    			$tmp->ref = $result->ref;
-    			$tmp->label = $result->label;
-    			$tmp->rang = $result->rang;
+			while ($result = $this->db->fetch_object($query)) {
+				$tmp = new ProductAttribute($this->db);
+				$tmp->id = $result->rowid;
+				$tmp->ref = $result->ref;
+				$tmp->label = $result->label;
+				$tmp->rang = $result->rang;
 
-    			$return[] = $tmp;
-    		}
+				$return[] = $tmp;
+			}
 		}
 		else dol_print_error($this->db);
 
@@ -130,19 +130,19 @@ class ProductAttribute extends CommonObject
 	 * Creates a product attribute
 	 *
 	 * @param   User    $user      Object user
-     * @param   int     $notrigger Do not execute trigger
+	 * @param   int     $notrigger Do not execute trigger
 	 * @return 					int <0 KO, Id of new variant if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-	    if (empty($notrigger)) {
-	        // Call trigger
-	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_CREATE', $user);
-	        if ($result < 0) {
-	            return -1;
-	        }
-	        // End call triggers
-	    }
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_CREATE', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+		}
 
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
@@ -165,19 +165,19 @@ class ProductAttribute extends CommonObject
 	 * Updates a product attribute
 	 *
 	 * @param   User    $user      Object user
-     * @param   int     $notrigger Do not execute trigger
+	 * @param   int     $notrigger Do not execute trigger
 	 * @return 	int 				<0 KO, >0 OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-	    if (empty($notrigger)) {
-	        // Call trigger
-	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
-	        if ($result < 0) {
-	            return -1;
-	        }
-	        // End call triggers
-	    }
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+		}
 
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
@@ -196,19 +196,19 @@ class ProductAttribute extends CommonObject
 	 * Deletes a product attribute
 	 *
 	 * @param   User    $user      Object user
-     * @param   int     $notrigger Do not execute trigger
+	 * @param   int     $notrigger Do not execute trigger
 	 * @return 	int <0 KO, >0 OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
-	    if (empty($notrigger)) {
-	        // Call trigger
-	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_DELETE', $user);
-	        if ($result < 0) {
-	            return -1;
-	        }
-	        // End call triggers
-	    }
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_DELETE', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 

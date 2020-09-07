@@ -214,66 +214,66 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-    // Edit Thirdparty
-    if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $action == 'set_thirdparty' && $usercancreate && $object->statut == CommandeFournisseur::STATUS_DRAFT)
-    {
-        $new_socid = GETPOST('new_socid', 'int');
-        if (!empty($new_socid) && $new_socid != $object->thirdparty->id) {
-            $db->begin();
+	// Edit Thirdparty
+	if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $action == 'set_thirdparty' && $usercancreate && $object->statut == CommandeFournisseur::STATUS_DRAFT)
+	{
+		$new_socid = GETPOST('new_socid', 'int');
+		if (!empty($new_socid) && $new_socid != $object->thirdparty->id) {
+			$db->begin();
 
-            // Update supplier
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-            $sql .= ' SET fk_soc='.$new_socid;
-            $sql .= ' WHERE fk_soc='.$object->thirdparty->id;
-            $sql .= ' AND rowid='.$object->id;
+			// Update supplier
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+			$sql .= ' SET fk_soc='.$new_socid;
+			$sql .= ' WHERE fk_soc='.$object->thirdparty->id;
+			$sql .= ' AND rowid='.$object->id;
 
-            $res = $db->query($sql);
+			$res = $db->query($sql);
 
-            if (!$res) $db->rollback();
-            else {
-                $db->commit();
+			if (!$res) $db->rollback();
+			else {
+				$db->commit();
 
-                // Replace prices for each lines by new supplier prices
-                foreach ($object->lines as $l) {
-                    $sql = 'SELECT price, unitprice, tva_tx, ref_fourn';
-                    $sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-                    $sql .= ' WHERE fk_product='.$l->fk_product;
-                    $sql .= ' AND fk_soc='.$new_socid;
-                    $sql .= ' ORDER BY unitprice ASC';
+				// Replace prices for each lines by new supplier prices
+				foreach ($object->lines as $l) {
+					$sql = 'SELECT price, unitprice, tva_tx, ref_fourn';
+					$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
+					$sql .= ' WHERE fk_product='.$l->fk_product;
+					$sql .= ' AND fk_soc='.$new_socid;
+					$sql .= ' ORDER BY unitprice ASC';
 
-                    $resql = $db->query($sql);
-                    if ($resql) {
-                        $num_row = $db->num_rows($resql);
-                        if (empty($num_row)) {
-                            // No product price for this supplier !
-                            $l->subprice = 0;
-                            $l->total_ht = 0;
-                            $l->total_tva = 0;
-                            $l->total_ttc = 0;
-                            $l->ref_supplier = '';
-                            $l->update();
-                        } else {
-                            // No need for loop to keep best supplier price
-                            $obj = $db->fetch_object($resql);
-                            $l->subprice = $obj->unitprice;
-                            $l->total_ht = $obj->price;
-                            $l->tva_tx = $obj->tva_tx;
-                            $l->total_tva = $l->total_ht * ($obj->tva_tx / 100);
-                            $l->total_ttc = $l->total_ht + $l->total_tva;
-                            $l->ref_supplier = $obj->ref_fourn;
-                            $l->update();
-                        }
-                    } else {
-                        dol_print_error($db);
-                    }
-                    $db->free($resql);
-                }
-                $object->update_price();
-            }
-        }
-        header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
-        exit;
-    }
+					$resql = $db->query($sql);
+					if ($resql) {
+						$num_row = $db->num_rows($resql);
+						if (empty($num_row)) {
+							// No product price for this supplier !
+							$l->subprice = 0;
+							$l->total_ht = 0;
+							$l->total_tva = 0;
+							$l->total_ttc = 0;
+							$l->ref_supplier = '';
+							$l->update();
+						} else {
+							// No need for loop to keep best supplier price
+							$obj = $db->fetch_object($resql);
+							$l->subprice = $obj->unitprice;
+							$l->total_ht = $obj->price;
+							$l->tva_tx = $obj->tva_tx;
+							$l->total_tva = $l->total_ht * ($obj->tva_tx / 100);
+							$l->total_ttc = $l->total_ht + $l->total_tva;
+							$l->ref_supplier = $obj->ref_fourn;
+							$l->update();
+						}
+					} else {
+						dol_print_error($db);
+					}
+					$db->free($resql);
+				}
+				$object->update_price();
+			}
+		}
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+		exit;
+	}
 
 	if ($action == 'setremisepercent' && $usercancreate)
 	{
@@ -481,7 +481,7 @@ if (empty($reshook))
 				}
 				// if we use supplier description of the products
 				if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
-				    $desc = $productsupplier->desc_supplier;
+					$desc = $productsupplier->desc_supplier;
 				}
 
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
@@ -681,7 +681,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 		}
 
-	    // Define vat_rate
+		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
 		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
@@ -949,14 +949,14 @@ if (empty($reshook))
 	}
 
 	// Force mandatory order method
-    if ($action == 'commande') {
-        $methodecommande = GETPOST('methodecommande', 'int');
+	if ($action == 'commande') {
+		$methodecommande = GETPOST('methodecommande', 'int');
 
-        if ($methodecommande <= 0) {
-            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
-            $action = 'makeorder';
-        }
-    }
+		if ($methodecommande <= 0) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
+			$action = 'makeorder';
+		}
+	}
 
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $usercanorder)
 	{
@@ -1125,7 +1125,7 @@ if (empty($reshook))
 	if ($action == 'add' && $usercancreate)
 	{
 	 	$error = 0;
-        $selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array');
 		if ($socid < 1)
 		{
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
@@ -1276,7 +1276,7 @@ if (empty($reshook))
 									'',
 									null,
 									null,
-                                    $array_option,
+									$array_option,
 									$lines[$i]->fk_unit,
 									0,
 									$element,
@@ -1785,7 +1785,7 @@ if ($action == 'create')
 
 		print '</table>';
 	}
-    print "</form>\n";
+	print "</form>\n";
 } elseif (!empty($object->id))
 {
 	$result = $object->fetch($id, $ref);
@@ -2585,8 +2585,8 @@ if ($action == 'create')
 			print $form->selectDate($date_com, '', 1, 1, '', "commande", 1, 1);
 			print '</td></tr>';
 
-            // Force mandatory order method
-            print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
+			// Force mandatory order method
+			print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
 			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
 			print '</td></tr>';
 
