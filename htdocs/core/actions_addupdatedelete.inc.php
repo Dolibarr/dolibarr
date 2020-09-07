@@ -85,7 +85,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		$object->$key = $value;
 		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)')
 		{
-		    $object->$key = '(PROV)';
+			$object->$key = '(PROV)';
 		}
 		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
@@ -105,7 +105,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		$result = $object->create($user);
 		if ($result > 0)
 		{
-		    // Creation OK
+			// Creation OK
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
@@ -154,7 +154,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 				$value = '';
 			}
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-            $value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} else {
@@ -223,11 +223,11 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 // Action to delete
 if ($action == 'confirm_delete' && !empty($permissiontodelete))
 {
-    if (!($object->id > 0))
-    {
-        dol_print_error('', 'Error, object must be fetched before being deleted');
-        exit;
-    }
+	if (!($object->id > 0))
+	{
+		dol_print_error('', 'Error, object must be fetched before being deleted');
+		exit;
+	}
 
 	$result = $object->delete($user);
 	if ($result > 0)
@@ -246,7 +246,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd))
 {
 	if (method_exists('deleteline', $object)) {
-		$result = $object->deleteline($user, $lineid);		// For backward compatibility
+		$result = $object->deleteline($user, $lineid); // For backward compatibility
 	} else {
 		$result = $object->deleteLine($user, $lineid);
 	}
@@ -385,11 +385,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-	    $objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
-        // ...
-	    $result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
-	    if (is_object($result) || $result > 0)
+		// ...
+		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
+		if (is_object($result) || $result > 0)
 		{
 			$newid = 0;
 			if (is_object($result)) $newid = $result->id;
@@ -397,7 +397,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
 			exit;
 		} else {
-		    setEventMessages($objectutil->error, $objectutil->errors, 'errors');
+			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 			$action = '';
 		}
 	}

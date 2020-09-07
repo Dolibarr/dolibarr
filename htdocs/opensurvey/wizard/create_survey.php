@@ -37,14 +37,14 @@ $langs->load("opensurvey");
 
 // On teste toutes les variables pour supprimer l'ensemble des warnings PHP
 // On transforme en entites html les données afin éviter les failles XSS
-$post_var = array('titre', 'commentaires', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
+$post_var = array('title', 'description', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
 foreach ($post_var as $var)
 {
 	$$var = GETPOST($var);
 }
 
 // On initialise egalement la session car sinon bonjour les warning :-)
-$session_var = array('titre', 'commentaires', 'mailsonde');
+$session_var = array('title', 'description', 'mailsonde');
 foreach ($session_var as $var)
 {
 	if (isset($_SESSION[$var])) $_SESSION[$var] = null;
@@ -57,8 +57,8 @@ $cochemail = '';
 // Jump to correct page
 if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 {
-	$_SESSION["titre"] = $titre;
-	$_SESSION["commentaires"] = $commentaires;
+	$_SESSION["title"] = $title;
+	$_SESSION["description"] = $description;
 
 	if (GETPOST('mailsonde') == 'on') {
 		$_SESSION["mailsonde"] = true;
@@ -101,7 +101,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
-	if ($titre && $testdate)
+	if ($title && $testdate)
 	{
 		if (!empty($creation_sondage_date))
 		{
@@ -141,15 +141,15 @@ dol_fiche_head();
 // Affichage des différents champs textes a remplir
 print '<table class="border centpercent">'."\n";
 
-print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
-if (!$_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
+print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td><td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'"></td>'."\n";
+if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";
 print '<tr><td>'.$langs->trans("Description").'</td><td>';
-$doleditor = new DolEditor('commentaires', $_SESSION["commentaires"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+$doleditor = new DolEditor('description', $_SESSION["description"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 $doleditor->Create(0, '');
 print '</td>'."\n";
 print '</tr>'."\n";

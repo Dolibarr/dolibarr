@@ -127,6 +127,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+$error = 0;
 if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers{
@@ -157,6 +158,8 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
 			$action = 'create';
 		}
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0)	$error++;
 
 		if (!$error) {
 			$db->begin();
@@ -174,12 +177,10 @@ if (empty($reshook)) {
 
 			$object->fk_project = GETPOST('projectid', 'int');
 
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
-
 			$id = $object->create($user);
 			if ($id <= 0) {
 				$error++;
-				setEventMessage($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'create';
 			}
 
@@ -305,7 +306,7 @@ if (empty($reshook)) {
 			$ret = $object->update($user);
 			if ($ret <= 0) {
 				$error++;
-				setEventMessage($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'edit';
 			}
 
@@ -560,18 +561,22 @@ if (empty($reshook)) {
 	// Action to update one extrafield
 	if ($action == "update_extras" && !empty($permissiontoadd)) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
-		$attributekey = GETPOST('attribute', 'alpha');
-		$attributekeylong = 'options_' . $attributekey;
-		$object->array_options['options_' . $attributekey] = GETPOST($attributekeylong, ' alpha');
 
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-		if ($result > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'edit_extras';
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		if ($ret < 0) $error++;
+
+		if (!$error) {
+			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			if ($result > 0) {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				$action = 'view';
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
+
+		if ($error) $action = 'edit_extras';
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $user->rights->ticket->write) {
@@ -1022,15 +1027,15 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		} else {
 			// Type
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
+			print $langs->getLabelFromKey($db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 			print '</td></tr>';
 			// Group
 			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
-			print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+			print $langs->getLabelFromKey($db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
 			print '</td></tr>';
 			// Severity
 			print '<tr><td>'.$langs->trans("TicketSeverity").'</td><td>';
-			print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
+			print $langs->getLabelFromKey($db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
 			print '</td></tr>';
 		}
 		print '</table>'; // End table actions
@@ -1229,7 +1234,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 				$object->fetch_thirdparty();
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
-			$substitutionarray['__SIGNATURE__'] = $user->signature;
+			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
 			$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
 			$substitutionarray['__TICKET_REF__'] = $object->ref;
 			$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;

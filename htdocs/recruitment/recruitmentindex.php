@@ -116,8 +116,8 @@ if ($conf->use_javascript_ajax)
 		{
 			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentjobposition->LibStatut($status, 1), ENT_QUOTES), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 			if ($status == RecruitmentJobPosition::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-			if ($status == RecruitmentJobPosition::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-			if ($status == RecruitmentJobPosition::STATUS_RECRUITED) $colorseries[$status] = $badgeStatus4;
+			if ($status == RecruitmentJobPosition::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus4;
+			if ($status == RecruitmentJobPosition::STATUS_RECRUITED) $colorseries[$status] = $badgeStatus6;
 			if ($status == RecruitmentJobPosition::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
 
 			if (empty($conf->use_javascript_ajax))
@@ -195,7 +195,7 @@ if ($conf->use_javascript_ajax)
 			if ($status == RecruitmentCandidature::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
 			if ($status == RecruitmentCandidature::STATUS_CONTRACT_PROPOSED) $colorseries[$status] = $badgeStatus4;
 			if ($status == RecruitmentCandidature::STATUS_CONTRACT_SIGNED) $colorseries[$status] = $badgeStatus5;
-			if ($status == RecruitmentCandidature::STATUS_REFUSED) $colorseries[$status] = $badgeStatus8;
+			if ($status == RecruitmentCandidature::STATUS_REFUSED) $colorseries[$status] = $badgeStatus9;
 			if ($status == RecruitmentCandidature::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
 
 			if (empty($conf->use_javascript_ajax))
@@ -323,7 +323,7 @@ $max = 3;
 // Last modified job position
 if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
 {
-	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
+	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
@@ -343,16 +343,16 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 		print '<th colspan="2">';
 		print $langs->trans("BoxTitleLatestModifiedJobPositions", $max);
 		print '</th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentjobposition_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentjobposition_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
 		if ($num)
 		{
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$staticrecruitmentjobposition->id=$objp->rowid;
-				$staticrecruitmentjobposition->ref=$objp->ref;
-				$staticrecruitmentjobposition->label=$objp->label;
+				$staticrecruitmentjobposition->id = $objp->rowid;
+				$staticrecruitmentjobposition->ref = $objp->ref;
+				$staticrecruitmentjobposition->label = $objp->label;
 				$staticrecruitmentjobposition->status = $objp->status;
 				$staticrecruitmentjobposition->date_creation = $objp->date_creation;
 
@@ -361,13 +361,16 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 				print '<td class="right nowrap">';
 				print "</td>";
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '<td class="right nowrap">';
+				print $staticrecruitmentjobposition->getLibStatut(3);
+				print "</td>";
 				print '</tr>';
 				$i++;
 			}
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	} else {
@@ -378,7 +381,7 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 // Last modified job position
 if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
 {
-	$sql = "SELECT rc.rowid, rc.ref, rc.date_creation, rc.tms";
+	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -399,7 +402,7 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 		print '<th colspan="2">';
 		print $langs->trans("BoxTitleLatestModifiedCandidatures", $max);
 		print '</th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -408,21 +411,27 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 				$objp = $db->fetch_object($resql);
 				$staticrecruitmentcandidature->id=$objp->rowid;
 				$staticrecruitmentcandidature->ref=$objp->ref;
+				$staticrecruitmentcandidature->email=$objp->email;
 				$staticrecruitmentcandidature->status = $objp->status;
 				$staticrecruitmentcandidature->date_creation = $objp->date_creation;
+				$staticrecruitmentcandidature->firstname = $objp->firstname;
+				$staticrecruitmentcandidature->lastname = $objp->lastname;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="right nowrap">';
 				print "</td>";
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '<td class="right nowrap">';
+				print $staticrecruitmentcandidature->getLibStatut(3);
+				print "</td>";
 				print '</tr>';
 				$i++;
 			}
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	} else {

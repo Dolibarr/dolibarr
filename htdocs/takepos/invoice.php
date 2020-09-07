@@ -117,13 +117,13 @@ $paiementid = $codes[0];
 $invoice = new Facture($db);
 if ($invoiceid > 0)
 {
-    $ret = $invoice->fetch($invoiceid);
+	$ret = $invoice->fetch($invoiceid);
 } else {
-    $ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
+	$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 }
 if ($ret > 0)
 {
-    $placeid = $invoice->id;
+	$placeid = $invoice->id;
 }
 
 $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -143,17 +143,17 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$bankaccount = 0;
 	$error = 0;
 
-	if (! empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+	if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 		$bankaccount = GETPOST('accountid', 'int');
 	}
 	else {
-	    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
-	    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
-	    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
-	    else {
-	        $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-	    	$bankaccount = $conf->global->$accountname;
-	    }
+		if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+		elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
+		elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+		else {
+			$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
+			$bankaccount = $conf->global->$accountname;
+		}
 	}
 
 	if ($bankaccount <= 0 && $pay != "delayed") {
@@ -224,7 +224,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	} else {
-	    $res = $invoice->validate($user);
+		$res = $invoice->validate($user);
 	}
 
 	// Restore save values
@@ -267,14 +267,14 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		}
 	} else {
 		dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
-    }
+	}
 }
 
 if ($action == 'history')
 {
-    $placeid = (int) GETPOST('placeid', 'int');
-    $invoice = new Facture($db);
-    $invoice->fetch($placeid);
+	$placeid = (int) GETPOST('placeid', 'int');
+	$invoice = new Facture($db);
+	$invoice->fetch($placeid);
 }
 
 if (($action == "addline" || $action == "freezone") && $placeid == 0)
@@ -302,7 +302,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 if ($action == "addline")
 {
 	$prod = new Product($db);
-    $prod->fetch($idproduct);
+	$prod->fetch($idproduct);
 
 	$customer = new Societe($db);
 	$customer->fetch($invoice->socid);
@@ -359,8 +359,8 @@ if ($action == "addline")
 }
 
 if ($action == "freezone") {
-    $customer = new Societe($db);
-    $customer->fetch($invoice->socid);
+	$customer = new Societe($db);
+	$customer->fetch($invoice->socid);
 
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	if ($tva_tx != '') {
@@ -401,7 +401,7 @@ if ($action == "deleteline") {
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
     }
-	if (count($invoice->lines)==0) $invoice->delete($user);
+	if (count($invoice->lines) == 0) $invoice->delete($user);
 }
 
 if ($action == "delete") {
@@ -415,52 +415,52 @@ if ($action == "delete") {
 	}*/
 
 	if ($placeid > 0) {
-        $result = $invoice->fetch($placeid);
+		$result = $invoice->fetch($placeid);
 
-        if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
-        {
-        	$db->begin();
+		if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
+		{
+			$db->begin();
 
-        	// We delete the lines
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_extrafields where fk_object = ".$placeid;
-        	$resql1 = $db->query($sql);
-        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
-            $resql2 = $db->query($sql);
+			// We delete the lines
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_extrafields where fk_object = ".$placeid;
+			$resql1 = $db->query($sql);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
+			$resql2 = $db->query($sql);
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
 			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
 			$invoice->update_price(1);
-            if ($resql1 && $resql2 && $resql3)
-            {
-            	$db->commit();
-            } else {
-            	$db->rollback();
-            }
+			if ($resql1 && $resql2 && $resql3)
+			{
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 
-            $invoice->fetch($placeid);
-        }
-    }
+			$invoice->fetch($placeid);
+		}
+	}
 }
 
 if ($action == "updateqty")
 {
-    foreach ($invoice->lines as $line)
-    {
-        if ($line->id == $idline)
-        {
-            $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
-        }
-    }
+	foreach ($invoice->lines as $line)
+	{
+		if ($line->id == $idline)
+		{
+			$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+		}
+	}
 
-    $invoice->fetch($placeid);
+	$invoice->fetch($placeid);
 }
 
 if ($action == "updateprice")
 {
-    foreach ($invoice->lines as $line)
-    {
-        if ($line->id == $idline)
+	foreach ($invoice->lines as $line)
+	{
+		if ($line->id == $idline)
 		{
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
@@ -475,15 +475,15 @@ if ($action == "updateprice")
 			{
 				echo $langs->trans("CantBeLessThanMinPrice");
 			} else $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
-        }
-    }
-    $invoice->fetch($placeid);
+		}
+	}
+	$invoice->fetch($placeid);
 }
 
 if ($action == "updatereduction")
 {
-    foreach ($invoice->lines as $line)
-    {
+	foreach ($invoice->lines as $line)
+	{
 		if ($line->id == $idline)
 		{
 			$prod = new Product($db);
@@ -500,7 +500,7 @@ if ($action == "updatereduction")
 				echo $langs->trans("CantBeLessThanMinPrice");
 			} else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 		}
-    }
+	}
 	$invoice->fetch($placeid);
 } elseif ($action == 'update_reduction_global') {
 	foreach ($invoice->lines as $line) {
@@ -512,37 +512,37 @@ if ($action == "updatereduction")
 
 if ($action == "order" and $placeid != 0)
 {
-    include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		$printer = new dolReceiptPrinter($db);
 	}
 
-    $headerorder = '<html><br><b>'.$langs->trans('Place').' '.$place.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
-    $footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
-    $order_receipt_printer1 = "";
-    $order_receipt_printer2 = "";
-    $catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
-    $catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
-    foreach ($invoice->lines as $line)
-    {
-        if ($line->special_code == "4") {
-        	continue;
-        }
-        $c = new Categorie($db);
-        $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
-        $result = array_intersect($catsprinter1, $existing);
-        $count = count($result);
-        if ($count > 0) {
-            $linestoprint++;
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
-            $db->query($sql);
-            $order_receipt_printer1 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
+	$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$place.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
+	$footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
+	$order_receipt_printer1 = "";
+	$order_receipt_printer2 = "";
+	$catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
+	$catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
+	foreach ($invoice->lines as $line)
+	{
+		if ($line->special_code == "4") {
+			continue;
+		}
+		$c = new Categorie($db);
+		$existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
+		$result = array_intersect($catsprinter1, $existing);
+		$count = count($result);
+		if ($count > 0) {
+			$linestoprint++;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
+			$db->query($sql);
+			$order_receipt_printer1 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1 .= "<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer1 .= '</td></tr>';
-        }
-    }
-    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+		}
+	}
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 1;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
@@ -552,25 +552,25 @@ if ($action == "order" and $placeid != 0)
 	$invoice->fetch($placeid); //Reload object after set lines as printed
 	$linestoprint = 0;
 
-    foreach ($invoice->lines as $line)
-    {
-        if ($line->special_code == "4") {
-        	continue;
-        }
-        $c = new Categorie($db);
-        $existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
-        $result = array_intersect($catsprinter2, $existing);
-        $count = count($result);
-        if ($count > 0) {
-            $linestoprint++;
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid=".$line->id; //Set to print on printer 2
-            $db->query($sql);
-            $order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
+	foreach ($invoice->lines as $line)
+	{
+		if ($line->special_code == "4") {
+			continue;
+		}
+		$c = new Categorie($db);
+		$existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
+		$result = array_intersect($catsprinter2, $existing);
+		$count = count($result);
+		if ($count > 0) {
+			$linestoprint++;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid=".$line->id; //Set to print on printer 2
+			$db->query($sql);
+			$order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2 .= "<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer2 .= '</td></tr>';
-        }
-    }
-    if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+		}
+	}
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
 		$invoice->fetch($placeid); //Reload object before send to printer
 		$printer->orderprinter = 2;
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
@@ -583,35 +583,35 @@ if ($action == "order" and $placeid != 0)
 $sectionwithinvoicelink = '';
 if ($action == "valid" || $action == "history")
 {
-    $sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
-    $sectionwithinvoicelink .= '<span style="font-size:120%;" class="center">';
-    $sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
-    $remaintopay = $invoice->getRemainToPay();
-    if ($remaintopay > 0)
-    {
-        $sectionwithinvoicelink .= $langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
-    } else {
-        if ($invoice->paye) $sectionwithinvoicelink .= '<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
-        else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
-    }
-    $sectionwithinvoicelink .= '</span>';
-    if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+	$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
+	$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center">';
+	$sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
+	$remaintopay = $invoice->getRemainToPay();
+	if ($remaintopay > 0)
+	{
+		$sectionwithinvoicelink .= $langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+	} else {
+		if ($invoice->paye) $sectionwithinvoicelink .= '<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
+		else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
+	}
+	$sectionwithinvoicelink .= '</span>';
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		else $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    } elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
-        $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    } else {
-        $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+	} elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+	} else {
+		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		if ($conf->global->TAKEPOS_GIFT_RECEIPT) {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button><br>';
 		}
-    }
-    if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
-    {
-    	$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
-    }
+	}
+	if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
+	{
+		$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
+	}
 
-    if ($remaintopay <= 0 && $conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink .= '<script language="javascript">$("#buttonprint").click();</script>';
+	if ($remaintopay <= 0 && $conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink .= '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 /*
@@ -652,48 +652,48 @@ $(document).ready(function() {
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
-    ?>
+	?>
     $.ajax({
         type: "POST",
         url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
         data: '<?php
-        print $headerorder.$order_receipt_printer1.$footerorder; ?>'
+		print $headerorder.$order_receipt_printer1.$footerorder; ?>'
     });
     <?php
 }
 
 if ($action == "order" and $order_receipt_printer2 != "") {
-    ?>
+	?>
     $.ajax({
         type: "POST",
         url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print2',
         data: '<?php
-        print $headerorder.$order_receipt_printer2.$footerorder; ?>'
+		print $headerorder.$order_receipt_printer2.$footerorder; ?>'
     });
     <?php
 }
 
 // Set focus to search field
 if ($action == "search" || $action == "valid") {
-    ?>
+	?>
 	parent.setFocusOnSearchField();
     <?php
 }
 
 
 if ($action == "temp" and $ticket_printer1 != "") {
-    ?>
+	?>
     $.ajax({
         type: "POST",
         url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
         data: '<?php
-        print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
+		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
     });
     <?php
 }
 
 if ($action == "search") {
-    ?>
+	?>
     $('#search').focus();
     <?php
 }
@@ -710,7 +710,7 @@ function SendTicket(id)
 
 function Print(id, gift){
     $.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
-    echo $langs->trans("PrintTicket"); ?>"});
+	echo $langs->trans("PrintTicket"); ?>"});
 }
 
 function TakeposPrinting(id){
@@ -752,11 +752,11 @@ $( document ).ready(function() {
 	console.log("Set customer info and sales in header");
 
     <?php
-    $s = $langs->trans("Customer");
-    if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
-    	$s = $soc->name;
-    }
-    ?>
+	$s = $langs->trans("Customer");
+	if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
+		$s = $soc->name;
+	}
+	?>
 
     $("#customerandsales").html('');
 
@@ -789,16 +789,16 @@ $( document ).ready(function() {
 
 	$s = '';
 
-    $constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-    if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
-    {
-    	$s = '<span class="small">';
-    	$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-    	$warehouse = new Entrepot($db);
-    	$warehouse->fetch($conf->global->$constantforkey);
-    	$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
-    	$s .= '</span>';
-    }
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	{
+		$s = '<span class="small">';
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouse = new Entrepot($db);
+		$warehouse->fetch($conf->global->$constantforkey);
+		$s .= $langs->trans("Warehouse").'<br>'.$warehouse->ref;
+		$s .= '</span>';
+	}
 	?>
 
     $("#infowarehouse").html('<?php print dol_escape_js($s); ?>');
@@ -848,8 +848,8 @@ $( document ).ready(function() {
 // for tooltip and other js beautifiers must be reexecuted too.
 if (!empty($conf->use_javascript_ajax))
 {
-    print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-    print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
+	print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+	print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext ? '&'.$ext : '').'"></script>'."\n";
 }
 
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.$mobilepage.' $_SESSION["basiclayout"]='.$_SESSION["basiclayout"].' conf->global->TAKEPOS_BAR_RESTAURANT='.$conf->global->TAKEPOS_BAR_RESTAURANT.' -->'."\n";
@@ -863,14 +863,14 @@ if ($mobilepage == "invoice" || $mobilepage == "") {
 }
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
-    $sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
-    $resql = $db->query($sql);
-    $obj = $db->fetch_object($resql);
-    if ($obj)
-    {
-        $label = $obj->label;
-        $floor = $obj->floor;
-    }
+	$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	if ($obj)
+	{
+		$label = $obj->label;
+		$floor = $obj->floor;
+	}
 	// In phone version only show when is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
 		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".$label."</b><br>";
@@ -906,9 +906,9 @@ if ($_SESSION["basiclayout"] == 1)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categorie = new Categorie($db);
-        $categories = $categorie->get_full_arbo('product');
+		$categories = $categorie->get_full_arbo('product');
 		$htmlforlines = '';
-        foreach ($categories as $row) {
+		foreach ($categories as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<div class="leftcat';
 			else $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
 			$htmlforlines .= '" onclick="LoadProducts('.$row['id'].');">';
@@ -976,12 +976,12 @@ if ($placeid > 0)
 	//In Phone basic layout hide some content depends situation
 	if ($_SESSION["basiclayout"] == 1 && $mobilepage != "invoice" && $action != "order") return;
 
-    if (is_array($invoice->lines) && count($invoice->lines))
-    {
-    	print '<!-- Show lines of invoices -->'."\n";
-        $tmplines = array_reverse($invoice->lines);
-        foreach ($tmplines as $line)
-        {
+	if (is_array($invoice->lines) && count($invoice->lines))
+	{
+		print '<!-- Show lines of invoices -->'."\n";
+		$tmplines = array_reverse($invoice->lines);
+		foreach ($tmplines as $line)
+		{
 			if ($line->fk_parent_line != false)
 			{
 				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
@@ -1051,7 +1051,7 @@ if ($placeid > 0)
 	            }
             }
             if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
-            if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty-1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty+1).');" class="publicphonebutton2 phonegreen">+</button>';
+            if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
 			if ($_SESSION["basiclayout"] != 1)
 			{
 				$moreinfo = '';
@@ -1071,13 +1071,13 @@ if ($placeid > 0)
 			$htmlforlines .= '</tr>'."\n";
 			$htmlforlines .= $htmlsupplements[$line->id];
 
-            print $htmlforlines;
-        }
-    } else {
-        print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
-    }
+			print $htmlforlines;
+		}
+	} else {
+		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
+	}
 } else {      // No invoice generated yet
-    print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
+	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
 }
 
 print '</table>';
@@ -1085,7 +1085,7 @@ print '</table>';
 
 if ($action == "search")
 {
-    print '<center>
+	print '<center>
 	<input type="text" id="search" name="search" onkeyup="Search2();" name="search" style="width:80%;font-size: 150%;" placeholder=' . $langs->trans('Search').'
 	</center>';
 }

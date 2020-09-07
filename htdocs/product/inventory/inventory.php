@@ -68,7 +68,7 @@ $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action = 'view';
@@ -148,7 +148,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorProductDoesNotNeedBatchNumber", $tmpproduct->ref), null, 'errors');
 			}
 		}
-		if (! $error) {
+		if (!$error) {
 			$tmp = new InventoryLine($db);
 			$tmp->fk_inventory = $object->id;
 			$tmp->fk_warehouse = $fk_warehouse;
@@ -199,16 +199,16 @@ jQuery(document).ready(function() {
 // Part to show record
 if ($object->id > 0)
 {
-    $res = $object->fetch_optionals();
+	$res = $object->fetch_optionals();
 
-    $head = inventoryPrepareHead($object);
+	$head = inventoryPrepareHead($object);
 	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline')
@@ -377,8 +377,8 @@ if ($object->id > 0)
 	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('RecordVerb').'</a>'."\n";
 	    		}
     		}*/
-    	}
-    	print '</div>'."\n";
+		}
+		print '</div>'."\n";
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

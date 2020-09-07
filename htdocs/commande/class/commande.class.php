@@ -1004,6 +1004,11 @@ class Commande extends CommonOrder
 						$origintype = $this->element;
 					}
 
+					// ref_ext
+					if (empty($line->ref_ext)) {
+						$line->ref_ext = '';
+					}
+
                     $result = $this->addline(
 						$line->desc,
 						$line->subprice,
@@ -1029,7 +1034,9 @@ class Commande extends CommonOrder
 						$line->array_options,
 						$line->fk_unit,
 	                    $origintype,
-	                    $originid
+	                    $originid,
+						0,
+	                    $line->ref_ext
 					);
 					if ($result < 0)
 					{
@@ -1214,6 +1221,13 @@ class Commande extends CommonOrder
 		$this->date_creation      = '';
 		$this->date_validation    = '';
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
+
+		// Do not clone ref_ext
+		$num = count($this->lines);
+		for ($i = 0; $i < $num; $i++)
+		{
+			$this->lines[$i]->ref_ext = '';
+		}
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
@@ -1423,6 +1437,7 @@ class Commande extends CommonOrder
 	 * 	@param		string		    $origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *  @param		int			    $origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
+	 * 	@param		string			$ref_ext		    line external reference
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
 	 *	@see        add_product()
@@ -1432,13 +1447,13 @@ class Commande extends CommonOrder
 	 *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '')
 	{
 		global $mysoc, $conf, $langs, $user;
 
 		$logtext = "::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent";
 		$logtext .= ", info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start";
-		$logtext .= ", date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit, origin=$origin, origin_id=$origin_id, pu_ht_devise=$pu_ht_devise";
+		$logtext .= ", date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit, origin=$origin, origin_id=$origin_id, pu_ht_devise=$pu_ht_devise, ref_ext=$ref_ext";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
 		if ($this->statut == self::STATUS_DRAFT)
@@ -1446,6 +1461,7 @@ class Commande extends CommonOrder
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
+
 			if (empty($remise_percent)) $remise_percent = 0;
 			if (empty($qty)) $qty = 0;
 			if (empty($info_bits)) $info_bits = 0;
@@ -1455,6 +1471,7 @@ class Commande extends CommonOrder
 			if (empty($txlocaltax2)) $txlocaltax2 = 0;
 			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line = 0;
 			if (empty($this->fk_multicurrency)) $this->fk_multicurrency = 0;
+			if (empty($ref_ext)) $ref_ext = '';
 
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
@@ -1570,6 +1587,7 @@ class Commande extends CommonOrder
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
+			$this->line->ref_ext = $ref_ext;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -1977,7 +1995,7 @@ class Commande extends CommonOrder
         // phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx,';
+		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit,';
@@ -2012,6 +2030,7 @@ class Commande extends CommonOrder
 				$line->description      = $objp->description; // Description line
 				$line->product_type     = $objp->product_type;
 				$line->qty              = $objp->qty;
+				$line->ref_ext          = $objp->ref_ext;
 
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
@@ -2981,13 +3000,14 @@ class Commande extends CommonOrder
 	 * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @param		double			$pu_ht_devise		Amount in currency
 	 * 	@param		int				$notrigger			disable line update trigger
+	 * 	@param		string			$ref_ext			external reference
 	 *  @return   	int              					< 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '')
 	{
 		global $conf, $mysoc, $langs, $user;
 
-		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
+		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code, ref_ext=$ref_ext");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		if ($this->statut == Commande::STATUS_DRAFT)
@@ -3000,6 +3020,7 @@ class Commande extends CommonOrder
 			if (empty($txlocaltax2)) $txlocaltax2 = 0;
 			if (empty($remise_percent)) $remise_percent = 0;
 			if (empty($special_code) || $special_code == 3) $special_code = 0;
+			if (empty($ref_ext)) $ref_ext = '';
 
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
@@ -3104,6 +3125,7 @@ class Commande extends CommonOrder
 			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
+			$this->line->ref_ext = $ref_ext;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx         = $txtva;
@@ -3970,6 +3992,8 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $label;
 
+	public $ref_ext;
+
 	public $fk_remise_except;
 	public $rang = 0;
 	public $fk_fournprice;
@@ -4014,7 +4038,7 @@ class OrderLine extends CommonOrderLine
 	public function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.label as custom_label, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
-		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
+		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.ref_ext,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
@@ -4036,6 +4060,7 @@ class OrderLine extends CommonOrderLine
 			$this->qty              = $objp->qty;
 			$this->price            = $objp->price;
 			$this->subprice         = $objp->subprice;
+			$this->ref_ext          = $objp->ref_ext;
 			$this->vat_src_code     = $objp->vat_src_code;
 			$this->tva_tx           = $objp->tva_tx;
 			$this->localtax1_tx		= $objp->localtax1_tx;
@@ -4205,6 +4230,7 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->special_code)) $this->special_code = 0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
 		if (empty($this->pa_ht)) $this->pa_ht = 0;
+		if (empty($this->ref_ext)) $this->ref_ext = '';
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
@@ -4224,7 +4250,7 @@ class OrderLine extends CommonOrderLine
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ';
+		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
 		$sql .= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
@@ -4237,6 +4263,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".price2num($this->qty)."',";
+		$sql .= " '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " '".price2num($this->tva_tx)."',";
 		$sql .= " '".price2num($this->localtax1_tx)."',";
@@ -4347,6 +4374,7 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->product_type)) $this->product_type = 0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
 		if (empty($this->pa_ht)) $this->pa_ht = 0;
+		if (empty($this->ref_ext)) $this->ref_ext = '';
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
@@ -4372,6 +4400,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty=".price2num($this->qty);
+		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
 		$sql .= " , subprice=".price2num($this->subprice)."";
 		$sql .= " , remise_percent=".price2num($this->remise_percent)."";
 		$sql .= " , price=".price2num($this->price).""; // TODO A virer

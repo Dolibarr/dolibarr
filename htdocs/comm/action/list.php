@@ -160,7 +160,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 if (GETPOST('cancel', 'alpha'))
 {
-	$action='list'; $massaction='';
+	$action = 'list'; $massaction = '';
 }
 
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
@@ -708,7 +708,7 @@ if ($resql)
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
-				if ($obj->type_code == 'AC_OTH_AUTO' && ($obj->type_code != $obj->code) && $labeltype && !empty($arraylist[$obj->code])) $labeltype .= ' - '.$arraylist[$obj->code];		// Use code in priority on type_code
+				if ($obj->type_code == 'AC_OTH_AUTO' && ($obj->type_code != $obj->code) && $labeltype && !empty($arraylist[$obj->code])) $labeltype .= ' - '.$arraylist[$obj->code]; // Use code in priority on type_code
 			}
 			print dol_trunc($labeltype, 28);
 			print '</td>';

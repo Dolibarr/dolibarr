@@ -58,7 +58,7 @@ class FormFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show form to upload a new file.
 	 *
@@ -70,8 +70,8 @@ class FormFile
 	 *  @param  int			$size          	Length of input file area. Deprecated.
 	 *  @param	Object		$object			Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
-     *  @param  integer     $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
-     *                                      Deprecated 2 should never be used and if 1 is used, option should no be enabled.
+	 *  @param  integer     $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
+	 *                                      Deprecated 2 should never be used and if 1 is used, option should no be enabled.
 	 *  @param	string		$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
@@ -83,14 +83,14 @@ class FormFile
 	 */
 	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs, $hookmanager;
 		$hookmanager->initHooks(array('formfile'));
 
-        // Deprecation warning
-        if ($useajax == 2) {
-            dol_syslog(__METHOD__.": using 2 for useajax is deprecated and should be not used", LOG_WARNING);
-        }
+		// Deprecation warning
+		if ($useajax == 2) {
+			dol_syslog(__METHOD__.": using 2 for useajax is deprecated and should be not used", LOG_WARNING);
+		}
 
 		if (!empty($conf->browser->layout) && $conf->browser->layout != 'classic') $useajax = 0;
 
@@ -114,15 +114,15 @@ class FormFile
 
 			if (empty($usewithoutform))		// Try to avoid this and set instead the form by the caller.
 			{
-    			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-    			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-    			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
-    			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
-    			$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'alpha').'">';
-    			$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
+				$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
+				$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
+				$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'alpha').'">';
+				$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
 			}
 
-			$out .= '<table class="nobordernopadding cenpercent">';
+			$out .= '<table class="nobordernopadding centpercent">';
 			$out .= '<tr>';
 
 			if (!empty($options)) $out .= '<td>'.$options.'</td>';
@@ -201,24 +201,24 @@ class FormFile
 			$out .= "</td></tr>";
 
 			if ($savingdocmask)
-            {
-            	//add a global variable for disable the auto renaming on upload
-                $rename = (empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT) ? 'checked' : '');
+			{
+				//add a global variable for disable the auto renaming on upload
+				$rename = (empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT) ? 'checked' : '');
 
-                $out .= '<tr>';
-   	            if (!empty($options)) $out .= '<td>'.$options.'</td>';
-	            $out .= '<td valign="middle" class="nowrap">';
+				$out .= '<tr>';
+   				if (!empty($options)) $out .= '<td>'.$options.'</td>';
+				$out .= '<td valign="middle" class="nowrap">';
 				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
-            	$out .= '</td>';
-            	$out .= '</tr>';
-            }
+				$out .= '</td>';
+				$out .= '</tr>';
+			}
 
 			$out .= "</table>";
 
 			if (empty($usewithoutform))
 			{
-    			$out .= '</form>';
-	       		if (empty($sectionid)) $out .= '<br>';
+				$out .= '</form>';
+		   		if (empty($sectionid)) $out .= '<br>';
 			}
 
 			$out .= "\n</div><!-- End form attach new file -->\n";
@@ -232,10 +232,10 @@ class FormFile
 
 				if (empty($usewithoutform))
 				{
-    				$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
-    				$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
-    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
-    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
+					$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
+					$out .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+					$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
+					$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
 				}
 
 				$out .= '<div class="valignmiddle">';
@@ -257,8 +257,8 @@ class FormFile
 				$out .= '</div>';
 				if (empty($usewithoutform))
 				{
-    				$out .= '<div class="clearboth"></div>';
-                    $out .= '</form><br>';
+					$out .= '<div class="clearboth"></div>';
+					$out .= '</form><br>';
 				}
 
 				$out .= "\n</div><!-- End form link new url -->\n";
@@ -268,7 +268,7 @@ class FormFile
 			$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
 			if (empty($res))
 			{
-			    print '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">';
+				print '<div class="'.($usewithoutform ? 'inline-block valignmiddle' : 'attacharea attacharea'.$htmlname).'">';
 				print $out;
 				print '</div>';
 			}
@@ -278,7 +278,7 @@ class FormFile
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Show the box with list of available documents for object
 	 *
@@ -303,7 +303,7 @@ class FormFile
 	 */
 	public function show_documents($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->numoffiles = 0;
 		print $this->showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed, $modelselected, $allowgenifempty, $forcenomultilang, $iconPDF, $notused, $noform, $param, $title, $buttonlabel, $codelang);
 		return $this->numoffiles;
@@ -454,13 +454,13 @@ class FormFile
 					$modellist = ModelePDFExpedition::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'reception')
-            {
-                if (is_array($genallowed)) $modellist = $genallowed;
-                else {
+			{
+				if (is_array($genallowed)) $modellist = $genallowed;
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 					$modellist = ModelePdfReception::liste_modeles($this->db);
 				}
-            } elseif ($modulepart == 'livraison')
+			} elseif ($modulepart == 'livraison')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
@@ -611,16 +611,16 @@ class FormFile
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
 			} else {
-			    $submodulepart = $modulepart;
+				$submodulepart = $modulepart;
 
-			    // modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
-			    $tmp = explode(':', $modulepart);
-			    if (!empty($tmp[1])) {
-			    	$modulepart = $tmp[0];
-			    	$submodulepart = $tmp[1];
-			    }
+				// modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
+				$tmp = explode(':', $modulepart);
+				if (!empty($tmp[1])) {
+					$modulepart = $tmp[0];
+					$submodulepart = $tmp[1];
+				}
 
-			    // For normalized standard modules
+				// For normalized standard modules
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 				if (file_exists($file))
 				{
@@ -628,7 +628,7 @@ class FormFile
 				}
 				// For normalized external modules.
 				else {
-				    $file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+					$file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 					$res = include_once $file;
 				}
 
@@ -992,7 +992,7 @@ class FormFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show list of documents in $filearray (may be they are all in same directory but may not)
 	 *  This also sync database if $upload_dir is defined.
@@ -1027,7 +1027,7 @@ class FormFile
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
@@ -1049,7 +1049,7 @@ class FormFile
 		// For backward compatiblity, we detect file stored into an old path
 		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')
 		{
-		    $relativepath = preg_replace('/^.*\/produit\//', '', $filearray[0]['path']).'/';
+			$relativepath = preg_replace('/^.*\/produit\//', '', $filearray[0]['path']).'/';
 		}
 		// Defined relative dir to DOL_DATA_ROOT
 		$relativedir = '';
@@ -1233,13 +1233,13 @@ class FormFile
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0)
 						{
-						    if ($useinecm == 5 || $useinecm == 6)
-						    {
-						    	$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
-						    } else {
-						        $smallfile = getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
-						    }
-						    if (!dol_is_file($file['path'].'/'.$smallfile)) $smallfile = getImageFileNameForSize($file['name'], '_small', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+							if ($useinecm == 5 || $useinecm == 6)
+							{
+								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
+							} else {
+								$smallfile = getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
+							}
+							if (!dol_is_file($file['path'].'/'.$smallfile)) $smallfile = getImageFileNameForSize($file['name'], '_small', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 							//print $file['path'].'/'.$smallfile.'<br>';
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
@@ -1353,7 +1353,7 @@ class FormFile
 							   	print '<td'.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'>';
 							   	print '</td>';
 							}
-					    }
+						}
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
@@ -1398,7 +1398,7 @@ class FormFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show list of documents in a directory
 	 *
@@ -1419,7 +1419,7 @@ class FormFile
 	 */
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
@@ -1532,8 +1532,8 @@ class FormFile
 			$object_instance = new RecruitmentCandidature($this->db);
 		} elseif ($modulepart == 'banque')
 		{
-		    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		    $object_instance = new Account($this->db);
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$object_instance = new Account($this->db);
 		} elseif ($modulepart == 'mrp-mo')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
@@ -1574,7 +1574,7 @@ class FormFile
 					'banque'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
-				    //print 'Error: Value for modulepart = '.$modulepart.' is not yet implemented in function list_of_autoecmfiles'."\n";
+					//print 'Error: Value for modulepart = '.$modulepart.' is not yet implemented in function list_of_autoecmfiles'."\n";
 				}
 
 				if (!$id && !$ref) continue;
@@ -1733,7 +1733,7 @@ class FormFile
 
 		print '<table width="100%" class="liste noborder nobottom">';
 		print '<tr class="liste_titre">';
-        print_liste_field_titre(
+		print_liste_field_titre(
 			$langs->trans("Links"),
 			$_SERVER['PHP_SELF'],
 			"name",
@@ -1742,20 +1742,20 @@ class FormFile
 			'',
 			$sortfield,
 			$sortorder,
-            ''
+			''
 		);
-        print_liste_field_titre(
+		print_liste_field_titre(
 			"",
 			"",
 			"",
 			"",
 			"",
 			'',
-            '',
-            '',
-            'right '
+			'',
+			'',
+			'right '
 		);
-        print_liste_field_titre(
+		print_liste_field_titre(
 			$langs->trans("Date"),
 			$_SERVER['PHP_SELF'],
 			"date",
@@ -1764,18 +1764,18 @@ class FormFile
 			'',
 			$sortfield,
 			$sortorder,
-            'center '
+			'center '
 		);
-        print_liste_field_titre(
+		print_liste_field_titre(
 			'',
 			$_SERVER['PHP_SELF'],
 			"",
 			"",
 			$param,
 			'',
-            '',
-            '',
-            'center '
+			'',
+			'',
+			'center '
 		);
 		print_liste_field_titre('', '', '');
 		print '</tr>';

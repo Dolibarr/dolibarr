@@ -187,7 +187,7 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Create supplier order object
 	 *
-     * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
+	 * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of supplier order

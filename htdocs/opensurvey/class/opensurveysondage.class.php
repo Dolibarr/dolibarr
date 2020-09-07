@@ -54,11 +54,6 @@ class Opensurveysondage extends CommonObject
      * @var string	ID survey
      */
     public $id_sondage;
-    /**
-     * @deprecated
-     * @see $description
-     */
-    public $commentaires;
 
     /**
      * @var string description
@@ -74,7 +69,11 @@ class Opensurveysondage extends CommonObject
      */
     public $fk_user_creat;
 
-    public $titre;
+    /**
+     * @var string	Title
+     */
+    public $title;
+
     public $date_fin = '';
     public $status = 1;
     public $format;
@@ -156,9 +155,9 @@ class Opensurveysondage extends CommonObject
         $sql .= "sujet";
         $sql .= ") VALUES (";
         $sql .= "'".$this->db->escape($this->id_sondage)."',";
-        $sql .= " ".(empty($this->commentaires) ? 'NULL' : "'".$this->db->escape($this->commentaires)."'").",";
+        $sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
         $sql .= " ".$user->id.",";
-        $sql .= " '".$this->db->escape($this->titre)."',";
+        $sql .= " '".$this->db->escape($this->title)."',";
         $sql .= " '".$this->db->idate($this->date_fin)."',";
         $sql .= " ".$this->status.",";
         $sql .= " '".$this->db->escape($this->format)."',";
@@ -215,11 +214,11 @@ class Opensurveysondage extends CommonObject
     {
         $sql = "SELECT";
         $sql .= " t.id_sondage,";
+        $sql .= " t.titre as title,";
         $sql .= " t.commentaires as description,";
         $sql .= " t.mail_admin,";
         $sql .= " t.nom_admin,";
         $sql .= " t.fk_user_creat,";
-        $sql .= " t.titre,";
         $sql .= " t.date_fin,";
         $sql .= " t.status,";
         $sql .= " t.format,";
@@ -242,11 +241,10 @@ class Opensurveysondage extends CommonObject
                 $this->id_sondage = $obj->id_sondage;
                 $this->ref = $this->id_sondage; //For compatibility
 
-                $this->commentaires = $obj->description; // deprecated
                 $this->description = $obj->description;
                 $this->mail_admin = $obj->mail_admin;
                 $this->nom_admin = $obj->nom_admin;
-                $this->titre = $obj->titre;
+                $this->title = $obj->title;
                 $this->date_fin = $this->db->jdate($obj->date_fin);
                 $this->status = $obj->status;
                 $this->format = $obj->format;
@@ -295,19 +293,17 @@ class Opensurveysondage extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."opensurvey_sondage SET";
-
         $sql .= " id_sondage=".(isset($this->id_sondage) ? "'".$this->db->escape($this->id_sondage)."'" : "null").",";
-        $sql .= " commentaires=".(isset($this->commentaires) ? "'".$this->db->escape($this->commentaires)."'" : "null").",";
+        $sql .= " commentaires=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
         $sql .= " mail_admin=".(isset($this->mail_admin) ? "'".$this->db->escape($this->mail_admin)."'" : "null").",";
         $sql .= " nom_admin=".(isset($this->nom_admin) ? "'".$this->db->escape($this->nom_admin)."'" : "null").",";
-        $sql .= " titre=".(isset($this->titre) ? "'".$this->db->escape($this->titre)."'" : "null").",";
+        $sql .= " titre=".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "null").",";
         $sql .= " date_fin=".(dol_strlen($this->date_fin) != 0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
         $sql .= " status=".(isset($this->status) ? "'".$this->db->escape($this->status)."'" : "null").",";
         $sql .= " format=".(isset($this->format) ? "'".$this->db->escape($this->format)."'" : "null").",";
         $sql .= " mailsonde=".(isset($this->mailsonde) ? $this->db->escape($this->mailsonde) : "null").",";
         $sql .= " allow_comments=".$this->db->escape($this->allow_comments).",";
         $sql .= " allow_spy=".$this->db->escape($this->allow_spy);
-
         $sql .= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 
         $this->db->begin();
@@ -505,11 +501,10 @@ class Opensurveysondage extends CommonObject
         $this->id = 0;
 
         $this->id_sondage = '';
-        $this->commentaires = 'Comment of the specimen survey';
-        $this->description = 'Comment of the specimen survey';
+        $this->description = 'Description of the specimen survey';
         $this->mail_admin = '';
         $this->nom_admin = '';
-        $this->titre = 'This is a specimen survey';
+        $this->title = 'This is a specimen survey';
         $this->date_fin = dol_now() + 3600 * 24 * 10;
         $this->status = 1;
         $this->format = 'classic';
@@ -593,11 +588,10 @@ class Opensurveysondage extends CommonObject
     private function cleanParameters()
     {
         $this->id_sondage = trim($this->id_sondage);
-        $this->commentaires = trim($this->commentaires);
         $this->description = trim($this->description);
         $this->mail_admin = trim($this->mail_admin);
         $this->nom_admin = trim($this->nom_admin);
-        $this->titre = trim($this->titre);
+        $this->title = trim($this->title);
         $this->status = trim($this->status);
         $this->format = trim($this->format);
         $this->mailsonde = ($this->mailsonde ? 1 : 0);

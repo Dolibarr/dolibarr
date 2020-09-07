@@ -238,11 +238,10 @@ function ajouter_sondage()
 	// Insert survey
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
-	$opensurveysondage->commentaires = $_SESSION['commentaires'];
-	$opensurveysondage->description = $_SESSION['commentaires'];
+	$opensurveysondage->description = $_SESSION['description'];
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
-	$opensurveysondage->titre = $_SESSION['titre'];
+	$opensurveysondage->title = $_SESSION['title'];
 	$opensurveysondage->date_fin = $_SESSION['champdatefin'];
 	$opensurveysondage->format = $_SESSION['formatsondage'];
 	$opensurveysondage->mailsonde = $_SESSION['mailsonde'];
@@ -256,10 +255,10 @@ function ajouter_sondage()
 		dol_print_error($db);
 	}
 
-	unset($_SESSION["titre"]);
+	unset($_SESSION["title"]);
 	unset($_SESSION["nom"]);
 	unset($_SESSION["adresse"]);
-	unset($_SESSION["commentaires"]);
+	unset($_SESSION["description"]);
 	unset($_SESSION["mailsonde"]);
 	unset($_SESSION['allow_comments']);
 	unset($_SESSION['allow_spy']);

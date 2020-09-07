@@ -184,7 +184,7 @@ class Menubase
         $this->position = (int) $this->position;
         $this->url = trim($this->url);
         $this->target = trim($this->target);
-        $this->titre = trim($this->titre);
+        $this->title = trim($this->title);
         $this->langs = trim($this->langs);
         $this->perms = trim($this->perms);
         $this->enabled = trim($this->enabled);
@@ -264,7 +264,7 @@ class Menubase
 		        $sql .= " ".((int) $this->position).",";
 		        $sql .= " '".$this->db->escape($this->url)."',";
 		        $sql .= " '".$this->db->escape($this->target)."',";
-		        $sql .= " '".$this->db->escape($this->titre)."',";
+		        $sql .= " '".$this->db->escape($this->title)."',";
 		        $sql .= " '".$this->db->escape($this->langs)."',";
 		        $sql .= " '".$this->db->escape($this->perms)."',";
 		        $sql .= " '".$this->db->escape($this->enabled)."',";
@@ -317,7 +317,7 @@ class Menubase
         $this->position = (int) $this->position;
         $this->url = trim($this->url);
         $this->target = trim($this->target);
-        $this->titre = trim($this->titre);
+        $this->title = trim($this->title);
         $this->langs = trim($this->langs);
         $this->perms = trim($this->perms);
         $this->enabled = trim($this->enabled);
@@ -339,7 +339,7 @@ class Menubase
         $sql .= " position=".($this->position > 0 ? $this->position : 0).",";
         $sql .= " url='".$this->db->escape($this->url)."',";
         $sql .= " target='".$this->db->escape($this->target)."',";
-        $sql .= " titre='".$this->db->escape($this->titre)."',";
+        $sql .= " titre='".$this->db->escape($this->title)."',";
         $sql .= " langs='".$this->db->escape($this->langs)."',";
         $sql .= " perms='".$this->db->escape($this->perms)."',";
         $sql .= " enabled='".$this->db->escape($this->enabled)."',";
@@ -383,7 +383,7 @@ class Menubase
         $sql .= " t.position,";
         $sql .= " t.url,";
         $sql .= " t.target,";
-        $sql .= " t.titre,";
+        $sql .= " t.titre as title,";
         $sql .= " t.langs,";
         $sql .= " t.perms,";
         $sql .= " t.enabled,";
@@ -414,7 +414,7 @@ class Menubase
                 $this->position = $obj->position;
                 $this->url = $obj->url;
                 $this->target = $obj->target;
-                $this->titre = $obj->titre;
+                $this->title = $obj->title;
                 $this->langs = $obj->langs;
                 $this->perms = $obj->perms;
                 $this->enabled = str_replace("\"", "'", $obj->enabled);
@@ -475,10 +475,8 @@ class Menubase
         $this->position = '';
         $this->url = 'http://dummy';
         $this->target = '';
-        $this->titre = 'Specimen menu'; // deprecated
         $this->title = 'Specimen menu';
         $this->langs = '';
-        $this->level = '';
         $this->leftmenu = '';
         $this->perms = '';
         $this->enabled = '';

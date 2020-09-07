@@ -60,12 +60,12 @@ class Establishment extends CommonObject
 	 */
 	public $picto = 'building';
 
-    /**
+	/**
 	 * @var int ID
 	 */
 	public $id;
 
-    /**
+	/**
 	 * @var string Ref
 	 */
 	public $ref;
@@ -102,7 +102,7 @@ class Establishment extends CommonObject
 	const STATUS_CLOSED = 0;
 
 
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
@@ -147,13 +147,13 @@ class Establishment extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
-        // Clean parameters
-        $this->address = ($this->address > 0 ? $this->address : $this->address);
-        $this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-        $this->town = ($this->town > 0 ? $this->town : $this->town);
-        $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		// Clean parameters
+		$this->address = ($this->address > 0 ? $this->address : $this->address);
+		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
+		$this->town = ($this->town > 0 ? $this->town : $this->town);
+		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 
-        if (empty($this->ref)) $this->ref = '(PROV)';
+		if (empty($this->ref)) $this->ref = '(PROV)';
 
 		$this->db->begin();
 
@@ -173,8 +173,8 @@ class Establishment extends CommonObject
 		$sql .= "'".$this->db->escape($this->ref)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
-        $sql .= ", '".$this->db->escape($this->zip)."'";
-        $sql .= ", '".$this->db->escape($this->town)."'";
+		$sql .= ", '".$this->db->escape($this->zip)."'";
+		$sql .= ", '".$this->db->escape($this->town)."'";
 		$sql .= ", ".$this->country_id;
 		$sql .= ", ".$this->status;
 		$sql .= ", ".$conf->entity;
@@ -224,12 +224,12 @@ class Establishment extends CommonObject
 	{
 		global $langs;
 
-        // Check parameters
-        if (empty($this->label))
-        {
-            $this->error = 'ErrorBadParameter';
-            return -1;
-        }
+		// Check parameters
+		if (empty($this->label))
+		{
+			$this->error = 'ErrorBadParameter';
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -258,17 +258,17 @@ class Establishment extends CommonObject
 	}
 
 	/**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @return	int				<0 if KO, >0 if OK
-	*/
+	 * Load an object from database
+	 *
+	 * @param	int		$id		Id of record to load
+	 * @return	int				<0 if KO, >0 if OK
+	 */
 	public function fetch($id)
 	{
 		$sql = "SELECT e.rowid, e.ref, e.label, e.address, e.zip, e.town, e.status, e.fk_country as country_id, e.entity,";
 		$sql .= ' c.code as country_code, c.label as country';
 		$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
 		$sql .= " WHERE e.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -286,9 +286,9 @@ class Establishment extends CommonObject
 			$this->status = $obj->status;
 			$this->entity = $obj->entity;
 
-            $this->country_id   = $obj->country_id;
-            $this->country_code = $obj->country_code;
-            $this->country      = $obj->country;
+			$this->country_id   = $obj->country_id;
+			$this->country_code = $obj->country_code;
+			$this->country      = $obj->country;
 
 			return 1;
 		} else {
@@ -297,7 +297,7 @@ class Establishment extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
@@ -406,60 +406,60 @@ class Establishment extends CommonObject
 		}
 	}
 
-    /**
-     *  Return clicable name (with picto eventually)
-     *
-     *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
-     *  @return     string                  String with URL
-     */
-    public function getNomUrl($withpicto = 0)
-    {
-        global $langs;
+	/**
+	 *  Return clicable name (with picto eventually)
+	 *
+	 *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @return     string                  String with URL
+	 */
+	public function getNomUrl($withpicto = 0)
+	{
+		global $langs;
 
-        $result = '';
+		$result = '';
 
-        $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id.'">';
-        $linkend = '</a>';
+		$link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id.'">';
+		$linkend = '</a>';
 
-        $picto = 'building';
+		$picto = 'building';
 
-        $label = '<u>'.$langs->trans("Establishment").'</u>';
-        $label .= '<br>'.$langs->trans("Label").': '.$this->label;
+		$label = '<u>'.$langs->trans("Establishment").'</u>';
+		$label .= '<br>'.$langs->trans("Label").': '.$this->label;
 
-        if ($withpicto) $result .= ($link.img_object($label, $picto).$linkend);
-        if ($withpicto && $withpicto != 2) $result .= ' ';
-        if ($withpicto != 2) $result .= $link.$this->label.$linkend;
-        return $result;
-    }
+		if ($withpicto) $result .= ($link.img_object($label, $picto).$linkend);
+		if ($withpicto && $withpicto != 2) $result .= ' ';
+		if ($withpicto != 2) $result .= $link.$this->label.$linkend;
+		return $result;
+	}
 
 	/**
-     * 	Return account country code
-     *
-     *	@return		string		country code
-     */
-    public function getCountryCode()
-    {
-        global $mysoc;
+	 * 	Return account country code
+	 *
+	 *	@return		string		country code
+	 */
+	public function getCountryCode()
+	{
+		global $mysoc;
 
-        // We return country code of bank account
-        if (!empty($this->country_code)) return $this->country_code;
+		// We return country code of bank account
+		if (!empty($this->country_code)) return $this->country_code;
 
-        // We return country code of managed company
-        if (!empty($mysoc->country_code)) return $mysoc->country_code;
+		// We return country code of managed company
+		if (!empty($mysoc->country_code)) return $mysoc->country_code;
 
-        return '';
-    }
+		return '';
+	}
 
-    /**
-     * Initialise object with example values
-     * Id must be 0 if object instance is a specimen
-     *
-     * @return void
-     */
-    public function initAsSpecimen()
-    {
-        $this->id = 0;
-        $this->ref = '0';
-        $this->label = 'Department AAA';
-    }
+	/**
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
+	 *
+	 * @return void
+	 */
+	public function initAsSpecimen()
+	{
+		$this->id = 0;
+		$this->ref = '0';
+		$this->label = 'Department AAA';
+	}
 }
