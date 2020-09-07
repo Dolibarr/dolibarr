@@ -1186,6 +1186,7 @@ if ($resql)
 		if (GETPOST('confirm') == 'yes') {
 			$tmpproposal = new Propal($db);
 			$db->begin();
+			$error = 0;
 			foreach ($toselect as $checked) {
 				if ($tmpproposal->fetch($checked)) {
 					if ($tmpproposal->statut == 0) {
@@ -1193,13 +1194,21 @@ if ($resql)
 							setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
 						} else {
 							setEventMessage($langs->trans('CantBeValidated'), 'errors');
+							$error++;
 						}
 					} else {
 						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
+						$error++;
 					}
 				}
+				dol_print_error($db);
+				$error++;
 			}
-			$db->commit();
+			if ($error){
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
 		}
 	}
 
@@ -1207,25 +1216,31 @@ if ($resql)
 		if (GETPOST('confirm') == 'yes') {
 			$tmpproposal = new Propal($db);
 			$db->begin();
+			$error = 0;
 			foreach ($toselect as $checked) {
-				$tmpproposal->fetch($checked);
 				if ($tmpproposal->fetch($checked)) {
 					if ($tmpproposal->statut == 1) {
-						$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
-						$resqlp = $db->query($sqlp);
-						if ($resqlp) {
+						$tmpproposal->statut = 2;
+						if ($tmpproposal->update($user)) {
 							setEventMessage($tmpproposal->ref . " " . $langs->trans('Signed'), 'mesgs');
 						} else {
 							dol_print_error($db);
+							$error++;
 						}
 					} else {
 						setEventMessage($tmpproposal->ref . " " . $langs->trans('CantBeSign'), 'errors');
+						$error++;
 					}
 				} else {
 					dol_print_error($db);
+					$error++;
 				}
 			}
-			$db->commit();
+			if ($error){
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
 		}
 	}
 } else {
