@@ -460,7 +460,7 @@ class AccountingAccount extends CommonObject
 
 		$result = '';
 
-		if (empty($option)) {
+		if (empty($option) || $option == 'bookkeeping') {
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
 		} elseif ($option == 'bookkeepinglistbyaccount') {
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;

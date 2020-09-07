@@ -290,7 +290,7 @@ if ($action != 'export_csv')
 	{
         $accountingaccountstatic->fetch(null, $line->numero_compte, true);
         if (!empty($accountingaccountstatic->account_number)) {
-            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
         } else {
             $accounting_account = length_accountg($line->numero_compte);
         }
