@@ -506,34 +506,6 @@ if ($resql)
 
 	if ($massaction == 'prevalidate')
 	{
-		$cpt = 0;
-		$refs = array();
-		$ids = array();
-		foreach ($toselect as $checked){
-			$sqlp = "SELECT ref, rowid FROM ".MAIN_DB_PREFIX."propal WHERE rowid = " .$checked;
-			$resqlp = $db->query($sqlp);
-			if ($resqlp){
-				$objp = $db->fetch_object($resqlp);
-				if ($objp) {
-					$cpt++;
-					$refs[] = $objp->ref;
-					$ids[] = $objp->rowid;
-				}
-			} else {
-				dol_print_error($db);
-			}
-		}
-		if ($cpt > 0)
-		{
-			if ($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
-			if ($cpt>1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropsNoProductOrService'), 'warnings');
-			$cpt2 = 0;
-			foreach ($ids as $r)
-			{
-				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$r."'>".$refs[$cpt2]."</a>", 'warnings');
-				$cpt2++;
-			}
-		}
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
 	}
 
