@@ -1523,7 +1523,7 @@ class EmailCollector extends CommonObject
 
                     $description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
-                    $descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $msgid);
+                    $descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
 
                     $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
                     $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
