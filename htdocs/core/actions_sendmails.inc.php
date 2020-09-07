@@ -263,12 +263,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		if (dol_strlen($sendto))
 		{
-            // Define $urlwithroot
-            $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-            $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-            //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+			// Define $urlwithroot
+			$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+			$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+			//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-		    require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
 			$langs->load("commercial");
 
@@ -419,7 +419,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					// Initialisation of datas of object to call trigger
 					if (is_object($object))
 					{
-					    if (empty($actiontypecode)) $actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+						if (empty($actiontypecode)) $actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
 
 						$object->socid = $sendtosocid; // To link to a company
 						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
@@ -456,7 +456,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 							if ($error) {
 								setEventMessages($object->error, $object->errors, 'errors');
-    						}
+							}
 						}
 						// End call of triggers
 					}

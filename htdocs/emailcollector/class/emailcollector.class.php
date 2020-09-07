@@ -1061,14 +1061,14 @@ class EmailCollector extends CommonObject
              2.2.1 text/plain
              2.2.2 text/html
              */
-            /**
-             * create_part_array
-             *
-             * @param 	Object $structure	Structure
-             * @param 	string $prefix		prefix
-             * @return 	array				Array with number and object
-             */
-            /*function createPartArray($structure, $prefix = "")
+			/**
+			 * create_part_array
+			 *
+			 * @param 	Object $structure	Structure
+			 * @param 	string $prefix		prefix
+			 * @return 	array				Array with number and object
+			 */
+			/*function createPartArray($structure, $prefix = "")
             {
                 //print_r($structure);
                 $part_array=array();
@@ -1082,15 +1082,15 @@ class EmailCollector extends CommonObject
                 return $part_array;
             }*/
 
-            /**
-             * Sub function for createPartArray(). Only called by createPartArray() and itself.
-             *
-             * @param 	Object		$obj			Structure
-             * @param 	string		$partno			Part no
-             * @param 	array		$part_array		array
-             * @return	void
-             */
-            /*function addPartToArray($obj, $partno, &$part_array)
+			/**
+			 * Sub function for createPartArray(). Only called by createPartArray() and itself.
+			 *
+			 * @param 	Object		$obj			Structure
+			 * @param 	string		$partno			Part no
+			 * @param 	array		$part_array		array
+			 * @return	void
+			 */
+			/*function addPartToArray($obj, $partno, &$part_array)
             {
                 $part_array[] = array('part_number' => $partno, 'part_object' => $obj);
                 if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
@@ -1155,7 +1155,7 @@ class EmailCollector extends CommonObject
                     if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
-                        continue;	// Exclude email
+                        continue; // Exclude email
                     }
                 }
                 if ($searchfilternodoltrackid > 0)
@@ -1370,7 +1370,7 @@ class EmailCollector extends CommonObject
 		                    }
                 		} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
-                			if (! is_object($objectemail)) {
+                			if (!is_object($objectemail)) {
                 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -1383,9 +1383,9 @@ class EmailCollector extends CommonObject
 								} else {
 									$errorforemail++;
 								}
-                			}
+							}
 
-							if (! is_object($objectemail)) {
+							if (!is_object($objectemail)) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -1400,7 +1400,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (! is_object($objectemail)) {
+							if (!is_object($objectemail)) {
 								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
 								$resql = $this->db->query($sql);
 								if ($resql) {
@@ -1474,7 +1474,7 @@ class EmailCollector extends CommonObject
 
                 		if (is_object($objectemail))
                 		{
-                			break;	// Exit loop of references. We already found an accurate reference
+                			break; // Exit loop of references. We already found an accurate reference
                 		}
                 	}
                 }
@@ -1508,6 +1508,8 @@ class EmailCollector extends CommonObject
                 // Do operations
                 foreach ($this->actions as $operation)
                 {
+                	$errorforthisaction = 0;
+
                     if ($errorforactions) break;
                     if (empty($operation['status'])) continue;
 
@@ -1521,7 +1523,7 @@ class EmailCollector extends CommonObject
 
                     $description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
-                    $descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $msgid);
+                    $descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
 
                     $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
                     $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
@@ -1683,7 +1685,7 @@ class EmailCollector extends CommonObject
 	                        $actioncomm->datef       = $date;
 	                        $actioncomm->percentage  = -1; // Not applicable
 	                        $actioncomm->socid       = $thirdpartystatic->id;
-	                        $actioncomm->contact_id   = $contactstatic->id;
+	                        $actioncomm->contact_id = $contactstatic->id;
 		                    $actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
 	                        $actioncomm->authorid    = $user->id; // User saving action
 	                        $actioncomm->userownerid = $user->id; // Owner of action
@@ -2044,178 +2046,178 @@ class EmailCollector extends CommonObject
 	                    		$candidaturetocreate->ref = $defaultref;
 	                    	}*/
 
-	                    	if ($errorforthisaction)
-	                    	{
-	                    		$errorforactions++;
-	                    	} else {
-	                    		// Create project
-	                    		$result = $candidaturetocreate->create($user);
-	                    		if ($result <= 0)
-	                    		{
-	                    			$errorforactions++;
-	                    			$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
-	                    			$this->errors = $candidaturetocreate->errors;
-	                    		}
-	                    	}
-                    	}
-                    }
-                    // Create event specific on hook
-                    // this code action is hook..... for support this call
-                    elseif (substr($operation['type'], 0, 4) == 'hook') {
-                    	global $hookmanager;
+							if ($errorforthisaction)
+							{
+								$errorforactions++;
+							} else {
+								// Create project
+								$result = $candidaturetocreate->create($user);
+								if ($result <= 0)
+								{
+									$errorforactions++;
+									$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
+									$this->errors = $candidaturetocreate->errors;
+								}
+							}
+						}
+					}
+					// Create event specific on hook
+					// this code action is hook..... for support this call
+					elseif (substr($operation['type'], 0, 4) == 'hook') {
+						global $hookmanager;
 
-                    	if (!is_object($hookmanager)) {
-                    		$hookmanager->initHooks(array('emailcollectorcard'));
-                    	}
+						if (!is_object($hookmanager)) {
+							$hookmanager->initHooks(array('emailcollectorcard'));
+						}
 
-                    	$parameters = array(
-                    		'connection'=>  $connection,
-                    		'imapemail'=>$imapemail,
-                    		'overview'=>$overview,
+						$parameters = array(
+							'connection'=>  $connection,
+							'imapemail'=>$imapemail,
+							'overview'=>$overview,
 
-                    		'from' => $from,
-                    		'fromtext' => $fromtext,
+							'from' => $from,
+							'fromtext' => $fromtext,
 
-                    		'actionparam'=>  $operation['actionparam'],
+							'actionparam'=>  $operation['actionparam'],
 
-                    		'thirdpartyid' => $thirdpartyid,
-                    		'objectid'=> $objectid,
-                    		'objectemail'=> $objectemail,
+							'thirdpartyid' => $thirdpartyid,
+							'objectid'=> $objectid,
+							'objectemail'=> $objectemail,
 
-                    		'messagetext'=>$messagetext,
-                    		'subject'=>$subject,
-                    		'header'=>$header,
-                    	);
-                    	$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+							'messagetext'=>$messagetext,
+							'subject'=>$subject,
+							'header'=>$header,
+						);
+						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
 
-                    	if ($res < 0) {
-                    		$errorforthisaction++;
-                    		$this->error = $hookmanager->resPrint;
-                    	}
-                    	if ($errorforthisaction)
-                    	{
-                    		$errorforactions++;
-                    	}
-                    }
+						if ($res < 0) {
+							$errorforthisaction++;
+							$this->error = $hookmanager->resPrint;
+						}
+						if ($errorforthisaction)
+						{
+							$errorforactions++;
+						}
+					}
 
-                    if (!$errorforactions)
-                    {
-                        $nbactiondoneforemail++;
-                    }
-                }
+					if (!$errorforactions)
+					{
+						$nbactiondoneforemail++;
+					}
+				}
 
-                // Error for email or not ?
-                if (!$errorforactions)
-                {
-                    if ($targetdir)
-                    {
-                        dol_syslog("EmailCollector::doCollectOneCollector move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
-                        $res = imap_mail_move($connection, $imapemail, $targetdir, 0);
-                        if ($res == false) {
-                            $errorforemail++;
-                            $this->error = imap_last_error();
-                            $this->errors[] = $this->error;
-                            dol_syslog(imap_last_error());
-                        }
-                    } else {
-                        dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
-                    }
-                } else {
-                    $errorforemail++;
-                }
+				// Error for email or not ?
+				if (!$errorforactions)
+				{
+					if ($targetdir)
+					{
+						dol_syslog("EmailCollector::doCollectOneCollector move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
+						$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
+						if ($res == false) {
+							$errorforemail++;
+							$this->error = imap_last_error();
+							$this->errors[] = $this->error;
+							dol_syslog(imap_last_error());
+						}
+					} else {
+						dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+					}
+				} else {
+					$errorforemail++;
+				}
 
-                unset($objectemail);
-                unset($projectstatic);
-                unset($thirdpartystatic);
-                unset($contactstatic);
+				unset($objectemail);
+				unset($projectstatic);
+				unset($thirdpartystatic);
+				unset($contactstatic);
 
-                $nbemailprocessed++;
+				$nbemailprocessed++;
 
-                if (!$errorforemail)
-                {
-                    $nbactiondone += $nbactiondoneforemail;
-                    $nbemailok++;
+				if (!$errorforemail)
+				{
+					$nbactiondone += $nbactiondoneforemail;
+					$nbemailok++;
 
-                    $this->db->commit();
+					$this->db->commit();
 
-                    // Stop the loop to process email if we reach maximum collected per collect
-                    if ($this->maxemailpercollect > 0 && $nbemailok >= $this->maxemailpercollect)
-                    {
-                        dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
-                        break;
-                    }
-                } else {
-                    $error++;
+					// Stop the loop to process email if we reach maximum collected per collect
+					if ($this->maxemailpercollect > 0 && $nbemailok >= $this->maxemailpercollect)
+					{
+						dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
+						break;
+					}
+				} else {
+					$error++;
 
-                    $this->db->rollback();
-                }
-            }
+					$this->db->rollback();
+				}
+			}
 
-            $output = $langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbemailok, $nbactiondone);
+			$output = $langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbemailok, $nbactiondone);
 
-            dol_syslog("End of loop on emails", LOG_INFO, -1);
-        } else {
-            $output = $langs->trans('NoNewEmailToProcess');
-        }
+			dol_syslog("End of loop on emails", LOG_INFO, -1);
+		} else {
+			$output = $langs->trans('NoNewEmailToProcess');
+		}
 
-        imap_expunge($connection); // To validate any move
+		imap_expunge($connection); // To validate any move
 
-        imap_close($connection);
+		imap_close($connection);
 
-        $this->datelastresult = $now;
-        $this->lastresult = $output;
-        $this->debuginfo = 'IMAP search string used : '.$search;
-        if ($searchhead) $this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
+		$this->datelastresult = $now;
+		$this->lastresult = $output;
+		$this->debuginfo = 'IMAP search string used : '.$search;
+		if ($searchhead) $this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
 
-        if (!$error) $this->datelastok = $now;
+		if (!$error) $this->datelastok = $now;
 
-        if (!empty($this->errors)) $this->lastresult .= " - ".join(" - ", $this->errors);
-        $this->codelastresult = ($error ? 'KO' : 'OK');
-        $this->update($user);
+		if (!empty($this->errors)) $this->lastresult .= " - ".join(" - ", $this->errors);
+		$this->codelastresult = ($error ? 'KO' : 'OK');
+		$this->update($user);
 
-        dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
 
-        return $error ?-1 : 1;
-    }
+		return $error ?-1 : 1;
+	}
 
 
 
-    // Loop to get part html and plain. Code found on PHP imap_fetchstructure documentation
+	// Loop to get part html and plain. Code found on PHP imap_fetchstructure documentation
 
-    /**
-     * getmsg
-     *
-     * @param 	Object $mbox     	Structure
-     * @param 	string $mid		    prefix
-     * @return 	array				Array with number and object
-     */
-    private function getmsg($mbox, $mid)
-    {
-        // input $mbox = IMAP stream, $mid = message id
-        // output all the following:
-        global $charset, $htmlmsg, $plainmsg, $attachments;
-        $htmlmsg = $plainmsg = $charset = '';
-        $attachments = array();
+	/**
+	 * getmsg
+	 *
+	 * @param 	Object $mbox     	Structure
+	 * @param 	string $mid		    prefix
+	 * @return 	array				Array with number and object
+	 */
+	private function getmsg($mbox, $mid)
+	{
+		// input $mbox = IMAP stream, $mid = message id
+		// output all the following:
+		global $charset, $htmlmsg, $plainmsg, $attachments;
+		$htmlmsg = $plainmsg = $charset = '';
+		$attachments = array();
 
-        // HEADER
-        //$h = imap_header($mbox,$mid);
-        // add code here to get date, from, to, cc, subject...
+		// HEADER
+		//$h = imap_header($mbox,$mid);
+		// add code here to get date, from, to, cc, subject...
 
-        // BODY
-        $s = imap_fetchstructure($mbox, $mid);
+		// BODY
+		$s = imap_fetchstructure($mbox, $mid);
 
-        if (!$s->parts) {
-            // simple
-            $this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
-        } else {
-            // multipart: cycle through each part
-            foreach ($s->parts as $partno0 => $p) {
-                $this->getpart($mbox, $mid, $p, $partno0 + 1);
-            }
-        }
-    }
+		if (!$s->parts) {
+			// simple
+			$this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
+		} else {
+			// multipart: cycle through each part
+			foreach ($s->parts as $partno0 => $p) {
+				$this->getpart($mbox, $mid, $p, $partno0 + 1);
+			}
+		}
+	}
 
-    /* partno string
+	/* partno string
      0 multipart/mixed
      1 multipart/alternative
      1.1 text/plain
@@ -2230,91 +2232,91 @@ class EmailCollector extends CommonObject
      2.2.1 text/plain
      2.2.2 text/html
      */
-    /**
-     * Sub function for getpart(). Only called by createPartArray() and itself.
-     *
-     * @param 	Object		$mbox			Structure
-     * @param 	string		$mid			Part no
-     * @param 	Object		$p              Object p
-     * @param   string      $partno         Partno
-     * @return	void
-     */
-    private function getpart($mbox, $mid, $p, $partno)
-    {
-        // $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
-        global $htmlmsg, $plainmsg, $charset, $attachments;
+	/**
+	 * Sub function for getpart(). Only called by createPartArray() and itself.
+	 *
+	 * @param 	Object		$mbox			Structure
+	 * @param 	string		$mid			Part no
+	 * @param 	Object		$p              Object p
+	 * @param   string      $partno         Partno
+	 * @return	void
+	 */
+	private function getpart($mbox, $mid, $p, $partno)
+	{
+		// $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
+		global $htmlmsg, $plainmsg, $charset, $attachments;
 
-        // DECODE DATA
-        $data = ($partno) ?
-        imap_fetchbody($mbox, $mid, $partno) : // multipart
-        imap_body($mbox, $mid); // simple
-        // Any part may be encoded, even plain text messages, so check everything.
-        if ($p->encoding == 4)
-            $data = quoted_printable_decode($data);
-        elseif ($p->encoding == 3)
-            $data = base64_decode($data);
+		// DECODE DATA
+		$data = ($partno) ?
+		imap_fetchbody($mbox, $mid, $partno) : // multipart
+		imap_body($mbox, $mid); // simple
+		// Any part may be encoded, even plain text messages, so check everything.
+		if ($p->encoding == 4)
+			$data = quoted_printable_decode($data);
+		elseif ($p->encoding == 3)
+			$data = base64_decode($data);
 
-        // PARAMETERS
-        // get all parameters, like charset, filenames of attachments, etc.
-        $params = array();
-        if ($p->parameters)
-        {
-            foreach ($p->parameters as $x)
-            {
-                $params[strtolower($x->attribute)] = $x->value;
-            }
-        }
-        if ($p->dparameters)
-        {
-            foreach ($p->dparameters as $x)
-            {
-                $params[strtolower($x->attribute)] = $x->value;
-            }
-        }
+		// PARAMETERS
+		// get all parameters, like charset, filenames of attachments, etc.
+		$params = array();
+		if ($p->parameters)
+		{
+			foreach ($p->parameters as $x)
+			{
+				$params[strtolower($x->attribute)] = $x->value;
+			}
+		}
+		if ($p->dparameters)
+		{
+			foreach ($p->dparameters as $x)
+			{
+				$params[strtolower($x->attribute)] = $x->value;
+			}
+		}
 
-        // ATTACHMENT
-        // Any part with a filename is an attachment,
-        // so an attached text file (type 0) is not mistaken as the message.
-        if ($params['filename'] || $params['name']) {
-            // filename may be given as 'Filename' or 'Name' or both
-            $filename = ($params['filename']) ? $params['filename'] : $params['name'];
-            // filename may be encoded, so see imap_mime_header_decode()
-            $attachments[$filename] = $data; // this is a problem if two files have same name
-        }
+		// ATTACHMENT
+		// Any part with a filename is an attachment,
+		// so an attached text file (type 0) is not mistaken as the message.
+		if ($params['filename'] || $params['name']) {
+			// filename may be given as 'Filename' or 'Name' or both
+			$filename = ($params['filename']) ? $params['filename'] : $params['name'];
+			// filename may be encoded, so see imap_mime_header_decode()
+			$attachments[$filename] = $data; // this is a problem if two files have same name
+		}
 
-        // TEXT
-        if ($p->type == 0 && $data) {
+		// TEXT
+		if ($p->type == 0 && $data) {
 			if (!empty($params['charset'])) {
-                $data = $this->convertStringEncoding($data, $params['charset']);
-            }
-            // Messages may be split in different parts because of inline attachments,
-            // so append parts together with blank row.
-            if (strtolower($p->subtype) == 'plain')
-                $plainmsg .= trim($data)."\n\n";
-            else $htmlmsg .= $data."<br><br>";
-            $charset = $params['charset']; // assume all parts are same charset
-        }
+				$data = $this->convertStringEncoding($data, $params['charset']);
+			}
+			// Messages may be split in different parts because of inline attachments,
+			// so append parts together with blank row.
+			if (strtolower($p->subtype) == 'plain')
+				$plainmsg .= trim($data)."\n\n";
+			else $htmlmsg .= $data."<br><br>";
+			$charset = $params['charset']; // assume all parts are same charset
+		}
 
-        // EMBEDDED MESSAGE
-        // Many bounce notifications embed the original message as type 2,
-        // but AOL uses type 1 (multipart), which is not handled here.
-        // There are no PHP functions to parse embedded messages,
-        // so this just appends the raw source to the main message.
-        elseif ($p->type == 2 && $data) {
+		// EMBEDDED MESSAGE
+		// Many bounce notifications embed the original message as type 2,
+		// but AOL uses type 1 (multipart), which is not handled here.
+		// There are no PHP functions to parse embedded messages,
+		// so this just appends the raw source to the main message.
+		elseif ($p->type == 2 && $data) {
 			if (!empty($params['charset'])) {
-                $data = $this->convertStringEncoding($data, $params['charset']);
-            }
-            $plainmsg .= $data."\n\n";
-        }
+				$data = $this->convertStringEncoding($data, $params['charset']);
+			}
+			$plainmsg .= $data."\n\n";
+		}
 
-        // SUBPART RECURSION
-        if ($p->parts) {
-            foreach ($p->parts as $partno0=>$p2)
-            {
-                $this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
-            }
-        }
-    }
+		// SUBPART RECURSION
+		if ($p->parts) {
+			foreach ($p->parts as $partno0=>$p2)
+			{
+				$this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0 + 1)); // 1.2, 1.2.1, etc.
+			}
+		}
+	}
 
 	/**
 	 * Converts a string from one encoding to another.

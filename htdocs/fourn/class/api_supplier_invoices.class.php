@@ -559,54 +559,54 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->multicurrency_subprice,
 			$request_data->ref_supplier,
 			$request_data->special_code
-        );
+		);
 
-        if ($updateRes < 0) {
-            throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
-        }
+		if ($updateRes < 0) {
+			throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
+		}
 
-        return $updateRes;
-    }
+		return $updateRes;
+	}
 
-    /**
-     * Update a line to a given supplier invoice
-     *
-     * @param int   $id             Id of supplier invoice to update
-     * @param int   $lineid         Id of line to update
-     * @param array $request_data   InvoiceLine data
-     *
-     * @url	PUT {id}/lines/{lineid}
-     *
-     * @return object
-     *
-     * @throws 200
-     * @throws 304
-     * @throws 401
-     * @throws 404
-     */
-    public function putLine($id, $lineid, $request_data = null)
-    {
-    	if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
-            throw new RestException(401);
-        }
+	/**
+	 * Update a line to a given supplier invoice
+	 *
+	 * @param int   $id             Id of supplier invoice to update
+	 * @param int   $lineid         Id of line to update
+	 * @param array $request_data   InvoiceLine data
+	 *
+	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @return object
+	 *
+	 * @throws 200
+	 * @throws 304
+	 * @throws 401
+	 * @throws 404
+	 */
+	public function putLine($id, $lineid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
+			throw new RestException(401);
+		}
 
-        $result = $this->invoice->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Supplier invoice not found');
-        }
+		$result = $this->invoice->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-    	$request_data = (object) $request_data;
-        $updateRes = $this->invoice->updateline(
-    		$lineid,
-    		$request_data->description,
-    		$request_data->pu_ht,
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$request_data = (object) $request_data;
+		$updateRes = $this->invoice->updateline(
+			$lineid,
+			$request_data->description,
+			$request_data->pu_ht,
 			$request_data->tva_tx,
-    		$request_data->localtax1_tx,
-    		$request_data->localtax2_tx,
-    		$request_data->qty,
+			$request_data->localtax1_tx,
+			$request_data->localtax2_tx,
+			$request_data->qty,
 			$request_data->fk_product,
 			'HT',
 			$request_data->info_bits,
@@ -619,98 +619,98 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
 			$request_data->ref_supplier
-    	);
+		);
 
-    	if ($updateRes > 0) {
-    		$result = $this->get($id);
-    		unset($result->line);
-    		return $this->_cleanObjectDatas($result);
-	    } else {
-	    	throw new RestException(304, $this->invoice->error);
-    	}
-    }
+		if ($updateRes > 0) {
+			$result = $this->get($id);
+			unset($result->line);
+			return $this->_cleanObjectDatas($result);
+		} else {
+			throw new RestException(304, $this->invoice->error);
+		}
+	}
 
 	/**
-     * Deletes a line of a given supplier invoice
-     *
-     * @param int   $id             Id of supplier invoice
-     * @param int   $lineid 		Id of the line to delete
-     *
-     * @url     DELETE {id}/lines/{lineid}
-     *
-     * @return array
-     *
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     */
-    public function deleteLine($id, $lineid)
-    {
+	 * Deletes a line of a given supplier invoice
+	 *
+	 * @param int   $id             Id of supplier invoice
+	 * @param int   $lineid 		Id of the line to delete
+	 *
+	 * @url     DELETE {id}/lines/{lineid}
+	 *
+	 * @return array
+	 *
+	 * @throws 400
+	 * @throws 401
+	 * @throws 404
+	 * @throws 405
+	 */
+	public function deleteLine($id, $lineid)
+	{
 		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
-            throw new RestException(401);
-        }
+			throw new RestException(401);
+		}
 
 		$result = $this->invoice->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Supplier invoice not found');
-        }
+		if (!$result) {
+			throw new RestException(404, 'Supplier invoice not found');
+		}
 
-    	if (empty($lineid)) {
-    		throw new RestException(400, 'Line ID is mandatory');
-    	}
+		if (empty($lineid)) {
+			throw new RestException(400, 'Line ID is mandatory');
+		}
 
-    	if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-    	// TODO Check the lineid $lineid is a line of ojbect
+		// TODO Check the lineid $lineid is a line of ojbect
 
-    	$updateRes = $this->invoice->deleteline($lineid);
-    	if ($updateRes > 0) {
-    		return $this->get($id);
-    	} else {
-    		throw new RestException(405, $this->invoice->error);
-    	}
-    }
+		$updateRes = $this->invoice->deleteline($lineid);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(405, $this->invoice->error);
+		}
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   Object  $object    Object to clean
-     * @return  array              Array of cleaned object properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object    Object to clean
+	 * @return  array              Array of cleaned object properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
 
-        unset($object->rowid);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);
+		unset($object->rowid);
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param array $data   Datas to validate
-     * @return array
-     *
-     * @throws RestException
-     */
-    private function _validate($data)
-    {
-        $invoice = array();
-        foreach (SupplierInvoices::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $invoice[$field] = $data[$field];
-        }
-        return $invoice;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param array $data   Datas to validate
+	 * @return array
+	 *
+	 * @throws RestException
+	 */
+	private function _validate($data)
+	{
+		$invoice = array();
+		foreach (SupplierInvoices::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$invoice[$field] = $data[$field];
+		}
+		return $invoice;
+	}
 }

@@ -393,7 +393,7 @@ if ($result <= 0)
 	exit;
 }
 
-$title = $object->titre." - ".$langs->trans('Card');
+$title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
@@ -441,10 +441,11 @@ print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td><
 print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td colspan="2">';
-if ($action == 'edit')
-{
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
-} else print dol_htmlentities($object->titre);
+if ($action == 'edit') {
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+} else {
+	print dol_htmlentities($object->title);
+}
 print '</td></tr>';
 
 // Expire date
@@ -954,7 +955,7 @@ if (empty($testligneamodifier))
 	}
 
 	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
-	print '<td><input type="image" name="boutonp" value="'.$langs->trans("Vote").'" src="'.dol_buildpath('/opensurvey/img/add-24.png', 1).'"></td>'."\n";
+	print '<td><input type="image" name="boutonp" class="borderimp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 

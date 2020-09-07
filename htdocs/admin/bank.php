@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
 
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 $actionsave = GETPOST('save', 'alpha');
@@ -240,31 +240,31 @@ $i = 0;
 
 $nbofbank = count($bankorder);
 while ($i < $nbofbank) {
-    print '<tr class="oddeven">';
-    print '<td>'.$bankorder[$i][0]."</td><td>\n";
-    print $bankorder[$i][1];
-    print '</td>';
-    print '<td class="nowrap">';
-    $tmparray = explode(' ', $bankorder[$i][2]);
-    foreach ($tmparray as $key => $val) {
-        if ($key > 0)
-            print ', ';
-        print $langs->trans($val);
-    }
-    print "</td>\n";
+	print '<tr class="oddeven">';
+	print '<td>'.$bankorder[$i][0]."</td><td>\n";
+	print $bankorder[$i][1];
+	print '</td>';
+	print '<td class="nowrap">';
+	$tmparray = explode(' ', $bankorder[$i][2]);
+	foreach ($tmparray as $key => $val) {
+		if ($key > 0)
+			print ', ';
+		print $langs->trans($val);
+	}
+	print "</td>\n";
 
-    if ($conf->global->BANK_SHOW_ORDER_OPTION == $i) {
-        print '<td class="center">';
-        print img_picto($langs->trans("Activated"), 'on');
-        print '</td>';
-    } else {
-        print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
-        print img_picto($langs->trans("Disabled"), 'off');
-        print '</a></td>';
-    }
-    print '<td>&nbsp;</td>';
-    print '</tr>'."\n";
-    $i++;
+	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i) {
+		print '<td class="center">';
+		print img_picto($langs->trans("Activated"), 'on');
+		print '</td>';
+	} else {
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
+		print img_picto($langs->trans("Disabled"), 'off');
+		print '</a></td>';
+	}
+	print '<td>&nbsp;</td>';
+	print '</tr>'."\n";
+	$i++;
 }
 
 print '</table>'."\n";
@@ -287,15 +287,15 @@ $sql .= " WHERE type = '".$type."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql) {
-    $i = 0;
-    $num_rows = $db->num_rows($resql);
-    while ($i < $num_rows) {
-        $array = $db->fetch_array($resql);
-        array_push($def, $array[0]);
-        $i++;
-    }
+	$i = 0;
+	$num_rows = $db->num_rows($resql);
+	while ($i < $num_rows) {
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 print "<table class=\"noborder\" width=\"100%\">\n";
@@ -311,100 +311,100 @@ print "</tr>\n";
 clearstatcache();
 
 foreach ($dirmodels as $reldir) {
-    foreach (array('', '/doc') as $valdir) {
-        $dir = dol_buildpath($reldir."core/modules/bank".$valdir);
+	foreach (array('', '/doc') as $valdir) {
+		$dir = dol_buildpath($reldir."core/modules/bank".$valdir);
 
-        if (is_dir($dir)) {
-            $handle = opendir($dir);
-            if (is_resource($handle)) {
-                while (($file = readdir($handle)) !== false) {
-                    $filelist[] = $file;
-                }
-                closedir($handle);
-                arsort($filelist);
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					$filelist[] = $file;
+				}
+				closedir($handle);
+				arsort($filelist);
 
-                foreach ($filelist as $file) {
-                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-                        if (file_exists($dir.'/'.$file)) {
-                            $name = substr($file, 4, dol_strlen($file) - 16);
-                            $classname = substr($file, 0, dol_strlen($file) - 12);
+				foreach ($filelist as $file) {
+					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+						if (file_exists($dir.'/'.$file)) {
+							$name = substr($file, 4, dol_strlen($file) - 16);
+							$classname = substr($file, 0, dol_strlen($file) - 12);
 
-                            require_once $dir.'/'.$file;
-                            $module = new $classname($db);
+							require_once $dir.'/'.$file;
+							$module = new $classname($db);
 
-                            $modulequalified = 1;
-                            if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2)
-                                $modulequalified = 0;
-                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1)
-                                $modulequalified = 0;
+							$modulequalified = 1;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2)
+								$modulequalified = 0;
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1)
+								$modulequalified = 0;
 
-                            if ($modulequalified) {
-                                print '<tr class="oddeven"><td width="100">';
-                                print(empty($module->name) ? $name : $module->name);
-                                print "</td><td>\n";
-                                if (method_exists($module, 'info'))
-                                    print $module->info($langs);
-                                else print $module->description;
-                                print '</td>';
+							if ($modulequalified) {
+								print '<tr class="oddeven"><td width="100">';
+								print(empty($module->name) ? $name : $module->name);
+								print "</td><td>\n";
+								if (method_exists($module, 'info'))
+									print $module->info($langs);
+								else print $module->description;
+								print '</td>';
 
-                                // Active
-                                if (in_array($name, $def)) {
-                                    print '<td class="center">'."\n";
-                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
-                                    print img_picto($langs->trans("Enabled"), 'switch_on');
-                                    print '</a>';
-                                    print '</td>';
-                                } else {
-                                    print '<td class="center">'."\n";
-                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-                                    print "</td>";
-                                }
+								// Active
+								if (in_array($name, $def)) {
+									print '<td class="center">'."\n";
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print img_picto($langs->trans("Enabled"), 'switch_on');
+									print '</a>';
+									print '</td>';
+								} else {
+									print '<td class="center">'."\n";
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print "</td>";
+								}
 
-                                // Default
-                                print '<td class="center">';
-                                if ($conf->global->BANKADDON_PDF == $name) {
-                                    print img_picto($langs->trans("Default"), 'on');
-                                } else {
-                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-                                }
-                                print '</td>';
+								// Default
+								print '<td class="center">';
+								if ($conf->global->BANKADDON_PDF == $name) {
+									print img_picto($langs->trans("Default"), 'on');
+								} else {
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+								}
+								print '</td>';
 
-                                // Info
-                                $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-                                $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-                                if ($module->type == 'pdf') {
-                                    $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-                                }
-                                $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-                                $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-                                //$htmltooltip .= '<br>' . $langs->trans("PaymentMode") . ': ' . yn($module->option_modereg, 1, 1);
-                                //$htmltooltip .= '<br>' . $langs->trans("PaymentConditions") . ': ' . yn($module->option_condreg, 1, 1);
-                                $htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-                                // $htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-                                // $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-                                //$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
+								// Info
+								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+								if ($module->type == 'pdf') {
+									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+								}
+								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+								//$htmltooltip .= '<br>' . $langs->trans("PaymentMode") . ': ' . yn($module->option_modereg, 1, 1);
+								//$htmltooltip .= '<br>' . $langs->trans("PaymentConditions") . ': ' . yn($module->option_condreg, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+								// $htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
+								// $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+								//$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
 
-                                print '<td class="center">';
-                                print $form->textwithpicto('', $htmltooltip, 1, 0);
-                                print '</td>';
+								print '<td class="center">';
+								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print '</td>';
 
-                                // Preview
-                                print '<td class="center">';
-                                if ($module->type == 'pdf') {
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-                                } else {
-                                    print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-                                }
-                                print '</td>';
+								// Preview
+								print '<td class="center">';
+								if ($module->type == 'pdf') {
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+								} else {
+									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								}
+								print '</td>';
 
-                                print "</tr>\n";
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+								print "</tr>\n";
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 print '</table>';
 //}
@@ -423,38 +423,38 @@ print $langs->trans('BankColorizeMovementDesc');
 print "</td>";
 // Active
 if ($conf->global->BANK_COLORIZE_MOVEMENT) {
-    print '<td class="center">'."\n";
-    print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement">';
-    print img_picto($langs->trans("Enabled"), 'switch_on');
-    print '</a>';
-    print '</td>';
+	print '<td class="center">'."\n";
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement">';
+	print img_picto($langs->trans("Enabled"), 'switch_on');
+	print '</a>';
+	print '</td>';
 } else {
-    print '<td class="center">'."\n";
-    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-    print "</td>";
+	print '<td class="center">'."\n";
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print "</td>";
 }
 
 print "</tr>\n";
 
 if (!empty($conf->global->BANK_COLORIZE_MOVEMENT))
 {
-    $i = 1;
-    while ($i <= 2)
-    {
-        $key = $i;
-        $color = 'BANK_COLORIZE_MOVEMENT_COLOR'.$key;
+	$i = 1;
+	while ($i <= 2)
+	{
+		$key = $i;
+		$color = 'BANK_COLORIZE_MOVEMENT_COLOR'.$key;
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
-        // Label
-        print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
-        // Color
-        print '<td class="nowrap right">';
-        print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ?GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
-        print '</td>';
-        print "</tr>";
-        $i++;
-    }
+		// Label
+		print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
+		// Color
+		print '<td class="nowrap right">';
+		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ?GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
+		print '</td>';
+		print "</tr>";
+		$i++;
+	}
 }
 print '</table>';
 
@@ -482,15 +482,15 @@ print $langs->trans('AutoReportLastAccountStatement');
 print '</td>';
 // Active
 if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
-    print '<td class="center">'."\n";
-    print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve">';
-    print img_picto($langs->trans("Enabled"), 'switch_on');
-    print '</a>';
-    print '</td>';
+	print '<td class="center">'."\n";
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve">';
+	print img_picto($langs->trans("Enabled"), 'switch_on');
+	print '</a>';
+	print '</td>';
 } else {
-    print '<td class="center">'."\n";
-    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-    print "</td>";
+	print '<td class="center">'."\n";
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print "</td>";
 }
 
 print "</tr>\n";

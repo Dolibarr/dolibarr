@@ -251,7 +251,7 @@ if ($action == 'edit')
 
 $moduledir = 'recruitment';
 $myTmpObjects = array();
-$myTmpObjects['RecruitmentCandidature']=array('includerefgeneration'=>1, 'includedocgeneration'=>0);
+$myTmpObjects['RecruitmentCandidature'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {

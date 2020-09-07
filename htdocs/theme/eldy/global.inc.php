@@ -695,7 +695,9 @@ textarea.centpercent {
     font-size: 0.85em;
     opacity: 0.7;
 }
-
+.borderimp {
+	border: 1px solid #888 !important;
+}
 .text-warning{
     color : <?php print $textWarning; ?>
 }

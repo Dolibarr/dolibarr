@@ -108,7 +108,7 @@ class Ticket extends CommonObject
 	/**
 	 * @var int  Ticket statut
 	 */
-	public $fk_statut;				// deprecated
+	public $fk_statut; // deprecated
 	public $status;
 
 	/**
@@ -521,7 +521,7 @@ class Ticket extends CommonObject
 			$sql .= " WHERE t.rowid = ".$this->db->escape($id);
 		} else {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element, 1).")";
-			if (! empty($ref)) {
+			if (!empty($ref)) {
 				$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 			} elseif ($track_id) {
 				$sql .= " AND t.track_id = '".$this->db->escape($track_id)."'";
@@ -551,7 +551,7 @@ class Ticket extends CommonObject
 				$this->message = $obj->message;
 
 				$this->status = $obj->status;
-				$this->fk_statut = $this->status;		// For backward compatibility
+				$this->fk_statut = $this->status; // For backward compatibility
 
 				$this->resolution = $obj->resolution;
 				$this->progress = $obj->progress;
@@ -2512,7 +2512,7 @@ class Ticket extends CommonObject
 							$assigned_user = new User($this->db);
 							$assigned_user->fetch($this->fk_user_assign);
 							if (!empty($assigned_user->email)) {
-								$sendto[] = $assigned_user->getFullName($langs) . " <" . $assigned_user->email . ">";
+								$sendto[] = $assigned_user->getFullName($langs)." <".$assigned_user->email.">";
 							} else {
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
@@ -2534,7 +2534,7 @@ class Ticket extends CommonObject
 
 						if (!empty($sendto)) {
 							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+							$subject = '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2585,9 +2585,9 @@ class Ticket extends CommonObject
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// altairis: set default subject
 							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+							$subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
-							$message_intro = $langs->trans('TicketNotificationEmailBody', "#" . $object->id);
+							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
 							$message = $langs->trans('TicketMessageMailIntroText');
@@ -2661,7 +2661,7 @@ class Ticket extends CommonObject
 							if (is_array($external_contacts) && count($external_contacts) > 0) {
 								// altairis: get default subject for email to external contacts
 								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-								$subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
 								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
