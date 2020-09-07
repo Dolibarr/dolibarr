@@ -46,8 +46,8 @@ $action = GETPOST('action', 'aZ09');
 
 // Parameters ACCOUNTING_* and others
 $list = array(
-    'ACCOUNTING_LENGTH_GACCOUNT',
-    'ACCOUNTING_LENGTH_AACCOUNT',
+	'ACCOUNTING_LENGTH_GACCOUNT',
+	'ACCOUNTING_LENGTH_AACCOUNT',
 //    'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
 //    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
@@ -67,17 +67,17 @@ if ($action == 'update') {
 
 	if (!$error)
 	{
-	    foreach ($list as $constname)
-	    {
-	        $constvalue = GETPOST($constname, 'alpha');
+		foreach ($list as $constname)
+		{
+			$constvalue = GETPOST($constname, 'alpha');
 
-	        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	            $error++;
-	        }
-	    }
-	    if ($error) {
-	    	setEventMessages($langs->trans("Error"), null, 'errors');
-	    }
+			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+		if ($error) {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
 
 		foreach ($list_binding as $constname)
 		{
@@ -96,46 +96,46 @@ if ($action == 'update') {
 		}
 	}
 
-    if (!$error) {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setlistsorttodo') {
-    $setlistsorttodo = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
-        $error++;
+	$setlistsorttodo = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
 
-    if (!$error) {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'mesgs');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setlistsortdone') {
-    $setlistsortdone = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
-        $error++;
-    if (!$error) {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'mesgs');
-    }
+	$setlistsortdone = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setmanagezero') {
-    $setmanagezero = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
-        $error++;
-    if (!$error) {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'mesgs');
-    }
+	$setmanagezero = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setdisabledirectinput') {
@@ -163,15 +163,15 @@ if ($action == 'setenabledraftexport') {
 }
 
 if ($action == 'setenablesubsidiarylist') {
-    $setenablesubsidiarylist = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
-        $error++;
-    if (!$error) {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'mesgs');
-    }
+	$setenablesubsidiarylist = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setdisablebindingonsales') {

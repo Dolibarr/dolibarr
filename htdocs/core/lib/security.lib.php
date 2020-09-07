@@ -309,7 +309,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 						break;
 					}
 				}
-			} elseif (!empty($feature))	{												// This is for permissions on 2 levels ('creer' or 'write')
+			} elseif (!empty($feature)) {												// This is for permissions on 2 levels ('creer' or 'write')
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
 				if (empty($user->rights->$feature->creer)
 				&& empty($user->rights->$feature->write)
@@ -541,7 +541,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			if ($feature == 'agenda')// Also check owner or attendee for users without allactions->read
 			{
 				if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
-					require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 					$action = new ActionComm($db);
 					$action->fetch($objectid);
 					if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {

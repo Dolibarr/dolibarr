@@ -958,11 +958,11 @@ function dolCheckVirus($src_file)
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
-		$antivir=new AntiVir($db);
+		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
 		{
-			$reterrors=$antivir->errors;
+			$reterrors = $antivir->errors;
 			return $reterrors;
 		}
 	}
@@ -1049,7 +1049,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		{
 			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
-			if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
+			if (!preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash .= '/';
 
 			if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
 				$file_name .= '.noexe';
@@ -2771,7 +2771,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (preg_match('/^specimen/i', $original_file))	$accessallowed = 1; // If link to a file called specimen. Test must be done before changing $original_file int full path.
 		if ($fuser->admin) $accessallowed = 1; // If user is admin
 		$tmpmodulepart = explode('-', $modulepart);
-		if (! empty($tmpmodulepart[1])) {
+		if (!empty($tmpmodulepart[1])) {
 				$modulepart = $tmpmodulepart[0];
 				$original_file = $tmpmodulepart[1].'/'.$original_file;
 		}
