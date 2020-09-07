@@ -307,10 +307,10 @@ if ($object->id > 0)
 
 				print '</tr>';
 			}
-			
+
 			print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
 			print '<tr class="oddeven">';
-			
+
 			// Picto and label of module
 			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
 			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
