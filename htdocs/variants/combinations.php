@@ -120,7 +120,6 @@ if ($_POST) {
 			// for conf PRODUIT_MULTIPRICES
 			if ($conf->global->PRODUIT_MULTIPRICES) {
 				$level_price_impact = array_map('price2num', $level_price_impact);
-				$level_price_impact_percent = array_map('price2num', $level_price_impact_percent);
 			}
 			else {
 				$level_price_impact = array(1 => $weight_impact);
@@ -236,14 +235,11 @@ if ($_POST) {
 			exit();
 		}
 
-		$prodcomb->variation_price_percentage = $price_impact_percent;
-		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_weight = $weight_impact;
 
 		// for conf PRODUIT_MULTIPRICES
 		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
-			$level_price_impact_percent = array_map(function($a) { return !empty($a); }, $level_price_impact_percent);
 
 			$prodcomb->variation_price = $level_price_impact[1];
 			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
@@ -251,6 +247,9 @@ if ($_POST) {
 		else {
 			$level_price_impact = array(1 => $weight_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
+
+			$prodcomb->variation_price = $price_impact;
+			$prodcomb->variation_price_percentage = $price_impact_percent;
 		}
 
 		if ($conf->global->PRODUIT_MULTIPRICES) {
