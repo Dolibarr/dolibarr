@@ -177,14 +177,13 @@ class FormPropal
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($showempty) print '<option value="-1">&nbsp;</option>';
 
-		foreach($listofcommercial as $key => $obj)
+		foreach ($listofcommercial as $key => $obj)
 		{
 			if ($selected != '' && $selected == $obj['id'])
 			{
-//				TODO
+				//              TODO
 			}
-			else
-			{
+			else {
 				print '<option value='.$obj['id'].'>'.$obj['firstname'].'&nbsp;'.$obj['lastname'];
 			}
 			print '</option>';
