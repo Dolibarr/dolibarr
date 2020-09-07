@@ -68,3 +68,5 @@ InterviewToDo=Interview to do
 AnswerCandidature=Candidature answer
 YourCandidature=Your candidature
 YourCandidatureAnswerMessage=Thanks you for your candidature.<br>...
+JobClosedTextCandidateFound=The job offer is closed. The position has been filled.
+JobClosedTextCanceled=The job offer is closed.

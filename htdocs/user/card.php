@@ -158,7 +158,7 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
-            $object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;
 
 			$result = $object->delete($user);
 			if ($result < 0) {
@@ -413,12 +413,12 @@ if (empty($reshook)) {
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
 
-                if (!empty($conf->stock->enabled))
-                {
-				    $object->fk_warehouse = GETPOST('fk_warehouse', 'int');
-                }
+				if (!empty($conf->stock->enabled))
+				{
+					$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+				}
 
-                $object->lang = GETPOST('default_lang', 'aZ09');
+				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				if (!empty($conf->multicompany->enabled))
 				{
@@ -446,16 +446,16 @@ if (empty($reshook)) {
 				}
 				if (!empty($_FILES['photo']['name']))
 				{
-				    $isimage = image_format_supported($_FILES['photo']['name']);
-				    if ($isimage > 0)
-				    {
-    					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
-				    } else {
-				        $error++;
-				        $langs->load("errors");
-				        setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
-				        dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
-				    }
+					$isimage = image_format_supported($_FILES['photo']['name']);
+					if ($isimage > 0)
+					{
+						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+					} else {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+						dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
+					}
 				}
 
 				if (!$error) {
@@ -1115,7 +1115,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
-        print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
+		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
 		print "</td></tr>";
 	}
 
@@ -1173,7 +1173,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	// Default warehouse
 	if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
-    {
+	{
 		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 		print '</td></tr>';
@@ -1549,27 +1549,27 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			// Default warehouse
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
-            {
+			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$warehousestatic = new Entrepot($db);
 				$warehousestatic->fetch($object->fk_warehouse);
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print $warehousestatic->getNomUrl(1);
 				print '</td></tr>';
-            }
+			}
 
-            // Position/Job
-            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-            print '<td>'.$object->job.'</td>';
-            print '</tr>'."\n";
+			// Position/Job
+			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>'.$object->job.'</td>';
+			print '</tr>'."\n";
 
-            //$childids = $user->getAllChildIds(1);
+			//$childids = $user->getAllChildIds(1);
 
 			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read)))
 			{
-            	// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
-            	// However, he can see the valuation of timesheet of its subordinates even without these permissions.
+				// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
+				// However, he can see the valuation of timesheet of its subordinates even without these permissions.
 				$langs->load("salaries");
 
 				// THM
@@ -1696,24 +1696,24 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<td>'.dol_print_date($object->datepreviouslogin, "dayhour").'</td>';
 			print "</tr>\n";
 
-		    // Multicompany
+			// Multicompany
 			if (!empty($conf->multicompany->enabled) && is_object($mc))
 			{
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions'))
 				{
-				    if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
-				    {
-				     	print '<tr><td>'.$langs->trans("Entity").'</td><td>';
-				     	if (empty($object->entity)) {
-				     		print $langs->trans("AllEntities");
-				     	} else {
-				     		$mc->getInfo($object->entity);
-				     		print $mc->label;
-				     	}
-				     	print "</td></tr>\n";
-				    }
-                }
+					if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
+					{
+					 	print '<tr><td>'.$langs->trans("Entity").'</td><td>';
+					 	if (empty($object->entity)) {
+					 		print $langs->trans("AllEntities");
+					 	} else {
+					 		$mc->getInfo($object->entity);
+					 		print $mc->label;
+					 	}
+					 	print "</td></tr>\n";
+					}
+				}
 			}
 
 			// Other attributes
@@ -1857,10 +1857,10 @@ if ($action == 'create' || $action == 'adduserldap')
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
 				} else {
-				    if ($user->id == $id)
-				    {
-				        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
-				    }
+					if ($user->id == $id)
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
+					}
 				}
 				// Delete
 				if ($user->id <> $id && $candisableuser &&
@@ -2208,11 +2208,11 @@ if ($action == 'create' || $action == 'adduserldap')
 		   	}
 		   	print '</td></tr>';
 
-            // Employee
-            print '<tr>';
-            print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
-            if ($caneditfield) {
-                 print $form->selectyesno("employee", $object->employee, 1);
+			// Employee
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
+			if ($caneditfield) {
+				 print $form->selectyesno("employee", $object->employee, 1);
 			} else {
 				if ($object->employee) {
 					print $langs->trans("Yes");
@@ -2220,9 +2220,9 @@ if ($action == 'create' || $action == 'adduserldap')
 					print $langs->trans("No");
 				}
 			}
-		    print '</td></tr>';
+			print '</td></tr>';
 
-		    // Hierarchy
+			// Hierarchy
 		   	print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
 		   	print '<td>';
 		   	if ($caneditfield)
@@ -2531,22 +2531,22 @@ if ($action == 'create' || $action == 'adduserldap')
 				print "</tr>\n";
 			}
 
-            // Multicompany
-            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
-            if (!empty($conf->multicompany->enabled) && is_object($mc))
-            {
-            	// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
-            	if (!method_exists($mc, 'formObjectOptions'))
-            	{
-            		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity)
-	            	{
-	            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1); // last parameter 1 means, show also a choice 0=>'all entities'
-	            		print "</td></tr>\n";
-	            	} else {
-	            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-	            	}
-	            }
+			// Multicompany
+			// TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+			if (!empty($conf->multicompany->enabled) && is_object($mc))
+			{
+				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+				if (!method_exists($mc, 'formObjectOptions'))
+				{
+					if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity)
+					{
+						print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+						print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1); // last parameter 1 means, show also a choice 0=>'all entities'
+						print "</td></tr>\n";
+					} else {
+						print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+					}
+				}
 			}
 
 			// Other attributes
@@ -2584,26 +2584,26 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			// Default warehouse
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
-            {
-                print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-                print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
-                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
-                print '</td></tr>';
-            }
+			{
+				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
+				print '</td></tr>';
+			}
 
-            // Position/Job
-            print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
-            print '<td>';
-            if ($caneditfield)
-            {
-            	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-            } else {
-            	print '<input type="hidden" name="job" value="'.$object->job.'">';
-            	print $object->job;
-            }
-            print '</td></tr>';
+			// Position/Job
+			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+			} else {
+				print '<input type="hidden" name="job" value="'.$object->job.'">';
+				print $object->job;
+			}
+			print '</td></tr>';
 
-            if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
+			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read)))
 			{
 				$langs->load("salaries");

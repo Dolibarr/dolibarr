@@ -46,16 +46,16 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
-    if (empty($minLength)) $minLength = 1;
+	if (empty($minLength)) $minLength = 1;
 
-    $dataforrenderITem = 'ui-autocomplete';
-    $dataforitem = 'ui-autocomplete-item';
-    // Allow two constant to use other values for backward compatibility
-    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
-    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+	$dataforrenderITem = 'ui-autocomplete';
+	$dataforitem = 'ui-autocomplete-item';
+	// Allow two constant to use other values for backward compatibility
+	if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+	if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 
-    // Input search_htmlname is original field
-    // Input htmlname is a second input field used when using ajax autocomplete.
+	// Input search_htmlname is original field
+	// Input htmlname is a second input field used when using ajax autocomplete.
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" '.($moreparams ? $moreparams : '').' />';
 
 	$script .= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
@@ -348,7 +348,7 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
 	$msg = '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
 	$msg .= $message;
 	$msg .= '</div>'."\n";
-    $msg .= '<script>
+	$msg .= '<script>
     jQuery(function() {
         jQuery("#dialog-info").dialog({
 	        resizable: false,
@@ -364,9 +364,9 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
 	});
 	</script>';
 
-    $msg .= "\n";
+	$msg .= "\n";
 
-    return $msg;
+	return $msg;
 }
 
 
@@ -397,8 +397,8 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete = 0;
 
-    $tmpplugin = 'select2';
-    $msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
+	$tmpplugin = 'select2';
+	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script>
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
@@ -477,9 +477,9 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	}
 
 	$msg .= '});'."\n";
-    $msg .= "</script>\n";
+	$msg .= "</script>\n";
 
-    return $msg;
+	return $msg;
 }
 
 /**
@@ -500,7 +500,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	global $conf, $langs, $user;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
-	if (! isset($input)) $input = array();
+	if (!isset($input)) $input = array();
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax)
 	{
@@ -566,9 +566,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  */
 function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array())
 {
-    global $langs;
+	global $langs;
 
-    $out = '<script>
+	$out = '<script>
         $(function() {
             var input = '.json_encode($input).';
 
@@ -633,8 +633,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-    $out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
-    $out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
+	$out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
+	$out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
 
-    return $out;
+	return $out;
 }

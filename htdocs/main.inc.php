@@ -646,7 +646,7 @@ if (!defined('NOLOGIN'))
 			exit;
 		} else {
 			// User is loaded, we may need to change language for him according to its choice
-			if (! empty($user->conf->MAIN_LANG_DEFAULT)) {
+			if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 				$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
 			}
 		}
@@ -1879,14 +1879,14 @@ function top_menu_quickadd()
 	$html = '';
 	// Define $dropDownQuickAddHtml
 	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
-	$dropDownQuickAddHtml.= $langs->trans('QuickAdd');
-	$dropDownQuickAddHtml.= '</div>';
+	$dropDownQuickAddHtml .= $langs->trans('QuickAdd');
+	$dropDownQuickAddHtml .= '</div>';
 
-	$dropDownQuickAddHtml.= '<div class="quickadd-body dropdown-body">';
-	$dropDownQuickAddHtml.= '<div class="quickadd">';
-	if (! empty($conf->societe->enabled) && $user->rights->societe->creer) {
+	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	$dropDownQuickAddHtml .= '<div class="quickadd">';
+	if (!empty($conf->societe->enabled) && $user->rights->societe->creer) {
 		$langs->load("companies");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Thirdparty link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/societe/card.php?action=create" title="'.$langs->trans("MenuNewThirdParty").'">
@@ -1897,9 +1897,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->societe->enabled) && $user->rights->societe->contact->creer) {
+	if (!empty($conf->societe->enabled) && $user->rights->societe->contact->creer) {
 		$langs->load("companies");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Contact link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/contact/card.php?action=create" title="'.$langs->trans("NewContactAddress").'">
@@ -1910,9 +1910,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->propal->enabled) && $user->rights->propale->creer) {
+	if (!empty($conf->propal->enabled) && $user->rights->propale->creer) {
 		$langs->load("propal");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Propal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create" title="'.$langs->trans("NewPropal").'">
@@ -1923,9 +1923,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->commande->enabled) && $user->rights->commande->creer) {
+	if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
 		$langs->load("orders");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
@@ -1936,9 +1936,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->facture->enabled) && $user->rights->facture->creer) {
+	if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
 		$langs->load("bills");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
@@ -1949,9 +1949,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
+	if (!empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
 		$langs->load("contracts");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Contract link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewContractSubscription").'">
@@ -1962,9 +1962,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
+	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
 		$langs->load("supplier_proposal");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Supplier proposal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create" title="'.$langs->trans("NewAskPrice").'">
@@ -1975,9 +1975,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer) {
+	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer) {
 		$langs->load("orders");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Supplier order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
@@ -1988,9 +1988,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer) {
+	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer) {
 		$langs->load("bills");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Supplier invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
@@ -2001,9 +2001,9 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->product->enabled) && $user->rights->produit->creer) {
+	if (!empty($conf->product->enabled) && $user->rights->produit->creer) {
 		$langs->load("products");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Product link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0" title="'.$langs->trans("NewProduct").'">
@@ -2014,7 +2014,7 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (! empty($conf->service->enabled) && $user->rights->service->creer) {
+	if (!empty($conf->service->enabled) && $user->rights->service->creer) {
 		$langs->load("products");
 		$dropDownQuickAddHtml .= '
                 <!-- Service link -->
@@ -2032,7 +2032,7 @@ function top_menu_quickadd()
 	$result = $hookmanager->executeHooks('printQuickAddBlock', $parameters); // Note that $action and $object may have been modified by some hooks
 	if (is_numeric($result)) {
 		if ($result == 0) {
-			$dropDownQuickAddHtml.= $hookmanager->resPrint; // add
+			$dropDownQuickAddHtml .= $hookmanager->resPrint; // add
 		} else {
 			$dropDownQuickAddHtml = $hookmanager->resPrint; // replace
 		}
@@ -2043,7 +2043,7 @@ function top_menu_quickadd()
 	$dropDownQuickAddHtml .= '</div>';
 	$dropDownQuickAddHtml .= '</div>';
 
-	$html.= '<!-- div for quick add link -->
+	$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
         <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')">
             <i class="fa fa-plus-circle" ></i>

@@ -624,13 +624,11 @@ class UserGroup extends CommonObject
 		global $user, $conf;
 
 		$this->datec = dol_now();
-		if (empty($this->nom) && !empty($this->name)) {
-			$this->nom = $this->name;
+		if (!empty($this->name)) {
+			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
-		$entity = $this->entity;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1) $entity = $this->entity;
 
 		return $this->createCommon($user, $notrigger);
 	}
@@ -645,10 +643,8 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf;
 
-		$entity = $conf->entity;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1)
-		{
-			$entity = $this->entity;
+		if (!empty($this->name)) {
+			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
 		return $this->updateCommon($user, $notrigger);

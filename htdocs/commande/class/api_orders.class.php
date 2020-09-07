@@ -348,7 +348,8 @@ class Orders extends DolibarrApi
                         $request_data->fk_unit,
                         $request_data->origin,
                         $request_data->origin_id,
-                        $request_data->multicurrency_subprice
+                        $request_data->multicurrency_subprice,
+                        $request_data->ref_ext
         );
 
         if ($updateRes > 0) {
@@ -406,7 +407,9 @@ class Orders extends DolibarrApi
             $request_data->special_code,
             $request_data->array_options,
             $request_data->fk_unit,
-      		$request_data->multicurrency_subprice
+      		$request_data->multicurrency_subprice,
+			0,
+      		$request_data->ref_ext
         );
 
         if ($updateRes > 0) {
