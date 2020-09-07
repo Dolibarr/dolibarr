@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,6 +135,14 @@ foreach ($sortorder as $numero=>$name)
 		foreach ($modules[$numero]->rights as $rights)
 		{
 			$idperms .= ($idperms ? ", " : "").$rights[0];
+
+			$translationKey = "Permission".$rights[0];
+			if(empty($langs->tab_translate[$translationKey]))
+			{
+				$tooltip = 'Missing translation (key '.$translation.' not found in admin.lang)';
+				$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
+			}
+
 			array_push($rights_ids, $rights[0]);
 		}
 	}
