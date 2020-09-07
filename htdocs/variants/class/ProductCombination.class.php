@@ -54,8 +54,8 @@ class ProductCombination
 	public $variation_price;
 
 	/**
-	 * Is the price variation a relative variation?
-	 * @var bool
+	 * Is the price variation a relative variation? Can be an array if multiprice feature per level is enabled.
+	 * @var bool|array
 	 */
 	public $variation_price_percentage = false;
 
@@ -791,7 +791,7 @@ class ProductCombination
 				$productCombinationLevel->variation_price = $price_impact[$i];
 
 				if (is_array($price_var_percent)){
-					$productCombinationLevel->variation_price_percentage = !empty($price_var_percent[$i]) ? $price_var_percent[$i] : 0;
+					$productCombinationLevel->variation_price_percentage = (empty($price_var_percent[$i]) ? false : $price_var_percent[$i]);
 				}else {
 					$productCombinationLevel->variation_price_percentage = $price_var_percent;
 				}
