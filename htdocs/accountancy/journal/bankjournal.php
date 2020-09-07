@@ -93,48 +93,12 @@ $error = 0;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
-$periodbydefaultontransfer = $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER;
-isset($periodbydefaultontransfer)?$periodbydefaultontransfer:0;
-if ($periodbydefaultontransfer == 2) {
-	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
-	$sql .= $db->plimit(1);
-	$res = $db->query($sql);
-	if ($res->num_rows > 0) {
-		$fiscalYear = $db->fetch_object($res);
-		$date_start = strtotime($fiscalYear->date_start);
-		$date_end = strtotime($fiscalYear->date_end);
-	} else {
-		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
-		$year_end = $year_start + 1;
-		$month_end = $month_start - 1;
-		if ($month_end < 1)
-		{
-			$month_end = 12;
-			$year_end--;
-		}
-		$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-		$date_end = dol_get_last_day($year_end, $month_end);
-	}
-} elseif ($periodbydefaultontransfer == 1) {
-	$year_current = strftime("%Y", dol_now());
-	$pastmonth = strftime("%m", dol_now());
-	$pastmonthyear = $year_current;
-	if ($pastmonth == 0) {
-		$pastmonth = 12;
-		$pastmonthyear --;
-	}
-} else {
-	$year_current = strftime("%Y", dol_now());
-	$pastmonth = strftime("%m", dol_now())-1;
-	$pastmonthyear = $year_current;
-	if ($pastmonth == 0) {
-		$pastmonth = 12;
-		$pastmonthyear --;
-	}
-}
+// Period by default on transfer
+$dates = getDefaultDatesForTransfer();
+$date_start = $dates['date_start'];
+$date_end = $dates['date_end'];
+$pastmonthyear = $dates['pastmonthyear'];
+$pastmonth = $dates['pastmonth'];
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
