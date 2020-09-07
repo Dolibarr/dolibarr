@@ -118,16 +118,16 @@ class ProductAttribute extends CommonObject
 		$query = $this->db->query($sql);
 		if ($query)
 		{
-      while ($result = $this->db->fetch_object($query)) {
-        $tmp = new ProductAttribute($this->db);
-        $tmp->id = $result->rowid;
-        $tmp->ref = $result->ref;
-        $tmp->ref_ext = $result->ref_ext;
-        $tmp->label = $result->label;
-        $tmp->rang = $result->rang;
+			while ($result = $this->db->fetch_object($query)) {
+				$tmp = new ProductAttribute($this->db);
+				$tmp->id = $result->rowid;
+				$tmp->ref = $result->ref;
+				$tmp->ref_ext = $result->ref_ext;
+				$tmp->label = $result->label;
+				$tmp->rang = $result->rang;
 
-        $return[] = $tmp;
-      }
+				$return[] = $tmp;
+			}
 		}
 		else dol_print_error($this->db);
 

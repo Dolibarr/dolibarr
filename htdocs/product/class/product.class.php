@@ -4482,7 +4482,7 @@ class Product extends CommonObject
 		global $conf, $langs;
 
 		$labelStatus = $labelStatusShort = '';
-    
+
 		$langs->load('products');
 		if (!empty($conf->productbatch->enabled)) { $langs->load("productbatch");
 		}
