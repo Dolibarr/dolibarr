@@ -1508,6 +1508,8 @@ class EmailCollector extends CommonObject
                 // Do operations
                 foreach ($this->actions as $operation)
                 {
+                	$errorforthisaction = 0;
+
                     if ($errorforactions) break;
                     if (empty($operation['status'])) continue;
 
