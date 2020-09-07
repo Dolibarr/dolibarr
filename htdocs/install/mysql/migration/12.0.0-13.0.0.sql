@@ -314,3 +314,7 @@ ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehou
 
 ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
 ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_total_ttc;
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
+
