@@ -6257,6 +6257,15 @@ div.tabsElem a.tab {
 
 
 /* ============================================================================== */
+/* CSS style for debugbar                                                         */
+/* ============================================================================== */
+
+span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
+    width: 250px !important;
+}
+
+
+/* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */
 
@@ -6266,7 +6275,6 @@ div.tabsElem a.tab {
     writing-mode: vertical-rl;
     white-space: nowrap;
 }
-
 
 
 /* ============================================================================== */

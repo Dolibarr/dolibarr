@@ -7568,6 +7568,7 @@ function printCommonFooter($zone = 'private')
 		{
 			$debugbar['time']->stopMeasure('pageaftermaster');
 			print '<!-- Output debugbar data -->'."\n";
+			$renderer = $debugbar->getRenderer();
 			print $debugbar->getRenderer()->render();
 		} elseif (count($conf->logbuffer))    // If there is some logs in buffer to show
 		{
