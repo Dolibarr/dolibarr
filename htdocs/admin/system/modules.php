@@ -137,7 +137,7 @@ foreach ($sortorder as $numero=>$name)
 			$idperms .= ($idperms ? ", " : "").$rights[0];
 
 			$translationKey = "Permission".$rights[0];
-			if(empty($langs->tab_translate[$translationKey]))
+			if (empty($langs->tab_translate[$translationKey]))
 			{
 				$tooltip = 'Missing translation (key '.$translation.' not found in admin.lang)';
 				$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
