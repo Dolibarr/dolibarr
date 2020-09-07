@@ -205,7 +205,7 @@ if (empty($reshook)) {
 			$object->oldcopy = clone $object;
 
 			$object->name	= GETPOST("nom", 'nohtml');
-			//$object->nom = $object->name; // For backward compatibility
+			$object->nom = $object->name; // For backward compatibility
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 			// Fill array 'array_options' with data from add form
