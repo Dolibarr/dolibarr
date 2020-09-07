@@ -243,8 +243,7 @@ if ($_POST) {
 		// for conf PRODUIT_MULTIPRICES
 		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
-			$level_price_impact_percent = array_map(function($a) {
-				return !empty($a); }, $level_price_impact_percent);
+			$level_price_impact_percent = array_map(function($a) { return !empty($a); }, $level_price_impact_percent);
 
 			$prodcomb->variation_price = $level_price_impact[1];
 			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
@@ -261,7 +260,7 @@ if ($_POST) {
 				$productCombinationLevel->fk_product_attribute_combination = $prodcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
 				$productCombinationLevel->variation_price = $level_price_impact[$i];
-				$productCombinationLevel->variation_price_percentage = $level_price_impact_percent[$i];
+				$productCombinationLevel->variation_price_percentage = (bool) $level_price_impact_percent[$i];
 				$prodcomb->combination_price_levels[$i] = $productCombinationLevel;
 			}
 		}
