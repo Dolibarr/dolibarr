@@ -38,6 +38,8 @@ if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
 
 $object_status=GETPOST('object_status');
+$propal_commercial=GETPOST('propal_commercial');
+$showBySignDate_toselect=GETPOST('showBySignDate_toselect');
 $categ_id = GETPOST('categ_id', 'categ_id');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
@@ -260,6 +262,18 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Status
 	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
     $formpropal->selectProposalStatus(($object_status != '' ? $object_status : -1), 0, 0, 1, $mode, 'object_status');
+	if ($object_status == 2)
+	{
+		print "&nbsp;";
+		print "<form method='POST' name='template' action=''class='right'>";
+		if (isset($_POST['showBySignDate_toselect']))
+		{
+			print "<input id='cbsign' class='flat checkforselect' type='checkbox' name='showBySignDate_toselect' value='checked' checked='checked'>&nbsp;".$langs->trans('ShowBySignDate')."<br>";
+		} else {
+			print "<input id='cbsign' class='flat checkforselect' type='checkbox' name='showBySignDate_toselect' value='checked'>&nbsp;".$langs->trans('ShowBySignDate')."<br>";
+		}
+		print "</form>";
+	}
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
