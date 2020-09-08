@@ -388,6 +388,55 @@ class Translate
 		return 1;
 	}
 
+
+
+	/**
+	 *  re-load translation key-value for a particular file, into a memory array.
+	 *  If data for file already loaded, do nothing.
+	 * 	All data in translation array are stored in UTF-8 format.
+	 *  tab_loaded is completed with $domain key.
+	 *  rule "we keep first entry found with we keep last entry found" so it is probably not what you want to do.
+	 *
+	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+	 *
+	 *  @param	string	$domain      		File name to load (.lang file). Must be "file" or "file@module" for module language files:
+	 *										If $domain is "file@module" instead of "file" then we look for module lang file
+	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
+	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
+	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
+	 * 	@param	int		$forcelangdir		To force a different lang directory
+	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
+	 *	@return	int							<0 if KO, 0 if loading not required, >0 if OK
+	 *  @see loadLangs()
+	 */
+	public function reload($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
+	{
+		// Check parameters
+		if (empty($domain)) {
+			dol_print_error('', get_class($this) . "::Load ErrorWrongParameters");
+			return -1;
+		}
+
+		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
+
+		$newdomain = $domain;
+
+		// Search if a module directory name is provided into lang file name
+		$regs = array();
+		if (preg_match('/^([^@]+)@([^@]+)$/i', $domain, $regs)) {
+			$newdomain = $regs[1];
+		}
+
+		// Check cache and remove it
+		if (!empty($this->_tab_loaded[$newdomain]))    // File already loaded for this domain
+		{
+			unset($this->_tab_loaded[$newdomain]);
+		}
+
+		return $this->load($domain, $alt, $stopafterdirection, $forcelangdir, $loadfromfileonly);
+	}
+
 	/**
 	 *  Load translation key-value from database into a memory array.
 	 *  If data already loaded, do nothing.
