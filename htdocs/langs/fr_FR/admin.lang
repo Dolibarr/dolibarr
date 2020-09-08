@@ -289,6 +289,7 @@ MAIN_MAIL_SMTPS_ID=ID SMTP (si le serveur d'envoi nécessite une authentificatio
 MAIN_MAIL_SMTPS_PW=Mot de passe SMTP (si le serveur d'envoi nécessite une authentification)
 MAIN_MAIL_EMAIL_TLS=Utilisation du chiffrement TLS (SSL)
 MAIN_MAIL_EMAIL_STARTTLS=Utiliser le cryptage TTS (STARTTLS)
+MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=Authorise les certificats auto-signés
 MAIN_MAIL_EMAIL_DKIM_ENABLED=Utiliser DKIM pour signer les emails
 MAIN_MAIL_EMAIL_DKIM_DOMAIN=Nom de domaine pour la signature DKIM
 MAIN_MAIL_EMAIL_DKIM_SELECTOR=Nom du sélecteur DKIM
