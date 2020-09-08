@@ -114,16 +114,29 @@ if (!function_exists("session_id"))
 }
 
 print '</td></tr>';
+
 print '<tr><td>UTF-8 support</td><td>';
 
 if (!function_exists("utf8_encode"))
 {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
 }
 
 print '</td></tr>';
+
+print '<tr><td>MBString support</td><td>';
+
+if (!function_exists("mb_check_encoding"))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "mbstring");
+} else {
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "mbstring");
+}
+
+print '</td></tr>';
+
 print '</table>';
 
 print '<br>';

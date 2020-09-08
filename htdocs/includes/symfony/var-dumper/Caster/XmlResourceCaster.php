@@ -17,12 +17,10 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  * Casts XML resources to array representation.
  *
  * @author Nicolas Grekas <p@tchwork.com>
- *
- * @final since Symfony 4.4
  */
 class XmlResourceCaster
 {
-    private static $xmlErrors = [
+    private static $xmlErrors = array(
         XML_ERROR_NONE => 'XML_ERROR_NONE',
         XML_ERROR_NO_MEMORY => 'XML_ERROR_NO_MEMORY',
         XML_ERROR_SYNTAX => 'XML_ERROR_SYNTAX',
@@ -45,7 +43,7 @@ class XmlResourceCaster
         XML_ERROR_INCORRECT_ENCODING => 'XML_ERROR_INCORRECT_ENCODING',
         XML_ERROR_UNCLOSED_CDATA_SECTION => 'XML_ERROR_UNCLOSED_CDATA_SECTION',
         XML_ERROR_EXTERNAL_ENTITY_HANDLING => 'XML_ERROR_EXTERNAL_ENTITY_HANDLING',
-    ];
+    );
 
     public static function castXml($h, array $a, Stub $stub, $isNested)
     {

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "other"));
 
 // Security access
 if (empty($user->rights->accounting->chartofaccount))
@@ -54,6 +54,7 @@ $list = array(
 
 $list_binding = array(
 	'ACCOUNTING_DATE_START_BINDING',
+	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER'
 );
 
 /*
@@ -383,7 +384,10 @@ foreach ($list_binding as $key)
 	print '<td class="right">';
 	if ($key == 'ACCOUNTING_DATE_START_BINDING') {
 		print $form->selectDate(($conf->global->$key ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
-	} else {
+	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
+		$array=array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
+		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER)?$conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER:0));
+    } else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 

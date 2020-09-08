@@ -639,7 +639,7 @@ if ($action == 'create' || $action == 'presend')
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
 	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : 0);
-	$formticket->withusercreate = 1;
+	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
 	$formticket->withfile = 2;

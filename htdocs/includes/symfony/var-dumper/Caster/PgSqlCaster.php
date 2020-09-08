@@ -17,12 +17,10 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  * Casts pqsql resources to array representation.
  *
  * @author Nicolas Grekas <p@tchwork.com>
- *
- * @final since Symfony 4.4
  */
 class PgSqlCaster
 {
-    private static $paramCodes = [
+    private static $paramCodes = array(
         'server_encoding',
         'client_encoding',
         'is_superuser',
@@ -33,17 +31,17 @@ class PgSqlCaster
         'integer_datetimes',
         'application_name',
         'standard_conforming_strings',
-    ];
+    );
 
-    private static $transactionStatus = [
+    private static $transactionStatus = array(
         PGSQL_TRANSACTION_IDLE => 'PGSQL_TRANSACTION_IDLE',
         PGSQL_TRANSACTION_ACTIVE => 'PGSQL_TRANSACTION_ACTIVE',
         PGSQL_TRANSACTION_INTRANS => 'PGSQL_TRANSACTION_INTRANS',
         PGSQL_TRANSACTION_INERROR => 'PGSQL_TRANSACTION_INERROR',
         PGSQL_TRANSACTION_UNKNOWN => 'PGSQL_TRANSACTION_UNKNOWN',
-    ];
+    );
 
-    private static $resultStatus = [
+    private static $resultStatus = array(
         PGSQL_EMPTY_QUERY => 'PGSQL_EMPTY_QUERY',
         PGSQL_COMMAND_OK => 'PGSQL_COMMAND_OK',
         PGSQL_TUPLES_OK => 'PGSQL_TUPLES_OK',
@@ -52,9 +50,9 @@ class PgSqlCaster
         PGSQL_BAD_RESPONSE => 'PGSQL_BAD_RESPONSE',
         PGSQL_NONFATAL_ERROR => 'PGSQL_NONFATAL_ERROR',
         PGSQL_FATAL_ERROR => 'PGSQL_FATAL_ERROR',
-    ];
+    );
 
-    private static $diagCodes = [
+    private static $diagCodes = array(
         'severity' => PGSQL_DIAG_SEVERITY,
         'sqlstate' => PGSQL_DIAG_SQLSTATE,
         'message' => PGSQL_DIAG_MESSAGE_PRIMARY,
@@ -67,7 +65,7 @@ class PgSqlCaster
         'file' => PGSQL_DIAG_SOURCE_FILE,
         'line' => PGSQL_DIAG_SOURCE_LINE,
         'function' => PGSQL_DIAG_SOURCE_FUNCTION,
-    ];
+    );
 
     public static function castLargeObject($lo, array $a, Stub $stub, $isNested)
     {
@@ -129,14 +127,14 @@ class PgSqlCaster
         $fields = pg_num_fields($result);
 
         for ($i = 0; $i < $fields; ++$i) {
-            $field = [
+            $field = array(
                 'name' => pg_field_name($result, $i),
                 'table' => sprintf('%s (OID: %s)', pg_field_table($result, $i), pg_field_table($result, $i, true)),
                 'type' => sprintf('%s (OID: %s)', pg_field_type($result, $i), pg_field_type_oid($result, $i)),
                 'nullable' => (bool) pg_field_is_null($result, $i),
                 'storage' => pg_field_size($result, $i).' bytes',
                 'display' => pg_field_prtlen($result, $i).' chars',
-            ];
+            );
             if (' (OID: )' === $field['table']) {
                 $field['table'] = null;
             }

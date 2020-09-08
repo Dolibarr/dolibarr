@@ -14,18 +14,20 @@ namespace Symfony\Component\VarDumper\Caster;
 use Symfony\Component\VarDumper\Cloner\Stub;
 
 /**
- * Casts GMP objects to array representation.
+ * Casts classes from the MongoDb extension to array representation.
  *
- * @author Hamza Amrouche <hamza.simperfit@gmail.com>
  * @author Nicolas Grekas <p@tchwork.com>
- *
- * @final since Symfony 4.4
  */
-class GmpCaster
+class MongoCaster
 {
-    public static function castGmp(\GMP $gmp, array $a, Stub $stub, $isNested, $filter): array
+    public static function castCursor(\MongoCursorInterface $cursor, array $a, Stub $stub, $isNested)
     {
-        $a[Caster::PREFIX_VIRTUAL.'value'] = new ConstStub(gmp_strval($gmp), gmp_strval($gmp));
+        if ($info = $cursor->info()) {
+            foreach ($info as $k => $v) {
+                $a[Caster::PREFIX_VIRTUAL.$k] = $v;
+            }
+        }
+        $a[Caster::PREFIX_VIRTUAL.'dead'] = $cursor->dead();
 
         return $a;
     }
