@@ -390,7 +390,7 @@ if ($resql)
 		if (!empty($arrayfields['aa.account_number']['checked']))
 		{
 			print "<td>";
-			print $accountstatic->getNomUrl(1, 0, 0, '', 0, 1);
+			print $accountstatic->getNomUrl(1, 0, 0, '', 0, 1, 0, 'accountcard');
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
