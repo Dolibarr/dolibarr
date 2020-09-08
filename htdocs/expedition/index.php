@@ -279,13 +279,11 @@ if ($resql)
 			print '<td></td>';
 			print '</tr>';
 		}
-
 	} else {
 		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
 	}
 
 	print "</table></div><br>";
-
 } else dol_print_error($db);
 
 
