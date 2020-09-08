@@ -512,8 +512,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 		{
 			StartSimpleTableHeader($langs->trans("BoxTitleLastModifiedProspects", min($max, $num)), "societe/list.php", "type=p,c", 1);
 		}
-		else
-		{
+		else {
 			StartSimpleTableHeader($langs->trans("BoxTitleLastModifiedCustomers", min($max, $num)), "societe/list.php", "type=p,c", 1);
 		}
 
@@ -650,7 +649,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-		
+
 		if ($num > 0)
 		{
 			StartSimpleTableHeader($langs->trans("LastContracts", 5), "", "", 2);
