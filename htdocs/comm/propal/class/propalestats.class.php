@@ -63,6 +63,7 @@ class PropaleStats extends Stats
 		$this->db = $db;
         $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
+        $this->join = '';
 
         if ($mode == 'customer')
         {
@@ -110,13 +111,22 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		if ($_POST['showBySignDate_toselect'] == 'checked'){
+			$sql = "SELECT date_format(p.date_cloture,'%m') as dm, COUNT(*) as nb";
+		} else {
+			$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
+		}
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
+		if ($_POST['showBySignDate_toselect'] == 'checked'){
+			$sql.= " WHERE p.date_cloture BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		} else {
+			$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		}
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -153,13 +163,24 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		if ($_POST['showBySignDate_toselect'] == 'checked')
+		{
+			$sql = "SELECT date_format(p.date_cloture,'%m') as dm, SUM(p.".$this->field.")";
+		} else {
+			$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
+		}
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
+		if ($_POST['showBySignDate_toselect'] == 'checked')
+		{
+			$sql.= " WHERE p.date_cloture BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		} else {
+			$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		}
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
@@ -175,13 +196,23 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		if ($_POST['showBySignDate_toselect'] == 'checked'){
+			$sql = "SELECT date_format(p.date_cloture,'%m') as dm, AVG(p.".$this->field.")";
+
+		} else {
+			$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
+		}
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
+		if ($_POST['showBySignDate_toselect'] == 'checked'){
+			$sql.= " WHERE p.date_cloture BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		} else {
+			$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		}
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
