@@ -1478,7 +1478,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			{
 				$langs->load("categories");
 				$newmenu->add("/categories/index.php?type=5", $langs->trans("Rubriques"), 1, $user->rights->categorie->creer, '', $mainmenu, 'tags');
-				$newmenu->add("/compta/bank/categ.php", $langs->trans("RubriquesTransactions"), 1, $user->rights->categorie->creer, '', $mainmenu, 'tags');
+				$newmenu->add("/compta/bank/categ.php", $langs->trans("RubriquesTransactions"), 1, $user->rights->banque->configurer, '', $mainmenu, 'tags');
 			}
 
 			// Direct debit order
