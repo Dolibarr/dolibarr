@@ -95,16 +95,14 @@ foreach ($object->fields as $key => $val)
 }
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	's.nom'=>"ThirdParty",
-	's.name_alias'=>"AliasNameShort",
-	's.zip'=>"Zip",
-	's.town'=>"Town",
-);
+$fieldstosearchall = array();
 foreach ($object->fields as $key => $val)
 {
 	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
+$fieldstosearchall['s.name_alias']="AliasNameShort";
+$fieldstosearchall['s.zip']="Zip";
+$fieldstosearchall['s.town']="Town";
 
 // Definition of fields for list
 $arrayfields = array();
