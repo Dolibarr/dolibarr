@@ -7622,7 +7622,7 @@ class Form
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp maxwidth200">';
 			if ($useempty) $out .= '<option value="0">&nbsp;</option>';
 
 			while ($obj = $db->fetch_object($resql))

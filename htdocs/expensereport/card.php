@@ -2290,7 +2290,7 @@ if ($action == 'create')
 
 							// Select type
 							print '<td class="center">';
-							select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
 							print '</td>';
 
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
@@ -2449,7 +2449,7 @@ if ($action == 'create')
 
 					// Select type
 					print '<td class="center">';
-					select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
+					print select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
