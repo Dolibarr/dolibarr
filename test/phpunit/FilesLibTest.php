@@ -130,7 +130,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	/**
      * testDolBasename
      *
-     * @return	int
+     * @return	void
      */
     public function testDolBasename()
     {
@@ -239,7 +239,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolMimeType
      *
-     * @return	string
+     * @return	void
      */
     public function testDolMimeType()
     {
@@ -285,7 +285,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolDeleteDir
      *
-     * @return	int
+     * @return	void
      */
     public function testDolDeleteDir()
     {
@@ -323,10 +323,8 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolCopyMoveDelete
      *
-     * @return	int
-     *
+     * @return	void
      * @depends	testDolDeleteDir
-     * The depends says test is run only if previous is ok
      */
     public function testDolCopyMoveDelete()
     {
@@ -395,10 +393,8 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolCompressUnCompress
      *
-     * @return	string
-     *
+     * @return	void
      * @depends	testDolCopyMoveDelete
-     * The depends says test is run only if previous is ok
      */
     public function testDolCompressUnCompress()
     {
@@ -431,7 +427,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolDirList
      *
-     * @return	string
+     * @return	void
      *
      * @depends	testDolCompressUnCompress
      * The depends says test is run only if previous is ok

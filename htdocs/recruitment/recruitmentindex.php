@@ -350,9 +350,9 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$staticrecruitmentjobposition->id=$objp->rowid;
-				$staticrecruitmentjobposition->ref=$objp->ref;
-				$staticrecruitmentjobposition->label=$objp->label;
+				$staticrecruitmentjobposition->id = $objp->rowid;
+				$staticrecruitmentjobposition->ref = $objp->ref;
+				$staticrecruitmentjobposition->label = $objp->label;
 				$staticrecruitmentjobposition->status = $objp->status;
 				$staticrecruitmentjobposition->date_creation = $objp->date_creation;
 

@@ -58,23 +58,23 @@ $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 
-$fulldayevent = GETPOST('fullday');
+$fulldayevent = GETPOST('fullday', 'alpha');
 
-$aphour = GETPOST('aphour');
-$apmin = GETPOST('apmin');
-$p2hour = GETPOST('p2hour');
-$p2min = GETPOST('p2min');
+$aphour = GETPOST('aphour', 'int');
+$apmin = GETPOST('apmin', 'int');
+$p2hour = GETPOST('p2hour', 'int');
+$p2min = GETPOST('p2min', 'int');
 
-$addreminder = GETPOST('addreminder');
-$offsetvalue = GETPOST('offsetvalue');
-$offsetunit = GETPOST('offsetunittype_duration');
-$remindertype = GETPOST('selectremindertype');
-$modelmail = GETPOST('actioncommsendmodel_mail');
+$addreminder = GETPOST('addreminder', 'alpha');
+$offsetvalue = GETPOST('offsetvalue', 'int');
+$offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
+$remindertype = GETPOST('selectremindertype', 'aZ09');
+$modelmail = GETPOST('actioncommsendmodel_mail', 'int');
 
 //var_dump($_POST); exit;
 
-$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
-$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -391,19 +391,7 @@ if (empty($reshook) && $action == 'add')
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
-                    if ($offsetunit == 'minute'){
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
-                    } elseif ($offsetunit == 'hour'){
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
-                    } elseif ($offsetunit == 'day') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
-                    } elseif ($offsetunit == 'week') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'w');
-                    } elseif ($offsetunit == 'month') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'm');
-                    } elseif ($offsetunit == 'year') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
-                    }
+                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
 
                     $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
@@ -418,15 +406,20 @@ if (empty($reshook) && $action == 'add')
 
                     if ($res <= 0){
                         // If error
-                        $db->rollback();
+                        $error++;
                         $langs->load("errors");
-                        $error = $langs->trans('ErrorReminderActionCommCreation');
-                        setEventMessages($error, null, 'errors');
+                        $error = $langs->trans('ErrorReminderActionCommCreation').' '.$actionCommReminder->error;
+                        setEventMessages($error, $actionCommReminder->errors, 'errors');
                         $action = 'create'; $donotclearsession = 1;
                     }
                 }
 
-				$db->commit();
+                if ($error) {
+                	$db->rollback();
+                } else {
+					$db->commit();
+                }
+
 				if (!empty($backtopage))
 				{
 					dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
@@ -929,9 +922,9 @@ if ($action == 'create')
     print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
 	//print ' - ';
     if (GETPOST("afaire") == 1) {
-    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
+    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
     } else {
-    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
+    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
     }
     print '</td></tr>';
 
@@ -1208,7 +1201,7 @@ if ($action == 'create')
 
         //Time Type
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-        print $form->selectTypeDuration('offsetunit');
+        print $form->selectTypeDuration('offsetunit', 'i');
         print '</td></tr>';
 
         //Reminder Type

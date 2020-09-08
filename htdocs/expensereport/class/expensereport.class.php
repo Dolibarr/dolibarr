@@ -2774,12 +2774,14 @@ function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0,
     global $db, $langs, $user;
     $langs->load("trips");
 
-    print '<select class="flat" name="'.$htmlname.'">';
+    $out = '';
+
+    $out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
     if ($showempty)
     {
-        print '<option value="-1"';
-        if ($selected == -1) print ' selected';
-        print '>&nbsp;</option>';
+    	$out .= '<option value="-1"';
+    	if ($selected == -1) $out .= ' selected';
+    	$out .= '>&nbsp;</option>';
     }
 
     $sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
@@ -2794,13 +2796,16 @@ function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0,
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            print '<option value="'.$obj->id.'"';
-            if ($obj->code == $selected || $obj->id == $selected) print ' selected';
-            print '>';
-            if ($obj->code != $langs->trans($obj->code)) print $langs->trans($obj->code);
-            else print $langs->trans($obj->type);
+            $out .= '<option value="'.$obj->id.'"';
+            if ($obj->code == $selected || $obj->id == $selected) $out .= ' selected';
+            $out .= '>';
+            if ($obj->code != $langs->trans($obj->code)) $out .= $langs->trans($obj->code);
+            else $out .= $langs->trans($obj->type);
             $i++;
         }
     }
-    print '</select>';
+    $out .= '</select>';
+    $out .= ajax_combobox($htmlname);
+
+    return $out;
 }

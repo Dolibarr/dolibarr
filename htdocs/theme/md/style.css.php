@@ -788,6 +788,11 @@ textarea.centpercent {
     font-size: 0.85em;
     opacity: 0.7;
 }
+.longmessagecut {
+    max-height: 250px;
+    max-width: 100%;
+    overflow-y: scroll;
+}
 
 .text-warning{
     color : <?php print $textWarning; ?>

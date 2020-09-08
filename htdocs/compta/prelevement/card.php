@@ -81,38 +81,38 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($action == 'confirm_delete')
-    {
-        $res = $object->delete($user);
-        if ($res > 0)
-        {
-        	if ($object->type == 'bank-transfer') {
-        		header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
-        	} else {
-        		header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
-        	}
-            exit;
-        }
-    }
+	if ($action == 'confirm_delete')
+	{
+		$res = $object->delete($user);
+		if ($res > 0)
+		{
+			if ($object->type == 'bank-transfer') {
+				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+			}
+			exit;
+		}
+	}
 
-    // Seems to no be used and replaced with $action == 'infocredit'
-    if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
-    {
-        $res = $object->set_credite();
-        if ($res >= 0)
-        {
-            header("Location: card.php?id=".$id);
-            exit;
-        }
-    }
+	// Seems to no be used and replaced with $action == 'infocredit'
+	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
+	{
+		$res = $object->set_credite();
+		if ($res >= 0)
+		{
+			header("Location: card.php?id=".$id);
+			exit;
+		}
+	}
 
-    if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        /*
+		/*
         if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
         {
             $dir = $conf->prelevement->dir_output.'/receipts';
@@ -133,24 +133,24 @@ if (empty($reshook))
 
 		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
 
-        if ($error)
-        {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
-        }
-    }
+		if ($error)
+		{
+			header("Location: card.php?id=".$id."&error=$error");
+			exit;
+		}
+	}
 
 	// Set direct debit order to credited, create payment and close invoices
 	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 	{
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        $error = $object->set_infocredit($user, $dt);
-        if ($error)
-        {
-        	setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
+		$error = $object->set_infocredit($user, $dt);
+		if ($error)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 

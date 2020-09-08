@@ -107,7 +107,7 @@ $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss);
 
-if (empty($_SESSION['titre']))
+if (empty($_SESSION['title']))
 {
 	dol_print_error('', $langs->trans('ErrorOpenSurveyFillFirstSection'));
 	llxFooter();

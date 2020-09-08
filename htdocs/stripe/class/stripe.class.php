@@ -294,8 +294,8 @@ class Stripe extends CommonObject
     /**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
      * Warning. If a payment was tried and failed, a payment intent was created.
-	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed.
-	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
+	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
+	 * Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
 	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
@@ -345,14 +345,14 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object))
+		if (is_object($object) && ! empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND))
 		{
 			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change someting on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed.
-			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay), Stripe will
+			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
+			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
 			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
 			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
-			/*
+
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
     		$sql.= " WHERE pi.fk_facture = " . $object->id;
@@ -382,13 +382,12 @@ class Stripe extends CommonObject
     						$paymentintent = \Stripe\PaymentIntent::retrieve($intent, array("stripe_account" => $key));
     					}
     				}
-    				catch(Exception $e)
-    				{
+    				catch (Exception $e) {
     				    $error++;
     					$this->error = $e->getMessage();
     				}
     			}
-    		}*/
+    		}
 		}
 
 		if (empty($paymentintent))
@@ -402,12 +401,17 @@ class Stripe extends CommonObject
 				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
             }
 
+            // list of payment method types
+            $paymentmethodtypes = array("card");
+            if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+            if (!empty($conf->global->STRIPE_IDEAL) ) $paymentmethodtypes[] = "ideal"; //&& ($object->thirdparty->isInEEC())
+
     		$dataforintent = array(
     		    "confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
     		    "confirmation_method" => $mode,
     		    "amount" => $stripeamount,
     			"currency" => $currency_code,
-    		    "payment_method_types" => array("card"),
+    			"payment_method_types" => $paymentmethodtypes,
     		    "description" => $description,
     		    "statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
     			//"save_payment_method" => true,
@@ -566,14 +570,19 @@ class Stripe extends CommonObject
 				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
 			}
 
+			// list of payment method types
+			$paymentmethodtypes = array("card");
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			// iDEAL not supported with setupIntent
+
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
-				"payment_method_types" => array("card"),
-				"description" => $description,
+				"payment_method_types" => $paymentmethodtypes,
 				"usage" => "off_session",
 				"metadata" => $metadata
 			);
 			if (!is_null($customer)) $dataforintent["customer"] = $customer;
+			if (!is_null($description)) $dataforintent["description"] = $description;
 			// payment_method =
 			// payment_method_types = array('card')
 			//var_dump($dataforintent);

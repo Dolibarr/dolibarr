@@ -72,7 +72,7 @@ class PaymentLoan extends CommonObject
     public $amount_interest;
 
     /**
-     * @var int Payment type ID
+     * @var int Payment mode ID
      */
     public $fk_typepayment;
 
@@ -450,7 +450,7 @@ class PaymentLoan extends CommonObject
 			// Insert payment into llx_bank
             $bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
+            	$this->fk_typepayment, // Payment mode ID or code ("CHQ or VIR for example")
 				$label,
 				$total,
 				$this->num_payment,

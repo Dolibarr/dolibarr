@@ -112,8 +112,7 @@ if (empty($reshook))
 
     	if (!$error)
     	{
-    		$object->titre = GETPOST('nouveautitre', 'nohtml');
-    		$object->commentaires = GETPOST('nouveauxcommentaires', 'restricthtml');
+    		$object->title = GETPOST('nouveautitre', 'nohtml');
     		$object->description = GETPOST('nouveauxcommentaires', 'restricthtml');
     		$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
     		$object->date_fin = $expiredate;
@@ -189,7 +188,7 @@ if ($object->fk_user_creat)
 	$userstatic->fetch($object->fk_user_creat);
 }
 
-$title = $object->titre." - ".$langs->trans('Card');
+$title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
@@ -240,8 +239,8 @@ $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
-} else print dol_htmlentities($object->titre);
+	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+} else print dol_htmlentities($object->title);
 print '</td></tr>';
 
 // Description
@@ -402,7 +401,7 @@ if ($comments) {
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
 } else {
-	print $langs->trans("NoCommentYet").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("NoCommentYet").'</span><br>';
 }
 
 print '<br>';

@@ -205,6 +205,8 @@ ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_rec
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitmentcandidature_email_msgid(email_msgid);
 
 
+ALTER TABLE llx_product_attribute ADD COLUMN ref_ext VARCHAR(255) after ref;
+ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
 
 
 CREATE TABLE llx_product_attribute_combination_price_level
@@ -310,4 +312,11 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (st
 
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
+ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
+ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_total_ttc;
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
+
+ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
 

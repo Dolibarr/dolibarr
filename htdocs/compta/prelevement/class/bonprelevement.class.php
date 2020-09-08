@@ -318,7 +318,7 @@ class BonPrelevement extends CommonObject
 				$this->type           = $obj->type;
 
 				$this->status         = $obj->status;
-				$this->statut         = $obj->status;	// For backward compatibility
+				$this->statut         = $obj->status; // For backward compatibility
 
 				$this->fetched = 1;
 
@@ -510,7 +510,7 @@ class BonPrelevement extends CommonObject
 					$paiement->num_paiement = $this->ref; // For backward compatibility
 					$paiement->id_prelevement = $this->id;
 
-					$paiement_id = $paiement->create($user);		// This use ->paiementid, that is ID of payment mode
+					$paiement_id = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
 					if ($paiement_id < 0)
 					{
 						$error++;
@@ -540,7 +540,7 @@ class BonPrelevement extends CommonObject
 
 				// Update withdrawal line
 				// TODO: Translate to ligneprelevement.class.php
-				if (! $error) {
+				if (!$error) {
 					$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 					$sql .= " SET statut = 2";
 					$sql .= " WHERE fk_prelevement_bons = ".$this->id;
@@ -884,7 +884,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.rowid = pfd.fk_facture_fourn";
 			}
 			$sql .= " AND s.rowid = f.fk_soc";
-			$sql .= " AND f.fk_statut = 1";			// Invoice validated
+			$sql .= " AND f.fk_statut = 1"; // Invoice validated
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
@@ -1179,7 +1179,7 @@ class BonPrelevement extends CommonObject
 			/*
 			 * Update total defined after generation of file
 			 */
-			if (! $error) {
+			if (!$error) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " SET amount = ".price2num($this->total);
 				$sql .= " WHERE rowid = ".$this->id;
@@ -1542,7 +1542,7 @@ class BonPrelevement extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
@@ -1657,7 +1657,7 @@ class BonPrelevement extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
@@ -2192,7 +2192,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
@@ -2254,7 +2254,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;

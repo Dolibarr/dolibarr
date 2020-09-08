@@ -615,23 +615,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$mois  = date("m", $timestampStart);
 		$annee = date("Y", $timestampStart);
 
-		// Check into var $conf->global->HOLIDAY_MORE_DAYS   MM-DD,YYYY-MM-DD, ...
-		// Do not use this anymore, use instead the dictionary of public holidays.
-		if (!empty($conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS))
-		{
-			$arrayofdaystring = explode(',', $conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS);
-			foreach ($arrayofdaystring as $daystring)
-			{
-				$tmp = explode('-', $daystring);
-				if ($tmp[2])
-				{
-					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie = true;
-				} else {
-					if ($tmp[0] == $mois && $tmp[1] == $jour) $ferie = true;
-				}
-			}
-		}
-
 		$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
 
 		// Loop on public holiday defined into hrm_public_holiday

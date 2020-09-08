@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
@@ -1835,7 +1835,7 @@ if ($action == 'create')
 					print '</tr>';
 				}
 
-				if ($object->fk_statut == 6)
+				if ($object->fk_statut == $object::STATUS_CLOSED)
 				{
 					/* TODO this fields are not yet filled
 					print '<tr>';
@@ -2029,8 +2029,8 @@ if ($action == 'create')
 					//print '<td class="center">'.$langs->trans('Piece').'</td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
 					if (!empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
-					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td class="center">'.$langs->trans('Type').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td class="right">'.$langs->trans('VAT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
@@ -2080,6 +2080,13 @@ if ($action == 'create')
 								}
 								print '</td>';
 							}
+
+							// Type of fee
+							print '<td class="center">';
+							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
+							print $labeltype;
+							print '</td>';
+
 							// IK
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 							{
@@ -2087,11 +2094,7 @@ if ($action == 'create')
 								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 								print '</td>';
 							}
-							// Type of fee
-							print '<td class="center">';
-							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
-							print $labeltype;
-							print '</td>';
+
 							// Comment
 							print '<td class="left">'.dol_nl2br($line->comments).'</td>';
 							// VAT rate
@@ -2285,6 +2288,11 @@ if ($action == 'create')
 								print '</td>';
 							}
 
+							// Select type
+							print '<td class="center">';
+							print select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print '</td>';
+
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 							{
 								print '<td class="fk_c_exp_tax_cat">';
@@ -2292,11 +2300,6 @@ if ($action == 'create')
 								print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 								print '</td>';
 							}
-
-							// Select type
-							print '<td class="center">';
-							select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
-							print '</td>';
 
 							// Add comments
 							print '<td>';
@@ -2344,7 +2347,7 @@ if ($action == 'create')
 					}
 				}
 
-				// Add a line
+				// Add a new line
 				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
 				    && $action != 'editline'
 				    && $user->rights->expensereport->creer)
@@ -2408,9 +2411,13 @@ if ($action == 'create')
 					print '<tr class="liste_titre">';
 					print '<td></td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
-					if (!empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
-					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
+					if (!empty($conf->projet->enabled)) {
+						print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
+					}
 					print '<td class="center">'.$langs->trans('Type').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						print '<td>'.$langs->trans('CarCategory').'</td>';
+					}
 					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td class="right">'.$langs->trans('VAT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
@@ -2440,18 +2447,18 @@ if ($action == 'create')
 						print '</td>';
 					}
 
+					// Select type
+					print '<td class="center">';
+					print select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
+					print '</td>';
+
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 					{
 						print '<td class="fk_c_exp_tax_cat">';
 						$params = array('fk_expense' => $object->id);
-						print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
+						print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params, 0);
 						print '</td>';
 					}
-
-					// Select type
-					print '<td class="center">';
-					select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
-					print '</td>';
 
 					// Add comments
 					print '<td>';
