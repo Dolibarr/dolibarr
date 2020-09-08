@@ -701,12 +701,6 @@ textarea.centpercent {
 .text-warning{
     color : <?php print $textWarning; ?>
 }
-.longmessagecut {
-    max-height: 250px;
-    max-width: 100%;
-    overflow-y: scroll;
-}
-
 body[class*="colorblind-"] .text-warning{
     color : <?php print $colorblind_deuteranopes_textWarning; ?>
 }

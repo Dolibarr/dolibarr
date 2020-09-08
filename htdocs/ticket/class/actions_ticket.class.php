@@ -208,24 +208,14 @@ class ActionsTicket
 			$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
-			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_9, '95%');
+			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_4, '95%');
 			$doleditor->Create();
 		} else {
 			// Deal with format differences (text / HTML)
 			if (dol_textishtml($object->message)) {
-				print '<div class="longmessagecut">';
 				print $object->message;
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
 			} else {
-				print '<div class="longmessagecut">';
 				print dol_nl2br($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
 			}
 
 			//print '<div>' . $object->message . '</div>';

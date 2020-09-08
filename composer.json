@@ -34,8 +34,7 @@
 		"tecnickcom/tcpdf" : "6.3.2",
 		"nnnick/chartjs" : "^2.9",
 		"stripe/stripe-php" : "6.43.1",
-		"maximebf/debugbar" : "1.15.1",
-		"symfony/var-dumper": "3"
+		"maximebf/debugbar" : "1.15"
 	},
 	"require-dev" : {
 		"php-parallel-lint/php-parallel-lint" : "^0",

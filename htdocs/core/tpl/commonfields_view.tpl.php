@@ -60,10 +60,9 @@ foreach ($object->fields as $key => $val)
 	print '<td class="valuefield fieldname_'.$key;
 	if ($val['type'] == 'text') print ' wordbreak';
 	print '">';
-	if (in_array($val['type'], array('text', 'html'))) print '<div class="longmessagecut">';
+
 	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);
-	if (in_array($val['type'], array('text', 'html'))) print '</div>';
 	print '</td>';
 	print '</tr>';
 }
@@ -106,10 +105,8 @@ foreach ($object->fields as $key => $val)
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';
-	if (in_array($val['type'], array('text', 'html'))) print '<div class="longmessagecut">';
 	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);
-	if (in_array($val['type'], array('text', 'html'))) print '</div>';
 	print '</td>';
 	print '</tr>';
 }

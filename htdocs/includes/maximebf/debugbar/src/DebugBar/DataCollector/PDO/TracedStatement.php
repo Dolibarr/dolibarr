@@ -32,7 +32,7 @@ class TracedStatement
      * @param array $params
      * @param string $preparedId
      */
-    public function __construct($sql, array $params = [], $preparedId = null)
+    public function __construct($sql, array $params = array(), $preparedId = null)
     {
         $this->sql = $sql;
         $this->parameters = $this->checkParameters($params);
@@ -52,8 +52,8 @@ class TracedStatement
     /**
      * @param \Exception|null $exception
      * @param int $rowCount
-     * @param float $endTime
-     * @param int $endMemory
+     * @param null $endTime
+     * @param null $endMemory
      */
     public function end(\Exception $exception = null, $rowCount = 0, $endTime = null, $endMemory = null)
     {
@@ -68,8 +68,8 @@ class TracedStatement
     /**
      * Check parameters for illegal (non UTF-8) strings, like Binary data.
      *
-     * @param array $params
-     * @return array
+     * @param $params
+     * @return mixed
      */
     public function checkParameters($params)
     {
@@ -82,7 +82,7 @@ class TracedStatement
     }
 
     /**
-     * Returns the SQL string used for the query, without filled parameters
+     * Returns the SQL string used for the query
      *
      * @return string
      */
@@ -107,29 +107,15 @@ class TracedStatement
         }
 
         $sql = $this->sql;
-
-        $cleanBackRefCharMap = ['%' => '%%', '$' => '$%', '\\' => '\\%'];
-
         foreach ($this->parameters as $k => $v) {
-
-            $backRefSafeV = strtr($v, $cleanBackRefCharMap);
-
-            $v = "$quoteLeft$backRefSafeV$quoteRight";
-
-            if (is_numeric($k)) {
-                $marker = "\?";
+            $v = "$quoteLeft$v$quoteRight";
+            if (!is_numeric($k)) {
+                $sql = preg_replace("/{$k}\b/", $v, $sql, 1);
             } else {
-                $marker = (preg_match("/^:/", $k)) ? $k : ":" . $k;
-            }
-
-            $matchRule = "/({$marker}(?!\w))(?=(?:[^$quotationChar]|[$quotationChar][^$quotationChar]*[$quotationChar])*$)/";
-            for ($i = 0; $i <= mb_substr_count($sql, $k); $i++) {
-                $sql = preg_replace($matchRule, $v, $sql, 1);
+                $p = strpos($sql, '?');
+                $sql = substr($sql, 0, $p) . $v. substr($sql, $p + 1);
             }
         }
-
-        $sql = strtr($sql, array_flip($cleanBackRefCharMap));
-
         return $sql;
     }
 
@@ -150,7 +136,7 @@ class TracedStatement
      */
     public function getParameters()
     {
-        $params = [];
+        $params = array();
         foreach ($this->parameters as $name => $param) {
             $params[$name] = htmlentities($param, ENT_QUOTES, 'UTF-8', false);
         }
@@ -178,7 +164,7 @@ class TracedStatement
     }
 
     /**
-     * @return float
+     * @return mixed
      */
     public function getStartTime()
     {
@@ -186,7 +172,7 @@ class TracedStatement
     }
 
     /**
-     * @return float
+     * @return mixed
      */
     public function getEndTime()
     {
@@ -194,9 +180,9 @@ class TracedStatement
     }
 
     /**
-     * Returns the duration in seconds + microseconds of the execution
+     * Returns the duration in seconds of the execution
      *
-     * @return float
+     * @return int
      */
     public function getDuration()
     {
@@ -204,7 +190,7 @@ class TracedStatement
     }
 
     /**
-     * @return int
+     * @return mixed
      */
     public function getStartMemory()
     {
@@ -212,7 +198,7 @@ class TracedStatement
     }
 
     /**
-     * @return int
+     * @return mixed
      */
     public function getEndMemory()
     {
@@ -252,7 +238,7 @@ class TracedStatement
     /**
      * Returns the exception's code
      *
-     * @return int|string
+     * @return string
      */
     public function getErrorCode()
     {
