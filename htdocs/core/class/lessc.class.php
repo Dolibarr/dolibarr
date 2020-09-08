@@ -750,7 +750,7 @@ class Lessc {
 						if ($suffix !== null &&
 							$subProp[0] == "assign" &&
 							is_string($subProp[1]) &&
-							$subProp[1]{0} != $this->vPrefix
+							$subProp[1][0] != $this->vPrefix
 							) {
 								$subProp[2] = array(
 									'list', ' ',
