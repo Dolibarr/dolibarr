@@ -387,9 +387,7 @@ class SMTPs
         {
             $this->_setErr(99, $host.' is either offline or is an invalid host name.');
             $_retVal = false;
-        }
-        else
-        {
+        } else {
             if (function_exists('stream_socket_client')) {
                 $socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
                 set_error_handler([$this, 'errorHandler']);
