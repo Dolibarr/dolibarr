@@ -4,7 +4,7 @@
  * Simple autoloader, so we don't need Composer just for this.
  */
 
-spl_autoload_register(function($class) {
+spl_autoload_register(function ($class) {
 	if (preg_match('/^DebugBar/', $class)) {
 		$file = DOL_DOCUMENT_ROOT.'/includes/maximebf/debugbar/src/'.str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
 		//var_dump($class.' - '.file_exists($file).' - '.$file);
