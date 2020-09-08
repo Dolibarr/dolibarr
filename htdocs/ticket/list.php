@@ -721,6 +721,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$cacheofoutputfield = array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -753,9 +754,14 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif ($key == 'type_code') {
+				$s = $langs->getLabelFromKey($db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+				print '<span title="'.$s.'">';
+				print $s;
+				print '</span>';
+			}
 			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
 			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
-			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif ($key == 'fk_user_create') {
 				if ($object->fk_user_create > 0) {
@@ -763,7 +769,23 @@ while ($i < min($num, $limit))
 					print $user_create->getNomUrl(-1);
 				}
 			} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
-			else print $object->showOutputField($val, $key, $obj->$key, '');
+			else {	// Example: key=fk_soc, obj->key=123 val=array('type'=>'integer', ...
+				$tmp = explode(':', $val['type']);
+				if ($tmp[0] == 'integer' && !empty($tmp[1]) && class_exists($tmp[1])) {
+					// It is a type of an foreign field. We will try to reduce the number of fetch that the showOutputField is making.
+					//var_dump('eeee-'.$key.'-'.$obj->$key.'-'.$val['type']);
+					if ($key && $obj->$key && $val['type'] && array_key_exists($key.'-'.$obj->$key.'-'.$val['type'], $cacheofoutputfield)) {
+						$result = $cacheofoutputfield[$key.'-'.$obj->$key.'-'.$val['type']];
+					} else {
+						$result = $object->showOutputField($val, $key, $obj->$key, '');
+						$cacheofoutputfield[$key.'-'.$obj->$key.'-'.$val['type']] = $result;
+					}
+				} else {
+					$result = $object->showOutputField($val, $key, $obj->$key, '');
+				}
+				print $result;
+			}
+
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 			if (!empty($val['isameasure']))
