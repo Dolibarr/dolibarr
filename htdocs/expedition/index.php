@@ -234,6 +234,7 @@ if ($resql)
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
+
 	print '<tr class="liste_titre">';
 	print '<th colspan="3">'.$langs->trans("OrdersToProcess").' ';
 	print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.','.Commande::STATUS_ACCEPTED.'">';
@@ -279,10 +280,12 @@ if ($resql)
 			print '</tr>';
 		}
 
-		print "</table></div><br>";
 	} else {
 		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
 	}
+
+	print "</table></div><br>";
+
 } else dol_print_error($db);
 
 
