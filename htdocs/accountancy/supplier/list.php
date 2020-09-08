@@ -144,48 +144,48 @@ if (empty($reshook))
 
 
 if ($massaction == 'ventil') {
-    $msg = '';
+	$msg = '';
 
-    //print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
-    if (!empty($mesCasesCochees)) {
-        $msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
-        $msg .= '<div class="detail">';
-        $cpt = 0;
-        $ok = 0;
-        $ko = 0;
+	//print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+	if (!empty($mesCasesCochees)) {
+		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
+		$msg .= '<div class="detail">';
+		$cpt = 0;
+		$ok = 0;
+		$ko = 0;
 
-        foreach ($mesCasesCochees as $maLigneCochee) {
-            $maLigneCourante = explode("_", $maLigneCochee);
-            $monId = $maLigneCourante[0];
-            $monCompte = GETPOST('codeventil'.$monId);
+		foreach ($mesCasesCochees as $maLigneCochee) {
+			$maLigneCourante = explode("_", $maLigneCochee);
+			$monId = $maLigneCourante[0];
+			$monCompte = GETPOST('codeventil'.$monId);
 
-            if ($monCompte <= 0)
-            {
-                $msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
-                $ko++;
-            } else {
-                $sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-                $sql .= " SET fk_code_ventilation = ".$monCompte;
-                $sql .= " WHERE rowid = ".$monId;
+			if ($monCompte <= 0)
+			{
+				$msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
+				$ko++;
+			} else {
+				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
+				$sql .= " SET fk_code_ventilation = ".$monCompte;
+				$sql .= " WHERE rowid = ".$monId;
 
-                $accountventilated = new AccountingAccount($db);
-                $accountventilated->fetch($monCompte, '');
+				$accountventilated = new AccountingAccount($db);
+				$accountventilated->fetch($monCompte, '');
 
-                dol_syslog('accountancy/supplier/list.php:: sql='.$sql, LOG_DEBUG);
-                if ($db->query($sql)) {
-                    $msg .= '<div><font color="green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</font></div>';
-                    $ok++;
-                } else {
-                    $msg .= '<div><font color="red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></font></div>';
-                    $ko++;
-                }
-            }
+				dol_syslog('accountancy/supplier/list.php:: sql='.$sql, LOG_DEBUG);
+				if ($db->query($sql)) {
+					$msg .= '<div><font color="green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</font></div>';
+					$ok++;
+				} else {
+					$msg .= '<div><font color="red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></font></div>';
+					$ko++;
+				}
+			}
 
-            $cpt++;
-        }
-        $msg .= '</div>';
-        $msg .= '<div>'.$langs->trans("EndProcessing").'</div>';
-    }
+			$cpt++;
+		}
+		$msg .= '</div>';
+		$msg .= '<div>'.$langs->trans("EndProcessing").'</div>';
+	}
 }
 
 
@@ -203,8 +203,8 @@ if (empty($chartaccountcode))
 {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
 	// End of page
-    llxFooter();
-    $db->close();
+	llxFooter();
+	$db->close();
 	exit;
 }
 
@@ -240,28 +240,28 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_lineid) {
-    $sql .= natural_search("l.rowid", $search_lineid, 1);
+	$sql .= natural_search("l.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
-    $sql .= natural_search("f.ref", $search_invoice);
+	$sql .= natural_search("f.ref", $search_invoice);
 }
 if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.libelle", $search_label);
 }
 if (strlen(trim($search_ref))) {
-    $sql .= natural_search("p.ref", $search_ref);
+	$sql .= natural_search("p.ref", $search_ref);
 }
 if (strlen(trim($search_desc))) {
-    $sql .= natural_search("l.description", $search_desc);
+	$sql .= natural_search("l.description", $search_desc);
 }
 if (strlen(trim($search_amount))) {
-    $sql .= natural_search("l.total_ht", $search_amount, 1);
+	$sql .= natural_search("l.total_ht", $search_amount, 1);
 }
 if (strlen(trim($search_account))) {
-    $sql .= natural_search("aa.account_number", $search_account);
+	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-    $sql .= natural_search("l.tva_tx", price2num($search_vat), 1);
+	$sql .= natural_search("l.tva_tx", price2num($search_vat), 1);
 }
 $sql .= dolSqlDateFilter('f.datef', $search_day, $search_month, $search_year);
 if (strlen(trim($search_country))) {
@@ -299,13 +299,13 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -337,9 +337,9 @@ if ($result) {
 	if ($search_tvaintra)	 $param .= "&search_tvaintra=".urlencode($search_tvaintra);
 
 	$arrayofmassactions = array(
-	    'ventil'=>$langs->trans("Ventilate")
-	    //'presend'=>$langs->trans("SendByMail"),
-	    //'builddoc'=>$langs->trans("PDFMerge"),
+		'ventil'=>$langs->trans("Ventilate")
+		//'presend'=>$langs->trans("SendByMail"),
+		//'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -572,12 +572,12 @@ if ($result) {
 		print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
 
 		// Country
-        print '<td>';
-        $labelcountry = ($objp->country_code && ($langs->trans("Country".$objp->country_code) != "Country".$objp->country_code)) ? $langs->trans("Country".$objp->country_code) : $objp->country_label;
-        print $labelcountry;
-        print '</td>';
+		print '<td>';
+		$labelcountry = ($objp->country_code && ($langs->trans("Country".$objp->country_code) != "Country".$objp->country_code)) ? $langs->trans("Country".$objp->country_code) : $objp->country_label;
+		print $labelcountry;
+		print '</td>';
 
-        // VAT Num
+		// VAT Num
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		// Found accounts

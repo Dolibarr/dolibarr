@@ -450,14 +450,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->approve) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
-		$dashboardlines[$board->element . '_toapprove'] = $board->load_board($user, 'toapprove');
+		$dashboardlines[$board->element.'_toapprove'] = $board->load_board($user, 'toapprove');
 	}
 
 	// Number of expense reports to pay
 	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
-		$dashboardlines[$board->element . '_topay'] = $board->load_board($user, 'topay');
+		$dashboardlines[$board->element.'_topay'] = $board->load_board($user, 'topay');
 	}
 
 	// Number of holidays to approve

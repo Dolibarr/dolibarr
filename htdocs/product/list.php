@@ -219,7 +219,7 @@ $arrayfields = array(
 );
 
 // MultiPrices
-if ($conf->global->PRODUIT_MULTIPRICES){
+if ($conf->global->PRODUIT_MULTIPRICES) {
 	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 	{
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
@@ -753,7 +753,7 @@ if ($resql)
 	}
 
 	// Multiprice
-	if ($conf->global->PRODUIT_MULTIPRICES){
+	if ($conf->global->PRODUIT_MULTIPRICES) {
 		foreach ($arraypricelevel as $key => $value)
 		{
 			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
@@ -905,7 +905,7 @@ if ($resql)
 	}
 
 	// Multiprices
-	if ($conf->global->PRODUIT_MULTIPRICES){
+	if ($conf->global->PRODUIT_MULTIPRICES) {
 		foreach ($arraypricelevel as $key => $value)
 		{
 			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
@@ -1265,7 +1265,7 @@ if ($resql)
 
 
 		// Multiprices
-		if ($conf->global->PRODUIT_MULTIPRICES){
+		if ($conf->global->PRODUIT_MULTIPRICES) {
 			foreach ($arraypricelevel as $key => $value)
 			{
 				if (!empty($arrayfields['p.sellprice'.$key]['checked']))

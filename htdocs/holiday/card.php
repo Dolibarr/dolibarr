@@ -111,152 +111,152 @@ if (empty($reshook))
 			header("Location: ".$backtopage);
 			exit;
 		}
-	    $action = '';
+		$action = '';
 	}
 
 	// If create a request
 	if ($action == 'create')
 	{
-	    // If no right to create a request
-	    if (!$cancreate)
-	    {
-	    	$error++;
-	    	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
-	    	$action = 'request';
-	    }
+		// If no right to create a request
+		if (!$cancreate)
+		{
+			$error++;
+			setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
+			$action = 'request';
+		}
 
-	    if (!$error)
-	    {
-	        $object = new Holiday($db);
+		if (!$error)
+		{
+			$object = new Holiday($db);
 
-	    	$db->begin();
+			$db->begin();
 
-		    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		    $date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		    $date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		    $date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
-		    $starthalfday = GETPOST('starthalfday');
-		    $endhalfday = GETPOST('endhalfday');
-		    $type = GETPOST('type');
-		    $halfday = 0;
-		    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday = 2;
-		    elseif ($starthalfday == 'afternoon') $halfday = -1;
-		    elseif ($endhalfday == 'morning') $halfday = 1;
+			$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
+			$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+			$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
+			$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+			$starthalfday = GETPOST('starthalfday');
+			$endhalfday = GETPOST('endhalfday');
+			$type = GETPOST('type');
+			$halfday = 0;
+			if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday = 2;
+			elseif ($starthalfday == 'afternoon') $halfday = -1;
+			elseif ($endhalfday == 'morning') $halfday = 1;
 
-		    $valideur = GETPOST('valideur', 'int');
-		    $description = trim(GETPOST('description', 'none'));
+			$valideur = GETPOST('valideur', 'int');
+			$description = trim(GETPOST('description', 'none'));
 
-	    	// If no type
-		    if ($type <= 0)
-		    {
-		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// If no type
+			if ($type <= 0)
+			{
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
 
-		    // If no start date
-		    if (empty($date_debut))
-		    {
-		        setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
-		    // If no end date
-		    if (empty($date_fin))
-		    {
-		        setEventMessages($langs->trans("NoDateFin"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
-		    // If start date after end date
-		    if ($date_debut > $date_fin)
-		    {
-		        setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// If no start date
+			if (empty($date_debut))
+			{
+				setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
+			// If no end date
+			if (empty($date_fin))
+			{
+				setEventMessages($langs->trans("NoDateFin"), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
+			// If start date after end date
+			if ($date_debut > $date_fin)
+			{
+				setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
 
-		    // Check if there is already holiday for this period
-		    $verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
-		    if (!$verifCP)
-		    {
-		        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// Check if there is already holiday for this period
+			$verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
+			if (!$verifCP)
+			{
+				setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
 
-		    // If there is no Business Days within request
-		    $nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
-		    if ($nbopenedday < 0.5)
-		    {
-		        setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// If there is no Business Days within request
+			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+			if ($nbopenedday < 0.5)
+			{
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+				$error++;
+				$action = 'create';
+			}
 
-		    // If no validator designated
-		    if ($valideur < 1)
-		    {
-		        setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
-		        $error++;
-		    }
+			// If no validator designated
+			if ($valideur < 1)
+			{
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
+				$error++;
+			}
 
-		    $result = 0;
+			$result = 0;
 
-		    if (!$error)
-		    {
-	    	    $object->fk_user = $fuserid;
-	    	    $object->description = $description;
-	    	    $object->fk_validator = $valideur;
-	    		$object->fk_type = $type;
-	    		$object->date_debut = $date_debut;
-	    		$object->date_fin = $date_fin;
-	    		$object->halfday = $halfday;
+			if (!$error)
+			{
+				$object->fk_user = $fuserid;
+				$object->description = $description;
+				$object->fk_validator = $valideur;
+				$object->fk_type = $type;
+				$object->date_debut = $date_debut;
+				$object->date_fin = $date_fin;
+				$object->halfday = $halfday;
 
-	    		$result = $object->create($user);
-	    		if ($result <= 0)
-	    		{
-	    			setEventMessages($object->error, $object->errors, 'errors');
-	    			$error++;
-	    		}
-		    }
+				$result = $object->create($user);
+				if ($result <= 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+			}
 
-		    // If no SQL error we redirect to the request card
-		    if (!$error)
-		    {
+			// If no SQL error we redirect to the request card
+			if (!$error)
+			{
 				$db->commit();
 
-		    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		        exit;
-		    } else {
-		    	$db->rollback();
-		    }
-	    }
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			} else {
+				$db->rollback();
+			}
+		}
 	}
 
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve))
 	{
-	    $object->fetch($id);
+		$object->fetch($id);
 
-	    $object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object);
 
-	    $object->fk_validator = GETPOST('valideur', 'int');
+		$object->fk_validator = GETPOST('valideur', 'int');
 
-	    if ($object->fk_validator != $object->oldcopy->fk_validator)
-	    {
-	        $verif = $object->update($user);
+		if ($object->fk_validator != $object->oldcopy->fk_validator)
+		{
+			$verif = $object->update($user);
 
-	        if ($verif <= 0)
-	        {
-	            setEventMessages($object->error, $object->errors, 'warnings');
-	            $action = 'editvalidator';
-	        } else {
-	            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-	            exit;
-	        }
-	    }
+			if ($verif <= 0)
+			{
+				setEventMessages($object->error, $object->errors, 'warnings');
+				$action = 'editvalidator';
+			} else {
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			}
+		}
 
-	    $action = '';
+		$action = '';
 	}
 
 	if ($action == 'update' && !GETPOSTISSET('savevalidator'))

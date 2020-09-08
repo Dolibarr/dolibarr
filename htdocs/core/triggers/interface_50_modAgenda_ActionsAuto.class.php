@@ -756,64 +756,64 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = 0;
 		} elseif ($action == 'TICKET_ASSIGNED')
 		{
-		    // Load translation files required by the page
-		    $langs->loadLangs(array("agenda", "other", "projects"));
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
 
-		    if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
-		    $object->actionmsg = $langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
-		    if ($object->oldcopy->fk_user_assign > 0)
-		    {
-		        $tmpuser = new User($this->db);
-		        $tmpuser->fetch($object->oldcopy->fk_user_assign);
-		        $object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
-		    } else {
-		        $object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$langs->trans("None");
-		    }
-		    if ($object->fk_user_assign > 0)
-		    {
-		        $tmpuser = new User($this->db);
-		        $tmpuser->fetch($object->fk_user_assign);
-		        $object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$tmpuser->getFullName($langs);
-		    } else {
-		        $object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
-		    }
-		    $object->sendtoid = 0;
+			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
+			$object->actionmsg = $langs->transnoentities("TICKET_ASSIGNEDInDolibarr", $object->ref);
+			if ($object->oldcopy->fk_user_assign > 0)
+			{
+				$tmpuser = new User($this->db);
+				$tmpuser->fetch($object->oldcopy->fk_user_assign);
+				$object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
+			} else {
+				$object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$langs->trans("None");
+			}
+			if ($object->fk_user_assign > 0)
+			{
+				$tmpuser = new User($this->db);
+				$tmpuser->fetch($object->fk_user_assign);
+				$object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$tmpuser->getFullName($langs);
+			} else {
+				$object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
+			}
+			$object->sendtoid = 0;
 		}
 		// TODO Merge all previous cases into this generic one
 		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 		{
-		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
-		    // Note that these key can be set in agenda setup, only if defined into c_action_trigger
-		    // Load translation files required by the page
-            if (empty($object->actionmsg2)) {
-            	$langs->loadLangs(array("agenda", "other"));
-            	if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
-            		$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
-            	} else {	// generic translation key
-            		$tmp = explode('_', $action);
-            		$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
-            	}
-            }
-            if (empty($object->actionmsg))  {
-            	$langs->loadLangs(array("agenda", "other"));
-            	if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
-            		$object->actionmsg = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
-            	} else {	// generic translation key
-            		$tmp = explode('_', $action);
-            		$object->actionmsg = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
-            	}
-            }
+			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
+			// Note that these key can be set in agenda setup, only if defined into c_action_trigger
+			// Load translation files required by the page
+			if (empty($object->actionmsg2)) {
+				$langs->loadLangs(array("agenda", "other"));
+				if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
+					$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+				} else {	// generic translation key
+					$tmp = explode('_', $action);
+					$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+				}
+			}
+			if (empty($object->actionmsg))  {
+				$langs->loadLangs(array("agenda", "other"));
+				if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
+					$object->actionmsg = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+				} else {	// generic translation key
+					$tmp = explode('_', $action);
+					$object->actionmsg = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+				}
+			}
 
-		    if (!isset($object->sendtoid) || !is_array($object->sendtoid)) {
-		    	$object->sendtoid = 0;
-		    }
+			if (!isset($object->sendtoid) || !is_array($object->sendtoid)) {
+				$object->sendtoid = 0;
+			}
 		}
 
 		$object->actionmsg = $langs->transnoentities("Author").': '.$user->login."\n".$object->actionmsg;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        // Add entry in event table
+		// Add entry in event table
 		$now = dol_now();
 
 		if (isset($_SESSION['listofnames-'.$object->trackid]))
@@ -821,37 +821,37 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$attachs = $_SESSION['listofnames-'.$object->trackid];
 			if ($attachs && strpos($action, 'SENTBYMAIL'))
 			{
-                $object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
+				$object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
 			}
 		}
-        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactforaction = new Contact($this->db);
-        $societeforaction = new Societe($this->db);
-        // Set contactforaction if there is only 1 contact.
+		$societeforaction = new Societe($this->db);
+		// Set contactforaction if there is only 1 contact.
 
-        if (is_array($object->sendtoid))
-        {
-            if (count($object->sendtoid) == 1) $contactforaction->fetch(reset($object->sendtoid));
-        } else {
-            if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
-        }
-        // Set societeforaction.
-        if ($object->socid > 0)			$societeforaction->fetch($object->socid);
-        elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
+		if (is_array($object->sendtoid))
+		{
+			if (count($object->sendtoid) == 1) $contactforaction->fetch(reset($object->sendtoid));
+		} else {
+			if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
+		}
+		// Set societeforaction.
+		if ($object->socid > 0)			$societeforaction->fetch($object->socid);
+		elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
 
-        $projectid = isset($object->fk_project) ? $object->fk_project : 0;
-        if ($object->element == 'project') $projectid = $object->id;
+		$projectid = isset($object->fk_project) ? $object->fk_project : 0;
+		if ($object->element == 'project') $projectid = $object->id;
 
-        $elementid = $object->id;			// id of object
-        $elementtype = $object->element;
-        $elementmodule = $object->module;
-        if ($object->element == 'subscription')
-        {
-        	$elementid = $object->fk_adherent;
-        	$elementtype = 'member';
-        }
-        //var_dump($societeforaction);var_dump($contactforaction);var_dump($elementid);var_dump($elementtype);exit;
+		$elementid = $object->id;			// id of object
+		$elementtype = $object->element;
+		$elementmodule = $object->module;
+		if ($object->element == 'subscription')
+		{
+			$elementid = $object->fk_adherent;
+			$elementtype = 'member';
+		}
+		//var_dump($societeforaction);var_dump($contactforaction);var_dump($elementid);var_dump($elementtype);exit;
 
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';

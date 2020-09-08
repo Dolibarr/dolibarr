@@ -100,9 +100,9 @@ foreach ($object->fields as $key => $val)
 {
 	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
-$fieldstosearchall['s.name_alias']="AliasNameShort";
-$fieldstosearchall['s.zip']="Zip";
-$fieldstosearchall['s.town']="Town";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.zip'] = "Zip";
+$fieldstosearchall['s.town'] = "Town";
 
 // Definition of fields for list
 $arrayfields = array();
@@ -755,13 +755,13 @@ while ($i < min($num, $limit))
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
 			elseif ($key == 'type_code') {
-				$s = $langs->getLabelFromKey($db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 				print '<span title="'.$s.'">';
 				print $s;
 				print '</span>';
 			}
-			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
-			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
 			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif ($key == 'fk_user_create') {
 				if ($object->fk_user_create > 0) {

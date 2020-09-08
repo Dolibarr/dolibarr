@@ -426,13 +426,13 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 
 	$prefillDates = false;
 
-	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && ! empty($object->lines))
+	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && !empty($object->lines))
 	{
 		for ($i = count($object->lines) - 1; $i >= 0; $i--)
 		{
 			$lastline = $object->lines[$i];
 
-			if ($lastline->product_type == Product::TYPE_SERVICE && (! empty($lastline->date_start) || ! empty($lastline->date_end)))
+			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end)))
 			{
 				$date_start_prefill = $lastline->date_start;
 				$date_end_prefill = $lastline->date_end;
@@ -459,7 +459,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 
 	if ($prefillDates)
 	{
-		echo ' <span class="small"><a href="#" id="prefill_service_dates">' . $langs->trans('FillWithLastServiceDates') .  '</a></span>';
+		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
 	}
 
 	print '<script>';
