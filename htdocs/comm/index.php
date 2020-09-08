@@ -5,6 +5,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
+ * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +169,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
-		StartSimpleTableHeader(["ProposalsDraft"], 2, $num, "comm/propal/list.php","search_status=0");
+		StartSimpleTableHeader("ProposalsDraft", "comm/propal/list.php", "search_status=0", 2, $num);
 
 		if ($num > 0)
 		{
@@ -250,7 +251,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
         $total = 0;
         $num = $db->num_rows($resql);
 
-		StartSimpleTableHeader(["SupplierProposalsDraft"], 2, $num, "supplier_proposal/list.php","search_status=0");
+		StartSimpleTableHeader("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=0", 2, $num);
 
         if ($num > 0)
         {
@@ -329,7 +330,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
-		StartSimpleTableHeader(["DraftOrders"], 2, $num, "commande/list.php","search_status=0");
+		StartSimpleTableHeader("DraftOrders", "commande/list.php", "search_status=0", 2, $num);
 
 		if ($num > 0)
 		{
@@ -413,7 +414,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
         $total = 0;
         $num = $db->num_rows($resql);
 
-		StartSimpleTableHeader(["DraftSuppliersOrders"], 2, $num, "fourn/commande/list.php","search_status=0");
+		StartSimpleTableHeader("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=0", 2, $num);
 
         if ($num > 0)
         {
@@ -503,16 +504,19 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects", $max);
-        elseif (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects", $max);
-		else print $langs->trans("BoxTitleLastModifiedCustomers", $max);
-		print '</th>';
-		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
-		print '</tr>';
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+		{
+			StartSimpleTableHeader($langs->trans("BoxTitleLastCustomersOrProspects", min($max, $num)), "societe/list.php", "type=p,c", 1);
+		}
+		elseif (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+		{
+			StartSimpleTableHeader($langs->trans("BoxTitleLastModifiedProspects", min($max, $num)), "societe/list.php", "type=p,c", 1);
+		}
+		else
+		{
+			StartSimpleTableHeader($langs->trans("BoxTitleLastModifiedCustomers", min($max, $num)), "societe/list.php", "type=p,c", 1);
+		}
+
 		if ($num)
 		{
 			while ($i < $num)
@@ -570,12 +574,8 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)).'</th>';
-		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
-		print '</tr>';
+		StartSimpleTableHeader($langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)), "societe/list.php", "type=f");
+
 		if ($num)
 		{
 			while ($i < $num && $i < $max)
@@ -650,12 +650,11 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-
+		
 		if ($num > 0)
 		{
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts", 5).'</th></tr>';
+			StartSimpleTableHeader($langs->trans("LastContracts", 5), "", "", 2);
+
 			$i = 0;
 
 			$staticcontrat = new Contrat($db);
@@ -715,7 +714,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			StartSimpleTableHeader(["ProposalsOpened"], 4, $num, "comm/propal/list.php","search_status=1");
+			StartSimpleTableHeader("ProposalsOpened", "comm/propal/list.php", "search_status=1", 4, $num);
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -817,7 +816,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			StartSimpleTableHeader(["OrdersOpened"], 4, $num, "commande/list.php","search_status=1");
+			StartSimpleTableHeader("OrdersOpened", "commande/list.php", "search_status=1", 4, $num);
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)

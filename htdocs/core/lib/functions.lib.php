@@ -8675,58 +8675,70 @@ function currentToken()
  * Start a table with headers and a optinal clickable number
  * (don't forget to close the table with a HTML TABLE and a HTML DIV element)
  *
- * @param string|array	$headers		The header(s) of the table (headers inside a array are automatic translated)
- * @param integer		$emptyRows		(optional) The count of empty rows after the first header (use this instead of empty headers)
- * @param integer		$number			(optional) The number that is shown right after the first header
- * @param string		$internalLink	(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
- * @param string		$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @param string	$header		The first left header of the table (automatic translated)
+ * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @param integer	$emptyRows	(optional) The count of empty rows after the first header
+ * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
  * @return void
  */
-function StartSimpleTableHeader($headers, $emptyRows = 0, $number = -1, $internalLink = "", $arguments = "")
+function StartSimpleTableHeader($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
 {
 	global $langs;
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	
+
 	print $emptyRows < 1 ? '<th>' : '<th colspan="'.($emptyRows + 1).'">';
 
-	print is_array($headers) ? $langs->trans($headers[0]) : $headers;
+	print $langs->trans($header);
 
-	if($number > -1)
+	if ($number > -1)
 	{
 		// extra space between the first header and the number
 		print ' ';
 	}
 
-	if(!empty($internalLink))
+	if (!empty($link))
 	{
-		print '<a href="'.DOL_URL_ROOT.'/'.$internalLink.'?'.$arguments.'">';
+		if (!empty($arguments))
+		{
+			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
+		}
+		else
+		{
+			print '<a href="'.DOL_URL_ROOT.'/'.$link.'">';
+		}
 	}
 
-	if($number > -1)
+	if ($number > -1)
 	{
 		print '<span class="badge">'.$number.'</span>';
 	}
 
-	if(!empty($internalLink))
+	if (!empty($link))
 	{
 		print '</a>';
 	}
 
 	print '</th>';
 
-	if(!is_array($headers) || count($headers) < 2)
+	if ($number < 0 && !empty($link))
 	{
-		print '</tr>';
-		return;
-	}
+		print '<th class="right">';
 
-	foreach(array_slice($headers, 1) as $header)
-	{
-		print '<th>';
-		print print $langs->trans($header);
+		if (!empty($arguments))
+		{
+			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
+		}
+		else
+		{
+			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
+		}
+
+		print $langs->trans("FullList");
+		print '</a>';
 		print '</th>';
 	}
 
