@@ -1794,7 +1794,6 @@ TypePaymentDesc=0:Customer payment type, 1:Vendor payment type, 2:Both customers
 IncludePath=Include path (defined into variable %s)
 ExpenseReportsSetup=Setup of module Expense Reports
 TemplatePDFExpenseReports=Document templates to generate expense report document
-ExpenseReportsIkSetup=Setup of module Expense Reports - Milles index
 ExpenseReportsRulesSetup=Setup of module Expense Reports - Rules
 ExpenseReportNumberingModules=Expense reports numbering module
 NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.

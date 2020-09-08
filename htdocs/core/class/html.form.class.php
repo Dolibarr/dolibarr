@@ -7606,9 +7606,10 @@ class Form
 	 * @param	string	$target                htmlname of target select to bind event
 	 * @param	int		$default_selected      default category to select if fk_c_type_fees change = EX_KME
 	 * @param	array	$params                param to give
+	 * @param	int		$info_admin			   Show the tooltip help picto to setup list
 	 * @return	string
 	 */
-	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array())
+	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)
 	{
 		global $db, $conf, $langs, $user;
 
@@ -7629,7 +7630,9 @@ class Form
 				$out .= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
 			}
 			$out .= '</select>';
-			if (!empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= ajax_combobox('select_'.$htmlname);
+
+			if (!empty($htmlname) && $user->admin && $info_admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 			if (!empty($target))
 			{

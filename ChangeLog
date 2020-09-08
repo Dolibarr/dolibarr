@@ -15,6 +15,8 @@ Following changes may create regressions for some external modules, but were nec
 * Rename property $paiementid in API api_supplier_invoices into $payment_mode_id
 * The deprecated subsitution key __SIGNATURE__ has been removed. Replace with __USER_SIGNATURE__ if you still use old syntax in
   your email templates. 
+* The hidden option HOLIDAY_MORE_PUBLIC_HOLIDAYS has been removed. Use instead the dictionary table if you need to define custom
+  days of holiday.
 
 ***** ChangeLog for 12.0.2 compared to 12.0.1 *****
 FIX: computation of the bottom margin of <body> returns NaN because body is not loaded yet

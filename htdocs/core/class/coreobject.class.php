@@ -269,10 +269,10 @@ class CoreObject extends CommonObject
     /**
      * Function to create object in database
      *
-     * @param   User    $user   user object
+     * @param   User    $user   User object
      * @return  int             < 0 if KO, > 0 if OK
      */
-    public function create(User &$user)
+    public function create(User $user)
     {
         if ($this->id > 0) return $this->update($user);
 
