@@ -252,8 +252,8 @@ if ($action != 'export_csv')
 	print $langs->trans('to');
 	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
 	print '</td>';
-	print '<td class="liste_titre right">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 

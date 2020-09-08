@@ -462,10 +462,13 @@ class AccountingAccount extends CommonObject
 
 		if (empty($option) || $option == 'bookkeeping') {
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$labelurl = $langs->trans("ShowAccountingAccountInBookKeeping");
 		} elseif ($option == 'bookkeepinglistbyaccount') {
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$labelurl = $langs->trans("ShowAccountingAccountInBookKeepingByAccount");
 		} elseif ($option == 'accountcard') {
 			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
+			$labelurl = $langs->trans("ShowAccountingAccount");
 		}
 
 		// Add param to save lastsearch_values or not
@@ -483,7 +486,7 @@ class AccountingAccount extends CommonObject
 			$labeltoshow = $this->labelshort;
 		}
 
-		$label = '<u>'.$langs->trans("ShowAccountingAccount").'</u>';
+		$label = '<u>'.$labelurl.'</u>';
 		if (!empty($this->account_number))
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 		if (!empty($labeltoshow))
@@ -495,7 +498,7 @@ class AccountingAccount extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowAccountingAccount");
+				$label = $labelurl;
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
