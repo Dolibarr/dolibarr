@@ -324,7 +324,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
      * testDolCopyMoveDelete
      *
      * @return	void
-     * @depends	testDolDeleteDir
      */
     public function testDolCopyMoveDelete()
     {
