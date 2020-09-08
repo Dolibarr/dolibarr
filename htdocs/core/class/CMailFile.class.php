@@ -170,7 +170,7 @@ class CMailFile
 		$this->sendmode = '';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
-			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
+			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
 			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$this->sendmode = $smtpContextSendMode;
@@ -443,9 +443,9 @@ class CMailFile
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-			if (! empty($this->addr_from)) {
+			if (!empty($this->addr_from)) {
 				try {
-					if (! empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
+					if (!empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
 						// Prevent email spoofing for smtp server with a strict configuration
 						$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
@@ -465,7 +465,7 @@ class CMailFile
 			}
 
 			// Set the To addresses with an associative array
-			if (! empty($this->addr_to)) {
+			if (!empty($this->addr_to)) {
 				try {
 					$result = $this->message->setTo($this->getArrayAddress($this->addr_to));
 				} catch (Exception $e) {
@@ -473,7 +473,7 @@ class CMailFile
 				}
 			}
 
-			if (! empty($this->reply_to)) {
+			if (!empty($this->reply_to)) {
 				try {
 					$result = $this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
 				} catch (Exception $e) {
@@ -529,8 +529,8 @@ class CMailFile
 				}
 			}
 
-			if (! empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
-			if (! empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
+			if (!empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
+			if (!empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
 			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
 		} else {
@@ -641,15 +641,15 @@ class CMailFile
 			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
-				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
+				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
 				$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
-					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_' . $smtpContextKey;
-					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_' . $smtpContextKey;
-					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_' . $smtpContextKey;
-					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_' . $smtpContextKey;
-					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_' . $smtpContextKey;
-					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_' . $smtpContextKey;
+					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
+					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
+					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
+					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
+					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
 				}
 			}
 

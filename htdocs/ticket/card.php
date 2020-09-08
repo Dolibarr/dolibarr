@@ -138,7 +138,7 @@ if (empty($reshook)) {
 
 	if ($cancel) {
 		if (!empty($backtopage)) {
-			header("Location: " . $backtopage);
+			header("Location: ".$backtopage);
 			exit;
 		}
 
@@ -254,10 +254,10 @@ if (empty($reshook)) {
 				if (!empty($backtopage)) {
 					$url = $backtopage;
 				} else {
-					$url = 'card.php?track_id=' . $object->track_id;
+					$url = 'card.php?track_id='.$object->track_id;
 				}
 
-				header("Location: " . $url);
+				header("Location: ".$url);
 				exit;
 			} else {
 				$db->rollback();
@@ -325,7 +325,7 @@ if (empty($reshook)) {
 		if ($object->markAsRead($user) > 0) {
 			setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
 
-			header("Location: card.php?track_id=" . $object->track_id . "&action=view");
+			header("Location: card.php?track_id=".$object->track_id."&action=view");
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -376,7 +376,7 @@ if (empty($reshook)) {
 
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 
-			header("Location: card.php?track_id=" . $object->track_id . "&action=view");
+			header("Location: card.php?track_id=".$object->track_id."&action=view");
 			exit;
 		} else {
 			array_push($object->errors, $object->error);
@@ -392,10 +392,10 @@ if (empty($reshook)) {
 			if (!empty($backtopage)) {
 				$url = $backtopage;
 			} else {
-				$url = 'card.php?action=view&track_id=' . $object->track_id;
+				$url = 'card.php?action=view&track_id='.$object->track_id;
 			}
 
-			header("Location: " . $url);
+			header("Location: ".$url);
 			exit;
 		} else {
 			setEventMessages($object->error, null, 'errors');
@@ -409,8 +409,8 @@ if (empty($reshook)) {
 		if ($object->close($user)) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
-			$url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
-			header("Location: " . $url);
+			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
+			header("Location: ".$url);
 		} else {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -425,10 +425,10 @@ if (empty($reshook)) {
 			// Log action in ticket logs table
 			$log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
 
-			setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
+			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
-			$url = 'card.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
-			header("Location: " . $url);
+			$url = 'card.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
+			header("Location: ".$url);
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
@@ -438,12 +438,12 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $user->rights->ticket->delete) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			if ($object->delete($user) > 0) {
-				setEventMessages('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>', null, 'mesgs');
-				Header("Location: " . DOL_URL_ROOT . "/ticket/list.php");
+				setEventMessages('<div class="confirm">'.$langs->trans('TicketDeletedSuccess').'</div>', null, 'mesgs');
+				Header("Location: ".DOL_URL_ROOT."/ticket/list.php");
 				exit;
 			} else {
 				$langs->load("errors");
-				$mesg = '<div class="error">' . $langs->trans($object->error) . '</div>';
+				$mesg = '<div class="error">'.$langs->trans($object->error).'</div>';
 				$action = '';
 			}
 		}
@@ -453,8 +453,8 @@ if (empty($reshook)) {
 	if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
-			$url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
-			header("Location: " . $url);
+			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
+			header("Location: ".$url);
 			exit();
 		}
 	}
@@ -463,8 +463,8 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
 
-			$url = 'card.php?action=view&track_id=' . $object->track_id;
-			header("Location: " . $url);
+			$url = 'card.php?action=view&track_id='.$object->track_id;
+			header("Location: ".$url);
 			exit();
 		}
 	}
@@ -476,12 +476,12 @@ if (empty($reshook)) {
 			}
 
 			if ($action == 'setsubject' && empty($object->subject)) {
-				$mesg .= ($mesg ? '<br>' : '') . $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
+				$mesg .= ($mesg ? '<br>' : '').$langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
 			}
 
 			if (!$mesg) {
 				if ($object->update($user) >= 0) {
-					header("Location: " . $_SERVER['PHP_SELF'] . "?track_id=" . $object->track_id);
+					header("Location: ".$_SERVER['PHP_SELF']."?track_id=".$object->track_id);
 					exit;
 				}
 				$mesg = $object->error;
@@ -498,8 +498,8 @@ if (empty($reshook)) {
 					// Log action in ticket logs table
 					$log_action = $langs->trans('TicketLogReopen');
 
-					$url = 'card.php?action=view&track_id=' . $object->track_id;
-					header("Location: " . $url);
+					$url = 'card.php?action=view&track_id='.$object->track_id;
+					header("Location: ".$url);
 					exit();
 				}
 			}
@@ -508,16 +508,16 @@ if (empty($reshook)) {
 	elseif ($action == 'classin' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$object->setProject(GETPOST('projectid', 'int'));
-			$url = 'card.php?action=view&track_id=' . $object->track_id;
-			header("Location: " . $url);
+			$url = 'card.php?action=view&track_id='.$object->track_id;
+			header("Location: ".$url);
 			exit();
 		}
 	} // Categorisation dans contrat
 	elseif ($action == 'setcontract' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$object->setContract(GETPOST('contractid', 'int'));
-			$url = 'card.php?action=view&track_id=' . $object->track_id;
-			header("Location: " . $url);
+			$url = 'card.php?action=view&track_id='.$object->track_id;
+			header("Location: ".$url);
 			exit();
 		}
 	} elseif ($action == "set_message" && $user->rights->ticket->manage) {
@@ -530,7 +530,7 @@ if (empty($reshook)) {
 			$object->message = $fieldtomodify;
 			$ret = $object->update($user);
 			if ($ret > 0) {
-				$log_action = $langs->trans('TicketInitialMessageModified') . " \n";
+				$log_action = $langs->trans('TicketInitialMessageModified')." \n";
 				// include the Diff class
 				dol_include_once('/ticket/class/utils_diff.class.php');
 				// output the result of comparing two files as plain text
@@ -551,8 +551,8 @@ if (empty($reshook)) {
 				// Log action in ticket logs table
 				$log_action = $langs->trans('TicketLogStatusChanged', $langs->transnoentities($object->statuts_short[$old_status]), $langs->transnoentities($object->statuts_short[$new_status]));
 
-				$url = 'card.php?action=view&track_id=' . $object->track_id;
-				header("Location: " . $url);
+				$url = 'card.php?action=view&track_id='.$object->track_id;
+				header("Location: ".$url);
 				exit();
 			}
 		}
@@ -597,19 +597,19 @@ if (empty($reshook)) {
 
 
 	$permissiondellink = $user->rights->ticket->write;
-	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Actions to build doc
 	$upload_dir = $conf->ticket->dir_output;
 	$permissiontoadd = $user->rights->ticket->write;
-	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-	$trackid = 'tic' . $object->id;
-	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+	$trackid = 'tic'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Set $action to correct value for the case we used presend action to add a message
 	if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
@@ -1027,15 +1027,15 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		} else {
 			// Type
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			print $langs->getLabelFromKey($db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+			print $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 			print '</td></tr>';
 			// Group
 			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
-			print $langs->getLabelFromKey($db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+			print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
 			print '</td></tr>';
 			// Severity
 			print '<tr><td>'.$langs->trans("TicketSeverity").'</td><td>';
-			print $langs->getLabelFromKey($db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+			print $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
 			print '</td></tr>';
 		}
 		print '</table>'; // End table actions
@@ -1299,7 +1299,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		}
 
 		// Show messages on card (Note: this is a duplicate of the view Events/Agenda but on the main tab)
-		if (! empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
+		if (!empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
 			$param = '&id='.$object->id;
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 			if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
@@ -1308,17 +1308,17 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 			$morehtmlright = '';
 
-			$messagingUrl = DOL_URL_ROOT . '/ticket/agenda.php?track_id=' . $object->track_id;
+			$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fal fa-list-alt imgforviewmode', $messagingUrl, '', 1);
 
 			// Show link to add a message (if read and not closed)
 			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message";
-			$url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
+			$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init';
 			$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fal fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 			// Show link to add event (if read and not closed)
-			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message";;
-			$url = dol_buildpath('/comm/action/card.php', 1) . '?action=create&datep=' . date('YmdHi') . '&origin=ticket&originid=' . $object->id . '&projectid=' . $object->fk_project . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?track_id=' . $object->track_id);
+			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message"; ;
+			$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
 			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fal fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 			print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
@@ -1352,7 +1352,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/ticket/agenda.php?id='.$object->id);
 
 				// List of actions on element
-				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 				$formactions = new FormActions($db);
 				$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 

@@ -303,7 +303,7 @@ if ($object->id > 0)
 				print '<td colspan="2">&nbsp;</td>';
 
 				// Module id
-				if ($user->admin) print '<td class="right">'. $objMod->numero.'</td>';
+				if ($user->admin) print '<td class="right">'.$objMod->numero.'</td>';
 
 				print '</tr>';
 			}

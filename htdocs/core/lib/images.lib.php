@@ -41,8 +41,8 @@ function image_format_supported($file, $acceptsvg = 0)
 	global $conf;
 
 	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
-	if ($acceptsvg || ! empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
-		$regeximgext .= '|\.svg';		// Not allowed by default. SVG can contains javascript
+	if ($acceptsvg || !empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
 	}
 
 	// Case filename is not a format image

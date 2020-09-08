@@ -1291,21 +1291,21 @@ if ($resql)
 			foreach ($toselect as $checked) {
 				if ($tmpproposal->fetch($checked)) {
 					if ($tmpproposal->statut == 0) {
-						if ($tmpproposal->valid($user)){
-							setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+						if ($tmpproposal->valid($user)) {
+							setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
 						} else {
 							setEventMessage($langs->trans('CantBeValidated'), 'errors');
 							$error++;
 						}
 					} else {
-						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
+						setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
 						$error++;
 					}
 				}
 				dol_print_error($db);
 				$error++;
 			}
-			if ($error){
+			if ($error) {
 				$db->rollback();
 			} else {
 				$db->commit();
@@ -1323,13 +1323,13 @@ if ($resql)
 					if ($tmpproposal->statut == 1) {
 						$tmpproposal->statut = 2;
 						if ($tmpproposal->update($user)) {
-							setEventMessage($tmpproposal->ref . " " . $langs->trans('Signed'), 'mesgs');
+							setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 						} else {
 							dol_print_error($db);
 							$error++;
 						}
 					} else {
-						setEventMessage($tmpproposal->ref . " " . $langs->trans('CantBeSign'), 'errors');
+						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
 						$error++;
 					}
 				} else {
@@ -1337,7 +1337,7 @@ if ($resql)
 					$error++;
 				}
 			}
-			if ($error){
+			if ($error) {
 				$db->rollback();
 			} else {
 				$db->commit();

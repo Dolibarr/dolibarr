@@ -173,75 +173,75 @@ function length_accounta($accounta)
  */
 function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
-    global $langs;
+	global $langs;
 
-    print "\n\n<!-- start banner journal -->\n";
+	print "\n\n<!-- start banner journal -->\n";
 
-    if (!is_empty($varlink)) $varlink = '?'.$varlink;
+	if (!is_empty($varlink)) $varlink = '?'.$varlink;
 
-    $head = array();
-    $h = 0;
-    $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
-    $head[$h][1] = $langs->trans("Journalization");
-    $head[$h][2] = 'journal';
+	$head = array();
+	$h = 0;
+	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
+	$head[$h][1] = $langs->trans("Journalization");
+	$head[$h][2] = 'journal';
 
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-    dol_fiche_head($head, 'journal');
+	dol_fiche_head($head, 'journal');
 
-    foreach ($moreparam as $key => $value)
-    {
-        print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
-    }
-    print '<table width="100%" class="border">';
+	foreach ($moreparam as $key => $value)
+	{
+		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+	}
+	print '<table width="100%" class="border">';
 
-    // Ligne de titre
-    print '<tr>';
-    print '<td width="110">'.$langs->trans("Name").'</td>';
-    print '<td colspan="3">';
-    print $nom;
-    print '</td>';
-    print '</tr>';
+	// Ligne de titre
+	print '<tr>';
+	print '<td width="110">'.$langs->trans("Name").'</td>';
+	print '<td colspan="3">';
+	print $nom;
+	print '</td>';
+	print '</tr>';
 
-    // Calculation mode
-    if ($calcmode)
-    {
-        print '<tr>';
-        print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-        if (!$variante) print '<td colspan="3">';
-        else print '<td>';
-        print $calcmode;
-        if ($variante) print '</td><td colspan="2">'.$variante;
-        print '</td>';
-        print '</tr>';
-    }
+	// Calculation mode
+	if ($calcmode)
+	{
+		print '<tr>';
+		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		if (!$variante) print '<td colspan="3">';
+		else print '<td>';
+		print $calcmode;
+		if ($variante) print '</td><td colspan="2">'.$variante;
+		print '</td>';
+		print '</tr>';
+	}
 
-    // Ligne de la periode d'analyse du rapport
-    print '<tr>';
-    print '<td>'.$langs->trans("ReportPeriod").'</td>';
-    if (!$periodlink) print '<td colspan="3">';
-    else print '<td>';
-    if ($period) print $period;
-    if ($periodlink) print '</td><td colspan="2">'.$periodlink;
-    print '</td>';
-    print '</tr>';
+	// Ligne de la periode d'analyse du rapport
+	print '<tr>';
+	print '<td>'.$langs->trans("ReportPeriod").'</td>';
+	if (!$periodlink) print '<td colspan="3">';
+	else print '<td>';
+	if ($period) print $period;
+	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	print '</td>';
+	print '</tr>';
 
-    // Ligne de description
-    print '<tr>';
-    print '<td>'.$langs->trans("ReportDescription").'</td>';
-    print '<td colspan="3">'.$description.'</td>';
-    print '</tr>';
+	// Ligne de description
+	print '<tr>';
+	print '<td>'.$langs->trans("ReportDescription").'</td>';
+	print '<td colspan="3">'.$description.'</td>';
+	print '</tr>';
 
-    print '</table>';
+	print '</table>';
 
-    dol_fiche_end();
+	dol_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 
-    print '</form>';
+	print '</form>';
 
-    print "\n<!-- end banner journal -->\n\n";
+	print "\n<!-- end banner journal -->\n\n";
 }
 
 /**
@@ -255,7 +255,7 @@ function getDefaultDatesForTransfer()
 
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
 	$periodbydefaultontransfer = $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER;
-	isset($periodbydefaultontransfer)?$periodbydefaultontransfer:0;
+	isset($periodbydefaultontransfer) ? $periodbydefaultontransfer : 0;
 	if ($periodbydefaultontransfer == 2) {
 		$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
@@ -284,15 +284,15 @@ function getDefaultDatesForTransfer()
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
-			$pastmonthyear --;
+			$pastmonthyear--;
 		}
 	} else {
 		$year_current = strftime("%Y", dol_now());
-		$pastmonth = strftime("%m", dol_now())-1;
+		$pastmonth = strftime("%m", dol_now()) - 1;
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
-			$pastmonthyear --;
+			$pastmonthyear--;
 		}
 	}
 

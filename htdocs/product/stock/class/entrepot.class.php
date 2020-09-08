@@ -736,7 +736,7 @@ class Entrepot extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label));
+		if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
 		$result .= $linkend;
 
 		global $action;
