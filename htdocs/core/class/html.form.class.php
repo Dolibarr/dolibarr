@@ -7538,7 +7538,7 @@ class Form
 	}
 
 	/**
-	 *	Return HTML to show the search and clear seach button
+	 *	Return HTML to show the search and clear search button
 	 *
 	 *  @param  string  $cssclass                  CSS class
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
@@ -7611,7 +7611,7 @@ class Form
 	 */
 	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)
 	{
-		global $db, $conf, $langs, $user;
+		global $db, $langs, $user;
 
 		$out = '';
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
@@ -7933,7 +7933,7 @@ class Form
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array())
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$ret = '';
 

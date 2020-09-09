@@ -252,8 +252,8 @@ if ($action != 'export_csv')
 	print $langs->trans('to');
 	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
 	print '</td>';
-	print '<td class="liste_titre right">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 
@@ -290,7 +290,7 @@ if ($action != 'export_csv')
 	{
         $accountingaccountstatic->fetch(null, $line->numero_compte, true);
         if (!empty($accountingaccountstatic->account_number)) {
-            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
         } else {
             $accounting_account = length_accountg($line->numero_compte);
         }
