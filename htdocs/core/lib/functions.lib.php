@@ -8694,46 +8694,35 @@ function StartSimpleTableHeader($header, $link = "", $arguments = "", $emptyRows
 
 	print $langs->trans($header);
 
-	if ($number > -1)
-	{
-		// extra space between the first header and the number
+	// extra space between the first header and the number
+	if ($number > -1) {
 		print ' ';
 	}
 
-	if (!empty($link))
-	{
-		if (!empty($arguments))
-		{
+	if (!empty($link)) {
+		if (!empty($arguments)) {
 			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
-		}
-		else
-		{
+		} else {
 			print '<a href="'.DOL_URL_ROOT.'/'.$link.'">';
 		}
 	}
 
-	if ($number > -1)
-	{
+	if ($number > -1) {
 		print '<span class="badge">'.$number.'</span>';
 	}
 
-	if (!empty($link))
-	{
+	if (!empty($link)) {
 		print '</a>';
 	}
 
 	print '</th>';
 
-	if ($number < 0 && !empty($link))
-	{
+	if ($number < 0 && !empty($link)) {
 		print '<th class="right">';
 
-		if (!empty($arguments))
-		{
+		if (!empty($arguments)) {
 			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
-		}
-		else
-		{
+		} else {
 			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
 		}
 
