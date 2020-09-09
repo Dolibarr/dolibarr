@@ -44,6 +44,8 @@ $cancel = GETPOST('cancel', 'alpha');
 $accountingaccount = GETPOST('accountingaccount', 'alpha');
 
 // Security check
+if ($user->socid > 0) accessforbidden();
+if (!$user->rights->accounting->chartofaccount) accessforbidden();
 
 
 $object = new AccountingAccount($db);
