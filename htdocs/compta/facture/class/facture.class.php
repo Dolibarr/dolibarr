@@ -1591,7 +1591,7 @@ class Facture extends CommonInvoice
 				$this->user_author			= $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;
+				$this->modelpdf = $obj->model_pdf;				// deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
@@ -1837,7 +1837,7 @@ class Facture extends CommonInvoice
 		if (isset($this->note) || isset($this->note_private)) $this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
 		if (isset($this->note) || isset($this->note_private)) $this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 		if (isset($this->retained_warranty)) $this->retained_warranty = floatval($this->retained_warranty);
 

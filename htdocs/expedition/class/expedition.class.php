@@ -1067,7 +1067,7 @@ class Expedition extends CommonObject
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note = trim($this->note_private);
 		if (isset($this->note_public)) $this->note = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
 

@@ -1191,8 +1191,8 @@ class Mo extends CommonObject
 			//$modele = 'standard';
 			$modele = ''; // Remove this once a pdf_standard.php exists.
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->MO_ADDON_PDF)) {
 				$modele = $conf->global->MO_ADDON_PDF;
 			}

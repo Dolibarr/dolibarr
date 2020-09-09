@@ -842,7 +842,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 				{
 					// Define output language
 					$outputlangs = $langs;
-					$order->generateDocument($order->modelpdf, $outputlangs);
+					$order->generateDocument($order->model_pdf, $outputlangs);
 				}
 				else {
 					$db->rollback();
@@ -929,7 +929,7 @@ function updateOrder($authentication, $order)
 					{
 						// Define output language
 						$outputlangs = $langs;
-						$object->generateDocument($order->modelpdf, $outputlangs);
+						$object->generateDocument($order->model_pdf, $outputlangs);
 					}
 				}
 				if ($order['status'] == 0)  $result = $object->set_reopen($fuser);

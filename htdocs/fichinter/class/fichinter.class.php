@@ -279,7 +279,7 @@ class Fichinter extends CommonObject
 		$sql .= ", ".$user->id;
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->description ? "'".$this->db->escape($this->description)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fk_project ? $this->fk_project : 0);
 		$sql .= ", ".($this->fk_contrat ? $this->fk_contrat : 0);
 		$sql .= ", ".$this->statut;
@@ -449,7 +449,7 @@ class Fichinter extends CommonObject
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->model_pdf    = $obj->model_pdf;
-				$this->modelpdf     = $obj->model_pdf;
+				$this->modelpdf     = $obj->model_pdf;	// deprecated
 				$this->fk_contrat = $obj->fk_contrat;
 
 				$this->user_creation = $obj->fk_user_author;

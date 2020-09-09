@@ -187,7 +187,7 @@ if (empty($reshook))
     				$outputlangs = new Translate("", $conf);
     				$outputlangs->setDefaultLang($newlang);
     			}
-    			$model = $object->modelpdf;
+    			$model = $object->model_pdf;
     			$ret = $object->fetch($id); // Reload to get new records
 
     			$object->generateDocument($model, $outputlangs, 0, 0, 0);
@@ -694,7 +694,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	    $genallowed = $user->rights->mrp->read; // If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->mrp->create; // If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
+	    print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));

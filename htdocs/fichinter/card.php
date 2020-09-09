@@ -167,7 +167,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->modelpdf : GETPOST('model', 'alpha'), $outputlangs);
+				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->model_pdf : GETPOST('model', 'alpha'), $outputlangs);
 			}
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -192,7 +192,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->modelpdf : GETPOST('model', 'alpha'), $outputlangs);
+				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->model_pdf : GETPOST('model', 'alpha'), $outputlangs);
 			}
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -209,7 +209,7 @@ if (empty($reshook))
 	    $object->author = $user->id;
 	    $object->description	= GETPOST('description', 'none');
 	    $object->ref = $ref;
-	    $object->modelpdf = GETPOST('model', 'alpha');
+	    $object->model_pdf = GETPOST('model', 'alpha');
 	    $object->note_private = GETPOST('note_private', 'none');
 	    $object->note_public = GETPOST('note_public', 'none');
 
@@ -506,7 +506,7 @@ if (empty($reshook))
 			{
 				$db->commit();
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
 			} else {
@@ -603,7 +603,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
@@ -638,7 +638,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 	}
 
 	/*
@@ -658,7 +658,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
@@ -676,7 +676,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
@@ -1653,7 +1653,7 @@ if ($action == 'create')
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->rights->ficheinter->lire;
 		$delallowed = $user->rights->ficheinter->creer;
-		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));

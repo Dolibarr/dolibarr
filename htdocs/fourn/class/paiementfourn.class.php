@@ -256,7 +256,7 @@ class PaiementFourn extends Paiement
 									$outputlangs->setDefaultLang($newlang);
 								}
 								$ret = $invoice->fetch($facid); // Reload to get new records
-								$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+								$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 								if ($result < 0) {
 									setEventMessages($invoice->error, $invoice->errors, 'errors');
 									$error++;

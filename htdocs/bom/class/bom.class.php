@@ -934,8 +934,8 @@ class BOM extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->BOM_ADDON_PDF)) {
 				$modele = $conf->global->BOM_ADDON_PDF;
 			}

@@ -401,7 +401,7 @@ class Reception extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
@@ -784,7 +784,7 @@ class Reception extends CommonObject
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note = trim($this->note_private);
 		if (isset($this->note_public)) $this->note = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
 		// Check parameters
@@ -1877,8 +1877,8 @@ class Reception extends CommonObject
 		{
 			$modele = 'squille';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->RECEPTION_ADDON_PDF)) {
 				$modele = $conf->global->RECEPTION_ADDON_PDF;
 			}

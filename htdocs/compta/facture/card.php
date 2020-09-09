@@ -251,7 +251,7 @@ if (empty($reshook))
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($id); // Reload to get new records
-				$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			if ($result >= 0) {
 				header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
@@ -458,7 +458,7 @@ if (empty($reshook))
 					$outputlangs->setDefaultLang($newlang);
 					$outputlangs->load('products');
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -530,7 +530,7 @@ if (empty($reshook))
 			}
 			$ret = $object->fetch($id); // Reload to get new records
 
-			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setref' && $usercancreate)
@@ -644,7 +644,7 @@ if (empty($reshook))
 						$outputlangs->setDefaultLang($newlang);
 						$outputlangs->load('products');
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -728,7 +728,7 @@ if (empty($reshook))
 							$outputlangs->setDefaultLang($newlang);
 							$outputlangs->load('products');
 						}
-						$model = $object->modelpdf;
+						$model = $object->model_pdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -991,7 +991,7 @@ if (empty($reshook))
 				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
+				$object->model_pdf = $_POST['model'];
 				$object->fk_project			= $_POST['projectid'];
 				$object->cond_reglement_id	= $_POST['cond_reglement_id'];
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
@@ -1048,7 +1048,7 @@ if (empty($reshook))
 				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
+				$object->model_pdf = $_POST['model'];
 				$object->fk_project			= $_POST['projectid'];
 				$object->cond_reglement_id	= 0;
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
@@ -1264,7 +1264,7 @@ if (empty($reshook))
 				$object->note_private    = trim(GETPOST('note_private', 'none'));
 				$object->ref_client      = $_POST['ref_client'];
 				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf        = $_POST['model'];
+				$object->model_pdf        = $_POST['model'];
 				$object->fk_project = $_POST['projectid'];
 				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
@@ -1316,7 +1316,7 @@ if (empty($reshook))
 				$object->note_private = trim(GETPOST('note_private', 'none'));
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
+				$object->model_pdf = $_POST['model'];
 				$object->fk_project			= $_POST['projectid'];
 				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
@@ -1806,7 +1806,7 @@ if (empty($reshook))
 				$object->note_private = trim(GETPOST('note', 'none'));
 				$object->ref_client = GETPOST('ref_client', 'alpha');
 				$object->ref_int = GETPOST('ref_int', 'alpha');
-				$object->modelpdf = GETPOST('model', 'alpha');
+				$object->model_pdf = GETPOST('model', 'alpha');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
@@ -1851,7 +1851,7 @@ if (empty($reshook))
 					$outputlangs->setDefaultLang($newlang);
 					$outputlangs->load('products');
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2145,7 +2145,7 @@ if (empty($reshook))
 							$outputlangs->setDefaultLang($newlang);
 							$outputlangs->load('products');
 						}
-						$model = $object->modelpdf;
+						$model = $object->model_pdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2356,7 +2356,7 @@ if (empty($reshook))
 					}
 
 					$ret = $object->fetch($id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -5311,7 +5311,7 @@ if ($action == 'create')
 
 		print $formfile->showdocuments(
 			'facture', $filename, $filedir, $urlsource, $genallowed,
-			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
+			$delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '',
 			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
 
 		$somethingshown = $formfile->numoffiles;

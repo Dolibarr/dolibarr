@@ -344,7 +344,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 		}
-		$result = $object->generateDocument($object->modelpdf, $outputlangs);
+		$result = $object->generateDocument($object->model_pdf, $outputlangs);
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1352,7 +1352,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
 		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
 
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

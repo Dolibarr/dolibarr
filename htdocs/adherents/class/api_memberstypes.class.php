@@ -293,7 +293,7 @@ class MembersTypes extends DolibarrApi
         unset($object->cond_reglement);
         unset($object->fk_delivery_address);
         unset($object->shipping_method_id);
-        unset($object->modelpdf);
+        unset($object->model_pdf);
         unset($object->fk_account);
         unset($object->note_public);
         unset($object->note_private);

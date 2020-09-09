@@ -400,7 +400,7 @@ if (empty($reshook))
     				$outputlangs = new Translate("", $conf);
     				$outputlangs->setDefaultLang($newlang);
     			}
-    			$model = $object->modelpdf;
+    			$model = $object->model_pdf;
     			$ret = $object->fetch($id); // Reload to get new records
 
     			$object->generateDocument($model, $outputlangs, 0, 0, 0);

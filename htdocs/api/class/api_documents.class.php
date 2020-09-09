@@ -196,7 +196,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Invoice not found');
 			}
 
-			$templateused = $doctemplate ? $doctemplate : $this->invoice->modelpdf;
+			$templateused = $doctemplate ? $doctemplate : $this->invoice->model_pdf;
 			$result = $this->invoice->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
@@ -210,7 +210,7 @@ class Documents extends DolibarrApi
 			if (!$result) {
 				throw new RestException(404, 'Order not found');
 			}
-			$templateused = $doctemplate ? $doctemplate : $this->order->modelpdf;
+			$templateused = $doctemplate ? $doctemplate : $this->order->model_pdf;
 			$result = $this->order->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
@@ -224,7 +224,7 @@ class Documents extends DolibarrApi
 			if (!$result) {
 				throw new RestException(404, 'Proposal not found');
 			}
-			$templateused = $doctemplate ? $doctemplate : $this->propal->modelpdf;
+			$templateused = $doctemplate ? $doctemplate : $this->propal->model_pdf;
 			$result = $this->propal->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');

@@ -535,7 +535,7 @@ class Project extends CommonObject
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;
+				$this->modelpdf = $obj->model_pdf;	// deprecated
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
@@ -1689,8 +1689,8 @@ class Project extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'baleine';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
 			}

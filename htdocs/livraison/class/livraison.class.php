@@ -315,7 +315,7 @@ class Livraison extends CommonObject
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->origin               = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
@@ -1043,8 +1043,8 @@ class Livraison extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'typhon';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
 			}

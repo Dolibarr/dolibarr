@@ -227,7 +227,7 @@ if (empty($reshook)) {
 					$fichinter->fk_project = GETPOST('projectid', 'int');
 					$fichinter->fk_contrat = $contractid;
 					$fichinter->author = $user->id;
-					$fichinter->modelpdf = 'soleil';
+					$fichinter->model_pdf = 'soleil';
 					$fichinter->origin = $object->element;
 					$fichinter->origin_id = $object->id;
 

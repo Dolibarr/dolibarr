@@ -341,7 +341,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -454,7 +454,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -566,7 +566,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -680,7 +680,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -798,7 +798,7 @@ if (empty($reshook))
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
 						}
-						$model = $object->modelpdf;
+						$model = $object->model_pdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -913,7 +913,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -952,7 +952,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -980,7 +980,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1008,7 +1008,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1176,7 +1176,7 @@ if (empty($reshook))
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($qty);
@@ -1222,7 +1222,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1314,7 +1314,7 @@ if (empty($reshook))
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
 						}
-						$model = $object->modelpdf;
+						$model = $object->model_pdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);

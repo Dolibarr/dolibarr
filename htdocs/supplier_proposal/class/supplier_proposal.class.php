@@ -918,7 +918,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "null");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
@@ -1245,7 +1245,7 @@ class SupplierProposal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_project;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
@@ -2638,8 +2638,8 @@ class SupplierProposal extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'aurore';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF)) {
 				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
 			}

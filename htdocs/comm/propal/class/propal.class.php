@@ -1061,7 +1061,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
@@ -1494,7 +1494,7 @@ class Propal extends CommonObject
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -1599,7 +1599,7 @@ class Propal extends CommonObject
 		if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
 		if (isset($this->note) || isset($this->note_private)) $this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 		if (!empty($this->duree_validite)) $this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 
@@ -2527,13 +2527,13 @@ class Propal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
+			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 			$triggerName = 'PROPAL_CLOSE_REFUSED';
 
 			if ($status == self::STATUS_SIGNED)
 			{
 				$triggerName = 'PROPAL_CLOSE_SIGNED';
-				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
+				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
 				$soc = new Societe($this->db);
@@ -3671,8 +3671,8 @@ class Propal extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->PROPALE_ADDON_PDF)) {
 				$modele = $conf->global->PROPALE_ADDON_PDF;
 			}

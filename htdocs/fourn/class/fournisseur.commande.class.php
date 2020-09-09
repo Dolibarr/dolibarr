@@ -393,7 +393,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->note_private = $obj->note_private;
 			$this->note_public = $obj->note_public;
 			$this->model_pdf = $obj->model_pdf;
-			$this->modelpdf = $obj->model_pdf;
+			$this->modelpdf = $obj->model_pdf;	// deprecated
 
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
@@ -2972,8 +2972,8 @@ class CommandeFournisseur extends CommonOrder
 		if (!dol_strlen($modele)) {
 			$modele = 'muscadet';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 			}

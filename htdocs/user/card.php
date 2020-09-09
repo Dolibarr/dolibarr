@@ -2719,7 +2719,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			$genallowed = $user->rights->user->user->lire;
 			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

@@ -943,7 +943,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "null");
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
@@ -1843,7 +1843,7 @@ class Commande extends CommonOrder
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;
+				$this->modelpdf = $obj->model_pdf;	// deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -3211,7 +3211,7 @@ class Commande extends CommonOrder
 		if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
 		if (isset($this->note) || isset($this->note_private)) $this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 
 		// Check parameters

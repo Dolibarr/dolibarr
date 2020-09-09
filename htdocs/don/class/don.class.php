@@ -687,7 +687,7 @@ class Don extends CommonObject
 				$this->note_private	      = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf          = $obj->model_pdf;
-				$this->modelpdf           = $obj->model_pdf;
+				$this->modelpdf           = $obj->model_pdf;	// deprecated
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
@@ -985,8 +985,8 @@ class Don extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'html_cerfafr';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->DON_ADDON_MODEL)) {
 				$modele = $conf->global->DON_ADDON_MODEL;
 			}

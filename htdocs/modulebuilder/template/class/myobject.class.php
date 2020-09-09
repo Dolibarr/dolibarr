@@ -1020,8 +1020,8 @@ class MyObject extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_myobject';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->MYOBJECT_ADDON_PDF)) {
 				$modele = $conf->global->MYOBJECT_ADDON_PDF;
 			}
