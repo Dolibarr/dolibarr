@@ -1,4 +1,6 @@
 <?php
+use Sabre\VObject\Property\Boolean;
+
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  *
@@ -359,14 +361,17 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($result, 'move with default mask');
 
         // To test a move that should work with forced mask
-        $result=dol_move($conf->admin->dir_temp.'/file2.csv', $conf->admin->dir_temp.'/file3.csv', '0754', 1); // file shoutld be rwxr-wr--
+        $result=dol_move($conf->admin->dir_temp.'/file2.csv', $conf->admin->dir_temp.'/file3.csv', '0754', 1); // file should be rwxr-wr--
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result, 'move with forced mask');
 
+        $conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+        $conf->logbuffer=array();
+
         // To test a delete that should success
         $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv');
-        print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result, 'delete file');
+        print __METHOD__." result delete=".var_export($result, true)."\n";
+        $this->assertTrue($result, 'delete file '.join("\n", $conf->logbuffer));
 
         // Again to test there is error when deleting a non existing file with option disableglob
         $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv', 1, 1);
