@@ -517,12 +517,21 @@ class Translate
 
 		if ($fileread) $this->_tab_loaded[$newdomain] = 1; // Set domain file as loaded
 
-		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Marque ce cas comme non trouve (no lines found for language)
+		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Mark this case as not found (no lines found for language)
 
 		return 1;
 	}
 
-
+	/**
+	 * Get information with result of loading data for domain
+	 *
+	 * @param	string		$domain		Domain to check
+	 * @return 	int						0, 1, 2...
+	 */
+	public function isLoaded($domain)
+	{
+		return $this->_tab_loaded[$domain];
+	}
 
 	/**
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).

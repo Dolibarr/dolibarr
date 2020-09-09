@@ -2210,7 +2210,7 @@ class Product extends CommonObject
                             }
                             }*/
 						} else {
-							$this->error=$this->db->lasterror;
+							$this->error = $this->db->lasterror;
 							return -1;
 						}
 					}
@@ -2255,12 +2255,12 @@ class Product extends CommonObject
 								}
 								$this->prices_by_qty_list[0] = $resultat;
 							} else {
-								$this->error=$this->db->lasterror;
+								$this->error = $this->db->lasterror;
 								return -1;
 							}
 						}
 					} else {
-						$this->error=$this->db->lasterror;
+						$this->error = $this->db->lasterror;
 						return -1;
 					}
 				} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) && empty($ignore_price_load))    // prices per customer and quantity
@@ -2314,12 +2314,12 @@ class Product extends CommonObject
 									}
 									$this->prices_by_qty_list[$i] = $resultat;
 								} else {
-									$this->error=$this->db->lasterror;
+									$this->error = $this->db->lasterror;
 									return -1;
 								}
 							}
 						} else {
-							$this->error=$this->db->lasterror;
+							$this->error = $this->db->lasterror;
 							return -1;
 						}
 					}
@@ -2346,7 +2346,7 @@ class Product extends CommonObject
 				return 0;
 			}
 		} else {
-			$this->error=$this->db->lasterror;
+			$this->error = $this->db->lasterror;
 			return -1;
 		}
 	}
@@ -4769,7 +4769,7 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled))
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))
 		{
 			$filterStatus = '1,2,3,4';
 			if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;

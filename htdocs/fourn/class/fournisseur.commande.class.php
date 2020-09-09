@@ -519,740 +519,740 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				$line->date_start = $this->db->jdate($objp->date_start);
-    			$line->date_end            = $this->db->jdate($objp->date_end);
-    			$line->fk_unit             = $objp->fk_unit;
+				$line->date_end            = $this->db->jdate($objp->date_end);
+				$line->fk_unit             = $objp->fk_unit;
 
-    			// Multicurrency
-    			$line->fk_multicurrency = $objp->fk_multicurrency;
-    			$line->multicurrency_code = $objp->multicurrency_code;
-    			$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-    			$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-    			$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-    			$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+				// Multicurrency
+				$line->fk_multicurrency = $objp->fk_multicurrency;
+				$line->multicurrency_code = $objp->multicurrency_code;
+				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-    			$line->special_code        = $objp->special_code;
-    			$line->fk_parent_line      = $objp->fk_parent_line;
+				$line->special_code        = $objp->special_code;
+				$line->fk_parent_line      = $objp->fk_parent_line;
 
-    			$line->rang                = $objp->rang;
+				$line->rang                = $objp->rang;
 
-    			// Retreive all extrafield
-    			// fetch optionals attributes and labels
-    			$line->fetch_optionals();
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$line->fetch_optionals();
 
-    			$this->lines[$i] = $line;
+				$this->lines[$i] = $line;
 
-    			$i++;
-    		}
-    		$this->db->free($result);
+				$i++;
+			}
+			$this->db->free($result);
 
-    		return $num;
-    	} else {
-    		$this->error = $this->db->error()." sql=".$sql;
-    		return -1;
-    	}
-    }
+			return $num;
+		} else {
+			$this->error = $this->db->error()." sql=".$sql;
+			return -1;
+		}
+	}
 
-    /**
-     *	Validate an order
-     *
-     *	@param	User	$user			Validator User
-     *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
-     *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-     *	@return	int						<0 if KO, >0 if OK
-     */
-    public function valid($user, $idwarehouse = 0, $notrigger = 0)
-    {
-        global $langs, $conf;
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	/**
+	 *	Validate an order
+	 *
+	 *	@param	User	$user			Validator User
+	 *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function valid($user, $idwarehouse = 0, $notrigger = 0)
+	{
+		global $langs, $conf;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        $error = 0;
+		$error = 0;
 
-        dol_syslog(get_class($this)."::valid");
-        $result = 0;
-        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->creer))
-       	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)))
-        {
-            $this->db->begin();
+		dol_syslog(get_class($this)."::valid");
+		$result = 0;
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->creer))
+	   	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)))
+		{
+			$this->db->begin();
 
-            // Definition of supplier order numbering model name
-            $soc = new Societe($this->db);
-            $soc->fetch($this->fourn_id);
+			// Definition of supplier order numbering model name
+			$soc = new Societe($this->db);
+			$soc->fetch($this->fourn_id);
 
-            // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
-            {
-                $num = $this->getNextNumRef($soc);
-            } else {
-                $num = $this->ref;
-            }
-            $this->newref = dol_sanitizeFileName($num);
+			// Check if object has a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+			{
+				$num = $this->getNextNumRef($soc);
+			} else {
+				$num = $this->ref;
+			}
+			$this->newref = dol_sanitizeFileName($num);
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-            $sql .= " SET ref='".$this->db->escape($num)."',";
-            $sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
-            $sql .= " date_valid='".$this->db->idate(dol_now())."',";
-            $sql .= " fk_user_valid = ".$user->id;
-            $sql .= " WHERE rowid = ".$this->id;
-            $sql .= " AND fk_statut = ".self::STATUS_DRAFT;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
+			$sql .= " SET ref='".$this->db->escape($num)."',";
+			$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+			$sql .= " date_valid='".$this->db->idate(dol_now())."',";
+			$sql .= " fk_user_valid = ".$user->id;
+			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " AND fk_statut = ".self::STATUS_DRAFT;
 
-            $resql = $this->db->query($sql);
-            if (!$resql)
-            {
-                dol_print_error($this->db);
-                $error++;
-            }
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				dol_print_error($this->db);
+				$error++;
+			}
 
-            if (!$error && !$notrigger)
-            {
+			if (!$error && !$notrigger)
+			{
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_VALIDATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
-            }
+			}
 
-            if (!$error)
-            {
-	            $this->oldref = $this->ref;
+			if (!$error)
+			{
+				$this->oldref = $this->ref;
 
-                // Rename directory if dir was a temporary ref
-                if (preg_match('/^[\(]?PROV/i', $this->ref))
-                {
-                	// Now we rename also files into index
-                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
-                	$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-                	$resql = $this->db->query($sql);
-                	if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+				// Rename directory if dir was a temporary ref
+				if (preg_match('/^[\(]?PROV/i', $this->ref))
+				{
+					// Now we rename also files into index
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
-                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-                    $oldref = dol_sanitizeFileName($this->ref);
-                    $newref = dol_sanitizeFileName($num);
-                    $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
-                    $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
-                    if (!$error && file_exists($dirsource))
-                    {
-                        dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+					$oldref = dol_sanitizeFileName($this->ref);
+					$newref = dol_sanitizeFileName($num);
+					$dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
+					$dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
+					if (!$error && file_exists($dirsource))
+					{
+						dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
-                        if (@rename($dirsource, $dirdest))
-                        {
-                            dol_syslog("Rename ok");
-                            // Rename docs starting with $oldref with $newref
-	                        $listoffiles = dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-	                        foreach ($listoffiles as $fileentry)
-	                        {
-	                        	$dirsource = $fileentry['name'];
-	                        	$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-	                        	$dirsource = $fileentry['path'].'/'.$dirsource;
-	                        	$dirdest = $fileentry['path'].'/'.$dirdest;
-	                        	@rename($dirsource, $dirdest);
-	                        }
-                        }
-                    }
-                }
-            }
+						if (@rename($dirsource, $dirdest))
+						{
+							dol_syslog("Rename ok");
+							// Rename docs starting with $oldref with $newref
+							$listoffiles = dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+							foreach ($listoffiles as $fileentry)
+							{
+								$dirsource = $fileentry['name'];
+								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+								$dirsource = $fileentry['path'].'/'.$dirsource;
+								$dirdest = $fileentry['path'].'/'.$dirdest;
+								@rename($dirsource, $dirdest);
+							}
+						}
+					}
+				}
+			}
 
-            if (!$error)
-            {
-                $result = 1;
-                $this->statut = self::STATUS_VALIDATED;
-                $this->ref = $num;
-            }
+			if (!$error)
+			{
+				$result = 1;
+				$this->statut = self::STATUS_VALIDATED;
+				$this->ref = $num;
+			}
 
-            if (!$error)
-            {
-                $this->db->commit();
-                return 1;
-            } else {
-                $this->db->rollback();
-                return -1;
-            }
-        } else {
-            $this->error = 'NotAuthorized';
-            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
-
-    /**
-     *  Return label of the status of object
-     *
-	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-     *  @return 	string        			Label
-     */
-    public function getLibStatut($mode = 0)
-    {
-        return $this->LibStatut($this->statut, $mode, $this->billed);
-    }
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return label of a status
-     *
-     * 	@param  int		$status		Id statut
-	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-     *  @param  int     $billed     1=Billed
-     *  @return string				Label of status
-     */
-    public function LibStatut($status, $mode = 0, $billed = 0)
-    {
-        // phpcs:enable
-    	global $conf, $langs;
-
-    	if (empty($this->statuts) || empty($this->statutshort)) {
-	        $langs->load('orders');
-
-	        $this->statuts[0] = 'StatusSupplierOrderDraft';
-	        $this->statuts[1] = 'StatusSupplierOrderValidated';
-	        $this->statuts[2] = 'StatusSupplierOrderApproved';
-	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
-	        else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
-	        $this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
-	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
-	        $this->statuts[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
-	        $this->statuts[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
-	        $this->statuts[9] = 'StatusSupplierOrderRefused';
-
-	        // List of language codes for status
-	        $this->statutshort[0] = 'StatusSupplierOrderDraftShort';
-	        $this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
-	        $this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
-	        $this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
-	        $this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
-	        $this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
-	        $this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
-	        $this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
-	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
-    	}
-
-        $statustrans = array(
-            0 => 'status0',
-            1 => 'status1b',
-            2 => 'status1',
-            3 => 'status4',
-            4 => 'status4b',
-            5 => 'status6',
-            6 => 'status9',
-            7 => 'status9',
-            9 => 'status9',
-        );
-
-        $statusClass = 'status0';
-        if (!empty($statustrans[$status])) {
-            $statusClass = $statustrans[$status];
-        }
-
-        $billedtext = '';
-        if ($billed) {
-        	$billedtext = ' - '.$langs->trans("Billed");
-        }
-        if ($status == 5 && $billed) $statusClass = 'status6';
-
-        $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
-        $statusShort = $langs->trans($this->statutshort[$status]);
-
-        return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
-    }
-
-
-    /**
-     *	Return clicable name (with picto eventually)
-     *
-     *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		string	$option						On what the link points
-     *  @param	    int   	$notooltip					1=Disable tooltip
-     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @param		int		$addlinktonotes				Add link to show notes
-     *	@return		string								Chain with URL
-     */
-    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
-    {
-        global $langs, $conf, $user;
-
-        $result = '';
-        $label = '<u>'.$langs->trans("PurchaseOrder").'</u>';
-        if (!empty($this->ref))
-            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-        if (!empty($this->ref_supplier))
-            $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
-        if (!empty($this->total_ht))
-            $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (!empty($this->total_tva))
-            $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (!empty($this->total_ttc))
-            $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-
-        $picto = 'order';
-        $url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
-
-        if ($option !== 'nolink')
-        {
-        	// Add param to save lastsearch_values or not
-        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
-        }
-
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label = $langs->trans("ShowOrder");
-                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose .= ' class="classfortooltip"';
-        }
-
-        $linkstart = '<a href="'.$url.'"';
-        $linkstart .= $linkclose.'>';
-        $linkend = '</a>';
-
-        $result .= $linkstart;
-        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-        if ($withpicto != 2) $result .= $this->ref;
-        $result .= $linkend;
-
-        if ($addlinktonotes)
-        {
-        	$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
-        	if ($txttoshow)
-        	{
-        		$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
-        		$result .= ' <span class="note inline-block">';
-        		$result .= '<a href="'.DOL_URL_ROOT.'/fourn/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
-        		$result .= img_picto('', 'note');
-        		$result .= '</a>';
-        		//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
-        		//$result.='</a>';
-        		$result .= '</span>';
-        	}
-        }
-
-        return $result;
-    }
-
-
-    /**
-     *  Returns the following order reference not used depending on the numbering model activated
-     *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
-     *
-     *  @param	    Societe		$soc  		company object
-     *  @return     string                  free reference for the invoice
-     */
-    public function getNextNumRef($soc)
-    {
-        global $db, $langs, $conf;
-        $langs->load("orders");
-
-        if (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER))
-        {
-            $mybool = false;
-
-            $file = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER.'.php';
-            $classname = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
-
-            // Include file with class
-            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-            foreach ($dirmodels as $reldir) {
-                $dir = dol_buildpath($reldir."core/modules/supplier_order/");
-
-                // Load file with numbering class (if found)
-                $mybool |= @include_once $dir.$file;
-            }
-
-            if ($mybool === false) {
-                dol_print_error('', "Failed to include file ".$file);
-                return '';
-            }
-
-            $obj = new $classname();
-            $numref = $obj->getNextValue($soc, $this);
-
-            if ($numref != "")
-            {
-                return $numref;
-            } else {
-                $this->error = $obj->error;
-                return -1;
-            }
-        } else {
-            $this->error = "Error_COMMANDE_SUPPLIER_ADDON_NotDefined";
-            return -2;
-        }
-    }
-	/**
-     *	Class invoiced the supplier order
-     *
-     *  @param      User        $user       Object user making the change
-     *	@return     int     	            <0 if KO, >0 if KO
-     */
-    public function classifyBilled(User $user)
-    {
-        $error = 0;
-        $this->db->begin();
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
-        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
-
-        if ($this->db->query($sql))
-        {
-        	if (!$error)
-        	{
-        	    // Call trigger
-        	    $result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED', $user);
-        	    if ($result < 0) $error++;
-        	    // End call triggers
-        	}
-
-        	if (!$error)
-        	{
-        	    $this->billed = 1;
-
-        	    $this->db->commit();
-        	    return 1;
-        	} else {
-        	    $this->db->rollback();
-                return -1;
-        	}
-        } else {
-        	dol_print_error($this->db);
-
-        	$this->db->rollback();
+			if (!$error)
+			{
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = 'NotAuthorized';
+			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
-        }
-    }
+		}
+	}
 
-    /**
-     * 	Approve a supplier order
-     *
-     *	@param	User	$user			Object user
-     *	@param	int		$idwarehouse	Id of warhouse for stock change
-     *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-     *	@return	int						<0 if KO, >0 if OK
-     */
-    public function approve($user, $idwarehouse = 0, $secondlevel = 0)
-    {
-        global $langs, $conf;
+	/**
+	 *  Return label of the status of object
+	 *
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+	 *  @return 	string        			Label
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->statut, $mode, $this->billed);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return label of a status
+	 *
+	 * 	@param  int		$status		Id statut
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param  int     $billed     1=Billed
+	 *  @return string				Label of status
+	 */
+	public function LibStatut($status, $mode = 0, $billed = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		if (empty($this->statuts) || empty($this->statutshort)) {
+			$langs->load('orders');
+
+			$this->statuts[0] = 'StatusSupplierOrderDraft';
+			$this->statuts[1] = 'StatusSupplierOrderValidated';
+			$this->statuts[2] = 'StatusSupplierOrderApproved';
+			if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
+			else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+			$this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
+			$this->statuts[5] = 'StatusSupplierOrderReceivedAll';
+			$this->statuts[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
+			$this->statuts[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
+			$this->statuts[9] = 'StatusSupplierOrderRefused';
+
+			// List of language codes for status
+			$this->statutshort[0] = 'StatusSupplierOrderDraftShort';
+			$this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
+			$this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
+			$this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
+			$this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+			$this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
+			$this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
+			$this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
+			$this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
+		}
+
+		$statustrans = array(
+			0 => 'status0',
+			1 => 'status1b',
+			2 => 'status1',
+			3 => 'status4',
+			4 => 'status4b',
+			5 => 'status6',
+			6 => 'status9',
+			7 => 'status9',
+			9 => 'status9',
+		);
+
+		$statusClass = 'status0';
+		if (!empty($statustrans[$status])) {
+			$statusClass = $statustrans[$status];
+		}
+
+		$billedtext = '';
+		if ($billed) {
+			$billedtext = ' - '.$langs->trans("Billed");
+		}
+		if ($status == 5 && $billed) $statusClass = 'status6';
+
+		$statusLong = $langs->trans($this->statuts[$status]).$billedtext;
+		$statusShort = $langs->trans($this->statutshort[$status]);
+
+		return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
+	}
+
+
+	/**
+	 *	Return clicable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param		string	$option						On what the link points
+	 *  @param	    int   	$notooltip					1=Disable tooltip
+	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param		int		$addlinktonotes				Add link to show notes
+	 *	@return		string								Chain with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
+	{
+		global $langs, $conf, $user;
+
+		$result = '';
+		$label = '<u>'.$langs->trans("PurchaseOrder").'</u>';
+		if (!empty($this->ref))
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->ref_supplier))
+			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+		if (!empty($this->total_ht))
+			$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+		if (!empty($this->total_tva))
+			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+		if (!empty($this->total_ttc))
+			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+
+		$picto = 'order';
+		$url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
+
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
+
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowOrder");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip"';
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
+		$result .= $linkend;
+
+		if ($addlinktonotes)
+		{
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow)
+			{
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/fourn/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+				//$result.='</a>';
+				$result .= '</span>';
+			}
+		}
+
+		return $result;
+	}
+
+
+	/**
+	 *  Returns the following order reference not used depending on the numbering model activated
+	 *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
+	 *
+	 *  @param	    Societe		$soc  		company object
+	 *  @return     string                  free reference for the invoice
+	 */
+	public function getNextNumRef($soc)
+	{
+		global $db, $langs, $conf;
+		$langs->load("orders");
+
+		if (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER))
+		{
+			$mybool = false;
+
+			$file = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER.'.php';
+			$classname = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+				$dir = dol_buildpath($reldir."core/modules/supplier_order/");
+
+				// Load file with numbering class (if found)
+				$mybool |= @include_once $dir.$file;
+			}
+
+			if ($mybool === false) {
+				dol_print_error('', "Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			$numref = $obj->getNextValue($soc, $this);
+
+			if ($numref != "")
+			{
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				return -1;
+			}
+		} else {
+			$this->error = "Error_COMMANDE_SUPPLIER_ADDON_NotDefined";
+			return -2;
+		}
+	}
+	/**
+	 *	Class invoiced the supplier order
+	 *
+	 *  @param      User        $user       Object user making the change
+	 *	@return     int     	            <0 if KO, >0 if KO
+	 */
+	public function classifyBilled(User $user)
+	{
+		$error = 0;
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+
+		if ($this->db->query($sql))
+		{
+			if (!$error)
+			{
+				// Call trigger
+				$result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
+
+			if (!$error)
+			{
+				$this->billed = 1;
+
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			dol_print_error($this->db);
+
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * 	Approve a supplier order
+	 *
+	 *	@param	User	$user			Object user
+	 *	@param	int		$idwarehouse	Id of warhouse for stock change
+	 *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function approve($user, $idwarehouse = 0, $secondlevel = 0)
+	{
+		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        $error = 0;
+		$error = 0;
 
-        dol_syslog(get_class($this)."::approve");
+		dol_syslog(get_class($this)."::approve");
 
-        if ($user->rights->fournisseur->commande->approuver)
-        {
-        	$now = dol_now();
+		if ($user->rights->fournisseur->commande->approuver)
+		{
+			$now = dol_now();
 
-            $this->db->begin();
+			$this->db->begin();
 
 			// Definition of order numbering model name
-            $soc = new Societe($this->db);
-            $soc->fetch($this->fourn_id);
+			$soc = new Societe($this->db);
+			$soc->fetch($this->fourn_id);
 
-            // Check if object has a temporary ref
-            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
-            {
-                $num = $this->getNextNumRef($soc);
-            } else {
-                $num = $this->ref;
-            }
-            $this->newref = dol_sanitizeFileName($num);
+			// Check if object has a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+			{
+				$num = $this->getNextNumRef($soc);
+			} else {
+				$num = $this->ref;
+			}
+			$this->newref = dol_sanitizeFileName($num);
 
-            // Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
+			// Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
 			$movetoapprovestatus = true;
 			$comment = '';
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql .= " SET ref='".$this->db->escape($num)."',";
 			if (empty($secondlevel))	// standard or first level approval
 			{
-	            $sql .= " date_approve='".$this->db->idate($now)."',";
-    	        $sql .= " fk_user_approve = ".$user->id;
-    	        if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
-    	        {
-    	        	if (empty($this->user_approve_id2))
-    	        	{
-    	        	    $movetoapprovestatus = false; // second level approval not done
-    	        	    $comment = ' (first level)';
-    	        	}
-    	        }
+				$sql .= " date_approve='".$this->db->idate($now)."',";
+				$sql .= " fk_user_approve = ".$user->id;
+				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
+				{
+					if (empty($this->user_approve_id2))
+					{
+						$movetoapprovestatus = false; // second level approval not done
+						$comment = ' (first level)';
+					}
+				}
 			} else // request a second level approval
 			{
-            	$sql .= " date_approve2='".$this->db->idate($now)."',";
-            	$sql .= " fk_user_approve2 = ".$user->id;
-    	        if (empty($this->user_approve_id)) $movetoapprovestatus = false; // first level approval not done
-    	        $comment = ' (second level)';
+				$sql .= " date_approve2='".$this->db->idate($now)."',";
+				$sql .= " fk_user_approve2 = ".$user->id;
+				if (empty($this->user_approve_id)) $movetoapprovestatus = false; // first level approval not done
+				$comment = ' (second level)';
 			}
 			// If double approval is required and first approval, we keep status to 1 = validated
 			if ($movetoapprovestatus) $sql .= ", fk_statut = ".self::STATUS_ACCEPTED;
 			else $sql .= ", fk_statut = ".self::STATUS_VALIDATED;
-            $sql .= " WHERE rowid = ".$this->id;
-            $sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
-            if ($this->db->query($sql))
-            {
-            	if (!empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
-	            {
+			if ($this->db->query($sql))
+			{
+				if (!empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
+				{
 					$result = $this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
 					if ($result < 0 && $result != -2)	// -2 means already exists
 					{
 						$error++;
 					}
-	            }
+				}
 
-                // If stock is incremented on validate order, we must increment it
-                if (!$error && $movetoapprovestatus && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
-                {
-                    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-                    $langs->load("agenda");
+				// If stock is incremented on validate order, we must increment it
+				if (!$error && $movetoapprovestatus && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+					$langs->load("agenda");
 
-                    $cpt = count($this->lines);
-                    for ($i = 0; $i < $cpt; $i++)
-                    {
-                        // Product with reference
-                        if ($this->lines[$i]->fk_product > 0)
-                        {
-                            $this->line = $this->lines[$i];
-                            $mouvP = new MouvementStock($this->db);
-                            $mouvP->origin = &$this;
-                            // We decrement stock of product (and sub-products)
-	                        $up_ht_disc = $this->lines[$i]->subprice;
-    	                    if (!empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
-                            $result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr", $this->ref));
-                            if ($result < 0) { $error++; }
-                            unset($this->line);
-                        }
-                    }
-                }
+					$cpt = count($this->lines);
+					for ($i = 0; $i < $cpt; $i++)
+					{
+						// Product with reference
+						if ($this->lines[$i]->fk_product > 0)
+						{
+							$this->line = $this->lines[$i];
+							$mouvP = new MouvementStock($this->db);
+							$mouvP->origin = &$this;
+							// We decrement stock of product (and sub-products)
+							$up_ht_disc = $this->lines[$i]->subprice;
+							if (!empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr", $this->ref));
+							if ($result < 0) { $error++; }
+							unset($this->line);
+						}
+					}
+				}
 
-                if (!$error)
-                {
+				if (!$error)
+				{
 					// Call trigger
 					$result = $this->call_trigger('ORDER_SUPPLIER_APPROVE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
-                }
+				}
 
-                if (!$error)
-                {
-                	$this->ref = $this->newref;
+				if (!$error)
+				{
+					$this->ref = $this->newref;
 
-                	if ($movetoapprovestatus) $this->statut = self::STATUS_ACCEPTED;
+					if ($movetoapprovestatus) $this->statut = self::STATUS_ACCEPTED;
 					else $this->statut = self::STATUS_VALIDATED;
-           			if (empty($secondlevel))	// standard or first level approval
+		   			if (empty($secondlevel))	// standard or first level approval
 					{
-			            $this->date_approve = $now;
-		    	        $this->user_approve_id = $user->id;
+						$this->date_approve = $now;
+						$this->user_approve_id = $user->id;
 					} else // request a second level approval
 					{
-			            $this->date_approve2 = $now;
-		    	        $this->user_approve_id2 = $user->id;
+						$this->date_approve2 = $now;
+						$this->user_approve_id2 = $user->id;
 					}
 
-                    $this->db->commit();
-                    return 1;
-                } else {
-                    $this->db->rollback();
-                    return -1;
-                }
-            } else {
-                $this->db->rollback();
-                $this->error = $this->db->lasterror();
-                return -1;
-            }
-        } else {
-            dol_syslog(get_class($this)."::approve Not Authorized", LOG_ERR);
-        }
-        return -1;
-    }
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->db->rollback();
+					return -1;
+				}
+			} else {
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this)."::approve Not Authorized", LOG_ERR);
+		}
+		return -1;
+	}
 
-    /**
-     * 	Refuse an order
-     *
-     * 	@param		User	$user		User making action
-     *	@return		int					0 if Ok, <0 if Ko
-     */
-    public function refuse($user)
-    {
-        global $conf, $langs;
+	/**
+	 * 	Refuse an order
+	 *
+	 * 	@param		User	$user		User making action
+	 *	@return		int					0 if Ok, <0 if Ko
+	 */
+	public function refuse($user)
+	{
+		global $conf, $langs;
 
 		$error = 0;
 
-        dol_syslog(get_class($this)."::refuse");
-        $result = 0;
-        if ($user->rights->fournisseur->commande->approuver)
-        {
-            $this->db->begin();
+		dol_syslog(get_class($this)."::refuse");
+		$result = 0;
+		if ($user->rights->fournisseur->commande->approuver)
+		{
+			$this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_REFUSED;
-            $sql .= " WHERE rowid = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_REFUSED;
+			$sql .= " WHERE rowid = ".$this->id;
 
-            if ($this->db->query($sql))
-            {
-                $result = 0;
+			if ($this->db->query($sql))
+			{
+				$result = 0;
 
-                if ($error == 0)
-                {
+				if ($error == 0)
+				{
 					// Call trigger
 					$result = $this->call_trigger('ORDER_SUPPLIER_REFUSE', $user);
 					if ($result < 0)
-                    {
-                        $error++;
-                        $this->db->rollback();
-                    } else $this->db->commit();
+					{
+						$error++;
+						$this->db->rollback();
+					} else $this->db->commit();
 					// End call triggers
-                }
-            } else {
-                $this->db->rollback();
-                $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this)."::refuse Error -1");
-                $result = -1;
-            }
-        } else {
-            dol_syslog(get_class($this)."::refuse Not Authorized");
-        }
-        return $result;
-    }
+				}
+			} else {
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this)."::refuse Error -1");
+				$result = -1;
+			}
+		} else {
+			dol_syslog(get_class($this)."::refuse Not Authorized");
+		}
+		return $result;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * 	Cancel an approved order.
-     *	The cancellation is done after approval
-     *
-     * 	@param	User	$user			User making action
-     *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
-     * 	@return	int						>0 if Ok, <0 if Ko
-     */
-    public function Cancel($user, $idwarehouse = -1)
-    {
-        // phpcs:enable
-        global $langs, $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Cancel an approved order.
+	 *	The cancellation is done after approval
+	 *
+	 * 	@param	User	$user			User making action
+	 *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
+	 * 	@return	int						>0 if Ok, <0 if Ko
+	 */
+	public function Cancel($user, $idwarehouse = -1)
+	{
+		// phpcs:enable
+		global $langs, $conf;
 
-        $error = 0;
+		$error = 0;
 
-        //dol_syslog("CommandeFournisseur::Cancel");
-        $result = 0;
-        if ($user->rights->fournisseur->commande->commander)
-        {
-            $statut = self::STATUS_CANCELED;
+		//dol_syslog("CommandeFournisseur::Cancel");
+		$result = 0;
+		if ($user->rights->fournisseur->commande->commander)
+		{
+			$statut = self::STATUS_CANCELED;
 
-            $this->db->begin();
+			$this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
-            $sql .= " WHERE rowid = ".$this->id;
-            dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
-            if ($this->db->query($sql))
-            {
-                $result = 0;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
+			$sql .= " WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
+			if ($this->db->query($sql))
+			{
+				$result = 0;
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 
-                if ($error == 0)
-                {
-                    $this->db->commit();
-                    return 1;
-                } else {
-                    $this->db->rollback();
-                    return -1;
-                }
-            } else {
-                $this->db->rollback();
-                $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this)."::cancel ".$this->error);
-                return -1;
-            }
-        } else {
-            dol_syslog(get_class($this)."::cancel Not Authorized");
-            return -1;
-        }
-    }
+				if ($error == 0)
+				{
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->db->rollback();
+					return -1;
+				}
+			} else {
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this)."::cancel ".$this->error);
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this)."::cancel Not Authorized");
+			return -1;
+		}
+	}
 
-    /**
-     * 	Submit a supplier order to supplier
-     *
-     * 	@param		User	$user		User making change
-     * 	@param		integer	$date		Date
-     * 	@param		int		$methode	Method
-     * 	@param		string	$comment	Comment
-     * 	@return		int			        <0 if KO, >0 if OK
-     */
-    public function commande($user, $date, $methode, $comment = '')
-    {
-        global $langs;
-        dol_syslog(get_class($this)."::commande");
-        $error = 0;
-        if ($user->rights->fournisseur->commande->commander)
-        {
-            $this->db->begin();
+	/**
+	 * 	Submit a supplier order to supplier
+	 *
+	 * 	@param		User	$user		User making change
+	 * 	@param		integer	$date		Date
+	 * 	@param		int		$methode	Method
+	 * 	@param		string	$comment	Comment
+	 * 	@return		int			        <0 if KO, >0 if OK
+	 */
+	public function commande($user, $date, $methode, $comment = '')
+	{
+		global $langs;
+		dol_syslog(get_class($this)."::commande");
+		$error = 0;
+		if ($user->rights->fournisseur->commande->commander)
+		{
+			$this->db->begin();
 
-            $newnoteprivate = $this->note_private;
-            if ($comment) $newnoteprivate = dol_concatdesc($newnoteprivate, $langs->trans("Comment").': '.$comment);
+			$newnoteprivate = $this->note_private;
+			if ($comment) $newnoteprivate = dol_concatdesc($newnoteprivate, $langs->trans("Comment").': '.$comment);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."', ";
-            $sql .= " note_private='".$this->db->escape($newnoteprivate)."'";
-            $sql .= " WHERE rowid=".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."', ";
+			$sql .= " note_private='".$this->db->escape($newnoteprivate)."'";
+			$sql .= " WHERE rowid=".$this->id;
 
-            dol_syslog(get_class($this)."::commande", LOG_DEBUG);
-            if ($this->db->query($sql))
-            {
-                $this->statut = self::STATUS_ORDERSENT;
-                $this->methode_commande_id = $methode;
-                $this->date_commande = $date;
-                $this->context = array('comments' => $comment);
+			dol_syslog(get_class($this)."::commande", LOG_DEBUG);
+			if ($this->db->query($sql))
+			{
+				$this->statut = self::STATUS_ORDERSENT;
+				$this->methode_commande_id = $methode;
+				$this->date_commande = $date;
+				$this->context = array('comments' => $comment);
 
-                // Call trigger
-                $result = $this->call_trigger('ORDER_SUPPLIER_SUBMIT', $user);
-                if ($result < 0) $error++;
-                // End call triggers
-            } else {
-                $error++;
-                $this->error = $this->db->lasterror();
-                $this->errors[] = $this->db->lasterror();
-            }
+				// Call trigger
+				$result = $this->call_trigger('ORDER_SUPPLIER_SUBMIT', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+			} else {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+			}
 
-            if (!$error)
-            {
-                $this->db->commit();
-            } else {
-                $this->db->rollback();
-            }
-        } else {
-            $error++;
-            $this->error = $langs->trans('NotAuthorized');
-            $this->errors[] = $langs->trans('NotAuthorized');
-            dol_syslog(get_class($this)."::commande User not Authorized", LOG_WARNING);
-        }
+			if (!$error)
+			{
+				$this->db->commit();
+			} else {
+				$this->db->rollback();
+			}
+		} else {
+			$error++;
+			$this->error = $langs->trans('NotAuthorized');
+			$this->errors[] = $langs->trans('NotAuthorized');
+			dol_syslog(get_class($this)."::commande User not Authorized", LOG_WARNING);
+		}
 
-        return ($error ? -1 : 1);
-    }
+		return ($error ? -1 : 1);
+	}
 
-    /**
-     *  Create order with draft status
-     *
-     *  @param      User	$user       User making creation
-     *	@param		int		$notrigger	Disable all triggers
-     *  @return     int         		<0 if KO, Id of supplier order if OK
-     */
-    public function create($user, $notrigger = 0)
-    {
-        global $langs, $conf, $hookmanager;
+	/**
+	 *  Create order with draft status
+	 *
+	 *  @param      User	$user       User making creation
+	 *	@param		int		$notrigger	Disable all triggers
+	 *  @return     int         		<0 if KO, Id of supplier order if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		global $langs, $conf, $hookmanager;
 
-        $this->db->begin();
+		$this->db->begin();
 
 		$error = 0;
-        $now = dol_now();
+		$now = dol_now();
 
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
 		if (empty($date)) $date = $now;
 
-        // Clean parameters
-        if (empty($this->source)) $this->source = 0;
+		// Clean parameters
+		if (empty($this->source)) $this->source = 0;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
@@ -1264,104 +1264,104 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_tx = 1;
 		}
 
-        // We set order into draft status
-        $this->brouillon = 1;
+		// We set order into draft status
+		$this->brouillon = 1;
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
-        $sql .= "ref";
-        $sql .= ", ref_supplier";
-        $sql .= ", note_private";
-        $sql .= ", note_public";
-        $sql .= ", entity";
-        $sql .= ", fk_soc";
-        $sql .= ", fk_projet";
-        $sql .= ", date_creation";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
+		$sql .= "ref";
+		$sql .= ", ref_supplier";
+		$sql .= ", note_private";
+		$sql .= ", note_public";
+		$sql .= ", entity";
+		$sql .= ", fk_soc";
+		$sql .= ", fk_projet";
+		$sql .= ", date_creation";
 		$sql .= ", date_livraison";
-        $sql .= ", fk_user_author";
-        $sql .= ", fk_statut";
-        $sql .= ", source";
-        $sql .= ", model_pdf";
-        $sql .= ", fk_mode_reglement";
+		$sql .= ", fk_user_author";
+		$sql .= ", fk_statut";
+		$sql .= ", source";
+		$sql .= ", model_pdf";
+		$sql .= ", fk_mode_reglement";
 		$sql .= ", fk_cond_reglement";
-        $sql .= ", fk_account";
+		$sql .= ", fk_account";
 		$sql .= ", fk_incoterms, location_incoterms";
-        $sql .= ", fk_multicurrency";
-        $sql .= ", multicurrency_code";
-        $sql .= ", multicurrency_tx";
-        $sql .= ") ";
-        $sql .= " VALUES (";
-        $sql .= "''";
-        $sql .= ", '".$this->db->escape($this->ref_supplier)."'";
-        $sql .= ", '".$this->db->escape($this->note_private)."'";
-        $sql .= ", '".$this->db->escape($this->note_public)."'";
-        $sql .= ", ".$conf->entity;
-        $sql .= ", ".$this->socid;
-        $sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
-        $sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", fk_multicurrency";
+		$sql .= ", multicurrency_code";
+		$sql .= ", multicurrency_tx";
+		$sql .= ") ";
+		$sql .= " VALUES (";
+		$sql .= "''";
+		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
+		$sql .= ", '".$this->db->escape($this->note_private)."'";
+		$sql .= ", '".$this->db->escape($this->note_public)."'";
+		$sql .= ", ".$conf->entity;
+		$sql .= ", ".$this->socid;
+		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".($this->date_livraison ? "'".$this->db->idate($this->date_livraison)."'" : "null");
-        $sql .= ", ".$user->id;
-        $sql .= ", ".self::STATUS_DRAFT;
-        $sql .= ", ".$this->db->escape($this->source);
-        $sql .= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
-        $sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
-        $sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
-        $sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
-        $sql .= ", ".(int) $this->fk_incoterms;
-        $sql .= ", '".$this->db->escape($this->location_incoterms)."'";
+		$sql .= ", ".$user->id;
+		$sql .= ", ".self::STATUS_DRAFT;
+		$sql .= ", ".$this->db->escape($this->source);
+		$sql .= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
+		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
+		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
+		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
+		$sql .= ", ".(int) $this->fk_incoterms;
+		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;
-        $sql .= ")";
+		$sql .= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
 
 			if ($this->id) {
 				$num = count($this->lines);
 
-	            // insert products details into database
-	            for ($i = 0; $i < $num; $i++)
-	            {
-	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
+				// insert products details into database
+				for ($i = 0; $i < $num; $i++)
+				{
+					$this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
-                    // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
-                    $result = $this->addline(
-	                    $this->lines[$i]->desc,
-	                    $this->lines[$i]->subprice,
-	                    $this->lines[$i]->qty,
-	                    $this->lines[$i]->tva_tx,
-	                    $this->lines[$i]->localtax1_tx,
-	                    $this->lines[$i]->localtax2_tx,
-	                    $this->lines[$i]->fk_product,
-	                    0,
-	                    $this->lines[$i]->ref_fourn, // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
-	                    $this->lines[$i]->remise_percent,
-	                    'HT',
-	                    0,
-	                    $this->lines[$i]->product_type,
-	                    $this->lines[$i]->info_bits,
-                        false,
-	                    $this->lines[$i]->date_start,
-                        $this->lines[$i]->date_end,
-                        $this->lines[$i]->array_options,
-                        $this->lines[$i]->fk_unit
-	                );
-	                if ($result < 0)
-	                {
-	                    dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
-	                    $this->db->rollback();
-	                    return -1;
-	                }
-	            }
+					// This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+					$result = $this->addline(
+						$this->lines[$i]->desc,
+						$this->lines[$i]->subprice,
+						$this->lines[$i]->qty,
+						$this->lines[$i]->tva_tx,
+						$this->lines[$i]->localtax1_tx,
+						$this->lines[$i]->localtax2_tx,
+						$this->lines[$i]->fk_product,
+						0,
+						$this->lines[$i]->ref_fourn, // $this->lines[$i]->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$this->lines[$i]->remise_percent,
+						'HT',
+						0,
+						$this->lines[$i]->product_type,
+						$this->lines[$i]->info_bits,
+						false,
+						$this->lines[$i]->date_start,
+						$this->lines[$i]->date_end,
+						$this->lines[$i]->array_options,
+						$this->lines[$i]->fk_unit
+					);
+					if ($result < 0)
+					{
+						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
+						$this->db->rollback();
+						return -1;
+					}
+				}
 
-	            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-	            $sql .= " SET ref='(PROV".$this->id.")'";
-	            $sql .= " WHERE rowid=".$this->id;
-	            dol_syslog(get_class($this)."::create", LOG_DEBUG);
-	            if ($this->db->query($sql))
-	            {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+				$sql .= " SET ref='(PROV".$this->id.")'";
+				$sql .= " WHERE rowid=".$this->id;
+				dol_syslog(get_class($this)."::create", LOG_DEBUG);
+				if ($this->db->query($sql))
+				{
 					// Add link with price request and supplier order
 					if ($this->id)
 					{
@@ -1377,82 +1377,82 @@ class CommandeFournisseur extends CommonOrder
 						{
 							foreach ($this->linked_objects as $origin => $tmp_origin_id)
 							{
-							    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
-							    {
-							        foreach ($tmp_origin_id as $origin_id)
-							        {
-							            $ret = $this->add_object_linked($origin, $origin_id);
-							            if (!$ret)
-							            {
-							                dol_print_error($this->db);
-							                $error++;
-							            }
-							        }
-							    } else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-							    {
-							        $origin_id = $tmp_origin_id;
+								if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+								{
+									foreach ($tmp_origin_id as $origin_id)
+									{
+										$ret = $this->add_object_linked($origin, $origin_id);
+										if (!$ret)
+										{
+											dol_print_error($this->db);
+											$error++;
+										}
+									}
+								} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+								{
+									$origin_id = $tmp_origin_id;
 									$ret = $this->add_object_linked($origin, $origin_id);
 									if (!$ret)
 									{
 										dol_print_error($this->db);
 										$error++;
 									}
-							    }
+								}
 							}
 						}
 					}
 
-	                if (!$error)
-                    {
-                    	$result = $this->insertExtraFields();
-	                    if ($result < 0) $error++;
-                    }
+					if (!$error)
+					{
+						$result = $this->insertExtraFields();
+						if ($result < 0) $error++;
+					}
 
 					if (!$error && !$notrigger)
-	                {
+					{
 						// Call trigger
 						$result = $this->call_trigger('ORDER_SUPPLIER_CREATE', $user);
 						if ($result < 0)
-	                    {
-	                        $this->db->rollback();
-	                        return -1;
-	                    }
+						{
+							$this->db->rollback();
+							return -1;
+						}
 						// End call triggers
-	                }
+					}
 
-	                $this->db->commit();
-	                return $this->id;
-	            } else {
-	                $this->error = $this->db->lasterror();
-	                $this->db->rollback();
-	                return -2;
-	            }
-            }
-        } else {
-            $this->error = $this->db->lasterror();
-            $this->db->rollback();
-            return -1;
-        }
-    }
+					$this->db->commit();
+					return $this->id;
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -2;
+				}
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-    /**
-     *	Load an object from its id and create a new one in database
-     *
+	/**
+	 *	Load an object from its id and create a new one in database
+	 *
 	 *  @param	    User	$user		User making the clone
 	 *	@param		int		$socid		Id of thirdparty
-     *	@return		int					New id of clone
-     */
-    public function createFromClone(User $user, $socid = 0)
-    {
-    	global $conf, $user, $hookmanager;
+	 *	@return		int					New id of clone
+	 */
+	public function createFromClone(User $user, $socid = 0)
+	{
+		global $conf, $user, $hookmanager;
 
-        $error = 0;
+		$error = 0;
 
 		$this->db->begin();
 
-        // get extrafields so they will be clone
-        foreach ($this->lines as $line)
-            $line->fetch_optionals();
+		// get extrafields so they will be clone
+		foreach ($this->lines as $line)
+			$line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;
@@ -1474,85 +1474,85 @@ class CommandeFournisseur extends CommonOrder
 			// TODO Change product price if multi-prices
 		}
 
-        $this->id = 0;
-        $this->statut = self::STATUS_DRAFT;
+		$this->id = 0;
+		$this->statut = self::STATUS_DRAFT;
 
-        // Clear fields
-        $this->user_author_id     = $user->id;
-        $this->user_valid         = '';
-        $this->date_creation      = '';
-        $this->date_validation    = '';
-        $this->ref_supplier       = '';
-        $this->user_approve_id    = '';
-        $this->user_approve_id2   = '';
-        $this->date_approve       = '';
-        $this->date_approve2      = '';
+		// Clear fields
+		$this->user_author_id     = $user->id;
+		$this->user_valid         = '';
+		$this->date_creation      = '';
+		$this->date_validation    = '';
+		$this->ref_supplier       = '';
+		$this->user_approve_id    = '';
+		$this->user_approve_id2   = '';
+		$this->date_approve       = '';
+		$this->date_approve2      = '';
 
-        // Create clone
-        $this->context['createfromclone'] = 'createfromclone';
-        $result = $this->create($user);
-        if ($result < 0) $error++;
+		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
+		$result = $this->create($user);
+		if ($result < 0) $error++;
 
-        if (!$error)
-        {
-            // Hook of thirdparty module
-            if (is_object($hookmanager))
-            {
-                $parameters = array('objFrom'=>$objFrom);
-                $action = '';
-                $reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0) $error++;
-            }
-        }
+		if (!$error)
+		{
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+				$parameters = array('objFrom'=>$objFrom);
+				$action = '';
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
+		}
 
 		unset($this->context['createfromclone']);
 
 		// End
-        if (!$error)
-        {
-            $this->db->commit();
-            return $this->id;
-        } else {
-            $this->db->rollback();
-            return -1;
-        }
-    }
+		if (!$error)
+		{
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-    /**
-     *	Add order line
-     *
-     *	@param      string	$desc            		Description
-     *	@param      float	$pu_ht              	Unit price
-     *	@param      float	$qty             		Quantity
-     *	@param      float	$txtva           		Taux tva
-     *	@param      float	$txlocaltax1        	Localtax1 tax
-     *  @param      float	$txlocaltax2        	Localtax2 tax
-     *	@param      int		$fk_product      		Id product
-     *  @param      int		$fk_prod_fourn_price	Id supplier price
-     *  @param      string	$ref_supplier			Supplier reference price
-     *	@param      float	$remise_percent  		Remise
-     *	@param      string	$price_base_type		HT or TTC
-     *	@param		float	$pu_ttc					Unit price TTC
-     *	@param		int		$type					Type of line (0=product, 1=service)
-     *	@param		int		$info_bits				More information
-     *  @param		bool	$notrigger				Disable triggers
-     *  @param		int		$date_start				Date start of service
-     *  @param		int		$date_end				Date end of service
+	/**
+	 *	Add order line
+	 *
+	 *	@param      string	$desc            		Description
+	 *	@param      float	$pu_ht              	Unit price
+	 *	@param      float	$qty             		Quantity
+	 *	@param      float	$txtva           		Taux tva
+	 *	@param      float	$txlocaltax1        	Localtax1 tax
+	 *  @param      float	$txlocaltax2        	Localtax2 tax
+	 *	@param      int		$fk_product      		Id product
+	 *  @param      int		$fk_prod_fourn_price	Id supplier price
+	 *  @param      string	$ref_supplier			Supplier reference price
+	 *	@param      float	$remise_percent  		Remise
+	 *	@param      string	$price_base_type		HT or TTC
+	 *	@param		float	$pu_ttc					Unit price TTC
+	 *	@param		int		$type					Type of line (0=product, 1=service)
+	 *	@param		int		$info_bits				More information
+	 *  @param		bool	$notrigger				Disable triggers
+	 *  @param		int		$date_start				Date start of service
+	 *  @param		int		$date_end				Date end of service
 	 *  @param		array	$array_options			extrafields array
-     *  @param 		string	$fk_unit 				Code of the unit to use. Null to use the default one
+	 *  @param 		string	$fk_unit 				Code of the unit to use. Null to use the default one
 	 *  @param 		string	$pu_ht_devise			Amount in currency
 	 *  @param		string	$origin					'order', ...
 	 *  @param		int		$origin_id				Id of origin object
-     *	@return     int             				<=0 if KO, >0 if OK
-     */
+	 *	@return     int             				<=0 if KO, >0 if OK
+	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0)
-    {
-        global $langs, $mysoc, $conf;
+	{
+		global $langs, $mysoc, $conf;
 
-        $error = 0;
+		$error = 0;
 
-        dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{

@@ -158,8 +158,8 @@ $fieldstosearchall = array(
 	'p.phone_perso'=>"PhonePerso",
 	'p.phone_mobile'=>"PhoneMobile",
 	'p.fax'=>"Fax",
-    'p.note_public'=>"NotePublic",
-    'p.note_private'=>"NotePrivate",
+	'p.note_public'=>"NotePublic",
+	'p.note_private'=>"NotePrivate",
 );
 
 // Definition of fields for list
@@ -541,7 +541,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton = '';
 if ($user->rights->societe->contact->creer)
 {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create');
 }
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -734,9 +734,9 @@ if (!empty($arrayfields['p.thirdparty']['checked']))
 if (!empty($arrayfields['p.priv']['checked']))
 {
 	print '<td class="liste_titre center">';
-    $selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
-    print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
-    print '</td>';
+	$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
+	print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
+	print '</td>';
 }
 // Prospect level
 if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked']))
@@ -808,7 +808,7 @@ if (!empty($arrayfields['p.town']['checked']))                print_liste_field_
 //if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 //if (! empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
 if (!empty($arrayfields['country.code_iso']['checked'])) {
-    print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.phone']['checked']))               print_liste_field_titre($arrayfields['p.phone']['label'], $_SERVER["PHP_SELF"], "p.phone", $begin, $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['p.phone_perso']['checked']))         print_liste_field_titre($arrayfields['p.phone_perso']['label'], $_SERVER["PHP_SELF"], "p.phone_perso", $begin, $param, '', $sortfield, $sortorder);
@@ -831,24 +831,24 @@ if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) 			print_liste_field_
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array(
-    'arrayfields'=>$arrayfields,
-    'param'=>$param,
-    'sortfield'=>$sortfield,
-    'sortorder'=>$sortorder,
+	'arrayfields'=>$arrayfields,
+	'param'=>$param,
+	'sortfield'=>$sortfield,
+	'sortorder'=>$sortorder,
 );
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['p.datec']['checked'])) {
-    print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['p.tms']['checked'])) {
-    print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['p.statut']['checked'])) {
-    print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.import_key']['checked'])) {
-    print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
@@ -986,15 +986,15 @@ while ($i < min($num, $limit))
 			}
 		}
 	}
-    // Company
+	// Company
 	if (!empty($arrayfields['p.thirdparty']['checked']))
 	{
 		print '<td>';
 		if ($obj->socid)
 		{
-		    $objsoc = new Societe($db);
-		    $objsoc->fetch($obj->socid);
-		    print $objsoc->getNomUrl(1);
+			$objsoc = new Societe($db);
+			$objsoc->fetch($obj->socid);
+			print $objsoc->getNomUrl(1);
 		} else print '&nbsp;';
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;

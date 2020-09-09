@@ -855,7 +855,7 @@ class FormMail extends Form
 						{
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
-							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT)-strlen($val))), $formfile_params);
+							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT) - strlen($val))), $formfile_params);
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly)
@@ -956,13 +956,13 @@ class FormMail extends Form
 					$atleastonecomponentishtml++;
 				}
 				if ($atleastonecomponentishtml) {
-					if (! dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+					if (!dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 						$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
 					}
-					if (! dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
+					if (!dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
 						$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = dol_nl2br($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']);
 					}
-					if (! dol_textishtml($defaultmessage)) {
+					if (!dol_textishtml($defaultmessage)) {
 						$defaultmessage = dol_nl2br($defaultmessage);
 					}
 				}

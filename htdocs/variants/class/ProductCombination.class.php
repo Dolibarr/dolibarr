@@ -165,11 +165,11 @@ class ProductCombination
 			/**
 			 * for auto retrocompatibility with last behavior
 			 */
-			if ($fk_price_level>0){
+			if ($fk_price_level > 0) {
 				$combination_price_levels[$fk_price_level] = ProductCombinationLevel::createFromParent($this->db, $this, $fk_price_level);
 			}
 			else {
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++){
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					$combination_price_levels[$i] = ProductCombinationLevel::createFromParent($this->db, $this, $i);
 				}
 			}
@@ -783,16 +783,16 @@ class ProductCombination
 		$newcomb->variation_weight = $weight_impact;
 
 		// Init price level
-		if ($conf->global->PRODUIT_MULTIPRICES){
-			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++){
+		if ($conf->global->PRODUIT_MULTIPRICES) {
+			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 				$productCombinationLevel = new ProductCombinationLevel($this->db);
 				$productCombinationLevel->fk_product_attribute_combination = $newcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
 				$productCombinationLevel->variation_price = $price_impact[$i];
 
-				if (is_array($price_var_percent)){
+				if (is_array($price_var_percent)) {
 					$productCombinationLevel->variation_price_percentage = (empty($price_var_percent[$i]) ? false : $price_var_percent[$i]);
-				}else {
+				} else {
 					$productCombinationLevel->variation_price_percentage = $price_var_percent;
 				}
 

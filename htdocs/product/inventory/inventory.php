@@ -133,7 +133,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		}
 
-		if (! $error && ! empty($conf->productbatch->enabled)) {
+		if (!$error && !empty($conf->productbatch->enabled)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -320,53 +320,53 @@ if ($object->id > 0)
 		print '<br>';
 		print '</form>';
 	} else {
-    	print '<div class="tabsAction">'."\n";
-    	$parameters = array();
-    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		print '<div class="tabsAction">'."\n";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    	if (empty($reshook))
-    	{
-    		if ($object->status == Inventory::STATUS_DRAFT)
-    		{
-    			if ($permissiontoadd)
-    			{
-    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
-    			} else {
-    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
-    			}
-    		}
+		if (empty($reshook))
+		{
+			if ($object->status == Inventory::STATUS_DRAFT)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
+				}
+			}
 
-    		if ($object->status == Inventory::STATUS_VALIDATED)
-    		{
-    			if ($permissiontoadd)
-    			{
-    				/*
+			if ($object->status == Inventory::STATUS_VALIDATED)
+			{
+				if ($permissiontoadd)
+				{
+					/*
     				if ($conf->barcode->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
     				}
     				if ($conf->productbatch->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
     				}*/
-    				if ($conf->barcode->enabled || $conf->productbatch->enabled) {
-    					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
-    				}
-    			} else {
-    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
-    			}
-    		}
+					if ($conf->barcode->enabled || $conf->productbatch->enabled) {
+						print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
+					}
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
+				}
+			}
 
-    		if ($object->status == Inventory::STATUS_VALIDATED)
-    		{
-	        	if ($permissiontoadd)
-	    		{
-	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
-	    		} else {
-	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
-	    		}
-    		}
+			if ($object->status == Inventory::STATUS_VALIDATED)
+			{
+				if ($permissiontoadd)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
+				}
+			}
 
-    		/*if ($object->status == Inventory::STATUS_VALIDATED)
+			/*if ($object->status == Inventory::STATUS_VALIDATED)
     		{
 	    		if ($permissiontoadd)
 	    		{

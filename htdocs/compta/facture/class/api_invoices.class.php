@@ -415,7 +415,9 @@ class Invoices extends DolibarrApi
     		$request_data->array_options,
     		$request_data->situation_percent,
     		$request_data->fk_unit,
-    		$request_data->multicurrency_subprice
+    		$request_data->multicurrency_subprice,
+            0,
+            $request_data->ref_ext
     	);
 
     	if ($updateRes > 0) {
@@ -704,7 +706,9 @@ class Invoices extends DolibarrApi
             $request_data->array_options,
             $request_data->situation_percent,
             $request_data->fk_prev_id,
-            $request_data->fk_unit
+            $request_data->fk_unit,
+            0,
+            $request_data->ref_ext
         );
 
         if ($updateRes < 0) {

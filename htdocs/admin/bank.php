@@ -51,147 +51,147 @@ $type = 'bankaccount';
 
 // Order display of bank account
 if ($action == 'setbankorder') {
-    if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 // Auto report last num releve on conciliate
 if ($action == 'setreportlastnumreleve') {
-    if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 1, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 } elseif ($action == 'unsetreportlastnumreleve') {
-    if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 0, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 0, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 // Colorize movements
 if ($action == 'setbankcolorizemovement') {
-    if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 1, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 } elseif ($action == 'unsetbankcolorizemovement') {
-    if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 if ($actionsave)
 {
-    $db->begin();
+	$db->begin();
 
-    $i = 1; $errorsaved = 0;
-    $error = 0;
+	$i = 1; $errorsaved = 0;
+	$error = 0;
 
-    // Save colors
-    while ($i <= 2)
-    {
-        $color = GETPOST('BANK_COLORIZE_MOVEMENT_COLOR'.$i, 'alpha');
-        if ($color == '-1') $color = '';
+	// Save colors
+	while ($i <= 2)
+	{
+		$color = GETPOST('BANK_COLORIZE_MOVEMENT_COLOR'.$i, 'alpha');
+		if ($color == '-1') $color = '';
 
-        $res = dolibarr_set_const($db, 'BANK_COLORIZE_MOVEMENT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
-        if (!$res > 0) $error++;
-        $i++;
-    }
+		$res = dolibarr_set_const($db, 'BANK_COLORIZE_MOVEMENT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+		$i++;
+	}
 
-    if (!$error)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-        if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
 if ($action == 'specimen') {
-    $modele = GETPOST('module', 'alpha');
+	$modele = GETPOST('module', 'alpha');
 
-    if ($modele == 'sepamandate') {
-        $object = new CompanyBankAccount($db);
-    } else {
-        $object = new Account($db);
-    }
-    $object->initAsSpecimen();
+	if ($modele == 'sepamandate') {
+		$object = new CompanyBankAccount($db);
+	} else {
+		$object = new Account($db);
+	}
+	$object->initAsSpecimen();
 
-    // Search template files
-    $file = '';
-    $classname = '';
-    $filefound = 0;
-    $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-    foreach ($dirmodels as $reldir) {
-        $file = dol_buildpath($reldir."core/modules/bank/doc/pdf_".$modele.".modules.php", 0);
-        if (file_exists($file)) {
-            $filefound = 1;
-            $classname = "pdf_".$modele;
-            break;
-        }
-    }
+	// Search template files
+	$file = '';
+	$classname = '';
+	$filefound = 0;
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/bank/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$filefound = 1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
 
-    if ($filefound) {
-        require_once $file;
+	if ($filefound) {
+		require_once $file;
 
-        $module = new $classname($db);
+		$module = new $classname($db);
 
-        if ($module->write_file($object, $langs) > 0) {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bank&file=SPECIMEN.pdf");
-            return;
-        } else {
-            setEventMessages($module->error, null, 'errors');
-            dol_syslog($module->error, LOG_ERR);
-        }
-    } else {
-        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-    }
+		if ($module->write_file($object, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bank&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, null, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
 }
 
 // Activate a model
 if ($action == 'set') {
-    $ret = addDocumentModel($value, $type, $label, $scandir);
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
-    $ret = delDocumentModel($value, $type);
-    if ($ret > 0) {
-        if ($conf->global->BANKADDON_PDF == "$value")
-            dolibarr_del_const($db, 'BANKADDON_PDF', $conf->entity);
-    }
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		if ($conf->global->BANKADDON_PDF == "$value")
+			dolibarr_del_const($db, 'BANKADDON_PDF', $conf->entity);
+	}
 }
 // Set default model
 elseif ($action == 'setdoc') {
-    if (dolibarr_set_const($db, "BANKADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-        // The constant that was read before the new set
-        // We therefore requires a variable to have a coherent view
-        $conf->global->BANKADDON_PDF = $value;
-    }
+	if (dolibarr_set_const($db, "BANKADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+		// The constant that was read before the new set
+		// We therefore requires a variable to have a coherent view
+		$conf->global->BANKADDON_PDF = $value;
+	}
 
-    // On active le modele
-    $ret = delDocumentModel($value, $type);
-    if ($ret > 0) {
-        $ret = addDocumentModel($value, $type, $label, $scandir);
-    }
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 }
 
 
