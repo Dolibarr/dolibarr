@@ -204,10 +204,10 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-		print "</table></div><br>";
 	} else {
 		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 	}
+	print "</table></div><br>";
 	$db->free($resql);
 } else dol_print_error($db);
 
