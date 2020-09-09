@@ -662,7 +662,7 @@ if ($action == 'create' || $action == 'presend')
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="tack_id" value="' . $object->track_id . '">';
 
-	dol_fiche_head($head, 'card', $langs->trans('ticket'), 0, 'ticket');
+	dol_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
 
 	print '<div class="fichecenter2">';
 	print '<table class="border" width="100%">';
