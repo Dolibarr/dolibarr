@@ -251,10 +251,11 @@ class pdf_standard extends CommonStickerGenerator
 		{
 		    if ($object->country == '-') $object->country = '';
 
-			$year = date('Y', dol_now())
-			$month = date('m', dol_now())
-			$day = date('d', dol_now())
-
+			$now = dol_now();
+			$year = dol_print_date($now, '%Y');
+			$month = dol_print_date($now, '%m');
+			$day = dol_print_date($now, '%d');
+				
     		// List of values to scan for a replacement
     		$substitutionarray = array(
     		    '__ID__' => $object->id,
