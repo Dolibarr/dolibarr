@@ -3893,6 +3893,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		$out = '';
+
 		$this->label_incoterms = '';
 		if (!empty($this->fk_incoterms))
 		{
@@ -3905,7 +3906,7 @@ abstract class CommonObject
 			}
 		}
 
-		$out .= (($res->code && $this->location_incoterms) ? ' - ' : '').$this->location_incoterms;
+		$out .= (($out && $this->location_incoterms) ? ' - ' : '').$this->location_incoterms;
 
 		return $out;
 	}
