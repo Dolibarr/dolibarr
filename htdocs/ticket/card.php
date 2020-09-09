@@ -279,7 +279,7 @@ if (empty($reshook)) {
 
 		// check fields
 		if (!$error) {
-			if (!GETPOST('subject' , 'alpha')) {
+			if (!GETPOST('subject', 'alpha')) {
 				$error++;
 				array_push($object->errors, $langs->trans('ErrorFieldRequired', $langs->transnoentities('Subject')));
 			}
