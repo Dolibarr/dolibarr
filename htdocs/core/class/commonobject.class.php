@@ -3238,8 +3238,8 @@ abstract class CommonObject
 		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
 		$targettype = (!empty($targettype) ? $targettype : $this->element);
 		if(!empty($this->module)){
-		    $sourcetype=$this->module.":$sourcetype";
-            $targettype=$this->module.":$targettype";
+		    $sourcetype=$this->module."@$sourcetype";
+            $targettype=$this->module."@$targettype";
         }
 
 		/*if (empty($sourceid) && empty($targetid))
@@ -3306,7 +3306,7 @@ abstract class CommonObject
 				foreach ($tmparray as $objecttype => $objectids)       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
-                    list($module,$element)=explode(':',$objecttype);
+                    list($module,$element)=explode('@',$objecttype);
                     if(empty($element)) {
                         $element =$subelement = $objecttype;
                         $classpath = $element.'/class';
