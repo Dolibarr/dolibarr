@@ -454,6 +454,7 @@ if ($result)
 		if ($arrayfields['entry']['checked']) {
 			$bankline->fetch($obj->fk_bank);
 			print '<td>'.$bankline->getNomUrl(1).'</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Accounting account
