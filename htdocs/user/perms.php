@@ -365,7 +365,7 @@ if ($result)
 			print '<td>&nbsp;</td>';
 
 			// Module Id
-			if ($user->admin) print '<td class="right">'. $objMod->numero.'</td>';
+			if ($user->admin) print '<td class="right">'.$objMod->numero.'</td>';
 
 			print '</tr>'."\n";
 		}

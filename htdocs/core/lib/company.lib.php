@@ -1402,32 +1402,32 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 		}
 
-		if (! empty($search_start) && ! empty($search_end)) {
+		if (!empty($search_start) && !empty($search_end)) {
 			$sql .= " AND ((a.datep BETWEEN '$search_start' AND '$search_end') OR (a.datep2 BETWEEN '$search_start' AND '$search_end'))";
 		}
-		elseif (empty($search_start) && ! empty($search_end)) {
+		elseif (empty($search_start) && !empty($search_end)) {
 			$sql .= " AND ((a.datep <= '$search_end') OR (a.datep2 <= '$search_end'))";
 		}
-		elseif (! empty($search_start) && empty($search_end)) {
+		elseif (!empty($search_start) && empty($search_end)) {
 			$sql .= " AND ((a.datep >= '$search_start') OR (a.datep2 >= '$search_start'))";
 		}
 
-		if (is_array($actioncode) && ! empty($actioncode)) {
+		if (is_array($actioncode) && !empty($actioncode)) {
 			$sql .= ' AND (';
 			foreach ($actioncode as $key => $code) {
 				if ($key != 0) $sql .= "OR (";
-				if (! empty($code)) addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
+				if (!empty($code)) addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
 				if ($key != 0) $sql .= ")";
 			}
 			$sql .= ')';
 		}
-		elseif (! empty($actioncode)) addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
+		elseif (!empty($actioncode)) addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
 				$sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
-				if (! empty($sql2)) {
-					if (! empty($sql)) $sql = $sql." UNION ".$sql2;
+				if (!empty($sql2)) {
+					if (!empty($sql)) $sql = $sql." UNION ".$sql2;
 					elseif (empty($sql)) $sql = $sql2;
 					break;
 				}
@@ -1435,10 +1435,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 		else {
 			$sql2 = addMailingEventTypeSQL($actioncode, $objcon, $filterobj);
-			if (! empty($sql) && ! empty($sql2)) {
+			if (!empty($sql) && !empty($sql2)) {
 				$sql = $sql." UNION ".$sql2;
 			}
-			elseif (empty($sql) && ! empty($sql2)) {
+			elseif (empty($sql) && !empty($sql2)) {
 				$sql = $sql2;
 			}
 		}
@@ -1671,7 +1671,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
-				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) $labeltype .= ' - '.$arraylist[$actionstatic->code];		// Use code in priority on type_code
+				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) $labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 			}
 			$out .= dol_trunc($labeltype, 28);
 			$out .= '</td>';

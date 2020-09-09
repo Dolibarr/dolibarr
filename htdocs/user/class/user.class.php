@@ -3233,9 +3233,9 @@ class User extends CommonObject
 			}
 			return $num;
 		} else {
-            $this->errors[] = $this->db->lasterror();
-            return -1;
-        }
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
 	}
 
 	/**
