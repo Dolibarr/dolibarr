@@ -215,7 +215,7 @@ if ($result)
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	
+
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -223,7 +223,7 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	
+
 	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -292,21 +292,21 @@ if ($result)
 	if ($arrayfields['project']['checked']) {
 		print '<td class="liste_titre">';
 		// TODO
-		print '</td>'; 
+		print '</td>';
 	}
 
 	// Bank account
 	if ($arrayfields['bank']['checked']) {
 		print '<td class="liste_titre">';
 		$form->select_comptes($search_bank_account, 'search_account', 0, '', 1);
-		print '</td>'; 
+		print '</td>';
 	}
 
 	// Bank entry
 	if ($arrayfields['entry']['checked']) {
 		print '<td class="liste_titre right">';
 		print '<input name="search_bank_entry" class="flat" type="text" size="8" value="'.$search_bank_entry.'">';
-		print '</td>'; 
+		print '</td>';
 	}
 
 	// Accounting account
@@ -385,7 +385,7 @@ if ($result)
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 		}
-		
+
 		// Ref
 		if ($arrayfields['ref']['checked']) {
 			$variousstatic->id = $obj->rowid;
@@ -406,7 +406,7 @@ if ($result)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
-		
+
 		// Date value
 		if ($arrayfields['datev']['checked']) {
 			print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
