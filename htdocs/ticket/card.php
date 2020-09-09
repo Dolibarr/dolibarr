@@ -268,53 +268,55 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit' && $user->rights->ticket->write) {
+	if ($action == 'update' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
 		$error = 0;
 
-		if ($object->fetch(GETPOST('id', 'int')) < 0) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorTicketIsNotValid"));
-			$_GET["action"] = $_POST["action"] = '';
-		}
-	}
-
-	if (GETPOST('update', 'alpha') && GETPOST('id', 'int') && $user->rights->ticket->write) {
-		$error = 0;
-
-		$ret = $object->fetch(GETPOST('id', 'int'));
+		$ret = $object->fetch(GETPOST('id', 'int'), GETPOST('ref', 'alpha'), GETPOST('track_id', 'alpha'));
 		if ($ret < 0) {
 			$error++;
-			array_push($object->errors, $langs->trans("ErrorTicketIsNotValid"));
-			$action = '';
-		} elseif (!GETPOST("label")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")));
-			$action = 'edit';
-		} elseif (!GETPOST("subject", 'alphanohtml')) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
-			$action = 'edit';
+			array_push($object->errors, $langs->trans('ErrorTicketIsNotValid'));
+		}
+
+		// check fields
+		if (!$error) {
+			if (!GETPOST('subject' , 'alpha')) {
+				$error++;
+				array_push($object->errors, $langs->trans('ErrorFieldRequired', $langs->transnoentities('Subject')));
+			}
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0)	$error++;
 		}
 
 		if (!$error) {
 			$db->begin();
 
-			$object->label = GETPOST("label", 'alphanohtml');
-			$object->description = GETPOST("description", 'restricthtml');
+			$object->subject = GETPOST('subject', 'alpha');
+			$object->type_code = GETPOST('type_code', 'alpha');
+			$object->category_code = GETPOST('category_code', 'alpha');
+			$object->severity_code = GETPOST('severity_code', 'alpha');
 
-			//...
 			$ret = $object->update($user);
-			if ($ret <= 0) {
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'edit';
+			if ($ret <= 0)  $error++;
+
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+		}
+
+		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit';
+		} else {
+			if (!empty($backtopage)) {
+				$url = $backtopage;
+			} else {
+				$url = 'card.php?track_id=' . $object->track_id;
 			}
 
-			if (!$error && $ret > 0) {
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
+			header('Location: ' . $url);
+			exit();
 		}
 	}
 
@@ -650,9 +652,63 @@ if ($action == 'create' || $action == 'presend')
 	}
 
 	$formticket->showForm(1, 'create');
-}
+} elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
+	$formticket = new FormTicket($db);
 
-if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+	$head = ticket_prepare_head($object);
+
+	print '<form method="POST" name="form_ticket" id="form_edit_ticket" action="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="tack_id" value="' . $object->track_id . '">';
+
+	dol_fiche_head($head, 'card', $langs->trans('ticket'), 0, 'ticket');
+
+	print '<div class="fichecenter2">';
+	print '<table class="border" width="100%">';
+
+	// Type
+	print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
+	$formticket->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
+	print '</td></tr>';
+
+	// Severity
+	print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">' . $langs->trans("TicketSeverity") . '</span></label></td><td>';
+	$formticket->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
+	print '</td></tr>';
+
+	// Group
+	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketGroup") . '</span></label></td><td>';
+	$formticket->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
+	print '</td></tr>';
+
+	// Subject
+	print '<tr><td><label for="subject"><span class="fieldrequired">' . $langs->trans("Subject") . '</span></label></td><td>';
+	print '<input class="text" size="50" id="subject" name="subject" value="' . (GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $object->subject) . '" />';
+	print '</td></tr>';
+
+	// Other attributes
+	$parameters = array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook)) {
+		print $object->showOptionals($extrafields, 'edit');
+	}
+
+	print '</table>';
+	print '</div>';
+
+	dol_fiche_end();
+
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="save" value="' . $langs->trans('Save') . '">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
+	print '</div>';
+
+	print '</form>';
+}
+elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
 {
 	if ($res > 0)
@@ -1191,6 +1247,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 				}
 				if ($object->fk_soc > 0 && $object->fk_statut < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath('/fichinter/card.php', 1).'?action=create&socid='.$object->fk_soc.'&origin=ticket_ticket&originid='.$object->id.'">'.$langs->trans('TicketAddIntervention').'</a></div>';
+				}
+
+				if ($user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?track_id=' . $object->track_id . '&action=edit">' . $langs->trans('Modify') . '</a></div>';
 				}
 
 				// Close ticket if statut is read
