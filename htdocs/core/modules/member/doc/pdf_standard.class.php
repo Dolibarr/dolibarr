@@ -267,9 +267,9 @@ class pdf_standard extends CommonStickerGenerator
     		    '__EMAIL__'=>$object->email,
     		    '__BIRTH__'=>dol_print_date($object->birth, 'day'),
     		    '__TYPE__'=>$object->type,
-    		    '__YEAR__'=>$year,
-    		    '__MONTH__'=>$month,
-    		    '__DAY__'=>$day,
+                '__YEAR__'=>date('Y', dol_now()),
+    		    '__MONTH__'=>date('m', dol_now()),
+    		    '__DAY__'=>date('d', dol_now()),
     		    '__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
     		    '__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
     		);
