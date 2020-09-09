@@ -25,8 +25,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
@@ -68,8 +69,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
@@ -83,30 +83,23 @@ $modules_fullpath = array();
 $modulesdir = dolGetModulesDirs();
 $rights_ids = array();
 
-foreach ($modulesdir as $dir)
-{
+foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle)) !== false)
-		{
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-			{
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
+			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
 				$modName = substr($file, 0, dol_strlen($file) - 10);
 
-				if ($modName)
-				{
+				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
-					if (in_array($file, $modules_files))
-					{
+					if (in_array($file, $modules_files)) {
 						// File duplicate
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					}
 					else {
 						// File to load
 						$res = include_once $dir.$file;
-						if (class_exists($modName))
-						{
+						if (class_exists($modName)) {
 							try {
 								$objMod = new $modName($db);
 
@@ -114,8 +107,7 @@ foreach ($modulesdir as $dir)
 								$modules_files[$objMod->numero] = $file;
 								$modules_fullpath[$file] = $dir.$file;
 							}
-							catch (Exception $e)
-							{
+							catch (Exception $e) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						}
@@ -131,8 +123,7 @@ foreach ($modulesdir as $dir)
 }
 
 // create pre-filtered list for modules
-foreach ($modules as $key=>$module)
-{
+foreach ($modules as $key=>$module) {
 	$newModule = new stdClass();
 
 	$newModule->name	= $module->getName();
@@ -141,8 +132,7 @@ foreach ($modules as $key=>$module)
 
 	$alt = $module->name.' - '.$modules_files[$key];
 
-	if (!empty($module->picto))
-	{
+	if (!empty($module->picto)) {
 		if (preg_match('/^\//', $module->picto)) $newModule->picto = img_picto($alt, $module->picto, 'width="14px"', 1);
 		else $newModule->picto = img_object($alt, $module->picto, 'width="14px"');
 	}
@@ -151,12 +141,9 @@ foreach ($modules as $key=>$module)
 	}
 
 	$permission = array();
-	if ($module->rights)
-	{
-		foreach ($module->rights as $rights)
-		{
-			if (empty($rights[0]))
-			{
+	if ($module->rights) {
+		foreach ($module->rights as $rights) {
+			if (empty($rights[0])) {
 				continue;
 			}
 
@@ -173,14 +160,11 @@ foreach ($modules as $key=>$module)
 	if ($search_version && !stristr($newModule->version, $search_version))	continue;
 	if ($search_id && !stristr($newModule->id, $search_id))					continue;
 
-	if ($search_permission)
-	{
+	if ($search_permission) {
 		$found = false;
 
-		foreach ($newModule->permission as $permission)
-		{
-			if (stristr($permission, $search_permission))
-			{
+		foreach ($newModule->permission as $permission) {
+			if (stristr($permission, $search_permission)) {
 				$found = true;
 				break;
 			}
@@ -224,26 +208,22 @@ print '<table class="noborder centpercent">';
 // Lines with input filters
 print '<tr class="liste_titre_filter">';
 
-if ($arrayfields['name']['checked'])
-{
+if ($arrayfields['name']['checked']) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_name" size="8" value="'.$search_name.'">';
 	print '</td>';
 }
-if ($arrayfields['version']['checked'])
-{
+if ($arrayfields['version']['checked']) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_version" size="8" value="'.$search_version.'">';
 	print '</td>';
 }
-if ($arrayfields['id']['checked'])
-{
+if ($arrayfields['id']['checked']) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_id" size="8" value="'.$search_id.'">';
 	print '</td>';
 }
-if ($arrayfields['permission']['checked'])
-{
+if ($arrayfields['permission']['checked']) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_permission" size="8" value="'.$search_permission.'">';
 	print '</td>';
@@ -258,20 +238,16 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 
-if ($arrayfields['name']['checked'])
-{
+if ($arrayfields['name']['checked']) {
 	print_liste_field_titre($arrayfields['name']['label'], $_SERVER["PHP_SELF"], "name", "", "", "", $sortfield, $sortorder);
 }
-if ($arrayfields['version']['checked'])
-{
+if ($arrayfields['version']['checked']) {
 	print_liste_field_titre($arrayfields['version']['label'], $_SERVER["PHP_SELF"], "version", "", "", "", $sortfield, $sortorder);
 }
-if ($arrayfields['id']['checked'])
-{
+if ($arrayfields['id']['checked']) {
 	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder);
 }
-if ($arrayfields['permission']['checked'])
-{
+if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
 }
 
@@ -292,43 +268,37 @@ if ($sortfield == "version" && $sortorder == "asc") usort($moduleList, function 
 	return strcasecmp($a->version, $b->version); });
 if ($sortfield == "version" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
 	return strcasecmp($b->version, $a->version); });
-if ($sortfield == "id" && $sortorder == "asc") usort($moduleList, "sortIdAsc");
-if ($sortfield == "id" && $sortorder == "desc") usort($moduleList, "sortIdDesc");
-if ($sortfield == "permission" && $sortorder == "asc") usort($moduleList, "sortPermissionIdsAsc");
-if ($sortfield == "permission" && $sortorder == "desc") usort($moduleList, "sortPermissionIdsDesc");
+if ($sortfield == "id" && $sortorder == "asc") usort($moduleList, "compareIdAsc");
+if ($sortfield == "id" && $sortorder == "desc") usort($moduleList, "compareIdDesc");
+if ($sortfield == "permission" && $sortorder == "asc") usort($moduleList, "comparePermissionIdsAsc");
+if ($sortfield == "permission" && $sortorder == "desc") usort($moduleList, "comparePermissionIdsDesc");
 
-foreach ($moduleList as $module)
-{
+foreach ($moduleList as $module) {
 	print '<tr class="oddeven">';
 
-	if ($arrayfields['name']['checked'])
-	{
+	if ($arrayfields['name']['checked']) {
 		print '<td width="300" class="nowrap">';
 		print $module->picto;
 		print ' '.$module->name;
 		print "</td>";
 	}
 
-	if ($arrayfields['version']['checked'])
-	{
+	if ($arrayfields['version']['checked']) {
 		print '<td>'.$module->version.'</td>';
 	}
 
-	if ($arrayfields['id']['checked'])
-	{
+	if ($arrayfields['id']['checked']) {
 		print '<td class="center">'.$module->id.'</td>';
 	}
 
-	if ($arrayfields['permission']['checked'])
-	{
+	if ($arrayfields['permission']['checked']) {
 		$idperms = '';
-		foreach ($module->permission as $permission)
-		{
-			$idperms .= ($idperms ? ", " : "").$permission;
 
+		foreach ($module->permission as $permission) {
+			$idperms .= ($idperms ? ", " : "").$permission;
 			$translationKey = "Permission".$permission;
-			if (empty($langs->tab_translate[$translationKey]))
-			{
+
+			if (empty($langs->tab_translate[$translationKey])) {
 				$tooltip = 'Missing translation (key '.$translation.' not found in admin.lang)';
 				$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 			}
@@ -349,10 +319,8 @@ print '<br>';
 sort($rights_ids);
 $old = '';
 
-foreach ($rights_ids as $right_id)
-{
-	if ($old == $right_id)
-	{
+foreach ($rights_ids as $right_id) {
+	if ($old == $right_id) {
 		print "Warning duplicate id on permission : ".$right_id."<br>";
 	}
 
@@ -364,36 +332,68 @@ llxFooter();
 $db->close();
 
 
-/*
- * user-defined sort functions
- */
-
-function sortIdAsc(stdClass $a, stdClass $b)
+ /**
+  * Compare two modules by their ID for a ascending order
+  *
+  * @param	stdClass 	$a		First module
+  * @param	stdClass 	$b		Second module
+  * @return	int					Compare result (-1, 0, 1)
+  */
+function compareIdAsc(stdClass $a, stdClass $b)
 {
+	if ($a->id == $b->id) return 0;
+
 	return $a->id > $b->id ? -1 : 1;
 }
 
-function sortIdDesc(stdClass $a, stdClass $b)
+ /**
+  * Compare two modules by their ID for a descending order
+  *
+  * @param	stdClass 	$a		First module
+  * @param	stdClass 	$b		Second module
+  * @return	int					Compare result (-1, 0, 1)
+  */
+function compareIdDesc(stdClass $a, stdClass $b)
 {
+	if ($a->id == $b->id) return 0;
+
 	return $b->id > $a->id ? -1 : 1;
 }
 
-function sortPermissionIdsAsc(stdClass $a, stdClass $b)
+ /**
+  * Compare two modules by their ID for a ascending order
+  *
+  * @param	stdClass 	$a		First module
+  * @param	stdClass 	$b		Second module
+  * @return	int					Compare result (-1, 0, 1)
+  */
+function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 {
-	if (empty($a->permission) && empty($b->permission)) return sortIdAsc($a, $b);
+	if (empty($a->permission) && empty($b->permission)) return compareIdAsc($a, $b);
 
 	if (empty($a->permission)) return 1;
 	if (empty($b->permission)) return -1;
 
+	if ($a->permission[0] == $b->permission[0]) return 0;
+
 	return $a->permission[0] > $b->permission[0] ? -1 : 1;
 }
 
-function sortPermissionIdsDesc(stdClass $a, stdClass $b)
+ /**
+  * Compare two modules by their permissions for a descending order
+  *
+  * @param	stdClass 	$a		First module
+  * @param	stdClass 	$b		Second module
+  * @return	int					Compare result (-1, 0, 1)
+  */
+function comparePermissionIdsDesc(stdClass $a, stdClass $b)
 {
-	if (empty($a->permission) && empty($b->permission)) return sortIdDesc($a, $b);
+	if (empty($a->permission) && empty($b->permission)) return compareIdDesc($a, $b);
 
 	if (empty($a->permission)) return -1;
 	if (empty($b->permission)) return 1;
+
+	if ($a->permission[0] == $b->permission[0]) return 0;
 
 	return $a->permission[0] > $b->permission[0] ? 1 : -1;
 }
