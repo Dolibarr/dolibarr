@@ -526,7 +526,7 @@ class Translate
 	 * Get information with result of loading data for domain
 	 *
 	 * @param	string		$domain		Domain to check
-	 * @return 	int						True if loaded
+	 * @return 	int						0, 1, 2...
 	 */
 	public function isLoaded($domain)
 	{
