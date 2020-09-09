@@ -5160,7 +5160,7 @@ class FactureLigne extends CommonInvoiceLine
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
         $sql .= " description='".$this->db->escape($this->desc)."'";
-        $sql .= " ref_ext='".$this->db->escape($this->ref_ext)."'";
+        $sql .= ", ref_ext='".$this->db->escape($this->ref_ext)."'";
         $sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
         $sql .= ", subprice=".price2num($this->subprice)."";
         $sql .= ", remise_percent=".price2num($this->remise_percent)."";
