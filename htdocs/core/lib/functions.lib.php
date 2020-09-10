@@ -8751,23 +8751,34 @@ function finishSimpleTable($addLineBreak = false)
 	print '</table>';
 	print '</div>';
 
-	if($addLineBreak) {
+	if ($addLineBreak) {
 		print '<br>';
 	}
 }
 
+/**
+ * Add a summary line to the current open table ("None", "XMoreLines" or "Total xxx")
+ *
+ * @param integer	$tableColumnCount		The complete count columns of the table 
+ * @param integer	$num					The count of the rows of the table, when it is zero (0) the "$noneWord" is shown instead
+ * @param integer	$nbofloop				(optional)	The maximum count of rows thaht the table show (when it is zero (0) no summary line will show, expect "$noneWord" when $num === 0)
+ * @param integer	$total					(optional)	The total value thaht is shown after when the table has minimum of one entire
+ * @param string	$noneWord				(optional)	The word that is shown when the table has no entires ($num === 0)
+ * @param boolean	$extraRightColumn		(optional)	Add a addtional column after the summary word and total number
+ * @return void
+ */
 function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0, $noneWord = "None", $extraRightColumn = false)
 {
 	global $langs;
 
-	if($num === 0) {
+	if ($num === 0) {
 		print '<tr class="oddeven">';
 		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord ).'</td>';
 		print '</tr>';
 		return;
 	}
 
-	if($nbofloop === 0)
+	if ($nbofloop === 0)
 	{
 		// don't show a summary line
 		return;
@@ -8782,20 +8793,20 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 		$colspan = $tableColumnCount - 1;
 	}
 
-	if($extraRightColumn) {
+	if ($extraRightColumn) {
 		$colspan--;
 	}
 
 	print '<tr class="liste_total">';
 
-	if($nbofloop > 0 && $num > $nbofloop) {
+	if ($nbofloop > 0 && $num > $nbofloop) {
 		print '<td colspan="'.$colspan.'" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
 	} else {
 		print '<td colspan="'.$colspan.'" class="right"> '.$langs->trans("Total").'</td>';
 		print '<td class="right" width="100">'.price($total).'</td>';
 	}
 
-	if($extraRightColumn) {
+	if ($extraRightColumn) {
 		print '<td></td>';
 	}
 
