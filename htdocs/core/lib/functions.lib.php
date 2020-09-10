@@ -8673,8 +8673,10 @@ function currentToken()
 
 /**
  * Start a table with headers and a optinal clickable number
- * (don't forget to close the table with a HTML TABLE and a HTML DIV element)
- *
+ * (don't forget to use "finishSimpleTable()" after the last table row)
+ * 
+ * @see finishSimpleTable
+ * 
  * @param string	$header		The first left header of the table (automatic translated)
  * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
@@ -8682,7 +8684,7 @@ function currentToken()
  * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
  * @return void
  */
-function StartSimpleTableHeader($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
+function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
 {
 	global $langs;
 
@@ -8729,6 +8731,72 @@ function StartSimpleTableHeader($header, $link = "", $arguments = "", $emptyRows
 		print $langs->trans("FullList");
 		print '</a>';
 		print '</th>';
+	}
+
+	print '</tr>';
+}
+
+/**
+ * Add the correct HTML close tags for "startSimpleTable(...)"
+ * (use after the last table line)
+ * 
+ * @see startSimpleTable
+ *
+ * @param bool $addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
+ * 
+ * @return void
+ */
+function finishSimpleTable($addLineBreak = false)
+{
+	print '</table>';
+	print '</div>';
+
+	if($addLineBreak) {
+		print '<br>';
+	}
+}
+
+function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0, $noneWord = "None", $extraRightColumn = false)
+{
+	global $langs;
+
+	if($num === 0) {
+		print '<tr class="oddeven">';
+		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord ).'</td>';
+		print '</tr>';
+		return;
+	}
+
+	if($nbofloop === 0)
+	{
+		// don't show a summary line
+		return;
+	}
+
+	if ($num === 0) {
+		$colspan = $tableColumnCount;
+	}
+	elseif ($num > $nbofloop) {
+		$colspan = $tableColumnCount;
+	} else {
+		$colspan = $tableColumnCount - 1;
+	}
+
+	if($extraRightColumn) {
+		$colspan--;
+	}
+
+	print '<tr class="liste_total">';
+
+	if($nbofloop > 0 && $num > $nbofloop) {
+		print '<td colspan="'.$colspan.'" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
+	} else {
+		print '<td colspan="'.$colspan.'" class="right"> '.$langs->trans("Total").'</td>';
+		print '<td class="right" width="100">'.price($total).'</td>';
+	}
+
+	if($extraRightColumn) {
+		print '<td></td>';
 	}
 
 	print '</tr>';
