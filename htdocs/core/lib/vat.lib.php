@@ -37,7 +37,7 @@ function vat_prepare_head($object)
     $head = array();
 
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans('Card');
+	$head[$tab][1] = $langs->trans('VATPayment');
 	$head[$tab][2] = 'card';
 	$tab++;
 
