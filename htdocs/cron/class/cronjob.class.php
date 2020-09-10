@@ -1057,9 +1057,7 @@ class Cronjob extends CommonObject
 			if (!$error)
 			{
 				$result = $langs->load($this->module_name);
-				if($result<0){
-					$result = $langs->reload($this->module_name.'@'.$this->module_name);
-				}
+				$result = $langs->load($this->module_name.'@'.$this->module_name, 0, 0, '', 0, 1);
 
 				if ($result < 0)	// If technical error
 				{
