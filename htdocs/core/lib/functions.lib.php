@@ -8674,9 +8674,9 @@ function currentToken()
 /**
  * Start a table with headers and a optinal clickable number
  * (don't forget to use "finishSimpleTable()" after the last table row)
- * 
+ *
  * @see finishSimpleTable
- * 
+ *
  * @param string	$header		The first left header of the table (automatic translated)
  * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
  * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
@@ -8739,11 +8739,11 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 /**
  * Add the correct HTML close tags for "startSimpleTable(...)"
  * (use after the last table line)
- * 
+ *
  * @see startSimpleTable
  *
  * @param bool $addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
- * 
+ *
  * @return void
  */
 function finishSimpleTable($addLineBreak = false)
