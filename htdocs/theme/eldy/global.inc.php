@@ -3632,8 +3632,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     /* padding: 3px; */
 }
 .boxstats {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
     padding-top: 2px;
     padding-bottom: 2px;
     width: 118px;
