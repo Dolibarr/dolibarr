@@ -141,11 +141,11 @@ class FormPropal
 	 *    Return combo list of all commercial of proposals
 	 *
 	 *    @param	string	$selected   	Preselected value
+	 *    @param    string  $htmlname       Name of select field
 	 *    @param	int		$short			Use short labels
 	 *    @param	int		$excludedraft	0=All status, 1=Exclude draft status
 	 *    @param	int 	$showempty		1=Add empty line
 	 *    @param    string  $mode           'customer', 'supplier'
-	 *    @param    string  $htmlname       Name of select field
 	 *    @return	void
 	 */
 
