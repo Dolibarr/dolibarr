@@ -1183,7 +1183,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			$globencoded = str_replace(']', '\]', $globencoded);
 			dol_syslog("globencoded=".$globencoded);
 			$listofdir = glob($globencoded);
-			dol_syslog("listofdir=".joint(', ', $listofdir));
+			dol_syslog("listofdir=".join(', ', $listofdir));
 			if (!empty($listofdir) && is_array($listofdir))
 			{
 				foreach ($listofdir as $filename)
