@@ -85,10 +85,10 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
     {
         $sql .= ' (';
-        $sql .= ' ( arm.typeremind = "browser" AND arm.dateremind < NOW() AND arm.status = 0  )';
-        $sql .= ' OR ( datep BETWEEN "'.$db->idate($starttime).'" AND "'.$db->idate($time + $time_update - 1).'" )';
-        $sql .= ' AND a.code <> "AC_OTH_AUTO"';
-        $sql .= ' )';
+	    $sql .= ' ( arm.typeremind = 'browser' AND arm.dateremind < '".$db->idate(dol_now())."' AND arm.status = 0 )';
+	    $sql .= ' OR ( datep BETWEEN "'.$db->idate($starttime).'" AND "'.$db->idate($time + $time_update - 1).'" )';
+		$sql .= " AND a.code <> 'AC_OTH_AUTO'";
+		$sql .= ' )';
     }
     else {
         $sql .= " AND arm.typeremind = 'browser' AND arm.dateremind < NOW() AND arm.status = 0  ";
@@ -121,7 +121,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
                 $event['tipo'] = $langs->transnoentities('Event');
                 $event['titulo'] = $actionmod->label;
                 $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
-                $event['date'] = $langs->transnoentities('Date').': '. date('Y-m-d H:i:s', $actionmod->datep);
+                $event['date'] = $langs->transnoentities('Date').': '. dol_print_date($actionmod->datep, 'Y-m-d H:i:s');
 
                 //Update reminder to status "done"
                 $actioncommReminder->status = $actioncommReminder::STATUS_DONE;
