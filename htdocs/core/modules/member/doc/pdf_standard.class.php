@@ -255,7 +255,7 @@ class pdf_standard extends CommonStickerGenerator
 			$year = dol_print_date($now, '%Y');
 			$month = dol_print_date($now, '%m');
 			$day = dol_print_date($now, '%d');
-				
+
     		// List of values to scan for a replacement
     		$substitutionarray = array(
     		    '__ID__' => $object->id,
