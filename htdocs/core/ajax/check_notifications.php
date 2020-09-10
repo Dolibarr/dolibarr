@@ -85,7 +85,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
     {
         $sql .= ' (';
-	    $sql .= ' ( arm.typeremind = 'browser' AND arm.dateremind < '".$db->idate(dol_now())."' AND arm.status = 0 )';
+	    $sql .= " ( arm.typeremind = 'browser' AND arm.dateremind < '".$db->idate(dol_now())."' AND arm.status = 0 ";
 	    $sql .= ' OR ( datep BETWEEN "'.$db->idate($starttime).'" AND "'.$db->idate($time + $time_update - 1).'" )';
 		$sql .= " AND a.code <> 'AC_OTH_AUTO'";
 		$sql .= ' )';
