@@ -118,7 +118,7 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; color: var(--colortextlink); text-decoration: none;  }
+a:link, a:visited, a:hover, a:active { color: var(--colortextlink); text-decoration: none;  }
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
@@ -4176,7 +4176,7 @@ div.ui-tooltip {
 div.ui-tooltip.mytooltip {
 	border: none !important;
 	padding: 10px 15px;
-	border-radius: 0;
+	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
 	-moz-box-shadow:   0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
@@ -4186,6 +4186,7 @@ div.ui-tooltip.mytooltip {
 	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
+	line-height: 1.8em;
 }
 
 
@@ -6268,6 +6269,16 @@ div.tabsElem a.tab {
 
 span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
     width: 250px !important;
+}
+.phpdebugbar-indicator span.phpdebugbar-tooltip {
+    opacity: .95 !important;
+}
+a.phpdebugbar-tab.phpdebugbar-active {
+	background-image: unset !important;
+}
+.phpdebugbar-indicator .fa {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
 }
 
 

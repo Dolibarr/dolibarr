@@ -4280,9 +4280,9 @@ class Product extends CommonObject
 		if ($maxlength) { $newref = dol_trunc($newref, $maxlength, 'middle');
 		}
 
-		if ($this->type == Product::TYPE_PRODUCT) { $label = '<u>'.$langs->trans("Product").'</u>';
+		if ($this->type == Product::TYPE_PRODUCT) { $label = img_picto('', 'product').' <u>'.$langs->trans("Product").'</u>';
 		}
-		if ($this->type == Product::TYPE_SERVICE) { $label = '<u>'.$langs->trans("Service").'</u>';
+		if ($this->type == Product::TYPE_SERVICE) { $label = img_picto('', 'service').' <u>'.$langs->trans("Service").'</u>';
 		}
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
