@@ -216,7 +216,6 @@ class PropaleStats extends Stats
 
 		if ($_POST['showBySignDate_toselect'] == 'checked'){
 			$sql = "SELECT date_format(p.date_cloture,'%m') as dm, AVG(p.".$this->field.")";
-
 		} else {
 			$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
 		}
