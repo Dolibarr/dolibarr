@@ -148,7 +148,6 @@ class FormPropal
 	 *    @param    string  $mode           'customer', 'supplier'
 	 *    @return	void
 	 */
-
 	public function selectProposalCommercial($selected = '', $htmlname = 'propal_commercial', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer')
 	{
 		global $langs;
