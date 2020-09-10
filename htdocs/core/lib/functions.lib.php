@@ -8759,7 +8759,7 @@ function finishSimpleTable($addLineBreak = false)
 /**
  * Add a summary line to the current open table ("None", "XMoreLines" or "Total xxx")
  *
- * @param integer	$tableColumnCount		The complete count columns of the table 
+ * @param integer	$tableColumnCount		The complete count columns of the table
  * @param integer	$num					The count of the rows of the table, when it is zero (0) the "$noneWord" is shown instead
  * @param integer	$nbofloop				(optional)	The maximum count of rows thaht the table show (when it is zero (0) no summary line will show, expect "$noneWord" when $num === 0)
  * @param integer	$total					(optional)	The total value thaht is shown after when the table has minimum of one entire
@@ -8773,7 +8773,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 
 	if ($num === 0) {
 		print '<tr class="oddeven">';
-		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord ).'</td>';
+		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord).'</td>';
 		print '</tr>';
 		return;
 	}
