@@ -182,14 +182,13 @@ class FormPropal
 			$selected = $_POST['propal_commercial'];
 		}
 
-		foreach($listofcommercial as $key => $obj)
+		foreach ($listofcommercial as $key => $obj)
 		{
 			if ($selected != '' && $selected == $obj['id'])
 			{
 				print '<option value='.$obj['id'].' selected>'.$obj['firstname'].'&nbsp;'.$obj['lastname'];
 			}
-			else
-			{
+			else {
 				print '<option value='.$obj['id'].'>'.$obj['firstname'].'&nbsp;'.$obj['lastname'];
 			}
 			print '</option>';
