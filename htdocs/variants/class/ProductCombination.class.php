@@ -373,7 +373,7 @@ class ProductCombination
 		/* $this->fk_product_child may be empty and will be filled later after subproduct has been created */
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_combination";
-		$sql .= " (fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, entity)";
+		$sql .= " (fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext, entity)";
 		$sql .= " VALUES (".((int) $this->fk_product_parent).", ".((int) $this->fk_product_child).",";
 		$sql .= (float) $this->variation_price.", ".(int) $this->variation_price_percentage.",";
 		$sql .= (float) $this->variation_weight.", '".$this->db->escape($this->variation_ref_ext)."', ".(int) $this->entity.")";
