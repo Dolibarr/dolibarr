@@ -1168,18 +1168,20 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		$reshook = $hookmanager->executeHooks('deleteFile', $parameters, $object);
 	}
 
-	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok, -1 = ko
+	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok and replace, -1 = ko
 	{
 		if ($reshook < 0) return false;
 		return true;
 	} else {
 		//print "x".$file." ".$disableglob;exit;
+		dol_syslog("reshook=".$reshook);
 		$file_osencoded = dol_osencode($file); // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && !empty($file_osencoded))
 		{
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
+			dol_syslog("globencoded=".$globencoded);
 			$listofdir = glob($globencoded);
 			if (!empty($listofdir) && is_array($listofdir))
 			{
@@ -1220,7 +1222,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 						// If error because it does not exists, we should return true, and we should return false if this is a permission problem
 					}
 				}
-			} else dol_syslog("No files to delete found", LOG_DEBUG);
+			} else {
+				dol_syslog("No files to delete found", LOG_DEBUG);
+			}
 		} else {
 			$ok = false;
 			if ($nophperrors) $ok = @unlink($file_osencoded);
