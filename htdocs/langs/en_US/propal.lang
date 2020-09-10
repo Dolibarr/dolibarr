@@ -84,3 +84,4 @@ ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
 SignedOnly=Signed only
+ShowBySignDate=Display by date signed rather than by date created
