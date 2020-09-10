@@ -39,7 +39,7 @@ function facturefourn_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('Card');
+	$head[$h][1] = $langs->trans('SupplierInvoice');
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -129,7 +129,7 @@ function ordersupplier_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("OrderCard");
+	$head[$h][1] = $langs->trans("SupplierOrder");
 	$head[$h][2] = 'card';
 	$h++;
 

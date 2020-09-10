@@ -167,7 +167,7 @@ function task_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$head[$h][1] = $langs->trans("Project");
+	$head[$h][1] = $langs->trans("Task");
 	$head[$h][2] = 'task_task';
 	$h++;
 
