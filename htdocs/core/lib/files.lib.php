@@ -1170,6 +1170,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 
 	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok and replace, -1 = ko
 	{
+		dol_syslog("reshook=".$reshook);
 		if ($reshook < 0) return false;
 		return true;
 	} else {
