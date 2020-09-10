@@ -158,7 +158,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=0", 2, $num);
-		
+
 		if ($num > 0) {
 			$i = 0;
 
@@ -171,7 +171,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
-				
+
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
@@ -309,7 +309,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
-				
+
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
@@ -653,7 +653,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
-				
+
 				$companystatic->id = $obj->rowid;
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
