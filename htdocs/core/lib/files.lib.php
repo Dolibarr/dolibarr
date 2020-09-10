@@ -1155,6 +1155,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		return false;
 	}
 
+	$reshook = 0;
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -1174,17 +1175,13 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		if ($reshook < 0) return false;
 		return true;
 	} else {
-		//print "x".$file." ".$disableglob;exit;
-		dol_syslog("reshook=".$reshook);
 		$file_osencoded = dol_osencode($file); // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && !empty($file_osencoded))
 		{
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
-			dol_syslog("globencoded=".$globencoded);
 			$listofdir = glob($globencoded);
-			dol_syslog("listofdir=".join(', ', $listofdir));
 			if (!empty($listofdir) && is_array($listofdir))
 			{
 				foreach ($listofdir as $filename)
