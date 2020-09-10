@@ -75,7 +75,7 @@ if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
-$list_account[] = '---Other---';
+$list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
@@ -93,6 +93,9 @@ if ($conf->loan->enabled) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
+}
+if ($conf->societe->enabled) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
 
 /*
