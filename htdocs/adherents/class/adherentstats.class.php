@@ -172,13 +172,15 @@ class AdherentStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(p.dateadh,'%Y') as year, date_format(p.dateadh,'%M') as month";
+        $sql .= ", sum(case when m.statut = 1 then 1 else 0 end) as valid, sum(case when m.statut = 0 then 1 else 0 end) as resiliated, count(*) as nb";
+        $sql .= ", sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
         $sql .= $this->db->order('year', 'DESC');
 
-		return $this->_getAllByYear($sql);
+	  return $this->_getAllByYear($sql);
 	}
 }

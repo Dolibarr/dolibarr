@@ -158,13 +158,16 @@ print '<br><br>';
 
 // Show array
 $data = $stats->getAllByYear();
-
+//var_dump($data);
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("MenuMembersValidated").'</td>';
+print '<td class="right">'.$langs->trans("MenuMembersResiliated").'</td>';
 print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
+//print '<td class="right">'.$langs->trans("Total").'</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
@@ -191,6 +194,8 @@ foreach ($data as $val) {
     print $year;
     //print '</a>';
     print '</td>';
+    print '<td class="right">'.$val['resiliated'].'</td>';
+    print '<td class="right">'.$val['valid'].'</td>';
     print '<td class="right">'.$val['nb'].'</td>';
     print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
     print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';

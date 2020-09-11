@@ -381,6 +381,8 @@ abstract class Stats
 			{
 				$row = $this->db->fetch_object($resql);
 				$result[$i]['year'] = $row->year;
+				$result[$i]['resiliated'] = $row->resiliated;
+				$result[$i]['valid'] = $row->valid;
 				$result[$i]['nb'] = $row->nb;
 				if ($i > 0 && $row->nb > 0) $result[$i - 1]['nb_diff'] = ($result[$i - 1]['nb'] - $row->nb) / $row->nb * 100;
 				$result[$i]['total'] = $row->total;
