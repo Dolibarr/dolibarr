@@ -101,6 +101,37 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$typeid = '';
 }
 
+$search_all = GETPOSTISSET("search_all") ? trim(GETPOSTISSET("search_all", 'alpha')) : trim(GETPOST('sall'));
+
+/*
+* TODO: fill array "$fields" in "/compta/bank/class/paymentvarious.class.php" and use
+*
+*
+* $object = new PaymentVarious($db);
+*
+* $search = array();
+* foreach ($object->fields as $key => $val)
+* {
+*	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+* }
+
+* $fieldstosearchall = array();
+* foreach ($object->fields as $key => $val)
+* {
+*	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
+* }
+*
+*/
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'v.rowid'=>"Ref",
+	'v.label'=>"Label",
+	'v.datep'=>"DatePayment",
+	'v.datev'=>"DateValue",
+	'v.amount'=>$langs->trans("Debit").", ".$langs->trans("Credit"),
+);
+
 // Definition of fields for lists
 $arrayfields = array(
 	'ref'			=>array('label'=>"Ref",						'checked'=>1, 'position'=>100),
@@ -135,8 +166,6 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader();
 
 $form = new Form($db);
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked'])	$formaccounting		= new FormAccounting($db);
@@ -174,6 +203,7 @@ if ($filtre) {
 	$filtre = str_replace(":", "=", $filtre);
 	$sql .= " AND ".$filtre;
 }
+if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -189,6 +219,19 @@ $result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
+
+	// Direct jump if only one record found
+	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
+	{
+		$obj = $db->fetch_object($result);
+		$id = $obj->rowid;
+		header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
+		exit;
+	}
+
+	// must be place behind the last "header(...)" call
+	llxHeader();
+
 	$i = 0;
 	$total = 0;
 
@@ -225,6 +268,12 @@ if ($result)
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+	if ($search_all)
+	{
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
