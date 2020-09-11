@@ -139,7 +139,8 @@ if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['w
 }
 
 // remove not available workflows (based on activated modules and global defined keys)
-$workflowcodes  = array_filter($workflowcodes, function ($var) { return $var['enabled']; });
+$workflowcodes  = array_filter($workflowcodes, function ($var) {
+	return $var['enabled']; });
 
 /*
  * View
