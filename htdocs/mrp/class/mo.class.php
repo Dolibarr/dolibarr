@@ -1064,7 +1064,7 @@ class Mo extends CommonObject
 			global $langs;
 			//$langs->load("mrp");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans("ToProduce").')';
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ValidatedToProduce');
 			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
 			$this->labelStatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');

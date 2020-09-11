@@ -511,6 +511,7 @@ Draft=Draft
 Drafts=Drafts
 StatusInterInvoiced=Invoiced
 Validated=Validated
+ValidatedToProduce=Validated (To produce)
 Opened=Open
 OpenAll=Open (All)
 ClosedAll=Closed (All)
