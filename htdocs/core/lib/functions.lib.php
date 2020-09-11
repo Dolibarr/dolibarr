@@ -8667,3 +8667,145 @@ function currentToken()
 {
 	return $_SESSION['token'];
 }
+
+/**
+ * Start a table with headers and a optinal clickable number
+ * (don't forget to use "finishSimpleTable()" after the last table row)
+ *
+ * @see finishSimpleTable
+ *
+ * @param string	$header		The first left header of the table (automatic translated)
+ * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @param integer	$emptyRows	(optional) The count of empty rows after the first header
+ * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @return void
+ */
+function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
+{
+	global $langs;
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+
+	print $emptyRows < 1 ? '<th>' : '<th colspan="'.($emptyRows + 1).'">';
+
+	print $langs->trans($header);
+
+	// extra space between the first header and the number
+	if ($number > -1) {
+		print ' ';
+	}
+
+	if (!empty($link)) {
+		if (!empty($arguments)) {
+			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
+		} else {
+			print '<a href="'.DOL_URL_ROOT.'/'.$link.'">';
+		}
+	}
+
+	if ($number > -1) {
+		print '<span class="badge">'.$number.'</span>';
+	}
+
+	if (!empty($link)) {
+		print '</a>';
+	}
+
+	print '</th>';
+
+	if ($number < 0 && !empty($link)) {
+		print '<th class="right">';
+
+		if (!empty($arguments)) {
+			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
+		} else {
+			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
+		}
+
+		print $langs->trans("FullList");
+		print '</a>';
+		print '</th>';
+	}
+
+	print '</tr>';
+}
+
+/**
+ * Add the correct HTML close tags for "startSimpleTable(...)"
+ * (use after the last table line)
+ *
+ * @see startSimpleTable
+ *
+ * @param bool $addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
+ *
+ * @return void
+ */
+function finishSimpleTable($addLineBreak = false)
+{
+	print '</table>';
+	print '</div>';
+
+	if ($addLineBreak) {
+		print '<br>';
+	}
+}
+
+/**
+ * Add a summary line to the current open table ("None", "XMoreLines" or "Total xxx")
+ *
+ * @param integer	$tableColumnCount		The complete count columns of the table
+ * @param integer	$num					The count of the rows of the table, when it is zero (0) the "$noneWord" is shown instead
+ * @param integer	$nbofloop				(optional)	The maximum count of rows thaht the table show (when it is zero (0) no summary line will show, expect "$noneWord" when $num === 0)
+ * @param integer	$total					(optional)	The total value thaht is shown after when the table has minimum of one entire
+ * @param string	$noneWord				(optional)	The word that is shown when the table has no entires ($num === 0)
+ * @param boolean	$extraRightColumn		(optional)	Add a addtional column after the summary word and total number
+ * @return void
+ */
+function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0, $noneWord = "None", $extraRightColumn = false)
+{
+	global $langs;
+
+	if ($num === 0) {
+		print '<tr class="oddeven">';
+		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord).'</td>';
+		print '</tr>';
+		return;
+	}
+
+	if ($nbofloop === 0)
+	{
+		// don't show a summary line
+		return;
+	}
+
+	if ($num === 0) {
+		$colspan = $tableColumnCount;
+	}
+	elseif ($num > $nbofloop) {
+		$colspan = $tableColumnCount;
+	} else {
+		$colspan = $tableColumnCount - 1;
+	}
+
+	if ($extraRightColumn) {
+		$colspan--;
+	}
+
+	print '<tr class="liste_total">';
+
+	if ($nbofloop > 0 && $num > $nbofloop) {
+		print '<td colspan="'.$colspan.'" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
+	} else {
+		print '<td colspan="'.$colspan.'" class="right"> '.$langs->trans("Total").'</td>';
+		print '<td class="right" width="100">'.price($total).'</td>';
+	}
+
+	if ($extraRightColumn) {
+		print '<td></td>';
+	}
+
+	print '</tr>';
+}
