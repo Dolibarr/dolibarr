@@ -180,7 +180,7 @@ class AdherentStats extends Stats
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
         $sql .= $this->db->order('year', 'DESC');
-		
+
 		return $this->_getAllByYear($sql);
 	}
 }
