@@ -534,6 +534,17 @@ div.floatright
 .largenumber {
     font-size: 1.4em;
 }
+button[name='button_search_x'] span.fa.fa-search {
+    font-size: 1.3em;
+}
+button[name='button_removefilter_x'] span.fa.fa-remove {
+    opacity: 0.5;
+    font-size: 1.3em;
+}
+button:focus {
+	outline: none;
+}
+
 
 th .button {
     -webkit-box-shadow: none !important;
