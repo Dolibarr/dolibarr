@@ -1057,7 +1057,8 @@ class Cronjob extends CommonObject
 			if (!$error)
 			{
 				$result = $langs->load($this->module_name);
-				$result = $langs->load($this->module_name.'@'.$this->module_name); // If this->module_name was an existing language file, this will make nothing
+				$result = $langs->load($this->module_name.'@'.$this->module_name, 0, 0, '', 0, 1);
+
 				if ($result < 0)	// If technical error
 				{
 					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
