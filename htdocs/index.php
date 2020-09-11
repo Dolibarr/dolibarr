@@ -294,7 +294,10 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$boxstatItem = '';
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
-				if (!isset($boardloaded[$class]) || !is_object($boardloaded[$class]))
+				$classkeyforcache = $class;
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product';	// ProductService use same load_state_board than Product
+
+				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{
 					include_once $includes[$val]; // Loading a class cost around 1Mb
 
@@ -302,7 +305,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 					$board->load_state_board();
 					$boardloaded[$class] = $board;
 				} else {
-					$board = $boardloaded[$class];
+					$board = $boardloaded[$classkeyforcache];
 				}
 
 				$langs->load(empty($langfile[$val]) ? $val : $langfile[$val]);
