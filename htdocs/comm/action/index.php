@@ -398,6 +398,8 @@ if ($action == 'show_month') $tabactive = 'cardmonth';
 if ($action == 'show_week') $tabactive = 'cardweek';
 if ($action == 'show_day')  $tabactive = 'cardday';
 if ($action == 'show_list') $tabactive = 'cardlist';
+if ($action == 'show_pertuser') $tabactive = 'cardperuser';
+if ($action == 'show_pertype') $tabactive = 'cardpertype';
 
 $paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 

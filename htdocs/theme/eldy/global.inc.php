@@ -4459,7 +4459,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
 .cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
-.cal_peruserviewname { max-width: 140px; height: 22px; }
+.cal_peruserviewname { max-width: 140px; height: 30px !important; }
 .cal_event span.badge.badge-status { border: 1px solid #aaa; }
 table.cal_month tr td table.nobordernopadding tr td { padding: 0 2px 0 2px; }
 table.cal_month tr.liste_titre td.tdfordaytitle { min-width: 120px; }
