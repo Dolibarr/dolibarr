@@ -710,7 +710,7 @@ class RecruitmentCandidature extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("RecruitmentCandidature").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("RecruitmentCandidature").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;

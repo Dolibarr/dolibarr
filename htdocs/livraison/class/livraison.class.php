@@ -718,7 +718,8 @@ class Livraison extends CommonObject
 		$result = '';
 		$picto = 'sending';
 
-		$label = $langs->trans("ShowReceiving").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
 

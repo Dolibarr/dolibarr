@@ -1071,7 +1071,7 @@ class Reception extends CommonObject
 	{
 		global $conf, $langs;
 		$result = '';
-        $label = '<u>'.$langs->trans("Reception").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Reception").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 

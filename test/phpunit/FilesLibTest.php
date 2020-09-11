@@ -365,13 +365,10 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result, 'move with forced mask');
 
-        $conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
-        $conf->logbuffer=array();
-
         // To test a delete that should success
         $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv');
-        print __METHOD__." result delete=".var_export($result, true)."\n";
-        $this->assertTrue($result, 'delete file '.join("\n", $conf->logbuffer));
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result, 'delete file');
 
         // Again to test there is error when deleting a non existing file with option disableglob
         $result=dol_delete_file($conf->admin->dir_temp.'/file3.csv', 1, 1);
@@ -398,7 +395,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
      * testDolCompressUnCompress
      *
      * @return	void
-     * @depends	testDolCopyMoveDelete
      */
     public function testDolCompressUnCompress()
     {

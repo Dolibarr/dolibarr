@@ -1268,9 +1268,8 @@ class Ticket extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
-		$label = '<u>'.$langs->trans("Ticket").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Ticket").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';

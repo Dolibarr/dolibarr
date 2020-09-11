@@ -1303,7 +1303,7 @@ class BonPrelevement extends CommonObject
 
 		$result = '';
 
-		$labeltoshow = 'Withdraw';
+		$labeltoshow = 'PaymentByDirectDebit';
 		if ($this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
 		}

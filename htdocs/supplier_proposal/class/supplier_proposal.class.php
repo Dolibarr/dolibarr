@@ -2468,7 +2468,7 @@ class SupplierProposal extends CommonObject
 		$url = '';
 		$result = '';
 
-		$label = '<u>'.$langs->trans("SupplierProposal").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierProposal").'</u>';
 		if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_fourn)) $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
 		if (!empty($this->total_ht)) $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);

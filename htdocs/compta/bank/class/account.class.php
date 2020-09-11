@@ -1353,7 +1353,7 @@ class Account extends CommonObject
 		global $conf, $langs, $user;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("BankAccount").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankAccount").'</u>';
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.$this->iban;
