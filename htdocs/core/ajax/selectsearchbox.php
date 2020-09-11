@@ -143,7 +143,6 @@ if (!empty($conf->ticket->enabled) && empty($conf->global->MAIN_SEARCHFORM_TICKE
 	$arrayresult['searchintotickets'] = array('position'=>145, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
-
 // HR
 if (!empty($conf->user->enabled) && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && $user->rights->user->user->lire)
 {
