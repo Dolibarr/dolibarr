@@ -267,8 +267,12 @@ if ($action != 'export_csv')
 	$sous_total_credit = 0;
 	$displayed_account = "";
 
-	$sql = "select t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance from ".MAIN_DB_PREFIX."accounting_bookkeeping as t where entity in ".$conf->entity;
-	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."' GROUP BY t.numero_compte";
+	$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
+	$sql .= " WHERE t.entity IN (".getEntity('accountancy').")";
+	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."'";
+	$sql .= " GROUP BY t.numero_compte";
+
 	$resql = $db->query($sql);
 	$nrows = $resql->num_rows;
 	$opening_balances = array();
@@ -289,10 +293,10 @@ if ($action != 'export_csv')
 		}
 		print '<tr class="oddeven">';
 
-		// Permet d'afficher le compte comptable
+		// Display the accounting account
 		if (empty($displayed_account) || $root_account_description != $displayed_account)
 		{
-			// Affiche un Sous-Total par compte comptable
+			// Display a sub-total per account
 			if ($displayed_account != "") {
 				print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
 				print "<td>&nbsp;</td>\n";
@@ -321,7 +325,7 @@ if ($action != 'export_csv')
 		print '</td>';
 		print "</tr>\n";
 
-		// Comptabilise le sous-total
+		// Records the sub-total
 		$sous_total_debit += $line->debit;
 		$sous_total_credit += $line->credit;
 	}
