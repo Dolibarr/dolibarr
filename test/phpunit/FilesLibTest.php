@@ -415,8 +415,13 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
         $errorstring = '';
 
+        dol_mkdir($conf->admin->dir_temp);
+        $conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+        $conf->logbuffer=array();
+
         $result=dol_compress_file($filein, $fileout, $format, $errorstring);
         print __METHOD__." result=".$result."\n";
+        print join(', ', $conf->logbuffer);
         $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." into ".$fileout." : ".$errorstring);
 
         $result=dol_uncompress($fileout, $dirout);
