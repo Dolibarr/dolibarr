@@ -2430,7 +2430,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $out .= '</b>';
 			$out .= '</a>';
 
-            $out .= '/';
+            $out .= ' / ';
 
 			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';

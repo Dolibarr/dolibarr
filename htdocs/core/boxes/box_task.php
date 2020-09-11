@@ -189,7 +189,7 @@ class box_task extends ModeleBoxes
                     $projectstatic->ref = $objp->project_ref;
                     $projectstatic->title = $objp->project_title;
 
-                    $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
+                    $label = $projectstatic->getNomUrl(1).' &nbsp; '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
                     $boxcontent = getTaskProgressView($taskstatic, $label, true, false, false);
 
