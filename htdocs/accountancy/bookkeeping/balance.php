@@ -269,7 +269,7 @@ if ($action != 'export_csv')
 
 	$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
-	$sql .= " WHERE t.entity IN (".getEntity('accountancy').")";
+	$sql .= " WHERE t.entity = ".$conf->entity;		// Never do sharing into accounting features
 	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."'";
 	$sql .= " GROUP BY t.numero_compte";
 
