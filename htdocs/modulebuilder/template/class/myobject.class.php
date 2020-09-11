@@ -735,7 +735,7 @@ class MyObject extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("MyObject").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->status)) {

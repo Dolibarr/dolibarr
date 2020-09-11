@@ -707,7 +707,7 @@ class Entrepot extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("Warehouse").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Warehouse").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
 		if (!empty($this->lieu)) {
 			$label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;

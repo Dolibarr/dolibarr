@@ -899,7 +899,7 @@ class Don extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = '<u>'.$langs->trans("Donation").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Donation").'</u>';
 		if (!empty($this->id)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 		}

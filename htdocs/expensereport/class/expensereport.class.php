@@ -1556,7 +1556,7 @@ class ExpenseReport extends CommonObject
 
 		if ($short) return $url;
 
-		$label = '<u>'.$langs->trans("ShowExpenseReport").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowExpenseReport").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->total_ht))

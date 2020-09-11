@@ -745,7 +745,7 @@ class BOM extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("BillOfMaterials").'</u>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("BillOfMaterials").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {

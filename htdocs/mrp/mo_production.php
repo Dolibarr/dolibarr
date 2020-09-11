@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2019-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ if (empty($reshook))
 	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 	    						$error++;
 	    					}
-	    					if ($tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
+	    					if (!empty($conf->productbatch->enabled) && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
 	    						$langs->load("errors");
 	    						setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
 	    						$error++;
@@ -681,7 +681,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '<div class="fichehalfleft">';
     	print '<div class="clearboth"></div>';
 
-    	$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
+    	$newlinetext = '';
+    	if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
+    		$newlinetext = '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline">'.$langs->trans("AddNewConsumeLines").'</a>';
+    	}
     	print load_fiche_titre($langs->trans('Consumption'), '', '', 0, '', '', $newlinetext);
 
     	print '<div class="div-table-responsive-no-min">';
@@ -812,7 +815,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			$i = 1;
     	    			print '<!-- Enter line to consume -->'."\n";
     	    			print '<tr>';
-    	    			print '<td>'.$langs->trans("ToConsume").'</td>';
+    	    			print '<td><span class="opacitymedium">'.$langs->trans("ToConsume").'</span></td>';
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
     	    			if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) $preselected = 0;
     	    			print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
@@ -960,8 +963,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				}
 
     				if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+    					print '<!-- Enter line to produce -->'."\n";
     					print '<tr name="batch_'.$line->id.'_'.$i.'">';
-    					print '<td>'.$langs->trans("ToProduce").'</td>';
+    					print '<td><span class="opacitymedium">'.$langs->trans("ToProduce").'</span></td>';
     					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
     					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) $preselected = 0;
     					print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';

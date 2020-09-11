@@ -1284,7 +1284,7 @@ class Contact extends CommonObject
 			$label .= '</div><div style="clear: both;"></div>';
 		}
 
-        $label .= '<u>'.$langs->trans("Contact").'</u>';
+		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Contact").'</u>';
         $label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;

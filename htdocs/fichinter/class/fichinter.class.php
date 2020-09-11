@@ -765,7 +765,7 @@ class Fichinter extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowIntervention").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Intervention").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
