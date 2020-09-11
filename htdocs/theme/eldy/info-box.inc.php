@@ -17,7 +17,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	min-height: 90px;
 	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 2px rgba(128, 128, 128, 0.2);
+	box-shadow: 1px 1px 25px rgba(192, 192, 192, 0.2);
     border-radius: 2px;
     border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
