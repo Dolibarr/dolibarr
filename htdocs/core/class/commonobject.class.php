@@ -6707,7 +6707,7 @@ abstract class CommonObject
 			$value = implode('<br>', $value);
 		}
 
-		//print $type.'-'.$size;
+		//print $type.'-'.$size.'-'.$value;
 		$out = $value;
 
 		return $out;
