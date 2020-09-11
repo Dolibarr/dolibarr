@@ -65,9 +65,9 @@ No vulnerability disclosure, including partial is allowed for the moment.
 ONLY vulnerabilities discovered, when the following setup on tested platform is used, are accepted:
 
 * $dolibarr_main_prod must be set to 1 into conf.php
-* $dolibarr_nocsrfcheck must be kept to the default value 1 into conf.php
+* $dolibarr_nocsrfcheck must be kept to the value 1 into conf.php (this is the default value)
 * The module DebugBar must NOT be enabled (by default, this module is not enabled)
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this value should be switched soon to 1 by default)
+* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be enabled soon by default)
 * ONLY security reports on "stable" modules are allowed (troubles into "experimental" and "developement" modules are not accepted).
 
 Scope is the web application (back office) and the APIs.
@@ -93,11 +93,9 @@ Scope is the web application (back office) and the APIs.
 * "Self" XSS
 * Missing cookie flags
 * SSL/TLS best practices
-* Mixed content warnings
 * Denial of Service attacks
 * Clickjacking/UI redressing
 * Physical or social engineering attempts
-* Recently disclosed 0-day vulnerabilities
 * Presence of autocomplete attribute on web forms
 * Vulnerabilities affecting outdated browsers or platforms
 * Issues that require physical access to a victim’s computer/device
