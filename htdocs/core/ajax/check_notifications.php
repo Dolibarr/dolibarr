@@ -46,6 +46,45 @@ if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 
 require '../../main.inc.php';
 
+$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
+//$time=dol_now();
+$action = GETPOST('action', 'aZ09');
+$listofreminderids = GETPOST('listofreminderids', 'aZ09');
+
+
+/*
+ * Actions
+ */
+
+if ($action == 'stopreminder') {
+	dol_syslog("Clear notification for listofreminderids=".$listofreminderids);
+	$listofreminderidsarray = explode('-', GETPOST('listofreminderids', 'aZ09'));
+
+	// Set the reminder as done
+	foreach($listofreminderidsarray as $listofreminderid) {
+		if (empty($listofreminderid)) continue;
+		//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
+		$sql .= ' WHERE status = 0 AND rowid = '.$listofreminderid.' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_print_error($db);
+		}
+	}
+
+	include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+
+	// Clean database
+	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'actioncomm_reminder';
+	$sql .= " WHERE dateremind < '".$db->idate(dol_time_plus_duree(dol_now(), -1, 'm'))."'";
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+	}
+
+	exit;
+}
+
 
 /*
  * View
@@ -54,10 +93,6 @@ require '../../main.inc.php';
 top_httphead('text/html'); // TODO Use a json mime type
 
 global $user, $db, $langs, $conf;
-
-$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
-//$time=dol_now();
-
 
 $eventfound = array();
 //Uncomment this to force a test
@@ -96,7 +131,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow
 
     dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.$_SESSION['auto_check_events_not_before']);
 
-    $sql = 'SELECT a.id, a.code, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user';
+    $sql = 'SELECT a.id, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
     if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS)) {
     	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
@@ -120,10 +155,12 @@ if ($time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow
             $event['type'] = 'agenda';
             $event['id'] = $obj->id;
             $event['id_reminder'] = $obj->id_reminder;
+            $event['id_user'] = $obj->id_user_reminder;
             $event['code'] = $obj->code;
             $event['label'] = $obj->label;
             $event['location'] = $obj->location;
-            $event['date'] = $db->jdate($obj->dateremind);
+            $event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard');
+            $event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard');
 
             $eventfound[] = $event;
         }
