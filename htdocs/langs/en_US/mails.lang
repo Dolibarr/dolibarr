@@ -125,7 +125,7 @@ TagMailtoEmail=Recipient Email (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Notifications
-NotificationsAuto=Notifications (Auto)
+NotificationsAuto=Notifications Auto.
 NoNotificationsWillBeSent=No automtic email notifications are planned for this event type and company
 ANotificationsWillBeSent=1 automatic notification will be sent by email
 SomeNotificationsWillBeSent=%s automatic notifications will be sent by email
