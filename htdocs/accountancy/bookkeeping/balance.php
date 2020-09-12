@@ -276,8 +276,12 @@ if ($action != 'export_csv')
 
     $accountingaccountstatic = new AccountingAccount($db);
 
-	$sql = "select t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance from ".MAIN_DB_PREFIX."accounting_bookkeeping as t where entity in ".$conf->entity;
-	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."' GROUP BY t.numero_compte";
+	$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
+	$sql .= " WHERE t.entity = ".$conf->entity;		// Never do sharing into accounting features
+	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."'";
+	$sql .= " GROUP BY t.numero_compte";
+
 	$resql = $db->query($sql);
 	$nrows = $resql->num_rows;
 	$opening_balances = array();
@@ -340,7 +344,7 @@ if ($action != 'export_csv')
 		print '</td>';
 		print "</tr>\n";
 
-		// Comptabilise le sous-total
+		// Records the sub-total
 		$sous_total_debit += $line->debit;
 		$sous_total_credit += $line->credit;
 	}

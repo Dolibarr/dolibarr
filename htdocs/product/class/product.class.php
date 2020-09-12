@@ -5230,7 +5230,7 @@ class Product extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);
-			$label = ($label_type == 'short' ? $res[$label_type] : 'unit'.$res['code']);
+			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
 			$this->db->free($resql);
 			return $label;
 		} else {

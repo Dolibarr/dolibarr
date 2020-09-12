@@ -472,7 +472,7 @@ class Account extends CommonObject
 	 *  @param	string		$oper			'VIR','PRE','LIQ','VAD','CB','CHQ'...
 	 *  @param	string		$label			Descripton
 	 *  @param	float		$amount			Amount
-	 *  @param	string		$num_chq		Numero cheque ou virement
+	 *  @param	string		$num_chq		Numero cheque or transfer
 	 *  @param	int  		$categorie		Category id (optionnal)
 	 *  @param	User		$user			User that create
 	 *  @param	string		$emetteur		Name of cheque writer
@@ -566,15 +566,18 @@ class Account extends CommonObject
 				if (!$result) {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
+
 					return -3;
 				}
 			}
 
 			$this->db->commit();
+
 			return $accline->id;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
+
 			return -2;
 		}
 	}

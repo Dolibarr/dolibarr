@@ -1232,6 +1232,7 @@ class FormMail extends Form
 				return -1;
 			} else {	// If there is no template at all
 				$defaultmessage = '';
+
 				if ($type_template == 'body') {
 					// Special case to use this->withbody as content
 					$defaultmessage = $this->withbody;
@@ -1255,6 +1256,10 @@ class FormMail extends Form
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 				} elseif ($type_template == 'actioncomm_send') {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
+				} elseif ($type_template == 'thirdparty') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
+			    } elseif ($type_template == 'user') {
+			    	$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser");
 				} elseif (!empty($type_template)) {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 				}
