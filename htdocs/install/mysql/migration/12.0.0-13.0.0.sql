@@ -320,3 +320,5 @@ ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
 ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
 
+ALTER TABLE llx_paiement ADD COLUMN ref_ext varchar(255) AFTER ref;
+
