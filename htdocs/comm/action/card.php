@@ -1043,7 +1043,7 @@ if ($action == 'create')
 	}*/
 	print '</td></tr>';
 
-	// Realised by
+	// Done by
 	if (!empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';

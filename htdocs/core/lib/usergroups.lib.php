@@ -130,7 +130,7 @@ function user_prepare_head($object)
 		}
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Notifications");
+		$head[$h][1] = $langs->trans("NotificationsAuto");
 		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notify';
 		$h++;

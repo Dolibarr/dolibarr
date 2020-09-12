@@ -33,9 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
 
-
-
-
 /**
  *		Class to manage agenda events (actions)
  */

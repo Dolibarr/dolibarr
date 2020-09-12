@@ -79,6 +79,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 						}
 						?>
+						var listofreminderids = '';
 
                         $.each(arr, function (index, value) {
                             var url="notdefined";
@@ -86,6 +87,10 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                             var body = value['tipo'] + ': ' + value['titulo'];
                             if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
                                 body += '\n' + value['location'];
+                            }
+
+                            if(value['type'] == 'agenda' && (value['date'] != null || value['date'] != '')) {
+                                body += '\n' + value['date'];
                             }
 
                             if (value['type'] == 'agenda')
@@ -105,14 +110,26 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                             {
                             	audio.play();
                             }
-                            noti.onclick = function (event) {
-                                console.log("An event to notify on browser was received");
-                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
-                                window.focus();
-                                window.open(url, '_blank');
-                                noti.close();
-                            };
+
+                            if (noti) {
+	                            noti.onclick = function (event) {
+	                                console.log("An event to notify on browser was received");
+	                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
+	                                window.focus();
+	                                window.open(url, '_blank');
+	                                noti.close();
+	                            };
+
+	                            listofreminderids = listofreminderids + ',' + value['id']
+	                        }
                         });
+
+                        // Update status of all notifications we sent on browser (listofreminderids)
+						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderis='; ?>"+listofreminderids, {
+			                type: "get",   // Usually post or get
+			                async: true,
+			                data: {time: time_js_next_test}
+			                });
                     }
                 }
             });
