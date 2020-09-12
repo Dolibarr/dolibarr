@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2018 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -2084,6 +2084,9 @@ class SupplierProposal extends CommonObject
 
                     if (!$error)
                     {
+                    	// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+                    	$this->deleteEcmFiles();
+
                         // We remove directory
                         $ref = dol_sanitizeFileName($this->ref);
                         if ($conf->supplier_proposal->dir_output && !empty($this->ref))
