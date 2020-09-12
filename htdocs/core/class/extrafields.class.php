@@ -1218,13 +1218,13 @@ class ExtraFields
 							} else {
 								$labeltoshow = $obj->{$InfoFieldList[1]};
 							}
-							$labeltoshow = dol_trunc($labeltoshow, 45);
+							$labeltoshow = $labeltoshow;
 
 							if ($value == $obj->rowid) {
 								if (!$notrans) {
 									foreach ($fields_label as $field_toshow) {
 										$translabel = $langs->trans($obj->$field_toshow);
-										$labeltoshow = dol_trunc($translabel, 18).' ';
+										$labeltoshow = $translabel.' ';
 									}
 								}
 								$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
