@@ -269,14 +269,12 @@ if ($action == 'edit')
 	print '<input class="flat" name="MAIN_MAIL_FORCE_SENDTO" size="32" value="'.(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO) ? $conf->global->MAIN_MAIL_FORCE_SENDTO : '').'" />';
 	print '</td></tr>';
 
+	print '</table>';
 
-	//Add user to select destinaries list
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
-	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT', $conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT, 1);
-	print '</td></tr>';
+	print '<br>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -434,8 +432,12 @@ if ($action == 'edit')
     print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY : '').'</textarea>';
     print '</td></tr>';
 
-    // Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '</table>';
+
+	print '<br>';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
@@ -451,9 +453,6 @@ if ($action == 'edit')
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
 	print '</td></tr>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
-
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="'.(!empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : '');
@@ -463,6 +462,11 @@ if ($action == 'edit')
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="'.(!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) ? $conf->global->MAIN_MAIL_AUTOCOPY_TO : '');
 	print '"></td></tr>';
+
+	// Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
+	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT', $conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT, 1);
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -498,17 +502,23 @@ if ($action == 'edit')
 	}
 	print '</td></tr>';
 
-	//Add user to select destinaries list
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
+	print '</table>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '<br>';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 	if (empty($text)) $text = $langs->trans("Undefined").img_warning();
 	print $text;
+
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+		print $form->textwithpicto('', $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC"), 1, 'warning');
+	}
+
 	print '</td></tr>';
 
 	// Host server
@@ -591,8 +601,16 @@ if ($action == 'edit')
 	    print '</td></tr>';
 	}
 
-    // Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '</table>';
+
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+		print info_admin($langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC"), 0, 0, 'warning');
+	}
+
+	print '<br>';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
@@ -645,9 +663,6 @@ if ($action == 'edit')
 	}
 	print '</td></tr>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
-
 	// Errors To
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
@@ -665,6 +680,9 @@ if ($action == 'edit')
 		print '&nbsp;';
 	}
 	print '</td></tr>';
+
+	//Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
 
 	print '</table>';
 
@@ -717,7 +735,7 @@ if ($action == 'edit')
 		$text = '';
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= $langs->trans("WarningPHPMail"); // To encourage to use SMTPS
+			//$text .= $langs->trans("WarningPHPMail"); // To encourage to use SMTPS
 		}
 
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
