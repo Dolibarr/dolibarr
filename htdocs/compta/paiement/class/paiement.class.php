@@ -283,7 +283,7 @@ class Paiement extends CommonObject
         $this->db->begin();
 
 		$this->ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
-		
+
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';
 		}
