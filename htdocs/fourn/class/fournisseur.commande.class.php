@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
@@ -2062,6 +2062,9 @@ class CommandeFournisseur extends CommonOrder
 
         if (!$error)
         {
+        	// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+        	$this->deleteEcmFiles();
+
         	// We remove directory
         	$ref = dol_sanitizeFileName($this->ref);
         	if ($conf->fournisseur->commande->dir_output)
