@@ -264,7 +264,7 @@ class ProductCombination
 			$this->fetchCombinationPriceLevels();
 		}
 
-		return $this->fk_product_parent;
+		return (int) $this->fk_product_parent;
 	}
 
 	/**
