@@ -1522,7 +1522,7 @@ class Invoices extends DolibarrApi
 
         return $paiement_id;
     }
-    
+
     /**
      * Update a payment
      *
@@ -1539,28 +1539,28 @@ class Invoices extends DolibarrApi
     public function putPayment($id, $num_paiement = '')
     {
         require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-        
+
         if (!DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
         }
         if (empty($id)) {
             throw new RestException(400, 'Payment ID is mandatory');
         }
-        
+
         $paiement = new Paiement($this->db);
         $result = $paiement->fetch($id);
-        
+
         if (!$result) {
             throw new RestException(404, 'Paiement not found');
         }
-        
+
         if (!empty($num_paiement)) {
             $result = $paiement->update_num($num_paiement);
             if ($result < 0) {
                 throw new RestException(500, 'Error when updating the payment num');
             }
         }
-        
+
         return [
             'success' => [
                 'code' => 200,
