@@ -95,13 +95,6 @@ class Paiement extends CommonObject
      * @deprecated
      * @see $num_payment
      */
-    public $numero;
-
-    /**
-     * @var string Numero du CHQ, VIR, etc...
-     * @deprecated
-     * @see $num_payment
-     */
     public $num_paiement;
 
     /**
@@ -194,7 +187,6 @@ class Paiement extends CommonObject
 				$this->ref_ext        = $obj->ref_ext;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->num_paiement   = $obj->num_payment; // deprecated
 				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount; // deprecated
 				$this->amount         = $obj->amount;
@@ -297,8 +289,8 @@ class Paiement extends CommonObject
 			$mtotal = $totalamount;
 		}
 
-		$num_payment = ($this->num_payment ? $this->num_payment : $this->num_paiement);
-		$note = ($this->note_public ? $this->note_public : $this->note);
+		$num_payment = $this->num_payment;
+		$note = ($this->note_private ? $this->note_private : $this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
@@ -716,7 +708,7 @@ class Paiement extends CommonObject
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
-						$this->num_paiement,
+						$this->num_payment,
 						'withdraw'
 					);
 				}

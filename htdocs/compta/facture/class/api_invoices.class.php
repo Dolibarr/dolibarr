@@ -1285,7 +1285,7 @@ class Invoices extends DolibarrApi
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
      * @param string  $num_payment        {@from body}  Payment number (optional)
-     * @param string  $comment            {@from body}  Note public (optional)
+     * @param string  $comment            {@from body}  Note private (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paymentcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
@@ -1365,7 +1365,7 @@ class Invoices extends DolibarrApi
     	$paymentobj->paiementid = $paymentid;
     	$paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
     	$paymentobj->num_payment = $num_payment;
-    	$paymentobj->note_public = $comment;
+    	$paymentobj->note_private = $comment;
 
     	$payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
     	if ($payment_id < 0)
@@ -1405,7 +1405,7 @@ class Invoices extends DolibarrApi
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
      * @param string  $num_payment        {@from body}  Payment number (optional)
-     * @param string  $comment            {@from body}  Note public (optional)
+     * @param string  $comment            {@from body}  Note private (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
@@ -1497,7 +1497,7 @@ class Invoices extends DolibarrApi
         $paymentobj->paiementid   = $paymentid;
         $paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
         $paymentobj->num_payment  = $num_payment;
-        $paymentobj->note_public  = $comment;
+        $paymentobj->note_private = $comment;
 
         $payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
         if ($payment_id < 0)

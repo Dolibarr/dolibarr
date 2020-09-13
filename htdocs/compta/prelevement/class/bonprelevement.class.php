@@ -507,7 +507,6 @@ class BonPrelevement extends CommonObject
 					}
 
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
-					$paiement->num_paiement = $this->ref; // For backward compatibility
 					$paiement->id_prelevement = $this->id;
 
 					$paiement_id = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
