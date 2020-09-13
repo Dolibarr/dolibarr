@@ -483,12 +483,12 @@ if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("s.fk_s
 if ($search_import_key)    $sql .= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 // Add where from hooks
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-if (empty($reshook) && $socid) $sql .= " AND s.rowid = ".$socid;
-
+if (empty($reshook)) {
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
+}
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
