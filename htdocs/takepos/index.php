@@ -747,6 +747,19 @@ function FullScreen() {
 	document.documentElement.requestFullscreen();
 }
 
+function WeighingScale(){
+	console.log("Weighing Scale");
+    $.ajax({
+        type: "POST",
+        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale',
+    })
+	.done(function( editnumber ) {
+		$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+                editnumber="";
+            });
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -973,6 +986,11 @@ if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;
 
 if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+}
+
+if ($conf->global->TAKEPOS_WEIGHING_SCALE)
+{
+	$menus[$r++] = array('title'=>'<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action'=>'WeighingScale();');
 }
 
 ?>
