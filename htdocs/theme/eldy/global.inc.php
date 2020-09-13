@@ -4197,7 +4197,7 @@ div.ui-tooltip.mytooltip {
 	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
-	line-height: 1.8em;
+	line-height: 1.6em;
 }
 
 
