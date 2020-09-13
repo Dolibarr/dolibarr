@@ -5367,11 +5367,12 @@ class Product extends CommonObject
     }
 
     /**
-     *    Returns the text label from units dictionary
-	 *    A langs->trans() must be called on result to get translated value.
+     * Returns the label, shot_label or code found in units dictionary from ->fk_unit.
+	 * A langs->trans() must be called on result to get translated value.
      *
      * @param  string $type Label type (long, short or code)
      * @return string|int <0 if ko, label if ok
+	 * @see getLabelOfUnit() in CommonObjectLine
      */
     public function getLabelOfUnit($type = 'long')
     {
