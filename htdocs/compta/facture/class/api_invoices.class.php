@@ -876,8 +876,8 @@ class Invoices extends DolibarrApi
      * Sets an invoice as paid
      *
      * @param   int 	$id            Order ID
-     * @param   string 	$close_code    Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
-     * @param   string 	$close_note    Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+     * @param   string 	$close_code    Code filled if we classify to 'Paid completely' when payment is not complete (for escompte for example)
+     * @param   string 	$close_note    Comment defined if we classify to 'Paid' when payment is not complete (for escompte for example)
      *
      * @url POST    {id}/settopaid
      *
@@ -1060,7 +1060,7 @@ class Invoices extends DolibarrApi
                 // If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
                 // Total payments
-                $sql = 'SELECT SUM(pf.amount) as total_paiements';
+                $sql = 'SELECT SUM(pf.amount) as total_payments';
                 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
                 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
                 $sql .= ' WHERE pf.fk_facture = '.$this->invoice->id;
@@ -1070,7 +1070,7 @@ class Invoices extends DolibarrApi
                 if (!$resql) dol_print_error($this->db);
 
                 $res = $this->db->fetch_object($resql);
-                $total_paiements = $res->total_paiements;
+                $total_payments = $res->total_payments;
 
                 // Total credit note and deposit
                 $total_creditnote_and_deposit = 0;
@@ -1083,7 +1083,7 @@ class Invoices extends DolibarrApi
                     while ($obj = $this->db->fetch_object($resql)) $total_creditnote_and_deposit += $obj->amount_ttc;
                 } else dol_print_error($this->db);
 
-                $discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $this->invoice->total_ttc;
+                $discount->amount_ht = $discount->amount_ttc = $total_payments + $total_creditnote_and_deposit - $this->invoice->total_ttc;
                 $discount->amount_tva = 0;
                 $discount->tva_tx = 0;
 
@@ -1281,12 +1281,12 @@ class Invoices extends DolibarrApi
      *
      * @param int     $id                               Id of invoice
      * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
-     * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
+     * @param int     $paymentid          {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
      * @param string  $num_payment        {@from body}  Payment number (optional)
-     * @param string  $comment            {@from body}  Note (optional)
-     * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
+     * @param string  $comment            {@from body}  Note public (optional)
+     * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paymentcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
      * @url     POST {id}/payments
@@ -1297,7 +1297,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPayment($id, $datepaye, $paymentid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -1320,7 +1320,7 @@ class Invoices extends DolibarrApi
     		}
     	}
 
-    	if (empty($paiementid)) {
+    	if (empty($paymentid)) {
     		throw new RestException(400, 'Payment ID or Payment Code is mandatory');
     	}
 
@@ -1358,40 +1358,40 @@ class Invoices extends DolibarrApi
 
 
     	// Creation of payment line
-    	$paiement = new Paiement($this->db);
-    	$paiement->datepaye     = $datepaye;
-    	$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
-    	$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
-    	$paiement->paiementid = $paiementid;
-    	$paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
-    	$paiement->num_payment = $num_payment;
-    	$paiement->note = $comment;
+    	$paymentobj = new Paiement($this->db);
+    	$paymentobj->datepaye     = $datepaye;
+    	$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
+    	$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+    	$paymentobj->paiementid = $paymentid;
+    	$paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+    	$paymentobj->num_payment = $num_payment;
+    	$paymentobj->note_public = $comment;
 
-    	$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
-    	if ($paiement_id < 0)
+    	$payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
+    	if ($payment_id < 0)
     	{
     		$this->db->rollback();
-    		throw new RestException(400, 'Payment error : '.$paiement->error);
+    		throw new RestException(400, 'Payment error : '.$paymentobj->error);
     	}
 
     	if (!empty($conf->banque->enabled)) {
     		$label = '(CustomerInvoicePayment)';
 
-    		if ($paiement->paiementcode == 'CHQ' && empty($chqemetteur)) {
-    			throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paiement->paiementcode);
+    		if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
+    			throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
     		}
     		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-    		$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
+    		$result = $paymentobj->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
     		if ($result < 0)
     		{
     			$this->db->rollback();
-    			throw new RestException(400, 'Add payment to bank error : '.$paiement->error);
+    			throw new RestException(400, 'Add payment to bank error : '.$paymentobj->error);
     		}
     	}
 
     	$this->db->commit();
 
-    	return $paiement_id;
+    	return $payment_id;
     }
 
     /**
@@ -1401,11 +1401,11 @@ class Invoices extends DolibarrApi
      *
      * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
      * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
-     * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
+     * @param int     $paymentid          {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
      * @param string  $num_payment        {@from body}  Payment number (optional)
-     * @param string  $comment            {@from body}  Note (optional)
+     * @param string  $comment            {@from body}  Note public (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
@@ -1418,7 +1418,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPaymentDistributed($arrayofamounts, $datepaye, $paymentid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -1441,7 +1441,7 @@ class Invoices extends DolibarrApi
         		throw new RestException(400, 'Account ID is mandatory');
         	}
         }
-        if (empty($paiementid)) {
+        if (empty($paymentid)) {
         	throw new RestException(400, 'Payment ID or Payment Code is mandatory');
         }
 
@@ -1490,37 +1490,38 @@ class Invoices extends DolibarrApi
         }
 
         // Creation of payment line
-        $paiement = new Paiement($this->db);
-        $paiement->datepaye     = $datepaye;
-        $paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
-        $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
-        $paiement->paiementid   = $paiementid;
-        $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
-        $paiement->num_payment  = $num_payment;
-        $paiement->note         = $comment;
-        $paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
-        if ($paiement_id < 0)
+        $paymentobj = new Paiement($this->db);
+        $paymentobj->datepaye     = $datepaye;
+        $paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
+        $paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+        $paymentobj->paiementid   = $paymentid;
+        $paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
+        $paymentobj->num_payment  = $num_payment;
+        $paymentobj->note_public  = $comment;
+
+        $payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
+        if ($payment_id < 0)
         {
             $this->db->rollback();
-            throw new RestException(400, 'Payment error : '.$paiement->error);
+            throw new RestException(400, 'Payment error : '.$paymentobj->error);
         }
         if (!empty($conf->banque->enabled)) {
             $label = '(CustomerInvoicePayment)';
-            if ($paiement->paiementcode == 'CHQ' && empty($chqemetteur)) {
-                  throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paiement->paiementcode);
+            if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
+                  throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
             }
             if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-            $result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
+            $result = $paymentobj->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
             if ($result < 0)
             {
                 $this->db->rollback();
-                throw new RestException(400, 'Add payment to bank error : '.$paiement->error);
+                throw new RestException(400, 'Add payment to bank error : '.$paymentobj->error);
             }
         }
 
         $this->db->commit();
 
-        return $paiement_id;
+        return $payment_id;
     }
 
     /**
@@ -1532,9 +1533,9 @@ class Invoices extends DolibarrApi
      * @url     PUT payments/{id}
      *
      * @return array
-     * @throws 400
-     * @throws 401
-     * @throws 404
+	 * @throws RestException 400 Bad parameters
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
      */
     public function putPayment($id, $num_payment = '')
     {
