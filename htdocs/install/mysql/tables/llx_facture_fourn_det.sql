@@ -38,7 +38,7 @@ create table llx_facture_fourn_det
   localtax2_tx      double(6,3)  DEFAULT 0,    -- localtax2 rate
   localtax2_type	varchar(10)	  NULL, 		-- localtax2 type
   total_ht          double(24,8), -- Total line price of product excluding tax
-  tva               double(24,8), -- Total TVA of line
+  total_tva         double(24,8), -- Total TVA of line
   total_localtax1   double(24,8) DEFAULT 0,	-- Total LocalTax1 for total quantity of line
   total_localtax2   double(24,8) DEFAULT 0,	-- total LocalTax2 for total quantity of line
   total_ttc         double(24,8), -- Total line with tax
