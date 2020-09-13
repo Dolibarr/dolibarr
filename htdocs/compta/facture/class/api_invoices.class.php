@@ -1284,7 +1284,7 @@ class Invoices extends DolibarrApi
      * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
-     * @param string  $num_paiement       {@from body}  Payment number (optional)
+     * @param string  $num_payment        {@from body}  Payment number (optional)
      * @param string  $comment            {@from body}  Note (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
@@ -1297,7 +1297,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -1321,7 +1321,7 @@ class Invoices extends DolibarrApi
     	}
 
     	if (empty($paiementid)) {
-    		throw new RestException(400, 'Paiement ID or Paiement Code is mandatory');
+    		throw new RestException(400, 'Payment ID or Payment Code is mandatory');
     	}
 
 
@@ -1364,7 +1364,7 @@ class Invoices extends DolibarrApi
     	$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
     	$paiement->paiementid = $paiementid;
     	$paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
-    	$paiement->num_paiement = $num_paiement;
+    	$paiement->num_payment = $num_payment;
     	$paiement->note = $comment;
 
     	$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
@@ -1404,7 +1404,7 @@ class Invoices extends DolibarrApi
      * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
      * @param int     $accountid          {@from body}  Account Id {@min 1}
-     * @param string  $num_paiement       {@from body}  Payment number (optional)
+     * @param string  $num_payment        {@from body}  Payment number (optional)
      * @param string  $comment            {@from body}  Note (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
@@ -1418,7 +1418,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -1442,7 +1442,7 @@ class Invoices extends DolibarrApi
         	}
         }
         if (empty($paiementid)) {
-        	throw new RestException(400, 'Paiement ID or Paiement Code is mandatory');
+        	throw new RestException(400, 'Payment ID or Payment Code is mandatory');
         }
 
         $this->db->begin();
@@ -1496,7 +1496,7 @@ class Invoices extends DolibarrApi
         $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
         $paiement->paiementid   = $paiementid;
         $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
-        $paiement->num_payment  = $num_paiement;
+        $paiement->num_payment  = $num_payment;
         $paiement->note         = $comment;
         $paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
         if ($paiement_id < 0)
@@ -1536,7 +1536,7 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    public function putPayment($id, $num_paiement = '')
+    public function putPayment($id, $num_payment = '')
     {
         require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
