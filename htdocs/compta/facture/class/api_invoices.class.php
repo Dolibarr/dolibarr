@@ -1496,7 +1496,7 @@ class Invoices extends DolibarrApi
         $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
         $paiement->paiementid   = $paiementid;
         $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
-        $paiement->num_paiement = $num_paiement;
+        $paiement->num_payment  = $num_paiement;
         $paiement->note         = $comment;
         $paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
         if ($paiement_id < 0)
@@ -1527,7 +1527,7 @@ class Invoices extends DolibarrApi
      * Update a payment
      *
      * @param int       $id             Id of payment
-     * @param string    $num_paiement   Payment number
+     * @param string    $num_payment    Payment number
      *
      * @url     PUT payments/{id}
      *
@@ -1547,15 +1547,15 @@ class Invoices extends DolibarrApi
             throw new RestException(400, 'Payment ID is mandatory');
         }
 
-        $paiement = new Paiement($this->db);
-        $result = $paiement->fetch($id);
+        $paymentobj = new Paiement($this->db);
+        $result = $paymentobj->fetch($id);
 
         if (!$result) {
-            throw new RestException(404, 'Paiement not found');
+            throw new RestException(404, 'Payment not found');
         }
 
-        if (!empty($num_paiement)) {
-            $result = $paiement->update_num($num_paiement);
+        if (!empty($num_payment)) {
+            $result = $paymentobj->update_num($num_payment);
             if ($result < 0) {
                 throw new RestException(500, 'Error when updating the payment num');
             }
