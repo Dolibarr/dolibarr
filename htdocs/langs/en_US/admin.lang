@@ -2022,3 +2022,4 @@ MeasuringScaleDesc=The scale is the number of places you have to move the decima
 TemplateAdded=Template added
 TemplateUpdated=Template updated
 TemplateDeleted=Template deleted
+SwitchThisForABetterSecurity=Switching this value to 1 is recommended for more security
