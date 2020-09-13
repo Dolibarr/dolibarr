@@ -61,7 +61,7 @@ if ($action == 'stopreminder') {
 	$listofreminderidsarray = explode('-', GETPOST('listofreminderids', 'aZ09'));
 
 	// Set the reminder as done
-	foreach($listofreminderidsarray as $listofreminderid) {
+	foreach ($listofreminderidsarray as $listofreminderid) {
 		if (empty($listofreminderid)) continue;
 		//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
@@ -72,7 +72,7 @@ if ($action == 'stopreminder') {
 		}
 	}
 
-	include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 	// Clean database
 	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'actioncomm_reminder';
