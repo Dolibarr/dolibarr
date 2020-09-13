@@ -411,7 +411,7 @@ a.top-menu-dropdown-link {
  * QUICK ADD
  */
 #topmenu-quickadd-dropdown .dropdown-menu {
-	width: 300px !important;
+	width: 340px !important;
 	color: #444;
 }
 
@@ -449,8 +449,8 @@ div.quickadd a:hover, div.quickadd a:active {
 }
 
 div.quickaddblock {
-	width: 80px;
-	display: block ruby;
+	width: 100px;
+	height: 70px;
 }
 
 div.quickaddblock:hover,
