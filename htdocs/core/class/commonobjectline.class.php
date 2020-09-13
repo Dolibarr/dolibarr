@@ -51,7 +51,7 @@ abstract class CommonObjectLine extends CommonObject
 
 
 	/**
-	 *	Returns the translation key from units dictionary.
+	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type (long, short or code). This can be a translation key.
