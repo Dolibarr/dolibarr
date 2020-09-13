@@ -886,7 +886,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", remise";
 		$sql .= ", remise_percent";
 		$sql .= ", remise_absolue";
-		$sql .= ", tva";
+		$sql .= ", total_tva";
 		$sql .= ", total";
 		$sql .= ", datec";
 		$sql .= ", ref";
@@ -1197,7 +1197,7 @@ class SupplierProposal extends CommonObject
 		global $conf;
 
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
-		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
+		$sql .= ", p.total, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as date_livraison";
@@ -1238,7 +1238,7 @@ class SupplierProposal extends CommonObject
 				$this->remise_absolue       = $obj->remise_absolue;
 				$this->total                = $obj->total; // TODO deprecated
 				$this->total_ht             = $obj->total_ht;
-				$this->total_tva            = $obj->tva;
+				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
