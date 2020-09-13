@@ -535,6 +535,14 @@ if ($result) {
 			}
 		}
 
+		// Manage Deposit
+		if ($objp->description == "(DEPOSIT)") {
+			$accountdeposittoventilated = new AccountingAccount($db);
+			$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+			$objp->code_sell_l = $accountdeposittoventilated->ref;
+			$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+		}
+
 		if (!empty($objp->code_sell_p)) {
 			// Value was defined previously
 		} else {
