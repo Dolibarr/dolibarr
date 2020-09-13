@@ -2273,7 +2273,14 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 	{
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
 		$htmllink .= img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
-		$htmllink .= $value;
+		if ($type != 'skype')
+		{
+			$htmllink .= '<a target="_blank" href="';
+			$htmllink .= $value;
+			$htmllink .= '" alt="'.$langs->trans("Url").'" title="'.$langs->trans("Url").'">';
+			$htmllink .= $value;
+			$htmllink .= '</a>';
+		}
 		if ($type == 'skype')
 		{
 			$htmllink .= '&nbsp;';
