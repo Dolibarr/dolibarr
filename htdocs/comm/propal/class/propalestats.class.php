@@ -127,7 +127,7 @@ class PropaleStats extends Stats
     public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
-		
+
 		if (GETPOST('showBySignDate_toselect') == 'checked'){
 			$sql = "SELECT date_format(p.date_cloture,'%m') as dm, COUNT(*) as nb";
 		} else {
