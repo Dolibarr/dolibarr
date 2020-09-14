@@ -88,7 +88,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
             $sql .= " s.logo,";
             $sql .= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison, ";
             $sql .= " c.total_ht,";
-            $sql .= " c.tva as total_tva,";
+            $sql .= " c.total_tva,";
             $sql .= " c.total_ttc,";
             $sql .= " c.fk_statut";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

@@ -276,7 +276,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql .= ", s.code_client";
 	$sql .= ", s.email";
 	$sql .= ", s.entity";
@@ -709,7 +709,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$langs->load("orders");
 
-	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
+	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
 	$sql .= ", s.code_client";
 	$sql .= ", s.entity";
 	$sql .= ", s.email";

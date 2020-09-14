@@ -739,7 +739,7 @@ if ($object->id > 0)
 	{
         $sql = "SELECT s.nom, s.rowid";
         $sql .= ", c.rowid as cid, c.total_ht";
-        $sql .= ", c.tva as total_tva";
+        $sql .= ", c.total_tva";
         $sql .= ", c.total_ttc";
         $sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
         $sql .= ", c.date_commande as dc";
@@ -1031,8 +1031,8 @@ if ($object->id > 0)
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
-		$sql .= ', f.total as total_ht';
-		$sql .= ', f.tva as total_tva';
+		$sql .= ', f.total_ht';
+		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.datec as dc';
 		$sql .= ', f.date_last_gen, f.date_when';
@@ -1133,8 +1133,8 @@ if ($object->id > 0)
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
         $sql = 'SELECT f.rowid as facid, f.ref, f.type';
-        $sql .= ', f.total as total_ht';
-        $sql .= ', f.tva as total_tva';
+        $sql .= ', f.total_ht';
+        $sql .= ', f.total_tva';
         $sql .= ', f.total_ttc';
 		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut';
 		$sql .= ', s.nom, s.rowid as socid';
