@@ -134,18 +134,18 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields = array(
-	'ref'			=>array('label'=>"Ref",						'checked'=>1, 'position'=>100),
-	'label'			=>array('label'=>"Label",					'checked'=>1, 'position'=>110),
-	'datep'			=>array('label'=>"DatePayment",				'checked'=>1, 'position'=>120),
-	'datev'			=>array('label'=>"DateValue",				'checked'=>1, 'position'=>130),
-	'type'			=>array('label'=>"PaymentMode",				'checked'=>1, 'position'=>140),
-	'project'		=>array('label'=>"Project",					'checked'=>1, 'position'=>200, "enabled"=>!empty($conf->projet->enabled)),
-	'bank'			=>array('label'=>"BankAccount",				'checked'=>1, 'position'=>300, "enabled"=>!empty($conf->banque->enabled)),
-	'entry'			=>array('label'=>"BankTransactionLine",		'checked'=>1, 'position'=>310, "enabled"=>!empty($conf->banque->enabled)),
-	'account'		=>array('label'=>"AccountAccountingShort",	'checked'=>1, 'position'=>400, "enabled"=>!empty($conf->accounting->enabled)),
-	'subledger'		=>array('label'=>"SubledgerAccount",		'checked'=>1, 'position'=>410, "enabled"=>!empty($conf->accounting->enabled)),
-	'debit'			=>array('label'=>"Debit",					'checked'=>1, 'position'=>500),
-	'credit'		=>array('label'=>"Credit",					'checked'=>1, 'position'=>510),
+	'ref'			=>array('label'=>"Ref", 'checked'=>1, 'position'=>100),
+	'label'			=>array('label'=>"Label", 'checked'=>1, 'position'=>110),
+	'datep'			=>array('label'=>"DatePayment", 'checked'=>1, 'position'=>120),
+	'datev'			=>array('label'=>"DateValue", 'checked'=>1, 'position'=>130),
+	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
+	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>!empty($conf->projet->enabled)),
+	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>!empty($conf->banque->enabled)),
+	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>!empty($conf->banque->enabled)),
+	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>!empty($conf->accounting->enabled)),
+	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>!empty($conf->accounting->enabled)),
+	'debit'			=>array('label'=>"Debit", 'checked'=>1, 'position'=>500),
+	'credit'		=>array('label'=>"Credit", 'checked'=>1, 'position'=>510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -168,13 +168,13 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked'])	$formaccounting		= new FormAccounting($db);
-if ($arrayfields['bank']['checked'] && !empty($conf->accounting->enabled))		$accountingjournal	= new AccountingJournal($db);
+if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked'])	$formaccounting = new FormAccounting($db);
+if ($arrayfields['bank']['checked'] && !empty($conf->accounting->enabled))		$accountingjournal = new AccountingJournal($db);
 if ($arrayfields['ref']['checked'])		$variousstatic		= new PaymentVarious($db);
 if ($arrayfields['bank']['checked'])	$accountstatic		= new Account($db);
-if ($arrayfields['project']['checked'])	$proj				= new Project($db);
-if ($arrayfields['entry']['checked'])	$bankline			= new AccountLine($db);
-if ($arrayfields['account']['checked']) $accountingaccount	= new AccountingAccount($db);
+if ($arrayfields['project']['checked'])	$proj = new Project($db);
+if ($arrayfields['entry']['checked'])	$bankline = new AccountLine($db);
+if ($arrayfields['account']['checked']) $accountingaccount = new AccountingAccount($db);
 
 $sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code, v.subledger_account, v.fk_projet as fk_project,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";

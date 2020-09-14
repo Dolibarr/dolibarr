@@ -1995,7 +1995,7 @@ class ActionComm extends CommonObject
 			$formmail = new FormMail($this->db);
 			$actionCommReminder = new ActionCommReminder($this->db);
 
-			while ($obj = $this->db->fetch_object($resql)){
+			while ($obj = $this->db->fetch_object($resql)) {
 				$res = $actionCommReminder->fetch($obj->id);
 				if ($res < 0) {
 					$error++;
@@ -2055,7 +2055,7 @@ class ActionComm extends CommonObject
 							{
 								$errorsMsg[] = "Failed to update status of ActionComm Reminder";
 								$error++;
-								break;	// This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
 							} else {
 								$nbMailSend++;
 							}
