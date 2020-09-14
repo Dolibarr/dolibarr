@@ -1675,7 +1675,8 @@ if ($id > 0)
 			if (count($object->reminders) > 0) {
 				if (count($object->reminders) > 0) {
 					$tmpuserstatic = new User($db);
-					foreach($object->reminders as $actioncommreminderid => $actioncommreminder) {
+
+					foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
 						print $TRemindTypes[$actioncommreminder->typeremind];
 						if ($actioncommreminder->fk_user > 0) {
 							$tmpuserstatic->fetch($actioncommreminder->fk_user);
@@ -1985,7 +1986,8 @@ if ($id > 0)
 
         	if (count($object->reminders) > 0) {
         		$tmpuserstatic = new User($db);
-        		foreach($object->reminders as $actioncommreminderid => $actioncommreminder) {
+
+        		foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
         			print $TRemindTypes[$actioncommreminder->typeremind];
         			if ($actioncommreminder->fk_user > 0) {
         				$tmpuserstatic->fetch($actioncommreminder->fk_user);
