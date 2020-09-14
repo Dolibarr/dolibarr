@@ -887,7 +887,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", remise_percent";
 		$sql .= ", remise_absolue";
 		$sql .= ", total_tva";
-		$sql .= ", total";
+		$sql .= ", total_ttc";
 		$sql .= ", datec";
 		$sql .= ", ref";
 		$sql .= ", fk_user_author";
@@ -1241,7 +1241,7 @@ class SupplierProposal extends CommonObject
 				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
-				$this->total_ttc            = $obj->total;
+				$this->total_ttc            = $obj->total_ttc;
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_project;
 				$this->model_pdf            = $obj->model_pdf;

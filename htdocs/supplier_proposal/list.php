@@ -306,7 +306,7 @@ if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_login)  $sql .= natural_search('u.login', $search_login);
 if ($search_montant_ht) $sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search("sp.total_tva", $search_montant_vat, 1);
-if ($search_montant_ttc != '') $sql .= natural_search("sp.total", $search_montant_ttc, 1);
+if ($search_montant_ttc != '') $sql .= natural_search("sp.total_ttc", $search_montant_ttc, 1);
 if ($search_multicurrency_code != '')        $sql .= ' AND sp.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('sp.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('sp.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
