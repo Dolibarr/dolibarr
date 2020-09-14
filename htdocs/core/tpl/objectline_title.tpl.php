@@ -59,7 +59,13 @@ if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' 
 }
 
 // VAT
-print '<td class="linecolvat right" style="width: 80px">'.$langs->trans('VAT').'</td>';
+print '<td class="linecolvat right" style="width: 80px">';
+if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FACTURE_LOCAL_TAX1_OPTION)) {
+	print $langs->trans('Taxes');
+} else {
+	print $langs->trans('VAT');
+}
+print '</td>';
 
 // Price HT
 print '<td class="linecoluht right" style="width: 80px">'.$langs->trans('PriceUHT').'</td>';
