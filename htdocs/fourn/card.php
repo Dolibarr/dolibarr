@@ -517,7 +517,7 @@ if ($object->id > 0)
 
 	if ($user->rights->supplier_proposal->lire)
 	{
-	    $sql = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.total_tva, p.total as total_ttc";
+	    $sql = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.total_tva, p.total_ttc";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p ";
 	    $sql .= " WHERE p.fk_soc =".$object->id;
 	    $sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";

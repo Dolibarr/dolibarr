@@ -208,7 +208,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
 	$langs->load("supplier_proposal");
 
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql .= ", s.code_client";
 	$sql .= ", s.code_fournisseur";
 	$sql .= ", s.entity";
