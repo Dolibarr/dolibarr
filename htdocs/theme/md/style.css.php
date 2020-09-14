@@ -885,6 +885,34 @@ if ($conf->browser->layout == 'phone') {
    	white-space: nowrap;
 }
 <?php } ?>
+
+
+.a-filter, .a-mesure {
+    border-radius: 50px;
+    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 8px 10px 8px 6px;
+}
+.a-filter:before {
+    content: "\f0b0";
+}
+.a-mesure:before {
+    content: "\f080";
+}
+.a-filter:before, .a-mesure:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.a-filter-disabled, .a-mesure-disabled {
+    border-radius: 50px;
+    background: var(--colorbacktitle1);
+    padding: 8px;
+    opacity: 0.6;
+}
+
+
 div.confirmmessage {
 	padding-top: 6px;
 }

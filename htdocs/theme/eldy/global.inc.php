@@ -832,6 +832,31 @@ div.divsearchfield {
 	padding: 3px;
 }
 
+.a-filter, .a-mesure {
+    border-radius: 50px;
+    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 8px 10px 8px 6px;
+}
+.a-filter:before {
+    content: "\f0b0";
+}
+.a-mesure:before {
+    content: "\f080";
+}
+.a-filter:before, .a-mesure:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.a-filter-disabled, .a-mesure-disabled {
+    border-radius: 50px;
+    background: var(--colorbacktitle1);
+    padding: 8px;
+    opacity: 0.6;
+}
+
 
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
