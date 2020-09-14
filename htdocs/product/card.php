@@ -397,8 +397,8 @@ if (empty($reshook))
 					$object->note = $object->note_private;
 				}
 				$object->customcode             = GETPOST('customcode', 'alpha');
-	        $object->country_id = GETPOST('country_id', 'int');
-	        $object->state_id = GETPOST('state_id', 'int');
+				$object->country_id = GETPOST('country_id', 'int');
+				$object->state_id = GETPOST('state_id', 'int');
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
@@ -868,7 +868,7 @@ llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproduct = new FormProduct($db); 
+$formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
@@ -903,18 +903,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	}
 	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
 	$objcanvas->display_canvas($action); // Show template
-} else {   				
-
+} else {
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
 	if ($action == 'create' && $usercancreate)
 	{
-  
 		//WYSIWYG Editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    
-print '<script type="text/javascript">';
+
+		print '<script type="text/javascript">';
 				print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
                         	document.formprod.action.value="create";
@@ -934,7 +932,7 @@ print '<script type="text/javascript">';
 		{
 			$modCodeProduct = new $module();
 		}
-  
+
 		dol_set_focus('input[name="ref"]');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formprod">';
@@ -956,7 +954,7 @@ print '<script type="text/javascript">';
 		}
 		$linkback = "";
 		print load_fiche_titre($title, $linkback, $picto);
-    
+
         // We set country_id, country_code and country for the selected country
         $object->country_id = GETPOST('country_id') ?GETPOST('country_id') : null;
         if ($object->country_id)
@@ -1150,7 +1148,7 @@ print '<script type="text/javascript">';
 
             // State
             if (empty($conf->global->PRODUCT_DISABLE_STATE))
-            {   
+            {
             		if ($conf->browser->layout == 'phone') print '</tr><tr>';
                 if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
@@ -1159,7 +1157,7 @@ print '<script type="text/javascript">';
                     print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
                 }
 
-            print $formcompany->select_state($object->state_id, $object->country_code);
+				print $formcompany->select_state($object->state_id, $object->country_code);
                 print '</tr>';
             }
                 print '</tr>';
@@ -1365,9 +1363,6 @@ print '<script type="text/javascript">';
 
 		print '</form>';
 	} elseif ($object->id > 0) {
-  
-
-  
 		/*
          * Product card
          */
@@ -1376,8 +1371,8 @@ print '<script type="text/javascript">';
 		{
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        
-print '<script type="text/javascript">';
+
+			print '<script type="text/javascript">';
 				print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
                         	document.formprod.action.value="edit";
@@ -1385,17 +1380,17 @@ print '<script type="text/javascript">';
                         });
                      });';
 				print '</script>'."\n";
-        
-        // We set country_id, country_code and country for the selected country
-        $object->country_id = GETPOST('country_id') ? GETPOST('country_id') : $object->country_id;
-        if ($object->country_id)
-        {
-            $tmparray = getCountry($object->country_id, 'all');
-            $object->country_code = $tmparray['code'];
-            $object->country = $tmparray['label'];
-        }
-        
-        
+
+			// We set country_id, country_code and country for the selected country
+			$object->country_id = GETPOST('country_id') ? GETPOST('country_id') : $object->country_id;
+			if ($object->country_id)
+			{
+				$tmparray = getCountry($object->country_id, 'all');
+				$object->country_code = $tmparray['code'];
+				$object->country = $tmparray['label'];
+			}
+
+
 			$type = $langs->trans('Product');
 			if ($object->isService()) $type = $langs->trans('Service');
 			//print load_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
@@ -1411,7 +1406,7 @@ print '<script type="text/javascript">';
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 			dol_fiche_head($head, 'card', $titre, 0, $picto);
-      
+
 
 			print '<table class="border allwidth">';
 
@@ -1594,29 +1589,29 @@ print '<script type="text/javascript">';
 			if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
 			{
 				print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.$object->customcode.'"></td></tr>';
-			// Origin country
-			  print '<td>'.$langs->trans("CountryOrigin").'</td>';
-			  print '<td>';
-        print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+				// Origin country
+				print '<td>'.$langs->trans("CountryOrigin").'</td>';
+				print '<td>';
+				print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 				print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-        print '</td>';
-            // State
-            if (empty($conf->global->PRODUCT_DISABLE_STATE))
-            {
+				print '</td>';
+				// State
+				if (empty($conf->global->PRODUCT_DISABLE_STATE))
+				{
             		if ($conf->browser->layout == 'phone') print '</tr><tr>';
-                if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
-                {
-                    print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                } else {
-                    print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                }
+					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+					{
+						print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					} else {
+						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					}
 
-            print $formcompany->select_state($object->state_id, $object->country_code);
-                print '</td>';
-            }
-            print '</tr>';
-		}
+					print $formcompany->select_state($object->state_id, $object->country_code);
+					print '</td>';
+				}
+				print '</tr>';
+			}
 
 			// Other attributes
 			$parameters = array('colspan' => ' colspan="3"', 'cols' => 3);
@@ -2113,8 +2108,8 @@ print '<script type="text/javascript">';
 
 				// Origin country code
 				print '<tr><td>'.$langs->trans("Origin").'</td><td colspan="2">'.getCountry($object->country_id, 0, $db);
-        if (!empty($object->state_id)) print ' - '.getState($object->state_id, 0, $db);
-        print '</td>';
+				if (!empty($object->state_id)) print ' - '.getState($object->state_id, 0, $db);
+				print '</td>';
 			}
 
 			// Other attributes

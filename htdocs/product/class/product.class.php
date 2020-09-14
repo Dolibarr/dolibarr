@@ -882,7 +882,7 @@ class Product extends CommonObject
 		if (empty($this->country_id)) {
 			$this->country_id = 0;
 		}
-    
+
 		if (empty($this->state_id)) {
 			$this->state_id = 0;
 		}
@@ -1004,7 +1004,7 @@ class Product extends CommonObject
 			$sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
 			$sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
 			$sql .= ", fk_country = ".($this->country_id > 0 ? (int) $this->country_id : 'null');
-      $sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
+			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
 			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
 			$sql .= ", accountancy_code_buy = '".$this->db->escape($this->accountancy_code_buy)."'";
