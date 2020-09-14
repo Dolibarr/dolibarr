@@ -1159,7 +1159,7 @@ class Paiement extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-        $label = '<u>'.$langs->trans("Payment").'</u><br>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
         $label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
         if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
@@ -1172,7 +1172,7 @@ class Paiement extends CommonObject
             	foreach ($arraybill as $billid)
             	{
             		$facturestatic->fetch($billid);
-            		$label .= '<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2, 1);
+            		$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, 1);
             	}
             }
         }
