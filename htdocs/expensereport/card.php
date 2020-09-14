@@ -1933,7 +1933,6 @@ if ($action == 'create')
 						$paymentexpensereportstatic->id = $objp->rowid;
 						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
 						$paymentexpensereportstatic->ref = $objp->rowid;
-						$paymentexpensereportstatic->num_paiement = $objp->num_payment;
 						$paymentexpensereportstatic->num_payment = $objp->num_payment;
 						$paymentexpensereportstatic->payment_code = $objp->payment_code;
 

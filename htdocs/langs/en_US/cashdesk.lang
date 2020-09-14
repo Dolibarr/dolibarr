@@ -122,3 +122,4 @@ GiftReceipt=Gift receipt
 ModuleReceiptPrinterMustBeEnabled=Module Receipt printer must have been enabled first
 AllowDelayedPayment=Allow delayed payment
 PrintPaymentMethodOnReceipts=Print payment method on tickets|receipts
+WeighingScale=Weighing scale

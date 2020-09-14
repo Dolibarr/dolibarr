@@ -2056,3 +2056,4 @@ TemplateAdded=Template added
 TemplateUpdated=Template updated
 TemplateDeleted=Template deleted
 MailToSendEventPush=Template for event reminder emails
+SwitchThisForABetterSecurity=Switching this value to 1 is recommended for more security

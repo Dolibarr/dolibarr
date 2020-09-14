@@ -5160,15 +5160,15 @@ class FactureLigne extends CommonInvoiceLine
 
 		$this->db->begin();
 
-        // Update line in database
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-        $sql .= " description='".$this->db->escape($this->desc)."'";
-        $sql .= ", ref_ext='".$this->db->escape($this->ref_ext)."'";
-        $sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-        $sql .= ", subprice=".price2num($this->subprice)."";
-        $sql .= ", remise_percent=".price2num($this->remise_percent)."";
-        if ($this->fk_remise_except) $sql .= ", fk_remise_except=".$this->fk_remise_except;
-        else $sql .= ", fk_remise_except=null";
+		// Update line in database
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+		$sql .= " description='".$this->db->escape($this->desc)."'";
+		$sql .= ", ref_ext='".$this->db->escape($this->ref_ext)."'";
+		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+		$sql .= ", subprice=".price2num($this->subprice)."";
+		$sql .= ", remise_percent=".price2num($this->remise_percent)."";
+		if ($this->fk_remise_except) $sql .= ", fk_remise_except=".$this->fk_remise_except;
+		else $sql .= ", fk_remise_except=null";
 		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
 		$sql .= ", tva_tx=".price2num($this->tva_tx)."";
 		$sql .= ", localtax1_tx=".price2num($this->localtax1_tx)."";

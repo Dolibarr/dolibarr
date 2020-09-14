@@ -7993,18 +7993,18 @@ class Form
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
-		$result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
+		$result = $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
 		if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
 		if ($result > 0) {
-			foreach ($formmail->lines_model as $model){
+			foreach ($formmail->lines_model as $model) {
 				$TModels[$model->id] = $model->label;
 			}
 		}
 
 		$retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
 
-		foreach ($TModels as $id_model=>$label_model){
+		foreach ($TModels as $id_model=>$label_model) {
 			$retstring .= '<option value="'.$id_model.'"';
 			$retstring .= ">".$label_model."</option>";
 		}

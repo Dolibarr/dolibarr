@@ -294,9 +294,8 @@ switch ($action)
 				// Add the payment
 				$payment = new Paiement($db);
 				$payment->datepaye = $now;
-				$payment->bank_account = $conf_fkaccount;
 				$payment->amounts[$invoice->id] = $obj_facturation->amountWithTax();
-				$payment->note = $langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
+				$payment->note_public = $langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
 				$payment->paiementid = $invoice->mode_reglement_id;
 				$payment->num_paiement = '';
 				$payment->num_payment = '';

@@ -320,7 +320,6 @@ ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
 ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
 
-
 ALTER TABLE llx_commande CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_facture CHANGE COLUMN tva total_tva double(24,8) default 0;
@@ -331,4 +330,6 @@ ALTER TABLE llx_supplier_proposal CHANGE COLUMN tva total_tva double(24,8) defau
 ALTER TABLE llx_supplier_proposal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
+
+ALTER TABLE llx_paiement ADD COLUMN ref_ext varchar(255) AFTER ref;
 

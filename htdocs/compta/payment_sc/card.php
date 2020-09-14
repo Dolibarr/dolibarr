@@ -182,7 +182,7 @@ print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($o
 print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Numero
-print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_paiement.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
 
 // Montant
 print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';

@@ -354,13 +354,13 @@ class Stripe extends CommonObject
 			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
-			$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
-			$sql.= " WHERE pi.fk_facture = " . $object->id;
-			$sql.= " AND pi.sourcetype = '" . $object->element . "'";
-			$sql.= " AND pi.entity IN (".getEntity('societe').")";
-			$sql.= " AND pi.ext_payment_site = '" . $service . "'";
+			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
+			$sql .= " WHERE pi.fk_facture = ".$object->id;
+			$sql .= " AND pi.sourcetype = '".$object->element."'";
+			$sql .= " AND pi.entity IN (".getEntity('societe').")";
+			$sql .= " AND pi.ext_payment_site = '".$service."'";
 
-			dol_syslog(get_class($this) . "::getPaymentIntent search stripe payment intent for object id = ".$object->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::getPaymentIntent search stripe payment intent for object id = ".$object->id, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -369,7 +369,7 @@ class Stripe extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$intent = $obj->ext_payment_id;
 
-					dol_syslog(get_class($this) . "::getPaymentIntent found existing payment intent record");
+					dol_syslog(get_class($this)."::getPaymentIntent found existing payment intent record");
 
 					// Force to use the correct API key
 					global $stripearrayofkeysbyenv;
@@ -403,8 +403,8 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT) ) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			if (!empty($conf->global->STRIPE_IDEAL) ) $paymentmethodtypes[] = "ideal"; //&& ($object->thirdparty->isInEEC())
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal"; //&& ($object->thirdparty->isInEEC())
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent

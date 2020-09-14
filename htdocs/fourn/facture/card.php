@@ -2717,7 +2717,7 @@ if ($action == 'create')
 		if ($societe->localtax1_assuj == "1") $nbrows++;
 		if ($societe->localtax2_assuj == "1") $nbrows++;
 
-		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
+		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
 		$sql .= ' c.id as paiement_type,';
 		$sql .= ' pf.amount,';
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
@@ -2755,7 +2755,7 @@ if ($action == 'create')
 					$paymentstatic->id = $objp->rowid;
 					$paymentstatic->datepaye = $db->jdate($objp->dp);
 					$paymentstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-					$paymentstatic->num_paiement = $objp->num_paiement;
+					$paymentstatic->num_payment = $objp->num_payment;
 					$paymentstatic->payment_code = $objp->payment_code;
 
 					print '<tr class="oddeven">';
@@ -2764,7 +2764,7 @@ if ($action == 'create')
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
 					print '<td>';
-					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_paiement;
+					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
 					print '</td>';
 					if (!empty($conf->banque->enabled))
 					{
