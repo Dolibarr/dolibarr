@@ -201,7 +201,7 @@ $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABAND
 
 $sql = "SELECT";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
-if ($client) $sql .= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
+if ($client) $sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql .= " sum(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not, your database may be corrupted, you can update this)
 $sql .= " sum(".$db->ifsql('d.total_ht < 0', 'd.qty * d.buy_price_ht * -1 * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";

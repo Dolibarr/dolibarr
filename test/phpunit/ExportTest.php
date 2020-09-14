@@ -225,7 +225,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
     {
         global $conf,$user,$langs,$db;
 
-        $sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+        $sql = "SELECT f.ref as f_ref, f.total_ht as f_total, f.total_tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
         $objexport=new Export($db);
         //$objexport->load_arrays($user,$datatoexport);
@@ -233,7 +233,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         // Define properties
         $datatoexport='test';
         $array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
-        $array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+        $array_export_fields = array("f.ref"=>"FacNumber", "f.total_ht"=>"FacTotal", "f.total_tva"=>"FacVat");
         $array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
         $objexport->array_export_fields[0]=$array_export_fields;
         $objexport->array_export_alias[0]=$array_alias;
@@ -279,7 +279,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
     {
     	global $conf,$user,$langs,$db;
         /*
-    	$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+    	$sql = "SELECT f.ref as f_ref, f.total_ht as f_total, f.total_tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
     	$objexport=new Export($db);
     	//$objexport->load_arrays($user,$datatoexport);

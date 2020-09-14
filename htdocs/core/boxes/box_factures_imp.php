@@ -94,8 +94,8 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= " f.ref, f.date_lim_reglement as datelimite,";
             $sql .= " f.type,";
 			$sql .= " f.datef as df,";
-            $sql .= " f.total as total_ht,";
-            $sql .= " f.tva as total_tva,";
+            $sql .= " f.total_ht,";
+            $sql .= " f.total_tva,";
             $sql .= " f.total_ttc,";
 			$sql .= " f.paye, f.fk_statut, f.rowid as facid";
 			$sql .= ", sum(pf.amount) as am";

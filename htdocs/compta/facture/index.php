@@ -224,7 +224,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 {
 	global $db, $langs, $user;
 
-	$sql = "SELECT f.rowid, f.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client, f.total as total_ttc";
+	$sql = "SELECT f.rowid, f.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client, f.total_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -417,7 +417,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 	global $conf, $db, $langs, $user;
 
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
-	$sql .= ", f.rowid as id, f.entity, f.total as total_ttc, f.total as total_ht, f.ref, f.fk_statut";
+	$sql .= ", f.rowid as id, f.entity, f.total_ttc, f.total_ht, f.ref, f.fk_statut";
 	$sql .= ", f.datef as df, f.date_lim_reglement as datelimite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
@@ -469,8 +469,8 @@ function getOpenTable($maxCount = 500, $socid = 0)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$objectstatic->id= $obj->id;
-		$objectstatic->ref	= $obj->ref;
+		$objectstatic->id = $obj->id;
+		$objectstatic->ref = $obj->ref;
 
 		$companystatic->id		= $obj->socid;
 		$companystatic->name	= $obj->socname;

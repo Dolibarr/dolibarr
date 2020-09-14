@@ -178,7 +178,7 @@ $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABAND
 
 $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,";
 if ($id > 0) $sql .= " d.fk_product,";
-if ($id > 0) $sql .= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
+if ($id > 0) $sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql .= " SUM(d.total_ht) as selling_price,";
 // Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
 $sql .= " SUM(d.qty) as product_qty,";

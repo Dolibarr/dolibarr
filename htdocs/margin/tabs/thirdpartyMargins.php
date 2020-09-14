@@ -143,7 +143,7 @@ if ($socid > 0)
     print '<br>';
 
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
-    $sql .= " f.rowid as facid, f.ref, f.total as total_ht,";
+    $sql .= " f.rowid as facid, f.ref, f.total_ht,";
     $sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
     $sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
     $sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive

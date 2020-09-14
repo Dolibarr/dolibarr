@@ -131,7 +131,7 @@ if ($id > 0 || !empty($ref))
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
-            $sql .= " f.rowid as facid, f.ref, f.total as total_ht,";
+            $sql .= " f.rowid as facid, f.ref, f.total_ht,";
             $sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
             $sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive

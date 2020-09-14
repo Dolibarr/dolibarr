@@ -3987,7 +3987,7 @@ class Societe extends CommonObject
 		$table = 'propal';
 		if ($mode == 'supplier') $table = 'supplier_proposal';
 
-		$sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql  = "SELECT rowid, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('supplier_proposal').")";
@@ -4071,7 +4071,7 @@ class Societe extends CommonObject
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
 		if ($mode == 'supplier') $sql = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-		else $sql = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		else $sql = "SELECT rowid, total_ht, total_ttc, paye, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
