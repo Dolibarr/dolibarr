@@ -108,19 +108,19 @@ dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'use
 // Print title
 if (!count($data))
 {
-	print $langs->trans("NoValidatedMemberYet").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
 	print '<br>';
 }
 else
 {
-	print $langs->trans("MembersByNature").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("MembersByNature").'</span><br>';
 	print '<br>';
 }
 
 // Print array
 print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Nature").'</td>';
+print '<td>'.$langs->trans("MemberNature").'</td>';
 print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
 print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
 print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';

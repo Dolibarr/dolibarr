@@ -221,13 +221,13 @@ if ($mode && !count($data))
 }
 else
 {
-    if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
-    elseif ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
-    elseif ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
-    elseif ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>'; //+
+    if ($mode == 'memberbycountry') print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
+    elseif ($mode == 'memberbystate') print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
+    elseif ($mode == 'memberbytown') print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
+    elseif ($mode == 'memberbyregion') print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
     else
     {
-        print $langs->trans("MembersStatisticsDesc").'<br>';
+    	print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
         print '<br>';
