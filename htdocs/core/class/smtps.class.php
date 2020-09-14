@@ -388,11 +388,11 @@ class SMTPs
             $this->_setErr(99, $host.' is either offline or is an invalid host name.');
             $_retVal = false;
         } else {
-            if (function_exists('stream_socket_client')) {
+            if (function_exists('stream_socket_client') && !empty($this->_options)) {
                 $socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
                 set_error_handler([$this, 'errorHandler']);
                 $this->socket = @stream_socket_client(
-                    $this->getHost() .    // Host to 'hit', IP or domain
+					preg_replace('@tls://@i', '', $this->getHost()) .    // Host to 'hit', IP or domain
                     ':' . $this->getPort(),             // which Port number to use
                     $this->errno,                       // actual system level error
                     $this->errstr,                      // and any text that goes with the error
@@ -402,7 +402,7 @@ class SMTPs
                 );
         	} else {
                 $this->socket = @fsockopen(
-                    $this->getHost(),       // Host to 'hit', IP or domain
+					preg_replace('@tls://@i', '', $this->getHost()),       // Host to 'hit', IP or domain
                 $this->getPort(), // which Port number to use
                 $this->errno, // actual system level error
                 $this->errstr, // and any text that goes with the error
