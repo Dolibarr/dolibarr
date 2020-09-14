@@ -61,11 +61,11 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 *	Returns the translation key from units dictionary.
+	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
-	 * 	@param	string $type 	Label type (long or short). This can be a translation key.
-	 *	@return	string|int 		<0 if ko, label if ok
+	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
+	 *	@return	string|int 		<0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -79,17 +79,16 @@ abstract class CommonObjectLine extends CommonObject
 
 		$label_type = 'label';
 
-		if ($type == 'short')
-		{
-			$label_type = 'short_label';
-		}
+		$label_type = 'label';
+		if ($type == 'short') $label_type = 'short_label';
+		elseif ($type == 'code') $label_type = 'code';
 
-		$sql = 'select '.$label_type.',code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0)
-		{
+		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);
-			$label = ($label_type == 'short' ? $res[$label_type] : 'unit'.$res['code']);
+			if ($label_type == 'code') $label = 'unit'.$res['code'];
+			else $label = $res[$label_type];
 			$this->db->free($resql);
 			return $label;
 		} else {

@@ -5204,15 +5204,17 @@ class Product extends CommonObject
 		$this->barcode = -1; // Create barcode automatically
 	}
 
-	/**
-	 *    Returns the text label from units dictionary
-	 *
-	 * @param  string $type Label type (long or short)
-	 * @return string|int <0 if ko, label if ok
-	 */
-	public function getLabelOfUnit($type = 'long')
-	{
-		global $langs;
+    /**
+     * Returns the label, shot_label or code found in units dictionary from ->fk_unit.
+	 * A langs->trans() must be called on result to get translated value.
+     *
+     * @param  string 		$type 	Label type (long, short or code)
+     * @return string|int 			<0 if KO, label if OK (Example: 'long', 'short', 'unitCODE')
+	 * @see getLabelOfUnit() in CommonObjectLine
+     */
+    public function getLabelOfUnit($type = 'long')
+    {
+        global $langs;
 
 		if (!$this->fk_unit) {
 			return '';
@@ -5220,25 +5222,24 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-		$label_type = 'label';
+        $label_type = 'label';
+        if ($type == 'short') $label_type = 'short_label';
+        elseif ($type == 'code') $label_type = 'code';
 
-		if ($type == 'short') {
-			$label_type = 'short_label';
-		}
-
-		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
-		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0) {
-			$res = $this->db->fetch_array($resql);
-			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
-			$this->db->free($resql);
-			return $label;
-		} else {
-			$this->error = $this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
+        $sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+        $resql = $this->db->query($sql);
+        if ($resql && $this->db->num_rows($resql) > 0) {
+            $res = $this->db->fetch_array($resql);
+            if ($label_type == 'code') $label = 'unit'.$res['code'];
+            else $label = $res[$label_type];
+            $this->db->free($resql);
+            return $label;
+        } else {
+            $this->error = $this->db->error().' sql='.$sql;
+            dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
 
 	/**
 	 * Return if object has a sell-by date or eat-by date
