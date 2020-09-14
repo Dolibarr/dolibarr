@@ -658,6 +658,7 @@ Response=Response
 Priority=Priority
 SendByMail=Send by email
 MailSentBy=Email sent by
+NotSent=Not sent
 TextUsedInTheMessageBody=Email body
 SendAcknowledgementByMail=Send confirmation email
 SendMail=Send email

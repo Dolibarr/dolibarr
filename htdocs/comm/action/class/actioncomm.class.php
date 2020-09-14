@@ -1956,10 +1956,11 @@ class ActionComm extends CommonObject
 	/**
 	 *  Load event reminder of events
 	 *
-	 *  @param	string	$type	Type of reminder 'browser' or 'email'
-	 *  @return int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @param	string	$type		Type of reminder 'browser' or 'email'
+	 *  @param	int		$fk_user	Id of user
+	 *  @return int         		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function loadReminders($type = '')
+	public function loadReminders($type = '', $fk_user = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -1968,11 +1969,14 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".$this->id." AND dateremind <= '".$this->db->idate(dol_now())."'";
 		if ($type) {
 			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+		}
+		if ($fk_user > 0) {
+			$sql .= " AND fk_user = ".((int) $fk_user);
 		}
 		if (empty($conf->global->AGENDA_REMINDER_EMAIL)) $sql .= " AND typeremind != 'email'";
 		if (empty($conf->global->AGENDA_REMINDER_BROWSER)) $sql .= " AND typeremind != 'browser'";
@@ -1989,6 +1993,7 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetvalue = $obj->offsetvalue;
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
+				$tmpactioncommreminder->fk_user = $obj->fk_user;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
