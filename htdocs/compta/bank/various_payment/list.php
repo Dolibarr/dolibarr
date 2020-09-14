@@ -101,7 +101,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$typeid = '';
 }
 
-$search_all = GETPOSTISSET("search_all") ? trim(GETPOSTISSET("search_all", 'alpha')) : trim(GETPOST('sall'));
+$search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
 
 /*
 * TODO: fill array "$fields" in "/compta/bank/class/paymentvarious.class.php" and use
