@@ -144,7 +144,7 @@ if (!count($data)) {
 print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("MemberNature").'</td>';
-print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+print '<td class="right">'.$langs->trans("NbOfMembers").' ('.$langs->trans("AllTime").')</td>';
 print '<td class="right">'.$langs->trans("NbOfActiveMembers").'</td>';
 print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
 print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';

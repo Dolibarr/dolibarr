@@ -278,7 +278,7 @@ if ($mode) {
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td class="center">'.$label2.'</td>';
-    print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").' ('.$langs->trans("AllTime").')</td>';
     print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
     print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
     print '</tr>';
