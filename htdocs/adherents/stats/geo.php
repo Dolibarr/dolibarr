@@ -74,12 +74,12 @@ if ($mode) {
         $tab = 'statscountry';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY c.label, c.code";
         //print $sql;
     }
@@ -90,14 +90,14 @@ if ($mode) {
         $tab = 'statsstate';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY co.label, co.code, c.nom";
         //print $sql;
     }
@@ -107,14 +107,14 @@ if ($mode) {
         $tab = 'statsregion'; //onglet
 
         $data = array(); //tableau de donnée
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY co.label, co.code, r.nom"; //+
         //print $sql;
     }
@@ -124,12 +124,12 @@ if ($mode) {
         $tab = 'statstown';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY c.label, c.code, d.town";
         //print $sql;
     }
