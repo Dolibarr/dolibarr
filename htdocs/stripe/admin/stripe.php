@@ -332,7 +332,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("VendorName").'</td><td>';
+print $langs->trans("PublicVendorName").'</td><td>';
 print '<input class="minwidth300" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';

@@ -1088,3 +1088,4 @@ DELETEInDolibarr=Record %s deleted
 VALIDATEInDolibarr=Record %s validated
 APPROVEDInDolibarr=Record %s approved
 DefaultMailModel=Default Mail Model
+PublicVendorName=Public name of vendor
