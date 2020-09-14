@@ -222,7 +222,7 @@ class modPropale extends DolibarrModules
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"propal", 'c.ref'=>"propal", 'c.ref_client'=>"propal",
 			'c.fk_soc'=>"propal", 'c.datec'=>"propal", 'c.datep'=>"propal", 'c.fin_validite'=>"propal", 'c.remise_percent'=>"propal", 'c.total_ht'=>"propal",
-			'c.total'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.date_livraison'=>"propal", 'pj.ref'=>'project', 'cd.rowid'=>'propal_line',
+			'c.total_ttc'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.date_livraison'=>"propal", 'pj.ref'=>'project', 'cd.rowid'=>'propal_line',
 			'cd.label'=>"propal_line", 'cd.description'=>"propal_line", 'cd.product_type'=>'propal_line', 'cd.tva_tx'=>"propal_line", 'cd.qty'=>"propal_line",
 			'cd.total_ht'=>"propal_line", 'cd.total_tva'=>"propal_line", 'cd.total_ttc'=>"propal_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);

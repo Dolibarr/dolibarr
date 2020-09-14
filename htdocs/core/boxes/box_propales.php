@@ -86,7 +86,7 @@ class box_propales extends ModeleBoxes
     	if ($user->rights->propale->lire)
     	{
     		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.entity, s.email,";
-    		$sql .= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
+    		$sql .= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.total_tva, p.total_ttc, p.tms";
     		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
     		$sql .= ", ".MAIN_DB_PREFIX."propal as p";
     		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

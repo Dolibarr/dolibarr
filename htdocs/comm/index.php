@@ -138,7 +138,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {		// This is useless
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$langs->load("propal");
 
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql .= ", s.code_client";
 	$sql .= ", s.email";
 	$sql .= ", s.entity";
@@ -623,7 +623,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql = "SELECT s.nom as name, s.rowid, s.code_client";
 	$sql .= ", s.entity";
 	$sql .= ", s.email";
-	$sql .= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

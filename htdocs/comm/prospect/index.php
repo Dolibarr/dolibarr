@@ -172,7 +172,7 @@ if (!empty($conf->agenda->enabled)) show_array_actions_to_do(10);
 if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
-	$sql .= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
+	$sql .= " p.rowid as propalid, p.total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."c_propalst as c";

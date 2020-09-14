@@ -111,7 +111,7 @@ class box_activity extends ModeleBoxes
         	$data = array();
         	if ($refresh)
         	{
-        		$sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
+        		$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
         		$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
         		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql .= ")";
