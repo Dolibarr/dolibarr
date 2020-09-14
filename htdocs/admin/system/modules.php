@@ -32,13 +32,13 @@ if (!$user->admin) {
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
-$optioncss			= GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage		= GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
 $search_name		= GETPOST("search_name", 'alpha');
-$search_id			= GETPOST("search_id", 'alpha');
-$search_version		= GETPOST("search_version", 'alpha');
-$search_permission	= GETPOST("search_permission", 'alpha');
+$search_id = GETPOST("search_id", 'alpha');
+$search_version = GETPOST("search_version", 'alpha');
+$search_permission = GETPOST("search_permission", 'alpha');
 
 $sortfield			= GETPOST("sortfield", 'alpha');
 $sortorder			= GETPOST("sortorder", 'alpha');
@@ -126,9 +126,9 @@ foreach ($modulesdir as $dir) {
 foreach ($modules as $key=>$module) {
 	$newModule = new stdClass();
 
-	$newModule->name	= $module->getName();
-	$newModule->version	= $module->getVersion();
-	$newModule->id		= $key;
+	$newModule->name = $module->getName();
+	$newModule->version = $module->getVersion();
+	$newModule->id = $key;
 
 	$alt = $module->name.' - '.$modules_files[$key];
 
@@ -260,13 +260,13 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print '</tr>';
 
 // sort list
-if ($sortfield == "name" && $sortorder == "asc") usort($moduleList, function (stdClass $a, stdClass $b) {
+if ($sortfield == "name" && $sortorder == "asc") usort($moduleList, function(stdClass $a, stdClass $b) {
 	return strcasecmp($a->name, $b->name); });
-if ($sortfield == "name" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
+if ($sortfield == "name" && $sortorder == "desc") usort($moduleList, function(stdClass $a, stdClass $b) {
 	return strcasecmp($b->name, $a->name); });
-if ($sortfield == "version" && $sortorder == "asc") usort($moduleList, function (stdClass $a, stdClass $b) {
+if ($sortfield == "version" && $sortorder == "asc") usort($moduleList, function(stdClass $a, stdClass $b) {
 	return strcasecmp($a->version, $b->version); });
-if ($sortfield == "version" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
+if ($sortfield == "version" && $sortorder == "desc") usort($moduleList, function(stdClass $a, stdClass $b) {
 	return strcasecmp($b->version, $a->version); });
 if ($sortfield == "id" && $sortorder == "asc") usort($moduleList, "compareIdAsc");
 if ($sortfield == "id" && $sortorder == "desc") usort($moduleList, "compareIdDesc");
@@ -298,7 +298,7 @@ foreach ($moduleList as $module) {
 			$idperms .= ($idperms ? ", " : "").$permission;
 			$translationKey = "Permission".$permission;
 
-			if (! empty($conf->global->MAIN_SHOW_PERMISSION)) {
+			if (!empty($conf->global->MAIN_SHOW_PERMISSION)) {
 				if (empty($langs->tab_translate[$translationKey])) {
 					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';

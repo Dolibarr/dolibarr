@@ -791,16 +791,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 					$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
 				} else {	// generic translation key
 					$tmp = explode('_', $action);
-					$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+					$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
 				}
 			}
-			if (empty($object->actionmsg))  {
+			if (empty($object->actionmsg)) {
 				$langs->loadLangs(array("agenda", "other"));
 				if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
 					$object->actionmsg = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
 				} else {	// generic translation key
 					$tmp = explode('_', $action);
-					$object->actionmsg = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+					$object->actionmsg = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
 				}
 			}
 
@@ -843,7 +843,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$projectid = isset($object->fk_project) ? $object->fk_project : 0;
 		if ($object->element == 'project') $projectid = $object->id;
 
-		$elementid = $object->id;			// id of object
+		$elementid = $object->id; // id of object
 		$elementtype = $object->element;
 		$elementmodule = $object->module;
 		if ($object->element == 'subscription')

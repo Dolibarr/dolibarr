@@ -920,7 +920,7 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="[' . $conf->global->MAIN_INFO_SOCIETE_NOM . ' - ' . $langs->trans("Ticket") . ' ' . $this->ref . '] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
@@ -987,7 +987,7 @@ class FormTicket
 		}
 
 		// MESSAGE
-		$defaultmessage="";
+		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
 			$defaultmessage = $arraydefaultmessage->content;
 		}

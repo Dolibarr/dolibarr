@@ -299,8 +299,8 @@ class EmailCollector extends CommonObject
 		// Load source object
 		$object->fetchCommon($fromid);
 
-		$object->fetchFilters();	// Rules
-		$object->fetchActions();	// Operations
+		$object->fetchFilters(); // Rules
+		$object->fetchActions(); // Operations
 
 		// Reset some properties
 		unset($object->id);
@@ -979,7 +979,7 @@ class EmailCollector extends CommonObject
 		{
 			if (empty($rule['status'])) continue;
 
-			if ($rule['type'] == 'to')      {
+			if ($rule['type'] == 'to') {
 				$tmprulevaluearray = explode('*', $rule['rulevalue']);
 				if (count($tmprulevaluearray) >= 2) {
 					foreach ($tmprulevaluearray as $tmprulevalue) {
@@ -1163,7 +1163,7 @@ class EmailCollector extends CommonObject
 					if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
 					{
 						$nbemailprocessed++;
-						continue;	// Exclude email
+						continue; // Exclude email
 					}
 				}
 
@@ -1171,7 +1171,7 @@ class EmailCollector extends CommonObject
 					if (empty($headers['In-Reply-To']))
 					{
 						$nbemailprocessed++;
-						continue;	// Exclude email
+						continue; // Exclude email
 					}
 					// Note: we can have
 					// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
@@ -1182,7 +1182,7 @@ class EmailCollector extends CommonObject
 
 					if (!$isanswer) {
 						$nbemailprocessed++;
-						continue;	// Exclude email
+						continue; // Exclude email
 					}
 				}
 				if ($searchfilterisnotanswer > 0) {
@@ -1196,7 +1196,7 @@ class EmailCollector extends CommonObject
 						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
 						if ($isanswer) {
 							$nbemailprocessed++;
-							continue;	// Exclude email
+							continue; // Exclude email
 						}
 					}
 				}
@@ -1702,7 +1702,7 @@ class EmailCollector extends CommonObject
 							if (!in_array($fk_element_type, array('societe', 'contact', 'project', 'user')))
 							{
 								$actioncomm->fk_element  = $fk_element_id;
-								$actioncomm->elementid  = $fk_element_id;
+								$actioncomm->elementid = $fk_element_id;
 								$actioncomm->elementtype = $fk_element_type;
 								if (is_object($objectemail) && $objectemail->module) {
 									$actioncomm->elementtype .= '@'.$objectemail->module;

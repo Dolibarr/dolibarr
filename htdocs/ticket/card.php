@@ -312,10 +312,10 @@ if (empty($reshook)) {
 			if (!empty($backtopage)) {
 				$url = $backtopage;
 			} else {
-				$url = 'card.php?track_id=' . $object->track_id;
+				$url = 'card.php?track_id='.$object->track_id;
 			}
 
-			header('Location: ' . $url);
+			header('Location: '.$url);
 			exit();
 		}
 	}
@@ -657,10 +657,10 @@ if ($action == 'create' || $action == 'presend')
 
 	$head = ticket_prepare_head($object);
 
-	print '<form method="POST" name="form_ticket" id="form_edit_ticket" action="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<form method="POST" name="form_ticket" id="form_edit_ticket" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="tack_id" value="' . $object->track_id . '">';
+	print '<input type="hidden" name="tack_id" value="'.$object->track_id.'">';
 
 	dol_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
 
@@ -668,28 +668,28 @@ if ($action == 'create' || $action == 'presend')
 	print '<table class="border" width="100%">';
 
 	// Type
-	print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
+	print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
 	$formticket->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
 	print '</td></tr>';
 
 	// Severity
-	print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">' . $langs->trans("TicketSeverity") . '</span></label></td><td>';
+	print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
 	$formticket->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
 	print '</td></tr>';
 
 	// Group
-	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketGroup") . '</span></label></td><td>';
+	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketGroup").'</span></label></td><td>';
 	$formticket->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
 	print '</td></tr>';
 
 	// Subject
-	print '<tr><td><label for="subject"><span class="fieldrequired">' . $langs->trans("Subject") . '</span></label></td><td>';
-	print '<input class="text" size="50" id="subject" name="subject" value="' . (GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $object->subject) . '" />';
+	print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
+	print '<input class="text" size="50" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
 	print '</td></tr>';
 
 	// Other attributes
 	$parameters = array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
@@ -701,9 +701,9 @@ if ($action == 'create' || $action == 'presend')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="' . $langs->trans('Save') . '">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 	print '</div>';
 
 	print '</form>';
@@ -1250,7 +1250,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 				}
 
 				if ($user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?track_id=' . $object->track_id . '&action=edit">' . $langs->trans('Modify') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?track_id='.$object->track_id.'&action=edit">'.$langs->trans('Modify').'</a></div>';
 				}
 
 				// Close ticket if statut is read
