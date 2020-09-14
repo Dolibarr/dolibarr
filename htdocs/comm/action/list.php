@@ -429,7 +429,7 @@ if ($resql)
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	// Local calendar
-	$newtitle = '<div class="nowrap clear inline-block minheight30">';
+	$newtitle = '<div class="nowrap clear inline-block minheight30 margintoponly">';
 	$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
 	$newtitle .= '</div>';
 	//$newtitle=$langs->trans($title);

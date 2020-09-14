@@ -297,12 +297,12 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
 if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=0">';
-    print img_picto($langs->trans("Activated"), 'switch_on');
-    print '</a></td>';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=1">';
-    print img_picto($langs->trans("Disabled"), 'switch_off');
-    print '</a></td>';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
 }
 print '</tr>';
 
@@ -310,12 +310,12 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_MANAGE_ZERO").'</td>';
 if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=0">';
-    print img_picto($langs->trans("Activated"), 'switch_on');
-    print '</a></td>';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=1">';
-    print img_picto($langs->trans("Disabled"), 'switch_off');
-    print '</a></td>';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
 }
 print '</tr>';
 
@@ -385,9 +385,9 @@ foreach ($list_binding as $key)
 	if ($key == 'ACCOUNTING_DATE_START_BINDING') {
 		print $form->selectDate(($conf->global->$key ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
-		$array=array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
-		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER)?$conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER:0));
-    } else {
+		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
+		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER : 0));
+	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 

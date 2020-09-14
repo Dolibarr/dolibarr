@@ -648,7 +648,7 @@ class Task extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = '<u>'.$langs->trans("ShowTask").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowTask").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->label))

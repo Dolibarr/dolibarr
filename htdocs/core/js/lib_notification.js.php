@@ -44,6 +44,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
+		console.log("Ask Notification.permission");
         Notification.requestPermission()
     }
 
@@ -65,7 +66,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
     function check_events() {
     	if (Notification.permission === "granted")
     	{
-    		console.log("Call check_events time_js_next_test = date we are looking for event after ="+time_js_next_test);
+    		console.log("Call check_events time_js_next_test = date we are looking for event after this date = "+time_js_next_test);
             $.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
                 type: "post",   // Usually post or get
                 async: true,
@@ -79,13 +80,18 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 						}
 						?>
+						var listofreminderids = '';
 
                         $.each(arr, function (index, value) {
-                            var url="notdefined";
-                            var title="Not defined";
-                            var body = value['tipo'] + ': ' + value['titulo'];
+                            var url = "notdefined";
+                            var title = "Not defined";
+                            var body = value['type'] + ': ' + value['label'];
                             if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
                                 body += '\n' + value['location'];
+                            }
+
+                            if(value['type'] == 'agenda' && (value['event_date_start_formated'] != null || event_date_start_formated['event_date_start'] != '')) {
+                                body += '\n' + value['event_date_start_formated'];
                             }
 
                             if (value['type'] == 'agenda')
@@ -100,26 +106,40 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                             };
 
                             // We release the notify
+                            console.log("Send notification on browser");
                             var noti = new Notification(title, extra);
                             if (index==0 && audio)
                             {
                             	audio.play();
                             }
-                            noti.onclick = function (event) {
-                                console.log("An event to notify on browser was received");
-                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
-                                window.focus();
-                                window.open(url, '_blank');
-                                noti.close();
-                            };
+
+                            if (noti) {
+	                            noti.onclick = function (event) {
+	                                console.log("A click on notification on browser has been done");
+	                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
+	                                window.focus();
+	                                window.open(url, '_blank');
+	                                noti.close();
+	                            };
+
+	                            listofreminderids = listofreminderids + '-' + value['id_reminder']
+	                        }
                         });
+
+                        // Update status of all notifications we sent on browser (listofreminderids)
+                        console.log("Flag notification as done for listofreminderids="+listofreminderids);
+						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
+			                type: "get",   // Usually post or get
+			                async: true,
+			                data: {time: time_js_next_test}
+			                });
                     }
                 }
             });
         }
         else
         {
-        	console.log("Cancel check_events. Useless because Notification.permission is "+Notification.permission);
+        	console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+".");
         }
 
         time_js_next_test += time_auto_update;

@@ -647,7 +647,7 @@ class Form
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
-                $ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'select valignmiddle alignstart" name="'.$name.'"'.($disabled ? ' disabled="disabled"' : '').'>';
+				$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'select valignmiddle alignstart" name="'.$name.'"'.($disabled ? ' disabled="disabled"' : '').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
@@ -666,11 +666,11 @@ class Form
 
 		$ret .= '</select>';
 
-                if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.'.$name.'select');
+				if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.'.$name.'select');
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-                $ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+				$ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax))
@@ -5591,15 +5591,15 @@ class Form
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'HH\'); ';
-                if ($addnowlink == 1)
-                {
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
-                } elseif ($addnowlink == 2)
-                {
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(d.getHours().pad());';
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
-                }
+				if ($addnowlink == 1)
+				{
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
+				} elseif ($addnowlink == 2)
+				{
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(d.getHours().pad());';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
+				}
 
 				if ($fullday) $reset_scripts .= ' } ';
 			}
@@ -5608,15 +5608,15 @@ class Form
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'min\'].value=formatDate(new Date(), \'mm\'); ';
-                if ($addnowlink == 1)
-                {
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
-                } elseif ($addnowlink == 2)
-                {
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(d.getMinutes().pad());';
-                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
-                }
+				if ($addnowlink == 1)
+				{
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
+				} elseif ($addnowlink == 2)
+				{
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(d.getMinutes().pad());';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
+				}
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
@@ -5684,20 +5684,20 @@ class Form
 	{
 		global $langs;
 
-        $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+		$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
-        $retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
-        foreach ($TDurationTypes as $key=>$typeduration) {
-            $retstring .= '<option value="'.$key.'"';
-            if ($key == $selected) {
-                $retstring .= " selected";
-            }
-            $retstring .= ">".$typeduration."</option>";
-        }
-        $retstring .= "</select>";
+		$retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+		foreach ($TDurationTypes as $key=>$typeduration) {
+			$retstring .= '<option value="'.$key.'"';
+			if ($key == $selected) {
+				$retstring .= " selected";
+			}
+			$retstring .= ">".$typeduration."</option>";
+		}
+		$retstring .= "</select>";
 
-        return $retstring;
-    }
+		return $retstring;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -6545,23 +6545,23 @@ class Form
 
 		foreach ($array as $key => $val)
 		{
-		    /* var_dump($val);
+			/* var_dump($val);
             var_dump(array_key_exists('enabled', $val));
             var_dump(!$val['enabled']);*/
-		    if (array_key_exists('enabled', $val) && isset($val['enabled']) && !$val['enabled'])
-		    {
-			    unset($array[$key]); // We don't want this field
-			    continue;
-		    }
-		    if ($val['label'])
-		    {
-		    	if (!empty($val['langfile']) && is_object($langs)) {
-		    		$langs->load($val['langfile']);
-		    	}
+			if (array_key_exists('enabled', $val) && isset($val['enabled']) && !$val['enabled'])
+			{
+				unset($array[$key]); // We don't want this field
+				continue;
+			}
+			if ($val['label'])
+			{
+				if (!empty($val['langfile']) && is_object($langs)) {
+					$langs->load($val['langfile']);
+				}
 
-		        $lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked']) ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
-			    $listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
-		    }
+				$lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked']) ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+				$listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
+			}
 		}
 
 		$out = '<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' -->
@@ -7538,20 +7538,20 @@ class Form
 	}
 
 	/**
-	 *	Return HTML to show the search and clear seach button
+	 *	Return HTML to show the search and clear search button
 	 *
 	 *  @param  string  $cssclass                  CSS class
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
-         *  @param  string  $massactionname            Mass action button name that will launch an action on the selected items
+	 *  @param  string  $massactionname            Mass action button name that will launch an action on the selected items
 	 *  @return	string
 	 */
-    public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
+	public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
 		global $conf, $langs;
 
 		$out = '';
 		$id = uniqid();
-                if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
+				if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
@@ -7564,7 +7564,7 @@ class Form
                         console.log("We uncheck all");
                 		$(".'.$cssclass.'").prop(\'checked\', false).trigger(\'change\');
                     }'."\n";
-                if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "'.$massactionname.'", "'.$cssclass.'"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+				if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "'.$massactionname.'", "'.$cssclass.'"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out .= '         });
 
                 $(".' . $cssclass.'").change(function() {
@@ -7606,11 +7606,12 @@ class Form
 	 * @param	string	$target                htmlname of target select to bind event
 	 * @param	int		$default_selected      default category to select if fk_c_type_fees change = EX_KME
 	 * @param	array	$params                param to give
+	 * @param	int		$info_admin			   Show the tooltip help picto to setup list
 	 * @return	string
 	 */
-	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array())
+	public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array(), $info_admin = 1)
 	{
-		global $db, $conf, $langs, $user;
+		global $db, $langs, $user;
 
 		$out = '';
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
@@ -7621,7 +7622,7 @@ class Form
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
+			$out = '<select id="select_'.$htmlname.'" name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp maxwidth200">';
 			if ($useempty) $out .= '<option value="0">&nbsp;</option>';
 
 			while ($obj = $db->fetch_object($resql))
@@ -7629,7 +7630,9 @@ class Form
 				$out .= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
 			}
 			$out .= '</select>';
-			if (!empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= ajax_combobox('select_'.$htmlname);
+
+			if (!empty($htmlname) && $user->admin && $info_admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 			if (!empty($target))
 			{
@@ -7930,7 +7933,7 @@ class Form
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array())
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$ret = '';
 
@@ -7980,34 +7983,34 @@ class Form
 	 * @param	int		 $default	 1=Show also Default mail template
 	 * @return  string               HTML select string
 	 */
-    public function selectModelMail($prefix, $modelType = '', $default = 0)
-    {
-        global $langs, $db, $user;
+	public function selectModelMail($prefix, $modelType = '', $default = 0)
+	{
+		global $langs, $db, $user;
 
-        $retstring = '';
+		$retstring = '';
 
-        $TModels = array();
+		$TModels = array();
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-        $formmail = new FormMail($db);
-        $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		$result = $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
-        if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
-        if ($result > 0) {
-            foreach ($formmail->lines_model as $model){
-                $TModels[$model->id] = $model->label;
-            }
-        }
+		if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
+		if ($result > 0) {
+			foreach ($formmail->lines_model as $model) {
+				$TModels[$model->id] = $model->label;
+			}
+		}
 
-        $retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
+		$retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
 
-        foreach ($TModels as $id_model=>$label_model){
-            $retstring .= '<option value="'.$id_model.'"';
-            $retstring .= ">".$label_model."</option>";
-        }
+		foreach ($TModels as $id_model=>$label_model) {
+			$retstring .= '<option value="'.$id_model.'"';
+			$retstring .= ">".$label_model."</option>";
+		}
 
-        $retstring .= "</select>";
+		$retstring .= "</select>";
 
-        return $retstring;
-    }
+		return $retstring;
+	}
 }

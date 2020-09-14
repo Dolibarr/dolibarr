@@ -568,7 +568,7 @@ if (empty($reshook))
 
 					$ret = $object->fetch($id); // Reload to get new records
 
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['prod_entry_mode']);
@@ -743,7 +743,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2126,7 +2126,7 @@ if ($action == 'create')
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
 			// Show links to link elements

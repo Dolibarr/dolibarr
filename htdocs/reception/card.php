@@ -154,7 +154,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -392,7 +392,7 @@ if (empty($reshook))
 	    			$outputlangs = new Translate("", $conf);
 	    			$outputlangs->setDefaultLang($newlang);
 	    		}
-	    		$model = $object->modelpdf;
+	    		$model = $object->model_pdf;
 	    		$ret = $object->fetch($id); // Reload to get new records
 
 	    		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -486,7 +486,7 @@ if (empty($reshook))
 	        $outputlangs = new Translate("", $conf);
 	        $outputlangs->setDefaultLang($newlang);
 	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result <= 0)
 	    {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -644,7 +644,7 @@ if (empty($reshook))
 				}
 
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
@@ -2060,7 +2060,7 @@ if ($action == 'create')
 		$genallowed = $user->rights->reception->lire;
 		$delallowed = $user->rights->reception->creer;
 
-		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
@@ -2091,7 +2091,7 @@ if ($action == 'create')
 		// Build document if it not exists
 		if (!$file || !is_readable($file))
 		{
-			$result = $object->generateDocument(GETPOST('model') ?GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model') ?GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
 				dol_print_error($db, $object->error, $object->errors);

@@ -197,9 +197,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin');
 						$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 						$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-						$message_admin .= '<li>' . $langs->trans('Type') . ' : ' . $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code) . '</li>';
-						$message_admin .= '<li>' . $langs->trans('Category') . ' : ' . $langs->getLabelFromKey($this->db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code) . '</li>';
-						$message_admin .= '<li>' . $langs->trans('Severity') . ' : ' . $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code) . '</li>';
+						$message_admin .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
+						$message_admin .= '<li>'.$langs->trans('Category').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+						$message_admin .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 						$message_admin .= '<li>'.$langs->trans('From').' : '.($object->email_from ? $object->email_from : ($object->fk_user_create > 0 ? $langs->trans('Internal') : '')).'</li>';
 						// Extrafields
 						$extraFields = new ExtraFields($this->db);
@@ -207,7 +207,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						if (is_array($object->array_options) && count($object->array_options) > 0) {
 							foreach ($object->array_options as $key => $value) {
 								$key = substr($key, 8); // remove "options_"
-								$message_admin .= '<li>' . $langs->trans($extraFields->attributes[$object->element]['label'][$key]) . ' : ' . $extraFields->showOutputField($key, $value) . '</li>';
+								$message_admin .= '<li>'.$langs->trans($extraFields->attributes[$object->element]['label'][$key]).' : '.$extraFields->showOutputField($key, $value).'</li>';
 							}
 						}
 						$message_admin .= '</ul>';
@@ -267,9 +267,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectCustomer');
 						$message_customer = $langs->transnoentities('TicketNewEmailBodyCustomer', $object->track_id).'<br><br>';
 						$message_customer .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-						$message_customer .= '<li>' . $langs->trans('Type') . ' : ' . $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code) . '</li>';
-						$message_customer .= '<li>' . $langs->trans('Category') . ' : ' . $langs->getLabelFromKey($this->db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code) . '</li>';
-						$message_customer .= '<li>' . $langs->trans('Severity') . ' : ' . $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code) . '</li>';
+						$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
+						$message_customer .= '<li>'.$langs->trans('Category').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
+						$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 						// Extrafields
 						foreach ($this->attributes[$object->table_element]['label'] as $key => $value)

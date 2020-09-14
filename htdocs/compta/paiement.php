@@ -265,8 +265,6 @@ if (empty($reshook))
 	    $paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 	    $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 	    $paiement->note_private = GETPOST('comment', 'alpha');
-	    $paiement->num_paiement = $paiement->num_payment; // For bacward compatibility
-	    $paiement->note         = $paiement->note_private; // For bacward compatibility
 
 	    if (!$error)
 	    {
@@ -851,7 +849,7 @@ if (!GETPOST('action', 'aZ09'))
     if (!$sortfield) $sortfield = 'p.datep';
 
     $sql = 'SELECT p.datep as dp, p.amount, f.total_ttc as fa_amount, f.ref';
-    $sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
+    $sql .= ', f.rowid as facid, c.libelle as paiement_type, p.num_paiement as num_payment';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
     $sql .= ' WHERE p.fk_facture = f.rowid';
@@ -887,7 +885,7 @@ if (!GETPOST('action', 'aZ09'))
             print '<tr class="oddeven">';
             print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$objp->facid.'">'.$objp->ref."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
-            print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
+            print '<td>'.$objp->paiement_type.' '.$objp->num_payment."</td>\n";
             print '<td class="right">'.price($objp->amount).'</td>';
             print '<td>&nbsp;</td>';
             print '</tr>';

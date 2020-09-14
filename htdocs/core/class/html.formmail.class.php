@@ -855,7 +855,7 @@ class FormMail extends Form
 						{
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
-							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT)-strlen($val))), $formfile_params);
+							preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT) - strlen($val))), $formfile_params);
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly)
@@ -956,13 +956,13 @@ class FormMail extends Form
 					$atleastonecomponentishtml++;
 				}
 				if ($atleastonecomponentishtml) {
-					if (! dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+					if (!dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 						$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
 					}
-					if (! dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
+					if (!dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
 						$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = dol_nl2br($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']);
 					}
-					if (! dol_textishtml($defaultmessage)) {
+					if (!dol_textishtml($defaultmessage)) {
 						$defaultmessage = dol_nl2br($defaultmessage);
 					}
 				}
@@ -1232,6 +1232,7 @@ class FormMail extends Form
 				return -1;
 			} else {	// If there is no template at all
 				$defaultmessage = '';
+
 				if ($type_template == 'body') {
 					// Special case to use this->withbody as content
 					$defaultmessage = $this->withbody;
@@ -1255,6 +1256,10 @@ class FormMail extends Form
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 				} elseif ($type_template == 'actioncomm_send') {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
+				} elseif ($type_template == 'thirdparty') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
+			    } elseif ($type_template == 'user') {
+			    	$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser");
 				} elseif (!empty($type_template)) {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 				}

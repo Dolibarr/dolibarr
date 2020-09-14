@@ -4093,17 +4093,20 @@ div.ui-tooltip {
 	max-width: <?php print dol_size(600, 'width'); ?>px !important;
 }
 
-.mytooltip {
+div.ui-tooltip.mytooltip {
 	width: <?php print dol_size(450, 'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
 	border-<?php print $left; ?>: solid 1px #BBBBBB;
 	border-<?php print $right; ?>: solid 1px #444444;
 	border-bottom: solid 1px #444444;
-	padding: 5px 20px;
+	padding: 10px 20px;
 	border-radius: 0;
 	box-shadow: 0 0 4px grey;
 	margin: 2px;
 	font-stretch: condensed;
+	/*background: var(--tooltipbgcolor) !important;
+	color : var(--tooltipfontcolor);*/
+	line-height: 1.6em;
 }
 
 
@@ -6151,6 +6154,25 @@ border-top-right-radius: 6px;
     text-align: right;
   }
 
+}
+
+
+/* ============================================================================== */
+/* CSS style for debugbar                                                         */
+/* ============================================================================== */
+
+span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
+    width: 250px !important;
+}
+.phpdebugbar-indicator span.phpdebugbar-tooltip {
+    opacity: .95 !important;
+}
+a.phpdebugbar-tab.phpdebugbar-active {
+	background-image: unset !important;
+}
+.phpdebugbar-indicator .fa {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
 }
 
 

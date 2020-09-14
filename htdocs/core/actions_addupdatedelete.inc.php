@@ -270,7 +270,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			if (method_exists($object, 'generateDocument')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 
@@ -299,7 +299,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -327,7 +327,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -367,7 +367,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);

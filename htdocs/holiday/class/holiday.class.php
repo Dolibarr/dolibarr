@@ -1178,7 +1178,11 @@ class Holiday extends CommonObject
 
 		$result = '';
 
-		$label = $langs->trans("Show").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Holiday").'</u>';
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->statut)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 
@@ -1269,20 +1273,22 @@ class Holiday extends CommonObject
 		$nb = count($name) + 1;
 
 		// Select HTML
-		$statut = '<select name="'.$htmlname.'" class="flat">'."\n";
-		$statut .= '<option value="-1">&nbsp;</option>'."\n";
+		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat">'."\n";
+		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
 		for ($i = 1; $i < $nb; $i++) {
 			if ($i == $selected) {
-				$statut .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
+				$out .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
 			} else {
-				$statut .= '<option value="'.$i.'">'.$langs->trans($name[$i - 1]).'</option>'."\n";
+				$out .= '<option value="'.$i.'">'.$langs->trans($name[$i - 1]).'</option>'."\n";
 			}
 		}
 
-		$statut .= '</select>'."\n";
-		print $statut;
+		$out .= '</select>'."\n";
+		$out .= ajax_combobox($htmlname);
+
+		print $out;
 	}
 
 	/**

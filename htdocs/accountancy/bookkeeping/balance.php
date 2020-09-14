@@ -252,8 +252,8 @@ if ($action != 'export_csv')
 	print $langs->trans('to');
 	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
 	print '</td>';
-	print '<td class="liste_titre right">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 
@@ -276,8 +276,12 @@ if ($action != 'export_csv')
 
     $accountingaccountstatic = new AccountingAccount($db);
 
-	$sql = "select t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance from ".MAIN_DB_PREFIX."accounting_bookkeeping as t where entity in ".$conf->entity;
-	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."' GROUP BY t.numero_compte";
+	$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
+	$sql .= " WHERE t.entity = ".$conf->entity;		// Never do sharing into accounting features
+	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."'";
+	$sql .= " GROUP BY t.numero_compte";
+
 	$resql = $db->query($sql);
 	$nrows = $resql->num_rows;
 	$opening_balances = array();
@@ -290,7 +294,7 @@ if ($action != 'export_csv')
 	{
         $accountingaccountstatic->fetch(null, $line->numero_compte, true);
         if (!empty($accountingaccountstatic->account_number)) {
-            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
         } else {
             $accounting_account = length_accountg($line->numero_compte);
         }
@@ -340,7 +344,7 @@ if ($action != 'export_csv')
 		print '</td>';
 		print "</tr>\n";
 
-		// Comptabilise le sous-total
+		// Records the sub-total
 		$sous_total_debit += $line->debit;
 		$sous_total_credit += $line->credit;
 	}

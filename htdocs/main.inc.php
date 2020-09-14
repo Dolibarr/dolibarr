@@ -1800,7 +1800,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		if ($user->datepreviouslogin) {
 			$btnUser .= '<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>';
 		}
-		$btnUser .= '<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
+		//$btnUser .= '<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>';
+		$btnUser .= '
 	                </p>
 	            </div>
 

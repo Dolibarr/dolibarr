@@ -370,7 +370,7 @@ if ($rowid && $action != 'edit') {
     $genallowed = $user->rights->facture->lire;
     $delallowed = $user->rights->facture->creer;
 
-    print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+    print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
     $somethingshown = $formfile->numoffiles;
     */
 	// Show links to link elements

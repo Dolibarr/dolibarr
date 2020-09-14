@@ -690,13 +690,13 @@ class RecruitmentJobPosition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $this->modelpdf;
-			$triggerName = 'PROPAL_CLOSE_REFUSED';
+			$modelpdf = $this->model_pdf;
+			$triggerName = 'RECRUITMENTJOB_CLOSE_REFUSED';
 
 			if ($status == self::STATUS_RECRUITED)
 			{
 				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
-				$modelpdf = $this->modelpdf;
+				$modelpdf = $this->model_pdf;
 
 				if ($result < 0)
 				{
@@ -798,7 +798,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("PositionToBeFilled").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("PositionToBeFilled").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
@@ -1076,8 +1076,8 @@ class RecruitmentJobPosition extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_recruitmentjobposition';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
 			}

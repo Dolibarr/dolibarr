@@ -143,7 +143,7 @@ if ($action == 'add')
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$model = $object->modelpdf;
+		$model = $object->model_pdf;
 		$ret = $object->fetch($id); // Reload to get new records
 
 		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -681,7 +681,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			$genallowed = $user->rights->expedition->livraison->lire;
 			$delallowed = $user->rights->expedition->livraison->creer;
 
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

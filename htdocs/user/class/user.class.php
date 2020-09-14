@@ -2244,7 +2244,7 @@ class User extends CommonObject
 
 		// Info Login
 		$label .= '<div class="centpercent">';
-		$label .= '<u>'.$langs->trans("User").'</u><br>';
+		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("User").'</u><br>';
 		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
 		if (!empty($this->login)) $label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
 		if (!empty($this->job)) $label .= '<br><b>'.$langs->trans("Job").':</b> '.$this->job;
@@ -3233,9 +3233,9 @@ class User extends CommonObject
 			}
 			return $num;
 		} else {
-            $this->errors[] = $this->db->lasterror();
-            return -1;
-        }
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
 	}
 
 	/**

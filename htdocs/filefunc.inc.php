@@ -276,8 +276,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 //print memory_get_usage();
 
-// If password is encoded, we decode it
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
+// If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
+if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
 {
 	if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
 	{

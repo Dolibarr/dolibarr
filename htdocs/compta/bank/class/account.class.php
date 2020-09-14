@@ -472,7 +472,7 @@ class Account extends CommonObject
 	 *  @param	string		$oper			'VIR','PRE','LIQ','VAD','CB','CHQ'...
 	 *  @param	string		$label			Descripton
 	 *  @param	float		$amount			Amount
-	 *  @param	string		$num_chq		Numero cheque ou virement
+	 *  @param	string		$num_chq		Numero cheque or transfer
 	 *  @param	int  		$categorie		Category id (optionnal)
 	 *  @param	User		$user			User that create
 	 *  @param	string		$emetteur		Name of cheque writer
@@ -566,15 +566,18 @@ class Account extends CommonObject
 				if (!$result) {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
+
 					return -3;
 				}
 			}
 
 			$this->db->commit();
+
 			return $accline->id;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
+
 			return -2;
 		}
 	}
@@ -1353,7 +1356,7 @@ class Account extends CommonObject
 		global $conf, $langs, $user;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("BankAccount").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankAccount").'</u>';
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.$this->iban;

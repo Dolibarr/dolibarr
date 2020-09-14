@@ -369,38 +369,38 @@ if ($action == "freezone") {
 		$tva_tx = get_default_tva($mysoc, $customer);
 	}
 
-    // Local Taxes
-    $localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
-    $localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
+	// Local Taxes
+	$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
+	$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-    $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
-    $invoice->fetch($placeid);
+	$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+	$invoice->fetch($placeid);
 }
 
 if ($action == "addnote") {
-    foreach ($invoice->lines as $line)
-    {
-        if ($line->id == $number)
+	foreach ($invoice->lines as $line)
+	{
+		if ($line->id == $number)
 		{
 			$line->array_options['order_notes'] = $desc;
 			$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
-        }
-    }
-    $invoice->fetch($placeid);
+		}
+	}
+	$invoice->fetch($placeid);
 }
 
 if ($action == "deleteline") {
-    if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
-        $invoice->deleteline($idline);
-        $invoice->fetch($placeid);
-    } elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture='".$placeid."' order by rowid DESC";
-        $resql = $db->query($sql);
-        $row = $db->fetch_array($resql);
-        $deletelineid = $row[0];
-        $invoice->deleteline($deletelineid);
-        $invoice->fetch($placeid);
-    }
+	if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
+		$invoice->deleteline($idline);
+		$invoice->fetch($placeid);
+	} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture='".$placeid."' order by rowid DESC";
+		$resql = $db->query($sql);
+		$row = $db->fetch_array($resql);
+		$deletelineid = $row[0];
+		$invoice->deleteline($deletelineid);
+		$invoice->fetch($placeid);
+	}
 	if (count($invoice->lines) == 0) $invoice->delete($user);
 }
 
@@ -830,7 +830,7 @@ $( document ).ready(function() {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
 				if ($adh->statut > 0) $s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
-      		if (empty($adh->statut)) { $s .= "</s>"; }
+	  		if (empty($adh->statut)) { $s .= "</s>"; }
 		} else {
 			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 		}
@@ -1011,47 +1011,47 @@ if ($placeid > 0)
 				$htmlsupplements[$line->fk_parent_line] .= '</tr>'."\n";
 				continue;
 			}
-            $htmlforlines = '';
+			$htmlforlines = '';
 
-            $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
-            if ($line->special_code == "4") {
-                $htmlforlines .= ' order';
-            }
-            $htmlforlines .= '" id="'.$line->id.'">';
-            $htmlforlines .= '<td class="left">';
+			$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+			if ($line->special_code == "4") {
+				$htmlforlines .= ' order';
+			}
+			$htmlforlines .= '" id="'.$line->id.'">';
+			$htmlforlines .= '<td class="left">';
 			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '<span class="phoneqty">'.$line->qty."</span> x ";
-            if (isset($line->product_type))
-            {
-                if (empty($line->product_type)) $htmlforlines .= img_object('', 'product').' ';
-                else $htmlforlines .= img_object('', 'service').' ';
-            }
-            if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
-            	$tooltiptext = '';
-            	if ($line->product_ref) {
-            		$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
-            		$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
-	            	if ($line->product_label != $line->desc) {
-	            		if ($line->desc) $tooltiptext .= '<br>';
-	    	        	$tooltiptext .= $line->desc;
-	            	}
-            	}
-            	$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
-            } else {
-            	if ($line->product_label) $htmlforlines .= $line->product_label;
-            	if ($line->product_label != $line->desc)
-	            {
-	            	if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
-	            	$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
-	                if ($firstline != $line->desc)
-	                {
-	                    $htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
-	                } else {
-	                    $htmlforlines .= $line->desc;
-	                }
-	            }
-            }
-            if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
-            if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
+			if (isset($line->product_type))
+			{
+				if (empty($line->product_type)) $htmlforlines .= img_object('', 'product').' ';
+				else $htmlforlines .= img_object('', 'service').' ';
+			}
+			if (empty($conf->global->TAKEPOS_SHOW_N_FIRST_LINES)) {
+				$tooltiptext = '';
+				if ($line->product_ref) {
+					$tooltiptext .= '<b>'.$langs->trans("Ref").'</b> : '.$line->product_ref.'<br>';
+					$tooltiptext .= '<b>'.$langs->trans("Label").'</b> : '.$line->product_label.'<br>';
+					if ($line->product_label != $line->desc) {
+						if ($line->desc) $tooltiptext .= '<br>';
+						$tooltiptext .= $line->desc;
+					}
+				}
+				$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
+			} else {
+				if ($line->product_label) $htmlforlines .= $line->product_label;
+				if ($line->product_label != $line->desc)
+				{
+					if ($line->product_label && $line->desc) $htmlforlines .= '<br>';
+					$firstline = dolGetFirstLineOfText($line->desc, $conf->global->TAKEPOS_SHOW_N_FIRST_LINES);
+					if ($firstline != $line->desc)
+					{
+						$htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+					} else {
+						$htmlforlines .= $line->desc;
+					}
+				}
+			}
+			if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
+			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
 			if ($_SESSION["basiclayout"] != 1)
 			{
 				$moreinfo = '';

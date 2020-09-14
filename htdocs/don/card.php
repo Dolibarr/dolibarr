@@ -288,7 +288,7 @@ if ($action == 'builddoc')
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=don_create($db, $object->id, '', $object->modelpdf, $outputlangs);
+	$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -839,7 +839,7 @@ if (!empty($id) && $action != 'edit')
 	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
 	$delallowed	= $user->rights->don->creer;
 
-	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 	// Show links to link elements
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));

@@ -118,7 +118,7 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; color: var(--colortextlink); text-decoration: none;  }
+a:link, a:visited, a:hover, a:active { color: var(--colortextlink); text-decoration: none;  }
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
@@ -534,6 +534,17 @@ div.floatright
 .largenumber {
     font-size: 1.4em;
 }
+button[name='button_search_x'] span.fa.fa-search {
+    font-size: 1.3em;
+}
+button[name='button_removefilter_x'] span.fa.fa-remove {
+    opacity: 0.5;
+    font-size: 1.3em;
+}
+button:focus {
+	outline: none;
+}
+
 
 th .button {
     -webkit-box-shadow: none !important;
@@ -3632,8 +3643,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     /* padding: 3px; */
 }
 .boxstats {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
     padding-top: 2px;
     padding-bottom: 2px;
     width: 118px;
@@ -4176,7 +4187,7 @@ div.ui-tooltip {
 div.ui-tooltip.mytooltip {
 	border: none !important;
 	padding: 10px 15px;
-	border-radius: 0;
+	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
 	-moz-box-shadow:   0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
@@ -4186,6 +4197,8 @@ div.ui-tooltip.mytooltip {
 	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
+	line-height: 1.6em;
+	min-width: 200px;
 }
 
 
@@ -4447,7 +4460,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
 .cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
-.cal_peruserviewname { max-width: 140px; height: 22px; }
+.cal_peruserviewname { max-width: 140px; height: 30px !important; }
 .cal_event span.badge.badge-status { border: 1px solid #aaa; }
 table.cal_month tr td table.nobordernopadding tr td { padding: 0 2px 0 2px; }
 table.cal_month tr.liste_titre td.tdfordaytitle { min-width: 120px; }
@@ -6268,6 +6281,16 @@ div.tabsElem a.tab {
 
 span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
     width: 250px !important;
+}
+.phpdebugbar-indicator span.phpdebugbar-tooltip {
+    opacity: .95 !important;
+}
+a.phpdebugbar-tab.phpdebugbar-active {
+	background-image: unset !important;
+}
+.phpdebugbar-indicator .fa {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
 }
 
 

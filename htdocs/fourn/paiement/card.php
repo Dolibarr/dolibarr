@@ -367,7 +367,7 @@ if ($result > 0)
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 		$genallowed = $user->rights->fournisseur->facture->lire;
 		$delallowed = $user->rights->fournisseur->facture->creer;
-		$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
 		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 		$somethingshown = $formfile->numoffiles;

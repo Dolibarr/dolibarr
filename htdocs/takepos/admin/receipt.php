@@ -233,6 +233,14 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AUTO_PRINT_TICKETS, 1);
 print "</td></tr>\n";
 
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('WeighingScale');
+	print '<td colspan="2">';
+	print ajax_constantonoff("TAKEPOS_WEIGHING_SCALE", array(), $conf->entity, 0, 0, 1, 0);
+	print "</td></tr>\n";
+}
+
 print '</table>';
 print '</div>';
 

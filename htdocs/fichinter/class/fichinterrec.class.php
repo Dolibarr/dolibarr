@@ -177,7 +177,7 @@ class FichinterRec extends Fichinter
 				$sql .= ", null, null";
 			}
 
-			$sql .= ", ".(!empty($fichintsrc->modelpdf) ? "'".$this->db->escape($fichintsrc->modelpdf)."'" : "''");
+			$sql .= ", ".(!empty($fichintsrc->model_pdf) ? "'".$this->db->escape($fichintsrc->model_pdf)."'" : "''");
 
 			// récurrence
 			$sql .= ", ".(!empty($this->frequency) ? $this->frequency : "null");

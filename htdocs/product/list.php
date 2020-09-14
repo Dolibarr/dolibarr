@@ -219,7 +219,7 @@ $arrayfields = array(
 );
 
 // MultiPrices
-if ($conf->global->PRODUIT_MULTIPRICES){
+if ($conf->global->PRODUIT_MULTIPRICES) {
 	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 	{
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
@@ -753,7 +753,7 @@ if ($resql)
 	}
 
 	// Multiprice
-	if ($conf->global->PRODUIT_MULTIPRICES){
+	if ($conf->global->PRODUIT_MULTIPRICES) {
 		foreach ($arraypricelevel as $key => $value)
 		{
 			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
@@ -905,7 +905,7 @@ if ($resql)
 	}
 
 	// Multiprices
-	if ($conf->global->PRODUIT_MULTIPRICES){
+	if ($conf->global->PRODUIT_MULTIPRICES) {
 		foreach ($arraypricelevel as $key => $value)
 		{
 			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
@@ -1265,7 +1265,7 @@ if ($resql)
 
 
 		// Multiprices
-		if ($conf->global->PRODUIT_MULTIPRICES){
+		if ($conf->global->PRODUIT_MULTIPRICES) {
 			foreach ($arraypricelevel as $key => $value)
 			{
 				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
@@ -1389,7 +1389,7 @@ if ($resql)
 			if ($obj->fk_product_type != 1)
 			{
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
-				print $product_static->stock_reel;
+				print price2num($product_static->stock_reel, 'MS');
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -1401,7 +1401,7 @@ if ($resql)
 			if ($obj->fk_product_type != 1)
 			{
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
-				print $product_static->stock_theorique;
+				print price2num($product_static->stock_theorique, 'MS');
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

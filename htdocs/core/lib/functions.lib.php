@@ -1063,10 +1063,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	if (empty($conf->syslog->enabled)) return;
 
 	// Check if we are into execution of code of a website
-	if (defined('USEEXTERNALSERVER') && ! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
+	if (defined('USEEXTERNALSERVER') && !defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		global $website, $websitekey;
-		if (is_object($website) && ! empty($website->ref)) $suffixinfilename.='_website_'.$website->ref;
-		elseif (! empty($websitekey)) $suffixinfilename.='_website_'.$websitekey;
+		if (is_object($website) && !empty($website->ref)) $suffixinfilename .= '_website_'.$website->ref;
+		elseif (!empty($websitekey)) $suffixinfilename .= '_website_'.$websitekey;
 	}
 
 	if ($ident < 0)
@@ -3011,10 +3011,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+				'accountancy', 'account', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
-				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
+				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title',
+				'help', 'holiday',
 				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
 				'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
 				'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
@@ -3035,7 +3036,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
 				'home', 'hrm', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'members', 'ticket', 'generic',
-				'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'error', 'warning',
+				'recruitmentcandidature', 'recruitmentjobposition',
+				'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
@@ -5912,7 +5915,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
 		$signature = $user->signature;
-        $substitutionarray = array_merge($substitutionarray, array(
+		$substitutionarray = array_merge($substitutionarray, array(
 			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
 		)
 			);
@@ -6184,16 +6187,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_date($object->array_options['options_'.$key], 'day');
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LOCALE__'] = dol_print_date($object->array_options['options_'.$key], 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_RFC__'] = dol_print_date($object->array_options['options_'.$key], 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-                                $datetime = $object->array_options['options_'.$key];
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
-                                $substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
-                            }
+								$datetime = $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
+							}
 						}
 					}
 				}
@@ -6239,12 +6242,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
 			}
 
-            if (is_object($object) && $object->element == 'action')
-            {
-                $substitutionarray['__EVENT_LABEL__'] = $object->label;
-                $substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, '%A %d %b %Y');
-                $substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, '%H:%M:%S');
-            }
+			if (is_object($object) && $object->element == 'action')
+			{
+				$substitutionarray['__EVENT_LABEL__'] = $object->label;
+				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, '%A %d %b %Y');
+				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, '%H:%M:%S');
+			}
 		}
 	}
 	if (empty($exclude) || !in_array('objectamount', $exclude))
@@ -8663,4 +8666,146 @@ function newToken()
 function currentToken()
 {
 	return $_SESSION['token'];
+}
+
+/**
+ * Start a table with headers and a optinal clickable number
+ * (don't forget to use "finishSimpleTable()" after the last table row)
+ *
+ * @see finishSimpleTable
+ *
+ * @param string	$header		The first left header of the table (automatic translated)
+ * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string	$arguments	(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @param integer	$emptyRows	(optional) The count of empty rows after the first header
+ * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
+ * @return void
+ */
+function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
+{
+	global $langs;
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+
+	print $emptyRows < 1 ? '<th>' : '<th colspan="'.($emptyRows + 1).'">';
+
+	print $langs->trans($header);
+
+	// extra space between the first header and the number
+	if ($number > -1) {
+		print ' ';
+	}
+
+	if (!empty($link)) {
+		if (!empty($arguments)) {
+			print '<a href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
+		} else {
+			print '<a href="'.DOL_URL_ROOT.'/'.$link.'">';
+		}
+	}
+
+	if ($number > -1) {
+		print '<span class="badge">'.$number.'</span>';
+	}
+
+	if (!empty($link)) {
+		print '</a>';
+	}
+
+	print '</th>';
+
+	if ($number < 0 && !empty($link)) {
+		print '<th class="right">';
+
+		if (!empty($arguments)) {
+			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'?'.$arguments.'">';
+		} else {
+			print '<a class="commonlink" href="'.DOL_URL_ROOT.'/'.$link.'">';
+		}
+
+		print $langs->trans("FullList");
+		print '</a>';
+		print '</th>';
+	}
+
+	print '</tr>';
+}
+
+/**
+ * Add the correct HTML close tags for "startSimpleTable(...)"
+ * (use after the last table line)
+ *
+ * @see startSimpleTable
+ *
+ * @param bool $addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
+ *
+ * @return void
+ */
+function finishSimpleTable($addLineBreak = false)
+{
+	print '</table>';
+	print '</div>';
+
+	if ($addLineBreak) {
+		print '<br>';
+	}
+}
+
+/**
+ * Add a summary line to the current open table ("None", "XMoreLines" or "Total xxx")
+ *
+ * @param integer	$tableColumnCount		The complete count columns of the table
+ * @param integer	$num					The count of the rows of the table, when it is zero (0) the "$noneWord" is shown instead
+ * @param integer	$nbofloop				(optional)	The maximum count of rows thaht the table show (when it is zero (0) no summary line will show, expect "$noneWord" when $num === 0)
+ * @param integer	$total					(optional)	The total value thaht is shown after when the table has minimum of one entire
+ * @param string	$noneWord				(optional)	The word that is shown when the table has no entires ($num === 0)
+ * @param boolean	$extraRightColumn		(optional)	Add a addtional column after the summary word and total number
+ * @return void
+ */
+function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0, $noneWord = "None", $extraRightColumn = false)
+{
+	global $langs;
+
+	if ($num === 0) {
+		print '<tr class="oddeven">';
+		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord).'</td>';
+		print '</tr>';
+		return;
+	}
+
+	if ($nbofloop === 0)
+	{
+		// don't show a summary line
+		return;
+	}
+
+	if ($num === 0) {
+		$colspan = $tableColumnCount;
+	}
+	elseif ($num > $nbofloop) {
+		$colspan = $tableColumnCount;
+	} else {
+		$colspan = $tableColumnCount - 1;
+	}
+
+	if ($extraRightColumn) {
+		$colspan--;
+	}
+
+	print '<tr class="liste_total">';
+
+	if ($nbofloop > 0 && $num > $nbofloop) {
+		print '<td colspan="'.$colspan.'" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
+	} else {
+		print '<td colspan="'.$colspan.'" class="right"> '.$langs->trans("Total").'</td>';
+		print '<td class="right" width="100">'.price($total).'</td>';
+	}
+
+	if ($extraRightColumn) {
+		print '<td></td>';
+	}
+
+	print '</tr>';
 }

@@ -192,7 +192,7 @@ if (empty($reshook))
 			$object->title = GETPOST('titre', 'nohtml');
 			$object->note_private = GETPOST('note_private', 'none');
             $object->note_public = GETPOST('note_public', 'none');
-            $object->modelpdf = GETPOST('modelpdf', 'alpha');
+            $object->model_pdf = GETPOST('modelpdf', 'alpha');
 			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
@@ -650,7 +650,7 @@ if (empty($reshook))
 	    				$outputlangs = new Translate("", $conf);
 	    				$outputlangs->setDefaultLang($newlang);
 	    			    }
-	    			    $model=$object->modelpdf;
+	    			    $model=$object->model_pdf;
 	    			    $ret = $object->fetch($id); // Reload to get new records
 
 	    			    $result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -861,7 +861,7 @@ if (empty($reshook))
                                 }
 
                                 $ret = $object->fetch($id); // Reload to get new records
-                                $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                                $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                     }*/
 
 				$object->fetch($object->id); // Reload lines
@@ -1425,9 +1425,9 @@ if ($action == 'create')
                 $list[] = str_replace(':', '|', $k).':'.$model;
             }
             $select = 'select;'.implode(',', $list);
-            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
+            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
         } else {
-            print $object->modelpdf;
+            print $object->model_pdf;
         }
         print "</td>";
         print '</tr>';

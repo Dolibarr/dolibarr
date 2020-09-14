@@ -492,7 +492,7 @@ class Project extends CommonObject
 			$sql .= " WHERE entity IN (".getEntity('project').")";
 			if (!empty($ref)) {
 				$sql .= " AND ref = '".$this->db->escape($ref)."'";
-			} elseif (! empty($ref_ext)) {
+			} elseif (!empty($ref_ext)) {
 				$sql .= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 			} else {
 				$sql .= " AND email_msgid = '".$this->db->escape($email_msgid)."'";
@@ -535,7 +535,7 @@ class Project extends CommonObject
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;
+				$this->modelpdf = $obj->model_pdf;	// deprecated
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
@@ -1021,7 +1021,7 @@ class Project extends CommonObject
 		}
 
 		$label = '';
-		if ($option != 'nolink') $label = '<u>'.$langs->trans("Project").'</u>';
+		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u>'.$langs->trans("Project").'</u>';
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
@@ -1689,8 +1689,8 @@ class Project extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'baleine';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->PROJECT_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
 			}

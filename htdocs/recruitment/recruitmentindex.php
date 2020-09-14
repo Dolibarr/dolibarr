@@ -321,14 +321,14 @@ $NBMAX = 3;
 $max = 3;
 
 // Last modified job position
-if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
 {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
-	$sql.= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.fk_soc = $socid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid)	$sql .= " AND s.fk_soc = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -379,15 +379,15 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 }
 
 // Last modified job position
-if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
 {
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
-	$sql.= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.fk_soc = $socid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid)	$sql .= " AND s.fk_soc = $socid";
 	$sql .= " ORDER BY rc.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -409,9 +409,9 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$staticrecruitmentcandidature->id=$objp->rowid;
-				$staticrecruitmentcandidature->ref=$objp->ref;
-				$staticrecruitmentcandidature->email=$objp->email;
+				$staticrecruitmentcandidature->id = $objp->rowid;
+				$staticrecruitmentcandidature->ref = $objp->ref;
+				$staticrecruitmentcandidature->email = $objp->email;
 				$staticrecruitmentcandidature->status = $objp->status;
 				$staticrecruitmentcandidature->date_creation = $objp->date_creation;
 				$staticrecruitmentcandidature->firstname = $objp->firstname;

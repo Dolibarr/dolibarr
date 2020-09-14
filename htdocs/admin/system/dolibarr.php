@@ -367,8 +367,7 @@ foreach ($configfileparameters as $key => $value)
 			print "<td>";
 			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
 			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-			elseif ($newkey == 'dolibarr_main_document_root_alt')
-			{
+			elseif ($newkey == 'dolibarr_main_document_root_alt') {
 				$tmparray = explode(',', ${$newkey});
 				$i = 0;
 				foreach ($tmparray as $value2)
@@ -382,8 +381,7 @@ foreach ($configfileparameters as $key => $value)
 					}
 					++$i;
 				}
-			} elseif ($newkey == 'dolibarr_main_instance_unique_id')
-			{
+			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
 			    //print $conf->file->instance_unique_id;
 			    global $dolibarr_main_cookie_cryptkey;
 			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
@@ -392,6 +390,13 @@ foreach ($configfileparameters as $key => $value)
 			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 			    }
 			    print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
+			} elseif ($newkey == 'dolibarr_main_prod') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (empty($valuetoshow)) {
+					print img_warning($langs->trans('SwitchThisForABetterSecurity'));
+				}
 			} else {
 			    print ${$newkey};
 			}

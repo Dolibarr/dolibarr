@@ -121,7 +121,7 @@ $listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
 $listofmethods['mail'] = 'PHP mail function';
 //$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+if (version_compare(phpversion(), '7.0', '>=')) $listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 
 if ($action == 'edit')

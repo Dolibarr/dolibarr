@@ -2360,42 +2360,42 @@ class Societe extends CommonObject
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category')
 		{
-		    $label .= '<u>'.$langs->trans("Customer").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Customer").'</u>';
 		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			$label .= '<u>'.$langs->trans("Prospect").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'supplier' || $option == 'category_supplier')
 		{
-			$label .= '<u>'.$langs->trans("Supplier").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		} elseif ($option == 'agenda')
 		{
-			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		} elseif ($option == 'project')
 		{
-			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		} elseif ($option == 'margin')
 		{
-			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		} elseif ($option == 'contact')
 		{
-			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		} elseif ($option == 'ban')
 		{
-			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
 		// By default
 		if (empty($linkstart))
 		{
-			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
 		}
 
@@ -2474,7 +2474,15 @@ class Societe extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('thirdpartydao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array(
+			'id'=>$this->id,
+			'getnomurl'=>$result,
+			'withpicto '=> $withpicto,
+			'option'=> $option,
+			'maxlen'=> $maxlen,
+			'notooltip'=> $notooltip,
+			'save_lastsearch_value'=> $save_lastsearch_value
+		);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
@@ -4155,7 +4163,7 @@ class Societe extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
 	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description

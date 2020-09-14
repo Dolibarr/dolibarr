@@ -294,7 +294,10 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$boxstatItem = '';
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
-				if (!isset($boardloaded[$class]) || !is_object($boardloaded[$class]))
+				$classkeyforcache = $class;
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product';	// ProductService use same load_state_board than Product
+
+				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{
 					include_once $includes[$val]; // Loading a class cost around 1Mb
 
@@ -302,7 +305,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 					$board->load_state_board();
 					$boardloaded[$class] = $board;
 				} else {
-					$board = $boardloaded[$class];
+					$board = $boardloaded[$classkeyforcache];
 				}
 
 				$langs->load(empty($langfile[$val]) ? $val : $langfile[$val]);
@@ -450,14 +453,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->approve) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
-		$dashboardlines[$board->element . '_toapprove'] = $board->load_board($user, 'toapprove');
+		$dashboardlines[$board->element.'_toapprove'] = $board->load_board($user, 'toapprove');
 	}
 
 	// Number of expense reports to pay
 	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
-		$dashboardlines[$board->element . '_topay'] = $board->load_board($user, 'topay');
+		$dashboardlines[$board->element.'_topay'] = $board->load_board($user, 'topay');
 	}
 
 	// Number of holidays to approve

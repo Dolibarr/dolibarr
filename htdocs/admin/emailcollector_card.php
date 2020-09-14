@@ -670,12 +670,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Clone
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a></div>';
 
-		    // Collect now
-		    if (count($object->actions) > 0) {
+			// Collect now
+			if (count($object->actions) > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=collect">'.$langs->trans("CollectNow").'</a></div>';
-		    } else {
-		    	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
-		    }
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
+			}
 
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
 		}
@@ -705,7 +705,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->emailcollector->read;	// If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->emailcollector->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('emailcollector', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	    print $formfile->showdocuments('emailcollector', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		*/
 	/*
 		// Show links to link elements

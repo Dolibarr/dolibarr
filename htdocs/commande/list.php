@@ -65,10 +65,10 @@ $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = GETPOST("search_state");
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
@@ -84,7 +84,7 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$billed = GETPOST('billed', 'int');
+$search_billed = GETPOSTISSET('search_billed') ? GETPOST('search_billed', 'int') : GETPOST('billed', 'int');
 $search_status = GETPOST('search_status', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -224,7 +224,7 @@ if (empty($reshook))
 		$search_project_ref = '';
 		$search_project = '';
 		$search_status = '';
-		$billed = '';
+		$search_billed = '';
 		$toselect = '';
 		$search_array_options = array();
 		$search_categ_cus = 0;
@@ -309,7 +309,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
 if ($search_ref_customer) $sql .= natural_search('c.ref_client', $search_ref_customer);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-if ($billed != '' && $billed >= 0) $sql .= ' AND c.facture = '.$billed;
+if ($search_billed != '' && $search_billed >= 0) $sql .= ' AND c.facture = '.$search_billed;
 if ($search_status <> '')
 {
 	if ($search_status < 4 && $search_status > -3)
@@ -466,7 +466,7 @@ if ($resql)
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	if ($show_files)            	$param .= '&show_files='.urlencode($show_files);
 	if ($optioncss != '')       	$param .= '&optioncss='.urlencode($optioncss);
-	if ($billed != '')				$param .= '&billed='.urlencode($billed);
+	if ($search_billed != '')		$param .= '&search_billed='.urlencode($search_billed);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -755,7 +755,7 @@ if ($resql)
 	}
 	if (!empty($arrayfields['c.multicurrency_total_vat']['checked']))
 	{
-		// Amount
+		// Amount VAT
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_vat" value="'.dol_escape_htmltag($search_multicurrency_montant_vat).'">';
 		print '</td>';
@@ -817,7 +817,7 @@ if ($resql)
 	if (!empty($arrayfields['c.facture']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectyesno('billed', $billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
 		print '</td>';
 	}
 	// Action column

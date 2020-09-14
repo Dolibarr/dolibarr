@@ -231,7 +231,7 @@ if (empty($reshook))
 			}
 			$ret = $object->fetch($id); // Reload to get new records
 			if ($ret > 0) $object->fetch_thirdparty();
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -252,7 +252,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 				if ($ret > 0) {
 					$object->fetch_thirdparty();
@@ -353,7 +353,7 @@ if (empty($reshook))
 					$object->socid = GETPOST('socid', 'int');
 					$object->contact_id = GETPOST('contactid', 'int');
 					$object->fk_project = GETPOST('projectid', 'int');
-					$object->modelpdf = GETPOST('model');
+					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note_private = GETPOST('note_private', 'none');
 					$object->note_public = GETPOST('note_public', 'none');
@@ -381,7 +381,7 @@ if (empty($reshook))
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->contact_id = GETPOST('contactid', 'int');
 				$object->fk_project = GETPOST('projectid', 'int');
-				$object->modelpdf = GETPOST('model');
+				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note_private = GETPOST('note_private', 'none');
 				$object->note_public = GETPOST('note_public', 'none');
@@ -578,7 +578,7 @@ if (empty($reshook))
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
 							}
-							$model = $object->modelpdf;
+							$model = $object->model_pdf;
 
 							$ret = $object->fetch($id); // Reload to get new records
 							$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -769,7 +769,7 @@ if (empty($reshook))
 			}
 			$ret = $object->fetch($id); // Reload to get new records
 			if ($ret > 0) $object->fetch_thirdparty();
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		if ($_POST["remise_id"]) {
@@ -1101,7 +1101,7 @@ if (empty($reshook))
 						if ($ret > 0) {
 							$object->fetch_thirdparty();
 						}
-						$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 
 					unset($_POST['prod_entry_mode']);
@@ -1243,7 +1243,7 @@ if (empty($reshook))
 					}
 					$ret = $object->fetch($id); // Reload to get new records
 					if ($ret > 0) $object->fetch_thirdparty();
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -2521,7 +2521,7 @@ if ($action == 'create')
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));

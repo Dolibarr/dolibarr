@@ -100,14 +100,14 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->label = GETPOST("label", 'alpha');
 	$object->note = GETPOST("note", 'none');
 
-	if (empty($object->datev))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
-		$error++;
-	}
 	if (empty($object->datep))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
+		$error++;
+	}
+	if (empty($object->datev))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PeriodEndDate")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->type_payment) || $object->type_payment < 0)

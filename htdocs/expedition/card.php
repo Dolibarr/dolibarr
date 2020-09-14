@@ -434,7 +434,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -798,7 +798,7 @@ if (empty($reshook))
 				}
 
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
@@ -1005,191 +1005,191 @@ if ($action == 'create')
 			}
 
 
-            // Incoterms
+			// Incoterms
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
-		        print '<td colspan="3" class="maxwidthonsmartphone">';
-		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 				print '</td></tr>';
 			}
 
-            // Document model
+			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 			$liste = ModelePdfExpedition::liste_modeles($db);
 			if (count($liste) > 1)
 			{
-    			print "<tr><td>".$langs->trans("DefaultModel")."</td>";
-                print '<td colspan="3">';
-    			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
-                print "</td></tr>\n";
+				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
+				print '<td colspan="3">';
+				print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
+				print "</td></tr>\n";
 			}
 
-            print "</table>";
+			print "</table>";
 
-            dol_fiche_end();
+			dol_fiche_end();
 
 
-            // Shipment lines
+			// Shipment lines
 
-            $numAsked = count($object->lines);
+			$numAsked = count($object->lines);
 
-            print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
-    	    $i = 0;
-    	    while ($i < $numAsked)
-    	    {
-    	    	print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
-                if (!empty($conf->productbatch->enabled)) print 'jQuery("#qtyl'.$i.'_'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
-    	    	$i++;
-    	    }
-        	print '});
+			$i = 0;
+			while ($i < $numAsked)
+			{
+				print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+				if (!empty($conf->productbatch->enabled)) print 'jQuery("#qtyl'.$i.'_'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+				$i++;
+			}
+			print '});
 	            jQuery("#autoreset").click(function() {';
-    	    $i = 0;
-    	    while ($i < $numAsked)
-    	    {
-    	    	print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
-                if (!empty($conf->productbatch->enabled)) print 'jQuery("#qtyl'.$i.'_'.$i.'").val(0);'."\n";
-    	    	$i++;
-    	    }
-        	print '});
+			$i = 0;
+			while ($i < $numAsked)
+			{
+				print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
+				if (!empty($conf->productbatch->enabled)) print 'jQuery("#qtyl'.$i.'_'.$i.'").val(0);'."\n";
+				$i++;
+			}
+			print '});
         	});
             </script>';
 
-            print '<br>';
+			print '<br>';
 
-            print '<table class="noborder centpercent">';
+			print '<table class="noborder centpercent">';
 
-            // Load shipments already done for same order
-            $object->loadExpeditions();
+			// Load shipments already done for same order
+			$object->loadExpeditions();
 
-            if ($numAsked)
-            {
-                print '<tr class="liste_titre">';
-                print '<td>'.$langs->trans("Description").'</td>';
-                print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
-                print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
-                print '<td class="center">'.$langs->trans("QtyToShip");
+			if ($numAsked)
+			{
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
+				print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled))
 				{
-	                print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
-	                print ' / ';
+					print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+					print ' / ';
 				} else {
 					print '<br>';
 				}
 				print '<a href="#" id="autoreset">'.$langs->trans("Reset").'</a>';
-                print '</td>';
-                if (!empty($conf->stock->enabled))
-                {
+				print '</td>';
+				if (!empty($conf->stock->enabled))
+				{
 					if (empty($conf->productbatch->enabled))
 					{
-                    	print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
+						print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 					} else {
 						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
-                }
-                print "</tr>\n";
-            }
+				}
+				print "</tr>\n";
+			}
 
-            $indiceAsked = 0;
-            while ($indiceAsked < $numAsked)
-            {
-                $product = new Product($db);
+			$indiceAsked = 0;
+			while ($indiceAsked < $numAsked)
+			{
+				$product = new Product($db);
 
-                $line = $object->lines[$indiceAsked];
+				$line = $object->lines[$indiceAsked];
 
-                $parameters = array('i' => $indiceAsked, 'line' => $line, 'num' => $numAsked);
-                $reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
-                if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				$parameters = array('i' => $indiceAsked, 'line' => $line, 'num' => $numAsked);
+				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-                if (empty($reshook))
-                {
-	                // Show product and description
-	                $type = $line->product_type ? $line->product_type : $line->fk_product_type;
-	                // Try to enhance type detection using date_start and date_end for free lines where type
-	                // was not saved.
-	                if (!empty($line->date_start)) $type = 1;
-	                if (!empty($line->date_end)) $type = 1;
+				if (empty($reshook))
+				{
+					// Show product and description
+					$type = $line->product_type ? $line->product_type : $line->fk_product_type;
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (!empty($line->date_start)) $type = 1;
+					if (!empty($line->date_end)) $type = 1;
 
-	                print '<!-- line '.$line->rowid.' for product -->'."\n";
-	                print '<tr class="oddeven">'."\n";
+					print '<!-- line '.$line->rowid.' for product -->'."\n";
+					print '<tr class="oddeven">'."\n";
 
-	                // Product label
-	                if ($line->fk_product > 0)  // If predefined product
-	                {
-	                    $product->fetch($line->fk_product);
-	                    $product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
-	                    //var_dump($product->stock_warehouse[1]);
+					// Product label
+					if ($line->fk_product > 0)  // If predefined product
+					{
+						$product->fetch($line->fk_product);
+						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						//var_dump($product->stock_warehouse[1]);
 
-	                    print '<td>';
-	                    print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print '<td>';
+						print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-	                    // Show product and description
-	                    $product_static->type = $line->fk_product_type;
-	                    $product_static->id = $line->fk_product;
-	                    $product_static->ref = $line->ref;
-	                    $product_static->status_batch = $line->product_tobatch;
-	                    $text = $product_static->getNomUrl(1);
-	                    $text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
-	                    $description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
-	                    print $form->textwithtooltip($text, $description, 3, '', '', $i);
+						// Show product and description
+						$product_static->type = $line->fk_product_type;
+						$product_static->id = $line->fk_product;
+						$product_static->ref = $line->ref;
+						$product_static->status_batch = $line->product_tobatch;
+						$text = $product_static->getNomUrl(1);
+						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
+						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
+						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
-	                    // Show range
-	                    print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+						// Show range
+						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 
-	                    // Add description in form
-	                    if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
-	                    {
-	                        print ($line->desc && $line->desc != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
-	                    }
+						// Add description in form
+						if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
+						{
+							print ($line->desc && $line->desc != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
+						}
 
-	                    print '</td>';
-	                } else {
-					    print "<td>";
-	                    if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
-	                    else $text = img_object($langs->trans('Product'), 'product');
+						print '</td>';
+					} else {
+						print "<td>";
+						if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
+						else $text = img_object($langs->trans('Product'), 'product');
 
-	                    if (!empty($line->label)) {
-	                    	$text .= ' <strong>'.$line->label.'</strong>';
-	                    	print $form->textwithtooltip($text, $line->desc, 3, '', '', $i);
-	                    } else {
-	                    	print $text.' '.nl2br($line->desc);
-	                    }
+						if (!empty($line->label)) {
+							$text .= ' <strong>'.$line->label.'</strong>';
+							print $form->textwithtooltip($text, $line->desc, 3, '', '', $i);
+						} else {
+							print $text.' '.nl2br($line->desc);
+						}
 
-	                    // Show range
-	                    print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
-	                    print "</td>\n";
-	                }
+						// Show range
+						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
+						print "</td>\n";
+					}
 
-	                // Qty
-	                print '<td class="center">'.$line->qty;
-	                print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
-	                print '</td>';
-	                $qtyProdCom = $line->qty;
+					// Qty
+					print '<td class="center">'.$line->qty;
+					print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
+					print '</td>';
+					$qtyProdCom = $line->qty;
 
-	                // Qty already shipped
-	                print '<td class="center">';
-	                $quantityDelivered = $object->expeditions[$line->id];
-	                print $quantityDelivered;
-	                print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
-	                print '</td>';
+					// Qty already shipped
+					print '<td class="center">';
+					$quantityDelivered = $object->expeditions[$line->id];
+					print $quantityDelivered;
+					print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
+					print '</td>';
 
-	                // Qty to ship
-	                $quantityAsked = $line->qty;
+					// Qty to ship
+					$quantityAsked = $line->qty;
 					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 					{
 						$quantityToBeDelivered = 0;
 					} else {
 						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 					}
-	                $warehouse_id = GETPOST('entrepot_id', 'int');
+					$warehouse_id = GETPOST('entrepot_id', 'int');
 
 					$warehouseObject = null;
 					if ($warehouse_id > 0 || !($line->fk_product > 0) || empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 					{
-					    print '<!-- Case warehouse already known or product not a predefined product -->';
+						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
 						$deliverableQty = min($quantityToBeDelivered, $stock);
@@ -2523,7 +2523,7 @@ if ($action == 'create')
 		$genallowed = $user->rights->expedition->lire;
 		$delallowed = $user->rights->expedition->creer;
 
-		print $formfile->showdocuments('expedition', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('expedition', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 
 		// Show links to link elements
