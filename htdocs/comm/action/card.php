@@ -1662,24 +1662,42 @@ if ($id > 0)
 		// Reminders
 		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
 		{
-			$object->loadReminders();
+			$filtreuserid = $user->id;
+			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
+			$object->loadReminders('', $filteruserid);
+
+			print '<hr>';
+
+			print '<table class="border tableforfield centpercent">';
+
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
 
 			if (count($object->reminders) > 0) {
-				//checkbox create reminder
-				print '<hr>';
-
-				print '<table class="border tableforfield centpercent">';
-
-				print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
-
-				foreach($object->reminders as $actioncommreminderid => $actioncommreminder) {
-					print $TRemindTypes[$actioncommreminder->typeremind].' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+				if (count($object->reminders) > 0) {
+					$tmpuserstatic = new User($db);
+					foreach($object->reminders as $actioncommreminderid => $actioncommreminder) {
+						print $TRemindTypes[$actioncommreminder->typeremind];
+						if ($actioncommreminder->fk_user > 0) {
+							$tmpuserstatic->fetch($actioncommreminder->fk_user);
+							print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
+						}
+						print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+						if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
+							print ' - <span class="opacitymedium">';
+							print $langs->trans("NotSent");
+							print ' </span>';
+						} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
+							print ' - <span class="opacitymedium">';
+							print $langs->trans("Done");
+							print ' </span>';
+						}
+					}
 				}
-
-				print '</td></tr>';
-
-				print '</table>';
 			}
+
+			print '</td></tr>';
+
+			print '</table>';
 		}
 
 		dol_fiche_end();
