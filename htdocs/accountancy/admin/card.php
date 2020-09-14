@@ -44,6 +44,8 @@ $cancel = GETPOST('cancel', 'alpha');
 $accountingaccount = GETPOST('accountingaccount', 'alpha');
 
 // Security check
+if ($user->socid > 0) accessforbidden();
+if (!$user->rights->accounting->chartofaccount) accessforbidden();
 
 
 $object = new AccountingAccount($db);
@@ -75,18 +77,14 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
 			$account_number = GETPOST('account_number', 'string');
-		}
-		else
-		{
+		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
 		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
-		}
-		else
-		{
+		} else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
@@ -104,13 +102,11 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			$error = 1;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		elseif ($res == - 4) {
+		} elseif ($res == - 4) {
 			$error = 2;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		elseif ($res < 0)
+		} elseif ($res < 0)
 		{
 		    $error++;
 		    setEventMessages($object->error, $object->errors, 'errors');
@@ -140,18 +136,14 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
 			$account_number = GETPOST('account_number', 'string');
-		}
-		else
-		{
+		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
 		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
-		}
-		else
-		{
+		} else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
@@ -269,8 +261,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($id > 0 || $ref) {
+} elseif ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref, 1);
 
 	if ($result > 0) {

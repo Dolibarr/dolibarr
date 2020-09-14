@@ -89,6 +89,8 @@ SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
+ShowAccountingAccountInBookKeeping=Show accounting account in ledger
+ShowAccountingAccountInBookKeepingByAccount=Show accounting account in ledger by account
 AccountAccountingSuggest=Accounting account suggested
 MenuDefaultAccounts=Default accounts
 MenuBankAccounts=Bank accounts
@@ -149,6 +151,8 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -167,6 +171,8 @@ TransitionalAccount=Transitional bank transfer account
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -284,6 +290,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Apply mass categories
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
@@ -303,6 +310,9 @@ ErrorAccountingJournalIsAlreadyUse=This journal is already use
 AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Number of entries
 NumberOfAccountancyMovements=Number of movements
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Export draft journal

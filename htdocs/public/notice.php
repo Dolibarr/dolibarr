@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 define('NOCSRFCHECK', 1);
 define('NOLOGIN', 1);
+define('NOSESSION', 1);
 
 require '../main.inc.php';
 
@@ -38,12 +39,9 @@ if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'
 {
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
-}
-else
-{
-	$langs->load("error");
-	$langs->load("other");
+} else {
+    $langs->loadLangs(array("error", "other"));
 
-	if (GETPOST('transphrase', 'alphanohtml')) print GETPOST('transphrase', 'alphanohtml');
-	if (GETPOST('transkey', 'alphanohtml')) print $langs->trans(GETPOST('transkey', 'alphanohtml'));
+    if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
+    elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
 }

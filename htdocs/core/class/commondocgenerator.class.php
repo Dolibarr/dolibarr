@@ -218,8 +218,8 @@ abstract class CommonDocGenerator
             'company_idprof6'=>$object->idprof6,
             'company_note_public'=>$object->note_public,
             'company_note_private'=>$object->note_private,
-            'company_default_bank_iban'=>$object->bank_account->iban,
-            'company_default_bank_bic'=>$object->bank_account->bic
+        	'company_default_bank_iban'=>(is_object($object->bank_account) ? $object->bank_account->iban : ''),
+        	'company_default_bank_bic'=>(is_object($object->bank_account) ? $object->bank_account->bic : '')
         );
 
 	    // Retrieve extrafields
@@ -794,12 +794,10 @@ abstract class CommonDocGenerator
 					$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
 					//Add value to store price with currency
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
-				}
-				elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
+				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
 				{
 					$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
-				}
-				elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
+				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
 					$valArray = explode(',', $object->array_options['options_'.$key]);
 					$output = array();
 					foreach ($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
@@ -808,8 +806,7 @@ abstract class CommonDocGenerator
 						}
 					}
 					$object->array_options['options_'.$key] = implode(', ', $output);
-				}
-				elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
+				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
 				{
 					if (strlen($object->array_options['options_'.$key]) > 0)
 					{
@@ -817,17 +814,14 @@ abstract class CommonDocGenerator
 						$object->array_options['options_'.$key] = dol_print_date($date, 'day'); // using company output language
 						$object->array_options['options_'.$key.'_locale'] = dol_print_date($date, 'day', 'tzserver', $outputlangs); // using output language format
 						$object->array_options['options_'.$key.'_rfc'] = dol_print_date($date, 'dayrfc'); // international format
-					}
-					else
-					{
+					} else {
 						$object->array_options['options_'.$key] = '';
 						$object->array_options['options_'.$key.'_locale'] = '';
 						$object->array_options['options_'.$key.'_rfc'] = '';
 					}
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
-				}
-				elseif ($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
+				} elseif ($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
 				{
 					$datetime = $object->array_options['options_'.$key];
 					$object->array_options['options_'.$key] = ($datetime != "0000-00-00 00:00:00" ?dol_print_date($object->array_options['options_'.$key], 'dayhour') : ''); // using company output language
@@ -835,8 +829,7 @@ abstract class CommonDocGenerator
 					$object->array_options['options_'.$key.'_rfc'] = ($datetime != "0000-00-00 00:00:00" ?dol_print_date($object->array_options['options_'.$key], 'dayhourrfc') : ''); // international format
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
-				}
-				elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
+				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
 				{
 					$id = $object->array_options['options_'.$key];
 					if ($id != "")
@@ -946,8 +939,7 @@ abstract class CommonDocGenerator
 
             if (empty($colDef['width'])) {
                 $countFlexCol++;
-            }
-            else {
+            } else {
                 $totalDefinedColWidth += $colDef['width'];
             }
         }
@@ -957,16 +949,14 @@ abstract class CommonDocGenerator
             // setting empty conf with default
             if (!empty($colDef['title'])) {
                 $colDef['title'] = array_replace($this->defaultTitlesFieldsStyle, $colDef['title']);
-            }
-            else {
+            } else {
                 $colDef['title'] = $this->defaultTitlesFieldsStyle;
             }
 
             // setting empty conf with default
             if (!empty($colDef['content'])) {
                 $colDef['content'] = array_replace($this->defaultContentsFieldsStyle, $colDef['content']);
-            }
-            else {
+            } else {
                 $colDef['content'] = $this->defaultContentsFieldsStyle;
             }
 
@@ -1082,7 +1072,8 @@ abstract class CommonDocGenerator
         $parameters = array(
             'curY' => &$curY,
             'columnText' => $columnText,
-            'colKey' => $colKey
+            'colKey' => $colKey,
+            'pdf' => &$pdf,
         );
         $reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
         if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1296,7 +1287,7 @@ abstract class CommonDocGenerator
         {
             // Sort extrafields by rank
             uasort($fields, function ($a, $b) {
-                return  ($a->rank > $b->rank) ? -1 : 1;
+                return  ($a->rank > $b->rank) ? 1 : -1;
 			});
 
             // define some HTML content with style
@@ -1322,8 +1313,7 @@ abstract class CommonDocGenerator
                     $html .= $field->content;
                     $i++;
                 }
-            }
-            elseif ($params['display'] == 'table') {
+            } elseif ($params['display'] == 'table') {
                 // Display in table format
                 $html .= '<table class="extrafield-table" cellspacing="'.$params['table']['cellspacing'].'" cellpadding="'.$params['table']['cellpadding'].'" border="'.$params['table']['border'].'">';
 
@@ -1388,8 +1378,7 @@ abstract class CommonDocGenerator
     {
         if (!empty($this->cols[$colKey]['status'])) {
             return true;
-        }
-        else  return  false;
+        } else return  false;
     }
 
     /**
@@ -1439,8 +1428,7 @@ abstract class CommonDocGenerator
                     if (is_object($outputlangsbis)) {
                         // set cell padding with column title definition
                         $pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);
-                    }
-                    else {
+                    } else {
                         // set cell padding with column title definition
                         $pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
                     }

@@ -146,8 +146,7 @@ class box_project extends ModeleBoxes
                                 'td' => 'class="right"',
                                 'text' => round($objTask->totprogress / $objTask->nb, 0)."%",
                             );
-                        else
-                            $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+                        else $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
                         $totalnbTask += $objTask->nb;
                     } else {
                         $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));

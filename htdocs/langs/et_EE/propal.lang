@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Müügiarve kontakt
 TypeContact_propal_external_CUSTOMER=Kliendi kontakt pakkumise järelkaja jaoks
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Vaikimisi mudeli loomine
 DefaultModelPropalToBill=Vaikimisi mall pakkumise sulgemiseks (arve esitada)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Vaikimisi mall pakkumise sulgemiseks (arvet ei esitata)
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

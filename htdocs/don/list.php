@@ -269,8 +269,7 @@ if ($resql)
 				$projectstatic->public = $objp->public;
 				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';
@@ -283,9 +282,7 @@ if ($resql)
     print '</div>';
     print "</form>\n";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

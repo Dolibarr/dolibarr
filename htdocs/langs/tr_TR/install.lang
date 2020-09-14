@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Error(s) were reported during the migration process so
 YouTryInstallDisabledByDirLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (directory renamed with .lock suffix).<br>
 YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (by the existence of a lock file <strong>install.lock</strong> in the dolibarr documents directory).<br>
 ClickHereToGoToApp=Uygulamanıza gitmek için buraya tıklayın
-ClickOnLinkOrRemoveManualy=Click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test

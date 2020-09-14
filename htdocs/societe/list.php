@@ -10,6 +10,7 @@
  * Copyright (C) 2017       Rui Strecht      	    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -139,6 +140,8 @@ $fieldstosearchall = array(
 	's.code_fournisseur'=>"SupplierCode",
 	's.code_compta'=>"CustomerAccountancyCodeShort",
 	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
+	's.zip'=>"Zip",
+	's.town'=>"Town",
 	's.email'=>"EMail",
 	's.url'=>"URL",
 	's.tva_intra'=>"VATIntra",
@@ -386,12 +389,11 @@ if ($resql)
 		if ($level == $obj->code) $level = $langs->trans($obj->label);
 		$tab_level[$obj->code] = $level;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
-$sql .= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
+$sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql .= " s.tms as date_update, s.datec as date_creation,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
@@ -431,7 +433,6 @@ if ($search_sale == -2) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciau
 elseif ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid)                $sql .= " AND s.rowid = ".$socid;
 if ($search_sale && $search_sale != -2)    $sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 if (!$user->rights->fournisseur->lire) $sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 if ($search_sale == -2)    $sql .= " AND sc.fk_user IS NULL";
@@ -482,10 +483,12 @@ if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("s.fk_s
 if ($search_import_key)    $sql .= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 // Add where from hooks
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
+}
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -1045,13 +1048,11 @@ while ($i < min($num, $limit))
 	{
 		$savalias = $obj->name_alias;
 		if (!empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias = '';
-		print '<td class="tdoverflowmax200">';
+		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').'>';
 		if ($contextpage == 'poslist')
 		{
 		    print $obj->name;
-		}
-		else
-		{
+		} else {
 		    print $companystatic->getNomUrl(1, '', 100, 0, 1);
 		}
 		print "</td>\n";
@@ -1122,7 +1123,7 @@ while ($i < min($num, $limit))
 	// Country
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax100">';
 		$labelcountry = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $obj->country_label;
 		print $labelcountry;
 		print '</td>';
@@ -1196,6 +1197,7 @@ while ($i < min($num, $limit))
 		print "<td>".$obj->idprof6."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
+	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked']))
 	{
 		print "<td>";
@@ -1212,25 +1214,17 @@ while ($i < min($num, $limit))
 	{
 		print '<td class="center">';
 		$s = '';
-		if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
-		{
-	  		$companystatic->name = $langs->trans("Customer");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'customer', 0, 1);
-		}
 		if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			if ($s) $s .= ", ";
-			$companystatic->name = $langs->trans("Prospect");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'prospect', 0, 1);
+			$s .= '<a class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</a>';
+		}
+		if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+		{
+			$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $obj->fournisseur)
 		{
-			if ($s) $s .= ", ";
-			$companystatic->name = $langs->trans("Supplier");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'supplier', 0, 1);
+			$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 		}
 		print $s;
 		print '</td>';
@@ -1250,13 +1244,13 @@ while ($i < min($num, $limit))
 	{
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
+		print '<div class="inline-block">' . $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
 		foreach ($prospectstatic->cacheprospectstatus as $key => $val)
 		{
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code']).'</a>';
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm' . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
 		}
 		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;

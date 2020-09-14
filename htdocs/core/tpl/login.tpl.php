@@ -54,6 +54,7 @@ $titleofloginpage = $langs->trans('Login').' @ '.$titletruedolibarrversion; // $
 
 $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow = 0;
+if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $disablenofollow = 0;
 
 print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
 
@@ -78,7 +79,7 @@ if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 ?>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
-<script type="text/javascript">
+<script>
 $(document).ready(function () {
 	/* Set focus on correct field */
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
@@ -165,8 +166,7 @@ if (!empty($morelogincontent)) {
 				echo $option;
 			}
 		}
-	}
-	else {
+	} else {
 		echo '<!-- Option by hook -->';
 		echo $morelogincontent;
 	}
@@ -254,8 +254,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 
 	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 	if (!empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
-	else
-	{
+	else {
 		$langs->load("errors");
 		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
 	}
@@ -330,49 +329,49 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
-elseif (!empty($moreloginextracontent)) {
+} elseif (!empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }
 
-// Google Analytics (need Google module)
+// Google Analytics
+// TODO Add a hook here
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
-	if (empty($conf->dol_use_jmobile))
-	{
+	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+	foreach ($tmptagarray as $tmptag) {
 		print "\n";
-		print '<script type="text/javascript">'."\n";
-		print '  var _gaq = _gaq || [];'."\n";
-		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-		print '  _gaq.push([\'_trackPageview\']);'."\n";
-		print ''."\n";
-		print '  (function() {'."\n";
-		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-		print '  })();'."\n";
-		print '</script>'."\n";
+		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
+		print "
+					<!-- Global site tag (gtag.js) - Google Analytics -->
+					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
+					<script>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', '".trim($tmptag)."');
+					</script>";
+		print "\n";
 	}
 }
 
-// Google Adsense
+// TODO Replace this with a hook
+// Google Adsense (need Google module)
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
 	if (empty($conf->dol_use_jmobile))
 	{
 		?>
 	<div class="center"><br>
-		<script type="text/javascript"><!--
+		<script><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
 			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
 			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
 			//-->
 		</script>
-		<script type="text/javascript"
-			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-		</script>
+		<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 	</div>
 		<?php
 	}

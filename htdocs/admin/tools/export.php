@@ -203,9 +203,7 @@ if ($errormsg)
     $resultstring .= '<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
 
     $_SESSION["commandbackupresult"] = $resultstring;
-}
-else
-{
+} else {
 	if ($what)
 	{
         setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');

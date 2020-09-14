@@ -42,14 +42,12 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-if ($action == 'setMEMBER_ENABLE_PUBLIC')
-{
+if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 	if (GETPOST('value')) dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
 	else dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
 }
 
-if ($action == 'update')
-{
+if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
 	$amount = GETPOST('MEMBER_NEWFORM_AMOUNT');
 	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
@@ -61,16 +59,15 @@ if ($action == 'update')
     $res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
     if ($forcetype < 0) $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
-    else                $res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
+    else {
+        $res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
+    }
 
     if (!$res > 0) $error++;
 
- 	if (!$error)
-    {
+ 	if (!$error) {
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -99,8 +96,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print "\n".'<script type="text/javascript" language="javascript">';
     print 'jQuery(document).ready(function () {
                 function initemail()
@@ -139,15 +135,12 @@ print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").
 
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
-{
+if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
-}
-else
-{
+} else {
 	// Button on, click to disable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
@@ -159,8 +152,7 @@ print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC
 
 print '<br>';
 
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC))
-{
+if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 
 	print '<table class="noborder centpercent">';
@@ -221,8 +213,7 @@ dol_fiche_end();
 print '</form>';
 
 
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC))
-{
+if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';

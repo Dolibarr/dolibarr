@@ -96,5 +96,6 @@ NoContactWithCategoryFound=Nenhum foi encontrado nenhum contato/endereço com um
 NoContactLinkedToThirdpartieWithCategoryFound=Nenhum foi encontrado nenhum contato/endereço com uma categoria
 OutGoingEmailSetup=Configuração de e-mail de saída
 InGoingEmailSetup=Configuração de e-mail de entrada
+OutGoingEmailSetupForEmailing=Configuração de email de saída (para o módulo %s)
 DefaultOutgoingEmailSetup=Configuração de e-mail de saída padrão
 ContactsWithThirdpartyFilter=Contatos com filtro de terceiros

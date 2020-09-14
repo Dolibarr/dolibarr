@@ -50,9 +50,7 @@ if ($result)
 	$obj = $db->fetch_object($result);
 	preg_match('/([0-9]+)$/i', $obj->name, $reg);
 	if ($reg[1]) $lastftpentry = $reg[1];
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -96,9 +94,7 @@ if ($action == 'add' || GETPOST('modify', 'alpha'))
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			dol_print_error($db);
 		}
@@ -123,9 +119,7 @@ if (GETPOST('delete', 'alpha'))
             $db->commit();
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -148,9 +142,7 @@ print '<br>';
 if (!function_exists('ftp_connect'))
 {
 	print $langs->trans("FTPFeatureNotSupportedByYourPHP");
-}
-else
-{
+} else {
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -300,9 +292,7 @@ else
 
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

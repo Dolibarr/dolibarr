@@ -313,9 +313,7 @@ if ($object->id)
     						$filename = $filetoadd['name'].' - '.$langs->trans('Language_'.$default_lang);
     						$checked = ' checked ';
     					}
-    				}
-    				else
-    				{
+    				} else {
     					if (array_key_exists($filetoadd['name'], $filetomerge->lines))
     					{
     						$checked = ' checked ';
@@ -337,9 +335,7 @@ if ($object->id)
     		print  '</form>';
     	}
     }
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

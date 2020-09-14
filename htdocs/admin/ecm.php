@@ -41,9 +41,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -55,9 +53,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -93,14 +89,11 @@ print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('ECM_AUTO_TREE_ENABLED');
-}
-else
-{
+} else {
 	if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	elseif (!empty($conf->global->USER_MAIL_REQUIRED))
+	} elseif (!empty($conf->global->USER_MAIL_REQUIRED))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}

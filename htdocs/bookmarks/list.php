@@ -72,9 +72,7 @@ if ($action == 'delete')
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -115,9 +113,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -158,7 +154,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bookmark', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -230,9 +226,7 @@ while ($i < min($num, $limit))
 		}
 		$tmpuser = $cacheOfUsers[$obj->fk_user];
 		print $tmpuser->getNomUrl(1);
-	}
-	else
-	{
+	} else {
 		print $langs->trans("Public");
 	}
 	print "</td>\n";
@@ -252,9 +246,7 @@ while ($i < min($num, $limit))
 	if ($user->rights->bookmark->supprimer)
 	{
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a>';
-	}
-	else
-	{
+	} else {
 		print "&nbsp;";
 	}
 	print "</td>";

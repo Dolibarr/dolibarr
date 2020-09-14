@@ -126,9 +126,7 @@ if ($resql)
         if ($objp->statut == 0)
         {
             print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
-        }
-        else
-        {
+        } else {
             print "-";
         }
 

@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Robot fájl (robots.txt)
 WEBSITE_HTACCESS=Weboldal .htaccess fájl
 WEBSITE_MANIFEST_JSON=Honlap manifest.json fájl
 WEBSITE_README=README.md fájl
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
 EnterHereLicenseInformation=Írja ide a meta adatokat vagy a licenc információkat a README.md fájl kitöltéséhez. ha sablonként terjeszti webhelyét, akkor a fájl belekerül a temptate csomagba.
 HtmlHeaderPage=HTML fejléc (csak ezen az oldalon)
 PageNameAliasHelp=Az oldal neve vagy aliasa. <br> Ezt az aliast SEO URL kovácsolására is használják, ha a webhelyet egy webszerver virtuális gazdagépről indítják (például Apacke, Nginx, ...). Használja az &quot; <strong>%s</strong> &quot; gombot az alias szerkesztéséhez.
@@ -57,7 +58,10 @@ NoPageYet=Még nincs oldal
 YouCanCreatePageOrImportTemplate=Készíthet új oldalt, vagy importálhat egy teljes webhelysablont
 SyntaxHelp=Súgó a konkrét szintaxis-tippekhez
 YouCanEditHtmlSourceckeditor=A HTML forráskódot a szerkesztőben a &quot;Forrás&quot; gombbal szerkesztheti.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Oldal / tároló klónozása
 CloneSite=Klón webhely
 SiteAdded=Webhely hozzáadva
@@ -77,7 +81,7 @@ BlogPost=Blog bejegyzés
 WebsiteAccount=Weboldal-account
 WebsiteAccounts=Webhely-accountok
 AddWebsiteAccount=Hozzon létre webhely accountot
-BackToListOfThirdParty=Vissza a harmadik felek listájához
+BackToListForThirdParty=Back to list for the third-party
 DisableSiteFirst=Először tiltsa le a webhelyet
 MyContainerTitle=Saját webhelyem címe
 AnotherContainer=Így lehet beépíteni egy másik oldal / tároló tartalmát (itt lehet hiba, ha engedélyezi a dinamikus kódot, mert a beágyazott konténer nem létezik)
@@ -120,7 +124,7 @@ ShowSubContainersOnOff=A &#39;dinamikus tartalom&#39; végrehajtásának módja 
 GlobalCSSorJS=A webhely globális CSS / JS / fejléc fájlja
 BackToHomePage=Vissza a honlapra...
 TranslationLinks=Fordítási linkek
-YouTryToAccessToAFileThatIsNotAWebsitePage=Olyan oldalhoz próbál hozzáférni, amely nem weboldal
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=A helyes SEO gyakorlat érdekében használjon 5 és 70 karakter közötti szöveget
 MainLanguage=Fő nyelv
 OtherLanguages=Más nyelvek
@@ -128,3 +132,6 @@ UseManifest=Adjon meg egy manifest.json fájlt
 PublicAuthorAlias=Public author alias
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
 ReplacementDoneInXPages=Replacement done in %s pages or containers
+RSSFeed=RSS Feed
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated

@@ -71,9 +71,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
             $sql .= "nom LIKE '".$db->escape($socid)."%'";
             $sql .= " OR code_client LIKE '".$db->escape($socid)."%'";
             $sql .= " OR code_fournisseur LIKE '".$db->escape($socid)."%'";
-        }
-        else
-        {
+        } else {
     		$sql .= "nom LIKE '%".$db->escape($socid)."%'";
     		$sql .= " OR code_client LIKE '%".$db->escape($socid)."%'";
     		$sql .= " OR code_fournisseur LIKE '%".$db->escape($socid)."%'";
@@ -100,13 +98,9 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 	    }
 
 	    echo json_encode($return_arr);
-	}
-	else
-	{
+	} else {
 	    echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
 	}
-}
-else
-{
+} else {
     echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
 }

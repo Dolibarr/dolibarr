@@ -144,8 +144,7 @@ class StockMovements extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve stock movement list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -304,7 +303,7 @@ class StockMovements extends DolibarrApi
         unset($object->note_public);
         unset($object->shipping_method_id);
         unset($object->fk_account);
-        unset($object->modelpdf);
+        unset($object->model_pdf);
         unset($object->fk_delivery_address);
         unset($object->cond_reglement);
         unset($object->cond_reglement_id);

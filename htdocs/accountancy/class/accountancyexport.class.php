@@ -362,7 +362,7 @@ class AccountancyExport
 			if ($line->sens == 'D') {
 				print price($line->montant).$separator;
 				print ''.$separator;
-			}elseif ($line->sens == 'C') {
+			} elseif ($line->sens == 'C') {
 				print ''.$separator;
 				print price($line->montant).$separator;
 			}
@@ -518,11 +518,12 @@ class AccountancyExport
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
-			if (!empty($data->date_echeance))
+			if (!empty($data->date_echeance)) {
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%y'); // elarifr:  format must be ddmmyy
-			else
+			} else {
 				$Tab['date_echeance'] = '000000';
+			}
 
 			//elarifr please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
 			//$Tab['lettrage'] = str_repeat(' ', 5);
@@ -597,12 +598,11 @@ class AccountancyExport
 
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
 
-			if($data->sens == 'D'){
+			if ($data->sens == 'D') {
 				$Tab['montant_debit']  =  str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
-			}
-			else{
+			} else {
 				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -616,11 +616,12 @@ class AccountancyExport
 
 			$Tab['code_stat'] = str_repeat(' ', 4);
 
-			if (!empty($data->date_echeance))
+			if (!empty($data->date_echeance)) {
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%Y');
-			else
+			} else {
 				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
+			}
 
 			$Tab['monnaie'] = '1';
 
@@ -808,8 +809,8 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
-			$date_doc = dol_print_date($line->doc_date, '%Y%m%d');
-			$date_valid = dol_print_date($line->date_validated, '%Y%m%d');
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
 
 			// FEC:JournalCode
 			print $line->code_journal.$separator;
@@ -821,25 +822,25 @@ class AccountancyExport
 			print $line->piece_num.$separator;
 
 			// FEC:EcritureDate
-			print $date_creation.$separator;
+			print $date_document . $separator;
 
 			// FEC:CompteNum
 			print $line->numero_compte.$separator;
 
 			// FEC:CompteLib
-			print $line->label_compte.$separator;
+			print dol_string_unaccent($line->label_compte) . $separator;
 
 			// FEC:CompAuxNum
 			print $line->subledger_account.$separator;
 
 			// FEC:CompAuxLib
-			print $line->subledger_label.$separator;
+			print dol_string_unaccent($line->subledger_label) . $separator;
 
 			// FEC:PieceRef
 			print $line->doc_ref.$separator;
 
 			// FEC:PieceDate
-			print $date_doc.$separator;
+			print dol_string_unaccent($date_creation) . $separator;
 
 			// FEC:EcritureLib
 			print $line->label_operation.$separator;
@@ -857,7 +858,7 @@ class AccountancyExport
 			print $line->date_lettering.$separator;
 
 			// FEC:ValidDate
-			print $date_valid.$separator;
+			print $date_validation . $separator;
 
 			// FEC:Montantdevise
 			print $line->multicurrency_amount.$separator;
@@ -897,12 +898,10 @@ class AccountancyExport
             if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num)
             {
                 $sammelBuchung = true;
-            }
-            elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
+            } elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
             {
                 $sammelBuchung = true;
-            }
-            elseif ($aIndex + 1 < $aSize
+            } elseif ($aIndex + 1 < $aSize
                     && $objectLines[$aIndex + 1]->piece_num == $line->piece_num
                     && $aIndex - 1 < $aSize
                     && $objectLines[$aIndex - 1]->piece_num == $line->piece_num
@@ -924,9 +923,7 @@ class AccountancyExport
             if ($line->sens == 'D')
             {
                 print 'S'.$this->separator;
-            }
-            else
-            {
+            } else {
                 print 'H'.$this->separator;
             }
             //Grp
@@ -937,14 +934,10 @@ class AccountancyExport
                 if ($line->piece_num == $thisPieceNum)
                 {
                     print length_accounta($thisPieceAccountNr).$this->separator;
-                }
-                else
-                {
+                } else {
                     print "div".$this->separator;
                 }
-            }
-            else
-            {
+            } else {
                 print length_accounta($line->code_tiers).$this->separator;
             }
             //SId
@@ -960,9 +953,7 @@ class AccountancyExport
             if ($sammelBuchung)
             {
                 print "2".$this->separator;
-            }
-            else
-            {
+            } else {
                 print "1".$this->separator;
             }
             // Code
@@ -971,9 +962,7 @@ class AccountancyExport
             if ($line->montant >= 0)
             {
                 print $line->montant.$this->separator;
-            }
-            else
-            {
+            } else {
                 print ($line->montant * -1).$this->separator;
             }
             // Steuer
@@ -1085,7 +1074,7 @@ class AccountancyExport
 
 			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->montant), 0, '', 1, 2).$separator;
+			print price(abs($line->montant), 0, '', 1, 2, 2).$separator;
 			// CODC
 			print $line->sens.$separator;
 			// CPTG
@@ -1458,7 +1447,9 @@ class AccountancyExport
 			print self::trunc($line->code_journal, 6).$separator; //Journal code
 
 			if (!empty($line->subledger_account)) $account = $line->subledger_account;
-			else  $account = $line->numero_compte;
+			else {
+				$account = $line->numero_compte;
+			}
 			print self::trunc($account, 15).$separator; //Account number
 
 			print self::trunc($line->label_compte, 60).$separator; //Account label

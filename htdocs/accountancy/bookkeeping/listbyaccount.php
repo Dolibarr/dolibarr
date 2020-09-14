@@ -2,8 +2,8 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
@@ -78,6 +80,7 @@ if ($sortfield == "") $sortfield = "t.doc_date,t.rowid";
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
+$formfile = new FormFile($db);
 $hookmanager->initHooks(array('bookkeepingbyaccountlist'));
 
 $formaccounting = new FormAccounting($db);
@@ -254,18 +257,14 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
 		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
@@ -276,9 +275,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
@@ -293,6 +290,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
  */
 
 $formaccounting = new FormAccounting($db);
+$formfile = new FormFile($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
@@ -537,9 +535,7 @@ while ($i < min($num, $limit))
 				print price($sous_total_debit - $sous_total_credit);
 				print '</td>';
 				print '<td></td>';
-			}
-			else
-			{
+			} else {
 				print '<td></td>';
 				print '<td class="nowraponall right">';
 				print price($sous_total_credit - $sous_total_debit);
@@ -551,7 +547,7 @@ while ($i < min($num, $limit))
 
 		// Show the break account
 		print "<tr>";
-		print '<td colspan="'.$totalarray['nbfield'].'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 9).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
 		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
@@ -611,8 +607,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		}
-		elseif ($line->doc_type == 'supplier_invoice')
+		} elseif ($line->doc_type == 'supplier_invoice')
 		{
 			$langs->loadLangs(array('bills'));
 
@@ -625,8 +620,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
-		}
-		elseif ($line->doc_type == 'expense_report')
+		} elseif ($line->doc_type == 'expense_report')
 		{
 			$langs->loadLangs(array('trips'));
 
@@ -639,9 +633,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		}
-		else
-		{
+		} else {
 			// Other type
 		}
 
@@ -742,9 +734,7 @@ if ($balance > 0 )
 	print price($sous_total_debit - $sous_total_credit);
 	print '</td>';
 	print '<td></td>';
-}
-else
-{
+} else {
 	print '<td></td>';
 	print '<td class="nowraponall right">';
 	print price($sous_total_credit - $sous_total_debit);

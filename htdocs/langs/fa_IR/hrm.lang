@@ -9,8 +9,9 @@ ConfirmDeleteEstablishment=آیا شما مطمئن هستید که می‌خو�
 OpenEtablishment=باز‌کردن بنگاه
 CloseEtablishment=بستن بنگاه
 # Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=مدیریت منابع انسانی - فهرست بخش‌ها
-DictionaryFunction=مدیریت منابع انسانی - فهرست عملکردها
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=کارمندان
 Employee=کارمند

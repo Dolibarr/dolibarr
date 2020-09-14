@@ -76,11 +76,12 @@ TypeContact_propal_external_BILLING=Liên lạc khách hàng về hóa đơn
 TypeContact_propal_external_CUSTOMER=Liên hệ với khách hàng sau-up đề nghị
 TypeContact_propal_external_SHIPPING=Liên lạc khách hàng để giao hàng
 # Document models
-DocModelAzurDescription=A complete proposal model 
-DocModelCyanDescription=A complete proposal model
+DocModelAzurDescription=Mẫu hoàn chỉnh của báo giá (mẫu cũ của Cyan)
+DocModelCyanDescription=Mẫu hoàn chỉnh của báo giá
 DefaultModelPropalCreate=Tạo mô hình mặc định
 DefaultModelPropalToBill=Mặc định mẫu khi đóng cửa một đề xuất kinh doanh (được lập hoá đơn)
 DefaultModelPropalClosed=Mặc định mẫu khi đóng cửa một đề xuất kinh doanh (chưa lập hoá đơn)
 ProposalCustomerSignature=Văn bản chấp nhận, dấu công ty, ngày và chữ ký
 ProposalsStatisticsSuppliers=Thống kê đề xuất nhà cung cấp
 CaseFollowedBy=Theo bởi trường hợp
+SignedOnly=Signed only

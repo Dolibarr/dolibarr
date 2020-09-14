@@ -27,10 +27,10 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 
 if (!empty($conf->categorie->enabled))
 {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -97,11 +97,13 @@ $fieldstosearchall = array(
 );
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key] = GETPOST('search_'.$key, 'alpha');
+	$search_key = $key;
+	if ($search_key == 'statut') $search_key = 'status'; // remove this after refactor entrepot.class property statut to status
+	if (GETPOST('search_'.$search_key, 'alpha') !== '') $search[$search_key] = GETPOST('search_'.$search_key, 'alpha');
 }
 
 // Definition of fields for list
@@ -182,7 +184,6 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
-$formcategory = new FormCategory($db);
 $warehouse = new Entrepot($db);
 
 $totalarray = array();
@@ -226,13 +227,15 @@ if (!empty($conf->categorie->enabled))
 }
 foreach ($search as $key => $val)
 {
-	if ($key == 'status' && $search[$key] == -1) continue;
+	$class_key = $key;
+	if ($class_key == 'status') $class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
+	if (($key == 'status' && $search[$key] == -1) || $key == 'entity') continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
 		if ($search[$key] == '-1') $search[$key] = '';
 		$mode_search = 2;
 	}
-	if ($search[$key] != '') $sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
+	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : 't.'.$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -292,9 +295,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -376,6 +377,7 @@ $moreforfilter = '';
 
 if (!empty($conf->categorie->enabled))
 {
+	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
 
@@ -420,8 +422,7 @@ foreach ($object->fields as $key => $val)
 		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
 		elseif (strpos($val['type'], 'integer:') === 0 || strpos($val['type'], 'sellist:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
-		}
-		elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }
@@ -448,7 +449,7 @@ print $hookmanager->resPrint;
 
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre center">';
 	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 }
@@ -499,7 +500,7 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $objec
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 
 // Action column
@@ -551,11 +552,9 @@ if ($num)
 				if ($key == 'statut') print $warehouse->getLibStatut(5);
 				if ($key == 'phone') {
 					print dol_print_phone($obj->phone, '', 0, $obj->rowid, 'AC_TEL');
-				}
-				elseif ($key == 'fax') {
+				} elseif ($key == 'fax') {
 					print dol_print_phone($obj->fax, '', 0, $obj->rowid, 'AC_FAX');
-				}
-				else {
+				} else {
 					print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
 				}
 				print '</td>';
@@ -607,7 +606,7 @@ if ($num)
 
 		// Status
 		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+			print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -659,10 +658,10 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->mymodule->read;
-	$delallowed = $user->rights->mymodule->create;
+	$genallowed = $user->rights->stock->lire;
+	$delallowed = $user->rights->stock->creer;
 
-	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

@@ -48,7 +48,7 @@ function myobjectPrepareHead($object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = dol_buildpath('/mymodule/myobject_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		$head[$h][2] = 'note';
 		$h++;
 	}

@@ -66,7 +66,7 @@ $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state", 'alpha'));
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -120,7 +120,7 @@ $hookmanager->initHooks(array('supplierorderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('commande_fournisseur');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -335,16 +335,12 @@ if (empty($reshook))
 							{
 								$result = $object->insert_discount($discountid);
 								//$result=$discount->link_to_invoice($lineid,$id);
-							}
-							else
-							{
+							} else {
 								setEventMessages($discount->error, $discount->errors, 'errors');
 								$error++;
 								break;
 							}
-						}
-						else
-						{
+						} else {
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start
@@ -391,9 +387,7 @@ if (empty($reshook))
 							if ($result > 0)
 							{
 								$lineid = $result;
-							}
-							else
-							{
+							} else {
 								$lineid = 0;
 								$error++;
 								break;
@@ -447,9 +441,7 @@ if (empty($reshook))
 		{
 			$db->commit();
 			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
@@ -596,9 +588,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierOrders').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierOrders');
 	}
 
@@ -1261,9 +1251,7 @@ if ($resql)
 	$delallowed = $user->rights->fournisseur->commande->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

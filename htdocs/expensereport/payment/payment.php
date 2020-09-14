@@ -158,9 +158,7 @@ if ($action == 'add_payment')
                 $loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
                 header('Location: '.$loc);
                 exit;
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
         }
@@ -321,9 +319,7 @@ if ($action == 'create' || empty($action))
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
-		}
-		else
-		{
+		} else {
 			print '-';
 		}
 		print "</td>";

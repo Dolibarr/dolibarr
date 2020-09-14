@@ -50,7 +50,7 @@ class modReception extends DolibarrModules
 		$this->description = "Gestion des réceptions fournisseurs";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = "dollyrevert";

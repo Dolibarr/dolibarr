@@ -173,9 +173,7 @@ if ($action == 'selectfield')     // Selection of field at step 2
 		    //print_r($array_selected);
 		    $_SESSION["export_selected_fields"] = $array_selected;
 		}
-    }
-    else
-    {
+    } else {
         $warnings = array();
 
         $array_selected[$field] = count($array_selected) + 1; // We tag the key $field as "selected"
@@ -190,8 +188,7 @@ if ($action == 'selectfield')     // Selection of field at step 2
             $tmp = $fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
             if (is_array($tmp)) $listofdependencies = $tmp;
             else $listofdependencies = array($tmp);
-        }
-        elseif (!empty($field) && !empty($fieldsdependenciesarray[$field]))
+        } elseif (!empty($field) && !empty($fieldsdependenciesarray[$field]))
         {
             // We found a dependency on a dedicated field
             $tmp = $fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))
@@ -222,9 +219,7 @@ if ($action == 'unselectfield')
     {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
-    }
-    else
-    {
+    } else {
 	    unset($array_selected[$_GET["field"]]);
 	    // Renumber fields of array_selected (from 1 to nb_elements)
 	    asort($array_selected);
@@ -287,9 +282,7 @@ if ($action == 'builddoc')
 	{
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	    $sqlusedforexport = $objexport->sqlusedforexport;
     }
@@ -350,18 +343,13 @@ if ($action == 'add_export_model')
 		if ($result >= 0)
 		{
 			setEventMessages($langs->trans("ExportModelSaved", $objexport->model_name), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				setEventMessages($langs->trans("ErrorExportDuplicateProfil"), null, 'errors');
-			else
-				setEventMessages($objexport->error, $objexport->errors, 'errors');
+			else setEventMessages($objexport->error, $objexport->errors, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportModelName")), null, 'errors');
 	}
 }
@@ -472,16 +460,12 @@ if ($step == 1 || !$datatoexport)
             if ($objexport->array_export_perms[$key])
             {
             	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
-            }
-            else
-            {
+            } else {
             	print $langs->trans("NotEnoughPermissions");
             }
            	print '</td></tr>';
         }
-    }
-    else
-    {
+    } else {
         print '<tr><td class="oddeven" colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
     }
     print '</table>';
@@ -546,8 +530,7 @@ if ($step == 2 && $datatoexport)
     print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
     if (empty($conf->global->EXPORTS_SHARE_MODELS)) {
     	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
-    }
-    else {
+    } else {
     	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1);
     }
     print ' ';
@@ -614,9 +597,7 @@ if ($step == 2 && $datatoexport)
         if (!empty($objexport->array_export_special[0][$code]))
         {
             $htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
-        }
-        else
-        {
+        } else {
             $htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
         }
    		if (!empty($objexport->array_export_examplevalues[0][$code]))
@@ -642,9 +623,7 @@ if ($step == 2 && $datatoexport)
             print $form->textwithpicto($text, $htmltext);
 			//print ' ('.$code.')';
             print '</td>';
-        }
-        else
-        {
+        } else {
         	// Fields not selected
             print '<td>';
 			//print $text.'-'.$htmltext."<br>";
@@ -672,14 +651,10 @@ if ($step == 2 && $datatoexport)
 		if ($usefilters && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
 		{
 			print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a class="butAction" href="export.php?step=4&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
 	}
 
@@ -810,9 +785,7 @@ if ($step == 3 && $datatoexport)
         if (!empty($objexport->array_export_special[0][$code]))
 		{
 		    $htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
-		}
-		else
-		{
+		} else {
 		    $htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
 		if (!empty($objexport->array_export_examplevalues[0][$code]))
@@ -841,9 +814,7 @@ if ($step == 3 && $datatoexport)
 			{
 				$tmp = $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
 				print $form->textwithpicto($tmp, $szInfoFiltre);
-			}
-			else
-			{
+			} else {
 				print $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
 			}
 		}
@@ -1005,9 +976,7 @@ if ($step == 4 && $datatoexport)
         if (!empty($objexport->array_export_special[0][$code]))
         {
             $htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
-        }
-        else
-        {
+        } else {
             $htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
         }
         if (!empty($objexport->array_export_examplevalues[0][$code]))
@@ -1111,8 +1080,7 @@ if ($step == 4 && $datatoexport)
 				print '</tr>';
 				$i++;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -1306,6 +1274,5 @@ function getablenamefromfield($code, $sqlmaxforexport)
 	if (preg_match($regexstring, $newsql, $reg))
 	{
 		return $reg[1]; // The tablename
-	}
-	else return '';
+	} else return '';
 }

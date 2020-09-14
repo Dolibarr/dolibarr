@@ -39,7 +39,7 @@ function facturefourn_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('Card');
+	$head[$h][1] = $langs->trans('SupplierInvoice');
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -50,6 +50,28 @@ function facturefourn_prepare_head($object)
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
+		$h++;
+	}
+
+	//if ($fac->mode_reglement_code == 'PRE')
+	if (!empty($conf->paymentbybanktransfer->enabled))
+	{
+		$nbStandingOrders = 0;
+		$sql = "SELECT COUNT(pfd.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " WHERE pfd.fk_facture_fourn = ".$object->id;
+		$sql .= " AND pfd.ext_payment_id IS NULL";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbStandingOrders = $obj->nb;
+		}
+		else dol_print_error($db);
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer';
+		$head[$h][1] = $langs->trans('BankTransfer');
+		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		$head[$h][2] = 'standingorders';
 		$h++;
 	}
 
@@ -107,7 +129,7 @@ function ordersupplier_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("OrderCard");
+	$head[$h][1] = $langs->trans("SupplierOrder");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -210,8 +232,6 @@ function supplierorder_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
-
-
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");

@@ -65,10 +65,10 @@ $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
@@ -82,9 +82,9 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$billed = GETPOST('billed', 'int');
+$search_billed = GETPOSTISSET('search_billed') ? GETPOST('search_billed', 'int') : GETPOST('billed', 'int');
 $search_status = GETPOST('search_status', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -116,7 +116,7 @@ $hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('commande');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -210,6 +210,7 @@ if (empty($reshook))
 		$search_total_ht = '';
 		$search_total_vat = '';
 		$search_total_ttc = '';
+		$search_warehouse = '';
 		$search_multicurrency_code = '';
 		$search_multicurrency_tx = '';
 		$search_multicurrency_montant_ht = '';
@@ -223,7 +224,7 @@ if (empty($reshook))
 		$search_project_ref = '';
 		$search_project = '';
 		$search_status = '';
-		$billed = '';
+		$search_billed = '';
 		$toselect = '';
 		$search_array_options = array();
 		$search_categ_cus = 0;
@@ -308,7 +309,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
 if ($search_ref_customer) $sql .= natural_search('c.ref_client', $search_ref_customer);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-if ($billed != '' && $billed >= 0) $sql .= ' AND c.facture = '.$billed;
+if ($search_billed != '' && $search_billed >= 0) $sql .= ' AND c.facture = '.$search_billed;
 if ($search_status <> '')
 {
 	if ($search_status < 4 && $search_status > -3)
@@ -395,9 +396,7 @@ if ($resql)
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfOrders').' - '.$soc->name;
 		if (empty($search_company)) $search_company = $soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfOrders');
 	}
 	if (strval($search_status) == '0')
@@ -467,7 +466,7 @@ if ($resql)
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	if ($show_files)            	$param .= '&show_files='.urlencode($show_files);
 	if ($optioncss != '')       	$param .= '&optioncss='.urlencode($optioncss);
-	if ($billed != '')				$param .= '&billed='.urlencode($billed);
+	if ($search_billed != '')		$param .= '&search_billed='.urlencode($search_billed);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -541,9 +540,7 @@ if ($resql)
 		{
 			print $form->selectyesno('validate_invoices', 0, 1, 1);
 			print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
-		}
-		else
-		{
+		} else {
 			print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
@@ -758,7 +755,7 @@ if ($resql)
 	}
 	if (!empty($arrayfields['c.multicurrency_total_vat']['checked']))
 	{
-		// Amount
+		// Amount VAT
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_vat" value="'.dol_escape_htmltag($search_multicurrency_montant_vat).'">';
 		print '</td>';
@@ -820,7 +817,7 @@ if ($resql)
 	if (!empty($arrayfields['c.facture']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectyesno('billed', $billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
 		print '</td>';
 	}
 	// Action column
@@ -962,8 +959,7 @@ if ($resql)
 								{
 									$notshippable++;
 								}
-							}
-							else {  // Detailed code, looks bugged
+							} else {  // Detailed code, looks bugged
 								// stock order and stock order_supplier
 								$stock_order = 0;
 								$stock_order_supplier = 0;
@@ -1129,7 +1125,7 @@ if ($resql)
 		if (!empty($arrayfields['typent.code']['checked']))
 		{
 			print '<td class="center">';
-			if (count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
+			if (empty($typenArray)) $typenArray = $formcompany->typent_array(1);
 			print $typenArray[$obj->typent_code];
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -1147,7 +1143,7 @@ if ($resql)
 		if (!empty($arrayfields['c.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'day');
+			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1310,9 +1306,7 @@ if ($resql)
 	$delallowed = $user->rights->commande->creer;
 
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -166,8 +166,7 @@ class Shipments extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -398,9 +397,7 @@ class Shipments extends DolibarrApi
         $updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
         if ($updateRes > 0) {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(405, $this->shipment->error);
         }
     }
@@ -435,9 +432,7 @@ class Shipments extends DolibarrApi
         if ($this->shipment->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->shipment->error);
         }
     }

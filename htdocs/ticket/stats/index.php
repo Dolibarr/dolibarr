@@ -84,9 +84,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/ticketsnbinyear-'.$user->id.'-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/ticketsnbinyear-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsnbinyear-'.$year.'.png';
 }
@@ -125,9 +123,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenameamount = $dir.'/ticketsamountinyear-'.$user->id.'-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenameamount = $dir.'/ticketsamountinyear-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsamountinyear-'.$year.'.png';
 }
@@ -164,9 +160,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filename_avg = $dir.'/ticketsaverage-'.$user->id.'-'.$year.'.png';
     $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filename_avg = $dir.'/ticketsaverage-'.$year.'.png';
     $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsaverage-'.$year.'.png';
 }
@@ -309,8 +303,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     //print $px2->show();

@@ -126,9 +126,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$_SESSION["dol_loginmesg"] = $langs->trans("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
 					return '';
 				}
-			}
-			else
-			{
+			} else {
 				 if ($ldapdebug) print "DEBUG: ".$ldap->error."<br>\n";
 			}
 			$ldap->close();
@@ -218,9 +216,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 			}
-		}
-		else
-		{
+		} else {
 			/* Login failed. Return false, together with the error code and text from
              ** the LDAP server. The common error codes and reasons are listed below :
              ** (for iPlanet, other servers may differ)

@@ -41,9 +41,7 @@ InterventionsArea=Obszar interwencji
 DraftFichinter=Szkic interwencji
 LastModifiedInterventions=Ostatnie %s zmodyfikowane interwencje
 FichinterToProcess=Interwencje do przetworzenia
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=W ślad za kontakt z klientem
-# Modele numérotation
 PrintProductsOnFichinter=Wydrukuj również linie typu "produkt" (nie tylko usługi) na karcie interwencji
 PrintProductsOnFichinterDetails=Interwencje generowane z zamówień
 UseServicesDurationOnFichinter=Użyj czasu trwania usług dla interwencji generowanych przez zamówienia
@@ -53,14 +51,16 @@ InterventionStatistics=Statystyki interwencji
 NbOfinterventions=Ilość kart interwencji
 NumberOfInterventionsByMonth=Ilość kart interwencji w miesiącu (data potwierdzenia)
 AmountOfInteventionNotIncludedByDefault=Ilość interwencji nie jest domyślnie uwzględniana w zysku (w większości przypadków do obliczania czasu wykorzystano karty czasu pracy). Ustaw opcję PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT na 1 w konfiguracji domowej - inne, aby je uwzględnić.
-##### Exports #####
 InterId=ID interwencji
 InterRef=Numer referencyjny interwencji
 InterDateCreation=Data stworzenia interwencji
 InterDuration=Czas trwania interwencji
 InterStatus=Status interwencji
 InterNote=Nota interwencji
+InterLine=Line of intervention
 InterLineId=Linia ID interwencji
 InterLineDate=Linia daty interwencji
 InterLineDuration=Linia czasu trwania interwencji
 InterLineDesc=Lini aopisu interwencji
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

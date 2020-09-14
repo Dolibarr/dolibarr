@@ -61,9 +61,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -107,9 +105,7 @@ if ($action == "save" && empty($cancel))
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         $db->commit();
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
         $db->rollback();
     }
@@ -169,6 +165,7 @@ if (!empty($triggers))
 		if ($module == 'member') $module = 'adherent';
 		if ($module == 'project') $module = 'projet';
 		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
+		if ($module == 'contact') $module = 'societe';
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);
@@ -176,7 +173,7 @@ if (!empty($triggers))
 			$module = $tmparray[1];
 		}
 
-		//print 'module='.$module.'<br>';
+		//print 'module='.$module.' code='.$trigger['code'].'<br>';
 		if (!empty($conf->$module->enabled))
 		{
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED

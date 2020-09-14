@@ -148,7 +148,7 @@ if (!empty($conf->don->enabled))
 
 if (!empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
+	print "\n".'<script>';
 	print '$(document).ready(function () {
 		$("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {

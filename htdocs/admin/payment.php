@@ -56,9 +56,7 @@ if ($action == 'updateMask')
     if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -183,9 +181,7 @@ foreach ($dirmodels as $reldir)
                             if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
                             {
                                 print img_picto($langs->trans("Activated"), 'switch_on');
-                            }
-                            else
-                            {
+                            } else {
                                 print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';

@@ -79,9 +79,7 @@ $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_stat
 if (!is_array($user_arbo) && $user_arbo < 0)
 {
     setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
-}
-else
-{
+} else {
     // Define fulltree array
     $fulltree = $user_arbo;
     //var_dump($fulltree);
@@ -112,9 +110,7 @@ else
     		if (empty($entity))
     		{
     			$entitystring = $langs->trans("AllEntities");
-    		}
-    		else
-    		{
+    		} else {
     			$mc->getInfo($entity);
     			$entitystring = $mc->label;
     		}
@@ -124,8 +120,7 @@ else
     	if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
     	{
     		$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
-    	}
-    	elseif ($userstatic->admin)
+    	} elseif ($userstatic->admin)
     	{
     		$li .= img_picto($langs->trans("Administrator"), 'star');
     	}
@@ -196,9 +191,7 @@ else
     	print '</td>';
     	print '<td></td>';
     	print '</tr>';
-    }
-    else
-    {
+    } else {
     	print '<tr '.$bc[true].'>';
     	print '<td colspan="3">';
     	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';

@@ -36,6 +36,7 @@ ErrorBadSupplierCodeSyntax=کد فروشنده اشتباه درج شده است
 ErrorSupplierCodeRequired=کدفروشنده الزامی است
 ErrorSupplierCodeAlreadyUsed=کدفروشنده قبلا استفاده شده است
 ErrorBadParameters=مقادیر اشتباه
+ErrorWrongParameters=Wrong or missing parameters
 ErrorBadValueForParameter=مقدار غلط '%s' برای مؤلفۀ '%s'
 ErrorBadImageFormat=حالت فایل تصویری قابل قبول نیست (PHP نصب شدۀ شما از توابعی که فایل را از این حالت تبدیل کنند، در خود ندارد)
 ErrorBadDateFormat=روش درج تاریخ مقدار '%s' اشتباه است
@@ -119,7 +120,7 @@ ErrorLoginHasNoEmail=کاربر هیچ نشانی رایانامه‌‌ای ن�
 ErrorBadValueForCode=مقدار نادرست برای کد امنیتی. با یک مقدار جدید امتحان کنید...
 ErrorBothFieldCantBeNegative=بخش‌های %s و %s نمی‌توانند هر دو منفی باشند
 ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in thirdparty card) and apply it to the invoice.
-ErrorLinesCantBeNegativeForOneVATRate=Total of lines can't be negative for a given VAT rate.
+ErrorLinesCantBeNegativeForOneVATRate=Total of lines (net of tax) can't be negative for a given not null VAT rate (Found a negative total for VAT rate <b>%s</b>%%).
 ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=در صورت‌حساب مشتری تعداد برای یک سطر نمی‌‌تواند رقمی منفی باشد
 ErrorWebServerUserHasNotPermission=حساب کاربری <b>%s</b> برای اجرای یک سرور وب انتخاب شده اما مجوز آن را ندارد
@@ -135,7 +136,8 @@ ErrorNewValueCantMatchOldValue=مقدار جدید نمی‌تواند براب�
 ErrorFailedToValidatePasswordReset=بازسازی گذرواژه مقدور نبود. ممکن است این بازسازی قبلا انجام شده باشد (این پیوند فقط یک بار قابل استفاده است). در صورتی که چنین نیست، روند بازسازی را از سر بگیرید.
 ErrorToConnectToMysqlCheckInstance=اتصال به پایگاه‌داده مقدور نیست. مطمئن شوید سرور پایگاه داده فعال است. (برای مثال، Mysql/Mariadb شما می‌توانید از خط فرمان لینوکس دستور 'sudo service mysql start' را اجرا کنید).
 ErrorFailedToAddContact=اضافه کردن طرف‌تماس مقدور نبود
-ErrorDateMustBeBeforeToday=تاریخ نمی‌تواند بیشتر از امروز باشد
+ErrorDateMustBeBeforeToday=The date must be lower than today
+ErrorDateMustBeInFuture=The date must be greater than today
 ErrorPaymentModeDefinedToWithoutSetup=حالت پرداخت به %s تنظیم شده اما برپاسازی واحد صورت‌حساب کامل نیست تا اطلاعات مربوط به این حالت پرداخت را تعریف کرده و نمایش دهد.
 ErrorPHPNeedModule=خطا، برای استفاده از این قابلیت روی PHP شما باید واحد <b>%s</b> نصب شده باشد.
 ErrorOpenIDSetupNotComplete=شما تنظیمات Dolibarr را پیکربندی کرده‌اید تا تصدیق ورود OpenID  را مجاز کنید، اما نشانی خدمات openID در مقدارثابت %s تعریف نشده است
@@ -183,6 +185,7 @@ ErrorBadDefinitionOfMenuArrayInModuleDescriptor=تعریف بد آرایۀ فه�
 ErrorSavingChanges=در هنگام ذخیرۀ تغییرات یک اشکال رخ داد
 ErrorWarehouseRequiredIntoShipmentLine=در این سطر برای ارسال یک انبار مورد نیاز است
 ErrorFileMustHaveFormat=فایل باید به شکل %s باشد
+ErrorFilenameCantStartWithDot=Filename can't start with a '.'
 ErrorSupplierCountryIsNotDefined=برای این فروشنده کشور تعریف نشده است. ابتدا این را تصحیح کنید.
 ErrorsThirdpartyMerge=امکان ادغام دو ردیف وجود نداشت. درخواست لغو شد.
 ErrorStockIsNotEnoughToAddProductOnOrder=موجودی برای محصول %s برای افزودن در سفارش جدید کافی نیست.
@@ -237,6 +240,9 @@ ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
 ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
 ErrorReplaceStringEmpty=Error, the string to replace into is empty
+ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
+ErrorProductDoesNotNeedBatchNumber=Error, product '<b>%s</b>' does not accept a lot/serial number
+ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد
@@ -263,3 +269,4 @@ WarningNumberOfRecipientIsRestrictedInMassAction=هشدار، در هنگام ا
 WarningDateOfLineMustBeInExpenseReportRange=هشدار، تاریخ مربوط به سطر در بازۀ گزارش هزینه‌ها نیست
 WarningProjectClosed=طرح بسته است. ابتدا باید آن را باز کنید
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
+WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table

@@ -83,7 +83,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -116,8 +116,8 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -129,9 +129,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_commande_marbre::getNextValue", LOG_DEBUG);
 			return -1;
 		}

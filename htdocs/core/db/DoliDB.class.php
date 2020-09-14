@@ -120,9 +120,7 @@ abstract class DoliDB implements Database
 				dol_syslog('', 0, 1);
 			}
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
 			return 1;
@@ -146,14 +144,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened = 0;
 				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -174,9 +168,7 @@ abstract class DoliDB implements Database
 			$this->transaction_opened = 0;
 			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -252,9 +244,7 @@ abstract class DoliDB implements Database
 				$i++;
 			}
 			return $return;
-		}
-		else
-		{
+		} else {
 			return '';
 		}
 	}
@@ -331,7 +321,7 @@ abstract class DoliDB implements Database
 		if ($res)
 		{
 			$results = array();
-			if($this->num_rows($res) > 0){
+			if ($this->num_rows($res) > 0){
 				while ($obj = $this->fetch_object($res)){
 					$results[] = $obj;
 				}

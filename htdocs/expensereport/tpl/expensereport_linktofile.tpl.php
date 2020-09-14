@@ -42,9 +42,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
                 print '<img class="photoexpensereport photorefcenter" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
                 print '</div>';
                 print '</a>';
-            }
-            else
-            {
+            } else {
                 $error = 0;
                 $thumbshown = '';
 
@@ -106,8 +104,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 	                {
 	                    $checked = ' checked';
 	                    break;
-	                }
-	                elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
+	                } elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
 	                    $checked = ' checked';
 	                    break;
 	                }
@@ -132,9 +129,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
         print '</script>';
 
         print '</td></tr>';
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven nohover trattachnewfilenow"'.(!GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
         print '<td colspan="'.$colspan.'">';
         print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';

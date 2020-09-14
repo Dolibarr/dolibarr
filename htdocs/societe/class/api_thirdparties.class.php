@@ -67,7 +67,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param 	int 	$id ID of thirdparty
+	 * @param 	int 	$id Id of third party to load
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
@@ -82,16 +82,33 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param string    $email  Sort field
+	 * @param string    $email  Email of third party to load
 	 * @return array|mixed data without useless information
 	 *
-	 * @url     GET byEmail/{email}
+	 * @url     GET email/{email}
 	 *
 	 * @throws RestException
 	 */
 	public function getByEmail($email)
 	{
 	    return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
+	}
+
+	/**
+	 * Get properties of a thirdparty object by barcode.
+	 *
+	 * Return an array with thirdparty informations
+	 *
+	 * @param string    $barcode  Barcode of third party to load
+	 * @return array|mixed data without useless information
+	 *
+	 * @url     GET barcode/{barcode}
+	 *
+	 * @throws RestException
+	 */
+	public function getByBarcode($barcode)
+	{
+	    return $this->_fetch('', '', '', $barcode);
 	}
 
 	/**
@@ -133,7 +150,7 @@ class Thirdparties extends DolibarrApi
     	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-		$sql .= " WHERE t.entity IN ('.getEntity('societe').')";
+		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
 		$sql .= " AND t.fk_stcomm = st.id";
 
 		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
@@ -143,9 +160,7 @@ class Thirdparties extends DolibarrApi
 
     	// Select thirdparties of given category
     	if ($category > 0) {
-			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; }
-			elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; }
-			else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
+			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; } elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; } else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
     	}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
@@ -195,8 +210,7 @@ class Thirdparties extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -466,9 +480,7 @@ class Thirdparties extends DolibarrApi
 			$db->rollback();
 
 			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
-		}
-		else
-		{
+		} else {
 			$db->commit();
 		}
 
@@ -495,6 +507,66 @@ class Thirdparties extends DolibarrApi
 		}
         $this->company->oldcopy = clone $this->company;
 		return $this->company->delete($id);
+    }
+
+	/**
+	 * Set new price level for the given thirdparty
+	 *
+	 * @param	int		$id				ID of thirdparty
+	 * @param	int		$priceLevel		Price level to apply to thirdparty
+	 * @return	object					Thirdparty data without useless information
+	 *
+	 * @url PUT {id}/setpricelevel
+	 *
+	 * @throws RestException 400 Price level out of bounds
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 Thirdparty not found
+	 * @throws RestException 500 Error fetching/setting price level
+	 * @throws RestException 501 Request needs modules "Thirdparties" and "Products" and setting Multiprices activated
+	 */
+	public function setThirdpartyPriceLevel($id, $priceLevel)
+	{
+		global $conf;
+
+		if (empty($conf->societe->enabled)) {
+			throw new RestException(501, 'Module "Thirdparties" needed for this request');
+		}
+
+		if (empty($conf->product->enabled)) {
+			throw new RestException(501, 'Module "Products" needed for this request');
+		}
+
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			throw new RestException(501, 'Multiprices features activation needed for this request');
+		}
+
+		if ($priceLevel < 1 || $priceLevel > $conf->global->PRODUIT_MULTIPRICES_LIMIT) {
+			throw new RestException(400, 'Price level must be between 1 and ' . $conf->global->PRODUIT_MULTIPRICES_LIMIT);
+		}
+
+		if (empty(DolibarrApiAccess::$user->rights->societe->creer)) {
+			throw new RestException(401, 'Access to thirdparty ' . $id . ' not allowed for login '. DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->company->fetch($id);
+		if ($result < 0) {
+			throw new RestException(404, 'Thirdparty ' . $id . ' not found');
+		}
+
+		if (empty($result)) {
+			throw new RestException(500, 'Error fetching thirdparty ' . $id, array_merge(array($this->company->error), $this->company->errors));
+		}
+
+		if (empty(DolibarrApi::_checkAccessToResource('societe', $this->company->id))) {
+			throw new RestException(401, 'Access to thirdparty ' . $id . ' not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->company->set_price_level($priceLevel, DolibarrApiAccess::$user);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error setting new price level for thirdparty ' . $id, array($this->company->db->lasterror()));
+		}
+
+		return $this->_cleanObjectDatas($this->company);
 	}
 
 	/**
@@ -1105,8 +1177,7 @@ class Thirdparties extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(404, 'Account not found');
 		}
 
@@ -1312,9 +1383,7 @@ class Thirdparties extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			throw new RestException(404, 'Bank account not found');
 		}
 
@@ -1330,9 +1399,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0)
 		{
 			return array("success" => $result);
-		}
-		else
-		{
+		} else {
 			throw new RestException(500);
 		}
     }
@@ -1760,7 +1827,7 @@ class Thirdparties extends DolibarrApi
      * @param    int	$rowid      Id of third party to load
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-	 * @param    string	$ref_int    Internal reference of third party (not used by dolibarr)
+	 * @param    string	$barcode    Barcode of third party to load
 	 * @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
 	 * @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
 	 * @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
@@ -1773,14 +1840,14 @@ class Thirdparties extends DolibarrApi
      *
      * @throws RestException
     */
-    private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+    private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
     {
         global $conf;
         if (!DolibarrApiAccess::$user->rights->societe->lire) {
             throw new RestException(401);
         }
 
-        $result = $this->company->fetch($rowid, $ref, $ref_ext, $ref_int, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+        $result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
         if (!$result) {
             throw new RestException(404, 'Thirdparty not found');
         }

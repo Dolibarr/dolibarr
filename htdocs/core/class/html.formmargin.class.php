@@ -118,8 +118,7 @@ class FormMargin
 					//}
 					//else
 						$marginInfos['margin_on_products'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
+				} elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -129,13 +128,11 @@ class FormMargin
 					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
 					//else
 						$marginInfos['margin_on_services'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
+				} elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
 					$marginInfos['pa_total'] += $pa;
 					$marginInfos['pv_total'] += $pv;
 				}
-			}
-			else {
+			} else {
 				$type = $line->product_type ? $line->product_type : $line->fk_product_type;
 				if ($type == 0) {  // product
 					$marginInfos['pa_products'] += $pa;
@@ -151,8 +148,7 @@ class FormMargin
 					//{
 					    $marginInfos['margin_on_products'] += $pv - $pa;
 					//}
-				}
-				elseif ($type == 1) {  // service
+				} elseif ($type == 1) {  // service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -228,8 +224,7 @@ class FormMargin
 		print '<td class="liste_titre right">'.$langs->trans('SellingPrice').'</td>';
 		if ($conf->global->MARGIN_TYPE == "1")
 			print '<td class="liste_titre right">'.$langs->trans('BuyingPrice').'</td>';
-		else
-			print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
+		else print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
 		print '<td class="liste_titre right">'.$langs->trans('Margin').'</td>';
 		if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td class="liste_titre right">'.$langs->trans('MarginRate').'</td>';

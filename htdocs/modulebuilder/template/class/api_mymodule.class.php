@@ -108,7 +108,7 @@ class MyModuleApi extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new MyObject($db);
 
-		if (!DolibarrApiAccess::$user->rights->bbb->read) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
 			throw new RestException(401);
 		}
 
@@ -131,7 +131,7 @@ class MyModuleApi extends DolibarrApi
 		//if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
 		//if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-		if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity('myobject').')';
+		if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
 		if ($restrictonsocid && $socid) $sql .= " AND t.fk_soc = ".$socid;
 		if ($restrictonsocid && $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -159,20 +159,20 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		$result = $db->query($sql);
+		$i = 0;
 		if ($result)
 		{
 			$num = $db->num_rows($result);
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				$myobject_static = new MyObject($db);
-				if ($myobject_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($myobject_static);
+				$tmp_object = new MyObject($db);
+				if ($tmp_object->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieving myobject list: '.$db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -239,12 +239,10 @@ class MyModuleApi extends DolibarrApi
 			$this->myobject->$field = $value;
 		}
 
-		if ($this->myobject->update($id, DolibarrApiAccess::$user) > 0)
+		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0)
 		{
 			return $this->get($id);
-		}
-		else
-		{
+		} else {
 			throw new RestException(500, $this->myobject->error);
 		}
 	}

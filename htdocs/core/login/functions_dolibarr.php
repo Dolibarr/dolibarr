@@ -106,9 +106,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($passok)
 				{
 					$login = $obj->login;
-				}
-				else
-				{
+				} else {
 				    sleep(2); // Anti brut force protection
 				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
 
@@ -124,8 +122,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					global $mc;
 
 					if (!isset($mc)) $conf->multicompany->enabled = false; // Global not available, disable $conf->multicompany->enabled for safety
-					else
-					{
+					else {
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
 						if ($ret < 0)
 						{
@@ -134,9 +131,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO user not found for '".$usertotest."'", LOG_NOTICE);
 				sleep(1);
 
@@ -145,9 +140,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 
 				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO db error for '".$usertotest."' error=".$db->lasterror(), LOG_ERR);
 			sleep(1);
 			$_SESSION["dol_loginmesg"] = $db->lasterror();

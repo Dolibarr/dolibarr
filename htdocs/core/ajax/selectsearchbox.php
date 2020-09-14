@@ -119,6 +119,17 @@ if ((! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFOR
 	$arrayresult['searchintosupplierinvoice'] = array('position'=>120, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_invoice').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
+// Miscellaneous payments
+if (!empty($conf->banque->enabled) && empty($conf->global->MAIN_SEARCHFORM_MISC_PAYMENTS_DISABLED) && $user->rights->banque->lire)
+{
+	$arrayresult['searchintomiscpayments'] = array(
+		'position'=>180,
+		'img'=>'object_payment',
+		'label'=>$langs->trans("SearchIntoMiscPayments", $search_boxvalue),
+		'text'=>img_picto('', 'object_payment').' '.$langs->trans("SearchIntoMiscPayments", $search_boxvalue),
+		'url'=>DOL_URL_ROOT.'/compta/bank/various_payment/list.php?leftmenu=tax_various'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+}
+
 if (!empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire)
 {
 	$arrayresult['searchintocontract'] = array('position'=>130, 'img'=>'object_contract', 'label'=>$langs->trans("SearchIntoContracts", $search_boxvalue), 'text'=>img_picto('', 'object_contract').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
@@ -146,28 +157,18 @@ if (!empty($conf->holiday->enabled) && empty($conf->global->MAIN_SEARCHFORM_HOLI
 	$arrayresult['searchintoleaves'] = array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
-
-/* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag
-if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->hrm->employee->read)
-{
-    $langs->load("hrm");
-    $searchform.=printSearchForm(DOL_URL_ROOT.'/hrm/employee/list.php', DOL_URL_ROOT.'/hrm/employee/list.php', $langs->trans("Employees"), 'employee', 'search_all', 'M', 'searchleftemployee', img_object('','user'));
-}
-*/
-
 // Execute hook addSearchEntry
 $parameters = array('search_boxvalue'=>$search_boxvalue, 'arrayresult'=>$arrayresult);
 $reshook = $hookmanager->executeHooks('addSearchEntry', $parameters);
 if (empty($reshook))
 {
 	$arrayresult = array_merge($arrayresult, $hookmanager->resArray);
-}
-else $arrayresult = $hookmanager->resArray;
+} else $arrayresult = $hookmanager->resArray;
 
-// This allow to keep a search entry to the top
+// This pushes a search entry to the top
 if (!empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {
     $key = 'searchinto'.$conf->global->DEFAULT_SEARCH_INTO_MODULE;
-    if (array_key_exists($key, $arrayresult)) $arrayresult[$key]['position'] = -10;
+    if (array_key_exists($key, $arrayresult)) $arrayresult[$key]['position'] = -1000;
 }
 
 // Sort on position

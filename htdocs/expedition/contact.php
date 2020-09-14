@@ -87,9 +87,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
@@ -117,8 +115,7 @@ elseif ($action == 'deletecontact' && $user->rights->expedition->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }

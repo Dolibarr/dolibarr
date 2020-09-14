@@ -15,6 +15,7 @@ CancelCP=Annullerad
 RefuseCP=Refused
 ValidatorCP=Approbator
 ListeCP=Förteckning över ledighet
+Leave=Lämna begäran
 LeaveId=Lämna ID
 ReviewedByCP=Kommer att godkännas av
 UserID=User ID

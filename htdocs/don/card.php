@@ -65,6 +65,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard', 'globalcard'));
 
+
 /*
  * Actions
  */
@@ -180,9 +181,7 @@ if ($action == 'add')
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -195,9 +194,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
     {
         header("Location: index.php");
         exit;
-    }
-    else
-    {
+    } else {
         dol_syslog($object->error, LOG_DEBUG);
         setEventMessages($object->error, $object->errors, 'errors');
     }
@@ -211,8 +208,7 @@ if ($action == 'valid_promesse')
 
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
-	}
-    else {
+	} else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -223,8 +219,7 @@ if ($action == 'set_cancel')
     {
         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
-    }
-    else {
+    } else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -235,12 +230,10 @@ if ($action == 'set_paid')
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
-	}
-    else {
+	} else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
-}
-elseif ($action == 'classin' && $user->rights->don->creer)
+} elseif ($action == 'classin' && $user->rights->don->creer)
 {
 	$object->fetch($id);
 	$object->setProject($projectid);
@@ -295,7 +288,7 @@ if ($action == 'builddoc')
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=don_create($db, $object->id, '', $object->modelpdf, $outputlangs);
+	$result=don_create($db, $object->id, '', $object->model_pdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -354,9 +347,7 @@ if ($action == 'create')
 			}
 			print ')';
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td colspan="2">';
 			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
@@ -409,11 +400,11 @@ if ($action == 'create')
 
 		// Country
 		print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
-		print $form->select_country(GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id);
+		print img_picto('', 'globe-americas', 'class="paddingrightonly"').$form->select_country(GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
-		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
+		print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.img_picto('', 'object_email', 'class="paddingrightonly"').'<input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
 	}
 
 	// Payment mode
@@ -519,9 +510,7 @@ if (!empty($id) && $action == 'edit')
 	if ($object->statut == 0)
 	{
 		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
 		print '</td></tr>';
@@ -776,9 +765,7 @@ if (!empty($id) && $action != 'edit')
 		}
 		print "</table>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -814,9 +801,7 @@ if (!empty($id) && $action != 'edit')
 		if ($remaintopay == 0)
 		{
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
 		}
 	}
@@ -833,14 +818,10 @@ if (!empty($id) && $action != 'edit')
 		if ($object->statut == -1 || $object->statut == 0)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 		}
-	}
-	else
-	{
+	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 	}
 
@@ -858,7 +839,7 @@ if (!empty($id) && $action != 'edit')
 	$genallowed	= (($object->paid == 0 || $user->admin) && $user->rights->don->lire);
 	$delallowed	= $user->rights->don->creer;
 
-	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+	print $formfile->showdocuments('donation', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 	// Show links to link elements
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));

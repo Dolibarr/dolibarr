@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #------------------------------------------------------
 # Script to pull language files to Transifex
 #
@@ -33,8 +33,16 @@ if [ "x$1" = "xall" ]
 then
 	if [ "x$2" = "x" ]
 	then
-	    echo "tx pull"
-	    tx pull
+	    echo "tx pull -a"
+	    tx pull -a
+	    
+	    echo "Remove some language directories (not enough translated)"
+	    rm -fr htdocs/langs/ach
+	    rm -fr htdocs/langs/br_FR
+	    rm -fr htdocs/langs/en
+	    rm -fr htdocs/langs/frp
+	    rm -fr htdocs/langs/fy_NL
+	    
 	else
 		for dir in `find htdocs/langs/* -type d`
 		do

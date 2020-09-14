@@ -163,9 +163,7 @@ if ($resql)
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -220,8 +218,7 @@ if (!empty($conf->propal->enabled))
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
 			}
@@ -310,8 +307,7 @@ if ($resql)
 	}
 	print "</table>";
 	print "</div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -394,17 +390,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

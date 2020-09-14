@@ -473,15 +473,13 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					));
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND';
                 $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED';
             $errorlabel = 'User does not have permission for this request';
@@ -640,8 +638,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 			);
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}
@@ -786,8 +783,7 @@ function createOrder($authentication, $order)
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
 		}
-		else
-		{
+		else {
 			dol_syslog("Webservice server_order:: order creation or validation failed, rollback", LOG_ERR);
 			$db->rollback();
 			$error++;
@@ -846,26 +842,23 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 				{
 					// Define output language
 					$outputlangs = $langs;
-					$order->generateDocument($order->modelpdf, $outputlangs);
+					$order->generateDocument($order->model_pdf, $outputlangs);
 				}
-				else
-				{
+				else {
 					$db->rollback();
 					$error++;
 					$errorcode = 'KO';
 					$errorlabel = $order->error;
 				}
 			}
-			else
-			{
+			else {
 				$db->rollback();
 				$error++;
 				$errorcode = 'KO';
 				$errorlabel = $order->error;
 			}
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -877,8 +870,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
-	else
-	{
+	else {
 		$db->commit();
 		$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
 	}
@@ -937,7 +929,7 @@ function updateOrder($authentication, $order)
 					{
 						// Define output language
 						$outputlangs = $langs;
-						$object->generateDocument($order->modelpdf, $outputlangs);
+						$object->generateDocument($order->model_pdf, $outputlangs);
 					}
 				}
 				if ($order['status'] == 0)  $result = $object->set_reopen($fuser);

@@ -55,7 +55,9 @@ if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategor
 elseif ($type == Categorie::TYPE_WAREHOUSE) 	$title = $langs->trans('StocksCategoriesArea');
 elseif ($type == Categorie::TYPE_ACTIONCOMM)	$title = $langs->trans('ActionCommCategoriesArea');
 elseif ($type == Categorie::TYPE_WEBSITE_PAGE)	$title = $langs->trans('WebsitePagesCategoriesArea');
-else 											$title = $langs->trans(ucfirst($type).'sCategoriesArea');
+else {
+	$title = $langs->trans(ucfirst($type).'sCategoriesArea');
+}
 
 $arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
@@ -122,8 +124,7 @@ if ($catname || $id > 0)
 		print "\t</tr>\n";
 	}
 	print "</table>";
-}
-else print '&nbsp;';
+} else print '&nbsp;';
 
 
 print '</div></div></div>';
@@ -193,9 +194,7 @@ if ($nbofentries > 0)
 	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data, $data[0], 0);
 	print '</td></tr>';
-}
-else
-{
+} else {
 	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';

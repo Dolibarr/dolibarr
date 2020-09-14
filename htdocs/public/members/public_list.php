@@ -152,18 +152,14 @@ if ($result)
 			print '<td>';
 			print $form->showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
-		}
-		else
-		{
+		} else {
 			print "<td>&nbsp;</td>\n";
 		}
 		print "</tr>";
 		$i++;
 	}
 	print "</table>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -37,18 +37,17 @@ if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask'
 	    {
 	        $object->fetch_thirdparty();
 	        $id = $object->id;
-	    }
-	    else
-	    {
+	    } else {
 	    	if (empty($object->error) && !count($object->errors))
 	    	{
 	    		if ($ret < 0)	// if $ret == 0, it means not found.
 	    		{
 	    			setEventMessages('Fetch on object (type '.get_class($object).') return an error without filling $object->error nor $object->errors', null, 'errors');
 	    		}
+	    	} else {
+	    		setEventMessages($object->error, $object->errors, 'errors');
 	    	}
-	        else setEventMessages($object->error, $object->errors, 'errors');
-	        $action = '';
+        	$action = '';
 	    }
 	}
 }

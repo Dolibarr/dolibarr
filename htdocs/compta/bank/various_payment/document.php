@@ -149,9 +149,7 @@ if ($object->id)
 	$permission = $user->rights->banque->modifier;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

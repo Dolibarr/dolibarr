@@ -170,9 +170,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

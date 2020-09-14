@@ -29,4 +29,4 @@ CREATE TABLE llx_product_lot (
   fk_user_creat integer,
   fk_user_modif integer,
   import_key    integer
-) ENGINE=InnoDB;
+) ENGINE=innodb;

@@ -16,6 +16,7 @@ MarginDetails=Margin details
 ProductMargins=Product margins
 CustomerMargins=Customer margins
 SalesRepresentativeMargins=Sales representative margins
+ContactOfInvoice=Contact of invoice
 UserMargins=User margins
 ProductService=Tuote tai palvelu
 AllProducts=Kaikki tuotteet ja palvelut
@@ -31,14 +32,14 @@ MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Margin on Best vendor price
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
-CostPrice=Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+CostPrice=Kustannushinta
 UnitCharges=Unit charges
 Charges=Charges
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos
 CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

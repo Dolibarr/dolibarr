@@ -171,7 +171,7 @@ class Import
 						// Sql request to run after import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
 						// Module
-						$this->array_import_module[$i] = $module;
+						$this->array_import_module[$i] = array('position_of_profile'=>($module->module_position.'-'.$module->import_code[$r]), 'module'=>$module);
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;
@@ -260,9 +260,7 @@ class Import
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
 			$this->db->rollback();
@@ -295,15 +293,11 @@ class Import
 				$this->datatoimport         = $obj->type;
 				$this->fk_user              = $obj->fk_user;
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = "Model not found";
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -3;
 		}
@@ -353,9 +347,7 @@ class Import
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}

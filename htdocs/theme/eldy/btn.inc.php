@@ -7,14 +7,20 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --btncolorbg: #fbfbfb;
             --btncolorborderhover: none;
             --btncolorborder: #FFF;
-            --butactionbg:rgb(225, 235, 225);
             --butactiondeletebg: rgb(234,228,225);
+            /* tertiary color */
+            /* --butactionbg:rgb(218, 235, 225); */
+            /* --butactionbg:rgb(228, 218, 235); */
+            --butactionbg:rgb(118, 145, 225);
 }
 
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";
+	}
 	print "
-    @media (prefers-color-scheme: dark) {
       :root {
 
             --btncolortext: ;
@@ -24,8 +30,10 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
             --butactionbg:rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
 
-      }
-    }";
+      }\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "}";
+	}
 }
 ?>
 
@@ -51,6 +59,8 @@ span.butAction, span.butActionDelete {
 
 .butAction {
     background: var(--butactionbg);
+    color: #FFF !important;
+    border-radius: 3px;
     /* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
@@ -70,10 +80,10 @@ span.butAction, span.butActionDelete {
     /* border: 1px solid #aaa; */
     /* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
-    border-top-right-radius: 0 !important;
+    /*border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;*/
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
     text-decoration: none;
@@ -102,18 +112,6 @@ span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list
 	padding-left: 0px;
 }
 
-/*a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
-span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
-a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
-span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
-a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
-span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
-a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
-span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover,
-a.butActionNew>span.fa-comment-dots, a.butActionNew>span.fa-comment-dots:hover,
-span.butActionNew>span.fa-comment-dots, span.butActionNew>span.fa-comment-dots:hover,
-a.butActionNewRefused>span.fa-comment-dots, a.butActionNewRefused>span.fa-comment-dots:hover,
-span.butActionNewRefused>span.fa-comment-dots, span.butActionNewRefused>span.fa-comment-dots:hover,*/
 a.butActionNew>span.fa, a.butActionNew>span.fa:hover,
 span.butActionNew>span.fa, span.butActionNew>span.fa:hover,
 a.butActionNewRefused>span.fa, a.butActionNewRefused>span.fa:hover,
@@ -195,7 +193,7 @@ TITLE BUTTON
 
 .btnTitle, a.btnTitle {
     display: inline-block;
-    padding: 4px 12px 4px 12px;
+    padding: 4px 4px 4px 4px;
     font-weight: 400;
     /* line-height: 1; */
     text-align: center;
@@ -211,8 +209,8 @@ TITLE BUTTON
     box-shadow: var(--btncolorbg);
     text-decoration: none;
     position: relative;
-    margin: 0 0 0 10px;
-    min-width: 80px;
+    /* margin: 0 0 0 8px; */
+    min-width: 72px;
     text-align: center;
     color: var(--btncolortext);
     border: none;
@@ -220,6 +218,11 @@ TITLE BUTTON
     font-weight: 300;
     background-color: var(--btncolorbg);
 	border: 1px solid var(--btncolorborder);
+}
+
+a.btnTitle.btnTitleSelected {
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
 .btnTitle > .btnTitle-icon{
@@ -234,7 +237,6 @@ TITLE BUTTON
 	border: 1px solid #bbb;
     border-radius: 3px;
     position: relative;
-    margin: 0 0 0 10px;
     text-align: center;
     /* color: #ffffff;
     background-color: rgb(<?php print $colortextlink; ?>); */

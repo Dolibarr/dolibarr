@@ -333,7 +333,6 @@ class Account extends CommonObject
 	public function __toString()
 	{
 		$string = '';
-
 		foreach ($this->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
 				$string .= $this->code_banque.' ';
@@ -343,9 +342,9 @@ class Account extends CommonObject
 				$string .= $this->code_guichet.' ';
 			} elseif ($val == 'BankAccountNumberKey') {
 				$string .= $this->cle_rib.' ';
-			}elseif ($val == 'BIC') {
+			} elseif ($val == 'BIC') {
 				$string .= $this->bic.' ';
-			}elseif ($val == 'IBAN') {
+			} elseif ($val == 'IBAN') {
 				$string .= $this->iban.' ';
 			}
 		}
@@ -403,9 +402,7 @@ class Account extends CommonObject
 		{
 			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
 			return $rowid;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -437,8 +434,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_url";
 		if ($fk_bank > 0) {
 			$sql .= " WHERE fk_bank = ".$fk_bank;
-		}
-		else { $sql .= " WHERE url_id = ".$url_id." AND type = '".$type."'";
+		} else { $sql .= " WHERE url_id = ".$url_id." AND type = '".$type."'";
 		}
 		$sql .= " ORDER BY type, label";
 
@@ -464,8 +460,7 @@ class Account extends CommonObject
 				$lines[$i]['fk_bank'] = $obj->fk_bank;
 				$i++;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return $lines;
 	}
@@ -474,10 +469,10 @@ class Account extends CommonObject
 	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
 	 *
 	 *  @param	int	        $date			Date operation
-	 *  @param	string		$oper			1,2,3,4... (deprecated) or 'TYP','VIR','PRE','LIQ','VAD','CB','CHQ'...
+	 *  @param	string		$oper			'VIR','PRE','LIQ','VAD','CB','CHQ'...
 	 *  @param	string		$label			Descripton
 	 *  @param	float		$amount			Amount
-	 *  @param	string		$num_chq		Numero cheque ou virement
+	 *  @param	string		$num_chq		Numero cheque or transfer
 	 *  @param	int  		$categorie		Category id (optionnal)
 	 *  @param	User		$user			User that create
 	 *  @param	string		$emetteur		Name of cheque writer
@@ -509,9 +504,7 @@ class Account extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$oper = $obj->code;
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db, 'Failed to get payment type code');
 				return -1;
 			}
@@ -573,15 +566,18 @@ class Account extends CommonObject
 				if (!$result) {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
+
 					return -3;
 				}
 			}
 
 			$this->db->commit();
+
 			return $accline->id;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
+
 			return -2;
 		}
 	}
@@ -720,20 +716,15 @@ class Account extends CommonObject
 					if ($result < 0) $error++;
 					// End call triggers
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$this->error = $langs->trans("ErrorBankLabelAlreadyExists");
 				$error++;
-			}
-			else {
+			} else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$error++;
 			}
@@ -743,9 +734,7 @@ class Account extends CommonObject
 		{
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1 * $error;
 		}
@@ -836,9 +825,7 @@ class Account extends CommonObject
 				if ($result < 0) $error++;
 				// End call triggers
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
@@ -848,9 +835,7 @@ class Account extends CommonObject
 		{
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1 * $error;
 		}
@@ -907,9 +892,7 @@ class Account extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
@@ -1006,14 +989,10 @@ class Account extends CommonObject
 				$this->fetch_optionals();
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror;
 			$this->errors[] = $this->error;
 			return -1;
@@ -1113,9 +1092,7 @@ class Account extends CommonObject
 						dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = "Error ".$this->db->lasterror();
 			}
@@ -1125,9 +1102,7 @@ class Account extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1192,8 +1167,7 @@ class Account extends CommonObject
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj->nb <= 1) $can_be_deleted = true; // Juste le solde
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 		return $can_be_deleted;
@@ -1291,9 +1265,7 @@ class Account extends CommonObject
 			}
 
 			return $response;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -1330,9 +1302,7 @@ class Account extends CommonObject
 				$this->nb["banklines"] = $obj->nb;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -1366,8 +1336,7 @@ class Account extends CommonObject
 		{
 			$obj = $db->fetch_object($resql);
 			$nb = $obj->nb;
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 
 		return $nb;
 	}
@@ -1387,9 +1356,11 @@ class Account extends CommonObject
 		global $conf, $langs, $user;
 
 		$result = '';
-		$label = '<u>'.$langs->trans("BankAccount").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankAccount").'</u>';
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
+		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.$this->iban;
+		$label .= '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
 		$label .= '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
 
 		if (empty($user->rights->banque->lire) || !empty($user->socid))
@@ -1414,8 +1385,7 @@ class Account extends CommonObject
 		if ($mode == 'transactions')
 		{
 			$url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
-		}
-		elseif ($mode == 'receipts')
+		} elseif ($mode == 'receipts')
 		{
 			$url = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id;
 		}
@@ -1475,9 +1445,7 @@ class Account extends CommonObject
 		if ($this->error_number == 0)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -1810,11 +1778,13 @@ class AccountLine extends CommonObject
      */
 	public $fk_account;
 
-	public $bank_account_label; // Label of bank account
+	/**
+	 * @var string		Label of bank account
+	 */
+	public $bank_account_label;
 
     /**
-	 * Issuer
-	 * @var Societe
+	 * @var string		Name of check issuer
 	 */
 	public $emetteur;
 
@@ -1896,9 +1866,7 @@ class AccountLine extends CommonObject
 			}
 			$this->db->free($result);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -1985,8 +1953,7 @@ class AccountLine extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else {
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
@@ -2014,9 +1981,7 @@ class AccountLine extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -$nbko;
 		}
@@ -2053,9 +2018,7 @@ class AccountLine extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -$nbko;
 		}
@@ -2085,9 +2048,7 @@ class AccountLine extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->error();
 			return -1;
@@ -2151,9 +2112,7 @@ class AccountLine extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -2189,14 +2148,11 @@ class AccountLine extends CommonObject
 				{
 					return 1;
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				return 0;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		return 0;
 	}
 
@@ -2256,14 +2212,11 @@ class AccountLine extends CommonObject
 				{
 					return 1;
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				return 0;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		return 0;
 	}
 
@@ -2333,9 +2286,7 @@ class AccountLine extends CommonObject
 				//$this->date_rappro       = $obj->daterappro;    // Not yet managed
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -2476,9 +2427,7 @@ class AccountLine extends CommonObject
 			{
 				$alreadydispatched = $obj->nb;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

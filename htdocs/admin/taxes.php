@@ -130,9 +130,7 @@ print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 if (empty($mysoc->tva_assuj))
 {
 	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
-}
-else
-{
+} else {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -150,9 +148,7 @@ else
 		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
 		print "</td>";
-	}
-	else
-	{
+	} else {
 		print '<td width="120">';
 		$listval = array(
 			'0'=>$langs->trans(""),
@@ -205,9 +201,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnDelivery");
 		print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
 	}
@@ -217,9 +211,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnDelivery");
 		print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
 	}
@@ -232,9 +224,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnInvoice");
 		print ' ('.$langs->trans("InvoiceDateUsed").')';
 	}
@@ -244,9 +234,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnInvoice");
 		print ' ('.$langs->trans("InvoiceDateUsed").')';
 	}

@@ -521,8 +521,7 @@ while ($i < min($num, $limit))
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
 		{
 		  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
-		}
-		elseif ($obj->admin)
+		} elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 		}
@@ -575,13 +574,10 @@ while ($i < min($num, $limit))
 			$companystatic->name = $obj->name;
 			$companystatic->canvas = $obj->canvas;
 			print $companystatic->getNomUrl(1);
-		}
-		elseif ($obj->ldap_sid)
+		} elseif ($obj->ldap_sid)
 		{
 			print $langs->trans("DomainUser");
-		}
-		else
-	    {
+		} else {
 			print $langs->trans("InternalUser");
 		}
 		print '</td>';
@@ -596,9 +592,7 @@ while ($i < min($num, $limit))
 			if (!$obj->entity)
 			{
 				print $langs->trans("AllEntities");
-			}
-			else
-			{
+			} else {
 				$mc->getInfo($obj->entity);
 				print $mc->label;
 			}
@@ -627,8 +621,7 @@ while ($i < min($num, $limit))
 			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
 			{
 			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
-			}
-			elseif ($obj->admin2)
+			} elseif ($obj->admin2)
 			{
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 			}

@@ -26,7 +26,7 @@ class TraceableDB extends DoliDB
 	 */
 	protected $startMemory;
 	/**
-	 * @var Database type
+	 * @var string type
 	 */
 	public $type;
 	/**

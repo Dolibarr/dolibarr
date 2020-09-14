@@ -53,7 +53,10 @@ if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/master.i
 if (!$res && file_exists("../master.inc.php")) $res = @include "../master.inc.php";
 if (!$res && file_exists("../../master.inc.php")) $res = @include "../../master.inc.php";
 if (!$res && file_exists("../../../master.inc.php")) $res = @include "../../../master.inc.php";
-if (!$res) die("Include of master fails");
+if (!$res) {
+	print "Include of master fails";
+	exit(-1);
+}
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 
@@ -163,9 +166,7 @@ if (!$error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

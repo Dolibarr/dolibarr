@@ -78,7 +78,7 @@ $search_login = GETPOST('search_login', 'alpha');
 $search_product_category = GETPOST('search_product_category', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
@@ -88,7 +88,7 @@ $search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
 $search_availability = GETPOST('search_availability', 'int');
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
@@ -414,9 +414,7 @@ if ($resql)
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfProposals').' - '.$soc->name;
 		if (empty($search_societe)) $search_societe = $soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfProposals');
 	}
 
@@ -474,6 +472,8 @@ if ($resql)
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
+		'prevalidate'=>$langs->trans("Validate"),
+		'presign'=>$langs->trans("Sign"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if ($user->rights->propal->cloturer) $arrayofmassactions['closed'] = $langs->trans("Close");
@@ -503,6 +503,16 @@ if ($resql)
 	$objecttmp = new Propal($db);
 	$trackid = 'pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
+
+	if ($massaction == 'presign')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSignature"), $langs->trans("ConfirmMassSignatureQuestion"), "sign", null, '', 0, 200, 500, 1);
+	}
 
 	if ($sall)
 	{
@@ -1028,9 +1038,7 @@ if ($resql)
 			{
 				print '<td class="center">'.dol_print_date($db->jdate($obj->dfv), 'day');
 				print '</td>';
-			}
-			else
-			{
+			} else {
 				print '<td>&nbsp;</td>';
 			}
 			if (!$i) $totalarray['nbfield']++;
@@ -1042,9 +1050,7 @@ if ($resql)
 			{
 				print '<td class="center">'.dol_print_date($db->jdate($obj->ddelivery), 'day');
 				print '</td>';
-			}
-			else
-			{
+			} else {
 				print '<td>&nbsp;</td>';
 			}
 			if (!$i) $totalarray['nbfield']++;
@@ -1169,8 +1175,7 @@ if ($resql)
 				if ($nbofsalesrepresentative > 3)   // We print only number
 				{
 					print $nbofsalesrepresentative;
-				}
-				elseif ($nbofsalesrepresentative > 0)
+				} elseif ($nbofsalesrepresentative > 0)
 				{
 					$userstatic = new User($db);
 					$j = 0;
@@ -1192,9 +1197,7 @@ if ($resql)
 					}
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
-			}
-			else
-			{
+			} else {
 				print '&nbsp';
 			}
 			print '</td>';
@@ -1279,12 +1282,72 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
-	dol_print_error($db);
+
+	if ($action == 'validate') {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
+			$db->begin();
+			$error = 0;
+			foreach ($toselect as $checked) {
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 0) {
+						if ($tmpproposal->valid($user)) {
+							setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						} else {
+							setEventMessage($langs->trans('CantBeValidated'), 'errors');
+							$error++;
+						}
+					} else {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+						$error++;
+					}
+				}
+				dol_print_error($db);
+				$error++;
+			}
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+		}
+	}
+
+	if ($action == "sign") {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
+			$db->begin();
+			$error = 0;
+			foreach ($toselect as $checked) {
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 1) {
+						$tmpproposal->statut = 2;
+						if ($tmpproposal->update($user)) {
+							setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+						} else {
+							dol_print_error($db);
+							$error++;
+						}
+					} else {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+						$error++;
+					}
+				} else {
+					dol_print_error($db);
+					$error++;
+				}
+			}
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+		}
+	}
+} else {
+		dol_print_error($db);
 }
 
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();

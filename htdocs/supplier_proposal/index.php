@@ -162,9 +162,7 @@ if ($resql)
 
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -294,8 +292,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -376,16 +373,13 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table></div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

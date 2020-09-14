@@ -44,15 +44,13 @@ if (!empty($actionsave))
 
 	$db->begin();
 
-	$i += dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
+	$i += dolibarr_set_const($db, 'CRON_KEY', GETPOST("CRON_KEY"), 'chaine', 0, '', 0);
 
 	if ($i >= 1)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
@@ -96,9 +94,7 @@ if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
     print '<input type="text" class="flat minwidth200"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
     if (!empty($conf->use_javascript_ajax))
     	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-}
-else
-{
+} else {
     print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
     print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
 }

@@ -75,21 +75,17 @@ if (!empty($section))
 }
 
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * Actions
+ */
+
+// None
 
 
 
-
-
-/*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -138,10 +134,10 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td class="right"><input type="text" name="search_ref" class="flat" size="10"></td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td class="right"><input type="text" name="search_title" class="flat" size="10"></td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td class="right"><input type="text" name="search_keyword" class="flat" size="10"></td></tr>';
-print "<tr ".$bc[false].'><td colspan="2" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print '<tr class="impair"><td>'.$langs->trans("Ref").':</td><td class="right"><input type="text" name="search_ref" class="flat" size="10"></td></tr>';
+print '<tr class="impair"><td>'.$langs->trans("Title").':</td><td class="right"><input type="text" name="search_title" class="flat" size="10"></td></tr>';
+print '<tr class="impair"><td>'.$langs->trans("Keyword").':</td><td class="right"><input type="text" name="search_keyword" class="flat" size="10"></td></tr>';
+print '<tr class="impair"><td colspan="2" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
 //print $langs->trans("ECMSectionManualDesc");
 
@@ -158,21 +154,16 @@ $butshown = 0;
 foreach ($sectionauto as $sectioncur)
 {
 	if (!$sectioncur['test']) continue;
-	//if ($butshown % 2 == 0)
-		print '<tr '.$bc[false].'>';
+	print '<tr class="impair">';
 	print "<td>".$sectioncur['label'].':</td>';
 	print '<td';
-	//if ($butshown % 2 == 1)
-		print ' class="right"';
+	print ' class="right"';
 	print '>';
 	print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
 	print '</td>';
-	//if ($butshown % 2 == 1)
-		print '</tr>';
+	print '</tr>';
 	$butshown++;
 }
-//if ($butshown % 2 == 1)
-//	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
 print '<tr '.$bc[false].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
@@ -191,11 +182,6 @@ $formfile = new FormFile($db);
 $param = '&amp;section='.$section;
 $textifempty = ($section ? $langs->trans("NoFileFound") : $langs->trans("ECMSelectASection"));
 $formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
-
-//	print '<table width="100%" class="border">';
-
-//	print '<tr><td> </td></tr></table>';
-
 
 
 print '</td></tr>';

@@ -39,12 +39,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$mesg = '';
-if (isset($_SESSION['DolMessage'])) {
-    $mesg = $_SESSION['DolMessage'];
-    unset($_SESSION['DolMessage']);
-}
-
 // Security check
 if ($user->socid) {
     $action = '';
@@ -137,12 +131,10 @@ if ($id > 0 || !empty($ref)) {
         $permtoedit = $user->rights->banque->modifier;
         $param = '&id='.$object->id;
         include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
-}
-else {
+} else {
     Header('Location: index.php');
     exit;
 }

@@ -98,9 +98,7 @@ if (dol_is_file($xmlfile))
     print '<input type="radio" name="target" value="local"'.((!GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"' : '').'"> '.$langs->trans("LocalSignature").' = ';
     print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print '<br>';
-}
-else
-{
+} else {
     print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = ';
     print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span>';
@@ -111,9 +109,7 @@ if ($enableremotecheck)
 {
     print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"' : '').'> '.$langs->trans("RemoteSignature").' = ';
     print '<input name="xmlremote" class="flat minwidth400" value="'.dol_escape_htmltag($xmlremote).'"><br>';
-}
-else
-{
+} else {
     print '<input type="radio" name="target" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.$xmlremote;
     if (!GETPOST('xmlremote')) print ' <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span>';
     print '<br>';
@@ -140,9 +136,7 @@ if (GETPOST('target') == 'local')
     		}
     	}
         $xml = simplexml_load_file($xmlfile);
-    }
-    else
-    {
+    } else {
         print $langs->trans('XmlNotFound').': '.$xmlfile;
         $error++;
     }
@@ -157,9 +151,7 @@ if (GETPOST('target') == 'remote')
         $xmlfile = $xmlarray['content'];
         //print "xmlfilestart".$xmlfile."xmlfileend";
         $xml = simplexml_load_string($xmlfile);
-    }
-    else
-    {
+    } else {
         $errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
         setEventMessages($errormsg, null, 'errors');
         $error++;
@@ -270,9 +262,7 @@ if (!$error && $xml)
 	            $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
 	            $out .= "</tr>\n";
 	        }
-        }
-        else
-        {
+        } else {
             $out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out .= '</table>';
@@ -325,9 +315,7 @@ if (!$error && $xml)
             $out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
             $out .= '<td class="right"></td>'."\n";
             $out .= "</tr>\n";
-        }
-        else
-        {
+        } else {
             $out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out .= '</table>';
@@ -380,9 +368,7 @@ if (!$error && $xml)
             $out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
             $out .= '<td class="right"></td>'."\n";
             $out .= "</tr>\n";
-        }
-        else
-        {
+        } else {
             $out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out .= '</table>';
@@ -393,14 +379,10 @@ if (!$error && $xml)
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
             setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-        }
-        else
-        {
+        } else {
             setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
-    }
-    else
-    {
+    } else {
         print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
         $error++;
     }
@@ -433,16 +415,12 @@ if (!$error && $xml)
     		$resultcode = 'warning';
     		$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
     		$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-    	}
-    	else
-    	{
+    	} else {
     		$resultcode = 'ok';
     		$resultcomment = 'Success';
     		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     	}
-    }
-    else
-    {
+    } else {
     	$resultcode = 'error';
     	$resultcomment = 'Error';
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';

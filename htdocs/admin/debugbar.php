@@ -58,9 +58,7 @@ if ($action == 'set')
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($error, null, 'errors');
 	}
@@ -77,8 +75,6 @@ $form = new Form($db);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
-
-//print load_fiche_titre($langs->trans("DebugBar"));
 
 if (!function_exists('mb_check_encoding'))
 {

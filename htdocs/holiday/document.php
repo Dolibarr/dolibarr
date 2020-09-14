@@ -146,9 +146,7 @@ if ($object->id)
         print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
         print '</td>';
         print '</tr>';
-    }
-    else
-    {
+    } else {
         print '<tr>';
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
@@ -168,9 +166,7 @@ if ($object->id)
         print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
         print '</td>';
         print '</tr>';
-    }
-    else
-    {
+    } else {
         print '<tr>';
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
@@ -200,9 +196,7 @@ if ($object->id)
         print '<td>'.$langs->trans('DescCP').'</td>';
         print '<td>'.nl2br($object->description).'</td>';
         print '</tr>';
-    }
-    else
-    {
+    } else {
         print '<tr>';
         print '<td>'.$langs->trans('DescCP').'</td>';
         print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
@@ -289,9 +283,7 @@ if ($object->id)
     $permtoedit = $user->rights->holiday->write;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

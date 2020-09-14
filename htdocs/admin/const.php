@@ -85,9 +85,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 			$constname = "";
 			$constvalue = "";
 			$constnote = "";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -104,9 +102,7 @@ if (!empty($consts) && $action == 'update')
 			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0)
 			{
 				$nbmodified++;
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -126,9 +122,7 @@ if (!empty($consts) && $action == 'delete')
 			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0)
 			{
 				$nbdeleted++;
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -143,9 +137,7 @@ if ($action == 'delete')
 	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
 	{
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -230,9 +222,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity)
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
 	print '<td class="center">';
-}
-else
-{
+} else {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
@@ -297,9 +287,7 @@ if ($result)
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
 			print '<td class="center">';
-		}
-		else
-		{
+		} else {
 			print '<td class="center">';
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
@@ -307,9 +295,7 @@ if ($result)
 		if ($conf->use_javascript_ajax)
 		{
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
-		}
-		else
-		{
+		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 		}
 

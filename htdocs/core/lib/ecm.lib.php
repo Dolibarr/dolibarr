@@ -84,9 +84,7 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
-	}
-	else
-	{
+	} else {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$section.'&module='.$module;
 		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';

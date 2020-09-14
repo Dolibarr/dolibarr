@@ -27,10 +27,10 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 $langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
 
@@ -59,9 +59,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	{
 		$db->commit();
 		$action = '';
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -78,9 +76,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 		$db->commit();
 		header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -99,9 +95,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 		$db->commit();
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -114,9 +108,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
 	}
 }
@@ -129,9 +121,7 @@ if ($action == 'setdatep' && !empty($_POST['datepday']))
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
@@ -199,7 +189,7 @@ if ($result > 0)
 	// Payment mode
 	$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
-	print $object->num_paiement ? ' - '.$object->num_paiement : '';
+	print $object->num_payment ? ' - '.$object->num_payment : '';
 	print '</td></tr>';
 
 	// Payment numero
@@ -210,7 +200,7 @@ if ($result > 0)
     */
 
 	// Amount
-	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
 
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
@@ -326,9 +316,7 @@ if ($result > 0)
 
 		print "</table>\n";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -358,9 +346,7 @@ if ($result > 0)
 			if ($allow_delete)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-			}
-			else
-			{
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
@@ -381,7 +367,7 @@ if ($result > 0)
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 		$genallowed = $user->rights->fournisseur->facture->lire;
 		$delallowed = $user->rights->fournisseur->facture->creer;
-		$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
 		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 		$somethingshown = $formfile->numoffiles;
@@ -397,9 +383,7 @@ if ($result > 0)
 	*/
 
 	print '</div></div></div>';
-}
-else
-{
+} else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");
 }

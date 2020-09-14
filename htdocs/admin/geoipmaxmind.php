@@ -64,9 +64,7 @@ if ($action == 'set')
 		if (!$error)
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
@@ -182,9 +180,7 @@ if ($geoip)
 		$result = dol_print_ip($ip, 1);
 		if ($result) print $result;
 		else print $langs->trans("Error");
-	}
-	else
-	{
+	} else {
 		print '<br>'.$ip.' -> ';
 		$result = dol_print_ip($ip, 1);
 		if ($result) print $result;

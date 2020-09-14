@@ -249,9 +249,7 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	print '</table>';
-}
-else
-{
+} else {
     /*
      * Show parameters
      */

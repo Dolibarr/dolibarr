@@ -82,7 +82,7 @@ class Asset extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1),
 		'amount_ht' => array('type'=>'double(24,8)', 'label'=>'AmountHTShort', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
 		'amount_vat' => array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'isameasure'=>'1', 'help'=>"Help text",),
-		'fk_asset_type' => array('type'=>'integer:AssetType:asset/class/asset_type.class.php', 'label'=>'AssetsType', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty",),
+		'fk_asset_type' => array('type'=>'integer:AssetType:asset/class/asset_type.class.php', 'label'=>'AssetsType', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'searchall'=>1),
 		'description' => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>90, 'notnull'=>-1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>91, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>-1,),
@@ -331,7 +331,7 @@ class Asset extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/assets/card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/asset/card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
@@ -351,8 +351,7 @@ class Asset extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -395,28 +394,23 @@ class Asset extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 6)
+		} elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
@@ -469,9 +463,7 @@ class Asset extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

@@ -94,7 +94,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -127,7 +127,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	{
 		global $db, $conf;
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -139,9 +139,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_holiday_madonna::getNextValue", LOG_DEBUG);
 			return -1;
 		}

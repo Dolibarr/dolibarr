@@ -155,7 +155,7 @@ $help_url = '';
 $title = $langs->trans('OpenSurveyArea');
 
 
-$sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre, p.nom_admin,";
+$sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre as title, p.nom_admin,";
 $sql .= " u.login, u.firstname, u.lastname";
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
@@ -190,9 +190,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
     $sql .= $db->plimit($limit + 1, $offset);
 
     $resql = $db->query($sql);
@@ -357,12 +355,11 @@ while ($i < min($num, $limit))
 	{
 		$obj2 = $db->fetch_object($resql2);
 		$nbuser = $obj2->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$opensurvey_static->id = $obj->rowid;
 	$opensurvey_static->ref = $obj->rowid;
-	$opensurvey_static->title = $obj->titre;
+	$opensurvey_static->title = $obj->title;
 	$opensurvey_static->status = $obj->status;
 	$opensurvey_static->date_fin = $db->jdate($obj->date_fin);
 
@@ -376,7 +373,7 @@ while ($i < min($num, $limit))
 	if (!$i) $totalarray['nbfield']++;
 
 	// Title
-	print '<td>'.dol_htmlentities($obj->titre).'</td>';
+	print '<td>'.dol_htmlentities($obj->title).'</td>';
 	if (!$i) $totalarray['nbfield']++;
 
 	// Type

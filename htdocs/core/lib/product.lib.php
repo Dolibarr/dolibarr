@@ -37,11 +37,14 @@ function product_prepare_head($object)
 	global $db, $langs, $conf, $user;
 	$langs->load("products");
 
+	$label = $langs->trans('Product');
+	if ($object->isService()) $label = $langs->trans('Service');
+
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/product/card.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("ProductOrService");
+	$head[$h][1] = $label;
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -544,17 +547,14 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 				't.rowid' => $unit,
 				't.active' => 1
 			);
-		}
-		elseif ($scale !== '')
+		} elseif ($scale !== '')
 		{
 			$arrayforfilter = array(
 				't.scale' => $scale,
 				't.unit_type' => $measuring_style,
 				't.active' => 1
 			);
-		}
-		else
-		{
+		} else {
 			$arrayforfilter = array(
 				't.rowid' => $unit,
 				't.unit_type' => $measuring_style,
@@ -575,8 +575,7 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 			$measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label] = $labeltoreturn;
 			return $labeltoreturn;
 		}
-	}
-	else {
+	} else {
 		return $measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label];
 	}
 }

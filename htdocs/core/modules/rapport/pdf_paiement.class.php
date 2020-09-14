@@ -211,8 +211,7 @@ class pdf_paiement
 				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payement are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD))
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiement ASC";
-				else
-					$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+				else $sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 				break;
 			case "fourn":
 				$sql = "SELECT p.datep as dp, f.ref as ref";
@@ -245,8 +244,7 @@ class pdf_paiement
                 // If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payement fourn are ordered by paiement_code
 				if (!empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiementfourn ASC";
-				else
-					$sql .= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
+				else $sql .= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
 				break;
 		}
 
@@ -273,9 +271,7 @@ class pdf_paiement
 				$lines[$i][9] = $objp->paiement_amount;
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -351,7 +347,7 @@ class pdf_paiement
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF			$pdf     		Object PDF
 	 *  @param  int			$page	     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -425,7 +421,7 @@ class pdf_paiement
 	/**
 	 *	Output body
 	 *
-	 *	@param	PDF			$pdf			PDF object
+	 *	@param	TCPDF		$pdf			PDF object
 	 *	@param	string		$page			Page
 	 *	@param	array		$lines			Array of lines
 	 *	@param	Translate	$outputlangs	Object langs

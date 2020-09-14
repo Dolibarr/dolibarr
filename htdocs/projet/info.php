@@ -52,9 +52,7 @@ if (GETPOST('actioncode', 'array'))
 {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -63,7 +61,7 @@ $search_agenda_label = GETPOST('search_agenda_label');
 $id = GETPOST("id", 'int');
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet', $id, '');
+$result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 if (!$user->rights->projet->lire)	accessforbidden();
 

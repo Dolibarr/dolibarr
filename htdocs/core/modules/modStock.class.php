@@ -81,14 +81,14 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "Standard";
+		$this->const[$r][2] = "standard";
 		$this->const[$r][3] = 'Name of PDF model of stock';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "StdMouvement";
+		$this->const[$r][2] = "stdmovement";
 		$this->const[$r][3] = 'Name of PDF model of stock mouvement';
 		$this->const[$r][4] = 0;
 
@@ -371,9 +371,9 @@ class modStock extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stock/template_stock.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/stock';
-		$dest = $dirodt.'/template_stock.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stocks/template_warehouse.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
+		$dest = $dirodt.'/template_warehouse.odt';
 
 		if (file_exists($src) && !file_exists($dest))
 		{

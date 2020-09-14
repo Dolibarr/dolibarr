@@ -3,49 +3,116 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 
-/* ICONS INFO BOX */
+/*
+ * Component: Info Box
+ * -------------------
+ */
+
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-//$prefix = 'background-';
 if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+
+if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+
 ?>
 
+.customer-back {
+	background-color: #99a17d !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.vendor-back {
+	background-color: #599caf !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+
+
 .bg-infobox-project{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #a47080  !important;
 }
 .bg-infobox-propal,
 .bg-infobox-facture,
 .bg-infobox-commande{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #99a17d  !important;
 }
 .bg-infobox-supplier_proposal,
 .bg-infobox-invoice_supplier,
 .bg-infobox-order_supplier{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #599caf  !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #46a676  !important;
 }
 .bg-infobox-bank_account{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #b0a53e  !important;
 }
-.bg-infobox-adherent{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-adherent, .bg-infobox-member{
+	<?php echo $prefix; ?>color: #79633f  !important;
 }
 .bg-infobox-expensereport{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #79633f  !important;
 }
 .bg-infobox-holiday{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #755114  !important;
 }
+
+
+.infobox-adherent, .infobox-member {
+	color: #79633f !important;
+}
+.infobox-project{
+	color: #6c6aa8 !important;
+}
+.infobox-action{
+	color: #a47080 !important;
+}
+.infobox-propal,
+.infobox-facture,
+.infobox-commande{
+	color: #99a17d !important;
+}
+.infobox-supplier_proposal,
+.infobox-invoice_supplier,
+.infobox-order_supplier{
+	color: #599caf !important;
+}
+.infobox-contrat, .infobox-ticket{
+	color: #46a676 !important;
+}
+.infobox-bank_account{
+	color: #b0a53e !important;
+}
+.infobox-adherent, .infobox-member {
+	color: #79633f !important;
+}
+.infobox-expensereport{
+	color: #79633f !important;
+}
+.infobox-holiday{
+	color: #755114 !important;
+}
+
 
 .info-box-module-external span.info-box-icon-version {
     background: #bbb;
+}
+
+a.info-box-text.info-box-text-a {
+    display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+    font-size: 0.9em;
 }
 
 .info-box {
@@ -57,11 +124,17 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
 	border-radius: 2px;
 	margin-bottom: 15px;
-	border: 1px solid #ddd;
+	border: 1px solid #e9e9e9;
 }
 .info-box.info-box-sm{
     min-height: 80px;
     margin-bottom: 10px;
+}
+.info-box-more {
+    float: right;
+    top: 4px;
+    position: absolute;
+    right: 10px;
 }
 
 .info-box small {
@@ -102,27 +175,26 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 	font-size: 45px;
 	line-height: 90px;
 	background: #eee;
+    <?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
+        filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+    <?php } ?>
 }
 .info-box-sm .info-box-icon {
     width: 80px;
     font-size: 25px;
-    line-height: 100px;
+    line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
 }
 .info-box-module .info-box-icon {
-	height: 108px;
+	height: 98px;
 }
 .info-box-icon > img {
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
     max-width: 55%;
-}
-.info-box-content {
-	padding: 5px 10px;
-	margin-left: 90px;
 }
 
 .info-box-icon-text{
@@ -189,7 +261,7 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 
 .info-box-content {
 	padding: 5px 10px;
-	margin-left: 90px;
+	margin-left: 84px;
 }
 
 .info-box-number {
@@ -209,10 +281,13 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
-	padding-bottom: 5px;
+	margin-bottom: 6px;
+}
+.info-box-title {
+    width: calc(100% - 20px);
 }
 .info-box-text{
-	font-size: 12px;
+	font-size: 0.92em;
 }
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
@@ -233,39 +308,39 @@ a.info-box-text{ text-decoration: none;}
 }
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO = -100;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
+if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
 ?>
 .bg-infobox-project i.fa{
-	color: <?php print colorAgressiveness('#605ca8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+	color: #605ca8 !important;
 }
 .bg-infobox-action i.fa{
-	color: <?php print colorAgressiveness('#d84b80', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #d84b80  !important;
 }
 .bg-infobox-propal i.fa,
 .bg-infobox-facture i.fa,
 .bg-infobox-commande i.fa{
-	color: <?php print colorAgressiveness('#abb87b', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #abb87b  !important;
 }
 .bg-infobox-supplier_proposal i.fa,
 .bg-infobox-invoice_supplier i.fa,
 .bg-infobox-order_supplier i.fa{
-	color: <?php print colorAgressiveness('#40b0cf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #40b0cf  !important;
 }
 .bg-infobox-contrat i.fa, .bg-infobox-ticket i.fa{
-	color: <?php print colorAgressiveness('#20a68a', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #20a68a  !important;
 }
 .bg-infobox-bank_account i.fa{
-	color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #b0a53e  !important;
 }
-.bg-infobox-adherent i.fa{
-	color: <?php print colorAgressiveness('#f39c12', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-adherent i.fa, .bg-infobox-member i.fa{
+	color: #755114  !important;
 }
 .bg-infobox-expensereport i.fa{
-	color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #755114  !important;
 }
 .bg-infobox-holiday i.fa{
-	color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	color: #755114  !important;
 }
 
 
@@ -296,7 +371,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .fa-dol-bank_account:before {
 	content: "\f19c";
 }
-.fa-dol-adherent:before {
+.fa-dol-member:before {
 	content: "\f0c0";
 }
 .fa-dol-expensereport:before {
@@ -390,6 +465,18 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	min-width: 350px;
     max-width: 350px;
 }
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+	    min-width: 315px;
+	    max-width: 315px;
+	}
+}
+@media only screen and (max-width: 767px) {
+	.info-box-module {
+		min-width: 260px;
+	}
+}
+
 .info-box-module .info-box-content {
-	height: 7em;
+	height: 6.3em;
 }

@@ -122,9 +122,7 @@ if ($object->id > 0)
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
     dol_fiche_end();
-}
-else
-{
+} else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");
 }

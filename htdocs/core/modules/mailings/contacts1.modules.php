@@ -153,8 +153,7 @@ class mailing_contacts1 extends MailingTargets
 				$s .= '<option value="'.dol_escape_htmltag($obj->poste).'">'.dol_escape_htmltag($obj->poste).' ('.$obj->nb.')</option>';
 				$i++;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		$s .= '</select>';
 
 		$s .= ' ';
@@ -190,13 +189,10 @@ class mailing_contacts1 extends MailingTargets
 					$s .= '<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$s .= '<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		$s .= '</select>';
 
 		$s .= '<br>';
@@ -225,8 +221,7 @@ class mailing_contacts1 extends MailingTargets
 				$s .= '<option value="prospectslevel'.$obj->code.'">'.$langs->trans("ThirdPartyProspects").' ('.$langs->trans("ProspectLevelShort").'='.$level.')</option>';
 				$i++;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		$s .= '<option value="customers">'.$langs->trans("ThirdPartyCustomers").'</option>';
 		//$s.='<option value="customersidprof">'.$langs->trans("ThirdPartyCustomersWithIdProf12",$langs->trans("ProfId1"),$langs->trans("ProfId2")).'</option>';
 		$s .= '<option value="suppliers">'.$langs->trans("ThirdPartySuppliers").'</option>';
@@ -265,13 +260,10 @@ class mailing_contacts1 extends MailingTargets
 					$s .= '<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$s .= '<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		$s .= '</select>';
 
 		$s .= ' ';
@@ -307,13 +299,10 @@ class mailing_contacts1 extends MailingTargets
 					$s .= '<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$s .= '<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		$s .= '</select>';
 
 		return $s;
@@ -369,8 +358,7 @@ class mailing_contacts1 extends MailingTargets
 				$prospectlevel[$obj->code] = $obj->label;
 				$i++;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		// Request must return: id, email, fk_contact, lastname, firstname, other
 		$sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact, sp.lastname, sp.firstname, sp.civility as civility_id, sp.poste as jobposition,";
@@ -447,9 +435,7 @@ class mailing_contacts1 extends MailingTargets
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;

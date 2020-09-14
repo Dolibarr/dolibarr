@@ -70,8 +70,7 @@ if ($action == 'activate_delivery')
 	dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: confexped.php");
 	exit;
-}
-elseif ($action == 'disable_delivery')
+} elseif ($action == 'disable_delivery')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
 	header("Location: confexped.php");
@@ -93,7 +92,7 @@ print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup')
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'sending');
+dol_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'shipment');
 
 // Miscellaneous parameters
 
@@ -135,9 +134,7 @@ print '<td class="center">';
 if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
 	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-else
-{
+} else {
 	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 

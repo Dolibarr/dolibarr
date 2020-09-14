@@ -182,14 +182,10 @@ if ($id > 0 || !empty($ref))
 		$permtoedit = $user->rights->commande->creer;
 		$param = '&id='.$object->id.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-else
-{
+} else {
 	header('Location: index.php');
 	exit;
 }

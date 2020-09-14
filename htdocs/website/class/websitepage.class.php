@@ -49,6 +49,7 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'file-code';
 
+
 	/**
      * @var int ID
      */
@@ -164,6 +165,35 @@ class WebsitePage extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
+	// If this object has a subtable with lines
+
+	/**
+	 * @var int    Name of subtable line
+	 */
+	//public $table_element_line = 'mymodule_myobjectline';
+
+	/**
+	 * @var int 	Field with ID of parent key if this field has a parent or for child tables
+	 */
+	public $fk_element = 'fk_website_page';
+
+	/**
+	 * @var int    Name of subtable class that manage subtable lines
+	 */
+	//public $class_element_line = 'MyObjectline';
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	//protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('categorie_website_page');
+
+
+
 	/**
 	 * Constructor
 	 *
@@ -238,8 +268,7 @@ class WebsitePage extends CommonObject
 		{
 			$sql .= ' AND t.rowid = '.$id;
 		}
-		else
-		{
+		else {
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
@@ -359,7 +388,7 @@ class WebsitePage extends CommonObject
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
 					$foundnull = 0;
-					foreach(explode(',', $value) as $tmpvalue) {
+					foreach (explode(',', $value) as $tmpvalue) {
 						if ($tmpvalue == 'null') {
 							$foundnull++;
 							continue;
@@ -523,9 +552,33 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		$result = $this->deleteCommon($user, $trigger);
+		$error = 0;
 
-		if ($result > 0)
+		// Delete all child tables
+		if (!$error) {
+			foreach ($this->childtablesoncascade as $table)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql .= " WHERE fk_website_page = ".(int) $this->id;
+
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+					break;
+				}
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteCommon($user, $trigger);
+			if ($result <= 0)
+			{
+				$error++;
+			}
+		}
+
+		if (!$error)
 		{
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
@@ -540,10 +593,17 @@ class WebsitePage extends CommonObject
 
 				dol_delete_file($filealias);
 				dol_delete_file($filetpl);
+			} else {
+				$this->error = $websiteobj->error;
+				$this->errors = $websiteobj->errors;
 			}
 		}
 
-		return $result;
+		if (! $error) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	/**
@@ -721,6 +781,21 @@ class WebsitePage extends CommonObject
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return $this->setCategoriesCommon($categories, Categorie::TYPE_WEBSITE_PAGE);
+	}
 
 	/**
 	 * Initialise object with example values

@@ -48,8 +48,7 @@ if (!$sortfield)
 {
 	if ($agentid > 0)
 		$sortfield = "s.nom";
-	else
-	    $sortfield = "u.lastname";
+	else $sortfield = "u.lastname";
 }
 
 $startdate = $enddate = '';
@@ -156,16 +155,14 @@ $sql .= " AND sc.fk_soc = f.fk_soc";
 $sql .= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (!empty($conf->global->AGENT_CONTACT_TYPE))
 	$sql .= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
-else
-	$sql .= " AND sc.fk_user = u.rowid";
+else $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
 $sql .= ' AND s.entity IN ('.getEntity('societe').')';
 $sql .= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
 	if (!empty($conf->global->AGENT_CONTACT_TYPE))
   		$sql .= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".$agentid.") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".$agentid."))";
-	else
-	    $sql .= " AND sc.fk_user = ".$agentid;
+	else $sql .= " AND sc.fk_user = ".$agentid;
 }
 if (!empty($startdate))
   $sql .= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -205,7 +202,7 @@ if ($result)
 
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
+	else // value is 'costprice' or 'pmp'
 	    $labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
@@ -217,8 +214,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	if ($agentid > 0)
 		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
-	else
-		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
+	else print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -307,9 +303,7 @@ if ($result)
     }
 	print "</table>";
 	print '</div>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 $db->free($result);

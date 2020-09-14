@@ -66,8 +66,7 @@ if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$textobject = $langs->trans('Services');
-}
-elseif (empty($conf->service->enabled))
+} elseif (empty($conf->service->enabled))
 {
 	$title = $langs->trans('ProductSetup');
 	$textobject = $langs->trans('Products');

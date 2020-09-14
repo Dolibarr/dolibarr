@@ -113,7 +113,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	$coldisplay++;
     if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
     } else {
-        print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';
+        print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'">'.img_edit().'</a>';
     }
     print '</td>';
 

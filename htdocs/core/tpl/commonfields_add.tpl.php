@@ -56,7 +56,8 @@ foreach ($object->fields as $key => $val)
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOST($key, 'int');
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOST($key, 'none');
 	else $value = GETPOST($key, 'alpha');
-	print $object->showInputField($val, $key, $value, '', '', '', 0);
+	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	else print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';
 	print '</tr>';
 }

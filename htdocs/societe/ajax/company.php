@@ -67,9 +67,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 	}
 
 	echo json_encode($outjson);
-}
-else
-{
+} else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$langs->load("companies");

@@ -231,18 +231,15 @@ $coldisplay++;
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
-				else
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+				else echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
-			}
-			elseif (!empty($conf->global->DISPLAY_MARK_RATES))
+			} elseif (!empty($conf->global->DISPLAY_MARK_RATES))
 			{
 				$mark_rate = (isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
-				else
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+				else echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -275,7 +272,7 @@ if (!empty($extrafields))
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
-	print '<script type="text/javascript">';
+	print '<script>';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
@@ -300,7 +297,7 @@ if (!empty($extrafields))
 ?>
 
 
-<script type="text/javascript">
+<script>
 
 jQuery(document).ready(function()
 {

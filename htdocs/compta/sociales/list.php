@@ -80,9 +80,7 @@ if (!GETPOSTISSET('search_typeid'))
 		$part = explode(':', $val);
 		if ($part[0] == 'cs.fk_type') $search_typeid = $part[1];
 	}
-}
-else
-{
+} else {
 	$search_typeid = GETPOST('search_typeid', 'int');
 }
 
@@ -152,6 +150,7 @@ if ($search_typeid) {
     $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+if (!empty($conf->projet->enabled)) $sql .= ", p.rowid, p.ref, p.title";
 $sql .= $db->order($sortfield, $sortorder);
 
 $totalnboflines = 0;
@@ -208,9 +207,7 @@ if ($resql)
 		$countrynotdefined = $langs->trans("ErrorSetACountryFirst");
 		print $countrynotdefined;
 		print '</div>';
-	}
-	else
-	{
+	} else {
 	    print '<div class="div-table-responsive">';
 	    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -313,9 +310,7 @@ if ($resql)
 			if ($obj->periode)
 			{
 				print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
-			}
-			else
-			{
+			} else {
 				print '&nbsp;';
 			}
 			print "</td>\n";
@@ -345,9 +340,7 @@ if ($resql)
 		print '</div>';
 	}
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -116,7 +116,7 @@ $db->commit();
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'default', '', -1);
 
 
 // Show warning about external users
@@ -229,9 +229,7 @@ if ($result)
 			print '<td class="center">';
 			print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td>';
 			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
 			print '</td>';
@@ -247,8 +245,7 @@ if ($result)
 
         $i++;
     }
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 print '</table>';
 print '</div>';
 

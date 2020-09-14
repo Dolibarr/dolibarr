@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
-/* Copyright (C) 2030   Thibault FOUCART     	<support@ptibogxiv.net>
+/* Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,8 +132,7 @@ class Users extends DolibarrApi
 	            }
 	            $i++;
 	        }
-	    }
-	    else {
+	    } else {
 	        throw new RestException(503, 'Error when retrieve User list : '.$db->lasterror());
 	    }
 	    if (!count($obj_ret)) {
@@ -144,13 +143,13 @@ class Users extends DolibarrApi
 
 	/**
 	 * Get properties of an user object
-	 * Return an array with user informations
 	 *
 	 * @param 	int 	$id 					ID of user
 	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return 	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws RestException 401     Insufficient rights
+	 * @throws RestException 404     User or group not found
 	 */
     public function get($id, $includepermissions = 0)
     {
@@ -159,6 +158,78 @@ class Users extends DolibarrApi
 		//}
 
 		$result = $this->useraccount->fetch($id);
+		if (!$result)
+		{
+			throw new RestException(404, 'User not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+		{
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($includepermissions) {
+			$this->useraccount->getRights();
+		}
+
+		return $this->_cleanObjectDatas($this->useraccount);
+	}
+
+	/**
+	 * Get properties of an user object by login
+	 *
+	 * @param 	string 	$login 					Login of user
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed data without useless information
+	 *
+	 * @url GET login/{login}
+	 *
+	 * @throws RestException 401     Insufficient rights
+	 * @throws RestException 404     User or group not found
+	 */
+    public function getByLogin($login, $includepermissions = 0)
+    {
+		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
+			//throw new RestException(401);
+		//}
+
+		$result = $this->useraccount->fetch('', $login);
+		if (!$result)
+		{
+			throw new RestException(404, 'User not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+		{
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($includepermissions) {
+			$this->useraccount->getRights();
+		}
+
+		return $this->_cleanObjectDatas($this->useraccount);
+	}
+
+	/**
+	 * Get properties of an user object by Email
+	 *
+	 * @param 	string 	$email 					Email of user
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
+	 * @return 	array|mixed data without useless information
+	 *
+	 * @url GET email/{email}
+	 *
+	 * @throws RestException 401     Insufficient rights
+	 * @throws RestException 404     User or group not found
+	 */
+    public function getByEmail($email, $includepermissions = 0)
+    {
+		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
+			//throw new RestException(401);
+		//}
+
+		$result = $this->useraccount->fetch('', '', '', 0, -1, $email);
 		if (!$result)
 		{
 			throw new RestException(404, 'User not found');
@@ -288,9 +359,7 @@ class Users extends DolibarrApi
 		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0)
 		{
 			return $this->get($id);
-		}
-		else
-		{
+		} else {
 			throw new RestException(500, $this->useraccount->error);
 		}
     }
@@ -363,9 +432,7 @@ class Users extends DolibarrApi
 		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
 		{
 			$entity = (!empty($entity) ? $entity : $conf->entity);
-		}
-		else
-		{
+		} else {
 			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
 			// hack the security by giving himself permissions on another entity.
 			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
@@ -450,8 +517,7 @@ class Users extends DolibarrApi
 	            }
 	            $i++;
 	        }
-	    }
-	    else {
+	    } else {
 	        throw new RestException(503, 'Error when retrieve Group list : '.$db->lasterror());
 	    }
 	    if (!count($obj_ret)) {
@@ -561,7 +627,7 @@ class Users extends DolibarrApi
 	    unset($object->openid);
 
 	    unset($object->lines);
-	    unset($object->modelpdf);
+	    unset($object->model_pdf);
 	    unset($object->skype);
 	    unset($object->twitter);
 	    unset($object->facebook);

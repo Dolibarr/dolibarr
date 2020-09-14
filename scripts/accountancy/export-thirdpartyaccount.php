@@ -65,10 +65,8 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			$month_end = $month_start - 1;
 			if ($month_end < 1)
 				$month_end = 12;
-			else
-				$year_end++;
-		} else
-			$month_end = $month_start;
+			else $year_end++;
+		} else $month_end = $month_start;
 		$date_start = dol_get_first_day($year_start, $month_start, false);
 		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}

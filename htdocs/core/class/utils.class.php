@@ -133,8 +133,7 @@ class Utils
 					$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
 					$count += $result;
 					$countdeleted += $tmpcountdeleted;
-				}
-				elseif ($filesarray[$key]['type'] == 'file')
+				} elseif ($filesarray[$key]['type'] == 'file')
 				{
 					// If (file that is not logfile) or (if mode is logfile)
 					if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile')
@@ -144,9 +143,7 @@ class Utils
 						{
 							$count++;
 							$countdeleted++;
-						}
-						else
-						{
+						} else {
 							$counterror++;
 						}
 					}
@@ -166,8 +163,7 @@ class Utils
 		{
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) $this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
-		}
-		else $this->output = $langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)' : '');
+		} else $this->output = $langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)' : '');
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
 		if (!empty($conf->api->enabled))
@@ -266,10 +262,8 @@ class Utils
 			if (GETPOST("sql_structure", "alpha") || $usedefault)
 			{
 				if (GETPOST("drop", "alpha") || $usedefault)	$param .= " --add-drop-table=TRUE";
-				else 				       	         		    $param .= " --add-drop-table=FALSE";
-			}
-			else
-			{
+				else $param .= " --add-drop-table=FALSE";
+			} else {
 				$param .= " -t";
 			}
 			if (GETPOST("disable-add-locks", "alpha")) $param .= " --add-locks=FALSE";
@@ -282,9 +276,7 @@ class Utils
 				if (GETPOST("delayed", "alpha"))	 	 $param .= " --delayed-insert";
 				if (GETPOST("sql_ignore", "alpha"))	 $param .= " --insert-ignore";
 				if (GETPOST("hexforbinary", "alpha") || $usedefault) $param .= " --hex-blob";
-			}
-			else
-			{
+			} else {
 				$param .= " -d"; // No row information (no data)
 			}
 			$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
@@ -325,9 +317,7 @@ class Utils
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
 						$ok = 0;
-					}
-					else
-					{
+					} else {
 						$i = 0;
 						if (!empty($output_arr))
 						{
@@ -366,9 +356,7 @@ class Utils
 
 				if (!empty($conf->global->MAIN_UMASK))
 					@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
 				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 				$errormsg = $langs->trans("ErrorFailedToWriteInDir");
@@ -390,9 +378,7 @@ class Utils
 				if ($compression == 'bz')   bzclose($handle);
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
 					$errormsg = '';
-				}
-				else
-				{
+				} else {
 					// Renommer fichier sortie en fichier erreur
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
@@ -430,9 +416,7 @@ class Utils
 				$this->backupTables($outputfiletemp);
 				dol_compress_file($outputfiletemp, $outputfile, $compression);
 				unlink($outputfiletemp);
-			}
-			else
-			{
+			} else {
 				$this->backupTables($outputfile);
 			}
 
@@ -612,15 +596,12 @@ class Utils
 		{
 			try {
 				$moduleobj = new $class($this->db);
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				$error++;
 				dol_print_error($e->getMessage());
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$langs->load("errors");
 			dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
@@ -689,9 +670,7 @@ class Utils
 						if ($filecursor)
 						{
 							fwrite($fhandle, ($i ? "\n<<<\n\n" : "").$filecursor."\n");
-						}
-						else
-						{
+						} else {
 							$this->error = 'Failed to concat content of file '.$spec['fullname'];
 							return -1;
 						}
@@ -759,25 +738,19 @@ class Utils
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 
 				chdir($currentdir);
-			}
-			else
-			{
+			} else {
 				$result = 0;
 			}
 
 			if ($result > 0)
 			{
 				return 1;
-			}
-			else
-			{
+			} else {
 				$error++;
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorFailToGenerateFile", $outputfiledoc);
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorCheckVersionIsDefined");
@@ -934,9 +907,7 @@ class Utils
 			{
 				$tables[] = $row[0];
 			}
-		}
-		else
-		{
+		} else {
 			$tables = is_array($tables) ? $tables : explode(',', $tables);
 		}
 
@@ -996,9 +967,7 @@ class Utils
 			if (empty($row2[1]))
 			{
 				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empy string when it should not.\n");
-			}
-			else
-			{
+			} else {
 				fwrite($handle, $row2[1].";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 

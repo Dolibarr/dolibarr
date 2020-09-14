@@ -102,7 +102,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -116,9 +116,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			return true;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -136,8 +134,8 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";

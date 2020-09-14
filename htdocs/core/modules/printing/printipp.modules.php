@@ -115,16 +115,12 @@ class printing_printipp extends PrintingDriver
             {
             	dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
                 $ipp->setPrinterURI($obj->printer_id);
-            }
-            else
-            {
+            } else {
                 if (!empty($conf->global->PRINTIPP_URI_DEFAULT))
                 {
                     dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
                     $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
-                }
-                else
-                {
+                } else {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;

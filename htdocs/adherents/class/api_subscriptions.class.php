@@ -99,10 +99,8 @@ class Subscriptions extends DolibarrApi
         $sql .= " FROM ".MAIN_DB_PREFIX."subscription as t";
         $sql .= ' WHERE 1 = 1';
         // Add sql filters
-        if ($sqlfilters)
-        {
-            if (!DolibarrApi::_checkFilters($sqlfilters))
-            {
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
 	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -111,8 +109,7 @@ class Subscriptions extends DolibarrApi
 
         $sql .= $db->order($sortfield, $sortorder);
         if ($limit) {
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -121,12 +118,10 @@ class Subscriptions extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
             $num = $db->num_rows($result);
-            while ($i < min($limit, $num))
-            {
+            while ($i < min($limit, $num)) {
                 $obj = $db->fetch_object($result);
                 $subscription = new Subscription($this->db);
                 if ($subscription->fetch($obj->rowid)) {
@@ -134,8 +129,7 @@ class Subscriptions extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve subscription list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -193,13 +187,10 @@ class Subscriptions extends DolibarrApi
             $subscription->$field = $value;
         }
 
-        if ($subscription->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($subscription->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
-        }
-        else
-        {
-        	throw new RestException(500, $subscription->error);
+        } else {
+            throw new RestException(500, $subscription->error);
         }
     }
 

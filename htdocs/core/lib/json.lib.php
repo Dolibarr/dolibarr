@@ -53,9 +53,7 @@ function dol_json_encode($elements)
 	if (is_object($elements))	// Count number of properties for an object
 	{
 		foreach ($elements as $key => $value) $num++;
-	}
-	else
-	{
+	} else {
 	    $num = count($elements);
 	}
 	//var_dump($num);
@@ -74,9 +72,7 @@ function dol_json_encode($elements)
 			if ($i !== $last) $output .= ',';
 		}
 		$output .= ']';
-	}
-	else
-	{
+	} else {
 		// associative (object)
 		$output = '{';
 		$last = $num - 1;
@@ -197,11 +193,10 @@ function _val($val)
 	    }
 
 	    return '"'.$ascii.'"';
-	}
-	elseif (is_int($val)) return sprintf('%d', $val);
+	} elseif (is_int($val)) return sprintf('%d', $val);
 	elseif (is_float($val)) return sprintf('%F', $val);
 	elseif (is_bool($val)) return ($val ? 'true' : 'false');
-	else  return 'null';
+	else return 'null';
 }
 
 if (!function_exists('json_decode'))
@@ -244,8 +239,7 @@ function dol_json_decode($json, $assoc = false)
 			elseif (($json[$i] == '}') || ($json[$i] == ']')) $out .= ')';
 			elseif ($json[$i] == ':') $out .= ' => ';
 			else $out .= $json[$i];
-		}
-		else $out .= $json[$i];
+		} else $out .= $json[$i];
 		if ($json[$i] == '"' && $json[($i - 1)] != "\\") $comment = !$comment;
 	}
 

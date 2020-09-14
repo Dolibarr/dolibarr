@@ -211,15 +211,11 @@ if ($id > 0)
 					}
 
 					$db->free($resqlp);
-				}
-				else
-				{
+				} else {
 					dol_print_error($db);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -288,9 +284,7 @@ if ($id > 0)
 
 		print "</table>";
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

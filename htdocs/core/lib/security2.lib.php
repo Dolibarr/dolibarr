@@ -101,9 +101,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
     					$dol_screenwidth = GETPOST('screenwidth');
     					$dol_screenheight = GETPOST('screenheight');
     				}
-    			}
-    			else
-    			{
+    			} else {
     				dol_syslog("Authentication KO - failed to load file '".$authfile."'", LOG_ERR);
     				sleep(1);
     				// Load translation files required by the page
@@ -179,9 +177,7 @@ if (!function_exists('dol_loginfunction'))
 				$tmp = dol_buildpath($reldir.'login.tpl.php');
 				if (file_exists($tmp)) { $template_dir = preg_replace('/login\.tpl\.php$/', '', $tmp); break; }
 			}
-		}
-		else
-		{
+		} else {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
@@ -226,13 +222,11 @@ if (!function_exists('dol_loginfunction'))
 		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 		{
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		}
-		elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 		{
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 			$width = 128;
-		}
-		elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
+		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
 		{
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 		}
@@ -279,7 +273,7 @@ if (!function_exists('dol_loginfunction'))
 		// Set jquery theme
 		$dol_loginmesg = (!empty($_SESSION["dol_loginmesg"]) ? $_SESSION["dol_loginmesg"] : '');
 
-		$favicon = DOL_URL_ROOT.'/theme/dolibarr_logo_256x256.png';
+		$favicon = DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png';
 		if (!empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (!empty($conf->global->MAIN_FAVICON_URL)) $favicon = $conf->global->MAIN_FAVICON_URL;
 
@@ -363,8 +357,7 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd = $val;
 					$lineofpass = 1;
 				}
-			}
-			elseif (preg_match('/^[^#]*dolibarr_main_db_pass[\s]*=[\s]*(.*)/i', $buffer, $reg))
+			} elseif (preg_match('/^[^#]*dolibarr_main_db_pass[\s]*=[\s]*(.*)/i', $buffer, $reg))
 			{
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
@@ -375,9 +368,7 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
-				}
-				else
-				{
+				} else {
 					$passwd = $val;
 					$val = dol_encode($val);
 					$passwd_crypted = $val;
@@ -400,9 +391,7 @@ function encodedecode_dbpassconf($level = 0)
 
 				//print 'passwd = '.$passwd.' - passwd_crypted = '.$passwd_crypted;
 				//exit;
-			}
-			else
-			{
+			} else {
 				$config .= $buffer;
 			}
 		}
@@ -422,15 +411,11 @@ function encodedecode_dbpassconf($level = 0)
 			//@chmod($file, octdec('0600'));
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_syslog("encodedecode_dbpassconf Failed to open conf.php file for writing", LOG_WARNING);
 			return -1;
 		}
-	}
-	else
-	{
+	} else {
 		dol_syslog("encodedecode_dbpassconf Failed to read conf.php", LOG_ERR);
 		return -2;
 	}
@@ -463,38 +448,36 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $lowercase{random_int(0, $max)};
+				$randomCode .= $lowercase[random_int(0, $max)];
 			}
 			$max = strlen($uppercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $uppercase{random_int(0, $max)};
+				$randomCode .= $uppercase[random_int(0, $max)];
 			}
 			$max = strlen($numbers) - 1;
 			for ($x = 0; $x < $nbofcharlast; $x++) {
-				$randomCode .= $numbers{random_int(0, $max)};
+				$randomCode .= $numbers[random_int(0, $max)];
 			}
 
 			$generated_password = str_shuffle($randomCode);
-		}
-		else	// Old platform, non cryptographic random
+		} else // Old platform, non cryptographic random
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $lowercase{mt_rand(0, $max)};
+				$randomCode .= $lowercase[mt_rand(0, $max)];
 			}
 			$max = strlen($uppercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $uppercase{mt_rand(0, $max)};
+				$randomCode .= $uppercase[mt_rand(0, $max)];
 			}
 			$max = strlen($numbers) - 1;
 			for ($x = 0; $x < $nbofcharlast; $x++) {
-				$randomCode .= $numbers{mt_rand(0, $max)};
+				$randomCode .= $numbers[mt_rand(0, $max)];
 			}
 
 			$generated_password = str_shuffle($randomCode);
 		}
-	}
-	elseif (!empty($conf->global->USER_PASSWORD_GENERATED))
+	} elseif (!empty($conf->global->USER_PASSWORD_GENERATED))
 	{
 		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier = $nomclass.".class.php";
@@ -512,11 +495,9 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		$max = strlen($numbers) - 1;
 		if (function_exists('random_int'))	// Cryptographic random
 		{
-			$generated_password = str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
-		}
-		else
-		{
-			$generated_password = str_replace($replaceambiguouschars, $numbers{mt_rand(0, $max)}, $generated_password);
+			$generated_password = str_replace($replaceambiguouschars, $numbers[random_int(0, $max)], $generated_password);
+		} else {
+			$generated_password = str_replace($replaceambiguouschars, $numbers[mt_rand(0, $max)], $generated_password);
 		}
 	}
 

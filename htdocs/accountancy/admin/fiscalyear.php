@@ -79,6 +79,7 @@ $object = new Fiscalyear($db);
 $max = 100;
 
 $form = new Form($db);
+$fiscalyearstatic = new Fiscalyear($db);
 
 $title = $langs->trans('AccountingPeriods');
 $helpurl = "";
@@ -132,13 +133,15 @@ if ($result)
 	print '</tr>';
 
 	if ($num) {
-		$fiscalyearstatic = new Fiscalyear($db);
-
 		while ($i < $num && $i < $max) {
 			$obj = $db->fetch_object($result);
+
 			$fiscalyearstatic->id = $obj->rowid;
+
 			print '<tr class="oddeven">';
-			print '<td><a href="fiscalyear_card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowFiscalYear"), "technic").' '.$obj->rowid.'</a></td>';
+			print '<td>';
+			print $fiscalyearstatic->getNomUrl(1);
+			print '</td>';
 			print '<td class="left">'.$obj->label.'</td>';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_start), 'day').'</td>';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_end), 'day').'</td>';

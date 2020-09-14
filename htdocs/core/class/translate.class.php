@@ -95,8 +95,7 @@ class Translate
 			$langpref = str_replace("-", "_", $langpref);
 			$langlist = preg_split("/[;,]/", $langpref);
 			$codetouse = preg_replace('/[^_a-zA-Z]/', '', $langlist[0]);
-		}
-		else $codetouse = $srclang;
+		} else $codetouse = $srclang;
 
 		// We redefine $srclang
 		$langpart = explode("_", $codetouse);
@@ -111,10 +110,8 @@ class Translate
 				$srclang = strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				$longforlong = array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang = $longforlong[strtolower($srclang)];
-			}
-			else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
-		}
-		else {						// If it's for a codetouse that is a short code xx
+			} else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
+		} else {						// If it's for a codetouse that is a short code xx
     	    // Array to convert short lang code into long code.
 	        $longforshort = array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'nb'=>'nb_NO', 'no'=>'nb_NO');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang = $longforshort[strtolower($langpart[0])];
@@ -165,18 +162,19 @@ class Translate
      *
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
      *
-	 *  @param	string	$domain      		File name to load (.lang file). Must be "file" or "file@module" for module language files:
- 	 *										If $domain is "file@module" instead of "file" then we look for module lang file
-	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
-	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
-	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
-	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
-	 * 	@param	int		$forcelangdir		To force a different lang directory
-	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
-	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *  @param	string	$domain      				File name to load (.lang file). Must be "file" or "file@module" for module language files:
+ 	 *												If $domain is "file@module" instead of "file" then we look for module lang file
+	 *												in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+	 *												then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
+	 *  @param	integer	$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
+	 * 	@param	int		$stopafterdirection			Stop when the DIRECTION tag is found (optimize speed)
+	 * 	@param	int		$forcelangdir				To force a different lang directory
+	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
+	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
+	 *	@return	int									<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs()
 	 */
-	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
+	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0)
 	{
 		global $conf, $db;
 
@@ -207,7 +205,8 @@ class Translate
 		}
 
         // Check cache
-		if (!empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain
+		if (!empty($this->_tab_loaded[$newdomain])
+			&& ($this->_tab_loaded[$newdomain] != 2 || empty($forceloadifalreadynotfound))) // File already loaded and found and not forced for this domain
 		{
 			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
@@ -302,12 +301,10 @@ class Translate
 												$tabtranslatedomain[$key] = $value;
 											}
 										}
-									}
-									elseif ($key[0] == '#')
+									} elseif ($key[0] == '#')
 									{
 									    continue;
-									}
-									else {
+									} else {
 										// Convert some strings: Parse and render carriage returns. Also, change '\\s' into '\s' because transifex sync pull the string '\s' into string '\\s'
 										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
@@ -515,21 +512,28 @@ class Translate
     					}
     				}
     			}
-		    }
-		    else
-		    {
+		    } else {
 		        dol_print_error($db);
 		    }
 		}
 
 		if ($fileread) $this->_tab_loaded[$newdomain] = 1; // Set domain file as loaded
 
-		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Marque ce cas comme non trouve (no lines found for language)
+		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Mark this case as not found (no lines found for language)
 
 		return 1;
 	}
 
-
+	/**
+	 * Get information with result of loading data for domain
+	 *
+	 * @param	string		$domain		Domain to check
+	 * @return 	int						0, 1, 2...
+	 */
+	public function isLoaded($domain)
+	{
+		return $this->_tab_loaded[$domain];
+	}
 
 	/**
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
@@ -546,30 +550,28 @@ class Translate
     {
 		global $conf, $db;
 
-		if (!is_string($key)) return 'ErrorBadValueForParamNotAString'; // Avoid multiple errors with code not using function correctly.
+		if (!is_string($key)) {
+			//xdebug_print_function_stack('ErrorBadValueForParamNotAString');
+			return 'ErrorBadValueForParamNotAString'; // Avoid multiple errors with code not using function correctly.
+		}
 
 		$newstr = $key;
 	    if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
-        }
-		elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg))
+        } elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg))
 		{
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
-		}
-		elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg))
+		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg))
 		{
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		}
-        elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg))
+		} elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
-        }
-        elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg))
+        } elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
-        }
-        elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg))
+        } elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg))
         {
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
@@ -636,8 +638,7 @@ class Translate
             $str = str_replace(array('__lt__', '__gt__', '__quot__'), array('<', '>', '"',), $str);
 
 			return $str;
-		}
-		else								// Translation is not available
+		} else // Translation is not available
 		{
 		    //if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
@@ -707,9 +708,7 @@ class Translate
             }
 
             return $str;
-		}
-		else
-		{
+		} else {
 		    if ($key[0] == '$') { return dol_eval($key, 1); }
 			return $this->getTradFromKey($key);
 		}
@@ -825,9 +824,7 @@ class Translate
 				if ($usecode == 1 || !empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
 				{
 				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir), $maxlength);
-				}
-				else
-				{
+				} else {
 					$langs_available[$dir] = $this->trans('Language_'.$dir);
 				}
 				if ($mainlangonly) {
@@ -956,9 +953,7 @@ class Translate
 
 			$db->free($resql);
 			return $this->cache_labels[$tablename][$key];
-		}
-		else
-		{
+		} else {
 			$this->error = $db->lasterror();
 			return -1;
 		}
@@ -1056,9 +1051,7 @@ class Translate
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 			return -1;
 		}

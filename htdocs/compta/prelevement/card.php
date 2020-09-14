@@ -31,10 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'withdrawals'));
-
-if (!$user->rights->prelevement->bons->lire)
-accessforbidden();
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
 // Security check
 if ($user->socid > 0) accessforbidden();
@@ -44,6 +41,7 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
+$type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -65,6 +63,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
+if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+	accessforbidden();
+}
+if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -76,34 +81,38 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($action == 'confirm_delete')
-    {
-        $res = $object->delete($user);
-        if ($res > 0)
-        {
-            header("Location: index.php");
-            exit;
-        }
-    }
+	if ($action == 'confirm_delete')
+	{
+		$res = $object->delete($user);
+		if ($res > 0)
+		{
+			if ($object->type == 'bank-transfer') {
+				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+			}
+			exit;
+		}
+	}
 
-    // Seems to no be used and replaced with $action == 'infocredit'
-    if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
-    {
-        $res = $object->set_credite();
-        if ($res >= 0)
-        {
-            header("Location: card.php?id=".$id);
-            exit;
-        }
-    }
+	// Seems to no be used and replaced with $action == 'infocredit'
+	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
+	{
+		$res = $object->set_credite();
+		if ($res >= 0)
+		{
+			header("Location: card.php?id=".$id);
+			exit;
+		}
+	}
 
-    if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        /*
+		/*
         if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
         {
             $dir = $conf->prelevement->dir_output.'/receipts';
@@ -124,26 +133,24 @@ if (empty($reshook))
 
 		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
 
-        if ($error)
-        {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
-        }
-    }
+		if ($error)
+		{
+			header("Location: card.php?id=".$id."&error=$error");
+			exit;
+		}
+	}
 
 	// Set direct debit order to credited, create payment and close invoices
 	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 	{
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        $error = $object->set_infocredit($user, $dt);
-
-        if ($error)
-        {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
-        }
-    }
+		$error = $object->set_infocredit($user, $dt);
+		if ($error)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 
@@ -172,7 +179,7 @@ if ($id > 0 || $ref)
 
 	}*/
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -198,7 +205,7 @@ if ($id > 0 || $ref)
 
 		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 		print dol_print_date($object->date_trans, 'day');
-		print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+		print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $object->methodes_trans[$object->method_trans];
 		print '</td></tr>';
@@ -221,7 +228,9 @@ if ($id > 0 || $ref)
 	$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 	print '<tr><td class="titlefield">';
-	print $langs->trans("BankToReceiveWithdraw");
+	$labelofbankfield = "BankToReceiveWithdraw";
+	if ($object->type == 'bank-transfer') $labelofbankfield = 'BankToPayCreditTransfer';
+	print $langs->trans($labelofbankfield);
 	print '</td>';
 	print '<td>';
 	if ($acc->id > 0)
@@ -230,9 +239,13 @@ if ($id > 0 || $ref)
 	print '</tr>';
 
 	print '<tr><td class="titlefield">';
-	print $langs->trans("WithdrawalFile").'</td><td>';
+	$labelfororderfield = 'WithdrawalFile';
+	if ($object->type == 'bank-transfer') $labelfororderfield = 'CreditTransferFile';
+	print $langs->trans($labelfororderfield).'</td><td>';
 	$relativepath = 'receipts/'.$object->ref.'.xml';
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+	$modulepart = 'prelevement';
+	if ($object->type == 'bank-transfer') $modulepart = 'paymentbybanktransfer';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 	print '</td></tr></table>';
 
 	print '</div>';
@@ -290,7 +303,7 @@ if ($id > 0 || $ref)
 		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
-		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
+		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
 		print '</form>';
 		print '<br>';
@@ -403,15 +416,26 @@ if ($id > 0 || $ref)
 
 			print '<td class="right">'.price($obj->amount)."</td>\n";
 
-			print '<td>';
+			print '<td class="right">';
 
 			if ($obj->statut == 3)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
-			}
-			else
-			{
-		  		print "&nbsp;";
+			} else {
+				if ($object->statut == BonPrelevement::STATUS_CREDITED)
+				{
+					if ($obj->statut == 2) {
+						if ($user->rights->prelevement->bons->credit)
+						{
+							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+						} else {
+							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
+						}
+					}
+				} else {
+					//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
+				}
 			}
 
 			print '</td></tr>';
@@ -442,9 +466,7 @@ if ($id > 0 || $ref)
 		print '</form>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

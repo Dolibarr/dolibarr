@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Fel (er) rapporterades under migreringsprocessen så n
 YouTryInstallDisabledByDirLock=Applikationen försökte självuppgradera, men installations- / uppgraderingssidorna har inaktiverats för säkerhet (katalog omdämd med .lock-suffix). <br>
 YouTryInstallDisabledByFileLock=Applikationen försökte självuppgradera, men installations- / uppgraderingssidorna har inaktiverats för säkerhet (genom att det finns en låsfil <strong> install.lock </strong> i katalogen dolibarr documents). <br>
 ClickHereToGoToApp=Klicka här för att gå till din ansökan
-ClickOnLinkOrRemoveManualy=Klicka på följande länk. Om du alltid ser samma sida måste du ta bort / byta namn på filen install.lock i dokumentkatalogen.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test

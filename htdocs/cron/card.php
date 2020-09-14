@@ -65,16 +65,12 @@ if (!empty($cancel))
     if (!empty($id) && empty($backtourl))
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 	    if ($backtourl)
 	    {
 	        header("Location: ".$backtourl);
 	        exit;
-	    }
-	    else
-	    {
+	    } else {
 	        header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		    exit;
 	    }
@@ -90,9 +86,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
-	}
-	else
-	{
+	} else {
 		Header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		exit;
 	}
@@ -105,9 +99,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     {
         setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
         $action = '';
-    }
-    else
-    {
+    } else {
         $now = dol_now(); // Date we start
 
     	$result = $object->run_jobs($user->login);
@@ -116,18 +108,14 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     	{
     		setEventMessages($object->error, $object->errors, 'errors');
     		$action = '';
-    	}
-    	else
-    	{
+    	} else {
     		$res = $object->reprogram_jobs($user->login, $now);
     		if ($res > 0)
     		{
     			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
     			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     			$action = '';
-    		}
-    		else
-    		{
+    		} else {
     			setEventMessages($object->error, $object->errors, 'errors');
     			$action = '';
     		}
@@ -163,8 +151,7 @@ if ($action == 'add')
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'create';
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action = '';
 	}
@@ -199,8 +186,7 @@ if ($action == 'update')
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action = '';
 	}
@@ -217,8 +203,7 @@ if ($action == 'activate')
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action = '';
 	}
@@ -236,8 +221,7 @@ if ($action == 'inactive')
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('CronSaveSucess'), null, 'mesgs');
 		$action = '';
 	}
@@ -257,8 +241,7 @@ llxHeader('', $langs->trans("CronTask"));
 if ($action == 'edit' || empty($action) || $action == 'delete' || $action == 'execute')
 {
 	$head = cron_prepare_head($object);
-}
-elseif ($action == 'create')
+} elseif ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("CronTask"), '', 'title_setup');
 }
@@ -415,9 +398,7 @@ if (($action == "create") || ($action == "edit"))
 	    if ($object->frequency == $i)
 	    {
 	        print "<option value='".$i."' selected>".$i."</option>";
-	    }
-	    else
-	    {
+	    } else {
 	        print "<option value='".$i."'>".$i."</option>";
 	    }
 	}
@@ -426,8 +407,7 @@ if (($action == "create") || ($action == "edit"))
 	if ($object->unitfrequency == "60")
 	{
 	    $input .= ' checked />';
-	}
-	else {
+	} else {
 	    $input .= ' />';
 	}
 	$input .= "<label for=\"frequency_minute\">".$langs->trans('Minutes')."</label>";
@@ -436,8 +416,7 @@ if (($action == "create") || ($action == "edit"))
 	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
 	if ($object->unitfrequency == "3600") {
 	    $input .= ' checked />';
-	}
-	else {
+	} else {
 	    $input .= ' />';
 	}
 	$input .= "<label for=\"frequency_heures\">".$langs->trans('Hours')."</label>";
@@ -446,8 +425,7 @@ if (($action == "create") || ($action == "edit"))
 	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
 	if ($object->unitfrequency == "86400") {
 	    $input .= ' checked />';
-	}
-	else {
+	} else {
 	    $input .= ' />';
 	}
 	$input .= "<label for=\"frequency_jours\">".$langs->trans('Days')."</label>";
@@ -456,8 +434,7 @@ if (($action == "create") || ($action == "edit"))
 	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
 	if ($object->unitfrequency == "604800") {
 	    $input .= ' checked />';
-	}
-	else {
+	} else {
 	    $input .= ' />';
 	}
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
@@ -472,9 +449,7 @@ if (($action == "create") || ($action == "edit"))
 	if (!empty($object->datestart))
 	{
         print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
-	}
-	else
-	{
+	} else {
         print $form->selectDate('', 'datestart', 1, 1, '', "cronform");
 	}
 	print "</td>";
@@ -486,8 +461,7 @@ if (($action == "create") || ($action == "edit"))
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if (!empty($object->dateend)) {
         print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
-	}
-	else {
+	} else {
         print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
 	print "</td>";
@@ -526,9 +500,7 @@ if (($action == "create") || ($action == "edit"))
 	if (!empty($object->datenextrun))
 	{
         print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, '', "cronform");
-	}
-	else
-	{
+	} else {
         print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform");
 	}
 	print "</td>";
@@ -547,9 +519,7 @@ if (($action == "create") || ($action == "edit"))
 	print "</div>";
 
 	print "</form>\n";
-}
-else
-{
+} else {
 	/*
 	 * view card
 	 */
@@ -621,9 +591,7 @@ else
 		if (!$object->entity)
 		{
 			print $langs->trans("AllEntities");
-		}
-		else
-		{
+		} else {
 			$mc->getInfo($object->entity);
 			print $mc->label;
 		}
@@ -681,8 +649,7 @@ else
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!$object->status) print $langs->trans("Disabled");
-	elseif (!empty($object->datenextrun)) { print img_picto('', 'object_calendarday').' '.dol_print_date($object->datenextrun, 'dayhoursec'); }
-	else { print $langs->trans('CronNone'); }
+	elseif (!empty($object->datenextrun)) { print img_picto('', 'object_calendarday').' '.dol_print_date($object->datenextrun, 'dayhoursec'); } else { print $langs->trans('CronNone'); }
 	if ($object->status == Cronjob::STATUS_ENABLED)
 	{
 		if ($object->maxrun && $object->nbrun >= $object->maxrun) print img_warning($langs->trans("MaxRunReached"));
@@ -737,12 +704,10 @@ else
 	if ((empty($user->rights->cron->execute)))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
-	}
-	elseif (empty($object->status))
+	} elseif (empty($object->status))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
-	}
-	else {
+	} else {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
 	}
 

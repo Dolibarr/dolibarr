@@ -150,15 +150,11 @@ class Tva extends CommonObject
             {
             	$this->db->commit();
             	return $this->id;
-            }
-            else
-			{
+            } else {
 				$this->db->rollback();
 				return -1;
             }
-        }
-        else
-		{
+        } else {
 			$this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -224,9 +220,7 @@ class Tva extends CommonObject
     	{
     		$this->db->commit();
     		return 1;
-    	}
-    	else
-    	{
+    	} else {
     		$this->db->rollback();
     		return -1;
     	}
@@ -293,9 +287,7 @@ class Tva extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -404,15 +396,11 @@ class Tva extends CommonObject
 				$ret = $obj->amount;
                 $this->db->free($result);
                 return $ret;
-            }
-            else
-			{
+            } else {
                 $this->db->free($result);
 				return 0;
             }
-        }
-        else
-        {
+        } else {
             print $this->db->lasterror();
             return -1;
         }
@@ -445,15 +433,11 @@ class Tva extends CommonObject
                 $ret = $obj->total_tva;
             	$this->db->free($result);
                 return $ret;
-            }
-            else
-			{
+            } else {
             	$this->db->free($result);
 				return 0;
             }
-        }
-        else
-        {
+        } else {
             print $this->db->lasterror();
             return -1;
         }
@@ -488,15 +472,11 @@ class Tva extends CommonObject
                 $ret = $obj->amount;
             	$this->db->free($result);
                 return $ret;
-            }
-            else
-			{
+            } else {
             	$this->db->free($result);
 				return 0;
             }
-        }
-        else
-        {
+        } else {
             print $this->db->lasterror();
             return -1;
         }
@@ -519,6 +499,7 @@ class Tva extends CommonObject
         $this->amount = price2num(trim($this->amount));
         $this->label = trim($this->label);
 		$this->note = trim($this->note);
+		$this->num_payment = trim($this->num_payment);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
@@ -603,18 +584,16 @@ class Tva extends CommonObject
 					if ($result <= 0) dol_print_error($this->db);
 
 					if ($this->amount > 0) {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), '', '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), $this->num_payment, '', $user);
 					} else {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), '', '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), $this->num_payment, '', $user);
 					}
 
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
-                    }
-					else
-					{
+                    } else {
 						$this->error = $acc->error;
 						$ok = 0;
 					}
@@ -632,21 +611,15 @@ class Tva extends CommonObject
 				{
 					$this->db->commit();
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -3;
 				}
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 return -2;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             $this->db->rollback();
             return -1;
@@ -669,9 +642,7 @@ class Tva extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -710,8 +681,7 @@ class Tva extends CommonObject
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
         	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
@@ -752,9 +722,7 @@ class Tva extends CommonObject
 
             $this->db->free($resql);
             return $amount;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -799,9 +767,7 @@ class Tva extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

@@ -45,8 +45,7 @@ if (!$user->rights->accounting->bind->write)
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else
-{
+else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 }
@@ -192,8 +191,7 @@ if ($action == 'validatehistory') {
 	if ($error)
 	{
 		$db->rollback();
-	}
-	else {
+	} else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
@@ -247,7 +245,12 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 $sql .= "  AND ff.fk_statut > 0";
+$sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
@@ -262,15 +265,13 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -317,7 +318,12 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 $sql .= "  AND ff.fk_statut > 0";
+$sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
@@ -325,33 +331,31 @@ $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
 dol_syslog('htdocs/accountancy/supplier/index.php');
 $resql = $db->query($sql);
 if ($resql) {
-    $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-    while ($row = $db->fetch_row($resql)) {
+	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
-    	for ($i = 2; $i <= 12; $i++) {
-            print '<td class="nowrap right">'.price($row[$i]).'</td>';
-        }
-        print '<td class="nowrap right">'.price($row[13]).'</td>';
-        print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
-        print '</tr>';
-    }
-    $db->free($resql);
+		for ($i = 2; $i <= 12; $i++) {
+			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+		}
+		print '<td class="nowrap right">'.price($row[13]).'</td>';
+		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '</tr>';
+	}
+	$db->free($resql);
 } else {
-    print $db->lasterror(); // Show last sql error
+	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
 print '</div>';
@@ -360,55 +364,60 @@ print '</div>';
 
 if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report that should rely on result of this step ?
 {
-    print '<br>';
-    print '<br>';
+	print '<br>';
+	print '<br>';
 
-    print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
-    //print load_fiche_titre($langs->trans("OtherInfo"), '', '');
+	print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+	//print load_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("Total").'</td>';
-    for ($i = 1; $i <= 12; $i++) {
-    	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-    	if ($j > 12) $j -= 12;
-    	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
-    }
-    print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("Total").'</td>';
+	for ($i = 1; $i <= 12; $i++) {
+		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		if ($j > 12) $j -= 12;
+		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+	}
+	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-    $sql = "SELECT '".$langs->trans("CAHTF")."' AS label,";
-    for ($i = 1; $i <= 12; $i++) {
-    	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-    	if ($j > 12) $j -= 12;
-    	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
-    }
-    $sql .= "  SUM(ffd.total_ht) as total";
-    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
-    $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-    $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
-    $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
-    $sql .= "  AND ff.fk_statut > 0";
-    $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
+	$sql = "SELECT '".$langs->trans("CAHTF")."' AS label,";
+	for ($i = 1; $i <= 12; $i++) {
+		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		if ($j > 12) $j -= 12;
+		$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	}
+	$sql .= "  SUM(ffd.total_ht) as total";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
+	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+	$sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
+	$sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
+	// Define begin binding date
+	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
+	$sql .= "  AND ff.fk_statut > 0";
+	$sql .= "  AND ffd.product_type <= 2";
+	$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 
-    dol_syslog('htdocs/accountancy/supplier/index.php');
-    $resql = $db->query($sql);
-    if ($resql) {
-    	$num = $db->num_rows($resql);
+	dol_syslog('htdocs/accountancy/supplier/index.php');
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 
-    	while ($row = $db->fetch_row($resql)) {
-    		print '<tr><td>'.$row[0].'</td>';
-            for ($i = 1; $i <= 12; $i++) {
-    			print '<td class="nowrap right">'.price($row[$i]).'</td>';
-    		}
-    		print '<td class="nowrap right"><b>'.price($row[13]).'</b></td>';
-    		print '</tr>';
-    	}
-        $db->free($resql);
-    } else {
-        print $db->lasterror(); // Show last sql error
-    }
-    print "</table>\n";
-    print '</div>';
+		while ($row = $db->fetch_row($resql)) {
+			print '<tr><td>'.$row[0].'</td>';
+			for ($i = 1; $i <= 12; $i++) {
+				print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			}
+			print '<td class="nowrap right"><b>'.price($row[13]).'</b></td>';
+			print '</tr>';
+		}
+		$db->free($resql);
+	} else {
+		print $db->lasterror(); // Show last sql error
+	}
+	print "</table>\n";
+	print '</div>';
 }
 
 // End of page

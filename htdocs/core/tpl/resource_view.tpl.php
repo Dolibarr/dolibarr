@@ -49,9 +49,7 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '<div class="tagtd center">'.$form->selectyesno('mandatory', $linked_resource['mandatory'] ? 1 : 0, 1).'</div>';
 			print '<div class="tagtd right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</div>';
-		}
-		else
-		{
+		} else {
 			$class = '';
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
 				$class = 'highlight';
@@ -87,8 +85,7 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 		}
 	}
-}
-else {
+} else {
 	print '<div class="tagtr oddeven">';
 	print '<div class="tagtd opacitymedium">'.$langs->trans('NoResourceLinked').'</div>';
 	print '<div class="tagtd opacitymedium"></div>';

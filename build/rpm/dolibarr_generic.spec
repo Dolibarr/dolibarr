@@ -150,7 +150,7 @@ cui hai bisogno ed essere facile da usare.
 %endif
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
+%{__install} -m 644 doc/images/appicon_64.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}

@@ -880,12 +880,13 @@ function newpopup(url, title) {
  */
 function document_preview(file, type, title)
 {
-	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/webp"];
 	var showOriginalSizeButton = false;
 
 	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
+		/* Not an image */
 		var width='85%';
 		var object_width='100%';
 		var height = ($( window ).height() - 60) * 0.90;
@@ -894,6 +895,7 @@ function document_preview(file, type, title)
 		show_preview('notimage');
 
 	} else {
+		/* This is an image */
 		var object_width=0;
 		var object_height=0;
 
@@ -904,11 +906,13 @@ function document_preview(file, type, title)
 			object_height = this.height;
 
 			width = $( window ).width()*0.90;
+			console.log("object_width="+object_width+" window width="+width);
 			if(object_width < width){
 				console.log("Object width is small, we set width of popup according to image width.");
 				width = object_width + 30
 			}
 			height = $( window ).height()*0.85;
+			console.log("object_height="+object_height+" window height="+height);
 			if(object_height < height){
 				console.log("Object height is small, we set height of popup according to image height.");
 				height = object_height + 80

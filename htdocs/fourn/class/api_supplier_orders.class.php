@@ -175,8 +175,7 @@ class SupplierOrders extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve supplier order list : '.$db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -187,6 +186,8 @@ class SupplierOrders extends DolibarrApi
 
 	/**
 	 * Create supplier order object
+	 *
+	 * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
 	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of supplier order

@@ -208,8 +208,7 @@ class Contacts extends DolibarrApi
 
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve contacts : '.$sql);
 		}
 		if (!count($obj_ret))

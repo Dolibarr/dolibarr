@@ -49,8 +49,7 @@ if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
 	$base = 1;
-}
-elseif ($conf->db->type == 'pgsql')
+} elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname,contype FROM pg_constraint";
 	$base = 2;
@@ -59,9 +58,7 @@ elseif ($conf->db->type == 'pgsql')
 if (!$base)
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
+} else {
 	$resql = $db->query($sql);
 	if ($resql)
 	{

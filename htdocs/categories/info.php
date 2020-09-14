@@ -60,9 +60,9 @@ llxHeader('', $langs->trans('Categories'), '');
 
 //$object->info($object->id);
 
-$head = categories_prepare_head($object, $type);
-
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
+
+$head = categories_prepare_head($object, $type);
 
 dol_fiche_head($head, 'info', $langs->trans($title), -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
@@ -78,14 +78,21 @@ $morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
+print '<br>';
+
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table width="100%"><tr><td>';
+print '<table "border centpercent tableforfield">';
+
+print '<tr><td>';
 dol_print_object_info($object);
-print '</td></tr></table>';
+print '</td></tr>';
+
+print '</table>';
+
 print '</div>';
 
 dol_fiche_end();

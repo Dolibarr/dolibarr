@@ -40,8 +40,7 @@ function checkElementExist($id, $table)
 		$num = $db->num_rows($resql);
 		if ($num > 0) return true;
 		else return false;
-	}
-	else return true; // for security
+	} else return true; // for security
 }
 
 /**
@@ -137,8 +136,7 @@ function clean_data_ecm_directories()
 				if (!$resqlupdate) dol_print_error($db, 'Failed to update');
 			}
 		}
-	}
-	else dol_print_error($db, 'Failed to run request');
+	} else dol_print_error($db, 'Failed to run request');
 
 	return;
 }

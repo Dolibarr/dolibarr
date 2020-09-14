@@ -88,7 +88,9 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
+			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
+			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 			$sql .= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
@@ -103,8 +105,10 @@ class box_produits_alerte_stock extends ModeleBoxes
     		    $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
     		    $sql .= $hookmanager->resPrint;
     		}
-		    $sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
-			$sql .= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
+		    $sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
+		    $sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+		    $sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export";
+		    $sql .= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
 			$sql .= $this->db->order('p.seuil_stock_alerte', 'DESC');
 			$sql .= $this->db->plimit($max, 0);
 
@@ -142,6 +146,15 @@ class box_produits_alerte_stock extends ModeleBoxes
                     $productstatic->type = $objp->fk_product_type;
                     $productstatic->label = $objp->label;
 					$productstatic->entity = $objp->entity;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
@@ -158,8 +171,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                     {
                         $price_base_type = $langs->trans($objp->price_base_type);
                         $price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-	                }
-	                else //Parse the dynamic price
+	                } else //Parse the dynamic price
 	               	{
 						$productstatic->fetch($objp->rowid, '', '', 1);
 	                    $priceparser = new PriceParser($this->db);
@@ -168,9 +180,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 							if ($objp->price_base_type == 'HT')
 							{
 								$price_base_type = $langs->trans("HT");
-							}
-							else
-							{
+							} else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
 								$price_base_type = $langs->trans("TTC");
 							}
@@ -215,17 +225,14 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
 				$this->db->free($result);
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
-		}
-		else {
+		} else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

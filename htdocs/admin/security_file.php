@@ -47,7 +47,7 @@ if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    dol_add_file_process($upload_dir, 0, 0, 'userfile');
+    dol_add_file_process($upload_dir, 1, 0, 'userfile');
 }
 
 if ($action == 'updateform')
@@ -100,7 +100,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'file', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'file', '', -1);
 
 
 // Upload options

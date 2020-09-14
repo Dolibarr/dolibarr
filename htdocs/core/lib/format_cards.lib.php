@@ -55,9 +55,7 @@ if ($resql)
         $_Avery_Labels[$row['code']]['custom_x'] = $row['custom_x'];
         $_Avery_Labels[$row['code']]['custom_y'] = $row['custom_y'];
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

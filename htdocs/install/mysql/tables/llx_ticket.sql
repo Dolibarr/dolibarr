@@ -38,6 +38,7 @@ CREATE TABLE llx_ticket
 	date_read datetime,
 	date_close datetime,
 	notify_tiers_at_create tinyint,
+	email_msgid varchar(255),				-- if ticket is created by email collector, we store here MSG ID
 	tms timestamp,
     import_key        varchar(14)
 )ENGINE=innodb;

@@ -21,5 +21,5 @@ CREATE TABLE llx_opensurvey_comments (
     comment text NOT NULL,
     tms timestamp,
     usercomment text
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

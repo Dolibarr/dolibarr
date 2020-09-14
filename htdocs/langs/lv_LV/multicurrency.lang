@@ -18,3 +18,5 @@ MulticurrencyReceived=Saņemta oriģinālā valūta
 MulticurrencyRemainderToTake=Atlikušā summa, oriģināla valūta
 MulticurrencyPaymentAmount=Maksājuma summa, oriģinālajā valūtā
 AmountToOthercurrency=Summa līdz (konta saņemšanas valūtā)
+CurrencyRateSyncSucceed=Valūtas kursa sinhronizācija ir veiksmīga
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Maksājumiem tiešsaistē izmantojiet dokumenta valūtu

@@ -166,17 +166,16 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 		$dataseries = array();
 		if (!empty($conf->product->enabled))
 		{
-			$dataseries[] = array($langs->trans("ProductsOnSale"), round($SommeA));
-			$dataseries[] = array($langs->trans("ProductsOnPurchase"), round($SommeB));
-			$dataseries[] = array($langs->trans("ProductsNotOnSell"), round($SommeC));
+			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnSale"), round($SommeA));
+			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnPurchase"), round($SommeB));
+			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsNotOnSell"), round($SommeC));
 		}
 		if (!empty($conf->service->enabled))
 		{
-			$dataseries[] = array($langs->trans("ServicesOnSale"), round($SommeD));
-			$dataseries[] = array($langs->trans("ServicesOnPurchase"), round($SommeE));
-			$dataseries[] = array(dol_trunc($langs->trans("ServicesNotOnSell"), 24), round($SommeF));
+			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnSale"), round($SommeD));
+			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnPurchase"), round($SommeE));
+			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesNotOnSell"), round($SommeF));
 		}
-
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
@@ -225,9 +224,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				if ($i < $nbmax)
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -247,9 +244,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
-		}
-		else
-		{
+		} else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -385,9 +380,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 			print '</div>';
 			print '<br>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -457,8 +450,7 @@ function activitytrim($product_type)
 
 			if ($product_type == 0)
 				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
-			else
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			else print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter3").'</td>';

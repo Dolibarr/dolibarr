@@ -106,7 +106,7 @@ if ($object->id)
 
     $head = vat_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'bill');
+    dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -148,9 +148,7 @@ if ($object->id)
     $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
     print $langs->trans("ErrorUnknown");
 }
 

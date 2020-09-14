@@ -50,13 +50,13 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state", 'alpha'));
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('contrat');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // List of fields to search into when doing a "search in all"
@@ -708,8 +708,7 @@ while ($i < min($num, $limit))
 			if ($nbofsalesrepresentative > 3) {
 				// We print only number
 				print $nbofsalesrepresentative;
-			}
-			elseif ($nbofsalesrepresentative > 0)
+			} elseif ($nbofsalesrepresentative > 0)
 			{
 				$userstatic = new User($db);
 				$j = 0;
@@ -731,9 +730,7 @@ while ($i < min($num, $limit))
 				}
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
-		}
-		else
-		{
+		} else {
 			print '&nbsp';
 		}
 		print '</td>';

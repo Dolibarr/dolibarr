@@ -163,9 +163,7 @@ if ($object->id)
     $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
     print $langs->trans("ErrorUnknown");
 }
 

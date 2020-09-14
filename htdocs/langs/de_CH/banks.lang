@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bank | Bar
 FinancialAccount=Finanzkonto
+BankAccount=Bankkonto
 BankAccounts=Kontenübersicht
 BankAccountsAndGateways=Bankkonten | Schnittstellen
 AccountRef=Konto-Referenz
@@ -16,8 +17,10 @@ SwiftValid=BIC/SWIFT gültig
 SwiftVNotalid=BIC/SWIFT ungültig
 IbanValid=BAN gültig
 IbanNotValid=BAN ungültig
+StandingOrder=Bankeinzug / Lastschrift
 BankAccountDomiciliation=Bankadresse
 RIBControlError=Hoppla, die Kontoinformationen sind entweder unvollständig oder ungültig. Bitte Prüfe Land, Werte und IBAN.
+LabelBankCashAccount=Bank- oder Kassebezeichnung
 AccountType=Kontoart
 AccountCard=Konto-Karte
 ConfirmDeleteAccount=Bist du sicher, dass du dieses Konto löschen willst?
@@ -43,7 +46,6 @@ Conciliated=Ausgeglichen
 BankLineConciliated=Transaktion mit Bankbeleg ausgeglichen
 Reconciled=Ausgeglichen
 SupplierInvoicePayment=Lieferantenzahlung
-BankTransfers=Kontentransfer
 MenuBankInternalTransfer=Kontoübertrag
 TransferDesc=Das ist ein interner Transfer zwischen zwei Konten. Dolibarr schreibt zwei Transaktionen über den selben Betrag vom Haben zum Sollkonto. Datum und Bezeichner sind auch gleich.
 TransferFrom=Von

@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=ติดต่อใบแจ้งหน�
 TypeContact_propal_external_CUSTOMER=การติดต่อกับลูกค้าข้อเสนอดังต่อไปนี้ขึ้น
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=เริ่มต้นการสร้างแบบจำลอง
 DefaultModelPropalToBill=แม่แบบเริ่มต้นเมื่อปิดข้อเสนอทางธุรกิจ (ที่จะออกใบแจ้งหนี้)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=แม่แบบเริ่มต้นเมื่�
 ProposalCustomerSignature=ยอมรับเขียนประทับ บริษัท วันและลายเซ็น
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

@@ -37,8 +37,7 @@ $action = GETPOST('action', 'alpha');
 // Securite acces client
 if (!$user->rights->zapier->read) accessforbidden();
 $socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0)
-{
+if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }

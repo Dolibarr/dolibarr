@@ -145,8 +145,7 @@ class ExpenseReports extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve Expense Report list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -411,9 +410,7 @@ class ExpenseReports extends DolibarrApi
         if ($this->expensereport->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->expensereport->error);
         }
     }

@@ -136,9 +136,7 @@ class modMyModule extends DolibarrModules
 		// Example: $this->const=array(1 => array('MYMODULE_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('MYMODULE_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array(
-			// 1 => array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
-		);
+		$this->const = array();
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -269,14 +267,14 @@ class modMyModule extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
-			'titre'=>'MyModule',
+			'titre'=>'ModuleMyModuleName',
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'',
 			'url'=>'/mymodule/mymoduleindex.php',
 			'langs'=>'mymodule@mymodule', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->mymodule->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->mymodule->myobject->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'perms'=>'1', // Use 'perms'=>'$user->rights->mymodule->myobject->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -299,7 +297,7 @@ class modMyModule extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List MyObject',
+			'titre'=>'List_MyObject',
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'mymodule_myobject_list',
 			'url'=>'/mymodule/myobject_list.php',
@@ -313,10 +311,10 @@ class modMyModule extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New MyObject',
+			'titre'=>'New_MyObject',
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'mymodule_myobject_new',
-			'url'=>'/mymodule/myobject_page.php?action=create',
+			'url'=>'/mymodule/myobject_card.php?action=create',
 			'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -325,7 +323,6 @@ class modMyModule extends DolibarrModules
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		END MODULEBUILDER LEFTMENU MYOBJECT */
-
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
@@ -335,7 +332,7 @@ class modMyModule extends DolibarrModules
 		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='myobject@mymodule';
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
+		$keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
@@ -365,7 +362,7 @@ class modMyModule extends DolibarrModules
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
 		 $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		 $this->export_icon[$r]='myobject@mymodule';
-		 $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
+		 $keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		 include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		 $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@mymodule';
 		 include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -407,30 +404,39 @@ class modMyModule extends DolibarrModules
 
 		$sql = array();
 
-		// ODT template
-		/*
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/mymodule';
-		$dest=$dirodt.'/template_myobjects.odt';
+		// Document templates
+		$moduledir = 'mymodule';
+		$myTmpObjects = array();
+		$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
-		if (file_exists($src) && ! file_exists($dest))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
-				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-				return 0;
+		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+			if ($myTmpObjectKey == 'MyObject') continue;
+			if ($myTmpObjectArray['includerefgeneration']) {
+				$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
+				$dirodt=DOL_DATA_ROOT.'/doctemplates/mymodule';
+				$dest=$dirodt.'/template_myobjects.odt';
+
+				if (file_exists($src) && ! file_exists($dest))
+				{
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					dol_mkdir($dirodt);
+					$result=dol_copy($src, $dest, 0, 0);
+					if ($result < 0)
+					{
+						$langs->load("errors");
+						$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+						return 0;
+					}
+				}
+
+				$sql = array_merge($sql, array(
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+				));
 			}
 		}
-
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'mymodule' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','mymodule',".$conf->entity.")"
-		);
-		*/
 
 		return $this->_init($sql, $options);
 	}

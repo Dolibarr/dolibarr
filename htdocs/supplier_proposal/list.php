@@ -62,7 +62,7 @@ $search_societe = GETPOST('search_societe', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
@@ -358,9 +358,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierProposals').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierProposals');
 	}
 
@@ -950,9 +948,7 @@ if ($resql)
 	$delallowed = $user->rights->supplier_proposal->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

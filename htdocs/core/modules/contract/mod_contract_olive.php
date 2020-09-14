@@ -114,8 +114,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)))
 		{
 			$result = -2;
 		}

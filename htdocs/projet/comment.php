@@ -123,8 +123,7 @@ print '<table class="border centpercent">';
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 if ($object->public) print $langs->trans('SharedProject');
-else
-	print $langs->trans('PrivateProject');
+else print $langs->trans('PrivateProject');
 print '</td></tr>';
 
 // Date start - end

@@ -175,8 +175,7 @@ abstract class CommonStickerGenerator
 		$hauteur = abs($y1 - $y2);
 		if ($length > $hauteur) {
 			$Pointilles = ($length / $nbPointilles) / 2; // taille des pointilles
-		}
-		else {
+		} else {
 			$Pointilles = ($hauteur / $nbPointilles) / 2;
 		}
 		for ($i = $x1; $i <= $x2; $i += $Pointilles + $Pointilles) {

@@ -71,9 +71,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-
-elseif ($action == 'add') {
+} elseif ($action == 'add') {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 

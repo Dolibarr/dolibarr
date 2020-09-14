@@ -128,9 +128,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		header("Location: list.php");
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -145,29 +143,23 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (!$dateperiod)
+	} elseif (!$dateperiod)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (!$actioncode > 0)
+	} elseif (!$actioncode > 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (empty($amount))
+	} elseif (empty($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (!is_numeric($amount))
+	} elseif (!is_numeric($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	else
-	{
+	} else {
 		$object->type = $actioncode;
 		$object->label = GETPOST('label', 'alpha');
 		$object->date_ech = $dateech;
@@ -195,24 +187,19 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->cre
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (!$dateperiod)
+	} elseif (!$dateperiod)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (empty($amount))
+	} elseif (empty($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (!is_numeric($amount))
+	} elseif (!is_numeric($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	else
-	{
+	} else {
 		$result = $object->fetch($id);
 
 		$object->date_ech = $dateech;
@@ -245,16 +232,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
-		}
-		else {
+		} else {
 			$object->label = $langs->trans("CopyOf").' '.$object->label;
 		}
 
 		if (GETPOST('clone_for_next_month', 'int')) {
 			$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 			$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
-		}
-		else {
+		} else {
 			$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
 			$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 			if ($newdateperiod) $object->periode = $newdateperiod;
@@ -271,18 +256,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
-			}
-			else
-			{
+			} else {
 				$id = $originalId;
 				$db->rollback();
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		dol_print_error($db, $object->error);
 	}
@@ -431,9 +412,7 @@ if ($id > 0)
 			if (!empty($conf->global->TAX_ADD_CLON_FOR_NEXT_MONTH_CHECKBOX))
 			{
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
-			}
-			else
-			{
+			} else {
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 			}
@@ -502,6 +481,8 @@ if ($id > 0)
 		}
 		$morehtmlref .= '</div>';
 
+		$morehtmlright = '';
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
@@ -535,9 +516,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
-		}
-		else
-		{
+		} else {
 			print dol_print_date($object->periode, "day");
 		}
 		print "</td></tr>";
@@ -548,8 +527,7 @@ if ($id > 0)
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
 			print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
 			print "</td></tr>";
-		}
-		else {
+		} else {
 			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
@@ -674,9 +652,7 @@ if ($id > 0)
 					$totalpaye += $objp->amount;
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';
@@ -695,9 +671,7 @@ if ($id > 0)
 			print '</div>';
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -767,9 +741,7 @@ if ($id > 0)
 
 			print "</div>";
 		}
-	}
-	else
-	{
+	} else {
 		/* Social contribution not found */
 		dol_print_error('', $object->error);
 	}

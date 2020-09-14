@@ -63,14 +63,10 @@ if ($action == 'updateMask')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'specimen') // For fiche inter
+} elseif ($action == 'specimen') // For fiche inter
 {
 	$modele = GETPOST('module', 'alpha');
 
@@ -101,15 +97,11 @@ elseif ($action == 'specimen') // For fiche inter
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
 			return;
-		}
-		else
-		{
+		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -119,9 +111,7 @@ elseif ($action == 'specimen') // For fiche inter
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -146,17 +136,13 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-
-elseif ($action == 'setmod')
+} elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FICHEINTER_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-
-elseif ($action == 'set_FICHINTER_FREE_TEXT')
+} elseif ($action == 'set_FICHINTER_FREE_TEXT')
 {
 	$freetext = GETPOST('FICHINTER_FREE_TEXT', 'none'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
@@ -166,14 +152,10 @@ elseif ($action == 'set_FICHINTER_FREE_TEXT')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
+} elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('FICHINTER_DRAFT_WATERMARK', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
@@ -183,14 +165,10 @@ elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
+} elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
 {
 	$val = GETPOST('FICHINTER_PRINT_PRODUCTS', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
@@ -200,9 +178,7 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
@@ -324,9 +300,7 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->FICHEINTER_ADDON == $classname)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
@@ -388,9 +362,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -457,9 +429,7 @@ foreach ($dirmodels as $reldir)
 		    					print img_picto($langs->trans("Enabled"), 'switch_on');
 		    					print '</a>';
 		    					print "</td>";
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print "<td align=\"center\">\n";
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		    					print "</td>";
@@ -470,9 +440,7 @@ foreach ($dirmodels as $reldir)
 		    				if ($conf->global->FICHEINTER_ADDON_PDF == "$name")
 		    				{
 		    					print img_picto($langs->trans("Default"), 'on');
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		    				}
 		    				print '</td>';
@@ -498,9 +466,7 @@ foreach ($dirmodels as $reldir)
 		    				if ($module->type == 'pdf')
 		    				{
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'intervention').'</a>';
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 		    				}
 		    				print '</td>';
@@ -544,9 +510,7 @@ $variablename = 'FICHINTER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();

@@ -22,7 +22,10 @@ ListLoanAssociatedProject=Danh sách vay vốn gắn với dự án này
 AddLoan=Tạo khoản vay
 FinancialCommitment=Cam kết tài chính
 InterestAmount=Lãi suất
-CapitalRemain=Vốn còn lại
+CapitalRemain=Gốc còn lại
+TermPaidAllreadyPaid = This term is allready paid
+CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
+CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
 # Admin
 ConfigLoan=Cấu hình của mô-đun cho vay
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Tài khoản kế toán vốn theo mặc định

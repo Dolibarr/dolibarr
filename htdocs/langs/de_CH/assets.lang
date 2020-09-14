@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - assets
+Assets =Vermögen
+NewAsset =Neuer Vermögenswert
+AccountancyCodeAsset =Buchungskonto (Vermögenswert)
+AccountancyCodeDepreciationAsset =Abschreibungskonto (Sachwert)
+AccountancyCodeDepreciationExpense =Abschreibungskonto (Aufwand)
+NewAssetType=Neuer Vermögenstyp
+AssetsTypeSetup=Vermögenstyp einrichten
+AssetTypeModified=Vermögenstyp geändert.
+AssetType=Vermögenstyp
+AssetsLines=Vermögen
+DeleteAnAssetType=Vermögenstyp löschen
+ConfirmDeleteAssetType=Bist du sicher, dass du diesen Vermögenstyp löschen willst?
+ShowTypeCard=Typ anzeigen '%s'
+ModuleAssetsName =Vermögen
+ModuleAssetsDesc =Beschreibung Vermögenswerte
+AssetsSetup =Einstellungen Vermögenswerte
+AssetsSetupPage =Einstellungen Vermögenswerte
+ExtraFieldsAssetsType =Ergänzende Attribute (Vermögenstyp)
+AssetsType=Vermögenstyp
+AssetsTypeId=ID Vermögenswert
+AssetsTypeLabel=Beschreibung Vermögenstyp
+AssetsTypes=Vermögenstypen
+MenuAssets =Vermögen
+MenuNewAsset =Neuer Vermögenswert
+MenuTypeAssets =Vermögenstype
+NewAsset=Neuer Vermögenswert

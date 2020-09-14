@@ -78,9 +78,7 @@ if ($action == 'setconst' && $user->admin)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -98,9 +96,7 @@ if ($action == 'setvalue' && $user->admin)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -153,8 +149,7 @@ if ($mode == 'setup' && $user->admin)
             $urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://github.com/settings/applications/';
-        }
-        elseif ($key[0] == 'OAUTH_GOOGLE_NAME')
+        } elseif ($key[0] == 'OAUTH_GOOGLE_NAME')
         {
             $OAUTH_SERVICENAME = 'Google';
             // List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
@@ -164,23 +159,19 @@ if ($mode == 'setup' && $user->admin)
             $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://security.google.com/settings/security/permissions';
-        }
-        elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME')
+        } elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME')
         {
         	$OAUTH_SERVICENAME = 'StripeTest';
         	$urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
         	$urltodelete = '';
         	$urltocheckperms = '';
-        }
-        elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
+        } elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
         {
         	$OAUTH_SERVICENAME = 'StripeLive';
         	$urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
         	$urltodelete = '';
         	$urltocheckperms = '';
-        }
-        else
-		{
+        } else {
 			$urltorenew = '';
 			$urltodelete = '';
 			$urltocheckperms = '';
@@ -194,11 +185,9 @@ if ($mode == 'setup' && $user->admin)
         require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
         // Dolibarr storage
         $storage = new DoliStorage($db, $conf);
-        try
-        {
+        try {
             $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-        }
-        catch (Exception $e)
+        } catch (Exception $e)
         {
             // Return an error if token not found
         }
@@ -221,13 +210,10 @@ if ($mode == 'setup' && $user->admin)
                 if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES)
                 {
                     $expiredat = $langs->trans("Never");
-                }
-                elseif ($endoflife == $tokenobj::EOL_UNKNOWN)
+                } elseif ($endoflife == $tokenobj::EOL_UNKNOWN)
                 {
                     $expiredat = $langs->trans("Unknown");
-                }
-                else
-                {
+                } else {
                     $expiredat = dol_print_date($endoflife, "dayhour");
                 }
             }
@@ -372,8 +358,7 @@ if ($mode == 'test' && $user->admin)
             } else {
                 setEventMessages($printer->error, $printer->errors, 'errors');
             }
-        }
-        else {
+        } else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
     }

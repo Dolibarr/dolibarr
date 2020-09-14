@@ -73,26 +73,21 @@ $cancel != $langs->trans("Cancel") &&
 	$current_lang = $langs->getDefaultLang();
 
 	// update de l'objet
-	if ($_POST["forcelangprod"] == $current_lang)
-	{
+	if ($_POST["forcelangprod"] == $current_lang) {
 		$object->label			= $_POST["libelle"];
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
-	}
-	else
-	{
+		$object->update($object->id, $user);
+	} else {
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
 	}
 
 	// sauvegarde en base
-	if ($object->setMultiLangs($user) > 0)
-	{
+	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$action = 'add';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -114,9 +109,7 @@ $cancel != $langs->trans("Cancel") &&
 			$object->label			= $_POST["libelle-".$key];
 			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
-		}
-		else
-		{
+		} else {
 			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
@@ -126,9 +119,7 @@ $cancel != $langs->trans("Cancel") &&
 	if ($object->setMultiLangs($user) > 0)
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -147,9 +138,7 @@ $cancel != $langs->trans("Cancel") &&
 	if ($object->delMultiLangs($langtodelete, $user) > 0)
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -276,8 +265,7 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add')
+} elseif ($action != 'add')
 {
 	if (!empty($object->multilangs))
 	{

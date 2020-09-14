@@ -75,8 +75,6 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield)
 {
- 	//if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sortfield="fd.date";
- 	//else
  	$sortfield = "f.ref";
 }
 
@@ -87,7 +85,7 @@ $hookmanager->initHooks(array('interventionlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('fichinter');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -203,7 +201,7 @@ foreach ($arrayfields as $tmpkey => $tmpval)
 
 $sql = "SELECT";
 $sql .= " f.ref, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
-if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= "fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
+if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (!empty($conf->projet->enabled)) {
     $sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
@@ -245,7 +243,7 @@ if ($search_contrat_ref) {
     $sql .= natural_search('c.ref', $search_contrat_ref);
 }
 if ($search_desc) {
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
 	else $sql .= natural_search(array('f.description'), $search_desc);
 }
 if ($search_status != '' && $search_status >= 0) {
@@ -652,9 +650,7 @@ if ($resql)
 	$delallowed = $user->rights->ficheinter->creer;
 
 	print $formfile->showdocuments('massfilesarea_interventions', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
