@@ -1223,7 +1223,7 @@ class ProductCombinationLevel
 		$productCombinationLevel->fk_price_level = $fkPriceLevel;
 		$productCombinationLevel->fk_product_attribute_combination = $productCombination->id;
 		$productCombinationLevel->variation_price = $productCombination->variation_price;
-		$productCombinationLevel->variation_price_percentage = $productCombination->variation_price_percentage;
+		$productCombinationLevel->variation_price_percentage = (bool) $productCombination->variation_price_percentage;
 
 		return $productCombinationLevel;
 	}
