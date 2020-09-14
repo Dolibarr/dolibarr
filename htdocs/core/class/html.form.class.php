@@ -1834,18 +1834,7 @@ class Form
 		$userstatic = new User($this->db);
 		$out = '';
 
-		// Method with no ajax
-		//$out.='<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		if ($action == 'view')
-		{
-			$out .= '';
-		} else {
-			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
-			$out .= '<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
-			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out .= ' <input type="submit" class="button valignmiddle" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
-			$out .= '<br>';
-		}
+
 		$assignedtouser = array();
 		if (!empty($_SESSION['assignedtouser']))
 		{
@@ -1853,7 +1842,7 @@ class Form
 		}
 		$nbassignetouser = count($assignedtouser);
 
-		if ($nbassignetouser && $action != 'view') $out .= '<br>';
+		//if ($nbassignetouser && $action != 'view') $out .= '<br>';
 		if ($nbassignetouser) $out .= '<ul class="attendees">';
 		$i = 0; $ownerid = 0;
 		foreach ($assignedtouser as $key => $value)
@@ -1886,7 +1875,16 @@ class Form
 		}
 		if ($nbassignetouser) $out .= '</ul>';
 
-		//$out.='</form>';
+		// Method with no ajax
+		if ($action != 'view')
+		{
+			$out .= '<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
+			$out .= '<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
+			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+			$out .= ' <input type="submit" class="button valignmiddle" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out .= '<br>';
+		}
+
 		return $out;
 	}
 

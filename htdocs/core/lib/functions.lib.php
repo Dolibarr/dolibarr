@@ -3038,7 +3038,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'supplier_invoice', 'ticket',
 				'error', 'warning',
-				'recruitmentcandidature', 'recruitmentjobposition',
+				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)

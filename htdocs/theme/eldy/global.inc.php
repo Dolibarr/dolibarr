@@ -1239,7 +1239,7 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300, .widthcentpercentminusx {
 		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}

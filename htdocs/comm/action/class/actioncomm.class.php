@@ -226,6 +226,10 @@ class ActionComm extends CommonObject
 	 */
 	public $otherassigned = array();
 
+	/**
+	 * @var array	Array of reminders
+	 */
+	public $reminders = array();
 
 	/**
 	 * @var User Object user of owner
@@ -1946,6 +1950,54 @@ class ActionComm extends CommonObject
 		$now = dol_now();
 
 		return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
+	}
+
+
+	/**
+	 *  Load event reminder of events
+	 *
+	 *  @param	string	$type	Type of reminder 'browser' or 'email'
+	 *  @return int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function loadReminders($type = '')
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+
+		$this->reminders = array();
+
+		//Select all action comm reminders for event
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		$sql .= " WHERE fk_actioncomm = ".$this->id." AND dateremind <= '".$this->db->idate(dol_now())."'";
+		if ($type) {
+			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+		}
+		if (empty($conf->global->AGENDA_REMINDER_EMAIL)) $sql .= " AND typeremind != 'email'";
+		if (empty($conf->global->AGENDA_REMINDER_BROWSER)) $sql .= " AND typeremind != 'browser'";
+
+		$sql .= $this->db->order("dateremind", "ASC");
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$tmpactioncommreminder = new ActionCommReminder($this->db);
+				$tmpactioncommreminder->id = $obj->id;
+				$tmpactioncommreminder->typeremind = $obj->typeremind;
+				$tmpactioncommreminder->dateremind = $obj->dateremind;
+				$tmpactioncommreminder->offsetvalue = $obj->offsetvalue;
+				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
+				$tmpactioncommreminder->status = $obj->status;
+
+				$this->reminders[$obj->id] = $tmpactioncommreminder;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
+
+		return count($this->reminders);
 	}
 
 
