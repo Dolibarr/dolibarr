@@ -441,8 +441,13 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (!empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
+if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+	$langs->load("errors");
+	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", PAYMENT_SECURITY_ACCEPT_ANY_TOKEN), '', 'pictowarning marginleftonly');
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
