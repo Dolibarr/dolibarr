@@ -169,7 +169,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-    
+
     /**
      * Get the list of states.
      *
@@ -240,7 +240,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-    
+
     /**
      * Get state by ID.
      *
@@ -397,7 +397,7 @@ class Setup extends DolibarrApi
     {
         return $this->_fetchCcountry('', '', $iso, $lang);
     }
-    
+
     /**
     * Get state.
     *
