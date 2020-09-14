@@ -4198,6 +4198,7 @@ div.ui-tooltip.mytooltip {
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
 	line-height: 1.6em;
+	min-width: 200px;
 }
 
 
