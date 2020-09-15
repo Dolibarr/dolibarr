@@ -851,7 +851,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<table class="border centpercent">';
 
 			// Date To Birth
-			print '<tr><td><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td>';
+			print '<tr><td><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td>';
 			$form = new Form($db);
 			if ($object->birthday)
 			{

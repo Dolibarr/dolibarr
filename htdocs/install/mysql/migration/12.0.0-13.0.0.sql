@@ -176,6 +176,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	lastname varchar(128),
 	email varchar(255),
 	phone varchar(64),
+	date_birth date,
 	remuneration_requested integer, 
 	remuneration_proposed integer,
 	email_msgid varchar(255),
@@ -186,6 +187,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN entity integer NOT NULL DEFAULT 1;
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_recruitment_origin INTEGER NULL;
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN date_birth date;
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_ref (ref);
