@@ -57,7 +57,7 @@ div.phpdebugbar-widgets-messages {
     padding-bottom: 20px;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before {
-    font-family: "Font Awesome 5 Free";
+    font-family: PhpDebugbarFontAwesome;
     content: "\f071";
     margin-right: 8px;
     font-size: 11px;
@@ -67,7 +67,7 @@ div.phpdebugbar-widgets-messages {
     color: red;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error:before {
-    font-family: "Font Awesome 5 Free";
+    font-family: PhpDebugbarFontAwesome;
     content: "\f057";
     margin-right: 8px;
     font-size: 11px;
@@ -249,7 +249,7 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
   }
 
 div.phpdebugbar-widgets-exceptions a.phpdebugbar-widgets-editor-link:before {
-  font-family: "Font Awesome 5 Free";
+  font-family: PhpDebugbarFontAwesome;
   margin-right: 4px;
   font-size: 12px;
   font-style: normal;
