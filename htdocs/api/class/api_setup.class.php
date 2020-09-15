@@ -170,7 +170,7 @@ class Setup extends DolibarrApi
     }
 
     /**
-     * Get the list of states.
+     * Get the list of states/provinces.
      *
      * The names of the states will be translated to the given language if
      * the $lang parameter is provided. The value of $lang must be a language
