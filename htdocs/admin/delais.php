@@ -327,7 +327,7 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 0, $options);
-		print ' = <input type="text" size="2" name="MAIN_METEO_LEVEL0" value="'.$level0.'"/></td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL0" value="'.$level0.'"/></td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 1, $options);
 		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_LEVEL1" value="'.$level1.'"/></td>';
@@ -396,7 +396,7 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 			print '<div>';
 			print '<div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 0, $options);
-			print ' = '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
+			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 1, $options);
 			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'&nbsp;%</td>';
@@ -415,7 +415,7 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 			print '<div>';
 			print '<div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 0, $options);
-			print ' = '.$level0;
+			print ' &lt;= '.$level0;
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 1, $options);
 			print ' &lt;= '.$level1;
