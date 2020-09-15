@@ -284,7 +284,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	<?php echo $prefix; ?>color: #599caf !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
-	<?php echo $prefix; ?>color: #46a676 !important;
+	<?php echo $prefix; ?>color: #3bbfa8 !important;
 }
 .bg-infobox-bank_account{
 	<?php echo $prefix; ?>color: #b0bb39 !important;
@@ -319,7 +319,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
-	color: #46a676 !important;
+	color: #3bbfa8 !important;
 }
 .infobox-bank_account{
 	color: #b0bb39 !important;

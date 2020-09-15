@@ -1665,7 +1665,7 @@ div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
 div.fiche>table.table-fiche-title {
-	margin-bottom: 7px;
+	margin-bottom: 12px;
 }
 div.fichecenter {
 	width: 100%;
@@ -3345,10 +3345,10 @@ table.hidepaginationnext .paginationnext {
 .tabBar .arearef .pagination.paginationref {
     max-width: calc(30%);
 }
-.paginationafterarrows a.btnTitlePlus {
+.paginationafterarrows a.btnTitlePlus, .titre_right  a.btnTitlePlus {
     border: 1px solid var(--btncolorborder);
 }
-.paginationafterarrows a.btnTitlePlus:hover span:before {
+.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
     /* text-shadow: 0px 0px 5px #ccc; */
     /* filter: invert(0.3); */
     font-size: 1.07em;
@@ -4108,7 +4108,7 @@ table.table-fiche-title .col-title div.titre{
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 
 

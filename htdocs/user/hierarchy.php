@@ -126,11 +126,13 @@ if (!is_array($user_arbo) && $user_arbo < 0)
     	}
     	$li .= ' ('.$val['login'].($entitystring ? ' - '.$entitystring : '').')';
 
+    	$entry = '<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
+
     	$data[] = array(
     		'rowid'=>$val['rowid'],
     		'fk_menu'=>$val['fk_user'],
     		'statut'=>$val['statut'],
-    		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
+    		'entry'=>$entry
     	);
     }
 
@@ -146,7 +148,9 @@ if (!is_array($user_arbo) && $user_arbo < 0)
         $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=');
     }
 
-    $morehtmlright .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
+    $morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
+    $param = array('morecss'=>'marginleftonly btnTitleSelected');
+    $morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $param);
 
     print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton, 'user');
 
@@ -186,13 +190,13 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 
     if ($nbofentries > 0)
     {
-    	print '<tr '.$bc[false].'><td colspan="3">';
+    	print '<tr><td colspan="3">';
     	tree_recur($data, $data[0], 0);
     	print '</td>';
     	print '<td></td>';
     	print '</tr>';
     } else {
-    	print '<tr '.$bc[true].'>';
+    	print '<tr class="oddeven">';
     	print '<td colspan="3">';
     	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
     	print '<td valign="middle">';

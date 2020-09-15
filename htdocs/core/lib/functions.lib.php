@@ -3150,8 +3150,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Define $color
 			$arrayconvpictotocolor = array(
-				'address'=>'#37a', 'building'=>'#37a', 'bom'=>'#a69944',
-				'companies'=>'#37a', 'company'=>'#37a', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
+				'address'=>'#aaa', 'building'=>'#aaa', 'bom'=>'#a69944',
+				'companies'=>'#aaa', 'company'=>'#aaa', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
@@ -8473,8 +8473,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 	$tag = (empty($attr['href']) ? 'span' : 'a');
 
-	$button = '';
-	$button .= '<'.$tag.' '.$compiledAttributes.'>';
+	$button = '<'.$tag.' '.$compiledAttributes.'>';
 	$button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
 	if (!empty($params['forcenohideoftext'])) {
 		$button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
