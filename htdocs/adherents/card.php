@@ -884,7 +884,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -1107,7 +1107,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
