@@ -3227,8 +3227,7 @@ abstract class CommonObject
 			$justsource = true; // the source (id and type) is a search criteria
 			if (!empty($targettype)) $withtargettype = true;
 		}
-		if (!empty($targetid) && !empty($targettype) && empty($sourceid))
-		{
+		if (!empty($targetid) && !empty($targettype) && empty($sourceid)) {
 			$justtarget = true; // the target (id and type) is a search criteria
 			if (!empty($sourcetype)) $withsourcetype = true;
 		}
@@ -3237,7 +3236,7 @@ abstract class CommonObject
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
 		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
 		$targettype = (!empty($targettype) ? $targettype : $this->element);
-		if(!empty($this->module)){
+		if (!empty($this->module)) {
 		    $sourcetype=$this->module."@$sourcetype";
             $targettype=$this->module."@$targettype";
         }
