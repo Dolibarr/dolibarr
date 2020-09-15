@@ -387,7 +387,7 @@ if ($resql)
 		{
 			print '<td class="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-			print $product->stock_theorique;
+			print price2num($product->stock_theorique, 'MS');
 			print '</td>';
 		}
         // Units
