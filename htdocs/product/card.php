@@ -1374,11 +1374,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print '<script type="text/javascript">';
 				print '$(document).ready(function () {
-                        $("#selectcountry_id").change(function() {
+                        $("#selectcountry_id").change(function () {
                         	document.formprod.action.value="edit";
                         	document.formprod.submit();
                         });
-                     });';
+		});';
 				print '</script>'."\n";
 
 			// We set country_id, country_code and country for the selected country
