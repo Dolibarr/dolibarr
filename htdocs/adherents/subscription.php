@@ -628,7 +628,7 @@ if ($rowid > 0) {
                 $subscriptionstatic->ref = $objp->crowid;
                 $subscriptionstatic->id = $objp->crowid;
 
-                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $adh->typeid);
+                $typeid = $objp->cfk_type;
                 if ($typeid > 0) {
                     $adht->fetch($typeid);
                 }
