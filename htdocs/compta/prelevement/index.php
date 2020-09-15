@@ -179,6 +179,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 $limit=5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " WHERE entity IN (" . getEntity('prelevement') . ")";
 $sql.= " ORDER BY datec DESC";
 $sql.= $db->plimit($limit);
 
