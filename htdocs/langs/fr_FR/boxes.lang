@@ -100,3 +100,6 @@ SuspenseAccountNotDefined=Le compte d'attente n'est pas défini
 BoxLastCustomerShipments=Dernières expéditions clients
 BoxTitleLastCustomerShipments=Les %s dernières expéditions clients 
 NoRecordedShipments=Aucune expédition client
+# Pages
+AccountancyHome=Comptabilité
+ValidatedProjects=Projet validés

@@ -144,6 +144,8 @@ class modProjet extends DolibarrModules
 		$r++;
 		$this->boxes[$r][1] = "box_task.php";
 		$r++;
+		$this->boxes[$r][1] = "box_validated_projects.php";
+		$r++;
 
 		// Permissions
 		$this->rights = array();
