@@ -883,6 +883,10 @@ class Product extends CommonObject
 			$this->country_id = 0;
 		}
 
+		if (empty($this->state_id)) {
+			$this->state_id = 0;
+		}
+
 		// Barcode value
 		$this->barcode = trim($this->barcode);
 
@@ -1000,6 +1004,7 @@ class Product extends CommonObject
 			$sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
 			$sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
 			$sql .= ", fk_country = ".($this->country_id > 0 ? (int) $this->country_id : 'null');
+			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
 			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
 			$sql .= ", accountancy_code_buy = '".$this->db->escape($this->accountancy_code_buy)."'";
@@ -2025,7 +2030,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note_public, note as note_private, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note_public, note as note_private, customcode, fk_country, fk_state, price, price_ttc,";
 		$sql .= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql .= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
 		$sql .= " length, length_units, width, width_units, height, height_units,";
@@ -2073,6 +2078,7 @@ class Product extends CommonObject
 				$this->customcode                    = $obj->customcode;
 				$this->country_id                    = $obj->fk_country;
 				$this->country_code = getCountry($this->country_id, 2, $this->db);
+				$this->state_id                    = $obj->fk_state;
 				$this->price                        = $obj->price;
 				$this->price_ttc                    = $obj->price_ttc;
 				$this->price_min                    = $obj->price_min;
@@ -5204,17 +5210,15 @@ class Product extends CommonObject
 		$this->barcode = -1; // Create barcode automatically
 	}
 
-    /**
-     * Returns the label, shot_label or code found in units dictionary from ->fk_unit.
-	 * A langs->trans() must be called on result to get translated value.
-     *
-     * @param  string 		$type 	Label type (long, short or code)
-     * @return string|int 			<0 if KO, label if OK (Example: 'long', 'short', 'unitCODE')
-	 * @see getLabelOfUnit() in CommonObjectLine
-     */
-    public function getLabelOfUnit($type = 'long')
-    {
-        global $langs;
+	/**
+	 *    Returns the text label from units dictionary
+	 *
+	 * @param  string $type Label type (long or short)
+	 * @return string|int <0 if ko, label if ok
+	 */
+	public function getLabelOfUnit($type = 'long')
+	{
+		global $langs;
 
 		if (!$this->fk_unit) {
 			return '';
@@ -5222,24 +5226,25 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-        $label_type = 'label';
-        if ($type == 'short') $label_type = 'short_label';
-        elseif ($type == 'code') $label_type = 'code';
+		$label_type = 'label';
 
-        $sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
-        $resql = $this->db->query($sql);
-        if ($resql && $this->db->num_rows($resql) > 0) {
-            $res = $this->db->fetch_array($resql);
-            if ($label_type == 'code') $label = 'unit'.$res['code'];
-            else $label = $res[$label_type];
-            $this->db->free($resql);
-            return $label;
-        } else {
-            $this->error = $this->db->error().' sql='.$sql;
-            dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
+		if ($type == 'short') {
+			$label_type = 'short_label';
+		}
+
+		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$resql = $this->db->query($sql);
+		if ($resql && $this->db->num_rows($resql) > 0) {
+			$res = $this->db->fetch_array($resql);
+			$label = ($label_type == 'short_label' ? $res[$label_type] : 'unit'.$res['code']);
+			$this->db->free($resql);
+			return $label;
+		} else {
+			$this->error = $this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 * Return if object has a sell-by date or eat-by date
