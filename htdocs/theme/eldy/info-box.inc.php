@@ -379,19 +379,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .fa-weather-level0:before{
 	content: "\f185";
-	color : #cccccc;
+	color : #ffbf00;
 }
 .fa-weather-level1:before{
 	content: "\f6c4";
-	color : #cccccc;
+	color : #b0b0b0;
 }
 .fa-weather-level2:before{
 	content: "\f0c2";
-	color : #cccccc;
+	color : #9b9b9b;
 }
 .fa-weather-level3:before{
 	content: "\f740";
-	color : #cccccc;
+	color : #888888;
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
