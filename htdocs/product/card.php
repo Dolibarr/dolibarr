@@ -956,8 +956,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print load_fiche_titre($title, $linkback, $picto);
 
         // We set country_id, country_code and country for the selected country
-        $object->country_id = GETPOST('country_id') ?GETPOST('country_id') : null;
-        if ($object->country_id)
+        $object->country_id = GETPOST('country_id', 'int) ? GETPOST('country_id', 'int') : null;
+        if ($object->country_id > 0)
         {
             $tmparray = getCountry($object->country_id, 'all');
             $object->country_code = $tmparray['code'];
