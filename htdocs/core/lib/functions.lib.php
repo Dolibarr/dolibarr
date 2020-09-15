@@ -3265,12 +3265,13 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
 {
 	global $conf;
 
-	if (is_numeric($picto))
-	{
-		$leveltopicto = array(0=>'weather-clear.png', 1=>'weather-few-clouds.png', 2=>'weather-clouds.png', 3=>'weather-many-clouds.png', 4=>'weather-storm.png');
+	if (is_numeric($picto)) {
+		//$leveltopicto = array(0=>'weather-clear.png', 1=>'weather-few-clouds.png', 2=>'weather-clouds.png', 3=>'weather-many-clouds.png', 4=>'weather-storm.png');
+		//$picto = $leveltopicto[$picto];
 		return '<i class="fa fa-weather-level'.$picto.'"></i>';
-		$picto = $leveltopicto[$picto];
-	} elseif (!preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
+	} elseif (!preg_match('/(\.png|\.gif)$/i', $picto)) {
+		$picto .= '.png';
+	}
 
 	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
 
