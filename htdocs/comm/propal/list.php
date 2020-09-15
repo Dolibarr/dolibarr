@@ -486,7 +486,7 @@ if ($resql)
 			$resqlp = $db->query($sqlp);
 			if ($resqlp){
 				$objp = $db->fetch_object($resqlp);
-				if ($db->num_rows($resqlp)){
+				if ($objp){
 					$cpt++;
 					$refs[] = $objp->ref;
 					$ids[] = $objp->rowid;
