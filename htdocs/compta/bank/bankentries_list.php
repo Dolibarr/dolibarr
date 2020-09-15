@@ -1141,13 +1141,17 @@ if ($resql)
                 $backgroundcolor = 'style="background: '.$color.';"';
             }
         }
+
+        $banklinestatic->id = $objp->rowid;
+        $banklinestatic->ref = $objp->rowid;
+
         print '<tr class="oddeven" '.$backgroundcolor.'>';
 
         // Ref
     	if (!empty($arrayfields['b.rowid']['checked']))
     	{
                 print '<td class="nowrap left">';
-                print "<a href=\"line.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+                print $banklinestatic->getNomUrl(1);
                 print '</td>';
                 if (!$i) $totalarray['nbfield']++;
     	}

@@ -1424,8 +1424,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo"'.($width ? ' style="width: '.$width.'px"' : '').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			}
 		}
-	} elseif ($object->element == 'ticket')
-	{
+	} elseif ($object->element == 'ticket') {
 		$width = 80; $cssclass = 'photoref';
 		$showimage = $object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos = (isset($conf->global->TICKET_MAX_VISIBLE_PHOTO) ? $conf->global->TICKET_MAX_VISIBLE_PHOTO : 2);
@@ -3011,14 +3010,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'account', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
+				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title',
 				'help', 'holiday',
 				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
 				'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
-				'object_accounting', 'object_action', 'object_account', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
+				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
 				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
@@ -3056,7 +3055,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 			$arrayconvpictotofa = array(
-				'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book',
+				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book',
 				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical', 'bom'=>'cubes',
 				'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
@@ -3124,7 +3123,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Add CSS
 			$arrayconvpictotomorcess = array(
-				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account',
+				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'conversation'=>'infobox-contrat',

@@ -1706,7 +1706,7 @@ class AccountLine extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'accountline';
 
 	/**
 	 * @var int ID
@@ -2306,13 +2306,16 @@ class AccountLine extends CommonObject
 		global $langs;
 
 		$result = '';
-		$label = $langs->trans("ShowTransaction").': '.$this->rowid;
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Transaction").'</u>:<br>';
+		$label .= '<b>'.$langs->trans("Ref").':</b> '.$this->ref;
+
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->id.'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'account'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= ($this->ref ? $this->ref : $this->rowid);
+		if ($withpicto != 2) $result .= ($this->ref ? $this->ref : $this->id);
 		$result .= $linkend;
 
 		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') $result .= ' <span class="opacitymedium">(';
