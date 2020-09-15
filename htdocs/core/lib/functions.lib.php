@@ -3268,7 +3268,7 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $mo
 	if (is_numeric($picto))
 	{
 		$leveltopicto = array(0=>'weather-clear.png', 1=>'weather-few-clouds.png', 2=>'weather-clouds.png', 3=>'weather-many-clouds.png', 4=>'weather-storm.png');
-		//return '<i class="fa fa-weather-level'.$picto.'"></i>';
+		return '<i class="fa fa-weather-level'.$picto.'"></i>';
 		$picto = $leveltopicto[$picto];
 	} elseif (!preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
 
