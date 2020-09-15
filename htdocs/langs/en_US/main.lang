@@ -840,6 +840,7 @@ ListOfTemplates=List of templates
 Gender=Gender
 Genderman=Man
 Genderwoman=Woman
+Genderother=Other
 ViewList=List view
 ViewGantt=Gantt view
 ViewKanban=Kanban view
