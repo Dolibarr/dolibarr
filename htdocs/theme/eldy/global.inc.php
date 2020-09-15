@@ -1039,6 +1039,13 @@ select.flat.selectlimit {
 	font-weight: bold;
 	font-size: 1.2em;
 }
+.onlinepaymentbody .amountpaymentcomplete {
+    background-color: var(--amountpaymentcomplete);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
