@@ -820,7 +820,7 @@ if (empty($reshook))
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 				// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
-				if (!empty($price_ht)) {
+				if (isset($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				}

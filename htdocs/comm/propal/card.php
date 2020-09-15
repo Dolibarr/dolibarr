@@ -825,7 +825,7 @@ if (empty($reshook))
 			$error++;
 		}
 
-		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht == '' && $price_ht_devise == '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+		if ($prod_entry_mode == 'free' && empty($idprod) && $price_ht === '' && $price_ht_devise === '') 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
@@ -966,7 +966,7 @@ if (empty($reshook))
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 				// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
-				if (!empty($price_ht)) {
+				if (isset($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} // On reevalue prix selon taux tva car taux tva transaction peut etre different
