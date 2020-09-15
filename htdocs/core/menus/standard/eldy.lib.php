@@ -171,7 +171,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// MRP
+	// MRP - GPAO
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->bom->enabled) || !empty($conf->mrp->enabled)),
 		'perms'=>(!empty($user->rights->bom->read) || !empty($user->rights->mrp->read)),
@@ -186,7 +186,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'target' => $atarget,
 		'mainmenu' => "mrp",
 		'leftmenu' => '',
-		'position' => 30,
+		'position' => 31,
 		'id' => $id,
 		'idsel' => 'mrp',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
@@ -1659,7 +1659,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 
 		/*
-		 * Menu PRODUCTS-SERVICES MRP
+		 * Menu PRODUCTS-SERVICES MRP - GPAO
 		 */
 		if ($mainmenu == 'mrp')
 		{

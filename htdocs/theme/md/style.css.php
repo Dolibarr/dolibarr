@@ -3271,6 +3271,14 @@ table.hidepaginationprevious .paginationprevious {
 table.hidepaginationnext .paginationnext {
 	display: none;
 }
+.paginationafterarrows a.btnTitlePlus {
+    border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover span:before {
+    /* text-shadow: 0px 0px 5px #ccc; */
+    /* filter: invert(0.3); */
+    font-size: 1.03em;
+}
 
 
 /* Prepare to remove class pair - impair

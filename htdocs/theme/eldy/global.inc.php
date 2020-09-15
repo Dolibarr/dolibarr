@@ -3338,6 +3338,14 @@ table.hidepaginationnext .paginationnext {
 .tabBar .arearef .pagination.paginationref {
     max-width: calc(30%);
 }
+.paginationafterarrows a.btnTitlePlus {
+    border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover span:before {
+    /* text-shadow: 0px 0px 5px #ccc; */
+    /* filter: invert(0.3); */
+    font-size: 1.07em;
+}
 
 
 /* Set the color for hover lines */

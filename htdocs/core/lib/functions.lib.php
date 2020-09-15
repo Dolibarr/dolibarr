@@ -8406,16 +8406,20 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 	$class = 'btnTitle';
 	if ($iconClass == 'fa fa-plus-circle') $class .= ' btnTitlePlus';
+	$useclassfortooltip = 1;
 
 	if (!empty($params['morecss'])) $class .= ' '.$params['morecss'];
 
 	$attr = array(
-		'class' => $class
-		,'href' => empty($url) ? '' : $url
+		'class' => $class,
+		'href' => empty($url) ? '' : $url
 	);
 
 	if (!empty($helpText)) {
 		$attr['title'] = dol_escape_htmltag($helpText);
+	} elseif (empty($attr['title']) && $label) {
+		$attr['title'] = $label;
+		$useclassfortooltip = 0;
 	}
 
 	if ($status <= 0) {
@@ -8430,7 +8434,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 		}
 	}
 
-	if (!empty($attr['title'])) {
+	if (!empty($attr['title']) && $useclassfortooltip) {
 		$attr['class'] .= ' classfortooltip';
 	}
 
@@ -8470,9 +8474,11 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	$tag = (empty($attr['href']) ? 'span' : 'a');
 
 	$button = '';
-	$button .= '<'.$tag.' '.$compiledAttributes.' >';
+	$button .= '<'.$tag.' '.$compiledAttributes.'>';
 	$button .= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
-	$button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
+	if (!empty($params['forcenohideoftext'])) {
+		$button .= '<span class="valignmiddle text-plus-circle btnTitle-label'.(empty($params['forcenohideoftext']) ? ' hideonsmartphone' : '').'">'.$label.'</span>';
+	}
 	$button .= '</'.$tag.'>';
 
 	return $button;
