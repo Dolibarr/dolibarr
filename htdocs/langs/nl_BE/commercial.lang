@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - commercial
+CommercialArea=Handelsgebied
 ConfirmDeleteAction=Bent u zeker dat u dit event wil verwijderen?
 ThirdPartiesOfSaleRepresentative=Derden met vertegenwoordiger
 SaleRepresentativesOfThirdParty=Vertegenwoordigers van derden
@@ -6,3 +7,12 @@ LastDoneTasks=Laatste %s gedane acties
 LastActionsToDo=Oudste %s onvoltooide acties
 ActionAC_FAC=Stuur factuur per e-mail
 ActionAC_REL=Stuur factuur per e-mail (herinnering)
+ActionAC_COM=Verzend verkooporder per mail
+ActionAC_SUP_ORD=Verzend bestelling per mail
+ActionAC_SUP_INV=Stuur leveranciersfactuur per mail
+ToOfferALinkForOnlineSignature=Link voor online handtekening
+WelcomeOnOnlineSignaturePage=Welkom op deze pagina om commerciële voorstellen van %s te accepteren
+ThisScreenAllowsYouToSignDocFrom=Met dit scherm kunt u een offerte / commercieel voorstel accepteren en ondertekenen of weigeren
+ThisIsInformationOnDocumentToSign=In dit document is informatie om te accepteren of te weigeren
+SignatureProposalRef=Handtekening van offerte / commercieel voorstel %s
+FeatureOnlineSignDisabled=Functie voor online ondertekenen uitgeschakeld of het document is gegenereerd voordat de functie was ingeschakeld

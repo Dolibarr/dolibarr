@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,32 +36,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
-    /**
-     * @var string Error code (or message)
-     */
-    public $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param  DoliDB  $db                 Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return array                       List of templates
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param  DoliDB  $db                 Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return array                       List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		global $conf;
 
-        $type='delivery';
-        $liste=array();
+		$type = 'delivery';
+		$liste = array();
 
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db, $type, $maxfilenamelength);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
-        return $liste;
-    }
+		return $liste;
+	}
 }
 
 
@@ -72,83 +72,83 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
  */
 abstract class ModeleNumRefDeliveryOrder
 {
-    /**
-     * @var string Error code (or message)
-     */
-    public $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
-    /**
-     * Return if a module can be used or not
-     *
-     * @return      boolean     true if module can be used
-     */
-    public function isEnabled()
-    {
-        return true;
-    }
+	/**
+	 * Return if a module can be used or not
+	 *
+	 * @return      boolean     true if module can be used
+	 */
+	public function isEnabled()
+	{
+		return true;
+	}
 
-    /**
-     * Renvoi la description par defaut du modele de numerotation
-     *
-     * @return     string      Texte descripif
-     */
-    public function info()
-    {
-        global $langs;
-        $langs->load("deliveries");
-        return $langs->trans("NoDescription");
-    }
+	/**
+	 * Renvoi la description par defaut du modele de numerotation
+	 *
+	 * @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $langs;
+		$langs->load("deliveries");
+		return $langs->trans("NoDescription");
+	}
 
-    /**
-     * Renvoi un exemple de numerotation
-     *
-     * @return     string      Example
-     */
-    public function getExample()
-    {
-        global $langs;
-        $langs->load("deliveries");
-        return $langs->trans("NoExample");
-    }
+	/**
+	 * Return an example of numbering
+	 *
+	 * @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $langs;
+		$langs->load("deliveries");
+		return $langs->trans("NoExample");
+	}
 
-    /**
-     * Test si les numeros deja en vigueur dans la base ne provoquent pas d
-     * de conflits qui empechera cette numerotation de fonctionner.
-     *
-     * @return     boolean     false si conflit, true si ok
-     */
-    public function canBeActivated()
-    {
-        return true;
-    }
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 * @return     boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		return true;
+	}
 
-    /**
-     * Renvoi prochaine valeur attribuee
-     *
-     *	@param  Societe     $objsoc         Object third party
-     *  @param  Object      $object         Object delivery
-     *	@return string                      Valeur
-     */
-    public function getNextValue($objsoc, $object)
-    {
-        global $langs;
-        return $langs->trans("NotAvailable");
-    }
+	/**
+	 * Renvoi prochaine valeur attribuee
+	 *
+	 *	@param  Societe     $objsoc         Object third party
+	 *  @param  Object      $object         Object delivery
+	 *	@return string                      Valeur
+	 */
+	public function getNextValue($objsoc, $object)
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
 
-    /**
-     * Renvoi version du module numerotation
-     *
-     * @return     string      Valeur
-     */
-    public function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
+	/**
+	 * Renvoi version du module numerotation
+	 *
+	 * @return     string      Valeur
+	 */
+	public function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
 
-        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("NotAvailable");
-    }
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
+	}
 }

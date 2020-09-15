@@ -11,17 +11,8 @@ YourEMail=E-Mail de confirmação de pagamento
 Creditor=Beneficiario
 PaymentCode=Código de pagamento
 PayBoxDoPayment=Pay with Paybox
-ToPay=Emitir pagamento
 YouWillBeRedirectedOnPayBox=Você será redirecionado para a página Paybox não se esqueça de introduzir a informação do seu cartão de crédito
 Continue=Continuar
-ToOfferALinkForOnlinePayment=URL para o pagamento %s
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL que fornece pagamento on-line interface% s com base no valor de um projeto de lei
-ToOfferALinkForOnlinePaymentOnContractLine=URL que fornece linha de pagamento  interface% com base na quantidade de uma linha de contrato
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL que fornece pagamento on-line %s interface baseada numa quantidade livre
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma interface on-line %s pagamento de uma subscrição de membro
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Você também pode adicionar o parâmetro url <b>&tag=<i>value</i></b>  para o endereço (exigida apenas para o pagamento livre) para ver o seu código próprio, observação do pagamento.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Esta página confirma que o pagamento tenha sido gravada. Obrigado.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

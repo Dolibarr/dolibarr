@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,7 +29,7 @@
  */
 abstract class ModelePdfReception extends CommonDocGenerator
 {
-    public $error='';
+    public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -45,11 +45,11 @@ abstract class ModelePdfReception extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type='reception';
-		$liste=array();
+		$type = 'reception';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -61,7 +61,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
  */
 abstract class ModelNumRefReception
 {
-    public $error='';
+    public $error = '';
 
 	/** Return if a model can be used or not
 	 *

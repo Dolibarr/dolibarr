@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 --
@@ -22,7 +22,8 @@
 CREATE TABLE llx_establishment (
   rowid 			integer NOT NULL auto_increment PRIMARY KEY,
   entity 			integer NOT NULL DEFAULT 1,
-  name				varchar(50),
+  ref				varchar(30),
+  name				varchar(128),
   address           varchar(255),
   zip               varchar(25),
   town              varchar(50),
@@ -37,5 +38,5 @@ CREATE TABLE llx_establishment (
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
   status            tinyint DEFAULT 1
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

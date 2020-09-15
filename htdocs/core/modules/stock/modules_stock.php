@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -26,7 +26,7 @@ abstract class ModelePDFStock extends CommonDocGenerator
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -42,11 +42,11 @@ abstract class ModelePDFStock extends CommonDocGenerator
         // phpcs:enable
         global $conf;
 
-        $type='stock';
-        $liste=array();
+        $type = 'stock';
+        $liste = array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        $liste = getListOfModels($db, $type, $maxfilenamelength);
 
         return $liste;
     }

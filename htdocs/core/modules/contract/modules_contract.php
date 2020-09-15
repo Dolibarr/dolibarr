@@ -19,8 +19,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -40,7 +40,7 @@ abstract class ModelePDFContract extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -56,11 +56,11 @@ abstract class ModelePDFContract extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='contract';
-		$liste=array();
+		$type = 'contract';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -75,7 +75,7 @@ class ModelNumRefContracts
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not

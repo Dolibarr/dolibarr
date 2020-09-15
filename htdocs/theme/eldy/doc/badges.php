@@ -1,11 +1,11 @@
 <?php
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
+if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 session_cache_limiter('public');
 
@@ -143,13 +143,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		
 		<div class="bd-example">
 		<?php for ($i = 0; $i <= 9; $i++): ?>
-		<span class="badge badge-status<?php print $i;  ?>" >status-<?php print $i;  ?></span>
+		<span class="badge badge-status<?php print $i; ?>" >status-<?php print $i; ?></span>
 		<?php endfor; ?>
 		</div>
 
 		<figure class="highlight"><pre><pre>
 <?php for ($i = 0; $i <= 9; $i++): ?>
-&lt;span class="badge badge-status<?php print $i;  ?>" &gt;status<?php print $i;  ?>&lt;/span&gt;
+&lt;span class="badge badge-status<?php print $i; ?>" &gt;status<?php print $i; ?>&lt;/span&gt;
 <?php endfor; ?>
 		</pre></figure>
 		
@@ -170,7 +170,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<span class="badge badge-pill badge-dark">Dark</span>
 		
 		<?php for ($i = 0; $i <= 9; $i++): ?>
-		<span class="badge badge-pill badge-status<?php print $i;  ?>" >status<?php print $i;  ?></span>
+		<span class="badge badge-pill badge-status<?php print $i; ?>" >status<?php print $i; ?></span>
 		<?php endfor; ?>
 		
 		</div>
@@ -187,7 +187,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;span class=&quot;badge badge-pill badge-light&quot;&gt;Light&lt;/span&gt;
 &lt;span class=&quot;badge badge-pill badge-dark&quot;&gt;Dark&lt;/span&gt;
 <?php for ($i = 0; $i <= 9; $i++): ?>
-&lt;span class="badge badge-pill badge-status<?php print $i;  ?>" &gt;status<?php print $i;  ?>&lt;/span&gt;
+&lt;span class="badge badge-pill badge-status<?php print $i; ?>" &gt;status<?php print $i; ?>&lt;/span&gt;
 <?php endfor; ?>
 		</pre></figure>
 		
@@ -209,7 +209,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<span class="badge badge-dot badge-dark"></span>
 		
 		<?php for ($i = 0; $i <= 9; $i++): ?>
-		<span class="badge badge-dot badge-status<?php print $i;  ?>" ></span>
+		<span class="badge badge-dot badge-status<?php print $i; ?>" ></span>
 		<?php endfor; ?>
 		
 		</div>
@@ -226,7 +226,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;span class=&quot;badge badge-dot badge-light&quot;&gt;&lt;/span&gt;
 &lt;span class=&quot;badge badge-dot badge-dark&quot;&gt;&lt;/span&gt;
 <?php for ($i = 0; $i <= 9; $i++): ?>
-&lt;span class="badge badge-dot badge-status<?php print $i;  ?>" &gt;&lt;/span&gt;
+&lt;span class="badge badge-dot badge-status<?php print $i; ?>" &gt;&lt;/span&gt;
 <?php endfor; ?>
 		</pre></figure>
 		
@@ -255,7 +255,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<a href="#" class="badge badge-light">Light</a>
 		<a href="#" class="badge badge-dark">Dark</a>
 		<?php for ($i = 0; $i <= 9; $i++): ?>
-		<a href="#" class="badge badge-status<?php print $i;  ?>" >status<?php print $i;  ?></a>
+		<a href="#" class="badge badge-status<?php print $i; ?>" >status<?php print $i; ?></a>
 		<?php endfor; ?>
 		
 		</div>
@@ -270,7 +270,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;a href=&quot;#&quot; class=&quot;badge badge-light&quot;&gt;Light&lt;/a&gt;
 &lt;a href=&quot;#&quot; class=&quot;badge badge-dark&quot;&gt;Dark&lt;/a&gt;
 <?php for ($i = 0; $i <= 9; $i++): ?>
-&lt;a href=&quot;#&quot; class="badge badge-status<?php print $i;  ?>" &gt;status<?php print $i;  ?>&lt;/a&gt;
+&lt;a href=&quot;#&quot; class="badge badge-status<?php print $i; ?>" &gt;status<?php print $i; ?>&lt;/a&gt;
 <?php endfor; ?>
 		</pre></figure>
 

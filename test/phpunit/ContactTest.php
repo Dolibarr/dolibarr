@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -82,7 +82,11 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -92,7 +96,11 @@ class ContactTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -207,7 +215,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobject->phone_mobile='New tel mobile';
 		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
-		$localobject->jabberid='New im id';
+		$localobject->socialnetworks['jabber']='New im id';
 		$localobject->default_lang='es_ES';
 
 		$result=$localobject->update($localobject->id, $user);
@@ -257,8 +265,8 @@ class ContactTest extends PHPUnit\Framework\TestCase
     	$this->assertEquals($localobject->fax, $newobject->fax);
     	print __METHOD__." old=".$localobject->email." new=".$newobject->email."\n";
     	$this->assertEquals($localobject->email, $newobject->email);
-    	print __METHOD__." old=".$localobject->jabberid." new=".$newobject->jabberid."\n";
-    	$this->assertEquals($localobject->jabberid, $newobject->jabberid);
+    	print __METHOD__." old=".$localobject->socialnetworks['jabber']." new=".$newobject->socialnetworks['jabber']."\n";
+    	$this->assertEquals($localobject->socialnetworks['jabber'], $newobject->socialnetworks['jabber']);
     	print __METHOD__." old=".$localobject->default_lang." new=".$newobject->default_lang."\n";
     	$this->assertEquals($localobject->default_lang, $newobject->default_lang);
 

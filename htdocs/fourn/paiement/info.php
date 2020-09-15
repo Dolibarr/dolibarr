@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 $langs->loadLangs(array("bills", "suppliers", "companies"));
 
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 
 $object = new PaiementFourn($db);
 $object->fetch($id);

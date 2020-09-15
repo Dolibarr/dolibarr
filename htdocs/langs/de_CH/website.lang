@@ -1,7 +1,10 @@
 # Dolibarr language file - Source file is en_US - website
+WebsiteSetupDesc=Binde hier die Websites ein, die du benutzen willst. Im Menu "Websites" kannst du sie später verwalten.
 DeleteWebsite=Webseite löschen
+WEBSITE_TYPE_CONTAINER=Seiten - / Containertyp
+WEBSITE_PAGE_EXAMPLE=Webseite als Vorlage benutzen
+WEBSITE_ALIASALT=Zusätzliche Seitennamen / Aliase
 WEBSITE_CSS_URL=URL zu externer CSS Datei
 ViewSiteInNewTab=Webauftritt in neuem Tab anzeigen
 SetAsHomePage=Als Startseite definieren
 WebsiteAccounts=Webseitenkonten
-BackToListOfThirdParty=Zurück zur Liste für Partner

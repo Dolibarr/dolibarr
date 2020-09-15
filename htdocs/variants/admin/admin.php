@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../../main.inc.php';
@@ -23,11 +23,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 $langs->loadLangs(array("admin", "products"));
 
 // Security check
-if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
 	accessforbidden();
 
 if ($_POST) {
-
 	$value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
 
 	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
@@ -36,17 +35,17 @@ if ($_POST) {
 		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 	}
 
-       if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
-               setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-       } else {
-               setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
-       }
+    if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
+        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+    }
 }
 
 $title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');
 llxHeader('', $title);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 dol_fiche_head(array(), 'general', $tab, 0, 'product');

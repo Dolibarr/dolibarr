@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -47,6 +47,7 @@ create table llx_don
   fk_projet       integer NULL,                 -- Donation is given for a project ?
   datec           datetime,                     -- Create date
   fk_user_author  integer NOT NULL,
+  fk_user_modif   integer,
   date_valid      datetime,						-- date de validation
   fk_user_valid   integer NULL,
   note_private    text,

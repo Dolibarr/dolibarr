@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,133 +30,133 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
  */
 class mod_ticket_simple extends ModeleNumRefTicket
 {
-    /**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-    public $prefix = 'TS';
+	public $prefix = 'TS';
 
-    /**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
-    /**
+	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
-	public $nom='Simple';
+	public $nom = 'Simple';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Simple';
+	public $name = 'Simple';
 
-    /**
-     *  Return description of numbering module
-     *
-     *  @return string      Text with description
-     */
-    public function info()
-    {
-        global $langs;
-        return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	/**
+	 *  Return description of numbering module
+	 *
+	 *  @return string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
-    /**
-     *  Return an example of numbering module values
-     *
-     *     @return string      Example
-     */
-    public function getExample()
-    {
-        return $this->prefix . "0501-0001";
-    }
+	/**
+	 *  Return an example of numbering module values
+	 *
+	 *     @return string      Example
+	 */
+	public function getExample()
+	{
+		return $this->prefix."0501-0001";
+	}
 
-    /**
-  * Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *   de conflits qui empechera cette numerotation de fonctionner.
-     *
-     *   @return boolean     false si conflit, true si ok
-     */
-    public function canBeActivated()
-    {
-        global $conf, $langs, $db;
+	/**
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
+	 *
+	 *   @return boolean     false if conflict, true if ok
+	 */
+	public function canBeActivated()
+	{
+		global $conf, $langs, $db;
 
-        $coyymm = '';
-        $max = '';
+		$coyymm = '';
+		$max = '';
 
-        $posindice = 8;
-        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
-        $sql .= " FROM " . MAIN_DB_PREFIX . "ticket";
-        $search = $this->prefix . "____-%";
-        $sql .= " WHERE ref LIKE '" . $search ."'";
-        $sql .= " AND entity = " . $conf->entity;
-        $resql = $db->query($sql);
-        if ($resql) {
-            $row = $db->fetch_row($resql);
-            if ($row) {
-                $coyymm = substr($row[0], 0, 6);
-                $max = $row[0];
-            }
-        }
-        if (!$coyymm || preg_match('/' . $this->prefix . '[0-9][0-9][0-9][0-9]/i', $coyymm)) {
-            return true;
-        } else {
-            $langs->load("errors");
-            $this->error = $langs->trans('ErrorNumRefModel', $max);
-            return false;
-        }
-    }
+		$posindice = strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
+		$search = $this->prefix."____-%";
+		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " AND entity = ".$conf->entity;
+		$resql = $db->query($sql);
+		if ($resql) {
+			$row = $db->fetch_row($resql);
+			if ($row) {
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
+		}
+		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
+			return true;
+		} else {
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorNumRefModel', $max);
+			return false;
+		}
+	}
 
-    /**
-     *  Return next value
-     *
-     *  @param  Societe $objsoc    Object third party
-     *  @param  Project $ticket Object ticket
-     *  @return string                Value if OK, 0 if KO
-     */
-    public function getNextValue($objsoc, $ticket)
-    {
-        global $db, $conf;
+	/**
+	 *  Return next value
+	 *
+	 *  @param  Societe $objsoc    Object third party
+	 *  @param  Project $ticket Object ticket
+	 *  @return string                Value if OK, 0 if KO
+	 */
+	public function getNextValue($objsoc, $ticket)
+	{
+		global $db, $conf;
 
-        // D'abord on recupere la valeur max
-        $posindice = 8;
-        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
-        $sql .= " FROM " . MAIN_DB_PREFIX . "ticket";
-        $search = $this->prefix . "____-%";
-        $sql .= " WHERE ref LIKE '" . $search ."'";
-        $sql .= " AND entity = " . $conf->entity;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
+		$search = $this->prefix."____-%";
+		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " AND entity = ".$conf->entity;
 
-        $resql = $db->query($sql);
-        if ($resql) {
-            $obj = $db->fetch_object($resql);
-            if ($obj) {
-                $max = intval($obj->max);
-            } else {
-                $max = 0;
-            }
-        } else {
-            dol_syslog("mod_ticket_simple::getNextValue", LOG_DEBUG);
-            return -1;
-        }
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
+			dol_syslog("mod_ticket_simple::getNextValue", LOG_DEBUG);
+			return -1;
+		}
 
-        $date = empty($ticket->datec) ? dol_now() : $ticket->datec;
+		$date = empty($ticket->datec) ? dol_now() : $ticket->datec;
 
-        //$yymm = strftime("%y%m",time());
-        $yymm = strftime("%y%m", $date);
+		//$yymm = strftime("%y%m",time());
+		$yymm = strftime("%y%m", $date);
 
-        if ($max >= (pow(10, 4) - 1)) {
-            $num = $max + 1;
-        } // If counter > 9999, we do not format on 4 chars, we take number as it is
-        else {
-            $num = sprintf("%04s", $max + 1);
-        }
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1;
+		} // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
-        dol_syslog("mod_ticket_simple::getNextValue return " . $this->prefix . $yymm . "-" . $num);
-        return $this->prefix . $yymm . "-" . $num;
-    }
+		dol_syslog("mod_ticket_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
+		return $this->prefix.$yymm."-".$num;
+	}
 }

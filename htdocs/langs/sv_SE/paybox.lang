@@ -11,17 +11,8 @@ YourEMail=E-post för betalning bekräftelse
 Creditor=Borgenär
 PaymentCode=Betalning kod
 PayBoxDoPayment=Pay with Paybox
-ToPay=Gör betalning
 YouWillBeRedirectedOnPayBox=Du kommer att omdirigeras på säkrade Paybox sida för att mata dig kreditkortsinformation
 Continue=Nästa
-ToOfferALinkForOnlinePayment=URL för %s betalning
-ToOfferALinkForOnlinePaymentOnOrder=URL för att erbjuda ett %s online betalningsgränssnitt för en orderorder
-ToOfferALinkForOnlinePaymentOnInvoice=URL för att erbjuda en %s online gränssnitt betalning användare för en faktura
-ToOfferALinkForOnlinePaymentOnContractLine=URL för att erbjuda en %s online gränssnitt betalning användare för ett kontrakt linje
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL för att erbjuda en %s online gränssnitt betalning användare för en fri belopp
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL för att erbjuda en %s online gränssnitt betalning användare för en medlem prenumeration
-ToOfferALinkForOnlinePaymentOnDonation=URL för att erbjuda en %s online betalning, användargränssnitt för betalning av donation
-YouCanAddTagOnUrl=Du kan också lägga till url parameter <b>&tag = <i>värde</i></b> för någon av dessa URL (krävs endast för gratis betalning) för att lägga till din egen kommentar tagg betalning.
 SetupPayBoxToHavePaymentCreatedAutomatically=Konfigurera din lön med url <b> %s </b> för att ha betalning skapad automatiskt när bekräftat av Paybox.
 YourPaymentHasBeenRecorded=Den här sidan bekräftar att din betalning har registrerats. Tack.
 YourPaymentHasNotBeenRecorded=Din betalning har INTE registrerats och transaktionen har annullerats. Tack.

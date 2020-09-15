@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,9 +82,7 @@ $idobject = $myproduct->create($user);
 if ($idobject > 0)
 {
 	print "OK Object created with id ".$idobject."\n";
-}
-else
-{
+} else {
 	$error++;
 	dol_print_error($db, $myproduct->error);
 }
@@ -95,9 +93,7 @@ if (! $error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

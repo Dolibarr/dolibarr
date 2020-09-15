@@ -11,17 +11,8 @@ YourEMail=Электронная почта для подтверждения о
 Creditor=Кредитор
 PaymentCode=Код платежа
 PayBoxDoPayment=Pay with Paybox
-ToPay=Совершить платеж
 YouWillBeRedirectedOnPayBox=Вы будете перенаправлены по обеспеченным Paybox страницу для ввода данных кредитной карточки
 Continue=Далее
-ToOfferALinkForOnlinePayment=URL-адрес для оплаты %s
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL предложить %s онлайн платежей пользовательский интерфейс для счета
-ToOfferALinkForOnlinePaymentOnContractLine=URL предложить% интернет-платежей с интерфейсом пользователя на контракт линия
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL предложить% интернет-платежей с пользовательским интерфейсом для свободного сумму
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL предложить оплаты %s онлайн пользовательский интерфейс для членов подписки
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Вы также можете добавить URL параметр И <b>тег= <i>значение</i></b> для любой из этих URL (требуется только для свободного платежа), чтобы добавить свой комментарий оплаты метки.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Эта страница подтверждает, что ваш платеж был записан. Спасибо.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

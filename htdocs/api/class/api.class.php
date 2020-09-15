@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\Restler;
@@ -32,7 +32,7 @@ class DolibarrApi
     /**
      * @var DoliDb        $db Database object
      */
-    static protected $db;
+    protected $db;
 
     /**
      * @var Restler     $r	Restler object
@@ -54,14 +54,14 @@ class DolibarrApi
         Defaults::$cacheDirectory = $cachedir;
 
         $this->db = $db;
-        $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
+        $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ? false : true);
         $this->r = new Restler($production_mode, $refreshCache);
 
-        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+        $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+        $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
-        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
-        $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
+        $urlwithouturlrootautodetect = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
+        $urlwithrootautodetect = $urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
 
         $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
@@ -102,11 +102,10 @@ class DolibarrApi
         unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
+		unset($object->table_rowid);
 
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
-
-        unset($object->lignes); // we don't want lignes, we want only ->lines
 
         unset($object->fields);
         unset($object->oldline);
@@ -118,9 +117,9 @@ class DolibarrApi
         unset($object->ref_next);
         unset($object->ref_int);
 
-        unset($object->projet);     // Should be fk_project
-        unset($object->project);    // Should be fk_project
-        unset($object->author);     // Should be fk_user_author
+        unset($object->projet); // Should be fk_project
+        unset($object->project); // Should be fk_project
+        unset($object->author); // Should be fk_user_author
         unset($object->timespent_old_duration);
         unset($object->timespent_id);
         unset($object->timespent_duration);
@@ -129,13 +128,23 @@ class DolibarrApi
         unset($object->timespent_withhour);
         unset($object->timespent_fk_user);
         unset($object->timespent_note);
+        unset($object->fk_delivery_address);
 
         unset($object->statuts);
         unset($object->statuts_short);
         unset($object->statuts_logo);
         unset($object->statuts_long);
-        unset($object->labelstatut);
-        unset($object->labelstatut_short);
+        unset($object->labelStatus);
+        unset($object->labelStatusShort);
+
+        unset($object->stats_propale);
+      	unset($object->stats_commande);
+        unset($object->stats_contrat);
+        unset($object->stats_facture);
+        unset($object->stats_commande_fournisseur);
+        unset($object->stats_reception);
+        unset($object->stats_mrptoconsume);
+        unset($object->stats_mrptoproduce);
 
         unset($object->element);
         unset($object->fk_element);
@@ -148,6 +157,17 @@ class DolibarrApi
 
         unset($object->skip_update_total);
         unset($object->context);
+        unset($object->next_prev_filter);
+
+        unset($object->region);
+        unset($object->region_code);
+
+        unset($object->libelle_statut);
+        unset($object->libelle_paiement);
+
+        if ($object->table_element != 'ticket') {
+        	unset($object->comments);
+        }
 
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
@@ -161,9 +181,9 @@ class DolibarrApi
         unset($object->oldcopy);
 
         // If object has lines, remove $db property
-        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0)  {
+        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
             $nboflines = count($object->lines);
-        	for ($i=0; $i < $nboflines; $i++)
+        	for ($i = 0; $i < $nboflines; $i++)
             {
                 $this->_cleanObjectDatas($object->lines[$i]);
 
@@ -180,6 +200,7 @@ class DolibarrApi
                 unset($object->lines[$i]->cond_reglement);
                 unset($object->lines[$i]->fk_delivery_address);
                 unset($object->lines[$i]->fk_projet);
+                unset($object->lines[$i]->fk_project);
                 unset($object->lines[$i]->thirdparty);
                 unset($object->lines[$i]->user);
                 unset($object->lines[$i]->model_pdf);
@@ -187,7 +208,7 @@ class DolibarrApi
                 unset($object->lines[$i]->note_public);
                 unset($object->lines[$i]->note_private);
                 unset($object->lines[$i]->fk_incoterms);
-                unset($object->lines[$i]->libelle_incoterms);
+                unset($object->lines[$i]->label_incoterms);
                 unset($object->lines[$i]->location_incoterms);
                 unset($object->lines[$i]->name);
                 unset($object->lines[$i]->lastname);
@@ -199,7 +220,7 @@ class DolibarrApi
             }
         }
 
-        if (! empty($object->thirdparty) && is_object($object->thirdparty))
+        if (!empty($object->thirdparty) && is_object($object->thirdparty))
         {
         	$this->_cleanObjectDatas($object->thirdparty);
         }
@@ -229,13 +250,12 @@ class DolibarrApi
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
 			$featuresarray = explode("&", $resource);
-		}
-		elseif (preg_match('/\|/', $resource)) {
+		} elseif (preg_match('/\|/', $resource)) {
 			$featuresarray = explode("|", $resource);
 		}
 
 		// More subfeatures to check
-		if (! empty($feature2)) {
+		if (!empty($feature2)) {
 			$feature2 = explode("|", $feature2);
 		}
 
@@ -254,19 +274,19 @@ class DolibarrApi
         // phpcs:enable
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-	    $tmp=$sqlfilters;
-	    $ok=0;
-	    $i=0; $nb=strlen($tmp);
-	    $counter=0;
+	    $tmp = $sqlfilters;
+	    $ok = 0;
+	    $i = 0; $nb = strlen($tmp);
+	    $counter = 0;
 	    while ($i < $nb)
 	    {
-	        if ($tmp[$i]=='(') $counter++;
-	        if ($tmp[$i]==')') $counter--;
+	        if ($tmp[$i] == '(') $counter++;
+	        if ($tmp[$i] == ')') $counter--;
             if ($counter < 0)
             {
-	           $error="Bad sqlfilters=".$sqlfilters;
-	           dol_syslog($error, LOG_WARNING);
-	           return false;
+	            $error = "Bad sqlfilters=".$sqlfilters;
+	            dol_syslog($error, LOG_WARNING);
+	            return false;
             }
             $i++;
 	    }
@@ -288,16 +308,15 @@ class DolibarrApi
 
 	    //dol_syslog("Convert matches ".$matches[1]);
 	    if (empty($matches[1])) return '';
-	    $tmp=explode(':', $matches[1]);
+	    $tmp = explode(':', $matches[1]);
         if (count($tmp) < 3) return '';
 
-	    $tmpescaped=$tmp[2];
+	    $tmpescaped = $tmp[2];
+	    $regbis = array();
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {
 	        $tmpescaped = "'".$db->escape($regbis[1])."'";
-	    }
-	    else
-	    {
+	    } else {
 	        $tmpescaped = $db->escape($tmpescaped);
 	    }
 	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;

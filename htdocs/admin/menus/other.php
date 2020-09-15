@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,11 +25,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("user","other","admin"));
+$langs->loadLangs(array("user", "other", "admin"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 
 /*
@@ -41,8 +41,7 @@ if ($action == 'activate_hidemenu')
 	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1', 'chaine', 0, '', $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
-}
-elseif ($action == 'disable_hidemenu')
+} elseif ($action == 'disable_hidemenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]);
@@ -76,12 +75,12 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
+dol_fiche_head($head, 'misc', '', -1);
 
 
 // Other Options
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
@@ -94,9 +93,7 @@ print '<td class="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-else
-{
+} else {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print "</td>";

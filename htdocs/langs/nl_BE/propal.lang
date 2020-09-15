@@ -3,7 +3,6 @@ ProposalsOpened=Openstaande offertes
 ConfirmValidateProp=Weet u zeker dat u deze offerte met naam <b>%s</b> wilt valideren?
 LastModifiedProposals=Laatste %s gewijzigde offertes
 NoProposal=Geen offerte
-PropalStatusValidated=Gevalideerd (offerte staat open)
 CloseAs=Zet de status op
 SetAcceptedRefused=Zet op goedgekeurd/geweigerd
 CreateEmptyPropal=Creëer een lege commerciële offerte uit de lijst van producten / diensten

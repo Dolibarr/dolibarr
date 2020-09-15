@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,7 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 
@@ -40,17 +40,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'order';
@@ -73,7 +73,7 @@ abstract class ModeleNumRefCommandes
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -110,9 +110,10 @@ abstract class ModeleNumRefCommandes
 	}
 
 	/**
-	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return     boolean     false si conflit, true si ok
+	 *	@return     boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{
@@ -120,7 +121,7 @@ abstract class ModeleNumRefCommandes
 	}
 
 	/**
-	 *	Renvoie prochaine valeur attribuee
+	 *	Returns next assigned value
 	 *
 	 *	@param	Societe		$objsoc     Object thirdparty
 	 *	@param	Object		$object		Object we need next value for
@@ -133,7 +134,7 @@ abstract class ModeleNumRefCommandes
 	}
 
 	/**
-	 *	Renvoie version du module numerotation
+	 *	Returns version of numbering module
 	 *
 	 *	@return     string      Valeur
 	 */

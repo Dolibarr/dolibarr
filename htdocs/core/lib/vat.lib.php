@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ function vat_prepare_head($object)
     $head = array();
 
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans('Card');
+	$head[$tab][1] = $langs->trans('VATPayment');
 	$head[$tab][2] = 'card';
 	$tab++;
 
@@ -46,15 +46,15 @@ function vat_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $tab, 'vat');
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->tax->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->tax->dir_output."/vat/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
 

@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -39,8 +39,13 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$h = 0;
 	$head = array();
 
+	$titleoftab = "WithdrawalsReceipts";
+	if ($object->type == 'bank-transfer') {
+		$titleoftab = "BankTransferReceipts";
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans($titleoftab);
 	$head[$h][2] = 'prelevement';
 	$h++;
 
@@ -59,15 +64,15 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'statistics';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement');
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'prelevement', 'remove');
 
-    return $head;
+	return $head;
 }
 
 /**
@@ -78,8 +83,8 @@ function prelevement_prepare_head(BonPrelevement $object)
 function prelevement_check_config()
 {
 	global $conf;
-	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
-	if(empty($conf->global->PRELEVEMENT_ICS)) return -1;
-    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
+	if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
+	if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
+	if (empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }

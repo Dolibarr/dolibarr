@@ -13,18 +13,19 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- This table is dedicated to store detail (lots/serial) of a stock
 -- ============================================================================
+
 CREATE TABLE llx_product_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_product_stock integer NOT NULL,
   eatby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
   sellby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
-  batch varchar(30) NOT NULL,
+  batch varchar(128) NOT NULL,
   qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

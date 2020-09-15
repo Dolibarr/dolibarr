@@ -18,10 +18,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2013 PrestaShop SA
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author PrestaShop SA <contact@prestashop.com>
+* @copyright  2007-2013 PrestaShop SA
+* @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 * PrestaShop Webservice Library
 * @package PrestaShopWebservice
 */
@@ -88,7 +88,7 @@ class PrestaShopWebservice
 	protected function checkStatusCode($status_code)
 	{
 		$error_label = 'This call to PrestaShop Web Services failed and returned an HTTP status of %d. That means: %s.';
-		switch($status_code)
+		switch ($status_code)
 		{
 			case 200:
 			case 201:
@@ -106,7 +106,7 @@ class PrestaShopWebservice
 			case 500:
 				throw new PrestaShopWebserviceException(sprintf($error_label, $status_code, 'Internal Server Error'));
 			default:
-				throw new PrestaShopWebserviceException('This call to PrestaShop Web Services returned an unexpected HTTP status of:' . $status_code);
+				throw new PrestaShopWebserviceException('This call to PrestaShop Web Services returned an unexpected HTTP status of:'.$status_code);
 		}
 	}
 
@@ -125,7 +125,7 @@ class PrestaShopWebservice
 			CURLINFO_HEADER_OUT => true,
 			CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			CURLOPT_USERPWD => $this->key.':',
-			CURLOPT_HTTPHEADER => array( 'Expect:' )
+			CURLOPT_HTTPHEADER => array('Expect:')
 		);
 
 		dol_syslog("curl_init url=".$url);
@@ -136,8 +136,9 @@ class PrestaShopWebservice
 		{
 			if (isset($curl_params[$defkey]))
 				$curl_options[$defkey] = $curl_params[$defkey];
-			else
+			else {
 				$curl_options[$defkey] = $defaultParams[$defkey];
+			}
 		}
 		foreach ($curl_params as $defkey => $defval)
 			if (!isset($curl_options[$defkey]))
@@ -236,9 +237,9 @@ class PrestaShopWebservice
 				throw new PrestaShopWebserviceException('HTTP XML response is not parsable: '.$msg);
 			}
 			return $xml;
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('HTTP response is empty');
+		}
 	}
 
 	/**
@@ -254,6 +255,7 @@ class PrestaShopWebservice
 	public function add($options)
 	{
 		$xml = '';
+		$url = '';
 
 		if (isset($options['resource'], $options['postXml']) || isset($options['url'], $options['postXml']))
 		{
@@ -263,9 +265,9 @@ class PrestaShopWebservice
 				$url .= '&id_shop='.$options['id_shop'];
 			if (isset($options['id_group_shop']))
 				$url .= '&id_group_shop='.$options['id_group_shop'];
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $xml));
 
 		self::checkStatusCode($request['status_code']);
@@ -320,12 +322,12 @@ class PrestaShopWebservice
 						$url_params[$k] = $options[$k];
 			if (count($url_params) > 0)
 				$url .= '?'.http_build_query($url_params);
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given ');
+		}
 
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-		self::checkStatusCode($request['status_code']);// check the response validity
+		self::checkStatusCode($request['status_code']); // check the response validity
 		return self::parseXML($request['response']);
 	}
 
@@ -353,11 +355,11 @@ class PrestaShopWebservice
 						$url_params[$k] = $options[$k];
 			if (count($url_params) > 0)
 				$url .= '?'.http_build_query($url_params);
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'HEAD', CURLOPT_NOBODY => true));
-		self::checkStatusCode($request['status_code']);// check the response validity
+		self::checkStatusCode($request['status_code']); // check the response validity
 		return $request['header'];
 	}
 	/**
@@ -384,56 +386,13 @@ class PrestaShopWebservice
 				$url .= '&id_shop='.$options['id_shop'];
 			if (isset($options['id_group_shop']))
 				$url .= '&id_group_shop='.$options['id_group_shop'];
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
-		self::checkStatusCode($request['status_code']);// check the response validity
+		self::checkStatusCode($request['status_code']); // check the response validity
 		return self::parseXML($request['response']);
-	}
-
-	/**
-	 * Delete (DELETE) a resource.
-	 * Unique parameter must take : <br><br>
-	 * 'resource' => Resource name<br>
-	 * 'id' => ID or array which contains IDs of a resource(s) you want to delete<br><br>
-	 * <code>
-	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
-	 * try
-	 * {
-	 * $ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
-	 * $xml = $ws->delete(array('resource' => 'orders', 'id' => 1));
-	 *	// Following code will not be executed if an exception is thrown.
-	 * 	echo 'Successfully deleted.';
-	 * }
-	 * catch (PrestaShopWebserviceException $ex)
-	 * {
-	 * 	echo 'Error : '.$ex->getMessage();
-	 * }
-	 * ?>
-	 * </code>
-	 *
-	 * @param  array       $options        Array representing resource to delete.
-	 * @return boolean                     True
-	 */
-	public function delete($options)
-	{
-	    if (isset($options['url']))
-	        $url = $options['url'];
-	    elseif (isset($options['resource']) && isset($options['id']))
-    	    if (is_array($options['id']))
-    	        $url = $this->url.'/api/'.$options['resource'].'/?id=['.implode(',', $options['id']).']';
-    	    else
-    	        $url = $this->url.'/api/'.$options['resource'].'/'.$options['id'];
-	    if (isset($options['id_shop']))
-	        $url .= '&id_shop='.$options['id_shop'];
-	    if (isset($options['id_group_shop']))
-	        $url .= '&id_group_shop='.$options['id_group_shop'];
-	    $request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'DELETE'));
-	    self::checkStatusCode($request['status_code']);// check the response validity
-	    return true;
 	}
 }
 

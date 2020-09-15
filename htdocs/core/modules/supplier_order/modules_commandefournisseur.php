@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,7 +29,7 @@
  *                  and parent class for supplier orders numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
 /**
@@ -40,7 +40,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -56,11 +56,11 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type='order_supplier';
-		$liste=array();
+		$type = 'order_supplier';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -76,7 +76,7 @@ abstract class ModeleNumRefSuppliersOrders
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**  Return if a model can be used or not
 	 *

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,17 +23,17 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
-$id=GETPOST('id');
+$id = GETPOST('id', 'int');
 
 // Load translation files required by the page
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
+if (!$user->rights->mailing->lire || $user->socid > 0)
 accessforbidden();
 
 
@@ -56,21 +56,30 @@ if ($object->fetch($id) >= 0)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlright='';
-	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
-	
+	$morehtmlright = '';
+	$nbtry = $nbok = 0;
+	if ($object->statut == 2 || $object->statut == 3)
+	{
+		$nbtry = $object->countNbOfTargets('alreadysent');
+		$nbko  = $object->countNbOfTargets('alreadysentko');
+
+		$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+		if ($nbko) $morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+		$morehtmlright .= ') &nbsp; ';
+	}
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
-	
+
 	print '<div class="underbanner clearboth"></div><br>';
-	
+
 	//print '<table width="100%"><tr><td>';
-	$object->user_creation=$object->user_creat;
-	$object->date_creation=$object->date_creat;
-	$object->user_validation=$object->user_valid;
-	$object->date_validation=$object->date_valid;
+	$object->user_creation = $object->user_creat;
+	$object->date_creation = $object->date_creat;
+	$object->user_validation = $object->user_valid;
+	$object->date_validation = $object->date_valid;
 	dol_print_object_info($object, 0);
 	//print '</td></tr></table>';
-	
+
 
 	dol_fiche_end();
 }

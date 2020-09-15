@@ -16,7 +16,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -36,13 +36,13 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='facture'; //Must be the $table_element of the class that manage extrafield
+$action = GETPOST('action', 'alpha');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'facture'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -59,11 +59,11 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 * View
 */
 
-$textobject=strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
+$textobject = strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 
 llxHeader('', $langs->trans("BillsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
@@ -85,11 +85,11 @@ if ($action != 'create' && $action != 'edit')
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation of an optional field											  */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ *
+ * Creation of an optional field
+ *
+ */
 
 if ($action == 'create')
 {
@@ -99,12 +99,12 @@ if ($action == 'create')
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition of an optional field                                               */
-/*                                                                            */
-/* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
+/*
+ *
+ * Edition of an optional field
+ *
+ */
+if ($action == 'edit' && !empty($attrname))
 {
 	$langs->load("members");
 

@@ -11,7 +11,7 @@ class SegmentException extends Exception
  *
  * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
+ * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4.5 (last update 2013-04-07)
  */
 class Segment implements IteratorAggregate, Countable

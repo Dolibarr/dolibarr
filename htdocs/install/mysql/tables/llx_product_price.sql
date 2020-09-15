@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -35,7 +35,7 @@ create table llx_product_price
   price_min_ttc		double(24,8) default NULL,
   price_base_type	varchar(3) DEFAULT 'HT',
   default_vat_code	varchar(10),	         		-- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
-  tva_tx			double(6,3) NOT NULL,
+  tva_tx			double(6,3) DEFAULT 0 NOT NULL, -- Used only when option PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on (not supported) 
   recuperableonly	integer NOT NULL DEFAULT '0',  
   localtax1_tx		double(6,3) DEFAULT 0,
   localtax1_type    varchar(10)  NOT NULL DEFAULT '0',

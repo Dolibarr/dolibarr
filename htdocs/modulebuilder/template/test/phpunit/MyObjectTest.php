@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,79 +32,79 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * Global test setup
-     * @return void
+	 * @return void
 	 */
 	public static function setUpBeforeClass()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
 	 * Unit test setup
-     * @return void
+	 * @return void
 	 */
 	protected function setUp()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
 	 * Verify pre conditions
-     * @return void
+	 * @return void
 	 */
 	protected function assertPreConditions()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
 	 * A sample test
-     * @return bool
+	 * @return bool
 	 */
 	public function testSomething()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 		// TODO: test something
 		$this->assertTrue(true);
 	}
 
 	/**
 	 * Verify post conditions
-     * @return void
+	 * @return void
 	 */
 	protected function assertPostConditions()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
 	 * Unit test teardown
-     * @return void
+	 * @return void
 	 */
 	protected function tearDown()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
 	 * Global test teardown
-     * @return void
+	 * @return void
 	 */
 	public static function tearDownAfterClass()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 	}
 
 	/**
 	 * Unsuccessful test
 	 *
 	 * @param  Exception $e    Exception
-     * @return void
+	 * @return void
 	 * @throws Exception
 	 */
 	protected function onNotSuccessfulTest(Exception $e)
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		fwrite(STDOUT, __METHOD__."\n");
 		throw $e;
 	}
 }

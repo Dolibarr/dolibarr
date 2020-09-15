@@ -53,7 +53,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 		// This function does not exists on some ISP (Ex: Free in France)
 		if (!function_exists('openlog')) return 0;
 
-		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_SYSLOG)?1:0;    // Set SYSLOG_DISABLE_LOGHANDLER_SYSLOG to 1 to disable this loghandler
+		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_SYSLOG) ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_SYSLOG to 1 to disable this loghandler
 	}
 
 	/**
@@ -89,12 +89,10 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	    if ($facility)
 		{
 			// Only LOG_USER supported on Windows
-			if (! empty($_SERVER["WINDIR"])) $facility=constant('LOG_USER');
+			if (!empty($_SERVER["WINDIR"])) $facility = constant('LOG_USER');
 
 			dol_syslog("admin/syslog: facility ".$facility);
-		}
-		else
-		{
+		} else {
 		    $errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
 		}
 
@@ -111,13 +109,12 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	{
 		global $conf;
 
-		if (! empty($conf->global->MAIN_SYSLOG_DISABLE_SYSLOG)) return;	// Global option to disable output of this handler
+		if (!empty($conf->global->MAIN_SYSLOG_DISABLE_SYSLOG)) return; // Global option to disable output of this handler
 
-		if (! empty($conf->global->SYSLOG_FACILITY))  // Example LOG_USER
+		if (!empty($conf->global->SYSLOG_FACILITY))  // Example LOG_USER
 		{
 			$facility = constant($conf->global->SYSLOG_FACILITY);
-		}
-		else $facility = constant('LOG_USER');
+		} else $facility = constant('LOG_USER');
 
 		// (int) is required to avoid error parameter 3 expected to be long
 		openlog('dolibarr', LOG_PID | LOG_PERROR, (int) $facility);

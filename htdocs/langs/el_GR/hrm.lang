@@ -5,12 +5,13 @@ Establishments=Εγκαταστάσεις
 Establishment=Εγκατάσταση
 NewEstablishment=Νέα εγκατάσταση
 DeleteEstablishment=Διαγραφή εγκατάστασης
-ConfirmDeleteEstablishment=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη σύσταση;
+ConfirmDeleteEstablishment= Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν την σύσταση ?
 OpenEtablishment=Άνοιγμα εγκατάστασης
 CloseEtablishment=Κλείσιμο εγκατάστασης
 # Dictionary
+DictionaryPublicHolidays=HRM-δημόσιες αργίες
 DictionaryDepartment=HRM - Λίστα τμημάτων
-DictionaryFunction=HRM - Λίστα συναρτήσεων
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Εργαζόμενοι
 Employee=Υπάλληλος

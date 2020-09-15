@@ -200,7 +200,7 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_emailcollector INTEGER NOT NULL,
 	type varchar(128) NOT NULL,
-	rulevalue varchar(255) NULL,
+	rulevalue varchar(128) NULL,
 	date_creation datetime NOT NULL,
 	tms timestamp NOT NULL,
 	fk_user_creat integer NOT NULL,
@@ -284,7 +284,6 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 --update llx_facturedet        set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_facture_fourn_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_expensereport_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
-
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);

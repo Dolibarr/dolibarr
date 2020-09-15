@@ -13,10 +13,13 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_tms (tms);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_datec (datec);
 ALTER TABLE llx_inventorydet ADD INDEX idx_inventorydet_fk_inventory (fk_inventory);
+
+ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
+

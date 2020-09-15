@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -31,9 +31,9 @@ $ref = GETPOST('ref');
 $form = new Form($db);
 
 // Security check
-$fieldvalue = (! empty($id) ? $id : $ref);
-$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-$result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+$fieldvalue = (!empty($id) ? $id : $ref);
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodattr = new ProductAttribute($db);
 $prodattrval = new ProductAttributeValue($db);
@@ -84,7 +84,6 @@ if ($_POST)
 	}
 
 	if ($sanitized_values) {
-
 		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$adapted_values = array();
@@ -106,13 +105,12 @@ if ($_POST)
 
 		//Current combinations will be deleted
 		if ($delete_prev_comb_res > 0) {
-
 			$res = 1;
 
 			$cartesianarray = cartesianArray($adapted_values);
 			foreach ($cartesianarray as $currcomb)
 			{
-				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
+				$res = $combination->createProductCombination($user, $product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
 				    $error++;
 				    setEventMessages($combination->error, $combination->errors, 'errors');
@@ -142,7 +140,7 @@ if ($_POST)
  *	View
  */
 
-if (! empty($id) || ! empty($ref)) {
+if (!empty($id) || !empty($ref)) {
 	$object = new Product($db);
 	$result = $object->fetch($id, $ref);
 
@@ -150,18 +148,18 @@ if (! empty($id) || ! empty($ref)) {
 
 	if ($result > 0)
 	{
-		$showbarcode=empty($conf->barcode->enabled)?0:1;
-		if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode = 0;
 
-		$head=product_prepare_head($object);
-		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+		$head = product_prepare_head($object);
+		$titre = $langs->trans("CardProduct".$object->type);
+		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-		$object->next_prev_filter=" fk_product_type = ".$object->type;
+		$object->next_prev_filter = " fk_product_type = ".$object->type;
 
-		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
 		dol_fiche_end();
 	}
@@ -380,8 +378,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-  // End of page
-  llxFooter();
+    // End of page
+    llxFooter();
 }
 
 $db->close();

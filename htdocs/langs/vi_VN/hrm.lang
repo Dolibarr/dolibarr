@@ -9,8 +9,9 @@ ConfirmDeleteEstablishment=Bạn có chắc chắn muốn xóa cơ sở này?
 OpenEtablishment=Mở cơ sở
 CloseEtablishment=Đóng cơ sở
 # Dictionary
+DictionaryPublicHolidays=HRM - Ngày lễ
 DictionaryDepartment=HRM - Danh sách phòng/ban
-DictionaryFunction=HRM - Danh sách vai trò
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Nhân viên
 Employee=Nhân viên

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,10 +22,10 @@
  */
 
 //if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Uncomment creates pb to relogon after a disconnect
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require_once '../main.inc.php';
 

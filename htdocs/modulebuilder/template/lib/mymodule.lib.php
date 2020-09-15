@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,6 +39,14 @@ function mymoduleAdminPrepareHead()
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
+
+	/*
+	$head[$h][0] = dol_buildpath("/mymodule/admin/myobject_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'myobject_extrafields';
+	$h++;
+	*/
+
 	$head[$h][0] = dol_buildpath("/mymodule/admin/about.php", 1);
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';

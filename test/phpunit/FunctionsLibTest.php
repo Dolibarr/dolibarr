@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -77,7 +77,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -88,7 +92,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -680,6 +688,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testDolAsciiCheck
+     *
+     * @return void
+     */
+    public function testDolAsciiCheck()
+    {
+    	// True
+    	$result=ascii_check('azerty');
+    	$this->assertTrue($result);
+
+    	$result=ascii_check('é');
+    	$this->assertFalse($result);
+
+    	$file=dirname(__FILE__).'/textutf8.txt';
+    	$filecontent=file_get_contents($file);
+    	$result=ascii_check($filecontent);
+    	$this->assertFalse($result);
+    }
+
+    /**
      * testDolTrunc
      *
      * @return boolean
@@ -905,7 +933,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     {
         $s=img_picto('title', 'user');
         print __METHOD__." s=".$s."\n";
-        $this->assertContains('theme', $s, 'testImgPicto1');
+        $this->assertContains('fa-user', $s, 'testImgPicto1');
 
         $s=img_picto('title', 'img.png', 'style="float: right"', 0);
         print __METHOD__." s=".$s."\n";

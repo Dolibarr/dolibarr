@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *      \file       htdocs/core/modules/mailings/modules_printing.php
+ *      \file       htdocs/core/modules/printing/modules_printing.php
  *      \ingroup    printing
  *      \brief      File with parent class of printing modules
  */
@@ -39,7 +39,7 @@ class PrintingDriver
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     /**
@@ -66,10 +66,10 @@ class PrintingDriver
         $type = 'printing';
         $list = array();
 
-        $moduledir=DOL_DOCUMENT_ROOT."/core/modules/printing/";
-        $tmpfiles=dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
-        foreach($tmpfiles as $record) {
-            $list[$record['fullname']]=str_replace('.modules.php', '', $record['name']);
+        $moduledir = DOL_DOCUMENT_ROOT."/core/modules/printing/";
+        $tmpfiles = dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
+        foreach ($tmpfiles as $record) {
+            $list[$record['fullname']] = str_replace('.modules.php', '', $record['name']);
         }
 
         return $list;
@@ -84,7 +84,7 @@ class PrintingDriver
     {
         global $langs;
         $langs->load("printing");
-        $transstring="PrintingModuleDesc".$this->name;
+        $transstring = "PrintingModuleDesc".$this->name;
         if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
         else return $this->desc;
     }

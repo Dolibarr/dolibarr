@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
  *  \ingroup    productbatch
  *  \brief      Description and activation file for module productbatch
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -40,7 +40,7 @@ class modProductBatch extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs,$conf;
+        global $langs, $conf;
 
         $this->db = $db;
 		$this->numero = 39000;
@@ -57,7 +57,7 @@ class modProductBatch extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where dluo is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 
-		$this->picto='stock';
+		$this->picto = 'lot';
 
 		$this->module_parts = array();
 
@@ -68,12 +68,12 @@ class modProductBatch extends DolibarrModules
 		$this->config_page_url = array("product_lot_extrafields.php@product");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array("modProduct","modStock","modExpedition","modFournisseur");		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array("modProduct", "modStock", "modExpedition", "modFournisseur"); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("productbatch");
 
 		// Constants
@@ -82,28 +82,28 @@ class modProductBatch extends DolibarrModules
         $this->tabs = array();
 
         // Dictionaries
-	    if (! isset($conf->productbatch->enabled))
+	    if (!isset($conf->productbatch->enabled))
         {
-        	$conf->productbatch=new stdClass();
-        	$conf->productbatch->enabled=0;
+        	$conf->productbatch = new stdClass();
+        	$conf->productbatch->enabled = 0;
         }
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 
         // Boxes
-        $this->boxes = array();			// List of boxes
+        $this->boxes = array(); // List of boxes
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$r=0;
+		$this->rights = array(); // Permission array used by this module
+		$r = 0;
 
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
-		$r=0;
+		$r = 0;
 	}
 
 	/**
@@ -116,11 +116,11 @@ class modProductBatch extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-	    global $db,$conf;
+	    global $db, $conf;
 
 		$sql = array();
 
-		if (! empty($conf->cashdesk->enabled)) {
+		if (!empty($conf->cashdesk->enabled)) {
     		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
     		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
     		    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);

@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
-WithdrawalPayment=Withdrawal payment
 BankChecks=Bank cheques
 ShowCheckReceipt=Show cheque deposit receipt
 RejectCheck=Cheque returned
 RejectCheckDate=Date the cheque was returned
 CheckRejected=Cheque returned
-CheckRejectedAndInvoicesReopened=Cheque returned and invoices reopened

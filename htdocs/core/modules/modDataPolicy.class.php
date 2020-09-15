@@ -14,18 +14,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * 	\defgroup   datapolicy     Module datapolicy
  *  \brief      datapolicy module descriptor.
  *
- *  \file       htdocs/datapolicy/core/modules/modDataPolicy.class.php
+ *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for module DATAPOLICY
  */
-include_once DOL_DOCUMENT_ROOT . '/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 
@@ -59,7 +59,7 @@ class modDataPolicy extends DolibarrModules {
         // It is used to group modules by family in module setup page
         $this->family = "technic";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '81';
+        $this->module_position = '78';
         // Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuledatapolicyName' not found (MyModue is name of module).
@@ -72,7 +72,7 @@ class modDataPolicy extends DolibarrModules {
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where datapolicy is value of property name of module in uppercase)
-        $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -102,15 +102,15 @@ class modDataPolicy extends DolibarrModules {
         $this->config_page_url = array("setup.php@datapolicy");
 
         // Dependencies
-        $this->hidden = false;   // A condition to hide module
-        $this->depends = array('always'=>'modCron');  // List of module class names as string that must be enabled if this module is enabled
+        $this->hidden = false; // A condition to hide module
+        $this->depends = array('always'=>'modCron'); // List of module class names as string that must be enabled if this module is enabled
         $this->requiredby = array(); // List of module ids to disable if this one is disabled
         $this->conflictwith = array(); // List of module class names as string this module is in conflict with
         $this->langfiles = array("datapolicy@datapolicy");
-        $this->phpmin = array(5, 3);     // Minimum version of PHP required by module
+        $this->phpmin = array(5, 3); // Minimum version of PHP required by module
         $this->need_dolibarr_version = array(4, 0); // Minimum version of Dolibarr required by module
-        $this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-        $this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+        $this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+        $this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         //$this->automatic_activation = array('FR'=>'datapolicyWasAutomaticallyActivatedBecauseOfYourCountryChoice');
         //$this->always_enabled = true;								// If true, can't be disabled
         // Constants
@@ -187,16 +187,15 @@ class modDataPolicy extends DolibarrModules {
         // Cronjobs (List of cron jobs entries to add when module is enabled)
         // unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
         $this->cronjobs = array(
-            0 => array('label' => 'DATAPOLICY Cron', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'exec', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
-            //1 => array('label' => 'DATAPOLICY Mailing', 'jobtype' => 'method', 'class' => '/datapolicy/class/datapolicyCron.class.php', 'objectname' => 'RgpdCron', 'method' => 'sendMailing', 'parameters' => '', 'comment' => 'Comment', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 0, 'test' => true)
+            0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
         );
         // Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
         //                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
         // );
         // Permissions
-        $this->rights = array();  // Permission array used by this module
+        $this->rights = array(); // Permission array used by this module
         // Main menu entries
-        $this->menu = array();   // List of menus to add
+        $this->menu = array(); // List of menus to add
         $r = 0;
     }
 
@@ -215,7 +214,7 @@ class modDataPolicy extends DolibarrModules {
         $this->_load_tables('/datapolicy/sql/');
 
         // Create extrafields
-        include_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
 
         /*

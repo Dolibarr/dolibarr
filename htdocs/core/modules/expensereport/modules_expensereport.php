@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -26,7 +26,7 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -42,8 +42,8 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='expensereport';
-		$list=array();
+		$type = 'expensereport';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$list = getListOfModels($db, $type, $maxfilenamelength);
@@ -80,7 +80,7 @@ abstract class ModeleNumRefExpenseReport
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a model can be used or not
@@ -117,7 +117,7 @@ abstract class ModeleNumRefExpenseReport
 	}
 
 	/**
-	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering from working.
+	 *	Test whether the numbers already in force in the base do not cause conflicts that would prevent this numbering working.
 	 *
 	 *	@return     boolean     false if conflict, true if ok
 	 */

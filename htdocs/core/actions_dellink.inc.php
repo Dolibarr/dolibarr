@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,16 +30,16 @@ $dellinkid = GETPOST('dellinkid', 'int');
 $addlinkid = GETPOST('idtolinkto', 'int');
 
 // Link invoice to order
-if ($action == 'addlink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $id > 0 && $addlinkid > 0)
+if ($action == 'addlink' && !empty($permissiondellink) && !GETPOST('cancel', 'alpha') && $id > 0 && $addlinkid > 0)
 {
-    $object->fetch($id);
-    $object->fetch_thirdparty();
-    $result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
 }
 
 // Delete link
-if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $dellinkid > 0)
+if ($action == 'dellink' && !empty($permissiondellink) && !GETPOST('cancel', 'alpha') && $dellinkid > 0)
 {
-	$result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }

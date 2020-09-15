@@ -41,9 +41,7 @@ InterventionsArea=Àrea d'intervencions
 DraftFichinter=Intervencions esborrany
 LastModifiedInterventions=Últimes %s intervencions modificades
 FichinterToProcess=Intervencions a processar
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contacte client seguiment intervenció
-# Modele numérotation
 PrintProductsOnFichinter=Imprimeix també les línies de tipus "producte" (no només serveis) en les fitxes d'intervencions.
 PrintProductsOnFichinterDetails=Intervencions generades des de comandes
 UseServicesDurationOnFichinter=Utilitza la durada dels serveis en les intervencions generades des de comandes
@@ -53,14 +51,16 @@ InterventionStatistics=Estadístiques de intervencions
 NbOfinterventions=Nº de fitxes d'intervenció
 NumberOfInterventionsByMonth=Nº de fitxes d'intervenció per mes (data de validació)
 AmountOfInteventionNotIncludedByDefault=La quantitat d'intervenció no s'inclou de manera predeterminada en els beneficis (en la majoria dels casos, els fulls de temps s'utilitzen per comptar el temps dedicat). Per incloure'ls, afegiu la opció  PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT amb el valor 1 a Configuració &rarr; Varis.
-##### Exports #####
 InterId=Id. d'intervenció
 InterRef=Ref. d'intervenció
 InterDateCreation=Data de creació de la intervenció
 InterDuration=Durada de la intervenció
 InterStatus=Estat de la intervenció
 InterNote=Nota de la intervenció
+InterLine=Línia d’intervenció
 InterLineId=Id. de la línia de la intervenció
 InterLineDate=Data de la línia de intervenció
 InterLineDuration=Durada de la línia de la intervenció
 InterLineDesc=Descripció de la línia de la intervenció
+RepeatableIntervention=Plantilla d’intervenció
+ToCreateAPredefinedIntervention=Per crear una intervenció predefinida o recurrent, creeu una intervenció comuna i convertiu-la en plantilla d'intervenció

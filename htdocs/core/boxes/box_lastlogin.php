@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_lastlogin extends ModeleBoxes
 {
-    public $boxcode="lastlogin";
-    public $boximg="object_user";
-    public $boxlabel='BoxLoginInformation';
+    public $boxcode = "lastlogin";
+    public $boximg = "object_user";
+    public $boxlabel = 'BoxLoginInformation';
     public $depends = array("user");
 
     /**
@@ -57,7 +57,7 @@ class box_lastlogin extends ModeleBoxes
     {
         global $conf;
 
-        $this->db=$db;
+        $this->db = $db;
     }
 
     /**
@@ -68,7 +68,7 @@ class box_lastlogin extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
 
         $textHead = $langs->trans("BoxLoginInformation");
         $this->info_box_head = array(
@@ -76,24 +76,24 @@ class box_lastlogin extends ModeleBoxes
             'limit'=> dol_strlen($textHead),
         );
 
-        $line=0;
+        $line = 0;
         $this->info_box_contents[$line][0] = array(
-            'td' => '',
+            'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
             'text' => $langs->trans("User"),
         );
         $this->info_box_contents[$line][1] = array(
-            'td' => '',
+            'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
             'text' => $user->getNomUrl(-1),
             'asis' => 1
         );
 
-        $line=1;
+        $line = 1;
         $this->info_box_contents[$line][0] = array(
             'td' => '',
             'text' => $langs->trans("PreviousConnexion"),
         );
-        if ($user->datepreviouslogin) $tmp= dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
-        else $tmp= $langs->trans("Unknown");
+        if ($user->datepreviouslogin) $tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
+        else $tmp = $langs->trans("Unknown");
         $this->info_box_contents[$line][1] = array(
             'td' => '',
             'text' => $tmp,

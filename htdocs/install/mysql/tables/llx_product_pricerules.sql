@@ -12,15 +12,15 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
 CREATE TABLE llx_product_pricerules
 (
-    rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    level INT NOT NULL, -- Which price level is this rule for?
-    fk_level INT NOT NULL, -- Price variations are made over price of X
-    var_percent FLOAT NOT NULL, -- Price variation over based price
-    var_min_percent FLOAT NOT NULL -- Min price discount over general price
+    rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    level INTEGER NOT NULL, -- Which price level is this rule for?
+    fk_level INTEGER NOT NULL, -- Price variations are made over price of X
+    var_percent REAL NOT NULL, -- Price variation over based price
+    var_min_percent REAL NOT NULL -- Min price discount over general price
 )ENGINE=innodb;

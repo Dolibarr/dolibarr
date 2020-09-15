@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -25,7 +25,7 @@
  *	\brief      	Fichier de description et activation du module Generation document
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -45,7 +45,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->numero = 1520;
 
 		$this->family = "technic";
-		$this->module_position = '80';
+		$this->module_position = '78';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Direct mail document generation";
@@ -53,7 +53,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='email';
+		$this->picto = 'email';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/documentgeneration/temp");
@@ -65,7 +65,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->langfiles = array("orders","bills","companies","mails");
+		$this->langfiles = array("orders", "bills", "companies", "mails");
 
 		// Constants
 
@@ -78,7 +78,7 @@ class modDocumentGeneration extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'document';
 
-		$r=0;
+		$r = 0;
 
 		$this->rights[$r][0] = 1521;
 		$this->rights[$r][1] = 'Lire les documents';

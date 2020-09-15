@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -28,7 +28,7 @@
  *	\brief      Fichier de description et activation du module Ficheinter
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -68,14 +68,14 @@ class modFicheinter extends DolibarrModules
         $this->depends = array("modSociete");
         $this->requiredby = array();
         $this->conflictwith = array();
-        $this->langfiles = array("bills","companies","interventions");
+        $this->langfiles = array("bills", "companies", "interventions");
 
         // Config pages
         $this->config_page_url = array("fichinter.php");
 
         // Constants
         $this->const = array();
-        $r=0;
+        $r = 0;
 
         $this->const[$r][0] = "FICHEINTER_ADDON_PDF";
         $this->const[$r][1] = "chaine";
@@ -88,12 +88,12 @@ class modFicheinter extends DolibarrModules
         $r++;
 
         // Boxes
-        $this->boxes = array(0=>array('file'=>'box_ficheinter.php','enabledbydefaulton'=>'Home'));
+        $this->boxes = array(0=>array('file'=>'box_ficheinter.php', 'enabledbydefaulton'=>'Home'));
 
         // Permissions
         $this->rights = array();
         $this->rights_class = 'ficheinter';
-        $r=0;
+        $r = 0;
 
         $r++;
         $this->rights[$r][0] = 61;
@@ -128,7 +128,7 @@ class modFicheinter extends DolibarrModules
         $this->rights[$r][1] = 'Envoyer les fiches d\'intervention par courriel';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][4] = 'ficheinter_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
         $this->rights[$r][5] = 'send';
 
         $r++;
@@ -136,7 +136,7 @@ class modFicheinter extends DolibarrModules
         $this->rights[$r][1] = 'Valider les fiches d\'intervention ';
         $this->rights[$r][2] = 'a';
         $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][4] = 'ficheinter_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
         $this->rights[$r][5] = 'validate';
 
         $r++;
@@ -144,33 +144,33 @@ class modFicheinter extends DolibarrModules
         $this->rights[$r][1] = 'Dévalider les fiches d\'intervention';
         $this->rights[$r][2] = 'a';
         $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][4] = 'ficheinter_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
         $this->rights[$r][5] = 'unvalidate';
 
 
         // Menus
         //-------
-        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
         //Exports
         //--------
-        $r=1;
+        $r = 1;
 
-        $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='InterventionCardsAndInterventionLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        $this->export_permission[$r]=array(array("ficheinter","export"));
-        $this->export_fields_array[$r]=array(
-			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',
-			's.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
-			's.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InterId",'f.ref'=>"InterRef",'f.datec'=>"InterDateCreation",
-			'f.duree'=>"InterDuration",'f.fk_statut'=>'InterStatus','f.description'=>"InterNote");
-        $keyforselect='fichinter'; $keyforelement='intervention'; $keyforaliasextra='extra';
+        $this->export_code[$r] = $this->rights_class.'_'.$r;
+        $this->export_label[$r] = 'InterventionCardsAndInterventionLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->export_permission[$r] = array(array("ficheinter", "export"));
+        $this->export_fields_array[$r] = array(
+			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 's.fk_pays'=>'Country', 's.phone'=>'Phone',
+			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
+			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 'f.rowid'=>"InterId", 'f.ref'=>"InterRef", 'f.datec'=>"InterDateCreation",
+			'f.duree'=>"InterDuration", 'f.fk_statut'=>'InterStatus', 'f.description'=>"InterNote");
+        $keyforselect = 'fichinter'; $keyforelement = 'intervention'; $keyforaliasextra = 'extra';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        $this->export_fields_array[$r]+=array(
-        	'pj.ref'=>'ProjectRef','pj.title'=>'ProjectLabel',
+        $this->export_fields_array[$r] += array(
+        	'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel',
         	'fd.rowid'=>'InterLineId',
-			'fd.date'=>"InterLineDate",'fd.duree'=>"InterLineDuration",'fd.description'=>"InterLineDesc"
+			'fd.date'=>"InterLineDate", 'fd.duree'=>"InterLineDuration", 'fd.description'=>"InterLineDesc"
 		);
         //$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
@@ -179,34 +179,34 @@ class modFicheinter extends DolibarrModules
 		//	'f.datee'=>"Date",'f.dateo'=>"Date",'f.fulldayevent'=>"Boolean",'fd.date'=>"Date",'fd.duree'=>"Duree",'fd.description'=>"Text",
 		//	'fd.total_ht'=>"Numeric"
 		//);
-        $this->export_TypeFields_array[$r]=array(
-        	's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label','s.phone'=>'Text','s.siren'=>'Text',
-			's.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
-        	'f.rowid'=>'Numeric','f.ref'=>"Text",'f.datec'=>"Date",
-			'f.duree'=>"Duree",'f.fk_statut'=>'Numeric','f.description'=>"Text",'f.datee'=>"Date",'f.dateo'=>"Date",'f.fulldayevent'=>"Boolean",
-        	'pj.ref'=>'Text','pj.title'=>'Text',
-        	'fd.rowid'=>"Numeric",'fd.date'=>"Date",'fd.duree'=>"Duree",'fd.description'=>"Text",'fd.total_ht'=>"Numeric"
+        $this->export_TypeFields_array[$r] = array(
+        	's.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 's.fk_pays'=>'List:c_country:label', 's.phone'=>'Text', 's.siren'=>'Text',
+			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text',
+        	'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.datec'=>"Date",
+			'f.duree'=>"Duree", 'f.fk_statut'=>'Numeric', 'f.description'=>"Text", 'f.datee'=>"Date", 'f.dateo'=>"Date", 'f.fulldayevent'=>"Boolean",
+        	'pj.ref'=>'Text', 'pj.title'=>'Text',
+        	'fd.rowid'=>"Numeric", 'fd.date'=>"Date", 'fd.duree'=>"Duree", 'fd.description'=>"Text", 'fd.total_ht'=>"Numeric"
 		);
-        $this->export_entities_array[$r]=array(
-			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company',
-			's.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company',
-			's.code_compta_fournisseur'=>'company','f.rowid'=>"intervention",'f.ref'=>"intervention",'f.datec'=>"intervention",'f.duree'=>"intervention",
-        	'f.fk_statut'=>"intervention",'f.description'=>"intervention", 'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>"inter_line",'fd.date'=>"inter_line",
-			'fd.duree'=>'inter_line','fd.description'=>'inter_line'
+        $this->export_entities_array[$r] = array(
+			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company',
+			's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company',
+			's.code_compta_fournisseur'=>'company', 'f.rowid'=>"intervention", 'f.ref'=>"intervention", 'f.datec'=>"intervention", 'f.duree'=>"intervention",
+        	'f.fk_statut'=>"intervention", 'f.description'=>"intervention", 'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>"inter_line", 'fd.date'=>"inter_line",
+			'fd.duree'=>'inter_line', 'fd.description'=>'inter_line'
 		);
-        $this->export_dependencies_array[$r]=array('inter_line'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-        $keyforselect='fichinterdet'; $keyforelement='inter_line'; $keyforaliasextra='extradet';
+        $this->export_dependencies_array[$r] = array('inter_line'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+        $keyforselect = 'fichinterdet'; $keyforelement = 'inter_line'; $keyforaliasextra = 'extradet';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
-        $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'fichinter as f';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter_extrafields as extra ON f.rowid = extra.fk_object';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet as fd ON f.rowid = fd.fk_fichinter';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet_extrafields as extradet ON fd.rowid = extradet.fk_object,';
-        $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'societe as s';
-        $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-        $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('intervention').')';
+        $this->export_sql_start[$r] = 'SELECT DISTINCT ';
+        $this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'fichinter as f';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter_extrafields as extra ON f.rowid = extra.fk_object';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet as fd ON f.rowid = fd.fk_fichinter';
+        $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet_extrafields as extradet ON fd.rowid = extradet.fk_object,';
+        $this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'societe as s';
+        $this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
+        $this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('intervention').')';
         $r++;
     }
 

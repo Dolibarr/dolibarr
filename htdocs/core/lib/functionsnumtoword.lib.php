@@ -57,6 +57,7 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 		return $concatWords;
 	} else {
 		$TNum = explode('.', $num);
+
 		$num = (int) $TNum[0];
 		$words = array();
 		$list1 = array(
@@ -181,22 +182,18 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	}
 
 	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
-	 in case exist why ask $lang like a parameter?*/
+	in case exist why ask $lang like a parameter?*/
 	if (((is_object($langs) && $langs->default == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency')
 	{
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 0 && $numero < 1) {
+		} elseif ($numero >= 0 && $numero < 1) {
 			return ("CERO PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 1000000 && $numero < 1000001) {
+		} elseif ($numero >= 1000000 && $numero < 1000001) {
 			return ("UN MILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
+		} elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
 			return ("UN BILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		else {
+		} else {
 			$entexto = "";
 			$number = $numero;
 			if ($number >= 1000000000) {
@@ -219,8 +216,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1)
 					$entexto .= " MILL&OacuteN ";
-					else
-						$entexto .= " MILLONES ";
+				else $entexto .= " MILLONES ";
 			}
 			if ($number >= 1000) {
 				$cdm = (int) ($numero / 100000);
@@ -240,7 +236,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			$entexto .= hundreds2text($c, $d, $u);
 			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
 				$entexto .= " DE";
-				$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
+			$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
 		}
 		return $entexto;
 	}
@@ -276,13 +272,11 @@ function hundreds2text($hundreds, $tens, $units)
 			$entexto .= $unidades[$units - 1];
 		}
 		return $entexto;
-	}
-	elseif ($tens == 2) {
+	} elseif ($tens == 2) {
 		if ($hundreds != 0) $entexto .= " ";
 		$entexto .= " ".$veintis[$units];
 		return $entexto;
-	}
-	elseif ($tens == 1) {
+	} elseif ($tens == 1) {
 		if ($hundreds != 0) $entexto .= " ";
 		$entexto .= $diecis[$units];
 		return $entexto;

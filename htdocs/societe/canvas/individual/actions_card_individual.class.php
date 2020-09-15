@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,9 +22,11 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
+
 /**
- *	\class      ActionsCardIndividual
- *	\brief      Class with controller methods for individual canvas
+ *	ActionsCardIndividual
+ *
+ *	Class with controller methods for individual canvas
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {
@@ -39,11 +41,11 @@ class ActionsCardIndividual extends ActionsCardCommon
      */
     public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
     {
-        $this->db				= $db;
-        $this->dirmodule		= $dirmodule;
-        $this->targetmodule		= $targetmodule;
-        $this->canvas			= $canvas;
-        $this->card				= $card;
+        $this->db = $db;
+        $this->dirmodule = $dirmodule;
+        $this->targetmodule = $targetmodule;
+        $this->canvas = $canvas;
+        $this->card = $card;
     }
 
 
@@ -57,11 +59,11 @@ class ActionsCardIndividual extends ActionsCardCommon
     {
         global $langs;
 
-        $out='';
+        $out = '';
 
-        if ($action == 'view')      $out.= $langs->trans("Individual");
-        if ($action == 'edit')      $out.= $langs->trans("EditCompany");
-        if ($action == 'create')    $out.= $langs->trans("NewCompany");
+        if ($action == 'view')      $out .= $langs->trans("Individual");
+        if ($action == 'edit')      $out .= $langs->trans("EditCompany");
+        if ($action == 'create')    $out .= $langs->trans("NewCompany");
 
         return $out;
     }
@@ -108,9 +110,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 		if ($action == 'create' || $action == 'edit')
 		{
 			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civility_id'));
-		}
-		else
-		{
+		} else {
 			// Confirm delete third party
 			if ($action == 'delete' || $conf->use_javascript_ajax)
 			{

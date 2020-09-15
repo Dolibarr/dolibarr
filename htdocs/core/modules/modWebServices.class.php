@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *       \ingroup    webservices
  *       \brief      File to describe webservices module
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *	Class to describe a WebServices module
@@ -50,7 +50,7 @@ class modWebServices extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='technic';
+        $this->picto = 'technic';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
@@ -59,11 +59,11 @@ class modWebServices extends DolibarrModules
         $this->config_page_url = array("index.php@webservices");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
         $this->langfiles = array("other");
 
         // Constants
@@ -78,6 +78,6 @@ class modWebServices extends DolibarrModules
         // Permissions
         $this->rights = array();
         $this->rights_class = 'webservices';
-        $r=0;
+        $r = 0;
     }
 }

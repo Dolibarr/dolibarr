@@ -8,3 +8,4 @@ LinkRemoved=The link %s has been removed
 ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
 ErrorFailedToUpdateLink= Nesėkmingas sąsajos '<b>%s</b>' atnaujinimas
 URLToLink=URL to link
+OverwriteIfExists=Overwrite file if exists

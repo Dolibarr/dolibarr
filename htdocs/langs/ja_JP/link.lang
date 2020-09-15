@@ -8,3 +8,4 @@ LinkRemoved=リンク %s が削除されました
 ErrorFailedToDeleteLink= リンク '<b>%s</b>' を削除できませんでした
 ErrorFailedToUpdateLink= リンク '<b>%s</b>' を更新できませんでした
 URLToLink=リンクの URL
+OverwriteIfExists=Overwrite file if exists

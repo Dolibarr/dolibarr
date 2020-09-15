@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,7 +26,7 @@
  */
 
 /** Includes */
-include_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box
@@ -112,7 +112,7 @@ class mymodulewidget1 extends ModeleBoxes
 		// Use configuration value for max lines count
 		$this->max = $max;
 
-		//include_once DOL_DOCUMENT_ROOT . "/mymodule/class/mymodule.class.php";
+		//dol_include_once("/mymodule/class/mymodule.class.php");
 
 		// Populate the head at runtime
 		$text = $langs->trans("MyModuleBoxDescription", $max);
@@ -194,18 +194,18 @@ class mymodulewidget1 extends ModeleBoxes
 		);
 	}
 
-    /**
-     * Method to show box. Called by Dolibarr eatch time it wants to display the box.
-     *
-     * @param array $head       Array with properties of box title
-     * @param array $contents   Array with properties of box lines
-     * @param int   $nooutput   No print, only return string
-     * @return void
-     */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        // You may make your own code here…
-        // … or use the parent's class function using the provided head and contents templates
-        parent::showBox($this->info_box_head, $this->info_box_contents);
-    }
+	/**
+	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+	 *
+	 * @param array $head       Array with properties of box title
+	 * @param array $contents   Array with properties of box lines
+	 * @param int   $nooutput   No print, only return string
+	 * @return void
+	 */
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		// You may make your own code here…
+		// … or use the parent's class function using the provided head and contents templates
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 }

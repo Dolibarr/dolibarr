@@ -216,10 +216,6 @@ ALTER TABLE llx_expeditiondet_batch ADD INDEX idx_fk_expeditiondet (fk_expeditio
 ALTER TABLE llx_expeditiondet_batch ADD CONSTRAINT fk_expeditiondet_batch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet(rowid);
 
 
-ALTER TABLE llx_product_batch ADD INDEX ix_fk_product_stock (fk_product_stock);
-ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
-
-
 -- New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin integer;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR(32);

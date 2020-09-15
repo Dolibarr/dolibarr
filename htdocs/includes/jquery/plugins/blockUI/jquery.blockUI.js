@@ -7,7 +7,7 @@
  * Copyright (c) 2007-2013 M. Alsup
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
- * http://www.gnu.org/licenses/gpl.html
+ * https://www.gnu.org/licenses/gpl.html
  *
  * Thanks to Amir-Hossein Sobhi for some excellent contributions!
  */

@@ -2,7 +2,7 @@
 Delivery=Delivery
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=Delivery order
+DeliveryOrder=Delivery receipt
 DeliveryDate=Delivery date
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved

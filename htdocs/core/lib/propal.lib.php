@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -38,18 +38,18 @@ function propal_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('ProposalCard');
+	$head[$h][1] = $langs->trans('Proposal');
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) &&	((! empty($conf->expedition->enabled) && ! empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-	    || (! empty($conf->expedition->enabled) && ! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
+	if ((empty($conf->commande->enabled) && ((!empty($conf->expedition->enabled) && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+	    || (!empty($conf->expedition->enabled) && !empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
-		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
+		if ($conf->expedition_bon->enabled) $text = $langs->trans("Shipment");
+		if ($conf->livraison_bon->enabled)  $text .= '/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
 		$h++;
@@ -60,7 +60,7 @@ function propal_prepare_head($object)
 	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -74,23 +74,23 @@ function propal_prepare_head($object)
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$nbNote = 0;
-        if(!empty($object->note_private)) $nbNote++;
-		if(!empty($object->note_public)) $nbNote++;
+        if (!empty($object->note_private)) $nbNote++;
+		if (!empty($object->note_public)) $nbNote++;
 	    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    $upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->propal->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 

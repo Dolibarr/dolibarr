@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
  *	\brief      Fichier de description et activation du module Mailing
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -56,17 +56,17 @@ class modMailing extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='email';
+		$this->picto = 'email';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/mailing/temp");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->langfiles = array("mails");
 
 		// Config pages
@@ -81,7 +81,7 @@ class modMailing extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'mailing';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 221; // id de la permission
@@ -116,7 +116,7 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][1] = 'View recipients and info';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'mailing_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'recipient';
 
 		$r++;
@@ -124,7 +124,7 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][1] = 'Manually send mailings';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'mailing_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'send';
 
 		$r++;
@@ -132,12 +132,12 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][1] = 'Delete mailings after validation and/or sent';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'mailing_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'delete';
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 
 

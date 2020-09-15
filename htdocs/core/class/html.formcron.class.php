@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,7 +36,7 @@ class FormCron extends Form
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
     /**
      *  Constructor
@@ -64,37 +64,37 @@ class FormCron extends Form
         global $langs;
 
         $langs->load('cron@cron');
+        $out = '';
         if (!empty($readonly)) {
-            if ($selected=='command') {
-                $out= $langs->trans('CronType_command');
-                $out.='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
-                $out.= '<OPTION value="command" selected>'.$langs->trans('CronType_command').'</OPTION>';
-                $out.='</SELECT>';
-            } elseif ($selected=='method') {
-                $out= $langs->trans('CronType_method');
-                $out.='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
-                $out.= '<OPTION value="method" selected>'.$langs->trans('CronType_method').'</OPTION>';
-                $out.='</SELECT>';
+            if ($selected == 'command') {
+                $out = $langs->trans('CronType_command');
+                $out .= '<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
+                $out .= '<OPTION value="command" selected>'.$langs->trans('CronType_command').'</OPTION>';
+                $out .= '</SELECT>';
+            } elseif ($selected == 'method') {
+                $out = $langs->trans('CronType_method');
+                $out .= '<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
+                $out .= '<OPTION value="method" selected>'.$langs->trans('CronType_method').'</OPTION>';
+                $out .= '</SELECT>';
             }
         } else {
+            $out = '<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
 
-        $out='<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
+            if ($selected == 'command') {
+                $selected_attr = ' selected ';
+            } else {
+                $selected_attr = '';
+            }
+            $out .= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
 
-        if ($selected=='command') {
-            $selected_attr=' selected ';
-        } else {
-            $selected_attr='';
-        }
-        $out.= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
+            if ($selected == 'method') {
+                $selected_attr = ' selected ';
+            } else {
+                $selected_attr = '';
+            }
+            $out .= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
 
-        if ($selected=='method') {
-            $selected_attr=' selected ';
-        } else {
-            $selected_attr='';
-        }
-        $out.= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
-
-        $out.='</SELECT>';
+            $out .= '</SELECT>';
         }
 
         return $out;

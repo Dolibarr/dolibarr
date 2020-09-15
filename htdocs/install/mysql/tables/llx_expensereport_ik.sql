@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
 
@@ -25,6 +25,6 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     fk_c_exp_tax_cat integer DEFAULT 0 NOT NULL,
     fk_range        integer DEFAULT 0 NOT NULL,	  	  
     coef            double DEFAULT 0 NOT NULL,  
-    ikoffset          double DEFAULT 0 NOT NULL,
+    ikoffset        double DEFAULT 0 NOT NULL,
     active          integer DEFAULT 1         
 )ENGINE=innodb;

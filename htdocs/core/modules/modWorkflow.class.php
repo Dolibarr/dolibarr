@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +23,7 @@
  *      \ingroup    workflow
  *      \brief      File to describe and activate module Workflow
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -43,7 +43,7 @@ class modWorkflow extends DolibarrModules
 
         // Id for module (must be unique).
         // Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-        $this->numero = 6000 ;
+        $this->numero = 6000;
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'workflow';
 
@@ -59,7 +59,7 @@ class modWorkflow extends DolibarrModules
         // Name of png file (without png) used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-        $this->picto='technic';
+        $this->picto = 'technic';
 
         // Data directories to create when module is enabled
         $this->dirs = array("/workflow/temp");
@@ -68,12 +68,12 @@ class modWorkflow extends DolibarrModules
         $this->config_page_url = array('workflow.php');
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(2,8);  // Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(2, 8); // Minimum version of Dolibarr required by module
         $this->langfiles = array("@workflow");
 
         // Constants
@@ -81,16 +81,16 @@ class modWorkflow extends DolibarrModules
         // Example: $this->const=array(1 => array('MYMODULE_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
         //                             2 => array('MYMODULE_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
         // );
-        $this->const=array(
+        $this->const = array(
             //0=>array('WORKFLOW_PROPAL_AUTOCREATE_ORDER', 'chaine', '1', 'WORKFLOW_PROPAL_AUTOCREATE_ORDER', 0, 'current', 0),
             //0=>array('WORKFLOW_ORDER_AUTOCREATE_INVOICE', 'chaine', '1', 'WORKFLOW_ORDER_AUTOCREATE_INVOICE', 0, 'current', 0),
-            0=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL',                  'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
-            1=>array('WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL',                'chaine', '1', 'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
-            2=>array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING',               'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 0, 'current', 0),
-            4=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER',          'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 0, 'current', 0),
-            5=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL',       'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 0, 'current', 0),
+            0=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
+            1=>array('WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL', 'chaine', '1', 'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
+            2=>array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 0, 'current', 0),
+            4=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 0, 'current', 0),
+            5=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 0, 'current', 0),
             6=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 0, 'current', 0),
-            7=>array('WORKFLOW_BILL_ON_RECEPTION',                             'chaine', '1', 'WORKFLOW_BILL_ON_RECEPTION', 0, 'current', 0)
+            7=>array('WORKFLOW_BILL_ON_RECEPTION', 'chaine', '1', 'WORKFLOW_BILL_ON_RECEPTION', 0, 'current', 0)
         );
 
         // Boxes
@@ -98,7 +98,7 @@ class modWorkflow extends DolibarrModules
 
         // Permissions
         $this->rights = array();
-        $r=0;
+        $r = 0;
 
         /*
         $r++;
@@ -110,8 +110,8 @@ class modWorkflow extends DolibarrModules
         */
 
         // Main menu entries
-        $this->menus = array();         // List of menus to add
-        $r=0;
+        $this->menus = array(); // List of menus to add
+        $r = 0;
         /*
         $this->menu[$r]=array('fk_menu'=>0,
                                 'type'=>'top',

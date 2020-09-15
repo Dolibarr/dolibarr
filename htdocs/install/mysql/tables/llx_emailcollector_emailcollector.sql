@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_emailcollector_emailcollector(
@@ -21,7 +21,8 @@ CREATE TABLE llx_emailcollector_emailcollector(
         ref varchar(128) NOT NULL,
         label varchar(255), 
         description text,
-        host varchar(255), 
+        host varchar(255),
+        hostcharset varchar(16) DEFAULT 'UTF-8',
         login varchar(128), 
         password varchar(128),
         source_directory varchar(255) NOT NULL,

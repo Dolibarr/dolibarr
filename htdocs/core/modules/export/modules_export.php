@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,15 +33,15 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
-	public $driverlabel=array();
+	public $driverlabel = array();
 
-	public $driverversion=array();
+	public $driverversion = array();
 
-	public $liblabel=array();
+	public $liblabel = array();
 
-	public $libversion=array();
+	public $libversion = array();
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -57,18 +57,18 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
         // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
-		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
-		$handle=opendir($dir);
+		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
+		$handle = opendir($dir);
 
 		// Recherche des fichiers drivers exports disponibles
-		$i=0;
+		$i = 0;
         if (is_resource($handle))
         {
-    		while (($file = readdir($handle))!==false)
+    		while (($file = readdir($handle)) !== false)
     		{
     			if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg))
     			{
-    				$moduleid=$reg[1];
+    				$moduleid = $reg[1];
 
     				// Loading Class
     				$file = $dir."export_".$moduleid.".modules.php";
@@ -80,14 +80,14 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
         				$module = new $classname($db);
 
         				// Picto
-        				$this->picto[$module->id]=$module->picto;
+        				$this->picto[$module->id] = $module->picto;
         				// Driver properties
-        				$this->driverlabel[$module->id]=$module->getDriverLabel().(empty($module->disabled)?'':' __(Disabled)__');	// '__(Disabled)__' is a key
-        				$this->driverdesc[$module->id]=$module->getDriverDesc();
-        				$this->driverversion[$module->id]=$module->getDriverVersion();
+        				$this->driverlabel[$module->id] = $module->getDriverLabel().(empty($module->disabled) ? '' : ' __(Disabled)__'); // '__(Disabled)__' is a key
+        				$this->driverdesc[$module->id] = $module->getDriverDesc();
+        				$this->driverversion[$module->id] = $module->getDriverVersion();
         				// If use an external lib
-        				$this->liblabel[$module->id]=$module->getLibLabel();
-        				$this->libversion[$module->id]=$module->getLibVersion();
+        				$this->liblabel[$module->id] = $module->getLibLabel();
+        				$this->libversion[$module->id] = $module->getLibVersion();
     				}
     				$i++;
     			}

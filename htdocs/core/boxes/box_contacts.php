@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,9 +35,9 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class box_contacts extends ModeleBoxes
 {
-    public $boxcode="lastcontacts";
-    public $boximg="object_contact";
-    public $boxlabel="BoxLastContacts";
+    public $boxcode = "lastcontacts";
+    public $boximg = "object_contact";
+    public $boxlabel = "BoxLastContacts";
     public $depends = array("societe");
 
 	/**
@@ -61,9 +61,9 @@ class box_contacts extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->societe->lire && $user->rights->societe->contact->lire);
+	    $this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**
@@ -74,56 +74,63 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
-		$this->max=$max;
+		$this->max = $max;
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
 		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
-			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
-			$sql.= ", s.nom as socname, s.name_alias";
-			$sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND sp.fk_soc = ".$user->societe_id;
-			$sql.= " ORDER BY sp.tms DESC";
-			$sql.= $db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
+			$sql .= ", s.nom as socname, s.name_alias, s.email as semail";
+			$sql .= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+			$sql .= ", co.label as country, co.code as country_code";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid) $sql .= " AND sp.fk_soc = ".$user->socid;
+			$sql .= " ORDER BY sp.tms DESC";
+			$sql .= $this->db->plimit($max, 0);
+
+			$result = $this->db->query($sql);
 			if ($result) {
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
-				$contactstatic=new Contact($db);
-				$societestatic=new Societe($db);
+				$contactstatic = new Contact($this->db);
+				$societestatic = new Societe($this->db);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->tms);
 
-					$contactstatic->id=$objp->id;
-					$contactstatic->lastname=$objp->lastname;
-					$contactstatic->firstname=$objp->firstname;
-					$contactstatic->civility_id=$objp->civility_id;
-					$contactstatic->statut=$objp->status;
+					$contactstatic->id = $objp->id;
+					$contactstatic->lastname = $objp->lastname;
+					$contactstatic->firstname = $objp->firstname;
+					$contactstatic->civility_id = $objp->civility_id;
+					$contactstatic->statut = $objp->status;
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;
 					$contactstatic->phone_mobile = $objp->phone_mobile;
+                    $contactstatic->email = $objp->spemail;
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
+					$contactstatic->country = $objp->country;
+					$contactstatic->country_code = $objp->country_code;
 
 					$societestatic->id = $objp->fk_soc;
 					$societestatic->name = $objp->socname;
+                    $societestatic->email = $objp->semail;
 					$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;
@@ -131,13 +138,13 @@ class box_contacts extends ModeleBoxes
 					$societestatic->fournisseur = $objp->fournisseur;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => $contactstatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
@@ -156,18 +163,19 @@ class box_contacts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0)
+				if ($num == 0)
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedContacts"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+						'asis'=> 1
 					);
 
-				$db->free($result);
+				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength'=>500,
-					'text' => ($db->error().' sql='.$sql),
+					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
 		} else {

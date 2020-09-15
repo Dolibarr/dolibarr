@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *	\brief      File of predefined functions for HTML forms for order module
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *	Class to manage HTML output components for orders
@@ -78,14 +78,14 @@ class FormOrder extends Form
 	{
 		global $langs;
 
-        $listofmethods=array();
+        $listofmethods = array();
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
-		$sql.= " WHERE active = 1";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method";
+		$sql .= " WHERE active = 1";
 
 		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!$resql) {
 			dol_print_error($this->db);

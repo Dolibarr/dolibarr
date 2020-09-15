@@ -15,26 +15,25 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\defgroup   	prelevement     Module prelevement
- *	\brief      	Module de gestion des prelevements bancaires
+ *	\brief      	Module to manage Direct debit orders
  *	\file       	htdocs/core/modules/modPrelevement.class.php
  *	\ingroup    	prelevement
- *	\brief      	Fichier de description et activation du module Prelevement
+ *	\brief      	File to describe and enable the module Prelevement
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Prelevement
+ *	Class to describe and enable module of payment by Direct Debit
  */
 class modPrelevement extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -51,31 +50,31 @@ class modPrelevement extends DolibarrModules
 		$this->module_position = '52';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des Prelevements";
+		$this->description = "Management of Direct Debit orders";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
-		$this->picto='payment';
+		$this->picto = 'payment';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/prelevement/temp","/prelevement/receipts");
+		$this->dirs = array("/prelevement/temp", "/prelevement/receipts");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array("modFacture","modBanque");		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array("modFacture", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("prelevement.php");
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "BANK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -91,7 +90,7 @@ class modPrelevement extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'prelevement';
-		$r=0;
+		$r = 0;
 		$r++;
 		$this->rights[$r][0] = 151;
 		$this->rights[$r][1] = 'Read direct debit payment orders';
@@ -124,18 +123,9 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
 
-        /*
-        $this->rights[2][0] = 154;
-        $this->rights[2][1] = 'Setup withdraw account';
-        $this->rights[2][2] = 'w';
-        $this->rights[2][3] = 0;
-        $this->rights[2][4] = 'bons';
-        $this->rights[2][5] = 'configurer';
-        */
-
         // Menus
         //-------
-        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        $this->menu = 1; // This module add menu entries. They are coded into menu manager.
     }
 
 

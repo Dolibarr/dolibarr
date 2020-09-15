@@ -13,7 +13,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -39,10 +39,14 @@ create table llx_projet
   fk_user_close    integer DEFAULT NULL,
   note_private     text,
   note_public      text,
+  email_msgid      varchar(255),				-- if project or lead is created by email collector, we store here MSG ID
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
   budget_amount    double(24,8),
-  bill_time        integer DEFAULT 0,			-- Set to 1 if time spent must be converted into invoices				
+  usage_opportunity    integer DEFAULT 0,			-- Set to 1 if project is used to follow an opportunity
+  usage_task           integer DEFAULT 1,			-- Set to 1 if project is used to manage tasks and/or record timesheet
+  usage_bill_time      integer DEFAULT 0,			-- Set to 1 if time spent must be converted into invoices
+  usage_organize_event integer DEFAULT 0,			-- Set to 1 if you want to use project to organize an event, receive attendees subscription				
   model_pdf        varchar(255),
   import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

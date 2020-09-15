@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -24,8 +24,10 @@ create table llx_subscription
   fk_adherent     integer,
   fk_type         integer,
   dateadh         datetime,
-  datef           date,
+  datef           datetime,
   subscription    double(24,8),
   fk_bank         integer DEFAULT NULL,
+  fk_user_creat   integer DEFAULT NULL,
+  fk_user_valid   integer DEFAULT NULL,
   note            text
 )ENGINE=innodb;

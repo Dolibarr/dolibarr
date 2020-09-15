@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -23,7 +23,7 @@
  *      \ingroup    loan
  *      \brief      File to activate module loan
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -54,7 +54,7 @@ class modLoan extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='bill';
+		$this->picto = 'money-bill-alt';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/loan/temp");
@@ -63,11 +63,11 @@ class modLoan extends DolibarrModules
 		$this->config_page_url = array('loan.php');
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->langfiles = array("loan");
 
 		// Constants
@@ -94,7 +94,7 @@ class modLoan extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'loan';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 520;
@@ -139,12 +139,12 @@ class modLoan extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
 		//--------
-		$r=0;
+		$r = 0;
 	}
 
 

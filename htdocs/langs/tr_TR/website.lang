@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Robot dosyası (robots.txt)
 WEBSITE_HTACCESS=Web sitesinin .htaccess dosyası
 WEBSITE_MANIFEST_JSON=Website manifest.json file
 WEBSITE_README=README.md file
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
 EnterHereLicenseInformation=Enter here meta data or license information to fille a README.md file. if you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=HTML başlığı (yalnızca bu sayfaya özgü)
 PageNameAliasHelp=Sayfanın adı veya takma adı.<br>Bu takma ad, web sitesi bir web sunucusunun (Apacke, Nginx gibi ...) Sanal host'undan çalıştırıldığında bir SEO URL'si oluşturmak için de kullanılır. Bu takma adı düzenlemek için "<strong>%s</strong>" düşmesini kullanın.
@@ -42,13 +43,14 @@ ViewPageInNewTab=Siteyi yeni sekmede izle
 SetAsHomePage=Giriş Sayfası olarak ayarla
 RealURL=Gerçek URL
 ViewWebsiteInProduction=Web sitesini giriş URL si kullanarak izle
-SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>If you can create, on your web server (Apache, Nginx, ...), a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong><br>then set the name of the virtual host you have created in the properties of web site, so the preview can be done also using this dedicated web server access instead of the internal Dolibarr server.
+SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
+ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u>PHP gömülü sunucu ile kullanın</u><br>Geliştirme ortamında, siteyi PHP gömülü web sunucusu ile test etmeyi tercih edebilirsiniz (PHP 5.5 gerekli)<br><strong>php -S 0.0.0.0:8080 -t%s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Check also that virtual host has permission <strong>%s</strong> on files into<br><strong>%s</strong>
 ReadPerm=Okundu
 WritePerm=Yaz
-TestDeployOnWeb=Test/deploy on web
+TestDeployOnWeb=Web'de dene/yayınla
 PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that URL of pages are not user friendly and start with path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that point on directory<br><strong>%s</strong><br>then enter the name of this virtual server and click on the other preview button.
 VirtualHostUrlNotDefined=Harici web sunucusu tarafından sunulan sanal host URL'si tanımlanmamış
@@ -56,7 +58,10 @@ NoPageYet=Henüz hiç sayfa yok
 YouCanCreatePageOrImportTemplate=Yeni bir sayfa oluşturabilir veya tam bir web sitesi şablonunu içe aktarabilirsiniz
 SyntaxHelp=Belirli sözdizimi ipuçları hakkında yardım
 YouCanEditHtmlSourceckeditor=Düzenleyicideki "Kaynak" düğmesini kullanarak HTML kaynak kodunu düzenleyebilirsiniz
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Sayfa/kapsayıcı kopyasını oluştur
 CloneSite=Sitenin kopyasını oluştur
 SiteAdded=Web sitesi eklendi
@@ -76,7 +81,7 @@ BlogPost=Blog yazısı
 WebsiteAccount=Web sitesi hesabı
 WebsiteAccounts=Web sitesi hesapları
 AddWebsiteAccount=Web sitesi hesabı oluştur
-BackToListOfThirdParty=Üçüncü Parti listesine geri dön
+BackToListForThirdParty=Back to list for the third-party
 DisableSiteFirst=Önce web sitesini devre dışı bırak
 MyContainerTitle=Web sitemin başlığı
 AnotherContainer=This is how to include content of another page/container (you may have an error here if you enable dynamic code because the embedded subcontainer may not exists)
@@ -84,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Sorry, this website is currently off line. Please
 WEBSITE_USE_WEBSITE_ACCOUNTS=Web sitesi hesap tablosunu etkinleştir
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store web site accounts (login/pass) for each website / third party
 YouMustDefineTheHomePage=Öncelikle varsayılan Giriş sayfasını tanımlamanız gerekir
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that edits of HTML source will be possible when page content has been initialized by grabbing it from an external page ("Online" editor will NOT be available)
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correclty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Only edition of HTML source is possible when content was grabbed from an external site
 GrabImagesInto=Grab also images found into css and page.
 ImagesShouldBeSavedInto=Görüntüler dizine kaydedilmelidir
@@ -114,3 +119,19 @@ CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS
 LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load javascript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Sample of a page with dynamic content
 ImportSite=Web sitesi şablonunu içe aktar
+EditInLineOnOff=Mode 'Edit inline' is %s
+ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
+GlobalCSSorJS=Global CSS/JS/Header file of web site
+BackToHomePage=Back to home page...
+TranslationLinks=Translation links
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
+UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters
+MainLanguage=Main language
+OtherLanguages=Other languages
+UseManifest=Provide a manifest.json file
+PublicAuthorAlias=Public author alias
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
+ReplacementDoneInXPages=Replacement done in %s pages or containers
+RSSFeed=RSS Besleme
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated

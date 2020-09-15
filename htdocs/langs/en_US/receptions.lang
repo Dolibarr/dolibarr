@@ -4,8 +4,8 @@ RefReception=Ref. reception
 Reception=Reception
 Receptions=Receptions
 AllReceptions=All Receptions
-Reception=Product reception
-Receptions=Reception
+Reception=Reception
+Receptions=Receptions
 ShowReception=Show Receptions
 ReceptionsArea=Receptions area
 ListOfReceptions=List of receptions
@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Product quantity from open supplie
 ValidateOrderFirstBeforeReception=You must first validate the order before being able to make receptions.
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,21 +25,21 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
 @set_time_limit(0); // No timeout for this script
 define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
 // Include and load Dolibarr environment variables
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/product/class/product.class.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
 
@@ -51,30 +51,30 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
-if (! isset($argv[1]) || $argv[1] != 'product') {
+if (!isset($argv[1]) || $argv[1] != 'product') {
 	print "Usage:  $script_file product\n";
-	exit(- 1);
+	exit(-1);
 }
 
-print '--- start' . "\n";
+print '--- start'."\n";
 
 // Case to migrate products path
 if ($argv[1] == 'product') {
 	$product = new Product($db);
 
-	$sql = "SELECT rowid as pid from " . MAIN_DB_PREFIX . "product"; // Get list of all products
+	$sql = "SELECT rowid as pid from ".MAIN_DB_PREFIX."product"; // Get list of all products
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			$product->fetch($obj->pid);
-			print " migrating product id=" . $product->id . " ref=" . $product->ref . "\n";
+			print " migrating product id=".$product->id." ref=".$product->ref."\n";
 			migrate_product_photospath($product);
 		}
 	} else {
-		print "\n sql error " . $sql;
+		print "\n sql error ".$sql;
 		exit();
 	}
 }
@@ -95,8 +95,8 @@ function migrate_product_photospath($product)
 
 	$dir = $conf->product->multidir_output[$product->entity];
 	$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = 1;
-	$origin = $dir . '/' . get_exdir($product->id, 2, 0, 0, $product, 'product') . $product->id . "/photos";
-	$destin = $dir . '/' . dol_sanitizeFileName($product->ref);
+	$origin = $dir.'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+	$destin = $dir.'/'.dol_sanitizeFileName($product->ref);
 
 	$error = 0;
 
@@ -108,18 +108,18 @@ function migrate_product_photospath($product)
 		$handle = opendir($origin_osencoded);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if ($file != '.' && $file != '..' && is_dir($origin_osencoded . '/' . $file)) {
-					$thumbs = opendir($origin_osencoded . '/' . $file);
+				if ($file != '.' && $file != '..' && is_dir($origin_osencoded.'/'.$file)) {
+					$thumbs = opendir($origin_osencoded.'/'.$file);
 					if (is_resource($thumbs)) {
-						dol_mkdir($destin . '/' . $file);
+						dol_mkdir($destin.'/'.$file);
 						while (($thumb = readdir($thumbs)) !== false) {
-							dol_move($origin . '/' . $file . '/' . $thumb, $destin . '/' . $file . '/' . $thumb);
+							dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
 						}
 						// dol_delete_dir($origin.'/'.$file);
 					}
 				} else {
-					if (dol_is_file($origin . '/' . $file)) {
-						dol_move($origin . '/' . $file, $destin . '/' . $file);
+					if (dol_is_file($origin.'/'.$file)) {
+						dol_move($origin.'/'.$file, $destin.'/'.$file);
 					}
 				}
 			}

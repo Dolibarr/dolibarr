@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +24,7 @@
  *	\brief      Fichier de description et activation du module de click to Dial
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -56,26 +56,26 @@ class modMailmanSpip extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='technic';
+		$this->picto = 'technic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('modAdherent');		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('modAdherent'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array('mailman.php');
 
 		// Constants
 		$this->const = array();
-		$this->const[1] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de désinscription aux listes mailman");
-		$this->const[2] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
-		$this->const[3] = array("ADHERENT_MAILMAN_LISTS","chaine","","Mailing-list to subscribe new members to");
+		$this->const[1] = array("ADHERENT_MAILMAN_UNSUB_URL", "chaine", "http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%", "Url de désinscription aux listes mailman");
+		$this->const[2] = array("ADHERENT_MAILMAN_URL", "chaine", "http://lists.example.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%", "Url pour les inscriptions mailman");
+		$this->const[3] = array("ADHERENT_MAILMAN_LISTS", "chaine", "", "Mailing-list to subscribe new members to");
 
 		// Boxes
 		$this->boxes = array();
@@ -86,6 +86,6 @@ class modMailmanSpip extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 }
