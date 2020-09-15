@@ -48,7 +48,7 @@ $modules = array(
 				),
 				array(
 						'code' => 'MAIN_DELAY_TASKS_TODO',
-						'img' => 'task'
+						'img' => 'projecttask'
 				)
 		),
         'propal' => array(
@@ -106,10 +106,6 @@ $modules = array(
 		'adherent' => array(
 				array(
 						'code' => 'MAIN_DELAY_MEMBERS',
-						'img' => 'user'
-				),
-        array(
-						'code' => 'MAIN_DELAY_MEMBERS_SHIFT',
 						'img' => 'user'
 				)
 		),

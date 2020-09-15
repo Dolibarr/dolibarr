@@ -278,7 +278,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	<?php echo $prefix; ?>color: #b06080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
-	<?php echo $prefix; ?>color: #95a55d !important;
+	<?php echo $prefix; ?>color: #55955d !important;
 }
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
@@ -311,7 +311,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .infobox-propal,
 .infobox-facture,
 .infobox-commande{
-	color: #95a55d !important;
+	color: #65955d !important;
 }
 .infobox-supplier_proposal,
 .infobox-invoice_supplier,
