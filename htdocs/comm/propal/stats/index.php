@@ -262,17 +262,27 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Status
 	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
     $formpropal->selectProposalStatus(($object_status != '' ? $object_status : -1), 0, 0, 1, $mode, 'object_status');
-	if ($object_status == 2)
-	{
-		print "&nbsp;";
-		print "<form method='POST' name='template' action=''class='right'>";
-		if (isset($_POST['showBySignDate_toselect']))
-		{
-			print "<input id='cbsign' class='flat checkforselect' type='checkbox' name='showBySignDate_toselect' value='checked' checked='checked'>&nbsp;".$langs->trans('ShowBySignDate')."<br>";
+
+	print "&nbsp;";
+	if($object_status == Propal::STATUS_SIGNED) $moreclass="";
+	else $moreclass="hideobject";
+
+	?><script>
+	let $statusList = $("select[name='object_status']");
+	$statusList.on('change', function (){
+		let $selectedStatusIndex = $("select[name='object_status'] option:selected").val();
+		console.log($selectedStatusIndex)
+		if ($selectedStatusIndex == <?php echo Propal::STATUS_SIGNED ?>){
+			$('#showBySign').removeClass("hideobject");
 		} else {
-			print "<input id='cbsign' class='flat checkforselect' type='checkbox' name='showBySignDate_toselect' value='checked'>&nbsp;".$langs->trans('ShowBySignDate')."<br>";
+			$('#showBySign').addClass("hideobject");
 		}
-		print "</form>";
+	});
+ 	</script><?php
+	if (isset($_POST['showBySignDate_toselect'])){
+		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' checked='checked'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
+	} else {
+		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' value='checked'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
 	}
 	print '</td></tr>';
 	// Year
@@ -286,7 +296,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td class="left">'.$langs->trans("Commercial").'</td><td class="left">';
 	$formpropal->selectProposalCommercial();
 	print '</td></tr>';
-
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
