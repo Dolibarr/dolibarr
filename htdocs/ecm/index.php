@@ -127,7 +127,6 @@ if ($action == 'confirm_deletefile')
 
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile', 'alpha');
-
 		$ret = dol_delete_file($file); // This include also the delete from file index in database.
 		if ($ret)
 		{
