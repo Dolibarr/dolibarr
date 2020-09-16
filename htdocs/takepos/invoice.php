@@ -62,8 +62,8 @@ $placeid = 0;	// $placeid is id of invoice
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
-$desc = GETPOST('desc', 'alpha');
-$pay = GETPOST('pay', 'alpha');
+$desc = GETPOST('desc', 'alphanohtml');
+$pay = GETPOST('pay', 'aZ09');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
 $invoiceid = GETPOST('invoiceid', 'int');
