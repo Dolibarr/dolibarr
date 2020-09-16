@@ -292,7 +292,7 @@ if ($resql) {
 
 			$propalstatic->id = $obj->rowid;
 			$propalstatic->ref = $obj->ref;
-			
+
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->socname;
 			$companystatic->client = $obj->client;
@@ -353,7 +353,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=1", 4, $num);
-		
+
 		if ($num > 0) {
 			$i = 0;
 			while ($i < $nbofloop) {

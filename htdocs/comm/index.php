@@ -153,7 +153,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=0", 2, $num);
-		
+
 		if ($num > 0) {
 			$i = 0;
 
@@ -166,7 +166,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
-				
+
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
@@ -294,7 +294,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
-				
+
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
@@ -338,7 +338,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= " AND cf.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND cf.fk_soc = ".$socid;
-	
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
@@ -402,7 +402,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 	if ($socid)	$sql .= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
-	
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
@@ -466,7 +466,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	if ($socid)	$sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
-	
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -524,7 +524,7 @@ if ($user->rights->agenda->myactions->read) {
  */
 if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
-	
+
 	$sql = "SELECT s.nom as name, s.rowid, s.canvas, s.code_client, s.entity, s.email";
 	$sql .= ", c.statut, c.rowid as contratid, p.ref, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -592,7 +592,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY p.rowid DESC";
-	
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
@@ -612,7 +612,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
-				
+
 				$companystatic->id = $obj->rowid;
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
@@ -677,14 +677,14 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY c.rowid DESC";
-	
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=1", 4, $num);
-		
+
 		if ($num > 0) {
 			$i = 0;
 
