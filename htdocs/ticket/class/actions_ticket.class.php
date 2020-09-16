@@ -253,7 +253,7 @@ class ActionsTicket
         $ret = $this->dao->loadCacheMsgsTicket();
         if ($ret < 0) dol_print_error($this->dao->db);
 
-        $action = GETPOST('action', 'alpha');
+        $action = GETPOST('action', 'aZ09');
 
         $this->viewTicketOriginalMessage($user, $action, $object);
 

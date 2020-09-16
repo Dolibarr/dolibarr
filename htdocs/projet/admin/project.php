@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'errors', 'other', 'projects'));
 if (!$user->admin) accessforbidden();
 
 $value = GETPOST('value', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type='project';

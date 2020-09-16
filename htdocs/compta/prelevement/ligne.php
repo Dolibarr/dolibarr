@@ -39,7 +39,7 @@ $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 

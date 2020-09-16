@@ -41,8 +41,8 @@ $user->getrights('ecm');
 
 // Get parameters
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
-$section=GETPOST('section');
+$action = GETPOST('action', 'aZ09');
+$section = GETPOST('section');
 if (! $section) $section=0;
 
 $module  = GETPOST('module', 'alpha');

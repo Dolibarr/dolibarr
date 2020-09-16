@@ -40,7 +40,7 @@ if (!$user->admin) accessforbidden();
 $error = false;
 $message = false;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 
 $apply_to = GETPOST('apply_to');
