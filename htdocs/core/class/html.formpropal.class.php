@@ -164,7 +164,7 @@ class FormPropal
 
 		$sql = "SELECT rowid, lastname, firstname FROM " . MAIN_DB_PREFIX . "user";
 		$sql .= " WHERE rowid IN";
-		$sql .= " (SELECT commercial FROM ".MAIN_DB_PREFIX."propal_extrafields) ORDER BY firstname ASC";
+		$sql .= " (SELECT fk_user FROM ".MAIN_DB_PREFIX."societe_commerciaux) ORDER BY firstname ASC";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
