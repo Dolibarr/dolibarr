@@ -297,8 +297,7 @@ function LoadProducts(position, issubcat) {
 					echo '$("#prodesc"+ishow).text("");';
 					echo '$("#proimg"+ishow).attr("title","");';
 					echo '$("#proimg"+ishow).attr("src","genimg/empty.png");';
-				} else
-				{
+				} else {
 					echo '$("#probutton"+ishow).hide();';
 					echo '$("#probutton"+ishow).text("");';
 				}?>
