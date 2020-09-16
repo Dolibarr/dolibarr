@@ -1038,6 +1038,14 @@ class User extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
+		// Remove params
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user  = ".$this->id;
+		if (!$error && !$this->db->query($sql))
+		{
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
 		// If contact, remove link
 		if ($this->contact_id > 0)
 		{
