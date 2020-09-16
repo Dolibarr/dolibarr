@@ -7745,7 +7745,8 @@ function ajax_autoselect($htmlname, $addlink = '')
  *	@return int					1 If allowed, 0 otherwise
  *  @see    dol_mimetype(), image_format_supported() from images.lib.php
  */
-function dolIsAllowedForPreview($file) {
+function dolIsAllowedForPreview($file)
+{
 	global $conf;
 
 	// Check .noexe extension in filename
