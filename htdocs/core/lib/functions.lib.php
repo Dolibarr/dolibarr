@@ -7921,7 +7921,8 @@ function ajax_autoselect($htmlname, $addlink = '')
  *	@return int					1 If allowed, 0 otherwise
  *  @see    dol_mimetype(), image_format_supported() from images.lib.php
  */
-function dolIsAllowedForPreview($file) {
+function dolIsAllowedForPreview($file)
+{
 	global $conf;
 
 	// Check .noexe extension in filename
@@ -8698,10 +8699,7 @@ function currentToken()
 }
 
 /**
- * Start a table with headers and a optinal clickable number
- * (don't forget to use "finishSimpleTable()" after the last table row)
- *
- * @see finishSimpleTable
+ * Start a table with headers and a optinal clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
  * @param string	$header		The first left header of the table (automatic translated)
  * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
@@ -8709,6 +8707,8 @@ function currentToken()
  * @param integer	$emptyRows	(optional) The count of empty rows after the first header
  * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
  * @return void
+ *
+ * @see finishSimpleTable()
  */
 function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
 {
@@ -8763,14 +8763,12 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 }
 
 /**
- * Add the correct HTML close tags for "startSimpleTable(...)"
- * (use after the last table line)
+ * Add the correct HTML close tags for "startSimpleTable(...)" (use after the last table line)
  *
- * @see startSimpleTable
+ * @param 	bool 	$addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
+ * @return 	void
  *
- * @param bool $addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
- *
- * @return void
+ * @see startSimpleTable()
  */
 function finishSimpleTable($addLineBreak = false)
 {
