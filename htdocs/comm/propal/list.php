@@ -200,12 +200,14 @@ if (empty($reshook)){
 			$tmpproposal = new Propal($db);
 			$db->begin();
 			$error = 0;
+			$cpt = 0;
+			$refs = array();
 			foreach ($toselect as $checked) {
 				if ($tmpproposal->fetch($checked)) {
-						if ($tmpproposal->valid($user) && $tmpproposal->statut == 0){
-							setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+						if ($tmpproposal->valid($user) && $tmpproposal->statut == 1){
+							$refs[] = $tmpproposal->ref;
+							$cpt++;
 						} else {
-							setEventMessage($langs->trans('CantBeValidated'), 'errors');
 							$error++;
 						}
 				} else {
@@ -215,8 +217,12 @@ if (empty($reshook)){
 			}
 			if ($error){
 				$db->rollback();
+				setEventMessage($langs->trans('CantBeValidated'), 'errors');
 			} else {
 				$db->commit();
+				foreach ($refs as $r){
+					setEventMessage($r . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+				}
 			}
 		}
 	}
@@ -226,18 +232,21 @@ if (empty($reshook)){
 			$tmpproposal = new Propal($db);
 			$db->begin();
 			$error = 0;
+			$cpt = 0;
+			$refs = array();
 			foreach ($toselect as $checked) {
 				if ($tmpproposal->fetch($checked)) {
 					if ($tmpproposal->statut == 1) {
 						$tmpproposal->statut = 2;
 						if ($tmpproposal->update($user)) {
-							setEventMessage($tmpproposal->ref . " " . $langs->trans('Signed'), 'mesgs');
+							$refs[] = $tmpproposal->ref;
+							$cpt++;
 						} else {
 							dol_print_error($db);
 							$error++;
 						}
 					} else {
-						setEventMessage($tmpproposal->ref . " " . $langs->trans('CantBeSign'), 'errors');
+
 						$error++;
 					}
 				} else {
@@ -247,8 +256,13 @@ if (empty($reshook)){
 			}
 			if ($error){
 				$db->rollback();
+				setEventMessage($langs->trans('CantBeSign'), 'errors');
+
 			} else {
 				$db->commit();
+				foreach ($refs as $r) {
+					setEventMessage($r . " " . $langs->trans('Signed'), 'mesgs');
+				}
 			}
 		}
 	}
