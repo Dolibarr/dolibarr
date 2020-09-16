@@ -34,6 +34,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (!empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -43,6 +44,8 @@ if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/
  */
 class Reception extends CommonObject
 {
+	use CommonIncoterm;
+
 	public $element = "reception";
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";

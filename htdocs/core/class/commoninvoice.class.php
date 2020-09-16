@@ -24,12 +24,15 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  * 	Superclass for invoices classes
  */
 abstract class CommonInvoice extends CommonObject
 {
+	use CommonIncoterm;
+
     /**
      * Standard invoice
      */

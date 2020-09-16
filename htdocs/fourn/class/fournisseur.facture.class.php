@@ -190,14 +190,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fournisseur;
 
-	/**
-	 * @var int ID Incorterms
-	 */
-	public $fk_incoterms;
-
-	public $location_incoterms;
-	public $label_incoterms; //Used into tooltip
-
 	public $extraparams = array();
 
 	// Multicurrency

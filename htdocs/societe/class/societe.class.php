@@ -38,6 +38,7 @@
  *	\brief      File for third party class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
@@ -45,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class Societe extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -692,20 +695,6 @@ class Societe extends CommonObject
      */
 	public $logo_squarred_mini;
 
-	/**
-     * @var int ID Incoterms
-     */
-	public $fk_incoterms;
-
-	/**
-	 * @var string Incoterms Location
-	 */
-	public $location_incoterms;
-
-    /**
-     * @var string Incoterm label
-     */
-	public $label_incoterms; //Used into tooltip
 
 	// Multicurrency
 	/**
