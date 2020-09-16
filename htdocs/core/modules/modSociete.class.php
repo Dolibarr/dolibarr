@@ -632,7 +632,7 @@ class modSociete extends DolibarrModules
 			's.town' => "Town",
 			's.fk_departement' => "StateCode",
 			's.fk_pays' => "CountryCode",
-			's.birthday' => "BirthdayDate",
+			's.birthday' => "DateOfBirth",
 			's.poste' => "Role",
 			's.phone' => "Phone",
 			's.phone_perso' => "PhonePerso",

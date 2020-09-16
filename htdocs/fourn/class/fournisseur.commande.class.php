@@ -156,11 +156,6 @@ class CommandeFournisseur extends CommonOrder
 	public $user_approve_id;
 	public $user_approve_id2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 
-	//Incoterms
-	public $fk_incoterms;
-	public $location_incoterms;
-	public $label_incoterms; //Used into tooltip
-
 	public $extraparams = array();
 
 	/**

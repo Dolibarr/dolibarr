@@ -171,7 +171,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// MRP
+	// MRP - GPAO
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->bom->enabled) || !empty($conf->mrp->enabled)),
 		'perms'=>(!empty($user->rights->bom->read) || !empty($user->rights->mrp->read)),
@@ -186,7 +186,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'target' => $atarget,
 		'mainmenu' => "mrp",
 		'leftmenu' => '',
-		'position' => 30,
+		'position' => 31,
 		'id' => $id,
 		'idsel' => 'mrp',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
@@ -1614,13 +1614,17 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$langs->load("stocks");
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 					{
-						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
-						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
-						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
+						if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
+							$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
+							$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->rights->stock->lire);
+						}
 					} else {
-						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
-						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
-						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
+						if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
+							$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
+							$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
+						}
 					}
 				}
 			}
@@ -1655,7 +1659,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 
 		/*
-		 * Menu PRODUCTS-SERVICES MRP
+		 * Menu PRODUCTS-SERVICES MRP - GPAO
 		 */
 		if ($mainmenu == 'mrp')
 		{

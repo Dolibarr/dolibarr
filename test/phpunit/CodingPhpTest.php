@@ -153,6 +153,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
+        //$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
         foreach ($filesarray as $key => $file)
         {
@@ -176,7 +177,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
            		break;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found string get_class($this)."::".__METHOD__ that must be replaced with __METHOD__ only in '.$file['fullname']);
+            $this->assertTrue($ok, 'Found string get_class($this)."::".__METHOD__ that must be replaced with __METHOD__ only in '.$file['relativename']);
             //exit;
 
             $ok=true;
@@ -193,7 +194,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['fullname'].' :: '.$val[0]);
+            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename'].' :: '.$val[0]);
             //exit;
 
 
@@ -211,7 +212,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['fullname'].' ('.$val[0].'). Bad.');
+            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].' ('.$val[0].'). Bad.');
             //exit;
 
 
@@ -228,7 +229,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['relativename'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
 
 
             // Test that first param of print_liste_field_titre is a translation key and not the translated value
@@ -241,7 +242,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                    $ok=false;
                    break;
             }
-            $this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
+            $this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['relativename'].'. Bad.');
 
 
             // Test we don't have <br />
@@ -257,7 +258,23 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].'. You may use html syntax <br> instead.');
+            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['relativename'].'. You must use html syntax <br> instead.');
+
+
+            // Test we don't have name="token" value="'.$_SESSION['newtoken'], we must use name="token" value="'.newToken() instead.
+            $ok=true;
+            $matches=array();
+            // Check string   name="token" value="'.$_SESSINON
+            preg_match_all('/name="token" value="\'\.\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach ($matches as $key => $val)
+            {
+            	if ($file['name'] != 'excludefile.php')
+            	{
+            		$ok=false;
+            		break;
+            	}
+            }
+            $this->assertTrue($ok, 'Found a forbidden string sequence into '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
 
 
             // Test we don't have @var array(
@@ -270,7 +287,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 $ok=false;
                 break;
             }
-            $this->assertTrue($ok, 'Found a declaration @var array() instead of @var array in file '.$file['fullname'].'.');
+            $this->assertTrue($ok, 'Found a declaration @var array() instead of @var array in file '.$file['relativename'].'.');
         }
 
         return;

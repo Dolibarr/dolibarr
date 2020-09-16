@@ -773,8 +773,14 @@ span.fa.fa-plus-circle.paddingleft {
 #formuserfile {
 	margin-top: 4px;
 }
+#formuserfile input[type='file'] {
+    font-size: 1em;
+}
 #formuserfile_link {
 	margin-left: 1px;
+}
+#formuserfile_link input[type='text'] {
+    font-size: 1em;
 }
 .listofinvoicetype {
 	height: 28px;
@@ -832,6 +838,43 @@ div.divsearchfield {
 	padding: 3px;
 }
 
+.a-filter, .a-mesure {
+    border-radius: 50px;
+    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 8px 10px 8px 6px;
+}
+.a-filter:before {
+    content: "\f0b0";
+}
+.a-mesure:before {
+    content: "\f080";
+}
+.a-filter:before, .a-mesure:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.a-filter-disabled, .a-mesure-disabled {
+    border-radius: 50px;
+    background: var(--colorbacktitle1);
+    padding: 8px;
+    opacity: 0.6;
+}
+
+div.div-for-modal {
+	/* display: none; */
+	position:absolute;
+	top:calc(50% - 200px);
+	left:calc(50% - 250px);
+	width:500px;  /* adjust as per your needs */
+	height:400px;   /* adjust as per your needs */
+	background: #fff;
+    border: 1px solid #bbb;
+    box-shadow: 2px 2px 20px #ddd;
+    z-index: 100;
+}
 
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
@@ -996,6 +1039,13 @@ select.flat.selectlimit {
 	font-weight: bold;
 	font-size: 1.2em;
 }
+.onlinepaymentbody .amountpaymentcomplete {
+    background-color: var(--amountpaymentcomplete);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -1239,7 +1289,7 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300, .widthcentpercentminusx {
 		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}
@@ -1615,7 +1665,7 @@ div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
 div.fiche>table.table-fiche-title {
-	margin-bottom: 7px;
+	margin-bottom: 12px;
 }
 div.fichecenter {
 	width: 100%;
@@ -3295,6 +3345,14 @@ table.hidepaginationnext .paginationnext {
 .tabBar .arearef .pagination.paginationref {
     max-width: calc(30%);
 }
+.paginationafterarrows a.btnTitlePlus, .titre_right  a.btnTitlePlus {
+    border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+    /* text-shadow: 0px 0px 5px #ccc; */
+    /* filter: invert(0.3); */
+    font-size: 1.07em;
+}
 
 
 /* Set the color for hover lines */
@@ -4050,7 +4108,7 @@ table.table-fiche-title .col-title div.titre{
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 
 
@@ -6292,7 +6350,23 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	font-family: "Font Awesome 5 Free";
 	font-weight: 600;
 }
-
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error:before,
+div.phpdebugbar-widgets-exceptions a.phpdebugbar-widgets-editor-link:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
+{
+	font-family: "Font Awesome 5 Free" !important;
+}
 
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */

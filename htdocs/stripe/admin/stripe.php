@@ -192,23 +192,23 @@ if (empty($conf->stripeconnect->enabled))
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx<</span>';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	    print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
-        print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+        print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx</span><br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
 	  $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
@@ -261,23 +261,23 @@ if (empty($conf->stripeconnect->enabled))
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.$conf->global->STRIPE_LIVE_SECRET_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
         print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
-        print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+        print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx</span><br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
     $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php', 3);
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
@@ -332,9 +332,9 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("VendorName").'</td><td>';
+print $langs->trans("PublicVendorName").'</td><td>';
 print '<input class="minwidth300" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
-print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
@@ -394,7 +394,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
 	}
-	print ' &nbsp; '.$langs->trans("ExampleOnlyForNLCustomers");
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForNLCustomers").'</span>';
 	print '</td></tr>';
 }
 
@@ -410,7 +410,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
-print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
@@ -433,16 +433,21 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
+print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (!empty($conf->use_javascript_ajax))
+print '<input class="minwidth300"  type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
+if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+	$langs->load("errors");
+	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", PAYMENT_SECURITY_ACCEPT_ANY_TOKEN), '', 'pictowarning marginleftonly');
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';

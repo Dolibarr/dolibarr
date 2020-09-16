@@ -923,6 +923,9 @@ if ($id > 0 || !empty($ref)) {
 							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
 							$type = 'dispatch';
+							$colspan = 7;
+							$colspan = (!empty($conf->global->PRODUCT_DISABLE_EATBY)) ? --$colspan : $colspan;
+							$colspan = (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) ? --$colspan : $colspan;
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
 							print '<td>';
@@ -949,7 +952,7 @@ if ($id > 0 || !empty($ref)) {
 							print '</tr>';
 
 							print '<tr class="oddeven" name="'.$type.$suffix.'">';
-							print '<td colspan="7">';
+							print '<td colspan="'.$colspan.'">';
 							print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 							print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 
@@ -1086,7 +1089,7 @@ if ($id > 0 || !empty($ref)) {
 					var fk_default_warehouse = $("option:selected", this).val();
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
                 });
-				
+
 	            jQuery("#autoreset").click(function() {';
 	$i = 0;
 	while ($i < $nbproduct) {
