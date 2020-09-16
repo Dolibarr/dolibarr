@@ -221,7 +221,7 @@ if (! $accessallowed)
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
 {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
-	print "ErrorFileNameInvalid: ".$original_file;
+	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
 	exit;
 }
 
