@@ -202,17 +202,12 @@ if (empty($reshook)){
 			$error = 0;
 			foreach ($toselect as $checked) {
 				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 0) {
-						if ($tmpproposal->valid($user)){
+						if ($tmpproposal->valid($user) && $tmpproposal->statut == 0){
 							setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
 						} else {
 							setEventMessage($langs->trans('CantBeValidated'), 'errors');
 							$error++;
 						}
-					} else {
-						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
-						$error++;
-					}
 				} else {
 					dol_print_error($db);
 					$error++;
@@ -222,7 +217,6 @@ if (empty($reshook)){
 				$db->rollback();
 			} else {
 				$db->commit();
-				?><script>location.reload()</script><?php
 			}
 		}
 	}
