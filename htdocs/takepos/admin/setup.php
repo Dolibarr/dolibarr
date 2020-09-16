@@ -57,7 +57,7 @@ if ($resql) {
 	}
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

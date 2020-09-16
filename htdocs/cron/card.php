@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'cron', 'members'));
 if (!$user->rights->cron->create) accessforbidden();
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtourl = GETPOST('backtourl', 'alpha');

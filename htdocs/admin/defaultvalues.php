@@ -37,7 +37,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'error
 if (!$user->admin) accessforbidden();
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'

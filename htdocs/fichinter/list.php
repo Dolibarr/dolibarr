@@ -40,7 +40,7 @@ $langs->loadLangs(array('companies', 'bills', 'interventions'));
 if (!empty($conf->projet->enabled))     $langs->load("projects");
 if (!empty($conf->contrat->enabled))    $langs->load("contracts");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');

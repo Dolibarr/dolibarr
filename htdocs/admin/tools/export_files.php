@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
 $file = GETPOST('zipfilename_template', 'alpha');

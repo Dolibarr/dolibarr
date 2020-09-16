@@ -40,7 +40,7 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
 $mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common');
 if (empty($mode)) $mode = 'common';
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 //var_dump($_POST);exit;
 $value = GETPOST('value', 'alpha');
 $page_y = GETPOST('page_y', 'int');

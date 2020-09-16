@@ -46,7 +46,7 @@ $langs->loadLangs(array('orders', "companies", "bills", 'propal', 'deliveries', 
 
 $id     = GETPOST('id', 'int'); // id of order
 $ref    = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('ordershipmentcard'));
 

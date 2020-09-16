@@ -46,7 +46,7 @@ if (!empty($conf->categorie->enabled))
 $langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins'));
 if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');

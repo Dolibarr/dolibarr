@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin", "receiptprinter"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 
 $printername = GETPOST('printername', 'alpha');

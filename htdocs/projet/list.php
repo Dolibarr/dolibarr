@@ -44,7 +44,7 @@ if (!empty($conf->categorie->enabled))
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');

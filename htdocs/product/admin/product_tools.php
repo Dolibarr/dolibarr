@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'products'));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $oldvatrate = GETPOST('oldvatrate', 'alpha');
 $newvatrate = GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');

@@ -37,7 +37,7 @@ $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
 $label  = GETPOST('label', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $type   = GETPOST('type', 'aZ09');
 

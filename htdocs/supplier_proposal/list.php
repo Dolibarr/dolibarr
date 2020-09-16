@@ -48,7 +48,7 @@ $langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'b
 
 $socid = GETPOST('socid', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');

@@ -28,7 +28,7 @@ if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
 
 /*

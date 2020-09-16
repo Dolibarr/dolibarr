@@ -34,7 +34,7 @@ $langs->loadLangs(array('users', 'admin', 'other'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $upload_dir = $conf->admin->dir_temp;
 

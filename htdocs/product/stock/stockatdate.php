@@ -49,7 +49,7 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'alpha');
 $date = '';

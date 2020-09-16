@@ -33,7 +33,7 @@ $langs->loadLangs(array("admin", "bills", "margins", "stocks"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

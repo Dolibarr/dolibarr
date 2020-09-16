@@ -38,7 +38,7 @@ $langs->loadLangs(array("companies", "members", "other"));
 
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check

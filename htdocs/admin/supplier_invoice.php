@@ -42,7 +42,7 @@ accessforbidden();
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');

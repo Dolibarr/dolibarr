@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $langs->loadLangs(array("bills", "companies", "donations"));
 
 $id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $amount = GETPOST('amount');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));

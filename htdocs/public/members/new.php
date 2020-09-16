@@ -59,7 +59,7 @@ $errmsg = '';
 $num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other"));

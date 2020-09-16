@@ -56,7 +56,7 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "margins", 
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);

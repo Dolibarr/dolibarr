@@ -79,7 +79,7 @@ if (!$user->rights->agenda->allactions->read || $filter == 'mine')  // If no per
 	$filtert = $user->id;
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $resourceid = GETPOST("search_resourceid", "int");
 $year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
 $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");

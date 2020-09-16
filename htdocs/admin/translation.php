@@ -33,7 +33,7 @@ $langs->loadLangs(array("companies", "products", "admin", "sms", "other", "error
 if (!$user->admin) accessforbidden();
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');

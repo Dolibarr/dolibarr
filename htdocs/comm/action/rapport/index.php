@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
