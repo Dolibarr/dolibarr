@@ -213,7 +213,7 @@ if (!empty($conf->propal->enabled)) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=0", 2, $num);
+		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num) {
 			$total = 0;
@@ -242,11 +242,11 @@ if (!empty($conf->propal->enabled)) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 16).'</td>';
-				print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ht;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -352,7 +352,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=1", 4, $num);
+		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=".Propal::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -388,13 +388,13 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 
 				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 

@@ -84,7 +84,8 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {		// This is useless due to the global search combo
+// This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
 	// Search proposal
 	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$listofsearchfields['search_proposal'] = array('text'=>'Proposal');
@@ -152,7 +153,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=0", 2, $num);
+		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -180,11 +181,11 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 16).'</td>';
-				print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price((!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ht;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -210,14 +211,14 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 	$sql .= " AND p.fk_statut = ".SupplierProposal::STATUS_DRAFT;
 	$sql .= " AND p.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND s.rowid = ".$socid;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=0", 2, $num);
+		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -241,13 +242,13 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$companystatic->email = $obj->email;
 
 				print '<tr class="oddeven">';
-				print '<td  class="nowrap">'.$supplierproposalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap">'.$supplierproposalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 16).'</td>';
-				print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ht;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -273,14 +274,14 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_DRAFT;
 	$sql .= " AND c.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND c.fk_soc = ".$socid;
+	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("DraftOrders", "commande/list.php", "search_status=0", 2, $num);
+		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -311,7 +312,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -337,14 +338,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= " AND cf.fk_statut = ".CommandeFournisseur::STATUS_DRAFT;
 	$sql .= " AND cf.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND cf.fk_soc = ".$socid;
+	if ($socid) $sql .= " AND cf.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=0", 2, $num);
+		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -375,7 +376,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -387,7 +388,8 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	}
 }
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
+print '<div class="ficheaddleft">';
 
 /*
  * Last modified customers or prospects
@@ -399,7 +401,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
 	$sql .= " AND s.client IN (".Societe::CUSTOMER.", ".Societe::PROSPECT.", ".Societe::CUSTOMER_AND_PROSPECT.")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND s.rowid = $socid";
+	if ($socid) $sql .= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -463,7 +465,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
 	$sql .= " AND s.fournisseur = ".Societe::SUPPLIER;
 	if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND s.rowid = ".$socid;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -581,7 +583,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
  * Opened (validated) proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-	$sql = "SELECT  p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= ", s.nom as name, s.rowid, s.code_client, s.entity, s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -622,24 +624,21 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$companystatic->entity = $obj->entity;
 				$companystatic->email = $obj->email;
 
-				print '<tr class="oddeven">';
-
-				// Ref
-				print '<td class="nowrap" width="140">';
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
-				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-				print '</td>';
-				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
-				print "</td>";
+				$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
+
+				print '<tr class="oddeven">';
+
+				print '<td class="nowrap" width="140">';
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td width="18" class="nobordernopadding nowrap">'.$warning.'</td>';
+				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($propalstatic->element, $filename, $filedir).'</td>';
+				print '</tr>';
+				print '</table>';
+				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
@@ -649,7 +648,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -683,7 +682,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=1", 4, $num);
+		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=".Commande::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -710,22 +709,18 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+				//$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
 
 				print '<tr class="oddeven">';
 
-				// Ref
 				print '<td class="nowrap" width="140">';
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $orderstatic->getNomUrl(1);
+				print '<td class="nobordernopadding nowrap">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td width="18" class="nobordernopadding nowrap"></td>';
+				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($orderstatic->element, $filename, $filedir).'</td>';
+				print '</tr>';
+				print '</table>';
 				print '</td>';
-				print '<td width="18" class="nobordernopadding nowrap">';
-				//if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-				print '</td>';
-				print '<td width="16" align="center" class="nobordernopadding">';
-				print $formfile->getDocumentsLink($orderstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
-				print "</td>";
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
@@ -735,7 +730,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total +=(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -747,7 +742,9 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	}
 }
 
-print '</div></div></div>';
+print '</div>';
+print '</div>';
+print '</div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardCommercials', $parameters, $object); // Note that $action and $object may have been modified by hook

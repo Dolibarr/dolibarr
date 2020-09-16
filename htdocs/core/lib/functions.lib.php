@@ -83,7 +83,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	global $conf, $mc;
 
 	// fix different element names (France to English)
-	switch($element) {
+	switch ($element) {
 		case 'contrat':			$element = 'contract';			break;	// "/contrat/class/contrat.class.php"
 		case 'order_supplier':	$element = 'supplier_order';	break;	// "/fourn/class/fournisseur.commande.class.php"
 	}
