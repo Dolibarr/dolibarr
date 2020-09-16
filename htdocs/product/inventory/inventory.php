@@ -381,9 +381,7 @@ if ($object->id > 0)
 		print '</div>'."\n";
 	}
 
-
 	if ($action == 'updatebyscaning') {
-
 		print '<div class="div-for-modal">';
 
 		print 'TODO';
