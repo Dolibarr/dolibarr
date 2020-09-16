@@ -421,7 +421,7 @@ class SupplierProposal extends CommonObject
 		$txtva = price2num($txtva);
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
-			$pa_ht = price2num($pa_ht);
+		$pa_ht = price2num($pa_ht);
 		if ($price_base_type == 'HT')
 		{
 			$pu = $pu_ht;

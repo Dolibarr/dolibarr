@@ -4016,7 +4016,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
