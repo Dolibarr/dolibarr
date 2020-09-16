@@ -297,8 +297,7 @@ function LoadProducts(position, issubcat) {
 					echo '$("#prodesc"+ishow).text("");';
 					echo '$("#proimg"+ishow).attr("title","");';
 					echo '$("#proimg"+ishow).attr("src","genimg/empty.png");';
-				}
-				else
+				} else
 				{
 					echo '$("#probutton"+ishow).hide();';
 					echo '$("#probutton"+ishow).text("");';
@@ -323,8 +322,7 @@ function LoadProducts(position, issubcat) {
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
 					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
 				}
-				else
-				{
+				else {
 					echo '$("#probutton"+ishow).show();';
 					echo '$("#probutton"+ishow).text(data[parseInt(idata)][\'label\']);';
 				}
@@ -1088,8 +1086,7 @@ if ($conf->global->TAKEPOS_WEIGHING_SCALE)
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				} else {
 						if ($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
-    					else
-						{
+    					else {
 							print '<div class="" id="proprice'.$count.'"></div>';
 							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
 						}
