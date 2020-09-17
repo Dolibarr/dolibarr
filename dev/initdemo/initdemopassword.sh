@@ -1,20 +1,16 @@
 #!/bin/sh
 #------------------------------------------------------
-# Script to purge and init a database with demo values.
+# Script to reinit admin password.
 # Note: "dialog" tool need to be available if no parameter provided.
 #
-# WARNING: This script erase all data of database
-# with data into dump file
-#
-# Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: initdemo.sh confirm 
-# usage: initdemo.sh confirm mysqldump_dolibarr_x.x.x.sql database port login pass
+# Usage: initdemopassword.sh confirm 
+# usage: initdemopassword.sh confirm login pass
 #------------------------------------------------------
 
 
-export mydir=`echo "$0" | sed -e 's/initdemo.sh//'`;
+export mydir=`echo "$0" | sed -e 's/initdemopassword.sh//'`;
 if [ "x$mydir" = 'x' -o "x$mydir" = 'x./' ]
 then
     export mydir="."
@@ -42,7 +38,7 @@ passwd=$6;
 if [ "x$confirm" != "xconfirm" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemo.sh confirm [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo "Usage: initdemopassword.sh confirm [login pass]"
 	exit
 fi
 
@@ -53,24 +49,6 @@ then
 	export dumpfile=`ls -v $mydir/mysqldump_dolibarr_*.sql | tail -n 1`
 	export dumpfile=`basename $dumpfile`
 
-	# ----------------------------- input file
-	DIALOG=${DIALOG=dialog}
-	DIALOG="$DIALOG --ascii-lines"
-	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
-	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --inputbox "Input dump file :" 16 55 $dumpfile 2> $fichtemp
-	valret=$?
-	case $valret in
-	  0)
-	dumpfile=`cat $fichtemp`;;
-	  1)
-	exit;;
-	  255)
-	exit;;
-	esac
-	rm $fichtemp
-	
 	# ----------------------------- database name
 	DIALOG=${DIALOG=dialog}
 	DIALOG="$DIALOG --ascii-lines"
@@ -146,14 +124,50 @@ then
 	esac
 	rm $fichtemp
 	
+	# ----------------------------- demo login
+	DIALOG=${DIALOG=dialog}
+	DIALOG="$DIALOG --ascii-lines"
+	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+	trap "rm -f $fichtemp" 0 1 2 5 15
+	$DIALOG --title "Reset login password" --clear \
+	        --inputbox "Login to reset :" 16 55 dolibarrdemologin 2> $fichtemp
+	valret=$?
+	case $valret in
+	  0)
+	demologin=`cat $fichtemp`;;
+	  1)
+	exit;;
+	  255)
+	exit;;
+	esac
+	rm fichtemp
+	
+	# ----------------------------- demo pass
+	DIALOG=${DIALOG=dialog}
+	DIALOG="$DIALOG --ascii-lines"
+	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+	trap "rm -f $fichtemp" 0 1 2 5 15
+	$DIALOG --title "Reset login password" --clear \
+	        --inputbox "Pass to set :" 16 55 dolibarrdemopass 2> $fichtemp
+	valret=$?
+	case $valret in
+	  0)
+	demopass=`cat $fichtemp`;;
+	  1)
+	exit;;
+	  255)
+	exit;;
+	esac
+	rm fichtemp
+	
 	
 	export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 
 
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 55
+	$DIALOG --title "Init demo login with demo values" --clear \
+	        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd' \n Demo login: '$demologin' \n Demo password : '$demopass'" 15 55
 	
 	case $? in
 	        0)      echo "Ok, start process...";;
@@ -171,66 +185,14 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-#echo "drop old table"
-echo "drop table if exists llx_accounting_account;" | mysql -P$port -u$admin $passwd $base
-echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
-mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
+echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port -u$admin $passwd $base"
+echo "UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';" | mysql -P$port -u$admin $passwd $base
 export res=$?
 
 if [ $res -ne 0 ]; then
-	echo "Error to load database dump with mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
+	echo "Error to execute sql with mysql -P$port -u$admin -p***** $base"
 	exit
 fi 
-
-$mydir/updatedemo.php confirm
-export res=$?
-
-# ---------------------------- copy demo files
-export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
-if [ "x$documentdir" != "x" ]
-then
-	$DIALOG --title "Reset document directory tpp" --clear \
-	        --inputbox "Delete and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
-	
-	valret=$?
-	
-	case $valret in
-	  0)
-	rep=`cat $fichtemp`;;
-	  1)
-	exit;;
-	  255)
-	exit;;
-	esac
-	
-	echo "rep=$rep"
-	if [ "x$rep" = "xy" ]; then
-		echo rm -fr "$documentdir/*"
-		rm -fr $documentdir/*
-	fi
-		
-	echo cp -pr $mydir/documents_demo/* "$documentdir/"
-	cp -pr $mydir/documents_demo/* "$documentdir/"
-	
-	mkdir "$documentdir/doctemplates/" 2>/dev/null
-	echo cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
-	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
-	
-	echo cp -pr $mydir/../../htdocs/install/medias/* "$documentdir/medias/image/"
-	cp -pr $mydir/../../htdocs/install/medias/* "$documentdir/medias/image/"
-
-	mkdir -p "$documentdir/ecm/Administrative documents" 2>/dev/null
-	mkdir -p "$documentdir/ecm/Images" 2>/dev/null
-	rm -f "$documentdir/doctemplates/"*/index.html
-	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
-	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
-	
-	chmod -R u+w "$documentdir/"
-	chown -R www-data "$documentdir/"
-else
-	echo Detection of documents directory from $mydir failed so demo files were not copied. 
-fi
-
 
 
 if [ "x$res" = "x0" ]
