@@ -130,8 +130,8 @@ if (!function_exists('dol_loginfunction'))
      */
     function dol_loginfunction($langs, $conf, $mysoc)
 	{
-		global $dolibarr_main_demo, $db;
-		global $hookmanager;
+		global $dolibarr_main_demo, $dolibarr_main_force_https;
+		global $db, $hookmanager;
 
 		$langs->loadLangs(array("main", "other", "help", "admin"));
 
