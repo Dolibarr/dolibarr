@@ -1844,7 +1844,7 @@ class Products extends DolibarrApi
 		if ($includeparentid) {
 			$prodcomb = new ProductCombination($this->db);
 			$this->product->fk_product_parent = null;
-			if (($fk_product_parent = $prodcomb->getFkProductParentByFkProductChild($this->product->id)) > 0) {
+			if (($fk_product_parent = $prodcomb->fetchByFkProductChild($this->product->id)) > 0) {
 				$this->product->fk_product_parent = $fk_product_parent;
 			}
 		}
