@@ -109,14 +109,17 @@ class PropaleStats extends Stats
     public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
-
+		$commerciaux = GETPOST('propal_commercial');
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!empty($commerciaux)){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -152,14 +155,17 @@ class PropaleStats extends Stats
     public function getAmountByMonth($year, $format)
 	{
 		global $user;
-
+		$commerciaux = GETPOST('propal_commercial');
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!empty($commerciaux)){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
@@ -174,14 +180,17 @@ class PropaleStats extends Stats
     public function getAverageByMonth($year)
 	{
 		global $user;
-
+		$commerciaux = GETPOST('propal_commercial');
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql .= " FROM ".$this->from;
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!empty($commerciaux)){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -194,10 +203,13 @@ class PropaleStats extends Stats
     public function getAllByYear()
 	{
 		global $user;
-
+		$commerciaux = GETPOST('propal_commercial');
 		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!empty($commerciaux)){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
         $sql.= $this->db->order('year', 'DESC');
