@@ -66,7 +66,8 @@ ONLY vulnerabilities discovered, when the following setup on tested platform is 
 
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
-* The module DebugBar must NOT be enabled (by default, this module is not enabled)
+* The module DebugBar must NOT be enabled (by default, this module is not enabled. This is a developer tool)
+* The module ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be enabled soon by default)
 * ONLY security reports on "stable" modules are allowed (troubles into "experimental" and "developement" modules are not accepted).
 
