@@ -1435,7 +1435,8 @@ if ($action == 'create' || $action == 'adduserldap')
 				if ($object->pass) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				else {
 					if ($user->admin && $user->id == $object->id) {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Crypted").': ';
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';
 						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 						// TODO Add a feature to reveal the hash
 						$valuetoshow .= '<!-- '.$object->pass_indatabase_crypted.' -->';
