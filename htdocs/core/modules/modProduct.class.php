@@ -167,7 +167,8 @@ class modProduct extends DolibarrModules
 		$r++;
 		*/
 
-		$usenpr = $mysoc->useNPR();
+		$usenpr = 0;
+		if (is_object($mysoc)) $usenpr = $mysoc->useNPR();
 
 		// Exports
 		//--------
