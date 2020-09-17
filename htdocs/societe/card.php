@@ -343,7 +343,7 @@ if (empty($reshook))
         // Fill array 'array_options' with data from update form
         $extrafields->fetch_name_optionals_label($object->table_element);
 
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
         if ($ret < 0) $error++;
 
         if (!$error)

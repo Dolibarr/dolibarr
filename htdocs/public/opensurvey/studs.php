@@ -66,7 +66,7 @@ if (GETPOST('ajoutcomment', 'alpha'))
 
 	$error = 0;
 
-	$comment = GETPOST("comment", 'none');
+	$comment = GETPOST("comment", 'restricthtml');
 	$comment_user = GETPOST('commentuser', 'nohtml');
 
 	if (!$comment)
@@ -733,7 +733,7 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'none'), 0, 1).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
 	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";

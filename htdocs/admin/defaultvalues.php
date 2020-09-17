@@ -61,7 +61,7 @@ $defaulturl = preg_replace('/^\//', '', $defaulturl);
 
 $urlpage = GETPOST('urlpage', 'alphanohtml');
 $key = GETPOST('key', 'alphanohtml');
-$value = GETPOST('value', 'none');
+$value = GETPOST('value', 'restricthtml');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));

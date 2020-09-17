@@ -64,7 +64,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 
 		// Set value to insert
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'none');
+			$value = GETPOST($key, 'restricthtml');
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
@@ -72,7 +72,7 @@ if ($action == 'add' && !empty($permissiontoadd))
 		} elseif ($object->fields[$key]['type'] == 'duration') {
 			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = (GETPOST($key) == 'on' ? 1 : 0);
 		} else {
@@ -142,7 +142,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 
 		// Set value to update
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'none');
+			$value = GETPOST($key, 'restricthtml');
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
@@ -154,7 +154,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 				$value = '';
 			}
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-			$value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
+			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} else {

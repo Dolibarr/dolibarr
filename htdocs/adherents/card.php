@@ -407,7 +407,6 @@ if (empty($reshook)) {
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'alpha');
 		$photo = GETPOST("photo", 'alpha');
-		//$comment=GETPOST("comment",'none');
 		$morphy = GETPOST("morphy", 'alphanohtml');
 		$public = GETPOST("public", 'alphanohtml');
 

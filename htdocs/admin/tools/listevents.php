@@ -60,8 +60,8 @@ $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
 $search_desc = GETPOST("search_desc", "alpha");
-$search_ua   = GETPOST("search_ua", "none");
-$search_prefix_session = GETPOST("search_prefix_session", "none");
+$search_ua   = GETPOST("search_ua", "restricthtml");
+$search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
 
 if (GETPOST("date_startmonth") == '' || GETPOST("date_startmonth") > 0) $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 else $date_start = -1;

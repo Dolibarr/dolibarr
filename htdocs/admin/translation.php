@@ -37,7 +37,7 @@ $action = GETPOST('action', 'aZ09');
 
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
-$transvalue = GETPOST('transvalue', 'none');
+$transvalue = GETPOST('transvalue', 'restricthtml');
 
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'searchkey';

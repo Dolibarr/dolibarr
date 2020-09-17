@@ -746,8 +746,8 @@ if (empty($reshook))
 	elseif ($action == 'confirm_paid_partially' && $confirm == 'yes' && $usercanissuepayment)
 	{
 		$object->fetch($id);
-		$close_code = GETPOST("close_code", 'none');
-		$close_note = GETPOST("close_note", 'none');
+		$close_code = GETPOST("close_code", 'restricthtml');
+		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
 			$result = $object->set_paid($user, $close_code, $close_note);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -757,8 +757,8 @@ if (empty($reshook))
 	} // Classify "abandoned"
 	elseif ($action == 'confirm_canceled' && $confirm == 'yes') {
 		$object->fetch($id);
-		$close_code = GETPOST("close_code", 'none');
-		$close_note = GETPOST("close_note", 'none');
+		$close_code = GETPOST("close_code", 'restricthtml');
+		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
 			$result = $object->set_canceled($user, $close_code, $close_note);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -987,7 +987,7 @@ if (empty($reshook))
 
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public		= trim(GETPOST('note_public', 'none'));
+				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int = $_POST['ref_int'];
@@ -1041,20 +1041,19 @@ if (empty($reshook))
 					$object->entity = $originentity;
 				}
 				$object->socid = GETPOST('socid', 'int');
-				$object->ref = $_POST['ref'];
+				$object->ref = GETPOST('ref');
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public		= trim(GETPOST('note_public', 'none'));
+				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				// We do not copy the private note
-				$object->ref_client			= $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->model_pdf = $_POST['model'];
-				$object->fk_project			= $_POST['projectid'];
+				$object->ref_client			= GETPOST('ref_client');
+				$object->model_pdf = GETPOST('model');
+				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= 0;
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->remise_absolue		= GETPOST('remise_absolue');
+				$object->remise_percent		= GETPOST('remise_percent');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1256,22 +1255,21 @@ if (empty($reshook))
 			if (!$error)
 			{
 				$object->socid = GETPOST('socid', 'int');
-				$object->type            = $_POST['type'];
-				$object->ref             = $_POST['ref'];
+				$object->type            = GETPOST('type');
+				$object->ref             = GETPOST('ref');
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public = trim(GETPOST('note_public', 'none'));
-				$object->note_private    = trim(GETPOST('note_private', 'none'));
-				$object->ref_client      = $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->model_pdf        = $_POST['model'];
-				$object->fk_project = $_POST['projectid'];
-				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_client      = GETPOST('ref_client');
+				$object->model_pdf        = GETPOST('model');
+				$object->fk_project = GETPOST('projectid', 'int');
+				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = $_POST['amount'];
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->amount = price2num(GETPOST('amount'));
+				$object->remise_absolue		= GETPOST('remise_absolue');
+				$object->remise_percent		= GETPOST('remise_percent');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1309,21 +1307,20 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
-				$object->ref = $_POST['ref'];
+				$object->ref = GETPOST('ref');
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public		= trim(GETPOST('note_public', 'none'));
-				$object->note_private = trim(GETPOST('note_private', 'none'));
-				$object->ref_client			= $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->model_pdf = $_POST['model'];
-				$object->fk_project			= $_POST['projectid'];
-				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_client			= GETPOST('ref_client');
+				$object->model_pdf = GETPOST('model');
+				$object->fk_project			= GETPOST('projectid');
+				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id');
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = $_POST['amount'];
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->amount = price2num(GETPOST('amount'));
+				$object->remise_absolue		= GETPOST('remise_absolue');
+				$object->remise_percent		= GETPOST('remise_percent');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1801,11 +1798,10 @@ if (empty($reshook))
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public = trim(GETPOST('note_public', 'none'));
-				$object->note = trim(GETPOST('note', 'none'));
-				$object->note_private = trim(GETPOST('note', 'none'));
+				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note = trim(GETPOST('note', 'restricthtml'));
+				$object->note_private = trim(GETPOST('note', 'restricthtml'));
 				$object->ref_client = GETPOST('ref_client', 'alpha');
-				$object->ref_int = GETPOST('ref_int', 'alpha');
 				$object->model_pdf = GETPOST('model', 'alpha');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
@@ -1883,9 +1879,9 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'none') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
 		{
@@ -2204,7 +2200,7 @@ if (empty($reshook))
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none') ? GETPOST('product_desc', 'none') : GETPOST('desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
@@ -2629,7 +2625,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)

@@ -55,8 +55,8 @@ $db_user = GETPOST('db_user', 'alpha') ?GETPOST('db_user', 'alpha') : (empty($ar
 $db_pass = GETPOST('db_pass', 'none') ?GETPOST('db_pass', 'none') : (empty($argv[12]) ? '' : $argv[12]);
 $db_port = GETPOST('db_port', 'int') ?GETPOST('db_port', 'int') : (empty($argv[13]) ? '' : $argv[13]);
 $db_prefix = GETPOST('db_prefix', 'aZ09') ?GETPOST('db_prefix', 'aZ09') : (empty($argv[14]) ? '' : $argv[14]);
-$db_create_database = GETPOST('db_create_database', 'none') ?GETPOST('db_create_database', 'none') : (empty($argv[15]) ? '' : $argv[15]);
-$db_create_user = GETPOST('db_create_user', 'none') ?GETPOST('db_create_user', 'none') : (empty($argv[16]) ? '' : $argv[16]);
+$db_create_database = GETPOST('db_create_database', 'alpha') ?GETPOST('db_create_database', 'alpha') : (empty($argv[15]) ? '' : $argv[15]);
+$db_create_user = GETPOST('db_create_user', 'alpha') ?GETPOST('db_create_user', 'alpha') : (empty($argv[16]) ? '' : $argv[16]);
 // Force https
 $main_force_https = ((GETPOST("main_force_https", 'alpha') && (GETPOST("main_force_https", 'alpha') == "on" || GETPOST("main_force_https", 'alpha') == 1)) ? '1' : '0');
 // Use alternative directory

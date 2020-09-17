@@ -152,7 +152,7 @@ elseif ($action == 'setdoc')
 {
     $db->begin();
 
-	$freetext = GETPOST('EXPENSEREPORT_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('EXPENSEREPORT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');

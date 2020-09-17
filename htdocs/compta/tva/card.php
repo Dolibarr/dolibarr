@@ -98,7 +98,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	}
     $object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'none');
+	$object->note = GETPOST("note", 'restricthtml');
 
 	if (empty($object->datep))
 	{

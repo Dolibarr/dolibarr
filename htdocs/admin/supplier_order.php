@@ -154,7 +154,7 @@ elseif ($action == 'setdoc')
     $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 } elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
-    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'none'); // No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
 	$doubleapproval = price2num($doubleapproval);
 

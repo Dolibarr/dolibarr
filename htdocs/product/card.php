@@ -286,9 +286,9 @@ if (empty($reshook))
 			$object->barcode_type_coder     = $stdobject->barcode_type_coder;
 			$object->barcode_type_label     = $stdobject->barcode_type_label;
 
-			$object->description        	 = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
+			$object->description        	 = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
 			$object->url = GETPOST('url');
-			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
+			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 			$object->note               	 = $object->note_private; // deprecated
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
 	        $object->country_id = GETPOST('country_id', 'int');
@@ -389,11 +389,11 @@ if (empty($reshook))
 
 				$object->ref                    = $ref;
 				$object->label                  = GETPOST('label', 'alphanohtml');
-				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
+				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
 				$object->url = GETPOST('url');
 				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 				{
-					$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
+					$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 					$object->note = $object->note_private;
 				}
 				$object->customcode             = GETPOST('customcode', 'alpha');
@@ -1029,7 +1029,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
-		$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
 		$doleditor->Create();
 
 		print "</td></tr>";
@@ -1178,7 +1178,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'none'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";

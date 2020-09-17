@@ -268,7 +268,8 @@ if (empty($reshook))
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note = GETPOST('note', 'none');
+					$object->note = GETPOST('note', 'restricthtml');
+					$object->note_private = GETPOST('note', 'restricthtml');
 					$object->statut = SupplierProposal::STATUS_DRAFT;
 
 					$id = $object->create_from($user);
@@ -286,7 +287,8 @@ if (empty($reshook))
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note = GETPOST('note', 'none');
+				$object->note = GETPOST('note', 'restricthtml');
+				$object->note_private = GETPOST('note', 'restricthtml');
 
 				$object->origin = GETPOST('origin');
 				$object->origin_id = GETPOST('originid');
@@ -482,7 +484,7 @@ if (empty($reshook))
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == SupplierProposal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note', 'none'));
+				$object->cloture($user, GETPOST('statut'), GETPOST('note', 'restricthtml'));
 			}
 		}
 	}
@@ -841,7 +843,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 		// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -1039,7 +1041,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)

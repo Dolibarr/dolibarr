@@ -115,7 +115,7 @@ if ($action == 'add')
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'none'));
+	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
 
 	$object->fk_user_author  = $user->id;
 
@@ -213,7 +213,7 @@ if ($action == 'update')
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'none'));
+	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
 
 	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
 	{

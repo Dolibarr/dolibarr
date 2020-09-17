@@ -207,8 +207,8 @@ if (empty($reshook))
 		$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
 		$object->fax = GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
-		$object->note_public = GETPOST("note_public", 'none');
-		$object->note_private = GETPOST("note_private", 'none');
+		$object->note_public = GETPOST("note_public", 'restricthtml');
+		$object->note_private = GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
 		$object->statut			= 1; //Defult status to Actif
@@ -395,8 +395,8 @@ if (empty($reshook))
 			$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
 			$object->fax = GETPOST("fax", 'alpha');
 			$object->priv = GETPOST("priv", 'int');
-			$object->note_public = GETPOST("note_public", 'none');
-			$object->note_private = GETPOST("note_private", 'none');
+			$object->note_public = GETPOST("note_public", 'restricthtml');
+			$object->note_private = GETPOST("note_private", 'restricthtml');
 			$object->roles = GETPOST("roles", 'array');
 
 			// Fill array 'array_options' with data from add form

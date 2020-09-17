@@ -113,8 +113,8 @@ if ($action == 'update')
 		$object->date = $donation_date;
 		$object->public = GETPOST("public", 'alpha');
 		$object->fk_project = GETPOST("fk_project", 'alpha');
-		$object->note_private = GETPOST("note_private", 'none');
-		$object->note_public = GETPOST("note_public", 'none');
+		$object->note_private = GETPOST("note_private", 'restricthtml');
+		$object->note_public = GETPOST("note_public", 'restricthtml');
 		$object->modepaymentid = GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
@@ -166,8 +166,8 @@ if ($action == 'add')
 		$object->country_id = GETPOST('country_id', 'int');
 		$object->email = GETPOST('email', 'alpha');
         $object->date = $donation_date;
-		$object->note_private = GETPOST("note_private", 'none');
-		$object->note_public = GETPOST("note_public", 'none');
+		$object->note_private = GETPOST("note_private", 'restricthtml');
+		$object->note_public = GETPOST("note_public", 'restricthtml');
 		$object->public = GETPOST("public", 'alpha');
 		$object->fk_project = GETPOST("fk_project", 'alpha');
 		$object->modepaymentid = GETPOST('modepayment', 'int');
@@ -389,7 +389,7 @@ if ($action == 'create')
 		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address", "none"), 0, 1).'</textarea></td></tr>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address", "alphanohtml"), 0, 1).'</textarea></td></tr>';
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';

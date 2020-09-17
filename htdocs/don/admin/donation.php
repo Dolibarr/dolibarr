@@ -130,7 +130,7 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
 
 if ($action == 'set_DONATION_MESSAGE')
 {
-	$freemessage = GETPOST('DONATION_MESSAGE', 'none'); // No alpha here, we want exact string
+	$freemessage = GETPOST('DONATION_MESSAGE', 'restricthtml'); // No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "DONATION_MESSAGE", $freemessage, 'chaine', 0, '', $conf->entity);
 
