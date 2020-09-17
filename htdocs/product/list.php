@@ -1445,7 +1445,9 @@ if ($resql)
 		// State
 		if (!empty($arrayfields['p.fk_state']['checked']))
 		{
-			print '<td>'.getState($obj->fk_state, 0, $db).'</td>';
+			print '<td>';
+			if (!empty($obj->fk_state)) print  getState($obj->fk_state, 0, $db);
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Accountancy code sell
