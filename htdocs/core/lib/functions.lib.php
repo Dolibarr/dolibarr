@@ -277,12 +277,13 @@ function GETPOSTISSET($paramname)
  *                               'none'=no check (only for param that should have very rich content)
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alpha'=check it's text and sign
+ *                               'alpha'=Same than alphanohtml since v13
+ *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'array'=check it's array
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml', 'alphanohtml'=check there is no html content
+ *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
@@ -555,13 +556,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		case 'intcomma':
 			if (preg_match('/[^0-9,-]+/i', $out)) $out = '';
 			break;
-		case 'alpha':
-			if (!is_array($out)) {
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('"', '../'), '', trim($out));
-			}
-			break;
 		case 'san_alpha':
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
@@ -592,6 +586,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
+		case 'alpha':		// No html and no " and no ../
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out))
 			{
