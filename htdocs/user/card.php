@@ -1434,7 +1434,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			{
 				if ($object->pass) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				else {
-					if ($user->admin && $user->id == $object->id) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+					if ($user->admin && $user->id == $object->id) {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Crypted").': ';
+						print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+						// TODO Add a feature to reveal the hash
+						print '<!-- '.$object->pass_indatabase_crypted.' -->';
+					}
 					else $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}
 			}
@@ -1454,6 +1459,9 @@ if ($action == 'create' || $action == 'adduserldap')
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) print '<span class="opacitymedium">'.preg_replace('/./', '*', $object->api_key).'</span>';
+				if ($user->admin || $user->id == $object->id) {
+					// TODO Add a feature to reveal the hash
+				}
 				print '</td></tr>';
 			}
 
