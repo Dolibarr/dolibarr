@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2020		Pierre Ardoin			<mapiolca@me.com>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,31 +22,31 @@
  */
 
 /**
- *	\file       htdocs/comm/index.php
- *	\ingroup    commercial
- *	\brief      Home page of commercial area
+ *	\file		htdocs/comm/index.php
+ *	\ingroup	commercial
+ *	\brief		Home page of commercial area
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (!empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (!empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (!empty($conf->supplier_proposal->enabled))  require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-if (!empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 if (!$user->rights->societe->lire) accessforbidden();
 
-$hookmanager = new HookManager($db);
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('commercialindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array("commercial", "propal"));
+$langs->loadLangs(array("boxes", "commercial", "contracts", "orders", "propal", "supplier_proposal"));
 
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOST('bid', 'int');
@@ -84,7 +84,8 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {		// This is useless due to the global search combo
+// This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
 	// Search proposal
 	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$listofsearchfields['search_proposal'] = array('text'=>'Proposal');
@@ -136,19 +137,14 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {		// This is useless
  * Draft customer proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-	$langs->load("propal");
-
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
-	$sql .= ", s.code_client";
-	$sql .= ", s.email";
-	$sql .= ", s.entity";
-	$sql .= ", s.code_compta";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc";
+	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_statut = 0";
+	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
-	$sql .= " AND p.entity IN (".getEntity('propal').")";
+	$sql .= " AND p.fk_statut = ".Propal::STATUS_DRAFT;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND s.rowid = ".$socid;
 
@@ -157,7 +153,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=0", 2, $num);
+		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -185,11 +181,11 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 16).'</td>';
-				print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price((!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ht;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -206,28 +202,23 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
-	$langs->load("supplier_proposal");
-
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
-	$sql .= ", s.code_client";
-	$sql .= ", s.code_fournisseur";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc";
+	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_statut = 0";
+	$sql .= " WHERE p.entity IN (".getEntity($supplierproposalstatic->element).")";
+	$sql .= " AND p.fk_statut = ".SupplierProposal::STATUS_DRAFT;
 	$sql .= " AND p.fk_soc = s.rowid";
-	$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND s.rowid = ".$socid;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=0", 2, $num);
+		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -251,13 +242,13 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$companystatic->email = $obj->email;
 
 				print '<tr class="oddeven">';
-				print '<td  class="nowrap">'.$supplierproposalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap">'.$supplierproposalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 16).'</td>';
-				print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ht;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -274,28 +265,23 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
  * Draft customer orders
  */
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
-	$langs->load("orders");
-
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
-	$sql .= ", s.code_client";
-	$sql .= ", s.email";
-	$sql .= ", s.entity";
-	$sql .= ", s.code_compta";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc";
+	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.fk_statut = 0";
-	$sql .= " AND c.entity IN (".getEntity('commande').")";
+	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
+	$sql .= " AND c.fk_statut = ".Commande::STATUS_DRAFT;
+	$sql .= " AND c.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND c.fk_soc = ".$socid;
+	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("DraftOrders", "commande/list.php", "search_status=0", 2, $num);
+		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -326,7 +312,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -343,28 +329,23 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
  * Draft suppliers orders
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
-	$langs->load("orders");
-
-	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
-	$sql .= ", s.code_client";
-	$sql .= ", s.code_fournisseur";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
+	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc";
+	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE cf.fk_soc = s.rowid";
-	$sql .= " AND cf.fk_statut = 0";
-	$sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
+	$sql .= " WHERE cf.entity IN (".getEntity($supplierorderstatic->element).")";
+	$sql .= " AND cf.fk_statut = ".CommandeFournisseur::STATUS_DRAFT;
+	$sql .= " AND cf.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND cf.fk_soc = ".$socid;
+	if ($socid) $sql .= " AND cf.fk_soc = ".$socid;
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=0", 2, $num);
+		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -395,7 +376,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -407,27 +388,20 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	}
 }
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-$max = 3;
+print '</div><div class="fichetwothirdright">';
+print '<div class="ficheaddleft">';
 
 /*
  * Last modified customers or prospects
  */
 if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
-	$langs->load("boxes");
-
-	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
-	$sql .= ", s.code_client";
-	$sql .= ", s.code_compta";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
+	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas, s.code_client, s.code_compta, s.entity, s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.client IN (1, 2, 3)";
-	$sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
+	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
+	$sql .= " AND s.client IN (".Societe::CUSTOMER.", ".Societe::PROSPECT.", ".Societe::CUSTOMER_AND_PROSPECT.")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND s.rowid = $socid";
+	if ($socid) $sql .= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -485,18 +459,13 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
  * Last suppliers
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire) {
-	$langs->load("boxes");
-
-	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
-	$sql .= ", s.code_fournisseur";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
+	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm, s.code_fournisseur, s.entity, s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.fournisseur = 1";
-	$sql .= " AND s.entity IN (".getEntity($companystatic->element).")";
+	$sql .= " WHERE s.entity IN (".getEntity($companystatic->element).")";
+	$sql .= " AND s.fournisseur = ".Societe::SUPPLIER;
 	if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid)	$sql .= " AND s.rowid = ".$socid;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -556,21 +525,18 @@ if ($user->rights->agenda->myactions->read) {
  * Latest contracts
  */
 if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
-	$langs->load("contracts");
+	$staticcontrat = new Contrat($db);
 
-	$sql = "SELECT s.nom as name, s.rowid, s.canvas, ";
-	$sql .= ", s.code_client";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
+	$sql = "SELECT s.nom as name, s.rowid, s.canvas, s.code_client, s.entity, s.email";
 	$sql .= ", c.statut, c.rowid as contratid, p.ref, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('contract').")";
+	$sql .= " WHERE c.entity IN (".getEntity($staticcontrat->element).")";
+	$sql .= " AND c.fk_soc = s.rowid";
 	$sql .= " AND c.fk_product = p.rowid";
-	if (!$user->rights->societe->client->voir && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY c.tms DESC";
 	$sql .= $db->plimit(5, 0);
@@ -582,7 +548,6 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 
 		if ($num > 0) {
 			$i = 0;
-			$staticcontrat = new Contrat($db);
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
@@ -615,21 +580,17 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 
 
 /*
- * Opened proposals
+ * Opened (validated) proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-	$langs->load("propal");
-
-	$sql = "SELECT s.nom as name, s.rowid, s.code_client";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
-	$sql .= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
+	$sql = "SELECT p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql .= ", s.nom as name, s.rowid, s.code_client, s.entity, s.email";
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_soc = s.rowid";
-	$sql .= " AND p.entity IN (".getEntity('propal').")";
-	$sql .= " AND p.fk_statut = 1";
+	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
+	$sql .= " AND p.fk_soc = s.rowid";
+	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY p.rowid DESC";
@@ -663,24 +624,21 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$companystatic->entity = $obj->entity;
 				$companystatic->email = $obj->email;
 
-				print '<tr class="oddeven">';
-
-				// Ref
-				print '<td class="nowrap" width="140">';
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
-				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-				print '</td>';
-				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
-				print "</td>";
+				$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
+
+				print '<tr class="oddeven">';
+
+				print '<td class="nowrap" width="140">';
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td width="18" class="nobordernopadding nowrap">'.$warning.'</td>';
+				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($propalstatic->element, $filename, $filedir).'</td>';
+				print '</tr>';
+				print '</table>';
+				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
@@ -690,7 +648,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -704,21 +662,17 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 
 /*
- * Opened Order
+ * Opened (validated) order
  */
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
-	$langs->load("orders");
-
-	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
-	$sql .= ", s.code_client";
-	$sql .= ", s.entity";
-	$sql .= ", s.email";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
+	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
+	$sql .= ", s.nom as name, s.rowid, s.code_client, s.entity, s.email";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity IN (".getEntity('commande').")";
-	$sql .= " AND (c.fk_statut = ".Commande::STATUS_VALIDATED." or c.fk_statut = ".Commande::STATUS_SHIPMENTONPROCESS.")";
+	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
+	$sql .= " AND c.fk_soc = s.rowid";
+	$sql .= " AND c.fk_statut IN (".Commande::STATUS_VALIDATED.", ".Commande::STATUS_SHIPMENTONPROCESS.")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY c.rowid DESC";
@@ -728,7 +682,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$total = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
-		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=1", 4, $num);
+		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=".Commande::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
 			$i = 0;
@@ -752,33 +706,31 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$companystatic->entity = $obj->entity;
 				$companystatic->email = $obj->email;
 
-				print '<tr class="oddeven">';
-
-				// Ref
-				print '<td class="nowrap" width="140">';
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
-				print $orderstatic->getNomUrl(1);
-				print '</td>';
-				print '<td width="18" class="nobordernopadding nowrap">';
-				//if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-				print '</td>';
-				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				print $formfile->getDocumentsLink($orderstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
-				print "</td>";
+				//$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
+
+				print '<tr class="oddeven">';
+
+				print '<td class="nowrap" width="140">';
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding nowrap">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td width="18" class="nobordernopadding nowrap"></td>';
+				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($orderstatic->element, $filename, $filedir).'</td>';
+				print '</tr>';
+				print '</table>';
+				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
 				print '<td class="right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>';
-				print '</tr>'."\n";
+
+				print '</tr>';
 
 				$i++;
-				$total += $obj->total_ttc;
+				$total +=(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -790,7 +742,9 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	}
 }
 
-print '</div></div></div>';
+print '</div>';
+print '</div>';
+print '</div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardCommercials', $parameters, $object); // Note that $action and $object may have been modified by hook

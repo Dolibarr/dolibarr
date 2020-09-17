@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (!empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -63,6 +64,8 @@ $searchCategoryProductOperator = (GETPOST('search_category_product_operator', 'i
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
+$search_country = GETPOST("search_country", 'int');
+$search_state = GETPOST("state_id", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
 $catid = GETPOST('catid', 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
@@ -105,6 +108,7 @@ $object = new Product($db);
 $hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -206,7 +210,9 @@ $arrayfields = array(
 	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>52),
 	'stock_virtual'=>array('label'=>$langs->trans("VirtualStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service' && $virtualdiffersfromphysical), 'position'=>53),
 	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>60),
-	'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0, 'position'=>400),
+	'p.fk_country'=>array('label'=>$langs->trans("Country").' ('.$langs->trans("Country").')', 'checked'=>0, 'position'=>100),
+	'p.fk_state'=>array('label'=>$langs->trans("State").' ('.$langs->trans("State").')', 'checked'=>0, 'position'=>101),
+  'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0, 'position'=>400),
 	'p.accountancy_code_sell_intra'=>array('label'=>$langs->trans("ProductAccountancySellIntraCode"), 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>401),
 	'p.accountancy_code_sell_export'=>array('label'=>$langs->trans("ProductAccountancySellExportCode"), 'checked'=>0, 'position'=>402),
 	'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0, 'position'=>403),
@@ -275,6 +281,8 @@ if (empty($reshook))
 		$searchCategoryProductList = array();
 		$search_tosell = "";
 		$search_tobuy = "";
+		$search_country = "";
+		$search_state = "";
 		$search_vatrate = "";
 		$search_tobatch = '';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
@@ -326,7 +334,7 @@ $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_
 $sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
 $sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ' p.fk_unit, cu.label as cu_label,';
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
@@ -401,6 +409,8 @@ if ($searchCategoryProductOperator == 1) {
 }
 if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".$fourn_id;
 if ($search_tobatch != '' && $search_tobatch >= 0)   $sql .= " AND p.tobatch = ".$db->escape($search_tobatch);
+if ($search_country)     $sql .= " AND p.fk_country = ".$search_country;
+if ($search_state)     $sql .= " AND p.fk_state = ".$search_state;
 if ($search_accountancy_code_sell)        $sql .= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
 if ($search_accountancy_code_sell_intra)  $sql .= natural_search('p.accountancy_code_sell_intra', $search_accountancy_code_sell_intra);
 if ($search_accountancy_code_sell_export) $sql .= natural_search('p.accountancy_code_sell_export', $search_accountancy_code_sell_export);
@@ -418,7 +428,7 @@ $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.pric
 $sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
 $sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.pmp, p.cost_price, p.stock,';
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ', p.fk_unit, cu.label';
 
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
@@ -498,6 +508,8 @@ if ($resql)
 	if ($search_label) $param .= "&search_label=".urlencode($search_label);
 	if ($search_tosell != '') $param .= "&search_tosell=".urlencode($search_tosell);
 	if ($search_tobuy != '') $param .= "&search_tobuy=".urlencode($search_tobuy);
+	if ($search_country != '') $param .= "&search_country=".urlencode($search_country);
+	if ($search_state != '') $param .= "&search_state=".urlencode($search_state);
 	if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 	if ($fourn_id > 0) $param .= ($fourn_id ? "&fourn_id=".$fourn_id : "");
 	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
@@ -819,6 +831,10 @@ if ($resql)
 	if (!empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
 	// To batch
 	if (!empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+	// Country
+	if (!empty($arrayfields['p.fk_country']['checked'])) print '<td class="liste_titre center">'.$form->select_country($search_country, 'search_country', '', 0).'</td>';
+	// State
+	if (!empty($arrayfields['p.fk_state']['checked'])) print '<td class="liste_titre center">'.$formcompany->select_state($search_state, $search_country).'</td>';
 	// Accountancy code sell
 	if (!empty($arrayfields['p.accountancy_code_sell']['checked']))        print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
 	if (!empty($arrayfields['p.accountancy_code_sell_intra']['checked']))  print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_intra" value="'.dol_escape_htmltag($search_accountancy_code_sell_intra).'"></td>';
@@ -944,6 +960,12 @@ if ($resql)
 	}
 	if (!empty($arrayfields['p.tobatch']['checked'])) {
 		print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"], "p.tobatch", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['p.fk_country']['checked'])) {
+		print_liste_field_titre($arrayfields['p.fk_country']['label'], $_SERVER["PHP_SELF"], "p.fk_country", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['p.fk_state']['checked'])) {
+		print_liste_field_titre($arrayfields['p.fk_state']['label'], $_SERVER["PHP_SELF"], "p.fk_state", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.accountancy_code_sell']['checked'])) {
 		print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_sell", "", $param, '', $sortfield, $sortorder);
@@ -1412,6 +1434,18 @@ if ($resql)
 			print '<td class="center">';
 			print yn($obj->tobatch);
 			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Country
+		if (!empty($arrayfields['p.fk_country']['checked']))
+		{
+			print '<td>'.getCountry($obj->fk_country, 0, $db).'</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// State
+		if (!empty($arrayfields['p.fk_state']['checked']))
+		{
+			print '<td>'.getState($obj->fk_state, 0, $db).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Accountancy code sell
