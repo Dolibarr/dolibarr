@@ -195,21 +195,16 @@ $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if (empty($reshook)){
-	if ($action == 'validate' && GETPOST('confirm') == 'yes') {
+	if (($action == 'validate' || $action == 'sign') && GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				$tmpproposal->setValidateOrSign($user, Propal::STATUS_VALIDATED);
-			} else {
-				dol_print_error($db);
-			}
-		}
-	}
-	if ($action == "sign" && GETPOST('confirm') == 'yes') {
-		$tmpproposal = new Propal($db);
-		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
-				$tmpproposal->setValidateOrSign($user, Propal::STATUS_SIGNED);
+				if ($action == 'validate')
+					$nextStatus = Propal::STATUS_VALIDATED;
+				elseif ($action == 'sign'){
+					$nextStatus = Propal::STATUS_SIGNED;
+				}
+				$tmpproposal->setValidateOrSign($user, $nextStatus);
 			} else {
 				dol_print_error($db);
 			}
@@ -523,7 +518,7 @@ if ($resql)
 			$cpt2 = 0;
 			foreach ($ids as $i)
 			{
-				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$i."'>".$refs[$ids]."</a>", 'warnings');
+				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$i."'>".$refs[$cpt2]."</a>", 'warnings');
 				$cpt2++;
 			}
 		}
