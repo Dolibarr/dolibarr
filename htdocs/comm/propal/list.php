@@ -504,7 +504,7 @@ if ($resql)
 				$objp = $db->fetch_object($resqlp);
 				if ($objp){
 					$cpt++;
-					$refs[] = $objp->ref;
+					$refs[$objp->rowid] = $objp->ref;
 					$ids[] = $objp->rowid;
 				}
 			} else {
@@ -515,11 +515,9 @@ if ($resql)
 		{
 			if($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
 			if ($cpt>1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropsNoProductOrService'), 'warnings');
-			$cpt2 = 0;
 			foreach ($ids as $i)
 			{
-				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$i."'>".$refs[$cpt2]."</a>", 'warnings');
-				$cpt2++;
+				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$i."'>".$refs[$i]."</a>", 'warnings');
 			}
 		}
 		print $form->formconfirm(DOL_URL_ROOT.'/comm/propal/list.php?leftmenu=propals', $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);

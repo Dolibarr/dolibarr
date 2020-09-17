@@ -3550,18 +3550,18 @@ class Propal extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 			if ($nextStatus == $this::STATUS_VALIDATED){
-				setEventMessage($langs->trans('CantBeValidated'), 'errors');
+				setEventMessage($langs->trans('CantBeValidated', $this->ref), 'errors');
 			} else if ($nextStatus == $this::STATUS_SIGNED){
-				setEventMessage($langs->trans('CantBeSign'), 'errors');
+				setEventMessage($langs->trans('CantBeSign', $this->ref), 'errors');
 			} else {
-				setEventMessage($langs->trans('CantValidateOrSignThisStatus'), 'errors');
+				setEventMessage($langs->trans('CantValidateOrSignThisStatus', $this->ref), 'errors');
 			}
 		} else {
 			$this->db->commit();
 			if ($nextStatus == $this::STATUS_VALIDATED) {
-				setEventMessage($this->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+				setEventMessage($this->ref . " " . $langs->trans('PassedInOpenStatus', $this->ref), 'mesgs');
 			} else if ($nextStatus == $this::STATUS_SIGNED) {
-				setEventMessage($this->ref . " " . $langs->trans('Signed'), 'mesgs');
+				setEventMessage($this->ref . " " . $langs->trans('Signed', $this->ref), 'mesgs');
 			}
 		}
 	}
