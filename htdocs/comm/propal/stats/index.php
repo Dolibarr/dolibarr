@@ -273,14 +273,15 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 		if ($selectedStatusIndex == <?php echo Propal::STATUS_SIGNED ?>){
 			$('#showBySign').removeClass("hideobject");
 		} else {
+			$('#cbsign').prop("checked", false);
 			$('#showBySign').addClass("hideobject");
 		}
 	});
  	</script><?php
 	if (isset($_POST['showBySignDate_toselect']) && $object_status == Propal::STATUS_SIGNED){
-		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' checked='checked'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
+		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' checked='on'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
 	} else {
-		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' value='checked'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
+		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' >&nbsp;".$langs->trans('ShowBySignDate')."</span>";
 	}
 	print '</td></tr>';
 	// Year
