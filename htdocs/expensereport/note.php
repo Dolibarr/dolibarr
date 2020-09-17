@@ -37,6 +37,8 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $socid = 0;
 if ($user->socid) $socid = $user->socid;
@@ -50,6 +52,18 @@ if (!$object->fetch($id, $ref) > 0)
 }
 
 $permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
+
+if ($object->id > 0)
+{
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->expensereport->readall)) $canread = 1;
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
+}
 
 
 /*
