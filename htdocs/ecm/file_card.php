@@ -127,7 +127,7 @@ if ($action == 'update')
 
     $oldlabel=GETPOST('urlfile', 'alpha');
     $newlabel=GETPOST('label', 'alpha');
-	$shareenabled = dol_sanitizeFileName(GETPOST('label', 'alpha'));
+	$shareenabled = dol_sanitizeFileName(GETPOST('shareenabled', 'alpha'));
 
     //$db->begin();
 
