@@ -90,8 +90,7 @@ dol_mkdir($dir);
 
 $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
 if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
-if ($propal_commercial != '' && $propal_commercial >= 0) $stats->where .= ' AND p.rowid IN (SELECT fk_object FROM '.MAIN_DB_PREFIX.'propal_extrafields WHERE commercial='.$propal_commercial.')';
-
+if ($propal_commercial != '' && $propal_commercial >= 0) $stats->where .= " AND sc.fk_user=".$_POST['propal_commercial'];
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -188,7 +187,6 @@ else
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
 }
-
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (! $mesg)

@@ -118,7 +118,9 @@ class PropaleStats extends Stats
 		}
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= $this->join;
+		if (isset($_POST['propal_commercial'])){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		if ($_POST['showBySignDate_toselect'] == 'checked'){
 			$sql.= " WHERE p.date_cloture BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		} else {
@@ -171,7 +173,9 @@ class PropaleStats extends Stats
 		}
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= $this->join;
+		if (isset($_POST['propal_commercial'])){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		if ($_POST['showBySignDate_toselect'] == 'checked')
 		{
 			$sql.= " WHERE p.date_cloture BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -204,7 +208,9 @@ class PropaleStats extends Stats
 		}
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= $this->join;
+		if (isset($_POST['propal_commercial'])){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		if ($_POST['showBySignDate_toselect'] == 'checked'){
 			$sql.= " WHERE p.date_cloture BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		} else {
@@ -229,6 +235,9 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (isset($_POST['propal_commercial'])){
+			$sql.=" JOIN ".MAIN_DB_PREFIX.'societe_commerciaux AS sc ON sc.fk_soc=p.fk_soc';
+		}
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
         $sql.= $this->db->order('year', 'DESC');
