@@ -6,7 +6,7 @@
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
 # Usage: initdemopassword.sh confirm 
-# usage: initdemopassword.sh confirm login pass
+# usage: initdemopassword.sh confirm base port login pass
 #------------------------------------------------------
 
 
@@ -37,13 +37,13 @@ demopass=$5;
 if [ "x$confirm" != "xconfirm" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemopassword.sh confirm [login pass]"
+	echo "Usage: initdemopassword.sh confirm [base port login pass]"
 	exit
 fi
 
 
 # ----------------------------- if no params on command line
-if [ "x$passwd" = "x" ]
+if [ "x$demopass" = "x" ]
 then
 	export dumpfile=`ls -v $mydir/mysqldump_dolibarr_*.sql | tail -n 1`
 	export dumpfile=`basename $dumpfile`
