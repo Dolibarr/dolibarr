@@ -86,43 +86,6 @@ then
 	esac
 	rm $fichtemp
 	
-	# ---------------------------- compte admin mysql
-	DIALOG=${DIALOG=dialog}
-	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
-	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --inputbox "Mysql user login (ex: root):" 16 55 root 2> $fichtemp
-	
-	valret=$?
-	
-	case $valret in
-	  0)
-	admin=`cat $fichtemp`;;
-	  1)
-	exit;;
-	  255)
-	exit;;
-	esac
-	rm $fichtemp
-	
-	# ---------------------------- mot de passe admin mysql
-	DIALOG=${DIALOG=dialog}
-	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
-	trap "rm -f $fichtemp" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --inputbox "Password for Mysql user login :" 16 55 2> $fichtemp
-	
-	valret=$?
-	
-	case $valret in
-	  0)
-	passwd=`cat $fichtemp`;;
-	  1)
-	exit;;
-	  255)
-	exit;;
-	esac
-	rm $fichtemp
 	
 	# ----------------------------- demo login
 	DIALOG=${DIALOG=dialog}
@@ -167,7 +130,7 @@ then
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
 	$DIALOG --title "Init demo login with demo values" --clear \
-	        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd' \n Demo login: '$demologin' \n Demo password : '$demopass'" 15 55
+	        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql port : '$port' \n Demo login: '$demologin' \n Demo password : '$demopass'" 15 55
 	
 	case $? in
 	        0)      echo "Ok, start process...";;
@@ -185,8 +148,8 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port -u$admin $passwd $base"
-echo "UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';" | mysql -P$port -u$admin $passwd $base
+echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port $base"
+echo "UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';" | mysql -P$port $base
 export res=$?
 
 if [ $res -ne 0 ]; then
