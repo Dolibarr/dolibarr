@@ -136,7 +136,7 @@ if ($action == 'add')
 	$object->params = GETPOST('params');
 	$object->md5params = GETPOST('md5params');
 	$object->module_name = GETPOST('module_name', 'alpha');
-	$object->note = GETPOST('note', 'none');
+	$object->note_private = GETPOST('note', 'restricthtml');
 	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
@@ -171,7 +171,7 @@ if ($action == 'update')
 	$object->params = GETPOST('params');
 	$object->md5params = GETPOST('md5params');
 	$object->module_name = GETPOST('module_name', 'alpha');
-	$object->note = GETPOST('note', 'none');
+	$object->note_private = GETPOST('note', 'restricthtml');
 	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
@@ -382,7 +382,7 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
-	$doleditor = new DolEditor('note', $object->note, '', 160, 'dolibarr_notes', 'In', true, false, 0, ROWS_4, '90%');
+	$doleditor = new DolEditor('note', $object->note_private, '', 160, 'dolibarr_notes', 'In', true, false, 0, ROWS_4, '90%');
 	$doleditor->Create();
 	print "</td>";
 	print "<td>";
@@ -581,7 +581,9 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
-	print $langs->trans($object->note);
+	if (!is_null($object->note_private) && $object->note_private != '') {
+		print $langs->trans($object->note_private);
+	}
 	print "</td></tr>";
 
 	if (!empty($conf->multicompany->enabled))
