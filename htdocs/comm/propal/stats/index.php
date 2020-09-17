@@ -277,7 +277,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 		}
 	});
  	</script><?php
-	if (isset($_POST['showBySignDate_toselect'])){
+	if (isset($_POST['showBySignDate_toselect']) && $object_status == Propal::STATUS_SIGNED){
 		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' checked='checked'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
 	} else {
 		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' value='checked'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
