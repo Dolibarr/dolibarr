@@ -2694,7 +2694,15 @@ function dol_print_ip($ip, $mode = 0)
  */
 function getUserRemoteIP()
 {
-	$ip = empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? (empty($_SERVER['HTTP_CLIENT_IP']) ? (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']) : $_SERVER['HTTP_CLIENT_IP']) : $_SERVER['HTTP_X_FORWARDED_FOR'];
+	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);
+		} else {
+			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
+		}
+	} else {
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];	// value is clean here
+	}
 	return $ip;
 }
 
