@@ -3533,17 +3533,13 @@ class Propal extends CommonObject
 		$refs = array();
 
 		if ($nextStatus == $this::STATUS_VALIDATED && $this->statut == $this::STATUS_DRAFT) {
-			if ($this->valid($user)){
-				$refs[] = $this->ref;
-			} else {
+			if (!$this->valid($user)){
 				dol_print_error($this->db);
 				$error++;
 			}
 		} else if ($nextStatus == $this::STATUS_SIGNED && $this->statut == $this::STATUS_VALIDATED) {
 			$this->statut = $this::STATUS_SIGNED;
-			if ($this->update($user)){
-				$refs[] = $this->ref;
-			} else {
+			if (!$this->update($user)){
 				dol_print_error($this->db);
 				$error++;
 			}
@@ -3562,12 +3558,10 @@ class Propal extends CommonObject
 			}
 		} else {
 			$this->db->commit();
-			foreach ($refs as $r){
-				if ($nextStatus == $this::STATUS_VALIDATED){
-					setEventMessage($r . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
-				} else if ($nextStatus == $this::STATUS_SIGNED){
-					setEventMessage($r . " " . $langs->trans('Signed'), 'mesgs');
-				}
+			if ($nextStatus == $this::STATUS_VALIDATED) {
+				setEventMessage($this->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+			} else if ($nextStatus == $this::STATUS_SIGNED) {
+				setEventMessage($this->ref . " " . $langs->trans('Signed'), 'mesgs');
 			}
 		}
 	}
