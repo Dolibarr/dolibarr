@@ -38,7 +38,9 @@ if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
 
 $object_status=GETPOST('object_status');
-
+$propal_commercial=GETPOST('propal_commercial');
+$showBySignDate_toselect=GETPOST('showBySignDate_toselect');
+$categ_id = GETPOST('categ_id', 'categ_id');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
@@ -87,8 +89,12 @@ dol_mkdir($dir);
 
 
 $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
+if (GETPOST('showBySignDate_toselect') == 'on')
+{
+	$stats->field_date = 'p.date_cloture';
+}
 if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
-
+if ($propal_commercial != '' && $propal_commercial >= 0) $stats->where .= " AND sc.fk_user=".$_POST['propal_commercial'];
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
@@ -185,7 +191,6 @@ else
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
 }
-
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (! $mesg)
@@ -258,7 +263,30 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Status
 	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-    $formpropal->selectProposalStatus(($object_status!=''?$object_status:-1), 0, 0, 1, $mode, 'object_status');
+    $formpropal->selectProposalStatus(($object_status != '' ? $object_status : -1), 0, 0, 1, $mode, 'object_status');
+
+	print "&nbsp;";
+	if($object_status == Propal::STATUS_SIGNED) $moreclass="";
+	else $moreclass="hideobject";
+
+	?><script>
+	let $statusList = $("select[name='object_status']");
+	$statusList.on('change', function (){
+		let $selectedStatusIndex = $("select[name='object_status'] option:selected").val();
+		console.log($selectedStatusIndex)
+		if ($selectedStatusIndex == <?php echo Propal::STATUS_SIGNED ?>){
+			$('#showBySign').removeClass("hideobject");
+		} else {
+			$('#cbsign').prop("checked", false);
+			$('#showBySign').addClass("hideobject");
+		}
+	});
+ 	</script><?php
+	if (isset($_POST['showBySignDate_toselect']) && $object_status == Propal::STATUS_SIGNED){
+		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' checked='on'>&nbsp;".$langs->trans('ShowBySignDate')."</span>";
+	} else {
+		print "<span id='showBySign' class='$moreclass'><input id='cbsign' class='flat checkforselect hidden' type='checkbox' name='showBySignDate_toselect' >&nbsp;".$langs->trans('ShowBySignDate')."</span>";
+	}
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
@@ -266,6 +294,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
+	print '</td></tr>';
+
+	print '<tr><td class="left">'.$langs->trans("Commerciaux").'</td><td class="left">';
+	$formpropal->selectProposalCommercial();
 	print '</td></tr>';
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
