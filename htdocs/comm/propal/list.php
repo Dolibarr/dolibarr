@@ -195,74 +195,23 @@ $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if (empty($reshook)){
-	if ($action == 'validate') {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			$cpt = 0;
-			$refs = array();
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-						if ($tmpproposal->valid($user) && $tmpproposal->statut == 1){
-							$refs[] = $tmpproposal->ref;
-							$cpt++;
-						} else {
-							$error++;
-						}
-				} else {
-					dol_print_error($db);
-					$error++;
-				}
-			}
-			if ($error){
-				$db->rollback();
-				setEventMessage($langs->trans('CantBeValidated'), 'errors');
+	if ($action == 'validate' && GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				$tmpproposal->setValidateOrSign($user, Propal::STATUS_VALIDATED);
 			} else {
-				$db->commit();
-				foreach ($refs as $r){
-					setEventMessage($r . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
-				}
+				dol_print_error($db);
 			}
 		}
 	}
-
-	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			$cpt = 0;
-			$refs = array();
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 1) {
-						$tmpproposal->statut = 2;
-						if ($tmpproposal->update($user)) {
-							$refs[] = $tmpproposal->ref;
-							$cpt++;
-						} else {
-							dol_print_error($db);
-							$error++;
-						}
-					} else {
-
-						$error++;
-					}
-				} else {
-					dol_print_error($db);
-					$error++;
-				}
-			}
-			if ($error){
-				$db->rollback();
-				setEventMessage($langs->trans('CantBeSign'), 'errors');
-
+	if ($action == "sign" && GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				$tmpproposal->setValidateOrSign($user, Propal::STATUS_SIGNED);
 			} else {
-				$db->commit();
-				foreach ($refs as $r) {
-					setEventMessage($r . " " . $langs->trans('Signed'), 'mesgs');
-				}
+				dol_print_error($db);
 			}
 		}
 	}
@@ -572,9 +521,9 @@ if ($resql)
 			if($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
 			if ($cpt>1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropsNoProductOrService'), 'warnings');
 			$cpt2 = 0;
-			foreach ($ids as $r)
+			foreach ($ids as $i)
 			{
-				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$r."'>".$refs[$cpt2]."</a>", 'warnings');
+				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$i."'>".$refs[$ids]."</a>", 'warnings');
 				$cpt2++;
 			}
 		}
