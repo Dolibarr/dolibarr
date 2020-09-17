@@ -1015,7 +1015,7 @@ if (empty($reshook))
 		}
 
 		// Credit note invoice
-		if ($_POST['type'] == Facture::TYPE_CREDIT_NOTE)
+		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE)
 		{
 			$sourceinvoice = GETPOST('fac_avoir');
 			if (!($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
@@ -1033,7 +1033,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 
 			if (!$error)
 			{
@@ -1315,7 +1315,7 @@ if (empty($reshook))
 				$object->ref_client			= GETPOST('ref_client');
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid');
-				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id');
+				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->amount = price2num(GETPOST('amount'));
