@@ -62,7 +62,7 @@ No vulnerability disclosure, including partial is allowed for the moment.
 
 ## Scope for qualified vulnerabilities
 
-ONLY vulnerabilities discovered, when the following setup on tested platform is used, are accepted:
+ONLY vulnerabilities discovered, when the following setup on test platform is used, are accepted:
 
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
