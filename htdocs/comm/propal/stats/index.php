@@ -89,6 +89,10 @@ dol_mkdir($dir);
 
 
 $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
+if (GETPOST('showBySignDate_toselect') == 'on')
+{
+	$stats->field_date = 'p.date_cloture';
+}
 if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
 if ($propal_commercial != '' && $propal_commercial >= 0) $stats->where .= " AND sc.fk_user=".$_POST['propal_commercial'];
 // Build graphic number of object
