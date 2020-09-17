@@ -69,7 +69,7 @@ ONLY vulnerabilities discovered, when the following setup on tested platform is 
 * The module DebugBar must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * The module ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be enabled soon by default)
-* ONLY security reports on "stable" modules are allowed (troubles into "experimental" and "developement" modules are not accepted).
+* ONLY security reports on modules provided by default and with the "stable" status are allowed (troubles into "experimental", "developement" or external modules are not accepted).
 
 Scope is the web application (back office) and the APIs.
 
