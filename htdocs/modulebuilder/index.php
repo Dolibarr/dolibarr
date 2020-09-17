@@ -1463,7 +1463,13 @@ if ($action == 'savefile' && empty($cancel))
 			dol_copy($pathoffile, $pathoffilebackup, 0, 1);
 		}
 
-		$content = GETPOST('editfilecontent', 'none');
+		$check = 'restricthtml';
+		$srclang = dol_mimetype($pathoffile, '', 3);
+		if ($srclang == 'md') $check = 'restricthtml';
+		if ($srclang == 'lang') $check = 'restricthtml';
+		if ($srclang == 'php') $check = 'none';
+
+		$content = GETPOST('editfilecontent', $check);
 
 		// Save file on disk
 		if ($content)
