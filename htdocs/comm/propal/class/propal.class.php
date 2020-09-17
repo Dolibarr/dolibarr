@@ -3525,6 +3525,47 @@ class Propal extends CommonObject
 		}
 	}
 
+	public function setValidateOrSign($user, $nextStatus)
+	{
+		global $langs;
+		$this->db->begin();
+		$error = 0;
+		$refs = array();
+
+		if ($nextStatus == $this::STATUS_VALIDATED && $this->statut == $this::STATUS_DRAFT) {
+			if (!$this->valid($user)){
+				dol_print_error($this->db);
+				$error++;
+			}
+		} else if ($nextStatus == $this::STATUS_SIGNED && $this->statut == $this::STATUS_VALIDATED) {
+			$this->statut = $this::STATUS_SIGNED;
+			if (!$this->update($user)){
+				dol_print_error($this->db);
+				$error++;
+			}
+		} else {
+			$error++;
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			if ($nextStatus == $this::STATUS_VALIDATED){
+				setEventMessage($langs->trans('CantBeValidated', $this->ref), 'errors');
+			} else if ($nextStatus == $this::STATUS_SIGNED){
+				setEventMessage($langs->trans('CantBeSign', $this->ref), 'errors');
+			} else {
+				setEventMessage($langs->trans('CantValidateOrSignThisStatus', $this->ref), 'errors');
+			}
+		} else {
+			$this->db->commit();
+			if ($nextStatus == $this::STATUS_VALIDATED) {
+				setEventMessage($this->ref . " " . $langs->trans('PassedInOpenStatus', $this->ref), 'mesgs');
+			} else if ($nextStatus == $this::STATUS_SIGNED) {
+				setEventMessage($this->ref . " " . $langs->trans('Signed', $this->ref), 'mesgs');
+			}
+		}
+	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord

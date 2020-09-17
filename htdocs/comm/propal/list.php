@@ -194,7 +194,23 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
+if (empty($reshook)){
+	if (($action == 'validate' || $action == 'sign') && GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($action == 'validate')
+					$nextStatus = Propal::STATUS_VALIDATED;
+				elseif ($action == 'sign'){
+					$nextStatus = Propal::STATUS_SIGNED;
+				}
+				$tmpproposal->setValidateOrSign($user, $nextStatus);
+			} else {
+				dol_print_error($db);
+			}
+		}
+	}
+}
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
@@ -441,7 +457,9 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
+		'prevalidate'=>$langs->trans("Validate"),
+		'presign'=>$langs->trans("Sign"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if ($user->rights->propal->cloturer) $arrayofmassactions['closed'] = $langs->trans("Close");
@@ -472,6 +490,43 @@ if ($resql)
 	$objecttmp = new Propal($db);
 	$trackid = 'pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate')
+	{
+		$cpt = 0;
+		$refs = array();
+		$ids = array();
+		foreach ($toselect as $checked){
+			$sqlp = "SELECT ref, rowid FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " .$checked." AND rowid NOT IN";
+			$sqlp .= " (SELECT fk_propal FROM " . MAIN_DB_PREFIX . "propaldet)";
+			$resqlp = $db->query($sqlp);
+			if ($resqlp){
+				$objp = $db->fetch_object($resqlp);
+				if ($objp){
+					$cpt++;
+					$refs[$objp->rowid] = $objp->ref;
+					$ids[] = $objp->rowid;
+				}
+			} else {
+				dol_print_error($db);
+			}
+		}
+		if ($cpt > 0)
+		{
+			if($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
+			if ($cpt>1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropsNoProductOrService'), 'warnings');
+			foreach ($ids as $i)
+			{
+				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$i."'>".$refs[$i]."</a>", 'warnings');
+			}
+		}
+		print $form->formconfirm(DOL_URL_ROOT.'/comm/propal/list.php?leftmenu=propals', $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
+
+	if ($massaction == 'presign')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSignature"), $langs->trans("ConfirmMassSignatureQuestion"), "sign", null, '', 0, 200, 500, 1);
+	}
 
 	if ($sall)
 	{
@@ -1140,12 +1195,11 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+
+} else {
 	dol_print_error($db);
 }
 
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();
