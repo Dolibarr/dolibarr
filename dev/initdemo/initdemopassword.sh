@@ -28,11 +28,10 @@ fi
 
 # ----------------------------- command line params
 confirm=$1;
-dumpfile=$2;
-base=$3;
-port=$4;
-admin=$5;
-passwd=$6;
+base=$2;
+port=$3;
+demologin=$4;
+demopass=$5;
 
 # ----------------------------- check params
 if [ "x$confirm" != "xconfirm" ]
