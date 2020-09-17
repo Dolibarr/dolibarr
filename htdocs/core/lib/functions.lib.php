@@ -592,7 +592,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			{
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('"', '../'), '', trim($out));
+				$out = str_replace(array('&quot;', '"', '../'), '', trim($out));
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
@@ -5716,7 +5716,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * @param   string	$a					Operand a
  * @param   string	$b					Operand b (ENT_QUOTES=convert simple and double quotes)
  * @param   string	$c					Operand c
- * @param	string	$keepsomeentities	Entities but &amp;, <, >, " are not converted.
+ * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
  */
 function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
