@@ -1119,23 +1119,32 @@ class Cronjob extends CommonObject
 		// Run a command line
 		if ($this->jobtype == 'command')
 		{
-			$outputdir = $conf->cron->dir_temp;
-			if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
+			global $dolibarr_cron_allow_cli;
 
-			if (!empty($outputdir))
-			{
-				dol_mkdir($outputdir);
-				$outputfile = $outputdir.'/cronjob.'.$userlogin.'.out'; // File used with popen method
+			if (empty($dolibarr_cron_allow_cli)) {
+				$langs->load("errors");
+				$this->error      = $langs->trans("FailedToExecutCommandJob");
+				$this->lastoutput = '';
+				$this->lastresult = $langs->trans("ErrorParameterMustBeEnabledToAllwoThisFeature", 'dolibarr_cron_allow_cli');
+			} else {
+				$outputdir = $conf->cron->dir_temp;
+				if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
 
-				// Execute a CLI
-				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($this->db);
-				$arrayresult = $utils->executeCLI($this->command, $outputfile);
+				if (!empty($outputdir))
+				{
+					dol_mkdir($outputdir);
+					$outputfile = $outputdir.'/cronjob.'.$userlogin.'.out'; // File used with popen method
 
-				$retval = $arrayresult['result'];
-				$this->error      = $arrayresult['error'];
-				$this->lastoutput = $arrayresult['output'];
-				$this->lastresult = $arrayresult['result'];
+					// Execute a CLI
+					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+					$utils = new Utils($this->db);
+					$arrayresult = $utils->executeCLI($this->command, $outputfile);
+
+					$retval = $arrayresult['result'];
+					$this->error      = $arrayresult['error'];
+					$this->lastoutput = $arrayresult['output'];
+					$this->lastresult = $arrayresult['result'];
+				}
 			}
 		}
 
