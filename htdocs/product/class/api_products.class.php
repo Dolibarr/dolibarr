@@ -1554,7 +1554,7 @@ class Products extends DolibarrApi
      * @param  float $price_impact Price impact of variant
      * @param  bool $price_impact_is_percent Price impact in percent (true or false)
      * @param  array $features List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
-     * @param  bool|string $reference Customized reference of variant
+     * @param  string $reference Customized reference of variant
      * @param  string $ref_ext External reference of variant
      * @return int
      *
@@ -1564,7 +1564,7 @@ class Products extends DolibarrApi
      *
      * @url POST {id}/variants
      */
-    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = false, $ref_ext = '')
+    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = '', $ref_ext = '')
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
