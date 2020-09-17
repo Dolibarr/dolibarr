@@ -177,6 +177,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $_GET["param4"]='../dir';
         $_GET["param5"]="a_1-b";
         $_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;Stored XSS &quot;)'&gt;";
+        $_GET["param7"]='"c:\this is a path~1\aaa" abc<bad>def</bad>';
 
         // Test int
         $result=GETPOST('id', 'int');              // Must return nothing
@@ -228,6 +229,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $result=GETPOST("param6", 'nohtml');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals('">', $result);
+
+        $result=GETPOST("param7", 'restricthtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('"c:\this is a path~1\aaa" abcdef', $result);
 
         return $result;
     }
