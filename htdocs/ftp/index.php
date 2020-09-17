@@ -504,11 +504,11 @@ if (!function_exists('ftp_connect'))
 			{
 				if ($newsection == '/') {
 					//$newsection = '/./';
-					$newsection = ssh2_sftp_realpath($conn_id,".").'/./';		// workaround for bug https://bugs.php.net/bug.php?id=64169
+					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./';		// workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
 			    //$newsection='/';
 			    //$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
-				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id,".").'/./');
+				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id, ".").'/./');
                 $contents = scandir('ssh2.sftp://'.intval($conn_id).$newsection);
                 $buff = array();
                 foreach ($contents as $i => $key)
