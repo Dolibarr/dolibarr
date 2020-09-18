@@ -163,7 +163,7 @@ $type = 'application/octet-stream';	// By default
 if (GETPOST('type', 'alpha')) $type = GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
 // Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
-if (!dolIsAllowedForPreview($original_file)) {
+if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
 	$type = 'application/octet-stream';
 }
 
