@@ -569,7 +569,10 @@ if ($socid)     print '<input type="hidden" name="socid" value="'.$socid.'" >';
 if ($projectid) print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : ''), '', !empty($user->rights->ticket->write));
+
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', !empty($user->rights->ticket->write));
 
 $picto = 'ticket';
 if ($socid > 0) $picto = '';

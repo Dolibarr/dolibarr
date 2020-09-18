@@ -612,7 +612,9 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 		if ($type == 'f') $label = 'NewSupplier';
 	}
 
-    $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';

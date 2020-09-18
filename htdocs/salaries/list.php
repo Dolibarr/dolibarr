@@ -156,7 +156,9 @@ if ($result)
 	$newcardbutton = '';
 	if (!empty($user->rights->salaries->write))
 	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
+		$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url);
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

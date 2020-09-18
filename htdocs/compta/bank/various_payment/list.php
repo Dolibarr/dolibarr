@@ -254,7 +254,9 @@ if ($result)
 	$newcardbutton = '';
 	if ($user->rights->banque->modifier)
 	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create');
+		$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url);
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
