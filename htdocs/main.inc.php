@@ -107,8 +107,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
 	//if ($type == 1)
 	//{
-		$inj += preg_match('/javascript%/i', $val);
-		$inj += preg_match('/javascript:/i', $val);
+		$inj += preg_match('/javascript\s*:/i', $val);
 		$inj += preg_match('/vbscript:/i', $val);
 	//}
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
