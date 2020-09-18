@@ -47,7 +47,7 @@ $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 $id = GETPOST('id', 'int');
 $msg_id = GETPOST('msg_id', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
@@ -114,11 +114,11 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 		}
 	}
 
-	if (!GETPOST("subject", "none")) {
+	if (!GETPOST("subject", "restricthtml")) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 		$action = '';
-	} elseif (!GETPOST("message", "none")) {
+	} elseif (!GETPOST("message", "restricthtml")) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
 		$action = '';
@@ -136,8 +136,8 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 		$object->track_id = generate_random_id(16);
 
-		$object->subject = GETPOST("subject", "none");
-		$object->message = GETPOST("message", "none");
+		$object->subject = GETPOST("subject", "restricthtml");
+		$object->message = GETPOST("message", "restricthtml");
 		$object->origin_email = $origin_email;
 
 		$object->type_code = GETPOST("type_code", 'aZ09');

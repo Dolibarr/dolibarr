@@ -107,8 +107,8 @@ if (empty($reshook))
 		$object->datev = $datev;
 		$object->datep = $datep;
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->label = GETPOST("label", 'none');
-		$object->note = GETPOST("note", 'none');
+		$object->label = GETPOST("label", 'restricthtml');
+		$object->note = GETPOST("note", 'restricthtml');
 		$object->type_payment = GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
 		$object->num_payment = GETPOST("num_payment", 'alpha');
 		$object->fk_user_author = $user->id;

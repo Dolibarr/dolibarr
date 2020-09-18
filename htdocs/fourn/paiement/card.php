@@ -54,7 +54,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->update_note(GETPOST('note', 'none'));
+	$result = $object->update_note(GETPOST('note', 'restricthtml'));
 	if ($result > 0)
 	{
 		$db->commit();

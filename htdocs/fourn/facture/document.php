@@ -41,7 +41,7 @@ if (!empty($conf->projet->enabled)) {
 $langs->loadLangs(array('bills', 'other', 'companies'));
 
 $id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 

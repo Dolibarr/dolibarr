@@ -32,7 +32,7 @@ $langs->loadLangs(array('admin', 'errors', 'mrp', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -151,7 +151,7 @@ elseif ($action == 'setdoc')
 	}
 } elseif ($action == 'set_BOM_FREE_TEXT')
 {
-	$freetext = GETPOST("BOM_FREE_TEXT", 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST("BOM_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "BOM_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 

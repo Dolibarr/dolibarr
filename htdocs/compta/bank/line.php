@@ -43,7 +43,7 @@ if (!empty($conf->salaries->enabled)) $langs->load("salaries");
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST("rowid", 'int');
 $orig_account = GETPOST("orig_account");

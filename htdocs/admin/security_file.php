@@ -34,7 +34,7 @@ $langs->loadLangs(array('users', 'admin', 'other'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $upload_dir = $conf->admin->dir_temp;
 
@@ -52,8 +52,8 @@ if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC))
 
 if ($action == 'updateform')
 {
-	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND', 'none'); // Use GETPOST none because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
-	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM', 'none'); // Use GETPOST none because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
+	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
+	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
 	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&")); // Sanitize command
 	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&")); // Sanitize params
 

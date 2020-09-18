@@ -39,7 +39,7 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -60,7 +60,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
     $db->begin();
 
     $object->fetch($id);
-    $result = $object->update_note(GETPOST('note', 'none'));
+    $result = $object->update_note(GETPOST('note', 'restricthtml'));
     if ($result > 0)
     {
         $db->commit();

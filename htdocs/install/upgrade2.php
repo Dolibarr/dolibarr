@@ -1,6 +1,4 @@
 <?php
-use Sabre\VObject\Recur\EventIterator\HandleRDateExpandTest;
-
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>

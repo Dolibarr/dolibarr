@@ -1207,7 +1207,7 @@ class FormFile
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
-						print dol_trunc($filenametoshow, 200);
+						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
 						print '</a>';
 					}
 					// Preview link

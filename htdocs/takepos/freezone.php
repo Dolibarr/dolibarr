@@ -44,7 +44,7 @@ $langs->loadLangs(array("bills", "cashdesk"));
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $idline = GETPOST('idline', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();

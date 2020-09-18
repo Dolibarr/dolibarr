@@ -37,7 +37,7 @@ if (!$user->admin) accessforbidden();
 
 $error = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $ikoffset = GETPOST('ikoffset', 'int');
 $coef = GETPOST('coef', 'int');

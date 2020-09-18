@@ -35,7 +35,7 @@ $comment = new Comment($db);
 
 if ($action == 'addcomment')
 {
-	$description = GETPOST('comment_description', 'none');
+	$description = GETPOST('comment_description', 'restricthtml');
 	if (!empty($description))
 	{
 		$comment->description = $description;
@@ -59,7 +59,7 @@ if ($action === 'updatecomment')
 {
     if ($comment->fetch($idcomment) >= 0)
     {
-        $comment->description = GETPOST('comment_description', 'none');
+        $comment->description = GETPOST('comment_description', 'restricthtml');
         if ($comment->update($user) > 0)
         {
             setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');

@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -64,9 +64,9 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml') ?GETPOST('search_all', '
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
 $search_id = trim(GETPOST("search_id", "int"));
-$search_nom = trim(GETPOST("search_nom", 'none'));
-$search_alias = trim(GETPOST("search_alias", 'none'));
-$search_nom_only = trim(GETPOST("search_nom_only", 'none'));
+$search_nom = trim(GETPOST("search_nom", 'restricthtml'));
+$search_alias = trim(GETPOST("search_alias", 'restricthtml'));
+$search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
 $search_barcode = trim(GETPOST("search_barcode", 'alpha'));
 $search_customer_code = trim(GETPOST('search_customer_code', 'alpha'));
 $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));

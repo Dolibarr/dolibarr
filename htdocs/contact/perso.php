@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 $langs->loadLangs(array('companies', 'other'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;

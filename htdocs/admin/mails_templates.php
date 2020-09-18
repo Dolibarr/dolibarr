@@ -284,7 +284,6 @@ if (empty($reshook))
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
 				}
-
 				$i++;
 			}
 			$sql .= ", 1)";
@@ -341,6 +340,7 @@ if (empty($reshook))
 
 				$i++;
 			}
+
 			$sql .= " WHERE ".$rowidcol." = '".$rowid."'";
 			//print $sql;exit;
 			dol_syslog("actionmodify", LOG_DEBUG);

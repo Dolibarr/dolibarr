@@ -28,7 +28,7 @@
 // $object must be defined (object is loaded in this file with fetch)
 
 // Save selection
-if (GETPOST('formfilteraction', 'none') == 'listafterchangingselectedfields')
+if (GETPOST('formfilteraction', 'alphanohtml') == 'listafterchangingselectedfields')
 {
     $tabparam = array();
 

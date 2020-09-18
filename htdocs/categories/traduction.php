@@ -37,7 +37,7 @@ $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
 $label  = GETPOST('label', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $type   = GETPOST('type', 'aZ09');
 
@@ -85,7 +85,7 @@ $cancel != $langs->trans("Cancel") &&
 	// check parameters
     $forcelangprod = GETPOST('forcelangprod', 'alpha');
     $libelle = GETPOST('libelle', 'alpha');
-    $desc = GETPOST('desc', 'none');
+    $desc = GETPOST('desc', 'restricthtml');
 
     if (empty($forcelangprod)) {
         $error++;
@@ -338,7 +338,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
 	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

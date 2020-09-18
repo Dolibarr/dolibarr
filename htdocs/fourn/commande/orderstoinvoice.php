@@ -49,7 +49,7 @@ if (!$user->rights->fournisseur->facture->creer)
 
 $id = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST("facid")); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $sref = GETPOST('sref');
 $sref_client = GETPOST('sref_client');
@@ -163,8 +163,8 @@ if (($action == 'create' || $action == 'add') && !$error) {
 			$object->label = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
-			$object->note_public = GETPOST('note_public', 'none');
-			$object->note_private = GETPOST('note_private', 'none');
+			$object->note_public = GETPOST('note_public', 'restricthtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$projectid = GETPOST('projectid', 'int');

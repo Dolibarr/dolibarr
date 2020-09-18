@@ -30,7 +30,7 @@ if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $hash_unique_id = GETPOST('hash_unique_id', 'alpha');
 $hash_algo = GETPOST('hash_algo', 'alpha');
 

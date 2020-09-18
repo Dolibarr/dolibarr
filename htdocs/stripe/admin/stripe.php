@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

@@ -31,7 +31,7 @@ $langs->loadLangs(array('companies', 'products', 'admin'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $currencycode = GETPOST('currencycode', 'alpha');
 
 if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {

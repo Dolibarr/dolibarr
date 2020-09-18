@@ -119,7 +119,7 @@ if ($action == 'add_payment')
     		$payment->total          = $total;
     		$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
     		$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
-    		$payment->note_public    = GETPOST("note_public", 'none');
+    		$payment->note_public    = GETPOST("note_public", 'restricthtml');
 
     		if (!$error)
     		{

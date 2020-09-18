@@ -20,6 +20,7 @@ Following changes may create regressions for some external modules, but were nec
 * Property num_paiement has been renamed num_payment everywhere for better code consistency.
 * If you build a class that implement CommonObject to use the incoterm properties or method (->fk_incoterm, ->label_incoterm, ->location_incoterm),
   you must now also include declaration of the Trait CommonIncoterm in your class. All incoterm functions were moved into this Trait. 
+* The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alpahnohtml');
 
 ***** ChangeLog for 12.0.2 compared to 12.0.1 *****
 FIX: computation of the bottom margin of <body> returns NaN because body is not loaded yet

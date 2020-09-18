@@ -193,7 +193,7 @@ if ($action == 'update_extras') {
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
 
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'none'));
+	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
 	if ($ret < 0) $error++;
 	if (!$error) {
 		$result = $tmpwarehouse->insertExtraFields();
