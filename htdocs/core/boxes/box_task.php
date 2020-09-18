@@ -94,7 +94,7 @@ class box_task extends ModeleBoxes
         if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
             $filterValue = GETPOST($cookie_name);
         } elseif (!empty($_COOKIE[$cookie_name])) {
-            $filterValue = $_COOKIE[$cookie_name];
+            $filterValue = preg_replace('/[^a-z_]/', '', $_COOKIE[$cookie_name]);	// Clean cookie from evil data
         }
 
         if ($filterValue == 'im_task_contact') {

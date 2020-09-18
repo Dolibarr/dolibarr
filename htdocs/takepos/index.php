@@ -48,7 +48,7 @@ $setterminal = GETPOST('setterminal', 'int');
 if ($_SESSION["takeposterminal"] == "")
 {
 	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
-	elseif (!empty($_COOKIE["takeposterminal"])) $_SESSION["takeposterminal"] = $_COOKIE["takeposterminal"]; // Restore takeposterminal from previous session
+	elseif (!empty($_COOKIE["takeposterminal"])) $_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
 }
 
 if ($setterminal > 0)
@@ -544,7 +544,7 @@ function Search2(keyCodeForEnter) {
 				if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
 					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
 					ChangeThirdparty(data[0]['rowid']);
-				} 
+				}
 				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
 					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
 					ClickProduct(0);
@@ -562,7 +562,7 @@ function Search2(keyCodeForEnter) {
 			}
 		});
 	}
-	
+
 }
 
 function Edit(number) {
