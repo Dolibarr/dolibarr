@@ -82,7 +82,7 @@ if (!empty($canvas)) {
 }
 
 // Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
 if ($id > 0) {
 	// Load member

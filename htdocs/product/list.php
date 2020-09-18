@@ -127,9 +127,9 @@ if (!empty($canvas))
 }
 
 // Security check
-if ($search_type == '0') $result = restrictedArea($user, 'produit', '', '', '', '', '', $objcanvas);
-elseif ($search_type == '1') $result = restrictedArea($user, 'service', '', '', '', '', '', $objcanvas);
-else $result = restrictedArea($user, 'produit|service', '', '', '', '', '', $objcanvas);
+if ($search_type == '0') $result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
+elseif ($search_type == '1') $result = restrictedArea($user, 'service', '', '', '', '', '', 0);
+else $result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;

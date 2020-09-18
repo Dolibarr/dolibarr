@@ -27,10 +27,14 @@ if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');	// id of thirdparty
 $action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
 $showempty = GETPOST('showempty', 'int');
+
+// Security check
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
+
 
 /*
  * View
