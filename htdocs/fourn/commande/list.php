@@ -650,12 +650,10 @@ if ($resql)
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
-	if ($user->rights->fournisseur->commande->creer)
-	{
-		$url = DOL_URL_ROOT.'/fourn/commande/card.php?action=create';
-		if (!empty($socid)) $url .= '&socid='.$socid;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url);
-	}
+
+	$url = DOL_URL_ROOT.'/fourn/commande/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->commande->creer);
 
 	// Fields title search
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

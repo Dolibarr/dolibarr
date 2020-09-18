@@ -415,12 +415,10 @@ if ($resql)
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
-	if ($user->rights->supplier_proposal->creer)
-	{
-		$url = DOL_URL_ROOT.'/supplier_proposal/card.php?action=create';
-		if (!empty($socid)) $url .= '&socid='.$socid;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url);
-	}
+
+	$url = DOL_URL_ROOT.'/supplier_proposal/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url, '', $user->rights->supplier_proposal->creer);
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

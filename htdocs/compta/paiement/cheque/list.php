@@ -125,12 +125,10 @@ if ($resql)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 	$newcardbutton = '';
-	if ($user->rights->banque->cheque)
-	{
-		$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
-		if (!empty($socid)) $url .= '&socid='.$socid;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url);
-	}
+
+	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

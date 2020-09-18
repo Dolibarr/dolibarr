@@ -370,12 +370,10 @@ if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->contrat->creer)
-{
-	$url = DOL_URL_ROOT.'/contrat/card.php?action=create';
-	if (!empty($socid)) $url .= '&socid='.$socid;
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url);
-}
+
+$url = DOL_URL_ROOT.'/contrat/card.php?action=create';
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

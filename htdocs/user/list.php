@@ -302,12 +302,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $text = $langs->trans("ListOfUsers");
 
 $newcardbutton = '';
-if ($canadduser)
-{
-	$url = DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=';
-	if (!empty($socid)) $url .= '&socid='.$socid;
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url);
-}
+$url = DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=';
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $canadduser);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

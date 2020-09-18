@@ -599,23 +599,20 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->societe->creer && $contextpage != 'poslist')
+$typefilter = '';
+$label = 'MenuNewThirdParty';
+
+if (!empty($type))
 {
-	$typefilter = '';
-	$label = 'MenuNewThirdParty';
-
-	if (!empty($type))
-	{
-		$typefilter = '&amp;type='.$type;
-		if ($type == 'p') $label = 'MenuNewProspect';
-		if ($type == 'c') $label = 'MenuNewCustomer';
-		if ($type == 'f') $label = 'NewSupplier';
-	}
-
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
-	if (!empty($socid)) $url .= '&socid='.$socid;
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+	$typefilter = '&amp;type='.$type;
+	if ($type == 'p') $label = 'MenuNewProspect';
+	if ($type == 'c') $label = 'MenuNewCustomer';
+	if ($type == 'f') $label = 'NewSupplier';
 }
+
+$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer && $contextpage != 'poslist');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

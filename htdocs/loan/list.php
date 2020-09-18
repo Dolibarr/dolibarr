@@ -151,12 +151,11 @@ if ($resql)
 	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
 	$newcardbutton = '';
-	if ($user->rights->loan->write)
-	{
-		$url = DOL_URL_ROOT.'/loan/card.php?action=create';
-		if (!empty($socid)) $url .= '&socid='.$socid;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url);
-	}
+
+	$url = DOL_URL_ROOT.'/loan/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url, '', $user->rights->loan->write);
+
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

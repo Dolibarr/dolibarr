@@ -252,12 +252,10 @@ if ($result)
 	if ($optioncss != '') $param .= '&amp;optioncss='.urlencode($optioncss);
 
 	$newcardbutton = '';
-	if ($user->rights->banque->modifier)
-	{
-		$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
-		if (!empty($socid)) $url .= '&socid='.$socid;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url);
-	}
+
+	$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '' $user->rights->banque->modifier);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
