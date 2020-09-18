@@ -73,7 +73,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * ONLY security reports on modules provided by default and with the "stable" status are allowed (troubles into "experimental", "developement" or external modules are not accepted).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so only the documents directory is in write mode. The root directory called htdocs must be readonly.
-* CSRF attacks are accepted for all when using a POST URL, but are accepted only for creating or updating data from pages resctricted to the admin users when using GET URL.
+* CSRF attacks are accepted for all when using a POST URL, but are accepted only for creating or updating data resctricted to the admin user when using GET URL.
 * Ability for a high level user to edit web site pages in the CMS by including javascript is an expected feature.
 
 Scope is the web application (back office) and the APIs.
