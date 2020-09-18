@@ -7951,32 +7951,6 @@ function dolIsAllowedForPreview($file)
 	return 0;
 }
 
-/**
- *	Return if a file is qualified for preview
- *
- *	@param	string	$file		Filename we looking for information
- *	@return int					1 If allowed, 0 otherwise
- *  @see    dol_mimetype(), image_format_supported() from images.lib.php
- */
-function dolIsAllowedForPreview($file)
-{
-	global $conf;
-
-	// Check .noexe extension in filename
-	if (preg_match('/\.noexe$/i', $file)) return 0;
-
-	// Check mime types
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp');
-	if (!empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) $mime_preview[] = 'svg+xml';
-	//$mime_preview[]='vnd.oasis.opendocument.presentation';
-	//$mime_preview[]='archive';
-	$num_mime = array_search(dol_mimetype($file, '', 1), $mime_preview);
-	if ($num_mime !== false) return 1;
-
-	// By default, not allowed for preview
-	return 0;
-}
-
 
 /**
  *	Return mime type of a file
