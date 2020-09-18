@@ -516,7 +516,8 @@ function hideMessage(fieldId,message) {
 
 
 /*
- * Used by button to set on/off
+ * Used by button to set on/off.
+ * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
  * @param	string	url			Url
  * @param	string	code		Code
@@ -525,12 +526,14 @@ function hideMessage(fieldId,message) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param   string  token       Token
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
 	$.get( url, {
 		action: "set",
 		name: code,
-		entity: entity
+		entity: entity,
+		token: token
 	},
 	function() {
 		console.log("url request success forcereload="+forcereload);
@@ -587,6 +590,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid) {
 
 /*
  * Used by button to set on/off
+ * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
  * @param	string	url			Url
  * @param	string	code		Code
@@ -595,12 +599,14 @@ function setConstant(url, code, input, entity, strict, forcereload, userid) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param   string  token       Token
  */
-function delConstant(url, code, input, entity, strict, forcereload, userid) {
+function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
 	$.get( url, {
 		action: "del",
 		name: code,
-		entity: entity
+		entity: entity,
+		token: token
 	},
 	function() {
 		console.log("url request success forcereload="+forcereload);
