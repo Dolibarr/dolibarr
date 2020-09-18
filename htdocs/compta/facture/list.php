@@ -677,7 +677,9 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->facture->creer && $contextpage != 'poslist')
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/facture/card.php?action=create');
+		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url);
 	}
 
 	$i = 0;

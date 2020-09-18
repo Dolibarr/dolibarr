@@ -362,6 +362,10 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->expedition->creer)
 	{
+		// Currently: a sending can't create from sending list
+		// $url = DOL_URL_ROOT.'/expedition/card.php?action=create';
+		// if (!empty($socid)) $url .= '&socid='.$socid;
+		// $newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', $url);
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
 	}
 

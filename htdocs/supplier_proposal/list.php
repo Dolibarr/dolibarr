@@ -417,8 +417,10 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->supplier_proposal->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create');
-    }
+		$url = DOL_URL_ROOT.'/supplier_proposal/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url);
+	}
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

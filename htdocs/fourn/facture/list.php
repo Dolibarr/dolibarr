@@ -511,7 +511,9 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->fournisseur->facture->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/facture/card.php?action=create');
+		$url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url);
 	}
 
 	$i = 0;

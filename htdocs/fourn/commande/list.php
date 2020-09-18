@@ -652,8 +652,10 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->fournisseur->commande->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/commande/card.php?action=create');
-    }
+		$url = DOL_URL_ROOT.'/fourn/commande/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url);
+	}
 
 	// Fields title search
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

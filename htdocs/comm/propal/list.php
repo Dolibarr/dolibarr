@@ -483,7 +483,9 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->propal->creer)
 	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/propal/card.php?action=create');
+		$url = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url);
 	}
 
 	// Fields title search
