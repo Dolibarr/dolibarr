@@ -194,6 +194,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if ($features == 'member') $features = 'adherent';
 	if ($features == 'subscription') { $features = 'adherent'; $feature2 = 'cotisation'; };
 	if ($features == 'websitepage') { $features = 'website'; $tableandshare = 'website_page'; $parentfortableentity = 'fk_website@website'; }
+	if ($features == 'project') $features = 'projet';
+	if ($features == 'product') $features = 'produit';
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);

@@ -5782,6 +5782,7 @@ class Form
 
 	/**
 	 * Generic method to select a component from a combo list.
+	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
 	 * @param 	string			$objectdesc			ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]
