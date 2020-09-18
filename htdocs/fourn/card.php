@@ -595,7 +595,7 @@ if ($object->id > 0)
 		// Show orders we can bill
 		if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
 		{
-			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY)).")"; //  Must match filter in htdocs/fourn/orderstoinvoice.php
+			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/orderstoinvoice.php
 		} else {
 			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
 			$sql2 .= " AND c.fk_statut IN (".$db->sanitize($db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS)).")";
