@@ -615,10 +615,9 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
     $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
 } elseif ($user->rights->societe->creer && $contextpage == 'poslist')
 {
-
 	$label = 'MenuNewCustomer';
 
-  $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place));
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place));
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
