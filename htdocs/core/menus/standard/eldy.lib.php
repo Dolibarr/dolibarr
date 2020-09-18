@@ -223,26 +223,24 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Commercial
+	// Commercial (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
 	$tmpentry = array(
-		'enabled'=>(!empty($conf->propal->enabled) ||
+		'enabled'=>(
+			!empty($conf->propal->enabled) ||
 			!empty($conf->commande->enabled) ||
-			!empty($conf->fournisseur->enabled) ||
 			!empty($conf->supplier_proposal->enabled) ||
 			!empty($conf->supplier_order->enabled) ||
 			!empty($conf->contrat->enabled) ||
 			!empty($conf->ficheinter->enabled)
-			) ? 1 : 0,
-		'perms'=>(!empty($user->rights->propal->lire) ||
+		) ? 1 : 0,
+		'perms'=>(
+			!empty($user->rights->propal->lire) ||
 			!empty($user->rights->commande->lire) ||
-			!empty($user->rights->fournisseur->lire) ||
 			!empty($user->rights->supplier_proposal->lire) ||
 			!empty($user->rights->supplier_order->lire) ||
 			!empty($user->rights->contrat->lire) ||
-			!empty($user->rights->ficheinter->lire) ||
-			!empty($user->rights->supplier_order->lire) ||
-			!empty($user->rights->fournisseur->commande->lire)
-			),
+			!empty($user->rights->ficheinter->lire)
+		),
 		'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
 
@@ -893,7 +891,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 
 		/*
-		 * Menu COMMERCIAL
+		 * Menu COMMERCIAL (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
 		 */
 		if ($mainmenu == 'commercial')
 		{
