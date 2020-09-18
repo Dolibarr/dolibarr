@@ -606,6 +606,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			break;
 	}
 
+	// Sanitizing for special var name. There is no reason to allow a backtopage to an external URL.
+	if ($paramname == 'backtopage') {
+		$out = preg_replace(array('/\/\//', '/^[a-z]*:/'), '', $out);
+	}
+
 	// Code for search criteria persistence.
 	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
 	if (empty($method) || $method == 3 || $method == 4)
