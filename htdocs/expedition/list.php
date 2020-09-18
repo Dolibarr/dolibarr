@@ -363,7 +363,7 @@ if ($resql)
 	// $url = DOL_URL_ROOT.'/expedition/card.php?action=create';
 	// if (!empty($socid)) $url .= '&socid='.$socid;
 	// $newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', $url, '', $user->rights->expedition->creer);
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '' , $user->rights->expedition->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->rights->expedition->creer);
 
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
