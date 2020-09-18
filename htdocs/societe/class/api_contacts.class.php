@@ -97,7 +97,7 @@ class Contacts extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->contact);
 	}
-	
+
 	/**
 	 * Get properties of a contact object by Email
 	 *
