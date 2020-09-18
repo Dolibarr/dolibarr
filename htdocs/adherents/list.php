@@ -71,7 +71,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 if ($statut < -1) $statut = '';
-// To do * change the left menu member to get filter and not statut set 
+// To do * change the left menu member to get filter and not statut set
 elseif ($statut === "-1") $filter = 'draft';
 elseif ($statut === "0") $filter = 'resiliated';
 elseif ($statut === "1" && $filter != 'uptodate' && $filter  != 'outofdate') $filter = 'validated';
@@ -392,7 +392,6 @@ if ($search_lastname)  $param .= "&search_lastname=".urlencode($search_lastname)
 if ($search_gender)  $param .= "&search_gender=".urlencode($search_gender);
 if ($search_login)   $param .= "&search_login=".urlencode($search_login);
 if ($search_email)   $param .= "&search_email=".urlencode($search_email);
-if ($search_categ)   $param .= "&search_categ=".urlencode($search_categ);
 if ($search_company) $param .= "&search_company=".urlencode($search_company);
 if ($search_address != '') $param .= "&search_address=".urlencode($search_address);
 if ($search_town != '') $param .= "&search_town=".urlencode($search_town);
@@ -568,7 +567,7 @@ if (!empty($arrayfields['d.email']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_email" value="'.$search_email.'"></td>';
 }
-// End of subscription date
+
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '</td>';
