@@ -351,7 +351,8 @@ if (!defined('NOTOKENRENEWAL'))
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' || (GETPOSTISSET('action') && defined('CSRFCHECK_WITH_TOKEN'))) // Note: offender can still send request by GET without token (but never for an action on page with CSRFCHECK_WITH_TOKEN defined)
+	// Check all cases that need a token (all POST and some GET)
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' || (GETPOSTISSET('action') && defined('CSRFCHECK_WITH_TOKEN')) || in_array(GETPOST('action', 'aZ09'), array('add', 'update')))
 	{
 		if (!GETPOSTISSET('token')) {
 			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
