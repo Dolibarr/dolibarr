@@ -67,13 +67,13 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * $dolibarr_main_prod must be set to 1 into conf.php
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
-* The module DebugBar must NOT be enabled (by default, this module is not enabled. This is a developer tool)
-* The module ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be enabled soon by default)
+* The module DebugBar must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * The module ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
 * ONLY security reports on modules provided by default and with the "stable" status are allowed (troubles into "experimental", "developement" or external modules are not accepted).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so only the documents directory is in write mode. The root directory with htdocs must be readonly.
+* Ability for a high level user to edit web site pages in the CMS by including javascript is an expected feature.
 
 Scope is the web application (back office) and the APIs.
 
