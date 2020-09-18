@@ -225,21 +225,19 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Commercial (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
 	$tmpentry = array(
-		'enabled'=>(
-			!empty($conf->propal->enabled) ||
-			!empty($conf->commande->enabled) ||
-			!empty($conf->supplier_proposal->enabled) ||
-			!empty($conf->supplier_order->enabled) ||
-			!empty($conf->contrat->enabled) ||
-			!empty($conf->ficheinter->enabled)
+		'enabled'=>(!empty($conf->propal->enabled)
+			|| !empty($conf->commande->enabled)
+			|| !empty($conf->supplier_proposal->enabled)
+			|| !empty($conf->supplier_order->enabled)
+			|| !empty($conf->contrat->enabled)
+			|| !empty($conf->ficheinter->enabled)
 		) ? 1 : 0,
-		'perms'=>(
-			!empty($user->rights->propal->lire) ||
-			!empty($user->rights->commande->lire) ||
-			!empty($user->rights->supplier_proposal->lire) ||
-			!empty($user->rights->supplier_order->lire) ||
-			!empty($user->rights->contrat->lire) ||
-			!empty($user->rights->ficheinter->lire)
+		'perms'=>(!empty($user->rights->propal->lire)
+			|| !empty($user->rights->commande->lire)
+			|| !empty($user->rights->supplier_proposal->lire)
+			|| !empty($user->rights->supplier_order->lire)
+			|| !empty($user->rights->contrat->lire)
+			|| !empty($user->rights->ficheinter->lire)
 		),
 		'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
