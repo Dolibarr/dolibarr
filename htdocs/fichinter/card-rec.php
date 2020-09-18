@@ -130,7 +130,7 @@ if ($action == 'add') {
 	if (! $error) {
 		$object->id_origin		= $id;
 		$object->titre			= GETPOST('titre', 'alpha');
-		$object->description	= GETPOST('description', 'alpha');
+		$object->description	= GETPOST('description', 'restricthtml');
 		$object->socid			= GETPOST('socid', 'alpha');
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contract	= GETPOST('contractid', 'int');

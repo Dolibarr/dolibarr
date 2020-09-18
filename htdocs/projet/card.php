@@ -152,7 +152,7 @@ if (empty($reshook))
 			$object->ref             = GETPOST('ref', 'alpha');
 			$object->title           = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
 			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public          = GETPOST('public', 'alpha');
 			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
 			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
@@ -255,7 +255,7 @@ if (empty($reshook))
 			$object->title        = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
-			$object->description  = GETPOST('description', 'none');	// Do not use 'alpha' here, we want field as it is
+			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
 			$object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 			$object->date_end     = empty($_POST["projectend"])?'':$date_end;

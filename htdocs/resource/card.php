@@ -35,11 +35,11 @@ $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
 $id						= GETPOST('id', 'int');
-$action					= GETPOST('action', 'alpha');
+$action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
-$description			= GETPOST('description');
-$confirm				= GETPOST('confirm');
+$description			= GETPOST('description', 'restricthtml');
+$confirm				= GETPOST('confirm', 'aZ09');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 

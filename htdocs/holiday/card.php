@@ -125,7 +125,7 @@ if ($action == 'create')
 	    elseif ($endhalfday == 'morning') $halfday=1;
 
 	    $valideur = GETPOST('valideur', 'int');
-	    $description = trim(GETPOST('description'));
+		$description = trim(GETPOST('description', 'restricthtml'));
 
     	// If no type
 	    if ($type <= 0)
@@ -273,7 +273,7 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         if ($cancreate)
         {
             $valideur = GETPOST('valideur', 'int');
-            $description = trim(GETPOST('description', 'none'));
+			$description = trim(GETPOST('description', 'restricthtml'));
 
             // If no start date
             if (empty($_POST['date_debut_'])) {
@@ -1047,7 +1047,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td class="tdtop">';
-        $doleditor = new DolEditor('description', GETPOST('description', 'none'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+        $doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         print '</td></tr>';
 

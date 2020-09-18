@@ -216,7 +216,7 @@ if (empty($reshook))
 	    $object->fk_project		= GETPOST('projectid', 'int');
 	    $object->fk_contrat		= GETPOST('contratid', 'int');
 	    $object->author			= $user->id;
-	    $object->description	= GETPOST('description', 'none');
+		$object->description	= GETPOST('description', 'restricthtml');
 	    $object->ref			= $ref;
 	    $object->modelpdf		= GETPOST('model', 'alpha');
 	    $object->note_private	= GETPOST('note_private', 'none');
@@ -438,7 +438,7 @@ if (empty($reshook))
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contrat		= GETPOST('contratid', 'int');
 		$object->author			= $user->id;
-		$object->description	= GETPOST('description', 'alpha');
+		$object->description	= GETPOST('description', 'restricthtml');
 		$object->ref			= $ref;
 
 		$result=$object->update($user);
