@@ -71,6 +71,27 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 if ($statut < -1) $statut = '';
+// To do * change the left menu member to get filter and not statut set 
+elseif ($statut === "-1") $filter = 'draft';
+elseif ($statut === "0") $filter = 'resiliated';
+elseif ($statut === "1" && $filter != 'uptodate' && $filter  != 'outofdate') $filter = 'validated';
+
+switch ($filter) {
+	case 'outofdate' :
+	case 'uptodate' :
+	case 'validated' :
+		$statut = 1;
+		break;
+	case 'draft' :
+		$statut = -1;
+		break;
+	case 'resiliated' :
+		$statut = 0;
+		break;
+	default :
+	  	$filter = '';
+		break;
+}
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -256,6 +277,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']))
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
@@ -273,7 +295,7 @@ if ($search_categ == -2) $sql .= " AND cm.fk_categorie IS NULL";
 $sql .= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_type > 0) $sql .= " AND t.rowid=".$db->escape($search_type);
-if ($statut != '') $sql .= " AND d.statut in (".$db->escape($statut).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
+if ($statut !== '') $sql .= " AND d.statut in (".$db->escape($statut).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql .= " AND 1 = 2"; // Always wrong
@@ -341,10 +363,10 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $titre = $langs->trans("MembersList");
-if (GETPOSTISSET("statut")) {
+if (GETPOSTISSET("statut") || GETPOSTISSET("filter")) {
 	if ($statut == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
-	if ($statut == '-1') { $titre = $langs->trans("MembersListToValid"); }
-	if ($statut == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); }
+	if ($statut == '-1'|| $filter == 'draft') { $titre = $langs->trans("MembersListToValid"); }
+	if ($statut == '1' || $filter == 'validated') { $titre = $langs->trans("MembersListValid"); }
 	if ($statut == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
 	if ($statut == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
 	if ($statut == '0') { $titre = $langs->trans("MembersListResiliated"); }
@@ -572,15 +594,18 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-// Status
+// Statut & Filter
 if (!empty($arrayfields['d.statut']['checked'])) {
 	print '<td class="liste_titre right maxwidthonsmartphone">';
 	$liststatus = array(
-		'-1'=>$langs->trans("Draft"),
-		'1'=>$langs->trans("Validated"),
-		'0'=>$langs->trans("Resiliated")
+		''=>$langs->trans(""),
+		'draft'=>$langs->trans("Draft"),
+		'validated'=>$langs->trans("Validated"),
+		'uptodate'=>$langs->trans("MemberStatusPaidShort"),
+		'outofdate'=>$langs->trans("MemberStatusActiveLateShort"),
+		'resiliated'=>$langs->trans("Resiliated")
 	);
-	print $form->selectarray('statut', $liststatus, $statut, -2);
+	print $form->selectarray('filter', $liststatus, $filter, "");
 	print '</td>';
 }
 // Action column
