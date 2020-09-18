@@ -114,15 +114,15 @@ if (empty($reshook))
 		$action = '';
 	}
 
-	// If create a request
-	if ($action == 'create')
+	// Add leave request
+	if ($action == 'add')
 	{
 		// If no right to create a request
 		if (!$cancreate)
 		{
 			$error++;
 			setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
-			$action = 'request';
+			$action = 'create';
 		}
 
 		if (!$error)
@@ -151,7 +151,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error++;
-				$action = 'create';
+				$action = 'add';
 			}
 
 			// If no start date
@@ -159,21 +159,21 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
 				$error++;
-				$action = 'create';
+				$action = 'add';
 			}
 			// If no end date
 			if (empty($date_fin))
 			{
 				setEventMessages($langs->trans("NoDateFin"), null, 'errors');
 				$error++;
-				$action = 'create';
+				$action = 'add';
 			}
 			// If start date after end date
 			if ($date_debut > $date_fin)
 			{
 				setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
 				$error++;
-				$action = 'create';
+				$action = 'add';
 			}
 
 			// Check if there is already holiday for this period
@@ -182,7 +182,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
 				$error++;
-				$action = 'create';
+				$action = 'add';
 			}
 
 			// If there is no Business Days within request
@@ -191,7 +191,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
 				$error++;
-				$action = 'create';
+				$action = 'add';
 			}
 
 			// If no validator designated
@@ -275,7 +275,8 @@ if (empty($reshook))
 		// If no right to modify a request
 		if (!$user->rights->holiday->write)
 		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=CantUpdate');
+			setEventMessages($langs->trans("CantUpdate"), null, 'errors');
+			header('Location: '.$_SERVER["PHP_SELF"].'?action=create');
 			exit;
 		}
 
@@ -863,7 +864,7 @@ $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->t
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $action == 'create')
+if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 {
 	// Si l'utilisateur n'a pas le droit de faire une demande
 	if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
@@ -943,7 +944,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		// Formulaire de demande
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
-		print '<input type="hidden" name="action" value="create" />'."\n";
+		print '<input type="hidden" name="action" value="add" />'."\n";
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
@@ -1008,8 +1009,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		// Date start
 		print '<tr>';
 		print '<td class="fieldrequired">';
-		print $langs->trans("DateDebCP");
-		print ' ('.$langs->trans("FirstDayOfHoliday").')';
+		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
 		print '<td>';
 		// Si la demande ne vient pas de l'agenda
@@ -1027,8 +1027,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		// Date end
 		print '<tr>';
 		print '<td class="fieldrequired">';
-		print $langs->trans("DateFinCP");
-		print ' ('.$langs->trans("LastDayOfHoliday").')';
+		print $form->textwithpicto($langs->trans("DateFinCP"), $langs->trans("LastDayOfHoliday"));
 		print '</td>';
 		print '<td>';
 		// Si la demande ne vient pas de l'agenda
@@ -1197,7 +1196,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 				if (!$edit)
 				{
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+					print '</td>';
 					print '<td>'.dol_print_date($object->date_debut, 'day');
 					print ' &nbsp; &nbsp; ';
 					print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
@@ -1205,7 +1206,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+					print '</td>';
 					print '<td>';
 					print $form->selectDate($object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
@@ -1217,7 +1220,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 				if (!$edit)
 				{
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+					print '</td>';
 					print '<td>'.dol_print_date($object->date_fin, 'day');
 					print ' &nbsp; &nbsp; ';
 					print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
@@ -1225,7 +1230,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+					print '</td>';
 					print '<td>';
 					print $form->selectDate($object->date_fin, 'date_fin_');
 					print ' &nbsp; &nbsp; ';
@@ -1236,7 +1243,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
 				// Nb of days
 				print '<tr>';
-				print '<td class="nowrap">';
+				print '<td>';
 				$htmlhelp = $langs->trans('NbUseDaysCPHelp');
 				$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
 				$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
