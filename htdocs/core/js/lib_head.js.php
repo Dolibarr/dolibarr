@@ -670,8 +670,9 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	int		noButton	noButton
  * @param	int		strict		Strict
  * @param   int     userid      User id
+ * @param   string  token       Token
  */
-function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid) {
+function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid, token) {
 	var boxConfirm = box;
 	$("#confirm_" + code)
 			.attr("title", boxConfirm.title)
@@ -687,9 +688,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity, strict, 0, userid);
+								setConstant(url, code, input, entity, strict, 0, userid, token);
 							} else if (action == "del") {
-								delConstant(url, code, input, entity, strict, 0, userid);
+								delConstant(url, code, input, entity, strict, 0, userid, token);
 							}
 							// Close dialog
 							$(this).dialog("close");

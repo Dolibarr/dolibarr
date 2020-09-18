@@ -516,17 +516,18 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var entity = \''.$entity.'\';
 				var strict = \''.$strict.'\';
 				var userid = \''.$user->id.'\';
-				var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
-				var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
+				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
+				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
+				var token = \''.newToken().'\';
 
 				// Set constant
 				$("#set_" + code).click(function() {
 					if (input.alert && input.alert.set) {
 						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid);
+						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
 					} else {
-						setConstant(url, code, input, entity, 0, '.$forcereload.', userid);
+						setConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);
 					}
 				});
 
@@ -535,9 +536,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 					if (input.alert && input.alert.del) {
 						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
 						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid);
+						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
 					} else {
-						delConstant(url, code, input, entity, 0, '.$forcereload.', userid);
+						delConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);
 					}
 				});
 			});
@@ -579,7 +580,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     field: \''.$field.'\',
                     value: \'1\',
                     element: \''.$object->element.'\',
-                    id: \''.$object->id.'\'
+                    id: \''.$object->id.'\',
+					token: \''.newToken().'\'
                 },
                 function() {
                     $("#set_'.$code.'_'.$object->id.'").hide();
@@ -609,7 +611,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     field: \''.$field.'\',
                     value: \'0\',
                     element: \''.$object->element.'\',
-                    id: \''.$object->id.'\'
+                    id: \''.$object->id.'\',
+					token: \''.newToken().'\'
                 },
                 function() {
                     $("#del_'.$code.'_'.$object->id.'").hide();
