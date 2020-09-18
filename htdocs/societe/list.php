@@ -598,7 +598,6 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete'] = '<span
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
 $typefilter = '';
 $label = 'MenuNewThirdParty';
 
@@ -612,7 +611,7 @@ if (!empty($type))
 
 $url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
 if (!empty($socid)) $url .= '&socid='.$socid;
-$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer && $contextpage != 'poslist');
+$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer && $contextpage != 'poslist');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
