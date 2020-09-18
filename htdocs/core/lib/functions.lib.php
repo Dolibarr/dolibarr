@@ -95,7 +95,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out .= '0,';
-		$out .= $conf->entity;
+		$out .= ((int) $conf->entity);
 		return $out;
 	}
 }

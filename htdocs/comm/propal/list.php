@@ -333,13 +333,13 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 if ($search_town)					$sql .= natural_search('s.town', $search_town);
 if ($search_zip)					$sql .= natural_search("s.zip", $search_zip);
 if ($search_state)					$sql .= natural_search("state.nom", $search_state);
-if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_ref)					$sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer)			$sql .= natural_search('p.ref_client', $search_refcustomer);
 if ($search_refproject)				$sql .= natural_search('pr.ref', $search_refproject);
 if ($search_project)				$sql .= natural_search('pr.title', $search_project);
-if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
+if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 
 if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
 if ($search_login)					$sql .= natural_search("u.login", $search_login);

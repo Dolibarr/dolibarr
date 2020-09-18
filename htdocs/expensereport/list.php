@@ -302,7 +302,7 @@ if ($search_amount_ttc != '') $sql .= natural_search('d.total_ttc', $search_amou
 // User
 if ($search_user != '' && $search_user >= 0) $sql .= " AND u.rowid = '".$db->escape($search_user)."'";
 // Status
-if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))

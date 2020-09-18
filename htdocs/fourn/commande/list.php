@@ -535,16 +535,16 @@ if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
-	$sql .= " AND cf.fk_statut IN (".$db->escape($db->escape(GETPOST('statut', 'intcomma'))).")";
+	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape(GETPOST('statut', 'intcomma'))).")";
 if ($search_status != '' && $search_status >= 0)
-	$sql .= " AND cf.fk_statut IN (".$db->escape($search_status).")";
+	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 $sql .= dolSqlDateFilter("cf.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
 $sql .= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_user > 0) $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='supplier_order' AND tc.source='internal' AND ec.element_id = cf.rowid AND ec.fk_socpeople = ".$db->escape($search_user);
