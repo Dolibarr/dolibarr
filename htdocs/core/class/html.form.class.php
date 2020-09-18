@@ -2163,7 +2163,7 @@ class Form
 		{
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
-			$sql .= ' AND e.statut IN ('.$this->db->escape(implode(',', $warehouseStatusArray)).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
+			$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
 		// include search in supplier ref
