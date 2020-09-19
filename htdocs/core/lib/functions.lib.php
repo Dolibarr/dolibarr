@@ -219,12 +219,13 @@ function GETPOSTISSET($paramname)
  *                               'none'=no check (only for param that should have very rich content)
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alpha'=check it's text and sign
+ *                               'alpha'=Same than alphanohtml
+ *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'array'=check it's array
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml', 'alphanohtml'=check there is no html content
+ *                               'nohtml'=check there is no html content and no " and no ../
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
@@ -489,16 +490,6 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		case 'intcomma':
 			if (preg_match('/[^0-9,-]+/i', $out)) $out='';
 			break;
-		case 'alpha':
-			if (! is_array($out))
-			{
-				$out=trim($out);
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
-				if (preg_match('/"/', $out)) $out='';
-				elseif (preg_match('/\.\.\//', $out)) $out='';
-			}
-			break;
 		case 'san_alpha':
 			$out=filter_var($out, FILTER_SANITIZE_STRING);
 			break;
@@ -529,6 +520,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		case 'nohtml':		// Recommended for most scalar parameters
 			$out=dol_string_nohtmltag($out, 0);
 			break;
+		case 'alpha':		// No html and no " and no ../
 		case 'alphanohtml':	// Recommended for search parameters
 			if (! is_array($out))
 			{
