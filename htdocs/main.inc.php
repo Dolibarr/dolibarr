@@ -57,7 +57,9 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
  */
 function testSqlAndScriptInject($val, $type)
 {
-	$val=html_entity_decode($val, ENT_QUOTES);		// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	$val = html_entity_decode($val, ENT_QUOTES);		// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	$val = str_replace('%09', '', $val);				// 'java%09script' is processed like 'javascript' (whatever is place of %09)
+
 	// TODO loop to decode until no more thing to decode ?
 
 	$inj = 0;
