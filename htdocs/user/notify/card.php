@@ -43,8 +43,8 @@ if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$sortfield=GETPOST("sortfield", 'alpha');
-$sortorder=GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page=GETPOST("page", 'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="n.daten";

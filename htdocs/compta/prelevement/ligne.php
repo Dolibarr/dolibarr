@@ -44,7 +44,7 @@ $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
 $page = GETPOST('page', 'int');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'alpha');
 
 if ($action == 'confirm_rejet')
