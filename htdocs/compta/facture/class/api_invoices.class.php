@@ -477,8 +477,9 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param int    $id             Id of invoice to update
 	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
 	 *
-	 * @url	DELETE {id}/contact/{rowid}
+	 * @url	DELETE {id}/contact/{rowid}/{type}
 	 *
 	 * @return array
   	 *
@@ -486,7 +487,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 404
      * @throws RestException 500
 	 */
-    public function deleteContact($id, $rowid)
+    public function deleteContact($id, $rowid, $type)
     {
         if (!DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
@@ -505,7 +506,7 @@ class Invoices extends DolibarrApi
         $contacts = $this->invoice->liste_contact();
 
 		foreach ($contacts as $contact) {
-		    if ($contact['id'] == $rowid) {
+		    if ($contact['id'] == $rowid && $contact['code'] == $type) {
 		        $result = $this->invoice->delete_contact($contact['rowid']);
 
 		        if (!$result) {
