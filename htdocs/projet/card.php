@@ -120,12 +120,12 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 		$error=0;
-		if (empty($_POST["ref"]))
+		if (! GETPOST('ref'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
 		}
-		if (empty($_POST["title"]))
+		if (! GETPOST('title'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
@@ -149,13 +149,13 @@ if (empty($reshook))
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alpha');
-			$object->title           = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
 			$object->description     = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alpha');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
+			$object->public          = GETPOST('public', 'alphanohtml');
+			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
+			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
 			$object->datec           = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
