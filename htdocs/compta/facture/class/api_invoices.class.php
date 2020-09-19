@@ -1408,6 +1408,7 @@ class Invoices extends DolibarrApi
      * @param string  $comment            {@from body}  Note (optional)
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
+     * @param string  $ref_ext            {@from body}  External reference (optional)
      *
      * @url     POST /paymentsdistributed
      *
@@ -1417,7 +1418,7 @@ class Invoices extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPaymentDistributed($arrayofamounts, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement = '', $comment = '', $chqemetteur = '', $chqbank = '', $ref_ext = '')
     {
         global $conf;
 
@@ -1511,6 +1512,7 @@ class Invoices extends DolibarrApi
         $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
         $paiement->num_paiement = $num_paiement;
         $paiement->note         = $comment;
+        $paiement->ref_ext      = $ref_ext;
         $paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
         if ($paiement_id < 0)
         {
