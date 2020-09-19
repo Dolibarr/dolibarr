@@ -235,6 +235,20 @@ if ($result)
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge', $formquestion, 'no', 1);
 	}
 
+	// Check some parameters
+	// TODO Add a tab with this and other information
+	/*
+	global $dolibarr_main_prod, $dolibarr_nocsrfcheck;
+	if (empty($dolibarr_main_prod)) {
+		print $langs->trans("Warning").' dolibarr_main_prod = '.$dolibarr_main_prod;
+		print ' '.img_warning($langs->trans('SwitchThisForABetterSecurity', 1)).'<br>';
+	}
+	if (!empty($dolibarr_nocsrfcheck)) {
+		print $langs->trans("Warning").' dolibarr_nocsrfcheck = '.$dolibarr_nocsrfcheck;
+		print ' '.img_warning($langs->trans('SwitchThisForABetterSecurity', 0)).'<br>';
+	}
+	*/
+
 	print '<div class="div-table-responsive">';
 	print '<table class="liste centpercent">';
 

@@ -101,7 +101,7 @@ $eventfound = array();
 //dol_syslog('time='.$time.' $_SESSION[auto_ck_events_not_before]='.$_SESSION['auto_check_events_not_before']);
 
 // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
-// This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate (save is not done yet).
+// This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate.
 if ($time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow', 'int'))
 {
     $time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined

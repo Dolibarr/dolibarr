@@ -518,7 +518,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var userid = \''.$user->id.'\';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
-				var token = \''.newToken().'\';
+				var token = \''.currentToken().'\';
 
 				// Set constant
 				$("#set_" + code).click(function() {

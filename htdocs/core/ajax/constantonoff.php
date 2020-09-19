@@ -46,7 +46,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-// Registering the location of boxes
+// Registering the new value of constant
 if (!empty($action) && !empty($name))
 {
 	$entity = GETPOST('entity', 'int');
@@ -62,4 +62,6 @@ if (!empty($action) && !empty($name))
 			dolibarr_del_const($db, $name, $entity);
 		}
 	}
+} else {
+	http_response_code(403);
 }

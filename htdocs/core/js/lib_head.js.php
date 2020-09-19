@@ -529,7 +529,7 @@ function hideMessage(fieldId,message) {
  * @param   string  token       Token
  */
 function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
-	$.get( url, {
+	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
@@ -585,7 +585,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		if (forcereload) {
 			location.reload();
 		}
-	});
+	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
 }
 
 /*
@@ -602,7 +602,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param   string  token       Token
  */
 function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
-	$.get( url, {
+	$.post( url, {
 		action: "del",
 		name: code,
 		entity: entity,
@@ -654,7 +654,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		if (forcereload) {
 			location.reload();
 		}
-	});
+	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
 }
 
 /*

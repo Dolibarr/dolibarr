@@ -395,7 +395,14 @@ foreach ($configfileparameters as $key => $value)
 
 				$valuetoshow = ${$newkey};
 				if (empty($valuetoshow)) {
-					print img_warning($langs->trans('SwitchThisForABetterSecurity'));
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 1));
+				}
+			} elseif ($newkey == 'dolibarr_nocsrfcheck') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (!empty($valuetoshow)) {
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
 				}
 			} else {
 			    print ${$newkey};
