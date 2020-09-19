@@ -51,12 +51,15 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
- * @param		string		$val		Value
+ * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function testSqlAndScriptInject($val, $type)
 {
+	$val=html_entity_decode($val, ENT_QUOTES);		// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	// TODO loop to decode until no more thing to decode ?
+
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
 	if ($type == 1 || $type == 3)
@@ -80,7 +83,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
-	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	// For XSS Injection done by closing textarea to execute content into a textarea field
 	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
