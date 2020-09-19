@@ -4698,7 +4698,7 @@ class Product extends CommonObject
 		$sql .= " AND w.rowid = ps.fk_entrepot";
 		$sql .= " AND ps.fk_product = ".$this->id;
 		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
-			$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+			$sql .= " AND w.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
 		}
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);

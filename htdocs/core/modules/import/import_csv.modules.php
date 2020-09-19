@@ -843,7 +843,7 @@ class ImportCsv extends ModeleImports
 						if (!$error && !$updatedone) {
 							// Build SQL INSERT request
 							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
-							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
+							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
 							if (!empty($tablewithentity_cache[$tablename])) {
 								$sqlstart .= ', entity';
 								$sqlend .= ', '.$conf->entity;

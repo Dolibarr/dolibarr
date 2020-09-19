@@ -1117,7 +1117,7 @@ class Adherent extends CommonObject
 		// Remove link to third party onto any other members
 		if ($thirdpartyid > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
-			$sql .= " WHERE fk_soc = '".$thirdpartyid."'";
+			$sql .= " WHERE fk_soc = ".((int) $thirdpartyid);
 			$sql .= " AND entity = ".$conf->entity;
 			dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
 			$resql = $this->db->query($sql);

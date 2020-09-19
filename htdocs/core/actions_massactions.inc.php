@@ -648,9 +648,9 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			$sql .= ", targettype";
 			$sql .= ") VALUES (";
 			$sql .= $id_order;
-			$sql .= ", '".$objecttmp->origin."'";
+			$sql .= ", '".$db->escape($objecttmp->origin)."'";
 			$sql .= ", ".$objecttmp->id;
-			$sql .= ", '".$objecttmp->element."'";
+			$sql .= ", '".$db->escape($objecttmp->element)."'";
 			$sql .= ")";
 
 			if (!$db->query($sql))

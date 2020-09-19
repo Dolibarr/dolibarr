@@ -113,7 +113,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $sql .= " WHERE s.entity IN (".getEntity('societe').")";
         $sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
         $sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
-        $sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$product."'";
+        $sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$this->db->escape($product)."'";
         $sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
         $sql .= " ORDER BY s.email";
 

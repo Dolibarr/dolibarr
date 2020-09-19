@@ -226,7 +226,7 @@ if (empty($reshook)) {
 			}
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
-			$object->job = GETPOST("job", 'nohtml');
+			$object->job = GETPOST("job", 'alphanohtml');
 			$object->signature = GETPOST("signature", 'restricthtml');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note = GETPOST("note", 'restricthtml');
@@ -388,7 +388,7 @@ if (empty($reshook)) {
 					}
 				}
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
-				$object->job = GETPOST("job", 'nohtml');
+				$object->job = GETPOST("job", 'alphanohtml');
 				$object->signature = GETPOST("signature", 'restricthtml');
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
@@ -1183,7 +1183,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Position/Job
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'nohtml')).'">';
+	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
@@ -1570,7 +1570,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			// Position/Job
 			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>'.$object->job.'</td>';
+			print '<td>'.dol_escape_htmltag($object->job).'</td>';
 			print '</tr>'."\n";
 
 			//$childids = $user->getAllChildIds(1);
@@ -2606,10 +2606,10 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<td>';
 			if ($caneditfield)
 			{
-				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+				print '<input size="30" type="text" name="job" value="'.dol_escape_htmltag($object->job).'">';
 			} else {
-				print '<input type="hidden" name="job" value="'.$object->job.'">';
-				print $object->job;
+				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
+				print dol_escape_htmltag($object->job);
 			}
 			print '</td></tr>';
 

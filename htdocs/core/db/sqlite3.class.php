@@ -420,7 +420,7 @@ class DoliDBSqlite3 extends DoliDB
             $constraintname = trim($reg[2]);
             $tablename = trim($reg[1]);
 
-            $descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$tablename."'");
+            $descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$this->escape($tablename)."'");
 
             // 1- Renommer la table avec un nom temporaire
             $this->query('ALTER TABLE '.$tablename.' RENAME TO tmp_'.$tablename);
@@ -921,7 +921,7 @@ class DoliDBSqlite3 extends DoliDB
             {
                 if (preg_match("/null/i", $field_desc['default']))
                     $sqlfields[$i] .= " default ".$field_desc['default'];
-                else $sqlfields[$i] .= " default '".$field_desc['default']."'";
+                else $sqlfields[$i] .= " default '".$this->escape($field_desc['default'])."'";
             } elseif (preg_match("/^[^\s]/i", $field_desc['null']))
                 $sqlfields[$i] .= " ".$field_desc['null'];
 
@@ -937,7 +937,7 @@ class DoliDBSqlite3 extends DoliDB
             $i = 0;
             foreach ($unique_keys as $key => $value)
             {
-                $sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
+            	$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$this->escape($value)."')";
                 $i++;
             }
         }
@@ -1030,7 +1030,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             if (preg_match("/null/i", $field_desc['default']))
             $sql .= " default ".$field_desc['default'];
-            else $sql .= " default '".$field_desc['default']."'";
+            else $sql .= " default '".$this->escape($field_desc['default'])."'";
         }
         if (preg_match("/^[^\s]/i", $field_desc['extra']))
         $sql .= " ".$field_desc['extra'];

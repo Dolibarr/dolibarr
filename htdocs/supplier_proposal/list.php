@@ -314,7 +314,7 @@ if ($search_multicurrency_montant_vat != '') $sql .= natural_search('sp.multicur
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('sp.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql .= ' AND s.rowid = '.$socid;
-if ($search_status >= 0 && $search_status != '') $sql .= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
+if ($search_status >= 0 && $search_status != '') $sql .= ' AND sp.fk_statut IN ('.$this->db->sanitize($db->escape($search_status)).')';
 $sql .= dolSqlDateFilter("sp.date_livraison", $day, $month, $year);
 $sql .= dolSqlDateFilter("sp.date_valid", $dayvalid, $monthvalid, $yearvalid);
 if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;

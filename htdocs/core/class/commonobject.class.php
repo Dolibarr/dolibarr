@@ -1028,8 +1028,8 @@ abstract class CommonObject
 		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql .= " statut = ".$statut;
-		if ($type_contact_id) $sql .= ", fk_c_type_contact = '".$type_contact_id."'";
-		if ($fk_socpeople) $sql .= ", fk_socpeople = '".$fk_socpeople."'";
+		if ($type_contact_id) $sql .= ", fk_c_type_contact = ".((int) $type_contact_id);
+		if ($fk_socpeople) $sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		$sql .= " where rowid = ".$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1389,9 +1389,9 @@ abstract class CommonObject
 		if ($source == 'internal') $sql .= " AND c.entity IN (".getEntity('user').")";
 		if ($source == 'external') $sql .= " AND c.entity IN (".getEntity('societe').")";
 		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$element."'";
-		$sql .= " AND tc.source = '".$source."'";
-		if ($code) $sql .= " AND tc.code = '".$code."'";
+		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+		if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		$sql .= " AND tc.active = 1";
 		if ($status) $sql .= " AND ec.statut = ".$status;
 
@@ -3243,16 +3243,16 @@ abstract class CommonObject
 		{
 			if ($justsource)
 			{
-				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-				if ($withtargettype) $sql .= " AND targettype = '".$targettype."'";
+				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
+				if ($withtargettype) $sql .= " AND targettype = '".$this->db->escape($targettype)."'";
 			} elseif ($justtarget)
 			{
-				$sql .= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
-				if ($withsourcetype) $sql .= " AND sourcetype = '".$sourcetype."'";
+				$sql .= "fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
+				if ($withsourcetype) $sql .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
 			}
 		} else {
-			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
-			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
+			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."')";
+			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."')";
 		}
 		$sql .= ' ORDER BY '.$orderby;
 
@@ -4841,7 +4841,7 @@ abstract class CommonObject
 		// Request to get translation values for object
 		$sql = "SELECT rowid, property, lang , value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
-		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " WHERE type_object = '".$this->db->escape($element)."'";
 		$sql .= " AND fk_object = ".$this->id;
 
 		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
@@ -8295,7 +8295,7 @@ abstract class CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_product)";
 		$sql .= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_product = '".$fromId."'";
+		$sql .= " WHERE fk_product = ".((int) $fromId);
 
 		if (!$this->db->query($sql))
 		{
@@ -8341,7 +8341,7 @@ abstract class CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
 		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql.= " AND filepath = '".$element."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();

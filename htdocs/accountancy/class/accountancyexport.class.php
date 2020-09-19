@@ -1160,7 +1160,8 @@ class AccountancyExport
 			// TYPE C
 			if ($last_codeinvoice != $line->doc_ref) {
 				//recherche societe en fonction de son code client
-				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$line->thirdparty_code."'";
+				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe";
+				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
 
 				if ($resql && $this->db->num_rows($resql) > 0)

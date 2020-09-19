@@ -358,7 +358,7 @@ class RemiseCheque extends CommonObject
 		if ($this->errno == 0 && $numref)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET statut = 1, ref = '".$numref."'";
+			$sql .= " SET statut = 1, ref = '".$this->db->escape($numref)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND statut = 0";
@@ -662,6 +662,7 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$this->errno = 0;
+
 		$this->db->begin();
 		$total = 0;
 		$nb = 0;
@@ -681,8 +682,8 @@ class RemiseCheque extends CommonObject
 			$this->db->free($resql);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET amount = '".price2num($total)."'";
-			$sql .= ", nbcheque = ".$nb;
+			$sql .= " SET amount = ".price2num($total);
+			$sql .= ", nbcheque = ".((int) $nb);
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND entity = ".$conf->entity;
 
@@ -722,8 +723,8 @@ class RemiseCheque extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 			$sql .= " SET fk_bordereau = 0";
-			$sql .= " WHERE rowid = '".$account_id."'";
-			$sql .= " AND fk_bordereau = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $account_id);
+			$sql .= " AND fk_bordereau = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql)

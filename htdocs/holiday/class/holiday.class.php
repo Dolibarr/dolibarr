@@ -1122,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
-		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->escape($status).")";
+		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)

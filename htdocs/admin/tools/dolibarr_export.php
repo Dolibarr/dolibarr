@@ -31,7 +31,7 @@ $langs->load("admin");
 
 $action = GETPOST('action', 'aZ09');
 
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";

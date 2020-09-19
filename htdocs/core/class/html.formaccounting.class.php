@@ -174,7 +174,7 @@ class FormAccounting extends Form
             $sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			$sql .= " AND c.fk_country = co.rowid";
-            if (empty($allcountries)) $sql .= " AND co.code = '".$mysoc->country_code."'";
+            if (empty($allcountries)) $sql .= " AND co.code = '".$this->db->escape($mysoc->country_code)."'";
             $sql .= " ORDER BY c.label ASC";
         }
 

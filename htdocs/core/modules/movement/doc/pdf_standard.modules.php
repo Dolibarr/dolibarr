@@ -291,13 +291,13 @@ class pdf_stdandard extends ModelePDFMovement
 		{
 			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 		}
-		if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
+		if ($idproduct > 0) $sql .= " AND p.rowid = ".((int) $idproduct);
 		if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
 		if (!empty($search_movement))      $sql .= natural_search('m.label', $search_movement);
 		if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);
 		if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
 		if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
-		if ($search_warehouse > 0)          $sql .= " AND e.rowid = '".$db->escape($search_warehouse)."'";
+		if ($search_warehouse > 0)          $sql .= " AND e.rowid = ".((int) $db->escape($search_warehouse));
 		if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
 		if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
 		if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
@@ -489,7 +489,7 @@ class pdf_stdandard extends ModelePDFMovement
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 							$sql .= " WHERE fk_product=".$objp->rowid;
-							$sql .= " AND lang='".$langs->getDefaultLang()."'";
+							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
 							$result = $db->query($sql);
@@ -1049,7 +1049,7 @@ class pdf_stdandard extends ModelePDFMovement
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-		$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 		$resqlbis = $db->query($sql);
 		if ($resqlbis)
 		{

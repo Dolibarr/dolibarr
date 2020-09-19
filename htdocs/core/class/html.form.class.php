@@ -2163,7 +2163,7 @@ class Form
 		{
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
-			$sql .= ' AND e.statut IN ('.$this->db->escape(implode(',', $warehouseStatusArray)).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
+			$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
 		// include search in supplier ref
@@ -2183,7 +2183,7 @@ class Form
 		// Multilang : we add translation
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='".$langs->getDefaultLang()."'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -2503,9 +2503,9 @@ class Form
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
-			$sql .= " WHERE fk_product='".$objp->rowid."'";
+			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
-			$sql .= " AND price_level=".$price_level;
+			$sql .= " AND price_level = ".((int) $price_level);
 			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
@@ -5782,6 +5782,7 @@ class Form
 
 	/**
 	 * Generic method to select a component from a combo list.
+	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
 	 * @param 	string			$objectdesc			ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]
@@ -7015,7 +7016,7 @@ class Form
 		// phpcs:enable
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE type = '".$type."'";
+		$sql .= " WHERE type = '".$this->db->escape($type)."'";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
 		if ($result)
@@ -7459,10 +7460,10 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=ug.entity";
-			if ($force_entity) $sql .= " WHERE ug.entity IN (0,".$force_entity.")";
+			if ($force_entity) $sql .= " WHERE ug.entity IN (0, ".$force_entity.")";
 			else $sql .= " WHERE ug.entity IS NOT NULL";
 		} else {
-			$sql .= " WHERE ug.entity IN (0,".$conf->entity.")";
+			$sql .= " WHERE ug.entity IN (0, ".$conf->entity.")";
 		}
 		if (is_array($exclude) && $excludeGroups) $sql .= " AND ug.rowid NOT IN ('".$excludeGroups."')";
 		if (is_array($include) && $includeGroups) $sql .= " AND ug.rowid IN ('".$includeGroups."')";

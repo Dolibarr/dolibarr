@@ -68,7 +68,7 @@ if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : $_COOKIE['weblangs-shortcode']));
+	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
 	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status)))

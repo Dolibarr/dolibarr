@@ -1249,9 +1249,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 	}
 
-	if (!empty($id) && $action != 'edit' && $action != 'create')
-	{
-		$objsoc = new Societe($db);
+    // Select mail models is same action as presend
+    if (GETPOST('modelselected', 'alpha')) {
+        $action = 'presend';
+    }
+
+    if (!empty($id) && $action != 'edit' && $action != 'create')
+    {
+        $objsoc = new Societe($db);
 
 		// View mode
 

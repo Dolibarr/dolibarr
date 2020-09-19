@@ -128,9 +128,9 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON p.accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$chartaccountcode."' AND aa2.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$chartaccountcode."' AND aa3.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON p.accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 
@@ -232,7 +232,7 @@ for ($i = 1; $i <= 12; $i++) {
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
+$sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
@@ -305,7 +305,7 @@ for ($i = 1; $i <= 12; $i++) {
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
+$sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number')." AS codecomptable,";
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
@@ -380,7 +380,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-	$sql = "SELECT '".$langs->trans("CAHTF")."' AS label,";
+	$sql = "SELECT '".$db->escape($langs->trans("CAHTF"))."' AS label,";
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 		if ($j > 12) $j -= 12;

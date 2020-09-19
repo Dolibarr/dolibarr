@@ -121,7 +121,7 @@ class FormProduct
 		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql .= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+			$sql .= " AND e.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
 		} else {
 			$sql .= " AND e.statut = 1";
 		}

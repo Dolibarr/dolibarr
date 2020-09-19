@@ -74,7 +74,7 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -302,7 +302,7 @@ if ($search_amount_ttc != '') $sql .= natural_search('d.total_ttc', $search_amou
 // User
 if ($search_user != '' && $search_user >= 0) $sql .= " AND u.rowid = '".$db->escape($search_user)."'";
 // Status
-if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))

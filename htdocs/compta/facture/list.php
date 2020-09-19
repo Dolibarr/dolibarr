@@ -478,15 +478,15 @@ if ($filtre)
 }
 if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
-if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->escape($search_type).")";
+if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
 if ($search_project_ref) $sql .= natural_search('p.ref', $search_project_ref);
 if ($search_project) $sql .= natural_search('p.title', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql .= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search('f.tva', $search_montant_vat, 1);
@@ -510,7 +510,7 @@ if ($search_status != '-1' && $search_status != '')
 		if ($search_status == '2') $sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
 		if ($search_status == '3') $sql .= " AND f.fk_statut = 3"; // abandonned
 	} else {
-		$sql .= " AND f.fk_statut IN (".$db->escape($search_status).")"; // When search_status is '1,2' for example
+		$sql .= " AND f.fk_statut IN (".$db->sanitize($db->escape($search_status)).")"; // When search_status is '1,2' for example
 	}
 }
 

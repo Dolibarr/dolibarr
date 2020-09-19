@@ -126,19 +126,19 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
 if ($action == 'add')
 {
-	$object->jobtype = GETPOST('jobtype', 'alpha');
-	$object->label = GETPOST('label', 'alpha');
-	$object->command = GETPOST('command', 'alpha');
-	$object->priority = GETPOST('priority', 'int');
-	$object->classesname = GETPOST('classesname', 'alpha');
-	$object->objectname = GETPOST('objectname', 'alpha');
-	$object->methodename = GETPOST('methodename', 'alpha');
+	$object->jobtype = GETPOST('jobtype');
+	$object->label = GETPOST('label');
+	$object->command = GETPOST('command');
+	$object->classesname = GETPOST('classesname', 'alphanohtml');
+	$object->objectname = GETPOST('objectname', 'aZ09');
+	$object->methodename = GETPOST('methodename', 'aZ09');
 	$object->params = GETPOST('params');
 	$object->md5params = GETPOST('md5params');
-	$object->module_name = GETPOST('module_name', 'alpha');
+	$object->module_name = GETPOST('module_name');
 	$object->note_private = GETPOST('note', 'restricthtml');
 	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+	$object->priority = GETPOST('priority', 'int');
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
@@ -164,16 +164,16 @@ if ($action == 'update')
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
 	$object->command = GETPOST('command');
-	$object->classesname = GETPOST('classesname', 'alpha');
-	$object->priority = GETPOST('priority', 'int');
-	$object->objectname = GETPOST('objectname', 'alpha');
-	$object->methodename = GETPOST('methodename', 'alpha');
+	$object->classesname = GETPOST('classesname', 'alphanohtml');
+	$object->objectname = GETPOST('objectname', 'aZ09');
+	$object->methodename = GETPOST('methodename', 'aZ09');
 	$object->params = GETPOST('params');
 	$object->md5params = GETPOST('md5params');
-	$object->module_name = GETPOST('module_name', 'alpha');
+	$object->module_name = GETPOST('module_name');
 	$object->note_private = GETPOST('note', 'restricthtml');
 	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+	$object->priority = GETPOST('priority', 'int');
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');

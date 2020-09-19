@@ -95,7 +95,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out .= '0,';
-		$out .= $conf->entity;
+		$out .= ((int) $conf->entity);
 		return $out;
 	}
 }
@@ -545,6 +545,59 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
+	// Check rule
+	if ($check == 'array') {
+		if (!is_array($out) || empty($out)) {
+			$out = array();
+		} else {
+			foreach($out as $outkey => $outval) {
+				$out[$outkey] = checkVal($outval, 'alphanohtml', $filter, $options);
+			}
+		}
+	}
+	else {
+		$out = checkVal($out, $check, $filter, $options);
+	}
+
+	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
+	if ($paramname == 'backtopage') {
+		$out = preg_replace(array('!(\\\|/)+!', '/^[a-z]*:/'), '', $out);
+	}
+
+	// Code for search criteria persistence.
+	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield')))
+		{
+			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
+
+			// We save search key only if $out not empty that means:
+			// - posted value not empty, or
+			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+
+			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
+			{
+				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
+			}
+		}
+	}
+
+	return $out;
+}
+
+
+/**
+ *  Return a value after checking on a rule.
+ *
+ *  @param  string  $out	     Value to get/check
+ *  @param  string  $check	     Type of check
+ *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array         Value found (string or array), or '' if check fails
+ */
+function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
 	// Check is done after replacement
 	switch ($check)
 	{
@@ -580,9 +633,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'array':
-			if (!is_array($out) || empty($out)) $out = array();
-			break;
 		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
@@ -598,6 +648,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 			$out = dol_string_onlythesehtmltags($out, 0);
+			// TODO We can also remove all javascripts reference
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -605,27 +656,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			break;
 	}
 
-	// Code for search criteria persistence.
-	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
-	if (empty($method) || $method == 3 || $method == 4)
-	{
-		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield')))
-		{
-			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
-
-			// We save search key only if $out not empty that means:
-			// - posted value not empty, or
-			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
-
-			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
-			{
-				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
-			}
-		}
-	}
-
 	return $out;
 }
+
 
 
 if (!function_exists('dol_getprefix'))
@@ -4048,11 +4081,11 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) {
 		$out .= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '.$moreattrib;
-		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 		$out .= '>';
 	} else {
 		$out .= '<'.$tag.' class="'.$prefix.'liste_titre" '.$moreattrib;
-		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 		$out .= '>';
 	}
 
@@ -4824,10 +4857,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	// By default, search value of local tax on line of common tax
 	$sql = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-   	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
+   	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdparty_seller->country_code)."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-   	if ($vatratecode) $sql .= " AND t.code ='".$vatratecode."'"; // If we have the code, we use it in priority
-   	else $sql .= " AND t.recuperableonly ='".$vatnpr."'";
+   	if ($vatratecode) $sql .= " AND t.code ='".$db->escape($vatratecode)."'"; // If we have the code, we use it in priority
+   	else $sql .= " AND t.recuperableonly ='".$db->escape($vatnpr)."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql = $db->query($sql);
 
@@ -4875,9 +4908,9 @@ function get_localtax_by_third($local)
 	global $db, $mysoc;
 	$sql = "SELECT t.localtax1, t.localtax2 ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql .= " WHERE c.code = '".$mysoc->country_code."' AND t.active = 1 AND t.taux=(";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux=(";
 	$sql .= "  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql .= "  WHERE c.code = '".$mysoc->country_code."' AND tt.active = 1";
+	$sql .= "  WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1";
 	$sql .= "  )";
 
 	$resql = $db->query($sql);
@@ -4923,11 +4956,11 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // vat in spain use the buyer country ??
-		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";*/
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'";    // vat in spain use the buyer country ??
+		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";*/
+		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-		if ($vatratecode) $sql .= " AND t.code = '".$vatratecode."'";
+		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -4978,10 +5011,10 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'"; // local tax in spain use the buyer country ??
-		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'"; // local tax in spain use the buyer country ??
+		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-		if ($vatratecode) $sql .= " AND t.code = '".$vatratecode."'";
+		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -5055,7 +5088,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
 			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -5120,7 +5153,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 
@@ -5536,9 +5569,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 	);
+
 	$allowed_tags_string = join("><", $allowed_tags);
-	$allowed_tags_string = preg_replace('/^>/', '', $allowed_tags_string);
-	$allowed_tags_string = preg_replace('/<$/', '', $allowed_tags_string);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
@@ -5547,6 +5579,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if ($removeclassattribute) {
 		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $stringtoclean);
 	}
+	// TODO Remove '/href=("|\'|)javascript/' string ?
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
 
@@ -7895,7 +7928,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	if ($alldata == 1)
 	{
-		if ($isAllowedForPreview) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath),);
+		if ($isAllowedForPreview) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath));
 		else return array();
 	}
 
@@ -7923,7 +7956,6 @@ function ajax_autoselect($htmlname, $addlink = '')
 	if ($addlink) $out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
 	return $out;
 }
-
 
 /**
  *	Return if a file is qualified for preview

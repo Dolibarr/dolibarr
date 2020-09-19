@@ -1586,10 +1586,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
 					$sql .= " VALUES (";
 					$sql .= $this->db->encrypt($name, 1);
-					$sql .= ",'".$type."'";
+					$sql .= ",'".$this->db->escape($type)."'";
 					$sql .= ",".(($val != '') ? $this->db->encrypt($val, 1) : "''");
 					$sql .= ",".($note ? "'".$this->db->escape($note)."'" : "null");
-					$sql .= ",'".$visible."'";
+					$sql .= ",'".$this->db->escape($visible)."'";
 					$sql .= ",".$entity;
 					$sql .= ")";
 
@@ -1630,7 +1630,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 			if ($deleteonunactive) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-				$sql .= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+				$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
 				$sql .= " AND entity in (0, ".$conf->entity.")";
 				dol_syslog(get_class($this)."::delete_const", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
@@ -1700,18 +1700,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
 									$sql .= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
 									$sql .= " VALUES ";
-									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.",'".$this->db->escape($r_perms)."','".$this->db->escape($r_subperms)."')";
 								} else {
 									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
 									$sql .= " (id, entity, libelle, module, type, bydefault, perms)";
 									$sql .= " VALUES ";
-									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.",'".$this->db->escape($r_perms)."')";
 								}
 							} else {
 								 $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
 								 $sql .= " (id, entity, libelle, module, type, bydefault)";
 								 $sql .= " VALUES ";
-								 $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+								 $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.")";
 							}
 
 							$resqlinsert = $this->db->query($sql, 1);
@@ -2009,7 +2009,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		$sql = "SELECT count(*)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const";
-		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
+		$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
