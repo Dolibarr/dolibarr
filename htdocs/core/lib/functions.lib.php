@@ -545,6 +545,59 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
+	// Check rule
+	if ($check == 'array') {
+		if (!is_array($out) || empty($out)) {
+			$out = array();
+		} else {
+			foreach($out as $outkey => $outval) {
+				$out[$outkey] = checkVal($outval, 'alphanohtml', $filter, $options);
+			}
+		}
+	}
+	else {
+		$out = checkVal($out, $check, $filter, $options);
+	}
+
+	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
+	if ($paramname == 'backtopage') {
+		$out = preg_replace(array('!(\\\|/)+!', '/^[a-z]*:/'), '', $out);
+	}
+
+	// Code for search criteria persistence.
+	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield')))
+		{
+			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
+
+			// We save search key only if $out not empty that means:
+			// - posted value not empty, or
+			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+
+			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
+			{
+				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
+			}
+		}
+	}
+
+	return $out;
+}
+
+
+/**
+ *  Return a value after checking on a rule.
+ *
+ *  @param  string  $out	     Value to get/check
+ *  @param  string  $check	     Type of check
+ *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array         Value found (string or array), or '' if check fails
+ */
+function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
 	// Check is done after replacement
 	switch ($check)
 	{
@@ -580,9 +633,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'array':
-			if (!is_array($out) || empty($out)) $out = array();
-			break;
 		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
@@ -606,32 +656,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			break;
 	}
 
-	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
-	if ($paramname == 'backtopage') {
-		$out = preg_replace(array('!(\\\|/)+!', '/^[a-z]*:/'), '', $out);
-	}
-
-	// Code for search criteria persistence.
-	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
-	if (empty($method) || $method == 3 || $method == 4)
-	{
-		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield')))
-		{
-			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
-
-			// We save search key only if $out not empty that means:
-			// - posted value not empty, or
-			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
-
-			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
-			{
-				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
-			}
-		}
-	}
-
 	return $out;
 }
+
 
 
 if (!function_exists('dol_getprefix'))
