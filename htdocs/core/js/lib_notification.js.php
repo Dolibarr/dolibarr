@@ -50,7 +50,8 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
-    var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
+    //var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
+    var time_first_execution = <?php echo max(3, $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
     if (login != '') {
     	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_test = "+time_js_next_test+" time_auto_update="+time_auto_update);
     	setTimeout(first_execution, time_first_execution);
@@ -139,7 +140,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
         }
         else
         {
-        	console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+".");
+        	console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
         }
 
         time_js_next_test += time_auto_update;
