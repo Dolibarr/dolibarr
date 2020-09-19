@@ -810,7 +810,7 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 	if ($action == 'show_day')
 	{
 		// Request only leaves for the current selected day
-		$sql .= " AND '".$year."-".$month."-".$day."' BETWEEN x.date_debut AND x.date_fin";
+		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";
 	} elseif ($action == 'show_week')
 	{
 		// TODO: Add filter to reduce database request
