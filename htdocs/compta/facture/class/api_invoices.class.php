@@ -511,8 +511,6 @@ class Invoices extends DolibarrApi
 		        if (!$result) {
                     throw new RestException(500, 'Error when deleted the contact');
                 }
-                
-                break;
 		    }
 		}
 
