@@ -106,7 +106,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         if ($action != '') {
             $actions = explode('_', $action);
             $sql = 'SELECT rowid, url FROM '.MAIN_DB_PREFIX.'zapier_hook';
-            $sql .= ' WHERE module="'.$db->escape(strtolower($actions[0])).'" AND action="'.$db->escape(strtolower($actions[1])).'"';
+            $sql .= ' WHERE module="'.$this->db->escape(strtolower($actions[0])).'" AND action="'.$this->db->escape(strtolower($actions[1])).'"';
             //setEventMessages($sql, null);
         }
 
@@ -130,9 +130,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
                 //$logtriggeraction = true;
                 break;
             case 'ACTION_CREATE':
-                $resql = $db->query($sql);
+            	$resql = $this->db->query($sql);
                 // TODO voir comment regrouper les webhooks en un post
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $cleaned = cleanAgendaEventsDatas($cleaned);
                     $json = json_encode($cleaned);
@@ -153,8 +153,8 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
             // Companies
             case 'COMPANY_CREATE':
-                $resql = $db->query($sql);
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	$resql = $this->db->query($sql);
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $json = json_encode($cleaned);
                     // call the zapierPostWebhook() function
@@ -163,8 +163,8 @@ class InterfaceZapierTriggers extends DolibarrTriggers
                 $logtriggeraction = true;
                 break;
             case 'COMPANY_MODIFY':
-                $resql = $db->query($sql);
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	$resql = $this->db->query($sql);
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $json = json_encode($cleaned);
                     // call the zapierPostWebhook() function
@@ -200,8 +200,8 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
             // Customer orders
             case 'ORDER_CREATE':
-                $resql = $db->query($sql);
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	$resql = $this->db->query($sql);
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $json = json_encode($cleaned);
                     // call the zapierPostWebhook() function

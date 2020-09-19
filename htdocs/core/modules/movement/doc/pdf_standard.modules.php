@@ -242,17 +242,17 @@ class pdf_stdandard extends ModelePDFMovement
 
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('movementlist'));
-		$extrafields = new ExtraFields($db);
+		$extrafields = new ExtraFields($this->db);
 
 		// fetch optionals attributes and labels
 		$extrafields->fetch_name_optionals_label('movement');
 		$search_array_options = $extrafields->getOptionalsFromPost('movement', '', 'search_');
 
-		$productlot = new ProductLot($db);
-		$productstatic = new Product($db);
-		$warehousestatic = new Entrepot($db);
-		$movement = new MouvementStock($db);
-		$userstatic = new User($db);
+		$productlot = new ProductLot($this->db);
+		$productstatic = new Product($this->db);
+		$warehousestatic = new Entrepot($this->db);
+		$movement = new MouvementStock($this->db);
+		$userstatic = new User($this->db);
 		$element = 'movement';
 
 		$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
@@ -285,11 +285,11 @@ class pdf_stdandard extends ModelePDFMovement
 		if ($month > 0)
 		{
 			if ($year > 0)
-			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
+				$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, $month, false))."' AND '".$this->db->idate(dol_get_last_day($year, $month, false))."'";
 			else $sql .= " AND date_format(m.datem, '%m') = '$month'";
 		} elseif ($year > 0)
 		{
-			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+			$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		}
 		if ($idproduct > 0) $sql .= " AND p.rowid = ".((int) $idproduct);
 		if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
@@ -297,24 +297,24 @@ class pdf_stdandard extends ModelePDFMovement
 		if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);
 		if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
 		if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
-		if ($search_warehouse > 0)          $sql .= " AND e.rowid = ".((int) $db->escape($search_warehouse));
+		if ($search_warehouse > 0)          $sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
 		if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
 		if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
 		if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
-		if ($search_type_mouvement > 0)		$sql .= " AND m.type_mouvement = '".$db->escape($search_type_mouvement)."'";
+		if ($search_type_mouvement > 0)		$sql .= " AND m.type_mouvement = '".$this->db->escape($search_type_mouvement)."'";
 		// Add where from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
-			$result = $db->query($sql);
-			$nbtotalofrecords = $db->num_rows($result);
+			$result = $this->db->query($sql);
+			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			{
 				$page = 0;
@@ -322,11 +322,11 @@ class pdf_stdandard extends ModelePDFMovement
 			}
 		}
 
-		if (empty($search_inventorycode)) $sql .= $db->plimit($limit + 1, $offset);
+		if (empty($search_inventorycode)) $sql .= $this->db->plimit($limit + 1, $offset);
 
 
-		$resql = $db->query($sql);
-		$nbtotalofrecords = $db->num_rows($result);
+		$resql = $this->db->query($sql);
+		$nbtotalofrecords = $this->db->num_rows($result);
 
 		/*
          * END TODO
@@ -338,8 +338,8 @@ class pdf_stdandard extends ModelePDFMovement
 		{
 			if ($resql)
 			{
-				$product = new Product($db);
-				$object = new Entrepot($db);
+				$product = new Product($this->db);
+				$object = new Entrepot($this->db);
 
 				if ($idproduct > 0)
 				{
@@ -350,11 +350,11 @@ class pdf_stdandard extends ModelePDFMovement
 					$result = $object->fetch($id, $ref);
 					if ($result < 0)
 					{
-						dol_print_error($db);
+						dol_print_error($this->db);
 					}
 				}
 
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 
 				$arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -384,7 +384,7 @@ class pdf_stdandard extends ModelePDFMovement
 			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
 			$object->supplierprices = $supplierprices;
 
-			$productstatic = new Product($db);
+			$productstatic = new Product($this->db);
 
 			if (!file_exists($dir))
 			{
@@ -473,15 +473,15 @@ class pdf_stdandard extends ModelePDFMovement
 				$arrayofuniqueproduct = array();
 
 				//dol_syslog('List products', LOG_DEBUG);
-				$resql = $db->query($sql);
+				$resql = $this->db->query($sql);
 				if ($resql)
 				{
-					$num = $db->num_rows($resql);
+					$num = $this->db->num_rows($resql);
 					$i = 0;
 					$nblines = $num;
 					for ($i = 0; $i < $nblines; $i++)
 					{
-						$objp = $db->fetch_object($resql);
+						$objp = $this->db->fetch_object($resql);
 
 						// Multilangs
 						if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
@@ -492,10 +492,10 @@ class pdf_stdandard extends ModelePDFMovement
 							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
-							$result = $db->query($sql);
+							$result = $this->db->query($sql);
 							if ($result)
 							{
-								$objtp = $db->fetch_object($result);
+								$objtp = $this->db->fetch_object($result);
 								if ($objtp->label != '') $objp->produit = $objtp->label;
 							}
 						}
@@ -562,7 +562,7 @@ class pdf_stdandard extends ModelePDFMovement
 
 						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
-						// $objp = $db->fetch_object($resql);
+						// $objp = $this->db->fetch_object($resql);
 
 						$userstatic->id = $objp->fk_user_author;
 						$userstatic->login = $objp->login;
@@ -599,7 +599,7 @@ class pdf_stdandard extends ModelePDFMovement
 
 						// Date.
 						$pdf->SetXY($this->posxdatemouv, $curY);
-						$pdf->MultiCell($this->posxdesc - $this->posxdatemouv - 0.8, 6, dol_print_date($db->jdate($objp->datem), 'dayhour'), 0, 'L');
+						$pdf->MultiCell($this->posxdesc - $this->posxdatemouv - 0.8, 6, dol_print_date($this->db->jdate($objp->datem), 'dayhour'), 0, 'L');
 
 						// Ref.
 						$pdf->SetXY($this->posxdesc, $curY);
@@ -683,7 +683,7 @@ class pdf_stdandard extends ModelePDFMovement
 						}
 					}
 
-					$db->free($resql);
+					$this->db->free($resql);
 
 					/**
 					 * footer table
@@ -707,7 +707,7 @@ class pdf_stdandard extends ModelePDFMovement
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', 0);
 				} else {
-					dol_print_error($db);
+					dol_print_error($this->db);
 				}
 
 				if ($notetoshow)
@@ -1014,7 +1014,7 @@ class pdf_stdandard extends ModelePDFMovement
 
 		$posy += 4;
 		$pdf->SetXY($posx - 50, $posy);
-		$e = new MouvementStock($db);
+		$e = new MouvementStock($this->db);
 		if (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
 		{
 			$pdf->MultiCell(150, 3, $e->label, '', 'R');
@@ -1050,13 +1050,13 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql = "SELECT max(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
-		$resqlbis = $db->query($sql);
+		$resqlbis = $this->db->query($sql);
 		if ($resqlbis)
 		{
-			$obj = $db->fetch_object($resqlbis);
-			$lastmovementdate = $db->jdate($obj->datem);
+			$obj = $this->db->fetch_object($resqlbis);
+			$lastmovementdate = $this->db->jdate($obj->datem);
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		if ($lastmovementdate)

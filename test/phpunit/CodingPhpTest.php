@@ -167,18 +167,22 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $filecontent=file_get_contents($file['fullname']);
 
             if (preg_match('/\.class\.php/', $file['relativename'])
-            	|| preg_match('/^core\/boxes\/box_/', $file['relativename'])
-            	|| in_array($file['relativename'], array('core/boxes/modules_boxes.php'))) {
-            	if (! in_array($file['relativename'], array(
-            		'api/class/api.class.php',
-            		'core/class/commonobject.class.php',
-	            	'core/class/conf.class.php',
-            		'core/class/html.form.class.php',
-            		'core/class/html.formmail.class.php',
-            		'core/class/infobox.class.php',
-            		'core/class/link.class.php',
-            		'core/class/translate.class.php',
-            		'core/class/utils.class.php'
+            	|| preg_match('/boxes\/box_/', $file['relativename'])
+            	|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
+            	|| preg_match('/modules\/(import|mailings|printing)\//', $file['relativename'])
+            	|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php'))) {
+            	if (! in_array($file['name'], array(
+            		'api.class.php',
+            		'commonobject.class.php',
+	            	'conf.class.php',
+            		'html.form.class.php',
+            		'html.formmail.class.php',
+            		'infobox.class.php',
+            		'link.class.php',
+            		'translate.class.php',
+            		'utils.class.php',
+            		'modules_product.class.php',
+            		'modules_societe.class.php'
             	))) {
 	            	// Must must not found $db->
 	            	$ok=true;
@@ -195,8 +199,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	            	//exit;
             	}
             } else {
-            	if (! in_array($file['relativename'], array(
-            		'core/extrafieldsinexport.inc.php'
+            	if (! in_array($file['name'], array(
+            		'extrafieldsinexport.inc.php'
             	))) {
 	            	// Must must not found $this->db->
 	            	$ok=true;
