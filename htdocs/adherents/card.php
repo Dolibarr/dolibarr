@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-				$sql .= " WHERE socid = '".$socid."'";
+				$sql .= " WHERE socid = ".((int) $socid);
 				$sql .= " AND entity = ".$conf->entity;
 				$resql = $db->query($sql);
 				if ($resql) {

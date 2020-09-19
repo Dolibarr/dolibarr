@@ -152,10 +152,10 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 	}
 }
 
-if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
+if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->rights->banque->cheque)
 {
 	$object->id = $id;
-	$result = $object->removeCheck($_GET["lineid"]);
+	$result = $object->removeCheck(GETPOST("lineid", "int"));
 	if ($result === 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);

@@ -230,8 +230,8 @@ if (strlen(trim($search_account))) {
 				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
 				$search_account_clean = preg_replace('/^\^/', '', $search_account);
 			}
-			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
-			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
+			$sql .= " AND (aa.account_number LIKE '".$db->escape($startchar.$search_account_tmp_clean)."'";
+			$sql .= " OR aa.account_number LIKE '".$db->escape($startchar.$search_account_clean)."%')";
 		} else $sql .= natural_search("aa.account_number", $search_account_tmp);
 	}
 }
@@ -264,14 +264,14 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
 	if ($search_label) $param .= '&search_label='.urlencode($search_label);
 	if ($search_labelshort) $param .= '&search_labelshort='.urlencode($search_labelshort);
 	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
     if (!empty($conf->use_javascript_ajax))
     {
