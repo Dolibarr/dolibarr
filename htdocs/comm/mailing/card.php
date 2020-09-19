@@ -462,14 +462,14 @@ if (empty($reshook))
 	{
 		$mesgs = array();
 
-		$object->email_from     = trim($_POST["from"]);
-		$object->email_replyto  = trim($_POST["replyto"]);
-		$object->email_errorsto = trim($_POST["errorsto"]);
-		$object->titre          = trim($_POST["titre"]);
-		$object->sujet          = trim($_POST["sujet"]);
-		$object->body           = trim($_POST["bodyemail"]);
-		$object->bgcolor        = trim($_POST["bgcolor"]);
-		$object->bgimage        = trim($_POST["bgimage"]);
+		$object->email_from     = GETPOST("from");
+		$object->email_replyto  = GETPOST("replyto");
+		$object->email_errorsto = GETPOST("errorsto");
+		$object->titre          = GETPOST("titre");
+		$object->sujet          = GETPOST("sujet");
+		$object->body           = GETPOST("bodyemail", 'restricthtml');
+		$object->bgcolor        = GETPOST("bgcolor");
+		$object->bgimage        = GETPOST("bgimage");
 
 		if (!$object->titre) {
 			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
@@ -563,10 +563,10 @@ if (empty($reshook))
 		{
 			$mesgs = array();
 
-			$object->sujet          = trim($_POST["sujet"]);
-			$object->body           = trim($_POST["bodyemail"]);
-			$object->bgcolor        = trim($_POST["bgcolor"]);
-			$object->bgimage        = trim($_POST["bgimage"]);
+			$object->sujet          = GETPOST("sujet");
+			$object->body           = GETPOST("bodyemail", 'restricthtml');
+			$object->bgcolor        = GETPOST("bgcolor");
+			$object->bgimage        = GETPOST("bgimage");
 
 			if (!$object->sujet) {
 				$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTopic"));
