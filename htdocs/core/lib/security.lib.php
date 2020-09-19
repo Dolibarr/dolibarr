@@ -528,7 +528,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";

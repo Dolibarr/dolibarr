@@ -4908,9 +4908,9 @@ function get_localtax_by_third($local)
 	global $db, $mysoc;
 	$sql = "SELECT t.localtax1, t.localtax2 ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql .= " WHERE c.code = '".$mysoc->country_code."' AND t.active = 1 AND t.taux=(";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux=(";
 	$sql .= "  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql .= "  WHERE c.code = '".$mysoc->country_code."' AND tt.active = 1";
+	$sql .= "  WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1";
 	$sql .= "  )";
 
 	$resql = $db->query($sql);
@@ -4956,11 +4956,11 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // vat in spain use the buyer country ??
-		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";*/
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'";    // vat in spain use the buyer country ??
+		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";*/
+		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-		if ($vatratecode) $sql .= " AND t.code = '".$vatratecode."'";
+		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -5011,10 +5011,10 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'"; // local tax in spain use the buyer country ??
-		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'"; // local tax in spain use the buyer country ??
+		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-		if ($vatratecode) $sql .= " AND t.code = '".$vatratecode."'";
+		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -5088,7 +5088,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
 			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -5153,7 +5153,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 

@@ -133,7 +133,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $posindice = strlen($prefix) + 6;
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE ".$field." LIKE '".$prefix."____-%'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);

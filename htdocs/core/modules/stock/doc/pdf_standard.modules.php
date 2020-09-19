@@ -863,7 +863,7 @@ class pdf_standard extends ModelePDFStock
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-		$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 		$resqlbis = $db->query($sql);
 		if ($resqlbis)
 		{
