@@ -503,11 +503,11 @@ class Invoices extends DolibarrApi
 		}
 
         $contacts = $this->invoice->liste_contact();
-		
+
 		foreach ($contacts as $contact) {
 		    if ($contact['id'] == $rowid) {
 		        $result = $this->invoice->delete_contact($contact['rowid']);
-		        
+
 		        if (!$result) {
                     throw new RestException(500, 'Error when deleted the contact');
                 }
