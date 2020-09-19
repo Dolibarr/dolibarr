@@ -1457,15 +1457,15 @@ class Invoices extends DolibarrApi
         		$this->db->rollback();
         		throw new RestException(404, 'Invoice ID '.$id.' not found');
         	}
-        	
+
         	if (($amountarray["amount"] == "remain" || $amountarray["amount"] > 0) && ($amountarray["multicurrency_amount"] == "remain" || $amountarray["multicurrency_amount"] > 0)) {
         	    $this->db->rollback();
         	    throw new RestException(400, 'Payment in both currency '.$id.' ( amount: '.$amountarray["amount"].', multicurrency_amount: '.$amountarray["multicurrency_amount"].')');
         	}
-        	
+
         	$is_multicurrency = 0;
         	$total_ttc = $this->invoice->total_ttc;
-        	
+
         	if ($amountarray["multicurrency_amount"] > 0 || $amountarray["multicurrency_amount"] == "remain") {
         	    $is_multicurrency = 1;
         	    $total_ttc = $this->invoice->multicurrency_total_ttc;
@@ -1476,21 +1476,21 @@ class Invoices extends DolibarrApi
         	$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
         	$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
         	$amount = price2num($total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-        	
+
         	if (!$is_multicurrency && $amountarray["amount"] != 'remain')
         	{
         	    $amount = price2num($amountarray["amount"], 'MT');
         	}
-        	
+
         	if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain')
         	{
         	    $amount = price2num($amountarray["multicurrency_amount"], 'MT');
         	}
-        	
+
         	if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
         	    $amount = -$amount;
         	}
-        	
+
             if ($is_multicurrency) {
                 $amounts[$id] = null;
                 // Multicurrency
