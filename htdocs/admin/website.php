@@ -252,7 +252,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
             $i++;
         }
-        $sql .= " WHERE ".$rowidcol." = '".$rowid."'";
+        $sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 
         dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
@@ -310,16 +310,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     if ($website->id > 0)
     {
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website = ".((int) $rowid);
     	$result = $db->query($sql);
 
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website = ".((int) $rowid);
     	$result = $db->query($sql);
 
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object = ".((int) $rowid);
     	$result = $db->query($sql);
 
-    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid = ".((int) $rowid);
 	    $result = $db->query($sql);
 	    if (!$result)
 	    {
@@ -346,7 +346,7 @@ if ($action == $acts[0])
     if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET status = 1 WHERE rowid ='".$rowid."'";
+        $sql = "UPDATE ".$tabname[$id]." SET status = 1 WHERE rowid = ".((int) $rowid);
     }
 
     $result = $db->query($sql);
@@ -362,7 +362,7 @@ if ($action == $acts[1])
     if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET status = 0 WHERE rowid ='".$rowid."'";
+        $sql = "UPDATE ".$tabname[$id]." SET status = 0 WHERE rowid = ".((int) $rowid);
     }
 
     $result = $db->query($sql);

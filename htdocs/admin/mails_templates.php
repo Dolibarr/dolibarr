@@ -341,7 +341,7 @@ if (empty($reshook))
 				$i++;
 			}
 
-			$sql .= " WHERE ".$rowidcol." = '".$rowid."'";
+			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 			//print $sql;exit;
 			dol_syslog("actionmodify", LOG_DEBUG);
 			//print $sql;
@@ -359,7 +359,7 @@ if (empty($reshook))
 	{
 		$rowidcol = "rowid";
 
-		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
 
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -379,7 +379,7 @@ if (empty($reshook))
 	{
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."=".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result)
@@ -393,7 +393,7 @@ if (empty($reshook))
 	{
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."=".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result)
@@ -443,7 +443,7 @@ if (!$user->admin)
 }
 if (empty($conf->global->MAIN_MULTILANGS))
 {
-	$sql .= " AND (lang = '".$langs->defaultlang."' OR lang IS NULL OR lang = '')";
+	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
 }
 if ($search_label) $sql .= natural_search('label', $search_label);
 if ($search_type_template != '' && $search_type_template != '-1') $sql .= natural_search('type_template', $search_type_template);
