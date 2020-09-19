@@ -138,8 +138,8 @@ if ($year > 0)
     $sql .= " AND (";
     // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
     // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-    $sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$year."') ";
-    $sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$year."')";
+    $sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$db->escape($year)."') ";
+    $sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
     $sql .= ")";
 }
 if ($filtre) {

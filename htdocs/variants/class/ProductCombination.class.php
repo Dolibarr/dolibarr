@@ -27,7 +27,7 @@ class ProductCombination
 	 * Database handler
 	 * @var DoliDB
 	 */
-	private $db;
+	public $db;
 
 	/**
 	 * Rowid of combination
@@ -672,14 +672,14 @@ class ProductCombination
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
-		$db->begin();
+		$this->db->begin();
 
 		$price_impact = array(1=>0); // init level price impact
 
 		$forced_refvar = trim($forced_refvar);
 
 		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
-			$existingProduct = new Product($db);
+			$existingProduct = new Product($this->db);
 			$result = $existingProduct->fetch('', $forced_refvar);
 			if ($result > 0) {
 				$newproduct = $existingProduct;
@@ -705,7 +705,7 @@ class ProductCombination
 			$price_impact = $forced_pricevar;
 		}
 
-		$newcomb = new ProductCombination($db);
+		$newcomb = new ProductCombination($this->db);
 		$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);
 
 		if ($existingCombination) {
@@ -718,13 +718,13 @@ class ProductCombination
 			if ($result < 0) {
 				$this->error = $newcomb->error;
 				$this->errors = $newcomb->errors;
-				$db->rollback();
+				$this->db->rollback();
 				return -1;
 			}
 		}
 
-		$prodattr = new ProductAttribute($db);
-		$prodattrval = new ProductAttributeValue($db);
+		$prodattr = new ProductAttribute($this->db);
+		$prodattrval = new ProductAttributeValue($this->db);
 
 		// $combination contains list of attributes pairs key->value. Example: array('id Color'=>id Blue, 'id Size'=>id Small, 'id Option'=>id val a, ...)
 		//var_dump($combinations);
@@ -735,7 +735,7 @@ class ProductCombination
 
 			//If there is an existing combination, there is no need to duplicate the valuepair
 			if (!$existingCombination) {
-				$tmp = new ProductCombination2ValuePair($db);
+				$tmp = new ProductCombination2ValuePair($this->db);
 				$tmp->fk_prod_attr = $currcombattr;
 				$tmp->fk_prod_attr_val = $currcombval;
 				$tmp->fk_prod_combination = $newcomb->id;
@@ -743,7 +743,7 @@ class ProductCombination
 				if ($tmp->create($user) < 0) {		// Create 1 entry into product_attribute_combination2val
 					$this->error = $tmp->error;
 					$this->errors = $tmp->errors;
-					$db->rollback();
+					$this->db->rollback();
 					return -1;
 				}
 			}
@@ -822,7 +822,7 @@ class ProductCombination
 				if ($newproduct->error != 'ErrorProductAlreadyExists') {
 					$this->error[] = $newproduct->error;
 					$this->errors = $newproduct->errors;
-					$db->rollback();
+					$this->db->rollback();
 					return -1;
 				}
 
@@ -851,7 +851,7 @@ class ProductCombination
 				}
 
 				if ($res < 0) {
-					$db->rollback();
+					$this->db->rollback();
 					return -1;
 				}
 			}
@@ -859,7 +859,7 @@ class ProductCombination
 			$result = $newproduct->update($newproduct->id, $user);
 			if ($result < 0)
 			{
-				$db->rollback();
+				$this->db->rollback();
 				return -1;
 			}
 		}
@@ -870,11 +870,11 @@ class ProductCombination
 		{
 			$this->error = $newcomb->error;
 			$this->errors = $newcomb->errors;
-			$db->rollback();
+			$this->db->rollback();
 			return -1;
 		}
 
-		$db->commit();
+		$this->db->commit();
 		return $newproduct->id;
 	}
 
@@ -971,7 +971,7 @@ class ProductCombinationLevel
 	 * Database handler
 	 * @var DoliDB
 	 */
-	private $db;
+	public $db;
 
 	/**
 	 * @var string Name of table without prefix where object is stored

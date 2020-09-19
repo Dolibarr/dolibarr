@@ -99,7 +99,7 @@ class Mos extends DolibarrApi
 		global $db, $conf;
 
 		$obj_ret = array();
-		$tmpobject = new Mo($db);
+		$tmpobject = new Mo($this->db);
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
@@ -139,7 +139,7 @@ class Mos extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0)
 			{
@@ -147,18 +147,18 @@ class Mos extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($result);
-				$tmp_object = new Mo($db);
+				$obj = $this->db->fetch_object($result);
+				$tmp_object = new Mo($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
 				}

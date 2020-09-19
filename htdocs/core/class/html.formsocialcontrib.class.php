@@ -88,10 +88,10 @@ class FormSocialContrib
         }
 
         dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
-        $resql = $db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $db->num_rows($resql);
+        	$num = $this->db->num_rows($resql);
             if ($num)
             {
             	print '<select class="'.($morecss ? $morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -100,7 +100,7 @@ class FormSocialContrib
                 if ($useempty) print '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object($resql);
+                	$obj = $this->db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
                     if ($obj->id == $selected) print ' selected';
                     print '>'.dol_trunc($obj->type, $maxlen);
@@ -113,7 +113,7 @@ class FormSocialContrib
                 print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
             }
         } else {
-            dol_print_error($db, $db->lasterror());
+        	dol_print_error($this->db);
         }
     }
 }

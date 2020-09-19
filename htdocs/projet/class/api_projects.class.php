@@ -131,7 +131,7 @@ class Projects extends DolibarrApi
         }
     	// Select projects of given category
     	if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_project = t.rowid ";
+    		$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_project = t.rowid ";
     	}
         // Add sql filters
         if ($sqlfilters)
@@ -144,7 +144,7 @@ class Projects extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0)
             {
@@ -152,27 +152,27 @@ class Projects extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
         dol_syslog("API Rest request");
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
 
         if ($result)
         {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $project_static = new Project($db);
+            	$obj = $this->db->fetch_object($result);
+            	$project_static = new Project($this->db);
                 if ($project_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($project_static);
                 }
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve project list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve project list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No project found');

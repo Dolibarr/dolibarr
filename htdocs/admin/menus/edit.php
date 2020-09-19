@@ -233,24 +233,25 @@ if ($action == 'add')
 // delete
 if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-	$this->db->begin();
+	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
 	$result = $db->query($sql);
 
 	if ($result == 0)
 	{
-		$this->db->commit();
+		$db->commit();
 
 		llxHeader();
 		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
 		llxFooter();
 		exit;
 	} else {
-		$this->db->rollback();
+		$db->rollback();
 
 		$reload = 0;
 		$_GET["action"] = '';
+		$action = '';
 	}
 }
 

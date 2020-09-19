@@ -550,7 +550,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		if (!is_array($out) || empty($out)) {
 			$out = array();
 		} else {
-			foreach($out as $outkey => $outval) {
+			foreach ($out as $outkey => $outval) {
 				$out[$outkey] = checkVal($outval, 'alphanohtml', $filter, $options);
 			}
 		}

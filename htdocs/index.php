@@ -428,7 +428,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
-		$nb = $board::countAccountToReconcile(); // Get nb of account to reconciliate
+		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
 		if ($nb > 0) {
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}

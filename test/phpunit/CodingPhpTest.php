@@ -152,7 +152,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT.'/bom', 'files', 1, '\.php', null, 'fullname');
+        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
         //$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
         foreach ($filesarray as $key => $file)
@@ -166,12 +166,52 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
 
-            if (preg_match('/\.class\.php/', $file['relativename'])) {
-            	// Must must not found $db->
-
+            if (preg_match('/\.class\.php/', $file['relativename'])
+            	|| preg_match('/^core\/boxes\/box_/', $file['relativename'])
+            	|| in_array($file['relativename'], array('core/boxes/modules_boxes.php'))) {
+            	if (! in_array($file['relativename'], array(
+            		'api/class/api.class.php',
+            		'core/class/commonobject.class.php',
+	            	'core/class/conf.class.php',
+            		'core/class/html.form.class.php',
+            		'core/class/html.formmail.class.php',
+            		'core/class/infobox.class.php',
+            		'core/class/link.class.php',
+            		'core/class/translate.class.php',
+            		'core/class/utils.class.php'
+            	))) {
+	            	// Must must not found $db->
+	            	$ok=true;
+	            	$matches=array();
+	            	// Check string get_class...
+	            	preg_match_all('/'.preg_quote('$db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
+	            	foreach ($matches as $key => $val)
+	            	{
+	            		$ok=false;
+	            		break;
+	            	}
+	            	//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+	            	$this->assertTrue($ok, 'Found string $db-> into a .class.php file in '.$file['relativename']);
+	            	//exit;
+            	}
             } else {
-            	// Must must not found $this->db->
-
+            	if (! in_array($file['relativename'], array(
+            		'core/extrafieldsinexport.inc.php'
+            	))) {
+	            	// Must must not found $this->db->
+	            	$ok=true;
+	            	$matches=array();
+	            	// Check string get_class...
+	            	preg_match_all('/'.preg_quote('$this->db->', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
+	            	foreach ($matches as $key => $val)
+	            	{
+	            		$ok=false;
+	            		break;
+	            	}
+	            	//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+	            	$this->assertTrue($ok, 'Found string $this->db-> in '.$file['relativename']);
+	            	//exit;
+            	}
             }
 
             $ok=true;

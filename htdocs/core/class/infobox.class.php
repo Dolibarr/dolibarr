@@ -125,6 +125,7 @@ class InfoBox
 
                 if (!in_array($obj->box_id, $excludelist))
                 {
+                	$regs = array();
                     if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
                     {
                         $boxname = preg_replace('/\.php$/i', '', $regs[1]);

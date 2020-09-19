@@ -211,7 +211,7 @@ class RemiseCheque extends CommonObject
 				$sql .= " WHERE b.fk_type = 'CHQ'";
 				$sql .= " AND b.amount > 0";
 				$sql .= " AND b.fk_bordereau = 0";
-				$sql .= " AND b.fk_account='".$account_id."'";
+				$sql .= " AND b.fk_account = ".((int) $account_id);
 				if ($limit) $sql .= $this->db->plimit($limit);
 
 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
@@ -775,18 +775,18 @@ class RemiseCheque extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 		$sql .= ' WHERE pf.fk_paiement = '.$payment->id;
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$rejectedPayment = new Paiement($db);
+			$rejectedPayment = new Paiement($this->db);
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
 			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement', 'code', 'id', 1);
 			$rejectedPayment->num_payment = $payment->num_payment;
 
-			while ($obj = $db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
-				$invoice = new Facture($db);
+				$invoice = new Facture($this->db);
 				$invoice->fetch($obj->fk_facture);
 				$invoice->set_unpaid($user);
 

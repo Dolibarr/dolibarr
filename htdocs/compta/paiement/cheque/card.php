@@ -57,7 +57,7 @@ $offset = $limit * $page;
 
 $dir = $conf->bank->dir_output.'/checkdeposits/';
 $filterdate = dol_mktime(0, 0, 0, GETPOST('fdmonth'), GETPOST('fdday'), GETPOST('fdyear'));
-$filteraccountid = GETPOST('accountid');
+$filteraccountid = GETPOST('accountid', 'int');
 
 $object = new RemiseCheque($db);
 
@@ -394,7 +394,7 @@ if ($action == 'new')
 	$sql .= " AND b.fk_bordereau = 0";
 	$sql .= " AND b.amount > 0";
 	if ($filterdate)          $sql .= " AND b.dateo = '".$db->idate($filterdate)."'";
-    if ($filteraccountid > 0) $sql .= " AND ba.rowid= '".$filteraccountid."'";
+    if ($filteraccountid > 0) $sql .= " AND ba.rowid = ".((int) $filteraccountid);
 	$sql .= $db->order("b.dateo,b.rowid", "ASC");
 
 	$resql = $db->query($sql);

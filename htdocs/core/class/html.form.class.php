@@ -2108,9 +2108,9 @@ class Form
 		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray))
 		{
-			$selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
+			$selectFieldsGrouped = ", sum(".$this->db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
 		} else {
-			$selectFieldsGrouped = ", ".$db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
+			$selectFieldsGrouped = ", ".$this->db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
 		}
 
 		$sql = "SELECT ";
@@ -2226,19 +2226,19 @@ class Form
 			foreach ($scrit as $crit)
 			{
 				if ($i > 0) $sql .= " AND ";
-				$sql .= "(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
-				if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
+				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION))
 				{
-					$sql .= " OR p.description LIKE '".$db->escape($prefix.$crit)."%'";
-					if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.description LIKE '".$db->escape($prefix.$crit)."%'";
+					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
+					if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.description LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
-				if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql .= " OR pfp.ref_fourn LIKE '".$db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql .= " OR pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%'";
 				$sql .= ")";
 				$i++;
 			}
 			if (count($scrit) > 1) $sql .= ")";
-		  	if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '".$db->escape($prefix.$filterkey)."%'";
+			if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			$sql .= ')';
 		}
 		if (count($warehouseStatusArray))
@@ -2253,10 +2253,10 @@ class Form
 			//ASC OR DESC order
 			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .= "ASC" : $sql .= "DESC";
 		} else {
-			$sql .= $db->order("p.ref");
+			$sql .= $this->db->order("p.ref");
 		}
 
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
 		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
@@ -2770,7 +2770,7 @@ class Form
 			$sql .= ')';
 		}
 		$sql .= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
 
@@ -4913,10 +4913,10 @@ class Form
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj = $db->fetch_object($resql)) $TCurrency[$obj->code] = $obj->code;
+			while ($obj = $this->db->fetch_object($resql)) $TCurrency[$obj->code] = $obj->code;
 		}
 
 		$out = '';

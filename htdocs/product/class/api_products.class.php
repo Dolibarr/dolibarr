@@ -178,7 +178,7 @@ class Products extends DolibarrApi
         $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
         // Select products of given category
         if ($category > 0) {
-            $sql .= " AND c.fk_categorie = ".$db->escape($category);
+        	$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
             $sql .= " AND c.fk_product = t.rowid ";
         }
         if ($mode == 1) {
@@ -197,32 +197,32 @@ class Products extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $product_static = new Product($db);
+            	$obj = $this->db->fetch_object($result);
+            	$product_static = new Product($this->db);
                 if ($product_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No product found');
@@ -762,12 +762,12 @@ class Products extends DolibarrApi
         $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
         if ($supplier > 0) {
-            $sql .= " AND s.fk_soc = ".$db->escape($supplier);
+        	$sql .= " AND s.fk_soc = ".$this->db->escape($supplier);
         }
         $sql .= " AND s.fk_product = t.rowid";
         // Select products of given category
         if ($category > 0) {
-            $sql .= " AND c.fk_categorie = ".$db->escape($category);
+        	$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
             $sql .= " AND c.fk_product = t.rowid";
         }
         if ($mode == 1) {
@@ -785,22 +785,22 @@ class Products extends DolibarrApi
             $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
+            	$obj = $this->db->fetch_object($result);
 
                 $product_fourn = new ProductFournisseur($this->db);
                 $product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
@@ -814,7 +814,7 @@ class Products extends DolibarrApi
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No product found');
