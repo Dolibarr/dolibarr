@@ -273,12 +273,13 @@ class InfoBox
                         //dol_syslog("aaaaa".count($listarray));
                         $i++;
                         $ii = sprintf('%02d', $i);
+
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
                         $sql .= "(box_id, position, box_order, fk_user, entity)";
                         $sql .= " values (";
                         $sql .= " ".$id.",";
                         $sql .= " ".$zone.",";
-                        $sql .= " '".$colonne.$ii."',";
+                        $sql .= " '".$this->db->escape($colonne.$ii)."',";
                         $sql .= " ".$userid.",";
                         $sql .= " ".$conf->entity;
                         $sql .= ")";

@@ -152,7 +152,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
+        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT.'/core', 'files', 1, '\.php', null, 'fullname');
         //$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
         foreach ($filesarray as $key => $file)
@@ -166,10 +166,17 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
 
+            if (preg_match('/\.class\.php/', $file['relativename'])) {
+            	// Must must not found $db->
+
+            } else {
+            	// Must must not found $this->db->
+
+            }
 
             $ok=true;
             $matches=array();
-            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            // Check string get_class...
             preg_match_all('/'.preg_quote('get_class($this)."::".__METHOD__', '/').'/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
@@ -182,7 +189,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 
             $ok=true;
             $matches=array();
-            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            // Check string $this->db->idate without quotes
             preg_match_all('/(..)\s*\.\s*\$this->db->idate\(/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
@@ -200,11 +207,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 
             $ok=true;
             $matches=array();
+
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/(=|sql.+)\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
-                if ($val[2] != 'db->' && $val[2] != 'esca')
+                if ($val[1] != 'db->' && $val[1] != 'esca')
                 {
                     $ok=false;
                     break;
@@ -212,7 +220,21 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].' ('.$val[0].'). Bad.');
+            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].': '.$val[0].' - Bad.');
+            //exit;
+
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/sql.+\s*\'"\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach ($matches as $key => $val)
+            {
+            	if (! in_array($val[1], array('this->db-', 'this->esc', 'db->escap', 'db->idate', 'excludeGr', 'includeGr'))) {
+            		$ok=false;
+            		break;
+            	}
+            	//if ($reg[0] != 'db') $ok=false;
+            }
+            //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+            $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['relativename'].': '.$val[0].' - Bad.');
             //exit;
 
 

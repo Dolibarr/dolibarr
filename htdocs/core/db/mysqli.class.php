@@ -693,7 +693,7 @@ class DoliDBMysqli extends DoliDB
 				if ((preg_match("/null/i", $field_desc['default'])) || (preg_match("/CURRENT_TIMESTAMP/i", $field_desc['default']))) {
 					$sqlfields[$i]  .= " default ".$field_desc['default'];
 				} else {
-					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+					$sqlfields[$i]  .= " default '".$this->escape($field_desc['default'])."'";
 				}
 			}
 			if (preg_match("/^[^\s]/i", $field_desc['null'])) {
@@ -711,7 +711,7 @@ class DoliDBMysqli extends DoliDB
             $i = 0;
             foreach ($unique_keys as $key => $value)
             {
-                $sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
+                $sqluq[$i] = "UNIQUE KEY '".$key."' ('".$this->escape($value)."')";
                 $i++;
             }
         }
@@ -809,7 +809,7 @@ class DoliDBMysqli extends DoliDB
         {
             if (preg_match("/null/i", $field_desc['default']))
             $sql .= " default ".$field_desc['default'];
-            else $sql .= " default '".$field_desc['default']."'";
+            else $sql .= " default '".$this->escape($field_desc['default'])."'";
         }
         if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra']))
         {

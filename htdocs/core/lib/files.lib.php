@@ -142,6 +142,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 
 							if (!$filter || preg_match('/'.$filter.'/i', $file))	// We do not search key $filter into all $path, only into $file part
 							{
+								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
 								$file_list[] = array(
