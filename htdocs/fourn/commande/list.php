@@ -137,7 +137,7 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"] = "NotePrivate";
 $checkedtypetiers = 0;
 $arrayfields = array(
 	'cf.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplierShort"), 'checked'=>1, 'enabled'=>1),
+	'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplierShort"), 'checked'=>1, 'enabled'=>1, 'css'=>'tdoverflowmaxwidth100'),
 	'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
 	'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
@@ -771,17 +771,17 @@ if ($resql)
 	// Ref
 	if (!empty($arrayfields['cf.ref']['checked']))
 	{
-		print '<td class="liste_titre"><input size="8" type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
+		print '<td class="liste_titre"><input size="8" type="text" class="flat maxwidth75" name="search_ref" value="'.$search_ref.'"></td>';
 	}
 	// Ref customer
 	if (!empty($arrayfields['cf.ref_supplier']['checked']))
 	{
-		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_refsupp" value="'.$search_refsupp.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_refsupp" value="'.$search_refsupp.'"></td>';
 	}
 	// Project ref
 	if (!empty($arrayfields['p.project_ref']['checked']))
 	{
-		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	}
 	// Request author
 	if (!empty($arrayfields['u.login']['checked']))
@@ -937,7 +937,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['cf.ref']['checked']))            print_liste_field_titre($arrayfields['cf.ref']['label'], $_SERVER["PHP_SELF"], "cf.ref", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['cf.ref_supplier']['checked']))   print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.ref_supplier']['checked']))   print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100imp ');
 	if (!empty($arrayfields['p.project_ref']['checked'])) 	   print_liste_field_titre($arrayfields['p.project_ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['u.login']['checked'])) 	       print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))             print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
