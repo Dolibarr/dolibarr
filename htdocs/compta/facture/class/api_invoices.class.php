@@ -1510,8 +1510,8 @@ class Invoices extends DolibarrApi
         $paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
         $paymentobj->paiementid   = $paymentid;
         $paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
-        $paymentobj->num_paiement = $num_payment;
-        $paymentobj->note         = $comment;
+        $paymentobj->num_payment  = $num_payment;
+        $paymentobj->note_private = $comment;
         $paymentobj->ref_ext      = $ref_ext;
         $payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
         if ($payment_id < 0)
