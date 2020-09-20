@@ -49,7 +49,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 }
 
 /**
- * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
+ * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
  * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
@@ -95,12 +95,14 @@ function testSqlAndScriptInject($val, $type)
 	// All examples on page: http://ha.ckers.org/xss.html#XSScalc
 	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
 	$inj += preg_match('/<audio/i', $val);
+	$inj += preg_match('/<embed/i', $val);
 	$inj += preg_match('/<iframe/i', $val);
 	$inj += preg_match('/<object/i', $val);
 	$inj += preg_match('/<script/i', $val);
 	$inj += preg_match('/Set\.constructor/i', $val); // ECMA script 6
 	if (!defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
-	$inj += preg_match('/base[\s]+href/si', $val);
+	$inj += preg_match('/base\s+href/si', $val);
+	$inj += preg_match('/=data:/si', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
 	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val); //
@@ -112,11 +114,8 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
-	//if ($type == 1)
-	//{
-		$inj += preg_match('/javascript\s*:/i', $val);
-		$inj += preg_match('/vbscript:/i', $val);
-	//}
+	$inj += preg_match('/javascript\s*:/i', $val);
+	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1) $inj += preg_match('/"/i', $val); // We refused " in GET parameters value
 	if ($type == 2) $inj += preg_match('/[;"]/', $val); // PHP_SELF is a file system path. It can contains spaces.
@@ -140,7 +139,13 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			{
 				//$var[$key] = $value;	// This is useless
 			} else {
-				print 'Access refused by SQL/Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
+				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
+				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
+				print $errormessage;
+				// Add entry into error log
+				error_log($errormessage);
+				// TODO Add entry into security audit table
 				exit;
 			}
 		}
