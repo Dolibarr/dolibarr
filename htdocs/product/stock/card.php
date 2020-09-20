@@ -432,7 +432,7 @@ if ($action == 'create')
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -555,7 +555,7 @@ if ($action == 'create')
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql .= " WHERE fk_product=".$objp->rowid;
-						$sql .= " AND lang='".$langs->getDefaultLang()."'";
+						$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 						$sql .= " LIMIT 1";
 
 						$result = $db->query($sql);

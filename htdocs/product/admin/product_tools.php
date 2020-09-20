@@ -184,7 +184,7 @@ if ($action == 'convert')
 		$sql .= " AND tva_tx = '".$db->escape($oldvatrate)."'";
 		if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		else " AND default_vat_code = IS NULL";
-		$sql .= " AND s.fk_pays = '".$country_id."'";
+		$sql .= " AND s.fk_pays = ".((int) $country_id);
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql)

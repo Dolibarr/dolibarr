@@ -483,7 +483,7 @@ $sql .= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
 if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
 $sql .= dolSqlDateFilter('m.datem', 0, $month, $year);
-if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
+if ($idproduct > 0) $sql .= " AND p.rowid = ".((int) $idproduct);
 if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
 if (!empty($search_movement))      $sql .= natural_search('m.label', $search_movement);
 if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);
@@ -624,7 +624,7 @@ if ($resql)
 		// Last movement
 		$sql = "SELECT MAX(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-		$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 		$resqlbis = $db->query($sql);
 		if ($resqlbis)
 		{

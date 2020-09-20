@@ -327,7 +327,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product=".$objp->rowid;
-					$sql .= " AND lang='".$langs->getDefaultLang()."'";
+					$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 
 					$resultd = $db->query($sql);
 					if ($resultd)
