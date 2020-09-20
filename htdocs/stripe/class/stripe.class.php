@@ -92,7 +92,7 @@ class Stripe extends CommonObject
 		$sql = "SELECT tokenstring";
 		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND service = '".$mode."'";
+		$sql .= " AND service = '".$this->db->escape($mode)."'";
 		if ($fk_soc > 0) {
 			$sql .= " AND fk_soc = ".$fk_soc;
 		} else {
@@ -356,9 +356,9 @@ class Stripe extends CommonObject
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
 			$sql .= " WHERE pi.fk_facture = ".$object->id;
-			$sql .= " AND pi.sourcetype = '".$object->element."'";
+			$sql .= " AND pi.sourcetype = '".$this->db->escape($object->element)."'";
 			$sql .= " AND pi.entity IN (".getEntity('societe').")";
-			$sql .= " AND pi.ext_payment_site = '".$service."'";
+			$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
 
 			dol_syslog(get_class($this)."::getPaymentIntent search stripe payment intent for object id = ".$object->id, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -465,7 +465,7 @@ class Stripe extends CommonObject
 					$sql = "SELECT pi.rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
 					$sql .= " WHERE pi.entity IN (".getEntity('societe').")";
-					$sql .= " AND pi.ext_payment_site = '".$service."'";
+					$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
 					$sql .= " AND pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
 
 					dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_facture_demande", LOG_DEBUG);
@@ -484,7 +484,7 @@ class Stripe extends CommonObject
 					{
 						$now = dol_now();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$service."', ".$amount.")";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$this->db->escape($service)."', ".$amount.")";
 						$resql = $this->db->query($sql);
 						if (!$resql)
 						{
@@ -617,7 +617,7 @@ class Stripe extends CommonObject
 					$sql = "SELECT pi.rowid";
 					$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
 					$sql.= " WHERE pi.entity IN (".getEntity('societe').")";
-					$sql.= " AND pi.ext_payment_site = '" . $service . "'";
+					$sql.= " AND pi.ext_payment_site = '" . $this->db->escape($service) . "'";
 					$sql.= " AND pi.ext_payment_id = '".$this->db->escape($setupintent->id)."'";
 
 					dol_syslog(get_class($this) . "::getPaymentIntent search if payment intent already in prelevement_facture_demande", LOG_DEBUG);
@@ -637,7 +637,7 @@ class Stripe extends CommonObject
 					{
 						$now=dol_now();
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "', ".$amount.")";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $this->db->escape($service) . "', ".$amount.")";
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{

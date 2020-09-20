@@ -152,7 +152,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT.'/product', 'files', 1, '\.php', null, 'fullname');
+        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT.'/ticket', 'files', 1, '\.php', null, 'fullname');
         //$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
         foreach ($filesarray as $key => $file)
@@ -188,7 +188,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             		'expensereport_ik.class.php',
             		'expensereport_rule.class.php',
             		'multicurrency.class.php',
-            		'productbatch.class.php'
+            		'productbatch.class.php',
+            		'reception.class.php',
+            		'societe.class.php'
             	))) {
 	            	// Must must not found $db->
 	            	$ok=true;

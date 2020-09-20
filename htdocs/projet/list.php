@@ -282,7 +282,7 @@ if (!$user->rights->projet->all->lire) $projectsListId = $object->getProjectsAut
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype = array();
 $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql .= " WHERE ctc.element = '".$object->element."'";
+$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
 $sql .= " AND ctc.source = 'internal'";
 $resql = $db->query($sql);
 if ($resql)

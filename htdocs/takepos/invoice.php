@@ -169,11 +169,11 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
-		$sql .= "fk_soc = '".$invoice->socid."' ";
-		$sql .= "AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
-		$sql .= "AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
-		$sql .= "ORDER BY rowid DESC";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE";
+		$sql .= " fk_soc = ".((int) $invoice->socid);
+		$sql .= " AND type <> ".Facture::TYPE_CREDIT_NOTE;
+		$sql .= " AND fk_statut >= ".$invoice::STATUS_VALIDATED;
+		$sql .= " ORDER BY rowid DESC";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -394,7 +394,7 @@ if ($action == "deleteline") {
 		$invoice->deleteline($idline);
 		$invoice->fetch($placeid);
 	} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture='".$placeid."' order by rowid DESC";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
 		$resql = $db->query($sql);
 		$row = $db->fetch_array($resql);
 		$deletelineid = $row[0];
@@ -427,7 +427,7 @@ if ($action == "delete") {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
 			$resql2 = $db->query($sql);
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
-			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-".$db->escape($place).")'";
 			$resql3 = $db->query($sql);
 
 			$invoice->update_price(1);

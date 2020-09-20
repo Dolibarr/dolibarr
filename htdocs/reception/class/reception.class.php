@@ -1012,21 +1012,20 @@ class Reception extends CommonObject
     public function fetch_lines()
 	{
 		// phpcs:enable
-		global $db;
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!empty($resql)) {
 			$this->lines = array();
 			while ($obj = $resql->fetch_object()) {
-				$line = new CommandeFournisseurDispatch($db);
+				$line = new CommandeFournisseurDispatch($this->db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
 				$sql_commfourndet = 'SELECT qty, ref,  label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
 				$resql_commfourndet = $db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
-					$obj = $db->fetch_object($resql_commfourndet);
+					$obj = $this->db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
 					$line->description = $line->comment;
 					$line->desc = $line->comment;

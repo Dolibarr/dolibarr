@@ -1588,7 +1588,7 @@ class Thirdparties extends DolibarrApi
 			// We found an existing SocieteAccount entity, we are replacing it
 		} else {
 			if (isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
 				$result = $this->db->query($sql);
 
 				if ($result->num_rows !== 0) {

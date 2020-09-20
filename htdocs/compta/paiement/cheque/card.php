@@ -206,7 +206,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
 if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
 	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
-	$rejected_check = GETPOST('bankid');
+	$rejected_check = GETPOST('bankid', 'int');
 
 	$object->fetch($id);
 	$paiement_id = $object->rejectCheck($rejected_check, $reject_date);

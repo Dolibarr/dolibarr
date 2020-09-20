@@ -1825,7 +1825,7 @@ class AccountLine extends CommonObject
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) $sql .= " AND b.num_chq='".$this->db->escape($num)."'";
 		elseif ($ref) $sql .= " AND b.rowid='".$this->db->escape($ref)."'";
-		else $sql .= " AND b.rowid=".$rowid;
+		else $sql .= " AND b.rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

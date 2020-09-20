@@ -918,7 +918,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "null");
+		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
