@@ -3133,7 +3133,7 @@ class User extends CommonObject
 
 		$sql = "SELECT rowid, email, user_mobile, civility, lastname, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
