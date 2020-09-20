@@ -3,7 +3,6 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
-FIX: 10.0 - when the mime file name is different from the filesystem n…
 FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename
 FIX: 11.0 - expenses lines overlapping the total amounts frame
 FIX: 12.0 - round value of virtual stock on product stock reassort list
@@ -16,7 +15,6 @@ FIX: Bad number of subscription (forgotten when member was resiliated)
 FIX: bad route url to delete subproduct with API
 FIX: Category for suplements not saved
 FIX: Compatibility with modules without document generation
-FIX: cron load lang
 FIX: Cron load lang
 FIX: CSS
 FIX: Error management. Do no try to approve PO if validation fails.
@@ -24,9 +22,8 @@ FIX: expenses lines overlapping the frame for total amounts.
 FIX: Filter in "billed" of orders was not saved
 FIX: infinite fetch object linked loop
 FIX: Intervention lose html tags when updating
-FIX:  JS CRASH - bad usage of moreparam
+FIX: JS CRASH - bad usage of moreparam
 FIX: lang fr retained warranty
-FIX: look and feel v12
 FIX: Look and feel v12: First tab must be name of object
 FIX: missing entity check
 FIX: missing param for hook
@@ -42,7 +39,6 @@ FIX: sign of amount with credit note and multicurrencies
 FIX: Static property called as non static
 FIX: task leftmenu
 FIX: title button attribute id empty
-FIX: unit price divided by quantity when accepting supplier price pro…
 FIX: unit price divided by quantity when accepting supplier price proposal
 FIX: Update extrafields on line only if it is supported
 FIX: Update line of BOM
