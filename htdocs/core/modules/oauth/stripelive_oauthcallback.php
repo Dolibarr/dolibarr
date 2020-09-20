@@ -80,7 +80,6 @@ if (GETPOST('state')) $requestedpermissionsarray = explode(',', GETPOST('state')
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-/** @var $apiService Service */
 //$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
 
 $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token set service='StripeLive', entity=".$conf->entity;

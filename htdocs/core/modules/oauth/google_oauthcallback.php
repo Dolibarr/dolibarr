@@ -82,7 +82,6 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
-/** @var $apiService Service */
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
