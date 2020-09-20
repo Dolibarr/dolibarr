@@ -751,7 +751,7 @@ function WeighingScale(){
 	console.log("Weighing Scale");
     $.ajax({
         type: "POST",
-        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale',
+        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale/index.php',
     })
 	.done(function( editnumber ) {
 		$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
