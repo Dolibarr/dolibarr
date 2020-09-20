@@ -1360,7 +1360,7 @@ class Products extends DolibarrApi
 
         $sql = 'SELECT ';
         $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value as v';
-        $sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."')";
+        $sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".$this->db->escape(trim($ref))."')";
 
         $resql = $this->db->query($sql);
 
