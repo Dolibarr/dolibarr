@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 
 if ($setterminal>0)

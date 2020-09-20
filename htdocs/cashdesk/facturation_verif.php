@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset($_SESSION['serObjFacturation']);

@@ -34,7 +34,7 @@ $langs->loadLangs(array('admin', 'boxes'));
 if (! $user->admin) accessforbidden();
 
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 // Define possible position of boxes

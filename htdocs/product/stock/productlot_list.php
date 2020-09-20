@@ -36,7 +36,7 @@ $langs->loadLangs(array('stocks', 'productbatch', 'other', 'users'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $myparam = GETPOST('myparam', 'alpha');
 $toselect = GETPOST('toselect', 'array');

@@ -40,7 +40,7 @@ accessforbidden();
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');

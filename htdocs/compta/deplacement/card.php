@@ -43,7 +43,7 @@ $id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $object = new Deplacement($db);

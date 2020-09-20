@@ -31,7 +31,7 @@ $langs->loadLangs(array('companies', 'products', 'admin'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if ($action == 'update')
 {

@@ -53,7 +53,7 @@ $mesg=''; $error=0; $errors=array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $eid = GETPOST('eid', 'int');
 
@@ -1722,7 +1722,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="checkbox" name="updatechildprice" value="1"> ';
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print '</div>';
-		
+
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -1816,7 +1816,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="checkbox" name="updatechildprice" value="1"> ';
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print "</div>";
-		
+
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';

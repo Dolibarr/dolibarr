@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'blockedloglist';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')

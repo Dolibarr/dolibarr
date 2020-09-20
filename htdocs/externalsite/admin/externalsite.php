@@ -40,7 +40,7 @@ $langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 $def = array();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Sauvegardes parametres
 if ($action == 'update')

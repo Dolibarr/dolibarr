@@ -39,7 +39,7 @@ if (! $user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $type='group';
 
