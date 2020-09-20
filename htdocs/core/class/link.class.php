@@ -286,7 +286,7 @@ class Link extends CommonObject
         global $conf;
 
         $sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
-        $sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".$objectid;
+        $sql .= " WHERE objecttype = '".$db->escape($objecttype)."' AND objectid = ".$objectid;
         if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
 
         $resql = $db->query($sql);

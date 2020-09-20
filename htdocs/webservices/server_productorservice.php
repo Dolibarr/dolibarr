@@ -593,7 +593,7 @@ function createProductOrService($authentication, $product)
 
 				if ($savstockreal != $getstockreal)
 				{
-					$warehouse = new Entrepot($this->db);
+					$warehouse = new Entrepot($db);
 					$warehouse->fetch(0, $product['warehouse_ref']);
 					if ($warehouse->id > 0)
 					{
@@ -762,7 +762,7 @@ function updateProductOrService($authentication, $product)
 
 				if ($savstockreal != $getstockreal)
 				{
-					$warehouse = new Entrepot($this->db);
+					$warehouse = new Entrepot($db);
 					$warehouse->fetch(0, $product['warehouse_ref']);
 					if ($warehouse->id > 0)
 					{

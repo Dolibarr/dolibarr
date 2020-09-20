@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
@@ -251,6 +252,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formexpensereport = new FormExpenseReport($db);
 
 $fuser = new User($db);
 
@@ -599,7 +601,7 @@ if ($resql)
 	if (!empty($arrayfields['d.fk_statut']['checked']))
 	{
     	print '<td class="liste_titre right">';
-    	select_expensereport_statut($search_status, 'search_status', 1, 1);
+    	$formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1);
     	print '</td>';
 	}
 	// Action column

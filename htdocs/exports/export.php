@@ -1081,7 +1081,7 @@ if ($step == 4 && $datatoexport)
 				$i++;
 			}
 		} else {
-			dol_print_error($this->db);
+			dol_print_error($db);
 		}
 
         print '</table>';

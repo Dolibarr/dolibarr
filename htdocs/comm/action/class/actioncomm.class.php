@@ -1160,32 +1160,32 @@ class ActionComm extends CommonObject
 				$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
 			}
 			else {
-				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$this->db->escape($elementtype)."'";
+				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) $sql .= $filter;
-		if ($sortorder && $sortfield) $sql .= $this->db->order($sortfield, $sortorder);
-		$sql .= $this->db->plimit($limit, 0);
+		if ($sortorder && $sortfield) $sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->plimit($limit, 0);
 
-		$resql = $this->db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->num_rows($resql);
+			$num = $db->num_rows($resql);
 
 			if ($num)
 			{
 				for ($i = 0; $i < $num; $i++)
 				{
-					$obj = $this->db->fetch_object($resql);
-					$actioncommstatic = new ActionComm($this->db);
+					$obj = $db->fetch_object($resql);
+					$actioncommstatic = new ActionComm($db);
 					$actioncommstatic->fetch($obj->id);
 					$resarray[$i] = $actioncommstatic;
 				}
 			}
-			$this->db->free($resql);
+			$db->free($resql);
 			return $resarray;
 		} else {
-			return $this->db->lasterror();
+			return $db->lasterror();
 		}
 	}
 

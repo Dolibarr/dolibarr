@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 $langs->loadLangs(array("other", "admin"));
 
 $cancel = GETPOST('cancel', 'alphanohtml'); // We click on a Cancel button
+$confirm = GETPOST('confirm');
 
 if (!$user->admin) accessforbidden();
 
@@ -231,7 +232,7 @@ if ($action == 'add')
 }
 
 // delete
-if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$db->begin();
 
