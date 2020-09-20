@@ -191,6 +191,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -254,6 +255,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -318,6 +320,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -382,6 +385,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -448,6 +452,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 
 		addSummaryTableLine(3, $num);
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -498,6 +503,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 		addSummaryTableLine(2, $num);
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -572,6 +578,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 
 		addSummaryTableLine(2, $num);
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -654,6 +661,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 		addSummaryTableLine(5, $num, $nbofloop, $total, "NoProposal", true);
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
@@ -734,8 +742,9 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			}
 		}
 
-		addSummaryTableLine(5, $num, $nbofloop, $num, $total, "None", true);
+		addSummaryTableLine(5, $num, $nbofloop, $total, "None", true);
 		finishSimpleTable(true);
+
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
