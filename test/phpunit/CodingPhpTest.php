@@ -173,6 +173,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             	|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
             	if (! in_array($file['name'], array(
             		'api.class.php',
+            		'actioncomm.class.php',
             		'commonobject.class.php',
 	            	'conf.class.php',
             		'html.form.class.php',
