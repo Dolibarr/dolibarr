@@ -33,16 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefo
  */
 class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
-    /**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
-    public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
@@ -63,28 +63,28 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	public $prefixdeposit = 'SD';
 
 
-    /**
-     *  Return description of numbering model
-     *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-        global $langs;
-        $langs->load("bills");
-        return $langs->trans("CactusNumRefModelDesc1", $this->prefixinvoice, $this->prefixcreditnote, $this->prefixdeposit);
-    }
+	/**
+	 *  Return description of numbering model
+	 *
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+		$langs->load("bills");
+		return $langs->trans("CactusNumRefModelDesc1", $this->prefixinvoice, $this->prefixcreditnote, $this->prefixdeposit);
+	}
 
 
-    /**
-     *  Returns a numbering example
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-        return $this->prefixinvoice."1301-0001";
-    }
+	/**
+	 *  Returns a numbering example
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		return $this->prefixinvoice."1301-0001";
+	}
 
 
 	/**

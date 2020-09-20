@@ -44,9 +44,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	public $code_null; // Optional code
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -232,7 +232,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return if a code is used (by other element)
 	 *
@@ -243,7 +243,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	public function verif_dispo($db, $code, $product)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE barcode = '".$db->escape($code)."'";
 		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
@@ -262,17 +262,17 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return if a barcode value match syntax
 	 *
 	 *	@param	string	$codefortest	Code to check syntax
-     *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
+	 *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
 	 *	@return	int						0 if OK, <0 if KO
 	 */
 	public function verif_syntax($codefortest, $typefortest)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$result = 0;
@@ -289,15 +289,15 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$newcodefortest = $codefortest;
 
-        // Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
-        if (in_array($typefortest, array('EAN13', 'ISBN')))	// We remove the CRC char not included into mask
-        {
-            if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
-            {
-                if (strlen($reg[1]) == 12) $newcodefortest = substr($newcodefortest, 0, 12);
-                dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
-            }
-        }
+		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
+		if (in_array($typefortest, array('EAN13', 'ISBN')))	// We remove the CRC char not included into mask
+		{
+			if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
+			{
+				if (strlen($reg[1]) == 12) $newcodefortest = substr($newcodefortest, 0, 12);
+				dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
+			}
+		}
 
 		$result = check_value($mask, $newcodefortest);
 		if (is_string($result))

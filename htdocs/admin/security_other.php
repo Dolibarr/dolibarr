@@ -121,8 +121,8 @@ if (function_exists("imagecreatefrompng"))
 		}
 	}
 } else {
-    $desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
-    print $desc;
+	$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
+	print $desc;
 }
 print '</td></tr>';
 

@@ -49,13 +49,13 @@ top_httphead('text/html');
 
 if ($place > 0)
 {
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-    $resql = $db->query($sql);
-    $obj = $db->fetch_object($resql);
-    if ($obj)
-    {
-        $facid = $obj->rowid;
-    }
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	if ($obj)
+	{
+		$facid = $obj->rowid;
+	}
 }
 $object = new Facture($db);
 $object->fetch($facid);
@@ -64,7 +64,7 @@ $object->fetch($facid);
 $hookmanager->initHooks(array('takeposfrontend'), $facid);
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 	exit;
 }
 
@@ -91,7 +91,7 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-$constFreeText = 'TAKEPOS_HEADER' . $_SESSION['takeposterminal'];
+$constFreeText = 'TAKEPOS_HEADER'.$_SESSION['takeposterminal'];
 if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeText}))
 {
 	$newfreetext = '';
@@ -127,34 +127,34 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 	<tr>
         <th class="center"><?php print $langs->trans("Label"); ?></th>
         <th class="right"><?php print $langs->trans("Qty"); ?></th>
-        <th class="right"><?php if ($gift!=1) print $langs->trans("Price"); ?></th>
-        <th class="right"><?php if ($gift!=1) print $langs->trans("TotalTTC"); ?></th>
+        <th class="right"><?php if ($gift != 1) print $langs->trans("Price"); ?></th>
+        <th class="right"><?php if ($gift != 1) print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
     <tbody>
     <?php
-    foreach ($object->lines as $line)
-    {
-        ?>
+	foreach ($object->lines as $line)
+	{
+		?>
     <tr>
         <td>
 		<?php if (!empty($line->product_label)) echo $line->product_label;
-        else echo $line->description; ?>
+		else echo $line->description; ?>
         </td>
         <td class="right"><?php echo $line->qty; ?></td>
-        <td class="right"><?php if ($gift!=1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
-        <td class="right"><?php if ($gift!=1) echo price($line->total_ttc, 1); ?></td>
+        <td class="right"><?php if ($gift != 1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
+        <td class="right"><?php if ($gift != 1) echo price($line->total_ttc, 1); ?></td>
     </tr>
         <?php
-    }
-    ?>
+	}
+	?>
     </tbody>
 </table>
 <br>
 <table class="right">
 <tr>
-    <th class="right"><?php if ($gift!=1) echo $langs->trans("TotalHT"); ?></th>
-    <td class="right"><?php if ($gift!=1) echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+    <th class="right"><?php if ($gift != 1) echo $langs->trans("TotalHT"); ?></th>
+    <td class="right"><?php if ($gift != 1) echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
 	$vat_groups = array();
@@ -166,20 +166,20 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
 	foreach ($vat_groups as $key => $val) {
-	    ?>
+		?>
 	<tr>
-		<th align="right"><?php if ($gift!=1) echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
-		<td align="right"><?php if ($gift!=1) echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+		<th align="right"><?php if ($gift != 1) echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
+		<td align="right"><?php if ($gift != 1) echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 	</tr>
         <?php
 	}
 } else { ?>
 <tr>
-	<th class="right"><?php if ($gift!=1) echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+	<th class="right"><?php if ($gift != 1) echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php } ?>
 <tr>
-	<th class="right"><?php if ($gift!=1) echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+	<th class="right"><?php if ($gift != 1) echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php
 if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
@@ -201,12 +201,12 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 			echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 			echo '</td>';
 			echo '<td class="right">';
-			$amount_payment=($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+			$amount_payment = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 			if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 			echo price($amount_payment, 1, '', 1, - 1, - 1, $conf->currency);
 			echo '</td>';
 			echo '</tr>';
-			if ($row->code == "LIQ" && $row->pos_change>0) // Print change only in cash payments
+			if ($row->code == "LIQ" && $row->pos_change > 0) // Print change only in cash payments
 			{
 				echo '<tr>';
 				echo '<td class="right">';
@@ -228,7 +228,7 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 <br>
 <br>
 <?php
-$constFreeText = 'TAKEPOS_FOOTER' . $_SESSION['takeposterminal'];
+$constFreeText = 'TAKEPOS_FOOTER'.$_SESSION['takeposterminal'];
 if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText}))
 {
 	$newfreetext = '';

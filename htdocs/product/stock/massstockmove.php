@@ -39,7 +39,7 @@ $hookmanager->initHooks(array('massstockmove'));
 
 // Security check
 if ($user->socid) {
-    $socid = $user->socid;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'produit|service');
 
@@ -59,11 +59,11 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
-    $sortfield = 'p.ref';
+	$sortfield = 'p.ref';
 }
 
 if (!$sortorder) {
-    $sortorder = 'ASC';
+	$sortorder = 'ASC';
 }
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
@@ -102,7 +102,7 @@ if ($action == 'addline')
 	if (!$qty)
 	{
 		$error++;
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 	}
 
 	// Check a batch number is provided if product need it
@@ -198,12 +198,12 @@ if ($action == 'createmovements')
 				{
 					// Remove stock
 					$result1 = $product->correct_stock(
-		    			$user,
-		    			$id_sw,
-		    			$qty,
-		    			1,
-		    			GETPOST("label"),
-		    			$pricesrc,
+						$user,
+						$id_sw,
+						$qty,
+						1,
+						GETPOST("label"),
+						$pricesrc,
 						GETPOST("codemove")
 					);
 					if ($result1 < 0)
@@ -214,12 +214,12 @@ if ($action == 'createmovements')
 
 					// Add stock
 					$result2 = $product->correct_stock(
-		    			$user,
-		    			$id_tw,
-		    			$qty,
-		    			0,
-		    			GETPOST("label"),
-		    			$pricedest,
+						$user,
+						$id_tw,
+						$qty,
+						0,
+						GETPOST("label"),
+						$pricedest,
 						GETPOST("codemove")
 					);
 					if ($result2 < 0)
@@ -242,12 +242,12 @@ if ($action == 'createmovements')
 
 					// Remove stock
 					$result1 = $product->correct_stock_batch(
-		    			$user,
-		    			$id_sw,
-		    			$qty,
-		    			1,
-		    			GETPOST("label"),
-		    			$pricesrc,
+						$user,
+						$id_sw,
+						$qty,
+						1,
+						GETPOST("label"),
+						$pricesrc,
 						$dlc,
 						$dluo,
 						$batch,
@@ -261,12 +261,12 @@ if ($action == 'createmovements')
 
 					// Add stock
 					$result2 = $product->correct_stock_batch(
-		    			$user,
-		    			$id_tw,
-		    			$qty,
-		    			0,
-		    			GETPOST("label"),
-		    			$pricedest,
+						$user,
+						$id_tw,
+						$qty,
+						0,
+						GETPOST("label"),
+						$pricedest,
 						$dlc,
 						$dluo,
 						$batch,

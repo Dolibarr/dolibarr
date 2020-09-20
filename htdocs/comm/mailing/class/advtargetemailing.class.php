@@ -28,10 +28,10 @@
  */
 class AdvanceTargetingMailing extends CommonObject
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -58,20 +58,20 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public $id;
 
-    public $name;
-    public $entity;
-    public $fk_element;
-    public $type_element;
-    public $filtervalue;
-    public $fk_user_author;
-    public $datec = '';
-    public $fk_user_mod;
-    public $tms = '';
+	public $name;
+	public $entity;
+	public $fk_element;
+	public $type_element;
+	public $filtervalue;
+	public $fk_user_author;
+	public $datec = '';
+	public $fk_user_mod;
+	public $tms = '';
 
-    public $select_target_type = array();
-    public $type_statuscommprospect = array();
-    public $thirdparty_lines;
-    public $contact_lines;
+	public $select_target_type = array();
+	public $type_statuscommprospect = array();
+	public $thirdparty_lines;
+	public $contact_lines;
 
 
 	/**
@@ -79,7 +79,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *  @param  DoliDb		$db		Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		global $langs;
 		$langs->load('customers');
@@ -108,7 +108,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 <0 if KO, Id of created object if OK
 	 */
-    public function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -177,7 +177,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-    public function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -226,16 +226,16 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-    public function fetch_by_mailing($id = 0)
+	public function fetch_by_mailing($id = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -290,7 +290,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
@@ -298,9 +298,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	string	$type_element	Type target
 	 *  @return int          			<0 if KO, >0 if OK
 	 */
-    public function fetch_by_element($id = 0, $type_element = 'mailing')
+	public function fetch_by_element($id = 0, $type_element = 'mailing')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -359,7 +359,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
-    public function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -389,9 +389,9 @@ class AdvanceTargetingMailing extends CommonObject
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-            $error++;
-            $this->errors[] = "Error ".$this->db->lasterror();
-        }
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
 		if ($error)
@@ -416,7 +416,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-    public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -457,7 +457,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		array		$arrayquery		All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-    public function savequery($user, $arrayquery)
+	public function savequery($user, $arrayquery)
 	{
 		global $langs, $conf;
 
@@ -477,16 +477,16 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
 	 * 	@param		array		$arrayquery	All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-    public function query_thirdparty($arrayquery)
+	public function query_thirdparty($arrayquery)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs, $conf, $extrafields;
 
 		$sql = "SELECT";
@@ -625,7 +625,7 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
@@ -633,9 +633,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-    public function query_contact($arrayquery, $withThirdpartyFilter = 0)
+	public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs, $conf;
 
 		$sql = "SELECT";
@@ -878,8 +878,8 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
 	 * 	@return		string		Sql to use for the where condition
 	 */
-    public function transformToSQL($column_to_test, $criteria)
-    {
+	public function transformToSQL($column_to_test, $criteria)
+	{
 		$return_sql_criteria = '(';
 
 		//This is a multiple value test

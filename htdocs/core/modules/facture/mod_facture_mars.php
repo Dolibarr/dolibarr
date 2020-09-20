@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 class mod_facture_mars extends ModeleNumRefFactures
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $prefixinvoice = 'FA';
@@ -146,7 +146,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *
 	 * @param	Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
-     * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string       			Value
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')

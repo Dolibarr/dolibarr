@@ -378,18 +378,18 @@ class InterfaceZapierTriggers extends DolibarrTriggers
  */
 function zapierPostWebhook($url, $json)
 {
-    $headers = array('Accept: application/json', 'Content-Type: application/json');
-    // TODO supprimer le webhook en cas de mauvaise réponse
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    $output = curl_exec($ch);
-    curl_close($ch);
+	$headers = array('Accept: application/json', 'Content-Type: application/json');
+	// TODO supprimer le webhook en cas de mauvaise réponse
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$output = curl_exec($ch);
+	curl_close($ch);
 }
 
 /**
@@ -400,72 +400,72 @@ function zapierPostWebhook($url, $json)
  */
 function cleanObjectDatas($toclean)
 {
-    // Remove $db object property for object
-    unset($toclean->db);
+	// Remove $db object property for object
+	unset($toclean->db);
 
-    // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
-    unset($toclean->linkedObjects);
+	// Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+	unset($toclean->linkedObjects);
 
-    unset($toclean->lines); // should be ->lines
+	unset($toclean->lines); // should be ->lines
 
-    unset($toclean->fields);
+	unset($toclean->fields);
 
-    unset($toclean->oldline);
+	unset($toclean->oldline);
 
-    unset($toclean->error);
-    unset($toclean->errors);
+	unset($toclean->error);
+	unset($toclean->errors);
 
-    unset($toclean->ref_previous);
-    unset($toclean->ref_next);
-    unset($toclean->ref_int);
+	unset($toclean->ref_previous);
+	unset($toclean->ref_next);
+	unset($toclean->ref_int);
 
-    unset($toclean->projet); // Should be fk_project
-    unset($toclean->project); // Should be fk_project
-    unset($toclean->author); // Should be fk_user_author
-    unset($toclean->timespent_old_duration);
-    unset($toclean->timespent_id);
-    unset($toclean->timespent_duration);
-    unset($toclean->timespent_date);
-    unset($toclean->timespent_datehour);
-    unset($toclean->timespent_withhour);
-    unset($toclean->timespent_fk_user);
-    unset($toclean->timespent_note);
+	unset($toclean->projet); // Should be fk_project
+	unset($toclean->project); // Should be fk_project
+	unset($toclean->author); // Should be fk_user_author
+	unset($toclean->timespent_old_duration);
+	unset($toclean->timespent_id);
+	unset($toclean->timespent_duration);
+	unset($toclean->timespent_date);
+	unset($toclean->timespent_datehour);
+	unset($toclean->timespent_withhour);
+	unset($toclean->timespent_fk_user);
+	unset($toclean->timespent_note);
 
-    unset($toclean->statuts);
-    unset($toclean->statuts_short);
-    unset($toclean->statuts_logo);
-    unset($toclean->statuts_long);
+	unset($toclean->statuts);
+	unset($toclean->statuts_short);
+	unset($toclean->statuts_logo);
+	unset($toclean->statuts_long);
 
-    unset($toclean->element);
-    unset($toclean->fk_element);
-    unset($toclean->table_element);
-    unset($toclean->table_element_line);
-    unset($toclean->picto);
+	unset($toclean->element);
+	unset($toclean->fk_element);
+	unset($toclean->table_element);
+	unset($toclean->table_element_line);
+	unset($toclean->picto);
 
-    unset($toclean->skip_update_total);
-    unset($toclean->context);
+	unset($toclean->skip_update_total);
+	unset($toclean->context);
 
-    // Remove the $oldcopy property because it is not supported by the JSON
-    // encoder. The following error is generated when trying to serialize
-    // it: "Error encoding/decoding JSON: Type is not supported"
-    // Note: Event if this property was correctly handled by the JSON
-    // encoder, it should be ignored because keeping it would let the API
-    // have a very strange behavior: calling PUT and then GET on the same
-    // resource would give different results:
-    // PUT /objects/{id} -> returns object with oldcopy = previous version of the object
-    // GET /objects/{id} -> returns object with oldcopy empty
-    unset($toclean->oldcopy);
+	// Remove the $oldcopy property because it is not supported by the JSON
+	// encoder. The following error is generated when trying to serialize
+	// it: "Error encoding/decoding JSON: Type is not supported"
+	// Note: Event if this property was correctly handled by the JSON
+	// encoder, it should be ignored because keeping it would let the API
+	// have a very strange behavior: calling PUT and then GET on the same
+	// resource would give different results:
+	// PUT /objects/{id} -> returns object with oldcopy = previous version of the object
+	// GET /objects/{id} -> returns object with oldcopy empty
+	unset($toclean->oldcopy);
 
-    // If object has lines, remove $db property
-    if (isset($toclean->lines) && count($toclean->lines) > 0) {
-        $nboflines = count($toclean->lines);
-        for ($i = 0; $i < $nboflines; $i++) {
-            cleanObjectDatas($toclean->lines[$i]);
-        }
-    }
+	// If object has lines, remove $db property
+	if (isset($toclean->lines) && count($toclean->lines) > 0) {
+		$nboflines = count($toclean->lines);
+		for ($i = 0; $i < $nboflines; $i++) {
+			cleanObjectDatas($toclean->lines[$i]);
+		}
+	}
 
-    // If object has linked objects, remove $db property
-    /*
+	// If object has linked objects, remove $db property
+	/*
     if(isset($toclean->linkedObjects) && count($toclean->linkedObjects) > 0)  {
         foreach($toclean->linkedObjects as $type_object => $linked_object) {
             foreach($linked_object as $toclean2clean) {
@@ -474,7 +474,7 @@ function cleanObjectDatas($toclean)
         }
     }*/
 
-    return $toclean;
+	return $toclean;
 }
 
 /**
@@ -485,46 +485,46 @@ function cleanObjectDatas($toclean)
  */
 function cleanAgendaEventsDatas($toclean)
 {
-    unset($toclean->usermod);
-    unset($toclean->libelle);
-    //unset($toclean->array_options);
-    unset($toclean->context);
-    unset($toclean->canvas);
-    unset($toclean->contact);
-    unset($toclean->contact_id);
-    unset($toclean->thirdparty);
-    unset($toclean->user);
-    unset($toclean->origin);
-    unset($toclean->origin_id);
-    unset($toclean->ref_ext);
-    unset($toclean->statut);
-    unset($toclean->country);
-    unset($toclean->country_id);
-    unset($toclean->country_code);
-    unset($toclean->barcode_type);
-    unset($toclean->barcode_type_code);
-    unset($toclean->barcode_type_label);
-    unset($toclean->barcode_type_coder);
-    unset($toclean->mode_reglement_id);
-    unset($toclean->cond_reglement_id);
-    unset($toclean->cond_reglement);
-    unset($toclean->fk_delivery_address);
-    unset($toclean->shipping_method_id);
-    unset($toclean->fk_account);
-    unset($toclean->total_ht);
-    unset($toclean->total_tva);
-    unset($toclean->total_localtax1);
-    unset($toclean->total_localtax2);
-    unset($toclean->total_ttc);
-    unset($toclean->fk_incoterms);
-    unset($toclean->libelle_incoterms);
-    unset($toclean->location_incoterms);
-    unset($toclean->name);
-    unset($toclean->lastname);
-    unset($toclean->firstname);
-    unset($toclean->civility_id);
-    unset($toclean->contact);
-    unset($toclean->societe);
+	unset($toclean->usermod);
+	unset($toclean->libelle);
+	//unset($toclean->array_options);
+	unset($toclean->context);
+	unset($toclean->canvas);
+	unset($toclean->contact);
+	unset($toclean->contact_id);
+	unset($toclean->thirdparty);
+	unset($toclean->user);
+	unset($toclean->origin);
+	unset($toclean->origin_id);
+	unset($toclean->ref_ext);
+	unset($toclean->statut);
+	unset($toclean->country);
+	unset($toclean->country_id);
+	unset($toclean->country_code);
+	unset($toclean->barcode_type);
+	unset($toclean->barcode_type_code);
+	unset($toclean->barcode_type_label);
+	unset($toclean->barcode_type_coder);
+	unset($toclean->mode_reglement_id);
+	unset($toclean->cond_reglement_id);
+	unset($toclean->cond_reglement);
+	unset($toclean->fk_delivery_address);
+	unset($toclean->shipping_method_id);
+	unset($toclean->fk_account);
+	unset($toclean->total_ht);
+	unset($toclean->total_tva);
+	unset($toclean->total_localtax1);
+	unset($toclean->total_localtax2);
+	unset($toclean->total_ttc);
+	unset($toclean->fk_incoterms);
+	unset($toclean->libelle_incoterms);
+	unset($toclean->location_incoterms);
+	unset($toclean->name);
+	unset($toclean->lastname);
+	unset($toclean->firstname);
+	unset($toclean->civility_id);
+	unset($toclean->contact);
+	unset($toclean->societe);
 
-    return $toclean;
+	return $toclean;
 }

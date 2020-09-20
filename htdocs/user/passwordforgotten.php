@@ -37,8 +37,8 @@ $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 // Security check
 if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
-    header("Location: ".DOL_URL_ROOT.'/');
-    exit;
+	header("Location: ".DOL_URL_ROOT.'/');
+	exit;
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -77,7 +77,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
         {
         	// Clear session
         	unset($_SESSION['dol_login']);
-        	$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated');	// Save message for the session page
+        	$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated'); // Save message for the session page
 
         	$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -165,9 +165,9 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = $conf->global->MAIN_
 // Select templates
 if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php"))
 {
-    $template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
+	$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 } else {
-    $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
+	$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
 
 if (!$username) $focus_element = 'username';

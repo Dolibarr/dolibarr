@@ -68,11 +68,11 @@ if ($action == 'addcontact' && $user->rights->societe->creer)
 {
 	$result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	if ($result > 0 && $id > 0)
+	{
+		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+	}
 
 	if ($result >= 0)
 	{
@@ -94,7 +94,7 @@ elseif ($action == 'swapstatut' && $user->rights->societe->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne'));
 	} else {
 		dol_print_error($db);
 	}
@@ -157,17 +157,17 @@ if ($id > 0 || !empty($ref))
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+		dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    	print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-        print '<div class="underbanner clearboth"></div>';
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
-    	// Prospect/Customer
-    	/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
+		// Prospect/Customer
+		/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 
@@ -178,25 +178,25 @@ if ($id > 0 || !empty($ref))
 
 		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
-		    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
 
 		if ($object->client)
 		{
-		    print '<tr><td class="titlefield">';
-		    print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		    print $object->code_client;
-		    if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		    print '</td></tr>';
+			print '<tr><td class="titlefield">';
+			print $langs->trans('CustomerCode').'</td><td colspan="3">';
+			print $object->code_client;
+			if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print '</td></tr>';
 		}
 
 		if ($object->fournisseur)
 		{
-		    print '<tr><td class="titlefield">';
-		    print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		    print $object->code_fournisseur;
-		    if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		    print '</td></tr>';
+			print '<tr><td class="titlefield">';
+			print $langs->trans('SupplierCode').'</td><td colspan="3">';
+			print $object->code_fournisseur;
+			if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print '</td></tr>';
 		}
 		print '</table>';
 

@@ -704,7 +704,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module))
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
 		$result = dol_delete_file($filetodelete);
-		if (! $result) {
+		if (!$result) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {
 			if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
@@ -778,9 +778,9 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$fieldname = $obj->Field;
 			// type
 			$type = $obj->Type;
-			if ($type == 'int(11)') $type='integer';
-			if ($type == 'float') $type='real';
-			if (strstr($type, 'tinyint')) $type='integer';
+			if ($type == 'int(11)') $type = 'integer';
+			if ($type == 'float') $type = 'real';
+			if (strstr($type, 'tinyint')) $type = 'integer';
 			if ($obj->Field == 'fk_soc') $type = 'integer:Societe:societe/class/societe.class.php';
 			if (preg_match('/^fk_proj/', $obj->Field)) $type = 'integer:Project:projet/class/project.class.php:1:fk_statut=1';
 			if (preg_match('/^fk_prod/', $obj->Field)) $type = 'integer:Product:product/class/product.class.php:1';
@@ -1623,7 +1623,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 
 		$class = 'mod'.$module;
 	} catch (Throwable $e) {		// This is called in PHP 7 only. Never called with PHP 5.6
-		$loadclasserrormessage = $e->getMessage()."<br>\n";;
+		$loadclasserrormessage = $e->getMessage()."<br>\n"; ;
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
 	}

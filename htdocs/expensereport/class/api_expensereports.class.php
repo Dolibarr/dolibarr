@@ -218,17 +218,17 @@ class ExpenseReports extends DolibarrApi
     }
     */
 
-    /**
-     * Add a line to given Expense Report
-     *
-     * @param int   $id             Id of Expense Report to update
-     * @param array $request_data   Expense Report data
-     *
-     * @url	POST {id}/lines
-     *
-     * @return int
-     */
-    /*
+	/**
+	 * Add a line to given Expense Report
+	 *
+	 * @param int   $id             Id of Expense Report to update
+	 * @param array $request_data   Expense Report data
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int
+	 */
+	/*
     public function postLine($id, $request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
@@ -280,18 +280,18 @@ class ExpenseReports extends DolibarrApi
     }
     */
 
-    /**
-     * Update a line to given Expense Report
-     *
-     * @param int   $id             Id of Expense Report to update
-     * @param int   $lineid         Id of line to update
-     * @param array $request_data   Expense Report data
-     *
-     * @url	PUT {id}/lines/{lineid}
-     *
-     * @return object
-     */
-    /*
+	/**
+	 * Update a line to given Expense Report
+	 *
+	 * @param int   $id             Id of Expense Report to update
+	 * @param int   $lineid         Id of line to update
+	 * @param array $request_data   Expense Report data
+	 *
+	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @return object
+	 */
+	/*
     public function putLine($id, $lineid, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
@@ -340,17 +340,17 @@ class ExpenseReports extends DolibarrApi
     }
     */
 
-    /**
-     * Delete a line of given Expense Report
-     *
-     * @param int   $id             Id of Expense Report to update
-     * @param int   $lineid         Id of line to delete
-     *
-     * @url	DELETE {id}/lines/{lineid}
-     *
-     * @return int
-     */
-    /*
+	/**
+	 * Delete a line of given Expense Report
+	 *
+	 * @param int   $id             Id of Expense Report to update
+	 * @param int   $lineid         Id of line to delete
+	 *
+	 * @url	DELETE {id}/lines/{lineid}
+	 *
+	 * @return int
+	 */
+	/*
     public function deleteLine($id, $lineid)
     {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
@@ -376,94 +376,94 @@ class ExpenseReports extends DolibarrApi
     }
     */
 
-    /**
-     * Update Expense Report general fields (won't touch lines of expensereport)
-     *
-     * @param int   $id             Id of Expense Report to update
-     * @param array $request_data   Datas
-     *
-     * @return int
-     *
-     * @throws	RestException	401		Not allowed
-     * @throws  RestException	404		Expense report not found
-     * @throws	RestException	500
-     */
-    public function put($id, $request_data = null)
-    {
-        if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
-            throw new RestException(401);
-        }
+	/**
+	 * Update Expense Report general fields (won't touch lines of expensereport)
+	 *
+	 * @param int   $id             Id of Expense Report to update
+	 * @param array $request_data   Datas
+	 *
+	 * @return int
+	 *
+	 * @throws	RestException	401		Not allowed
+	 * @throws  RestException	404		Expense report not found
+	 * @throws	RestException	500
+	 */
+	public function put($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
+			throw new RestException(401);
+		}
 
-        $result = $this->expensereport->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'expensereport not found');
-        }
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'expensereport not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        foreach ($request_data as $field => $value) {
-            if ($field == 'id') continue;
-            $this->expensereport->$field = $value;
-        }
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') continue;
+			$this->expensereport->$field = $value;
+		}
 
-        if ($this->expensereport->update(DolibarrApiAccess::$user) > 0)
-        {
-            return $this->get($id);
-        } else {
-            throw new RestException(500, $this->expensereport->error);
-        }
-    }
+		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0)
+		{
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->expensereport->error);
+		}
+	}
 
-    /**
-     * Delete Expense Report
-     *
-     * @param   int     $id         Expense Report ID
-     *
-     * @return  array
-     */
-    public function delete($id)
-    {
-        if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
-            throw new RestException(401);
-        }
-        $result = $this->expensereport->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Expense Report not found');
-        }
+	/**
+	 * Delete Expense Report
+	 *
+	 * @param   int     $id         Expense Report ID
+	 *
+	 * @return  array
+	 */
+	public function delete($id)
+	{
+		if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
+			throw new RestException(401);
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense Report not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->error);
-        }
+		if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->error);
+		}
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Expense Report deleted'
-            )
-        );
-    }
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Expense Report deleted'
+			)
+		);
+	}
 
-    /**
-     * Validate an Expense Report
-     *
-     * @param   int $id             Expense Report ID
-     *
-     * @url POST    {id}/validate
-     *
-     * @return  array
-     * FIXME An error 403 is returned if the request has an empty body.
-     * Error message: "Forbidden: Content type `text/plain` is not supported."
-     * Workaround: send this in the body
-     * {
-     *   "idwarehouse": 0
-     * }
-     */
-    /*
+	/**
+	 * Validate an Expense Report
+	 *
+	 * @param   int $id             Expense Report ID
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @return  array
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "idwarehouse": 0
+	 * }
+	 */
+	/*
     public function validate($id, $idwarehouse=0)
     {
         if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
@@ -490,75 +490,75 @@ class ExpenseReports extends DolibarrApi
         );
     }*/
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   object  $object    Object to clean
-     * @return    array    Array of cleaned object properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
 
-        unset($object->fk_statut);
-        unset($object->statut);
-        unset($object->user);
-        unset($object->thirdparty);
+		unset($object->fk_statut);
+		unset($object->statut);
+		unset($object->user);
+		unset($object->thirdparty);
 
-        unset($object->cond_reglement);
-        unset($object->shipping_method_id);
+		unset($object->cond_reglement);
+		unset($object->shipping_method_id);
 
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
 
-        unset($object->code_paiement);
-        unset($object->code_statut);
-        unset($object->fk_c_paiement);
-        unset($object->fk_incoterms);
-        unset($object->label_incoterms);
-        unset($object->location_incoterms);
-        unset($object->mode_reglement_id);
-        unset($object->cond_reglement_id);
+		unset($object->code_paiement);
+		unset($object->code_statut);
+		unset($object->fk_c_paiement);
+		unset($object->fk_incoterms);
+		unset($object->label_incoterms);
+		unset($object->location_incoterms);
+		unset($object->mode_reglement_id);
+		unset($object->cond_reglement_id);
 
-        unset($object->name);
-        unset($object->lastname);
-        unset($object->firstname);
-        unset($object->civility_id);
-        unset($object->cond_reglement_id);
-        unset($object->contact);
-        unset($object->contact_id);
+		unset($object->name);
+		unset($object->lastname);
+		unset($object->firstname);
+		unset($object->civility_id);
+		unset($object->cond_reglement_id);
+		unset($object->contact);
+		unset($object->contact_id);
 
-        unset($object->state);
-        unset($object->state_id);
-        unset($object->state_code);
-        unset($object->country);
-        unset($object->country_id);
-        unset($object->country_code);
+		unset($object->state);
+		unset($object->state_id);
+		unset($object->state_code);
+		unset($object->country);
+		unset($object->country_id);
+		unset($object->country_code);
 
-        unset($object->note); // We already use note_public and note_pricate
+		unset($object->note); // We already use note_public and note_pricate
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array           $data   Array with data to verify
-     * @return  array
-     * @throws  RestException
-     */
-    private function _validate($data)
-    {
-        $expensereport = array();
-        foreach (ExpenseReports::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $expensereport[$field] = $data[$field];
-        }
-        return $expensereport;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException
+	 */
+	private function _validate($data)
+	{
+		$expensereport = array();
+		foreach (ExpenseReports::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$expensereport[$field] = $data[$field];
+		}
+		return $expensereport;
+	}
 }

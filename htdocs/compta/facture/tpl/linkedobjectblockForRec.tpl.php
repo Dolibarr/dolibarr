@@ -40,10 +40,10 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink)
 {
-    $ilink++;
+	$ilink++;
 
-    $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+	$trclass = 'oddeven';
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 	?>
 <tr class="<?php echo $trclass; ?>" >
     <td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>

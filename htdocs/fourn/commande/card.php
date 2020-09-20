@@ -110,7 +110,7 @@ if ($id > 0 || !empty($ref))
 }
 
 // Common permissions
-$usercanread			= $user->rights->fournisseur->commande->lire;
+$usercanread = $user->rights->fournisseur->commande->lire;
 $usercancreate			= $user->rights->fournisseur->commande->creer;
 $usercandelete			= $user->rights->fournisseur->commande->supprimer;
 
@@ -119,14 +119,14 @@ $usercanvalidate		= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($u
 
 // Additional area permissions
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
-$usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
-$usercanorder			= $user->rights->fournisseur->commande->commander;
+$usercanapprovesecond = $user->rights->fournisseur->commande->approve2;
+$usercanorder = $user->rights->fournisseur->commande->commander;
 $usercanreceived		= $user->rights->fournisseur->commande->receptionner;
 
 // Permissions for includes
 $permissionnote			= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink		= $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit		= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd		= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
@@ -872,7 +872,7 @@ if (empty($reshook))
 			$action = 'confirm_approve'; // can make standard or first level approval also if permission is set
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1059,7 +1059,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
 		}
 
-		if (! $error) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();

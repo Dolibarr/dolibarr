@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 class FormProduct
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -55,23 +55,23 @@ class FormProduct
 	}
 
 
-    /**
-     * Load in cache array list of warehouses
-     * If fk_product is not 0, we do not use cache
-     *
-     * @param	int		    $fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
-     * @param	string	    $batch				Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
-     * @param	string	    $status				warehouse status filter, following comma separated filter options can be used
-     *                      				    'warehouseopen' = select products from open warehouses,
-     *                      				    'warehouseclosed' = select products from closed warehouses,
-     *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
-     * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
-     * @param	string      $exclude            warehouses ids to exclude
-     * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
-     * @param   string      $orderBy            [='e.ref'] Order by
-     * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
-     * @throws  Exception
-     */
+	/**
+	 * Load in cache array list of warehouses
+	 * If fk_product is not 0, we do not use cache
+	 *
+	 * @param	int		    $fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 * @param	string	    $batch				Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
+	 * @param	string	    $status				warehouse status filter, following comma separated filter options can be used
+	 *                      				    'warehouseopen' = select products from open warehouses,
+	 *                      				    'warehouseclosed' = select products from closed warehouses,
+	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
+	 * @param	string      $exclude            warehouses ids to exclude
+	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 * @param   string      $orderBy            [='e.ref'] Order by
+	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * @throws  Exception
+	 */
 	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '', $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf, $langs;
@@ -129,25 +129,25 @@ class FormProduct
 		if (!empty($exclude)) $sql .= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
 
 		// minimum stock
-        if ($stockMin !== false) {
-            if (!empty($fk_product)) {
-                if (!empty($batch)) {
-                    $sql .= " AND pb.qty > ".$this->db->escape($stockMin);
-                } else {
-                    $sql .= " AND ps.reel > ".$this->db->escape($stockMin);
-                }
-            }
-        }
+		if ($stockMin !== false) {
+			if (!empty($fk_product)) {
+				if (!empty($batch)) {
+					$sql .= " AND pb.qty > ".$this->db->escape($stockMin);
+				} else {
+					$sql .= " AND ps.reel > ".$this->db->escape($stockMin);
+				}
+			}
+		}
 
 		if ($sumStock && empty($fk_product)) {
-		    $sql .= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
+			$sql .= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
 
-            // minimum stock
-            if ($stockMin !== false) {
-                $sql .= " HAVING sum(ps.reel) > ".$this->db->escape($stockMin);
-            }
+			// minimum stock
+			if ($stockMin !== false) {
+				$sql .= " HAVING sum(ps.reel) > ".$this->db->escape($stockMin);
+			}
 		}
-        $sql .= " ORDER BY ".$orderBy;
+		$sql .= " ORDER BY ".$orderBy;
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -179,7 +179,7 @@ class FormProduct
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
 	 *
@@ -209,9 +209,9 @@ class FormProduct
 	 *  @param  string|int  $selected           Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
-     *                                          'warehouseopen' = select products from open warehouses,
-     *                                          'warehouseclosed' = select products from closed warehouses,
-     *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 *                                          'warehouseopen' = select products from open warehouses,
+	 *                                          'warehouseclosed' = select products from closed warehouses,
+	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @param  int		    $empty			    1=Can be empty, 0 if not
 	 * 	@param	int		    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
@@ -222,11 +222,11 @@ class FormProduct
 	 *  @param  string      $morecss                    Add more css classes to HTML select
 	 *  @param	string	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
-     *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
-     *  @param  string      $orderBy            [='e.ref'] Order by
+	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 * 	@return string					        HTML select
-     *
-     *  @throws Exception
+	 *
+	 *  @throws Exception
 	 */
 	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
@@ -236,7 +236,7 @@ class FormProduct
 
 		$out = '';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
-        if (!empty($fk_product))  $this->cache_warehouses = array();
+		if (!empty($fk_product))  $this->cache_warehouses = array();
 
 		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
 		$nbofwarehouses = count($this->cache_warehouses);
@@ -249,7 +249,7 @@ class FormProduct
 		}
 
 		if (strpos($htmlname, 'search_') !== 0) {
-			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1){
+			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
 				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 			}
 			else {
@@ -283,66 +283,66 @@ class FormProduct
 		$out .= '</select>';
 		if ($disabled) $out .= '<input type="hidden" name="'.$htmlname.'" value="'.(($selected > 0) ? $selected : '').'">';
 
-        $parameters = array(
-            'selected' => $selected,
-            'htmlname' => $htmlname,
-            'filterstatus' => $filterstatus,
-            'empty' => $empty,
-            'disabled ' => $disabled,
-            'fk_product' => $fk_product,
-            'empty_label' => $empty_label,
-            'showstock' => $showstock,
-            'forcecombo' => $forcecombo,
-            'events' => $events,
-            'morecss' => $morecss,
-            'exclude' => $exclude,
-            'showfullpath' => $showfullpath,
-            'stockMin' => $stockMin,
-            'orderBy' => $orderBy
-        );
+		$parameters = array(
+			'selected' => $selected,
+			'htmlname' => $htmlname,
+			'filterstatus' => $filterstatus,
+			'empty' => $empty,
+			'disabled ' => $disabled,
+			'fk_product' => $fk_product,
+			'empty_label' => $empty_label,
+			'showstock' => $showstock,
+			'forcecombo' => $forcecombo,
+			'events' => $events,
+			'morecss' => $morecss,
+			'exclude' => $exclude,
+			'showfullpath' => $showfullpath,
+			'stockMin' => $stockMin,
+			'orderBy' => $orderBy
+		);
 
-        $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
-        if ($reshook > 0) $out = $hookmanager->resPrint;
+		$reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
+		if ($reshook > 0) $out = $hookmanager->resPrint;
 		elseif ($reshook == 0) $out .= $hookmanager->resPrint;
 
 		return $out;
 	}
 
-    /**
-     *    Display form to select warehouse
-     *
-     *    @param    string  $page        Page
-     *    @param    int     $selected    Id of warehouse
-     *    @param    string  $htmlname    Name of select html field
-     *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
-     *    @return   void
-     */
-    public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
-    {
-        global $langs;
-        if ($htmlname != "none") {
-            print '<form method="POST" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setwarehouse">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            print $this->selectWarehouses($selected, $htmlname, '', $addempty);
-            print '</td>';
-            print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
-        } else {
-            if ($selected) {
-                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-                $warehousestatic = new Entrepot($this->db);
-                $warehousestatic->fetch($selected);
-                print $warehousestatic->getNomUrl();
-            } else {
-                print "&nbsp;";
-            }
-        }
-    }
+	/**
+	 *    Display form to select warehouse
+	 *
+	 *    @param    string  $page        Page
+	 *    @param    int     $selected    Id of warehouse
+	 *    @param    string  $htmlname    Name of select html field
+	 *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *    @return   void
+	 */
+	public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
+	{
+		global $langs;
+		if ($htmlname != "none") {
+			print '<form method="POST" action="'.$page.'">';
+			print '<input type="hidden" name="action" value="setwarehouse">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print $this->selectWarehouses($selected, $htmlname, '', $addempty);
+			print '</td>';
+			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		} else {
+			if ($selected) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+				$warehousestatic = new Entrepot($this->db);
+				$warehousestatic->fetch($selected);
+				print $warehousestatic->getNomUrl();
+			} else {
+				print "&nbsp;";
+			}
+		}
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base
@@ -357,8 +357,8 @@ class FormProduct
 	 */
 	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
-        //phpcs:enable
-	    print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
+		//phpcs:enable
+		print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
 	}
 
 	/**
@@ -387,13 +387,13 @@ class FormProduct
 		$filter['t.active'] = 1;
 		if ($measuring_style) $filter['t.unit_type'] = $measuring_style;
 
-        $result = $measuringUnits->fetchAll(
-            '',
-            '',
-            0,
-            0,
-        	$filter
-        );
+		$result = $measuringUnits->fetchAll(
+			'',
+			'',
+			0,
+			0,
+			$filter
+		);
 		if ($result < 0) {
 			dol_print_error($db);
 			return -1;

@@ -64,7 +64,7 @@ if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 
 if ($action == "productinfo") {
 	$prod = new Product($db);
-    $prod->fetch($idproduct);
+	$prod->fetch($idproduct);
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.');">'.$langs->trans('Add').'</button>';
 	print "<br><b>".$prod->label."</b><br>";
 	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
@@ -104,7 +104,7 @@ elseif ($action == "checkplease") {
 		$printer->printer->feed();
 		$printer->printer->feed();
 		$printer->close();
-	}	else {
+	} else {
 		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\');">'.$langs->trans('Cash').'</button>';
 		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\');">'.$langs->trans('CreditCard').'</button>';
 		print '<br>';
@@ -115,8 +115,8 @@ elseif ($action == "checkplease") {
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 	foreach ($invoice->lines as $line)
-    {
-        if ($line->id == $selectedline)
+	{
+		if ($line->id == $selectedline)
 		{
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
@@ -128,8 +128,8 @@ elseif ($action == "checkplease") {
 			print '<button type="button" class="publicphonebutton2 phonered width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).');">-</button>';
 			print '<button type="button" class="publicphonebutton2 phonegreen width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).');">+</button>';
 			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
-        }
-    }
+		}
+	}
 } else {
 	// Title
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -151,14 +151,14 @@ elseif ($action == "checkplease") {
 	$levelofrootcategory = 0;
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 	{
-    	foreach ($categories as $key => $categorycursor)
-    	{
-        	if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
-        	{
-            	$levelofrootcategory = $categorycursor['level'];
-            	break;
-        	}
-    	}
+		foreach ($categories as $key => $categorycursor)
+		{
+			if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+			{
+				$levelofrootcategory = $categorycursor['level'];
+				break;
+			}
+		}
 	}
 	$levelofmaincategories = $levelofrootcategory + 1;
 
@@ -166,12 +166,12 @@ elseif ($action == "checkplease") {
 	$subcategories = array();
 	foreach ($categories as $key => $categorycursor)
 	{
-    	if ($categorycursor['level'] == $levelofmaincategories)
-    	{
-        	$maincategories[$key] = $categorycursor;
-    	} else {
-        	$subcategories[$key] = $categorycursor;
-    	}
+		if ($categorycursor['level'] == $levelofmaincategories)
+		{
+			$maincategories[$key] = $categorycursor;
+		} else {
+			$subcategories[$key] = $categorycursor;
+		}
 	}
 
 	sort($maincategories);
@@ -341,7 +341,7 @@ function CheckPlease(payment){
 	}
 	else{
 		console.log("Request the check to the waiter");
-		$("#phonediv1").load("auto_order.php?action=checkplease&place=<?php echo $place;?>&payment="+payment, function() {
+		$("#phonediv1").load("auto_order.php?action=checkplease&place=<?php echo $place; ?>&payment="+payment, function() {
 		});
 	}
 }

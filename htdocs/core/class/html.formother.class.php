@@ -761,15 +761,15 @@ class FormOther
 	                  }
 			        } ); });
 	             </script>';
-            }
-            $out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
-        } else // In most cases, this is not used. We used instead function with no specific list of colors
-        {
-        	if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
-            {
-	        	$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-	            $out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-	            $out .= '<script type="text/javascript">
+			}
+			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
+		} else // In most cases, this is not used. We used instead function with no specific list of colors
+		{
+			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
+			{
+				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
+				$out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+				$out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
 	                     size: 14,
@@ -778,294 +778,294 @@ class FormOther
 	                 });
 	             });
 	             </script>';
-            }
-            $out .= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
-            //print '<option value="-1">&nbsp;</option>';
-            foreach ($arrayofcolors as $val)
-            {
-                $out .= '<option value="'.$val.'"';
-                if ($set_color == $val) $out .= ' selected';
-                $out .= '>'.$val.'</option>';
-            }
-            $out .= '</select>';
-        }
+			}
+			$out .= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
+			//print '<option value="-1">&nbsp;</option>';
+			foreach ($arrayofcolors as $val)
+			{
+				$out .= '<option value="'.$val.'"';
+				if ($set_color == $val) $out .= ' selected';
+				$out .= '>'.$val.'</option>';
+			}
+			$out .= '</select>';
+		}
 
-        return $out;
-    }
+		return $out;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *	Creation d'un icone de couleur
-     *
-     *	@param	string	$color		Couleur de l'image
-     *	@param	string	$module 	Nom du module
-     *	@param	string	$name		Nom de l'image
-     *	@param	int		$x 			Largeur de l'image en pixels
-     *	@param	int		$y      	Hauteur de l'image en pixels
-     *	@return	void
-     */
-    public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Creation d'un icone de couleur
+	 *
+	 *	@param	string	$color		Couleur de l'image
+	 *	@param	string	$module 	Nom du module
+	 *	@param	string	$name		Nom de l'image
+	 *	@param	int		$x 			Largeur de l'image en pixels
+	 *	@param	int		$y      	Hauteur de l'image en pixels
+	 *	@return	void
+	 */
+	public function CreateColorIcon($color, $module, $name, $x = '12', $y = '12')
+	{
+		// phpcs:enable
+		global $conf;
 
-        $file = $conf->$module->dir_temp.'/'.$name.'.png';
+		$file = $conf->$module->dir_temp.'/'.$name.'.png';
 
-        // On cree le repertoire contenant les icones
-        if (!file_exists($conf->$module->dir_temp))
-        {
-            dol_mkdir($conf->$module->dir_temp);
-        }
+		// On cree le repertoire contenant les icones
+		if (!file_exists($conf->$module->dir_temp))
+		{
+			dol_mkdir($conf->$module->dir_temp);
+		}
 
-        // On cree l'image en vraies couleurs
-        $image = imagecreatetruecolor($x, $y);
+		// On cree l'image en vraies couleurs
+		$image = imagecreatetruecolor($x, $y);
 
-        $color = substr($color, 1, 6);
+		$color = substr($color, 1, 6);
 
-        $rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
-        $vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
-        $bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
+		$rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
+		$vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
+		$bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
 
-        $couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
-        //print $rouge.$vert.$bleu;
-        imagefill($image, 0, 0, $couleur); //on remplit l'image
-        // On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-        ImagePng($image, $file); //renvoie une image sous format png
-        ImageDestroy($image);
-    }
+		$couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
+		//print $rouge.$vert.$bleu;
+		imagefill($image, 0, 0, $couleur); //on remplit l'image
+		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
+		ImagePng($image, $file); //renvoie une image sous format png
+		ImageDestroy($image);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *    	Return HTML combo list of week
-     *
-     *    	@param	string		$selected          Preselected value
-     *    	@param  string		$htmlname          Nom de la zone select
-     *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	string
-     */
-    public function select_dayofweek($selected = '', $htmlname = 'weekid', $useempty = 0)
-    {
-        // phpcs:enable
-        global $langs;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    	Return HTML combo list of week
+	 *
+	 *    	@param	string		$selected          Preselected value
+	 *    	@param  string		$htmlname          Nom de la zone select
+	 *    	@param  int			$useempty          Affiche valeur vide dans liste
+	 *    	@return	string
+	 */
+	public function select_dayofweek($selected = '', $htmlname = 'weekid', $useempty = 0)
+	{
+		// phpcs:enable
+		global $langs;
 
-        $week = array(
-            0=>$langs->trans("Day0"),
-            1=>$langs->trans("Day1"),
-            2=>$langs->trans("Day2"),
-            3=>$langs->trans("Day3"),
-            4=>$langs->trans("Day4"),
-            5=>$langs->trans("Day5"),
-            6=>$langs->trans("Day6")
-        );
+		$week = array(
+			0=>$langs->trans("Day0"),
+			1=>$langs->trans("Day1"),
+			2=>$langs->trans("Day2"),
+			3=>$langs->trans("Day3"),
+			4=>$langs->trans("Day4"),
+			5=>$langs->trans("Day5"),
+			6=>$langs->trans("Day6")
+		);
 
-        $select_week = '<select class="flat" name="'.$htmlname.'">';
-        if ($useempty)
-        {
-            $select_week .= '<option value="-1">&nbsp;</option>';
-        }
-        foreach ($week as $key => $val)
-        {
-            if ($selected == $key)
-            {
-                $select_week .= '<option value="'.$key.'" selected>';
-            } else {
-                $select_week .= '<option value="'.$key.'">';
-            }
-            $select_week .= $val;
-            $select_week .= '</option>';
-        }
-        $select_week .= '</select>';
-        return $select_week;
-    }
+		$select_week = '<select class="flat" name="'.$htmlname.'">';
+		if ($useempty)
+		{
+			$select_week .= '<option value="-1">&nbsp;</option>';
+		}
+		foreach ($week as $key => $val)
+		{
+			if ($selected == $key)
+			{
+				$select_week .= '<option value="'.$key.'" selected>';
+			} else {
+				$select_week .= '<option value="'.$key.'">';
+			}
+			$select_week .= $val;
+			$select_week .= '</option>';
+		}
+		$select_week .= '</select>';
+		return $select_week;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *      Return HTML combo list of month
-     *
-     *      @param  string      $selected          	Preselected value
-     *      @param  string      $htmlname          	Name of HTML select object
-     *      @param  int         $useempty          	Show empty in list
-     *      @param  int         $longlabel         	Show long label
-     *      @param	string		$morecss			More Css
-     *      @return string
-     */
-    public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
-    {
-        // phpcs:enable
-        global $langs;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Return HTML combo list of month
+	 *
+	 *      @param  string      $selected          	Preselected value
+	 *      @param  string      $htmlname          	Name of HTML select object
+	 *      @param  int         $useempty          	Show empty in list
+	 *      @param  int         $longlabel         	Show long label
+	 *      @param	string		$morecss			More Css
+	 *      @return string
+	 */
+	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
+	{
+		// phpcs:enable
+		global $langs;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        if ($longlabel) $montharray = monthArray($langs, 0); // Get array
-        else $montharray = monthArray($langs, 1);
+		if ($longlabel) $montharray = monthArray($langs, 0); // Get array
+		else $montharray = monthArray($langs, 1);
 
-        $select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-        if ($useempty)
-        {
-            $select_month .= '<option value="0">&nbsp;</option>';
-        }
-        foreach ($montharray as $key => $val)
-        {
-            if ($selected == $key)
-            {
-                $select_month .= '<option value="'.$key.'" selected>';
-            } else {
-                $select_month .= '<option value="'.$key.'">';
-            }
-            $select_month .= $val;
-            $select_month .= '</option>';
-        }
-        $select_month .= '</select>';
-        return $select_month;
-    }
+		$select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+		if ($useempty)
+		{
+			$select_month .= '<option value="0">&nbsp;</option>';
+		}
+		foreach ($montharray as $key => $val)
+		{
+			if ($selected == $key)
+			{
+				$select_month .= '<option value="'.$key.'" selected>';
+			} else {
+				$select_month .= '<option value="'.$key.'">';
+			}
+			$select_month .= $val;
+			$select_month .= '</option>';
+		}
+		$select_month .= '</select>';
+		return $select_month;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *	Return HTML combo list of years
-     *
-     *  @param  string		$selected       Preselected value (''=current year, -1=none, year otherwise)
-     *  @param  string		$htmlname       Name of HTML select object
-     *  @param  int			$useempty       Affiche valeur vide dans liste
-     *  @param  int			$min_year       Offset of minimum year into list (by default current year -10)
-     *  @param  int		    $max_year		Offset of maximum year into list (by default current year + 5)
-     *  @param	int			$offset			Offset
-     *  @param	int			$invert			Invert
-     *  @param	string		$option			Option
-     *  @param	string		$morecss		More CSS
-     *  @return	string
-     */
-    public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
-    {
-        // phpcs:enable
-        print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Return HTML combo list of years
+	 *
+	 *  @param  string		$selected       Preselected value (''=current year, -1=none, year otherwise)
+	 *  @param  string		$htmlname       Name of HTML select object
+	 *  @param  int			$useempty       Affiche valeur vide dans liste
+	 *  @param  int			$min_year       Offset of minimum year into list (by default current year -10)
+	 *  @param  int		    $max_year		Offset of maximum year into list (by default current year + 5)
+	 *  @param	int			$offset			Offset
+	 *  @param	int			$invert			Invert
+	 *  @param	string		$option			Option
+	 *  @param	string		$morecss		More CSS
+	 *  @return	string
+	 */
+	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+	{
+		// phpcs:enable
+		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
+	}
 
-    /**
-     *	Return HTML combo list of years
-     *
-     *  @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
-     *  @param  string	$htmlname       Name of HTML select object
-     *  @param  int	    $useempty       Affiche valeur vide dans liste
-     *  @param  int	    $min_year		Offset of minimum year into list (by default current year -10)
-     *  @param  int	    $max_year       Offset of maximum year into list (by default current year + 5)
-     *  @param	int		$offset			Offset
-     *  @param	int		$invert			Invert
-     *  @param	string	$option			Option
-     *  @param	string	$morecss		More css
-     *  @return	string
-     */
-    public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
-    {
-        $out = '';
+	/**
+	 *	Return HTML combo list of years
+	 *
+	 *  @param  string	$selected       Preselected value (''=current year, -1=none, year otherwise)
+	 *  @param  string	$htmlname       Name of HTML select object
+	 *  @param  int	    $useempty       Affiche valeur vide dans liste
+	 *  @param  int	    $min_year		Offset of minimum year into list (by default current year -10)
+	 *  @param  int	    $max_year       Offset of maximum year into list (by default current year + 5)
+	 *  @param	int		$offset			Offset
+	 *  @param	int		$invert			Invert
+	 *  @param	string	$option			Option
+	 *  @param	string	$morecss		More css
+	 *  @return	string
+	 */
+	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+	{
+		$out = '';
 
-        $currentyear = date("Y") + $offset;
-        $max_year = $currentyear + $max_year;
-        $min_year = $currentyear - $min_year;
-        if (empty($selected) && empty($useempty)) $selected = $currentyear;
+		$currentyear = date("Y") + $offset;
+		$max_year = $currentyear + $max_year;
+		$min_year = $currentyear - $min_year;
+		if (empty($selected) && empty($useempty)) $selected = $currentyear;
 
-        $out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$option.' >';
-        if ($useempty)
-        {
-        	$selected_html = '';
-            if ($selected == '') $selected_html = ' selected';
-            $out .= '<option value=""'.$selected_html.'>&nbsp;</option>';
-        }
-        if (!$invert)
-        {
-            for ($y = $max_year; $y >= $min_year; $y--)
-            {
-                $selected_html = '';
-                if ($selected > 0 && $y == $selected) $selected_html = ' selected';
-                $out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
-            }
-        } else {
-            for ($y = $min_year; $y <= $max_year; $y++)
-            {
-                $selected_html = '';
-                if ($selected > 0 && $y == $selected) $selected_html = ' selected';
-                $out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
-            }
-        }
-        $out .= "</select>\n";
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$option.' >';
+		if ($useempty)
+		{
+			$selected_html = '';
+			if ($selected == '') $selected_html = ' selected';
+			$out .= '<option value=""'.$selected_html.'>&nbsp;</option>';
+		}
+		if (!$invert)
+		{
+			for ($y = $max_year; $y >= $min_year; $y--)
+			{
+				$selected_html = '';
+				if ($selected > 0 && $y == $selected) $selected_html = ' selected';
+				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
+			}
+		} else {
+			for ($y = $min_year; $y <= $max_year; $y++)
+			{
+				$selected_html = '';
+				if ($selected > 0 && $y == $selected) $selected_html = ' selected';
+				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
+			}
+		}
+		$out .= "</select>\n";
 
-        return $out;
-    }
+		return $out;
+	}
 
 
-    /**
-     * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
-     *  Class 'Form' must be known.
-     *
-     * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	/**
+	 * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.
+	 *  Class 'Form' must be known.
+	 *
+	 * 	@param	   User         $user		 Object User
+	 * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
 	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
-     */
-    public static function getBoxesArea($user, $areacode)
-    {
-        global $conf, $langs, $db;
+	 */
+	public static function getBoxesArea($user, $areacode)
+	{
+		global $conf, $langs, $db;
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
-        $confuserzone = 'MAIN_BOXES_'.$areacode;
+		$confuserzone = 'MAIN_BOXES_'.$areacode;
 
-        // $boxactivated will be array of boxes enabled into global setup
-        // $boxidactivatedforuser will be array of boxes choosed by user
+		// $boxactivated will be array of boxes enabled into global setup
+		// $boxidactivatedforuser will be array of boxes choosed by user
 
-        $selectboxlist = '';
-        $boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+		$selectboxlist = '';
+		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
-        $boxidactivatedforuser = array();
-        foreach ($boxactivated as $box)
-        {
-        	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
-        }
+		$boxidactivatedforuser = array();
+		foreach ($boxactivated as $box)
+		{
+			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
+		}
 
-        // Define selectboxlist
-        $arrayboxtoactivatelabel = array();
-        if (!empty($user->conf->$confuserzone))
-        {
-        	$boxorder = '';
-        	$langs->load("boxes"); // Load label of boxes
-        	foreach ($boxactivated as $box)
-        	{
-        		if (!empty($boxidactivatedforuser[$box->id])) continue; // Already visible for user
-        		$label = $langs->transnoentitiesnoconv($box->boxlabel);
-        		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
-        		{
-        			$label = $label.' <span class="fa fa-bar-chart"></span>';
-        		}
-        		$arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
-        	}
-            foreach ($boxidactivatedforuser as $boxid)
-        	{
-       			if (empty($boxorder)) $boxorder .= 'A:';
+		// Define selectboxlist
+		$arrayboxtoactivatelabel = array();
+		if (!empty($user->conf->$confuserzone))
+		{
+			$boxorder = '';
+			$langs->load("boxes"); // Load label of boxes
+			foreach ($boxactivated as $box)
+			{
+				if (!empty($boxidactivatedforuser[$box->id])) continue; // Already visible for user
+				$label = $langs->transnoentitiesnoconv($box->boxlabel);
+				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
+				{
+					$label = $label.' <span class="fa fa-bar-chart"></span>';
+				}
+				$arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
+			}
+			foreach ($boxidactivatedforuser as $boxid)
+			{
+	   			if (empty($boxorder)) $boxorder .= 'A:';
   				$boxorder .= $boxid.',';
-        	}
+			}
 
-        	//var_dump($boxidactivatedforuser);
+			//var_dump($boxidactivatedforuser);
 
-        	// Class Form must have been already loaded
-        	$selectboxlist .= '<!-- Form with select box list -->'."\n";
+			// Class Form must have been already loaded
+			$selectboxlist .= '<!-- Form with select box list -->'."\n";
 			$selectboxlist .= '<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$selectboxlist .= '<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
 			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
-            if (empty($conf->use_javascript_ajax)) $selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
-            $selectboxlist .= '</form>';
-            if (!empty($conf->use_javascript_ajax))
-            {
-            	include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-            	$selectboxlist .= ajax_combobox("boxcombo");
-            }
-        }
+			if (empty($conf->use_javascript_ajax)) $selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
+			$selectboxlist .= '</form>';
+			if (!empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$selectboxlist .= ajax_combobox("boxcombo");
+			}
+		}
 
-        // Javascript code for dynamic actions
-        if (!empty($conf->use_javascript_ajax))
-        {
-	        $selectboxlist .= '<script type="text/javascript" language="javascript">
+		// Javascript code for dynamic actions
+		if (!empty($conf->use_javascript_ajax))
+		{
+			$selectboxlist .= '<script type="text/javascript" language="javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1104,8 +1104,8 @@ class FormOther
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
-	        	if (!count($arrayboxtoactivatelabel)) $selectboxlist .= 'jQuery("#boxcombo").hide();';
-	        	$selectboxlist .= '
+				if (!count($arrayboxtoactivatelabel)) $selectboxlist .= 'jQuery("#boxcombo").hide();';
+				$selectboxlist .= '
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',
@@ -1277,7 +1277,7 @@ class FormOther
 	 *  @param	int      	$useempty		1=Add empty line
 	 *	@return	string						See option
 	 */
-    public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+	public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
 	{
 		global $langs;
 

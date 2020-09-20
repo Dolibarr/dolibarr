@@ -255,7 +255,7 @@ function user_admin_prepare_head()
 
 	$langs->load("users");
 	$h = 0;
-    $head = array();
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
 	$head[$h][1] = $langs->trans("Parameters");
@@ -694,7 +694,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	if ($foruserprofile)
 	{
 	} else {
-		$default=(empty($colortexttitlelink) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitlelink)));
+		$default = (empty($colortexttitlelink) ? $langs->trans("Unknown") : colorArrayToHex(colorStringToArray($colortexttitlelink)));
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("BackgroundTableTitleTextlinkColor").'</td>';
@@ -890,30 +890,30 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
 	if ($foruserprofile)
 	{
-	    //$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
-	    $default = $langs->trans('No');
-	    print '<tr class="oddeven">';
-	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
-	    print '<td colspan="'.($colspan - 1).'">';
-	    //print ajax_constantonoff("MAIN_OPTIMIZEFORTEXTBROWSER", array(), null, 0, 0, 1, 0);
-   	    if ($edit)
-   	    {
-   	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
-   	    } else {
-   	        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-   	        {
-   	            print yn($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
-   	        } else {
-   	            print yn(1);
-   	            if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) print ' ('.$langs->trans("ForcedByGlobalSetup").')';
-   	        }
-   	    }
-   	    print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
-	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
-	    print '</td>';
-	    print '</tr>';
+		//$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
+		$default = $langs->trans('No');
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		//print ajax_constantonoff("MAIN_OPTIMIZEFORTEXTBROWSER", array(), null, 0, 0, 1, 0);
+   		if ($edit)
+   		{
+   			print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
+   		} else {
+   			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+   			{
+   				print yn($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
+   			} else {
+   				print yn(1);
+   				if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) print ' ('.$langs->trans("ForcedByGlobalSetup").')';
+   			}
+   		}
+   		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
+		print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
+		print '</td>';
+		print '</tr>';
 	} else {
-	    /*var_dump($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
+		/*var_dump($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 	    $default=$langs->trans('No');
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';

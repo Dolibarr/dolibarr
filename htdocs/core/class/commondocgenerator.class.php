@@ -40,199 +40,199 @@ abstract class CommonDocGenerator
 	 */
 	public $error = '';
 
-    /**
-     * @var string[]    Array of error strings
-     */
-    public $errors = array();
+	/**
+	 * @var string[]    Array of error strings
+	 */
+	public $errors = array();
 
 	/**
-     * @var DoliDB Database handler.
-     */
+	 * @var DoliDB Database handler.
+	 */
 	protected $db;
 
-    /**
-     * @var Extrafields object
-     */
+	/**
+	 * @var Extrafields object
+	 */
 	public $extrafieldsCache;
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
-	*/
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   User		$user           User
-     * @param   Translate	$outputlangs    Language object for output
-     * @return	array						Array of substitution key->code
-     */
-    public function get_substitutionarray_user($user, $outputlangs)
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   User		$user           User
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @return	array						Array of substitution key->code
+	 */
+	public function get_substitutionarray_user($user, $outputlangs)
+	{
+		// phpcs:enable
+		global $conf;
 
-        $logotouse = $conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
+		$logotouse = $conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
 
-        return array(
-            'myuser_lastname'=>$user->lastname,
-            'myuser_firstname'=>$user->firstname,
-            'myuser_fullname'=>$user->getFullName($outputlangs, 1),
-            'myuser_login'=>$user->login,
-            'myuser_phone'=>$user->office_phone,
-       		'myuser_address'=>$user->address,
-       		'myuser_zip'=>$user->zip,
-       		'myuser_town'=>$user->town,
-       		'myuser_country'=>$user->country,
-        	'myuser_country_code'=>$user->country_code,
-       		'myuser_state'=>$user->state,
-        	'myuser_state_code'=>$user->state_code,
-        	'myuser_fax'=>$user->office_fax,
-            'myuser_mobile'=>$user->user_mobile,
-            'myuser_email'=>$user->email,
-        	'myuser_logo'=>$logotouse,
-        	'myuser_job'=>$user->job,
-            'myuser_web'=>''	// url not exist in $user object
-        );
-    }
+		return array(
+			'myuser_lastname'=>$user->lastname,
+			'myuser_firstname'=>$user->firstname,
+			'myuser_fullname'=>$user->getFullName($outputlangs, 1),
+			'myuser_login'=>$user->login,
+			'myuser_phone'=>$user->office_phone,
+	   		'myuser_address'=>$user->address,
+	   		'myuser_zip'=>$user->zip,
+	   		'myuser_town'=>$user->town,
+	   		'myuser_country'=>$user->country,
+			'myuser_country_code'=>$user->country_code,
+	   		'myuser_state'=>$user->state,
+			'myuser_state_code'=>$user->state_code,
+			'myuser_fax'=>$user->office_fax,
+			'myuser_mobile'=>$user->user_mobile,
+			'myuser_email'=>$user->email,
+			'myuser_logo'=>$logotouse,
+			'myuser_job'=>$user->job,
+			'myuser_web'=>''	// url not exist in $user object
+		);
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   Societe		$mysoc			Object thirdparty
-     * @param   Translate	$outputlangs    Language object for output
-     * @return	array						Array of substitution key->code
-     */
-    public function get_substitutionarray_mysoc($mysoc, $outputlangs)
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Societe		$mysoc			Object thirdparty
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @return	array						Array of substitution key->code
+	 */
+	public function get_substitutionarray_mysoc($mysoc, $outputlangs)
+	{
+		// phpcs:enable
+		global $conf;
 
-        if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code))
-        {
-            $mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
-        }
-        if (empty($mysoc->country) && !empty($mysoc->country_code))
-        {
-        	$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
-        }
-        if (empty($mysoc->state) && !empty($mysoc->state_code))
-        {
-        	$mysoc->state = getState($mysoc->state_code, 0);
-        }
+		if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code))
+		{
+			$mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
+		}
+		if (empty($mysoc->country) && !empty($mysoc->country_code))
+		{
+			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
+		}
+		if (empty($mysoc->state) && !empty($mysoc->state_code))
+		{
+			$mysoc->state = getState($mysoc->state_code, 0);
+		}
 
-        $logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
 
-        return array(
-            'mycompany_logo'=>$logotouse,
-            'mycompany_name'=>$mysoc->name,
-            'mycompany_email'=>$mysoc->email,
-            'mycompany_phone'=>$mysoc->phone,
-            'mycompany_fax'=>$mysoc->fax,
-            'mycompany_address'=>$mysoc->address,
-            'mycompany_zip'=>$mysoc->zip,
-            'mycompany_town'=>$mysoc->town,
-            'mycompany_country'=>$mysoc->country,
-            'mycompany_country_code'=>$mysoc->country_code,
-            'mycompany_state'=>$mysoc->state,
-            'mycompany_state_code'=>$mysoc->state_code,
-        	'mycompany_web'=>$mysoc->url,
-            'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
-            'mycompany_managers'=>$mysoc->managers,
-            'mycompany_capital'=>$mysoc->capital,
-            'mycompany_barcode'=>$mysoc->barcode,
-            'mycompany_idprof1'=>$mysoc->idprof1,
-            'mycompany_idprof2'=>$mysoc->idprof2,
-            'mycompany_idprof3'=>$mysoc->idprof3,
-            'mycompany_idprof4'=>$mysoc->idprof4,
-            'mycompany_idprof5'=>$mysoc->idprof5,
-            'mycompany_idprof6'=>$mysoc->idprof6,
-        	'mycompany_vatnumber'=>$mysoc->tva_intra,
+		return array(
+			'mycompany_logo'=>$logotouse,
+			'mycompany_name'=>$mysoc->name,
+			'mycompany_email'=>$mysoc->email,
+			'mycompany_phone'=>$mysoc->phone,
+			'mycompany_fax'=>$mysoc->fax,
+			'mycompany_address'=>$mysoc->address,
+			'mycompany_zip'=>$mysoc->zip,
+			'mycompany_town'=>$mysoc->town,
+			'mycompany_country'=>$mysoc->country,
+			'mycompany_country_code'=>$mysoc->country_code,
+			'mycompany_state'=>$mysoc->state,
+			'mycompany_state_code'=>$mysoc->state_code,
+			'mycompany_web'=>$mysoc->url,
+			'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
+			'mycompany_managers'=>$mysoc->managers,
+			'mycompany_capital'=>$mysoc->capital,
+			'mycompany_barcode'=>$mysoc->barcode,
+			'mycompany_idprof1'=>$mysoc->idprof1,
+			'mycompany_idprof2'=>$mysoc->idprof2,
+			'mycompany_idprof3'=>$mysoc->idprof3,
+			'mycompany_idprof4'=>$mysoc->idprof4,
+			'mycompany_idprof5'=>$mysoc->idprof5,
+			'mycompany_idprof6'=>$mysoc->idprof6,
+			'mycompany_vatnumber'=>$mysoc->tva_intra,
 			'mycompany_object'=>$mysoc->object,
-            'mycompany_note_private'=>$mysoc->note_private,
-            //'mycompany_note_public'=>$mysoc->note_public,        // Only private not exists for "mysoc" but both for thirdparties
-        );
-    }
+			'mycompany_note_private'=>$mysoc->note_private,
+			//'mycompany_note_public'=>$mysoc->note_public,        // Only private not exists for "mysoc" but both for thirdparties
+		);
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param	Societe		$object			Object
-     * @param   Translate	$outputlangs    Language object for output
-     * @param   string		$array_key	    Name of the key for return array
-     * @return	array						Array of substitution key->code
-     */
-    public function get_substitutionarray_thirdparty($object, $outputlangs, $array_key = 'company')
-    {
-        // phpcs:enable
-        global $conf, $extrafields;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param	Societe		$object			Object
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @param   string		$array_key	    Name of the key for return array
+	 * @return	array						Array of substitution key->code
+	 */
+	public function get_substitutionarray_thirdparty($object, $outputlangs, $array_key = 'company')
+	{
+		// phpcs:enable
+		global $conf, $extrafields;
 
-        if (empty($object->country) && !empty($object->country_code))
-        {
-        	$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
-        }
-        if (empty($object->state) && !empty($object->state_code))
-        {
-        	$object->state = getState($object->state_code, 0);
-        }
+		if (empty($object->country) && !empty($object->country_code))
+		{
+			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
+		}
+		if (empty($object->state) && !empty($object->state_code))
+		{
+			$object->state = getState($object->state_code, 0);
+		}
 
-        $array_thirdparty = array(
-            'company_name'=>$object->name,
-	        'company_name_alias' => $object->name_alias,
-            'company_email'=>$object->email,
-            'company_phone'=>$object->phone,
-            'company_fax'=>$object->fax,
-            'company_address'=>$object->address,
-            'company_zip'=>$object->zip,
-            'company_town'=>$object->town,
-            'company_country'=>$object->country,
-        	'company_country_code'=>$object->country_code,
-            'company_state'=>$object->state,
-        	'company_state_code'=>$object->state_code,
-        	'company_web'=>$object->url,
-            'company_barcode'=>$object->barcode,
-            'company_vatnumber'=>$object->tva_intra,
-            'company_customercode'=>$object->code_client,
-            'company_suppliercode'=>$object->code_fournisseur,
-            'company_customeraccountancycode'=>$object->code_compta,
-            'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
-            'company_juridicalstatus'=>$object->forme_juridique,
-            'company_outstanding_limit'=>$object->outstanding_limit,
-            'company_capital'=>$object->capital,
-            'company_idprof1'=>$object->idprof1,
-            'company_idprof2'=>$object->idprof2,
-            'company_idprof3'=>$object->idprof3,
-            'company_idprof4'=>$object->idprof4,
-            'company_idprof5'=>$object->idprof5,
-            'company_idprof6'=>$object->idprof6,
-            'company_note_public'=>$object->note_public,
-            'company_note_private'=>$object->note_private,
-        	'company_default_bank_iban'=>(is_object($object->bank_account) ? $object->bank_account->iban : ''),
-        	'company_default_bank_bic'=>(is_object($object->bank_account) ? $object->bank_account->bic : '')
-        );
+		$array_thirdparty = array(
+			'company_name'=>$object->name,
+			'company_name_alias' => $object->name_alias,
+			'company_email'=>$object->email,
+			'company_phone'=>$object->phone,
+			'company_fax'=>$object->fax,
+			'company_address'=>$object->address,
+			'company_zip'=>$object->zip,
+			'company_town'=>$object->town,
+			'company_country'=>$object->country,
+			'company_country_code'=>$object->country_code,
+			'company_state'=>$object->state,
+			'company_state_code'=>$object->state_code,
+			'company_web'=>$object->url,
+			'company_barcode'=>$object->barcode,
+			'company_vatnumber'=>$object->tva_intra,
+			'company_customercode'=>$object->code_client,
+			'company_suppliercode'=>$object->code_fournisseur,
+			'company_customeraccountancycode'=>$object->code_compta,
+			'company_supplieraccountancycode'=>$object->code_compta_fournisseur,
+			'company_juridicalstatus'=>$object->forme_juridique,
+			'company_outstanding_limit'=>$object->outstanding_limit,
+			'company_capital'=>$object->capital,
+			'company_idprof1'=>$object->idprof1,
+			'company_idprof2'=>$object->idprof2,
+			'company_idprof3'=>$object->idprof3,
+			'company_idprof4'=>$object->idprof4,
+			'company_idprof5'=>$object->idprof5,
+			'company_idprof6'=>$object->idprof6,
+			'company_note_public'=>$object->note_public,
+			'company_note_private'=>$object->note_private,
+			'company_default_bank_iban'=>(is_object($object->bank_account) ? $object->bank_account->iban : ''),
+			'company_default_bank_bic'=>(is_object($object->bank_account) ? $object->bank_account->bic : '')
+		);
 
-	    // Retrieve extrafields
-	    if (is_array($object->array_options) && count($object->array_options))
-	    {
-		    $object->fetch_optionals();
+		// Retrieve extrafields
+		if (is_array($object->array_options) && count($object->array_options))
+		{
+			$object->fetch_optionals();
 
-		    $array_thirdparty = $this->fill_substitutionarray_with_extrafields($object, $array_thirdparty, $extrafields, $array_key, $outputlangs);
-	    }
+			$array_thirdparty = $this->fill_substitutionarray_with_extrafields($object, $array_thirdparty, $extrafields, $array_key, $outputlangs);
+		}
 		return $array_thirdparty;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -241,9 +241,9 @@ abstract class CommonDocGenerator
 	 * @param   string		$array_key	    Name of the key for return array
 	 * @return	array 						Array of substitution key->code
 	 */
-    public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
-    {
-        // phpcs:enable
+	public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
+	{
+		// phpcs:enable
 		global $conf, $extrafields;
 
 		if (empty($object->country) && !empty($object->country_code))
@@ -285,67 +285,67 @@ abstract class CommonDocGenerator
 			$array_key.'_civility' => $object->civility,
 		);
 
-	    // Retrieve extrafields
-	    if (is_array($object->array_options) && count($object->array_options))
-	    {
-		    $object->fetch_optionals();
+		// Retrieve extrafields
+		if (is_array($object->array_options) && count($object->array_options))
+		{
+			$object->fetch_optionals();
 
-		    $array_contact = $this->fill_substitutionarray_with_extrafields($object, $array_contact, $extrafields, $array_key, $outputlangs);
-	    }
+			$array_contact = $this->fill_substitutionarray_with_extrafields($object, $array_contact, $extrafields, $array_key, $outputlangs);
+		}
 		return $array_contact;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   Translate	$outputlangs    Language object for output
-     * @return	array						Array of substitution key->code
-     */
-    public function get_substitutionarray_other($outputlangs)
-    {
-        // phpcs:enable
-    	global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @return	array						Array of substitution key->code
+	 */
+	public function get_substitutionarray_other($outputlangs)
+	{
+		// phpcs:enable
+		global $conf;
 
-    	$now = dol_now('gmt'); // gmt
-    	$array_other = array(
-    	    // Date in default language
-    	    'current_date'=>dol_print_date($now, 'day', 'tzuser'),
-    	    'current_datehour'=>dol_print_date($now, 'dayhour', 'tzuser'),
+		$now = dol_now('gmt'); // gmt
+		$array_other = array(
+			// Date in default language
+			'current_date'=>dol_print_date($now, 'day', 'tzuser'),
+			'current_datehour'=>dol_print_date($now, 'dayhour', 'tzuser'),
    			'current_server_date'=>dol_print_date($now, 'day', 'tzserver'),
    			'current_server_datehour'=>dol_print_date($now, 'dayhour', 'tzserver'),
-    	    // Date in requested output language
-    	    'current_date_locale'=>dol_print_date($now, 'day', 'tzuser', $outputlangs),
+			// Date in requested output language
+			'current_date_locale'=>dol_print_date($now, 'day', 'tzuser', $outputlangs),
    			'current_datehour_locale'=>dol_print_date($now, 'dayhour', 'tzuser', $outputlangs),
    			'current_server_date_locale'=>dol_print_date($now, 'day', 'tzserver', $outputlangs),
    			'current_server_datehour_locale'=>dol_print_date($now, 'dayhour', 'tzserver', $outputlangs),
-    	);
+		);
 
 
-    	foreach ($conf->global as $key => $val)
-    	{
-    		if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
-    		else $newval = $val;
-    		$array_other['__['.$key.']__'] = $newval;
-    	}
+		foreach ($conf->global as $key => $val)
+		{
+			if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
+			else $newval = $val;
+			$array_other['__['.$key.']__'] = $newval;
+		}
 
-    	return $array_other;
-    }
+		return $array_other;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param   Object			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   string		    $array_key	        Name of the key for return array
+	 * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $extrafields;
 
 		$sumpayed = $sumdeposit = $sumcreditnote = '';
@@ -381,11 +381,11 @@ abstract class CommonDocGenerator
 		$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($date, 'hour'),
+		$array_key.'_hour'=>dol_print_date($date, 'hour'),
 		$array_key.'_date'=>dol_print_date($date, 'day'),
 		$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc'),
 		$array_key.'_date_limit'=>(!empty($object->date_lim_reglement) ?dol_print_date($object->date_lim_reglement, 'day') : ''),
-	    $array_key.'_date_end'=>(!empty($object->fin_validite) ?dol_print_date($object->fin_validite, 'day') : ''),
+		$array_key.'_date_end'=>(!empty($object->fin_validite) ?dol_print_date($object->fin_validite, 'day') : ''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
 		$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day') : ''),
 		$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour') : ''),
@@ -414,8 +414,8 @@ abstract class CommonDocGenerator
 
 		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
-	    $array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
-	    $array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
+		$array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
+		$array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
 		$array_key.'_multicurrency_total_ttc' => price2num($object->multicurrency_total_ttc),
 		$array_key.'_multicurrency_total_ht_locale' => price($object->multicurrency_total_ht, 0, $outputlangs),
 		$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
@@ -470,11 +470,11 @@ abstract class CommonDocGenerator
 			$totalUp = 0;
 			foreach ($object->lines as $line)
 			{
-			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
+				// $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx] = 0;
 				$resarray[$array_key.'_total_vat_'.$line->tva_tx] += $line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx] = price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
-			    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
+				// $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
 				$vatformated = vatrate($line->tva_tx);
 				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated] = 0;
 				$resarray[$array_key.'_total_vat_'.$vatformated] += $line->total_tva;
@@ -512,7 +512,7 @@ abstract class CommonDocGenerator
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -523,7 +523,7 @@ abstract class CommonDocGenerator
 	 */
 	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$resarray = array(
@@ -535,9 +535,9 @@ abstract class CommonDocGenerator
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
-		    'line_localtax1_rate'=>vatrate($line->localtax1_tx),
-		    'line_localtax2_rate'=>vatrate($line->localtax1_tx),
-		    'line_up'=>price2num($line->subprice),
+			'line_localtax1_rate'=>vatrate($line->localtax1_tx),
+			'line_localtax2_rate'=>vatrate($line->localtax1_tx),
+			'line_up'=>price2num($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
 			'line_total_up'=>price2num($line->subprice * $line->qty),
 			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
@@ -549,31 +549,31 @@ abstract class CommonDocGenerator
 			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
-		    // Dates
+			// Dates
 			'line_date_start'=>dol_print_date($line->date_start, 'day'),
 			'line_date_start_locale'=>dol_print_date($line->date_start, 'day', 'tzserver', $outputlangs),
-		    'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc'),
-		    'line_date_end'=>dol_print_date($line->date_end, 'day'),
-		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzserver', $outputlangs),
-		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc'),
+			'line_date_start_rfc'=>dol_print_date($line->date_start, 'dayrfc'),
+			'line_date_end'=>dol_print_date($line->date_end, 'day'),
+			'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzserver', $outputlangs),
+			'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc'),
 
-		    'line_multicurrency_code' => price2num($line->multicurrency_code),
-		    'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
-		    'line_multicurrency_total_ht' => price2num($line->multicurrency_total_ht),
-		    'line_multicurrency_total_tva' => price2num($line->multicurrency_total_tva),
-		    'line_multicurrency_total_ttc' => price2num($line->multicurrency_total_ttc),
-		    'line_multicurrency_subprice_locale' => price($line->multicurrency_subprice, 0, $outputlangs),
-		    'line_multicurrency_total_ht_locale' => price($line->multicurrency_total_ht, 0, $outputlangs),
-		    'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
-		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
+			'line_multicurrency_code' => price2num($line->multicurrency_code),
+			'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
+			'line_multicurrency_total_ht' => price2num($line->multicurrency_total_ht),
+			'line_multicurrency_total_tva' => price2num($line->multicurrency_total_tva),
+			'line_multicurrency_total_ttc' => price2num($line->multicurrency_total_ttc),
+			'line_multicurrency_subprice_locale' => price($line->multicurrency_subprice, 0, $outputlangs),
+			'line_multicurrency_total_ht_locale' => price($line->multicurrency_total_ht, 0, $outputlangs),
+			'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
+			'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
 
-        // Units
+		// Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
-		      $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
-		      $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
-        }
+			  $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
+			  $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
+		}
 
 		// Retrieve extrafields
 		$extrafieldkey = $line->table_element;
@@ -583,14 +583,14 @@ abstract class CommonDocGenerator
 		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
 
-        // Check if the current line belongs to a supplier order
-        if (get_class($line) == 'CommandeFournisseurLigne')
-        {
-            // Add the product supplier extrafields to the substitutions
-            $extrafields->fetch_name_optionals_label("product_fournisseur_price");
-            $extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
+		// Check if the current line belongs to a supplier order
+		if (get_class($line) == 'CommandeFournisseurLigne')
+		{
+			// Add the product supplier extrafields to the substitutions
+			$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+			$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
 
 			if (!empty($extralabels) && is_array($extralabels))
 			{
@@ -617,7 +617,7 @@ abstract class CommonDocGenerator
 					}
 				}
 			}
-        }
+		}
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
@@ -631,158 +631,158 @@ abstract class CommonDocGenerator
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   Expedition		$object             Main object to use as data source
-     * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   array			$array_key	        Name of the key for return array
-     * @return	array								Array of substitution
-     */
-    public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
-    {
-        // phpcs:enable
-    	global $conf, $extrafields;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Expedition		$object             Main object to use as data source
+	 * @param   Translate		$outputlangs        Lang object to use for output
+	 * @param   array			$array_key	        Name of the key for return array
+	 * @return	array								Array of substitution
+	 */
+	public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
+	{
+		// phpcs:enable
+		global $conf, $extrafields;
 		dol_include_once('/core/lib/product.lib.php');
 		$object->list_delivery_methods($object->shipping_method_id);
 		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
 
-    	$array_shipment = array(
-	    	$array_key.'_id'=>$object->id,
-	    	$array_key.'_ref'=>$object->ref,
-	    	$array_key.'_ref_ext'=>$object->ref_ext,
-	    	$array_key.'_ref_customer'=>$object->ref_customer,
-	    	$array_key.'_date_delivery'=>dol_print_date($object->date_delivery, 'day'),
-	    	$array_key.'_hour_delivery'=>dol_print_date($object->date_delivery, 'hour'),
-	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
-	    	$array_key.'_total_ht'=>price($object->total_ht),
-	    	$array_key.'_total_vat'=>price($object->total_tva),
-	    	$array_key.'_total_ttc'=>price($object->total_ttc),
-	    	$array_key.'_total_discount_ht' => price($object->getTotalDiscount()),
-	    	$array_key.'_note_private'=>$object->note_private,
-	    	$array_key.'_note'=>$object->note_public,
-	    	$array_key.'_tracking_number'=>$object->tracking_number,
-	    	$array_key.'_tracking_url'=>$object->tracking_url,
-	    	$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
-    		$array_key.'_weight'=>$object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
-    		$array_key.'_width'=>$object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
-    		$array_key.'_height'=>$object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
-    		$array_key.'_depth'=>$object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
-	    	$array_key.'_size'=>$calculatedVolume.' '.measuringUnitString(0, 'volume'),
-    	);
+		$array_shipment = array(
+			$array_key.'_id'=>$object->id,
+			$array_key.'_ref'=>$object->ref,
+			$array_key.'_ref_ext'=>$object->ref_ext,
+			$array_key.'_ref_customer'=>$object->ref_customer,
+			$array_key.'_date_delivery'=>dol_print_date($object->date_delivery, 'day'),
+			$array_key.'_hour_delivery'=>dol_print_date($object->date_delivery, 'hour'),
+			$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day'),
+			$array_key.'_total_ht'=>price($object->total_ht),
+			$array_key.'_total_vat'=>price($object->total_tva),
+			$array_key.'_total_ttc'=>price($object->total_ttc),
+			$array_key.'_total_discount_ht' => price($object->getTotalDiscount()),
+			$array_key.'_note_private'=>$object->note_private,
+			$array_key.'_note'=>$object->note_public,
+			$array_key.'_tracking_number'=>$object->tracking_number,
+			$array_key.'_tracking_url'=>$object->tracking_url,
+			$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
+			$array_key.'_weight'=>$object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
+			$array_key.'_width'=>$object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
+			$array_key.'_height'=>$object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
+			$array_key.'_depth'=>$object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
+			$array_key.'_size'=>$calculatedVolume.' '.measuringUnitString(0, 'volume'),
+		);
 
-    	// Add vat by rates
-    	foreach ($object->lines as $line)
-    	{
-    		if (empty($array_shipment[$array_key.'_total_vat_'.$line->tva_tx])) $array_shipment[$array_key.'_total_vat_'.$line->tva_tx] = 0;
-    		$array_shipment[$array_key.'_total_vat_'.$line->tva_tx] += $line->total_tva;
-    	}
+		// Add vat by rates
+		foreach ($object->lines as $line)
+		{
+			if (empty($array_shipment[$array_key.'_total_vat_'.$line->tva_tx])) $array_shipment[$array_key.'_total_vat_'.$line->tva_tx] = 0;
+			$array_shipment[$array_key.'_total_vat_'.$line->tva_tx] += $line->total_tva;
+		}
 
-	    // Retrieve extrafields
-	    if (is_array($object->array_options) && count($object->array_options))
-	    {
-		    $object->fetch_optionals();
+		// Retrieve extrafields
+		if (is_array($object->array_options) && count($object->array_options))
+		{
+			$object->fetch_optionals();
 
-		    $array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
-	    }
+			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
+		}
 
-    	return $array_shipment;
-    }
-
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Define array with couple substitution key => substitution value
-     *
-     *	@param  ExpeditionLigne	$line				Object line
-     *	@param  Translate		$outputlangs        Lang object to use for output
-     *	@return	array								Substitution array
-     */
-    public function get_substitutionarray_shipment_lines($line, $outputlangs)
-    {
-        // phpcs:enable
-        global $conf;
-        dol_include_once('/core/lib/product.lib.php');
-
-        $resarray = array(
-	    	'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
-	    	'line_product_ref'=>$line->product_ref,
-	    	'line_product_label'=>$line->product_label,
-	    	'line_desc'=>$line->desc,
-	    	'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
-	    	'line_up'=>price($line->subprice),
-            'line_total_up'=>price($line->subprice * $line->qty),
-	    	'line_qty'=>$line->qty,
-	    	'line_qty_shipped'=>$line->qty_shipped,
-	    	'line_qty_asked'=>$line->qty_asked,
-	    	'line_discount_percent'=>($line->remise_percent ? $line->remise_percent.'%' : ''),
-	    	'line_price_ht'=>price($line->total_ht),
-	    	'line_price_ttc'=>price($line->total_ttc),
-	    	'line_price_vat'=>price($line->total_tva),
-        	'line_weight'=>empty($line->weight) ? '' : $line->weight * $line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
-        	'line_length'=>empty($line->length) ? '' : $line->length * $line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
-        	'line_surface'=>empty($line->surface) ? '' : $line->surface * $line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
-        	'line_volume'=>empty($line->volume) ? '' : $line->volume * $line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
-    	);
-
-        // Retrieve extrafields
-        $extrafieldkey = $line->element;
-        $array_key = "line";
-        require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-        $extrafields = new ExtraFields($this->db);
-        $extrafields->fetch_name_optionals_label($extrafieldkey, true);
-        $line->fetch_optionals();
-
-        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
-
-        return $resarray;
-    }
+		return $array_shipment;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   Object		$object    		Dolibarr Object
-     * @param   Translate	$outputlangs    Language object for output
-     * @param   boolean		$recursive    	Want to fetch child array or child object
-     * @return	array						Array of substitution key->code
-     */
-    public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
-    {
-        // phpcs:enable
-        $array_other = array();
-        if (!empty($object)) {
-            foreach ($object as $key => $value) {
-                if (!empty($value)) {
-                    if (!is_array($value) && !is_object($value)) {
-                        $array_other['object_'.$key] = $value;
-                    }
-                    if (is_array($value) && $recursive) {
-                        $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value, $outputlangs, false);
-                    }
-                }
-            }
-        }
-        return $array_other;
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Define array with couple substitution key => substitution value
+	 *
+	 *	@param  ExpeditionLigne	$line				Object line
+	 *	@param  Translate		$outputlangs        Lang object to use for output
+	 *	@return	array								Substitution array
+	 */
+	public function get_substitutionarray_shipment_lines($line, $outputlangs)
+	{
+		// phpcs:enable
+		global $conf;
+		dol_include_once('/core/lib/product.lib.php');
+
+		$resarray = array(
+			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
+			'line_product_ref'=>$line->product_ref,
+			'line_product_label'=>$line->product_label,
+			'line_desc'=>$line->desc,
+			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
+			'line_up'=>price($line->subprice),
+			'line_total_up'=>price($line->subprice * $line->qty),
+			'line_qty'=>$line->qty,
+			'line_qty_shipped'=>$line->qty_shipped,
+			'line_qty_asked'=>$line->qty_asked,
+			'line_discount_percent'=>($line->remise_percent ? $line->remise_percent.'%' : ''),
+			'line_price_ht'=>price($line->total_ht),
+			'line_price_ttc'=>price($line->total_ttc),
+			'line_price_vat'=>price($line->total_tva),
+			'line_weight'=>empty($line->weight) ? '' : $line->weight * $line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
+			'line_length'=>empty($line->length) ? '' : $line->length * $line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
+			'line_surface'=>empty($line->surface) ? '' : $line->surface * $line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
+			'line_volume'=>empty($line->volume) ? '' : $line->volume * $line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
+		);
+
+		// Retrieve extrafields
+		$extrafieldkey = $line->element;
+		$array_key = "line";
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
+		$line->fetch_optionals();
+
+		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+
+		return $resarray;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *	Fill array with couple extrafield key => extrafield value
-     *
-     *	@param  Object			$object				Object with extrafields (must have $object->array_options filled)
-     *	@param  array			$array_to_fill      Substitution array
-     *  @param  Extrafields		$extrafields        Extrafields object
-     *  @param  string			$array_key	        Prefix for name of the keys into returned array
-     *  @param  Translate		$outputlangs        Lang object to use for output
-     *	@return	array								Substitution array
-     */
-    public function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
-    {
-        // phpcs:enable
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Object		$object    		Dolibarr Object
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @param   boolean		$recursive    	Want to fetch child array or child object
+	 * @return	array						Array of substitution key->code
+	 */
+	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
+	{
+		// phpcs:enable
+		$array_other = array();
+		if (!empty($object)) {
+			foreach ($object as $key => $value) {
+				if (!empty($value)) {
+					if (!is_array($value) && !is_object($value)) {
+						$array_other['object_'.$key] = $value;
+					}
+					if (is_array($value) && $recursive) {
+						$array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value, $outputlangs, false);
+					}
+				}
+			}
+		}
+		return $array_other;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Fill array with couple extrafield key => extrafield value
+	 *
+	 *	@param  Object			$object				Object with extrafields (must have $object->array_options filled)
+	 *	@param  array			$array_to_fill      Substitution array
+	 *  @param  Extrafields		$extrafields        Extrafields object
+	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
+	 *  @param  Translate		$outputlangs        Lang object to use for output
+	 *	@return	array								Substitution array
+	 */
+	public function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
+	{
+		// phpcs:enable
 		global $conf;
 
 		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
@@ -1286,7 +1286,7 @@ abstract class CommonDocGenerator
         if (!empty($fields))
         {
             // Sort extrafields by rank
-            uasort($fields, function ($a, $b) {
+            uasort($fields, function($a, $b) {
                 return  ($a->rank > $b->rank) ? 1 : -1;
 			});
 

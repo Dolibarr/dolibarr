@@ -88,7 +88,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_amount = "";
 	$year = "";
 	$month = "";
-    $typeid = "";
+	$typeid = "";
 }
 
 
@@ -119,38 +119,38 @@ if ($search_dateend_end)		$sql .= " AND t.datev <= '".$db->idate($search_dateend
 if ($search_datepayment_start)  $sql .= " AND t.datep >= '".$db->idate($search_datepayment_start)."'";
 if ($search_datepayment_end)	$sql .= " AND t.datep <= '".$db->idate($search_datepayment_end)."'";
 if ($filtre) {
-    $filtre = str_replace(":", "=", $filtre);
-    $sql .= " AND ".$filtre;
+	$filtre = str_replace(":", "=", $filtre);
+	$sql .= " AND ".$filtre;
 }
 if ($typeid) {
-    $sql .= " AND t.fk_typepayment=".$typeid;
+	$sql .= " AND t.fk_typepayment=".$typeid;
 }
 $sql .= $db->order($sortfield, $sortorder);
 $totalnboflines = 0;
 $result = $db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+	$totalnboflines = $db->num_rows($result);
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    $total = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
+	$total = 0;
 
 	$param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 
 	$newcardbutton = '';
 	if ($user->rights->tax->charges->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/tva/card.php?action=create');
-    }
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/tva/card.php?action=create');
+	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -195,17 +195,17 @@ if ($result)
 	print '</td>';
 	// Account
 	if (!empty($conf->banque->enabled))
-    {
-	    print '<td class="liste_titre">';
-	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
-	    print '</td>';
-    }
+	{
+		print '<td class="liste_titre">';
+		$form->select_comptes($search_account, 'search_account', 0, '', 1);
+		print '</td>';
+	}
 	// Amount
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto = $form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -220,8 +220,8 @@ if ($result)
 	print "</tr>\n";
 
 	while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+	{
+		$obj = $db->fetch_object($result);
 
 		if ($obj->payment_code <> '')
 		{
@@ -230,26 +230,26 @@ if ($result)
 			$type = '<td>&nbsp;</td>';
 		}
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
 		$tva_static->id = $obj->rowid;
 		$tva_static->ref = $obj->rowid;
 
 		// Ref
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
-        // Label
+		// Label
 		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 		// Date end period
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-        // Date payment
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
-        // Type
+		print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+		// Date payment
+		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		// Type
 		print $type;
 		// Account
-    	if (!empty($conf->banque->enabled))
-	    {
-	        print '<td>';
-	        if ($obj->fk_bank > 0)
+		if (!empty($conf->banque->enabled))
+		{
+			print '<td>';
+			if ($obj->fk_bank > 0)
 			{
 				$bankstatic->id = $obj->bid;
 				$bankstatic->ref = $obj->bref;
@@ -266,28 +266,28 @@ if ($result)
 			print '</td>';
 		}
 		// Amount
-        $total = $total + $obj->amount;
+		$total = $total + $obj->amount;
 		print '<td class="nowrap right">'.price($obj->amount)."</td>";
-	    print "<td>&nbsp;</td>";
-        print "</tr>\n";
+		print "<td>&nbsp;</td>";
+		print "</tr>\n";
 
-        $i++;
-    }
+		$i++;
+	}
 
-    $colspan = 5;
-    if (!empty($conf->banque->enabled)) $colspan++;
-    print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
-    print '<td class="right">'.price($total).'</td>';
+	$colspan = 5;
+	if (!empty($conf->banque->enabled)) $colspan++;
+	print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
+	print '<td class="right">'.price($total).'</td>';
 	print "<td>&nbsp;</td></tr>";
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
+	print '</div>';
 
 	print '</form>';
 
-    $db->free($result);
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

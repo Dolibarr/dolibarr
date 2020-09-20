@@ -28,10 +28,10 @@
  */
 class AccountancySystem
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -44,13 +44,13 @@ class AccountancySystem
 	public $rowid;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_pcg_version;
 
-    /**
-     * @var string pcg type
-     */
+	/**
+	 * @var string pcg type
+	 */
 	public $pcg_type;
 
 	/**
@@ -59,18 +59,18 @@ class AccountancySystem
 	public $numero;
 
 	/**
-     * @var string Accountancy System label
-     */
-    public $label;
+	 * @var string Accountancy System label
+	 */
+	public $label;
 
-    /**
-     * @var string account number
-     */
+	/**
+	 * @var string account number
+	 */
 	public $account_number;
 
-    /**
-     * @var string account parent
-     */
+	/**
+	 * @var string account parent
+	 */
 	public $account_parent;
 
 	/**
@@ -78,10 +78,10 @@ class AccountancySystem
 	 *
 	 * @param DoliDB $db handler
 	 */
-    public function __construct($db)
-    {
+	public function __construct($db)
+	{
 		$this->db = $db;
-    }
+	}
 
 
 	/**
@@ -138,8 +138,8 @@ class AccountancySystem
 	 * @param User $user making insert
 	 * @return int if KO, Id of line if OK
 	 */
-    public function create($user)
-    {
+	public function create($user)
+	{
 		$now = dol_now();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
@@ -165,6 +165,6 @@ class AccountancySystem
 			dol_syslog($this->error, LOG_ERR);
 		}
 
-        return $result;
-    }
+		return $result;
+	}
 }

@@ -150,29 +150,29 @@ class modStock extends DolibarrModules
 
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 		{
-    		$this->rights[5][0] = 1011;
-    		$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
-    		$this->rights[5][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[5][0] = 1011;
+			$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
+			$this->rights[5][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-    		$this->rights[6][0] = 1012;
-    		$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
-    		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[6][0] = 1012;
+			$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
+			$this->rights[6][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-    		$this->rights[8][0] = 1014;
-    		$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
-    		$this->rights[8][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[8][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[8][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[8][0] = 1014;
+			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
+			$this->rights[8][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[8][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[8][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-    		$this->rights[9][0] = 1015;
-    		$this->rights[9][1] = 'inventoryChangePMPPermission'; // Permission label
-    		$this->rights[9][3] = 0; // Permission by default for new user (0/1)
-    		$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-    		$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[9][0] = 1015;
+			$this->rights[9][1] = 'inventoryChangePMPPermission'; // Permission label
+			$this->rights[9][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		}
 
 		// Main menu entries
@@ -317,20 +317,20 @@ class modStock extends DolibarrModules
 				'e.description'=>"DescWareHouse", 'e.lieu'=>"LieuWareHouse",
 				'e.address'=>"Address", 'e.zip'=>'Zip', 'e.fk_pays'=>'CountryCode',
 				'e.statut'=>'Status',
-                'e.fk_parent'=>'ParentWarehouse'
+				'e.fk_parent'=>'ParentWarehouse'
 		);
 
 		$this->import_convertvalue_array[$r] = array(
 				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid', 'classfile'=>'/core/class/ccountry.class.php', 'class'=>'Ccountry', 'method'=>'fetch', 'dict'=>'DictionaryCountry'),
-                'e.fk_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
+				'e.fk_parent'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		);
 		$this->import_regex_array[$r] = array('e.statut'=>'^[0|1]');
 		$this->import_examplevalues_array[$r] = array('e.ref'=>"ALM001",
 				'e.description'=>"Central Warehouse", 'e.lieu'=>"Central",
 				'e.address'=>"Route 66", 'e.zip'=>'28080', 'e.fk_pays'=>'US',
 				'e.statut'=>'1',
-                'e.fk_parent'=>''
-        );
+				'e.fk_parent'=>''
+		);
 
 		// Import stocks
 		$r++;
@@ -346,11 +346,11 @@ class modStock extends DolibarrModules
 			'ps.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		  );
 		$this->import_examplevalues_array[$r] = array(
-		    'ps.fk_product'=>"PREF123456", 'ps.fk_entrepot'=>"ALM001", 'ps.reel'=>"10"
+			'ps.fk_product'=>"PREF123456", 'ps.fk_entrepot'=>"ALM001", 'ps.reel'=>"10"
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product'=>'Product', 'ps.fk_entrepot'=>"Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.
-		    'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
+			'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
 

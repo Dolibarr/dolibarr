@@ -124,19 +124,19 @@ if ($id > 0 && $removeelem > 0)
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
-    } elseif ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-        $tmpobject = new Account($db);
-        $result = $tmpobject->fetch($removeelem);
-        $elementtype = 'account';
-    } elseif ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-        $tmpobject = new Project($db);
-        $result = $tmpobject->fetch($removeelem);
-        $elementtype = 'project';
-    } elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer)
+	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$tmpobject = new Account($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'account';
+	} elseif ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$tmpobject = new Project($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'project';
+	} elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$tmpobject = new User($db);
@@ -208,7 +208,7 @@ $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/in
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way)
 {
-    $morehtmlref .= $way."<br>\n";
+	$morehtmlref .= $way."<br>\n";
 }
 $morehtmlref .= '</div>';
 
@@ -740,61 +740,61 @@ if ($type == Categorie::TYPE_CONTACT)
 // List of bank accounts
 if ($type == Categorie::TYPE_ACCOUNT)
 {
-    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-    $permission = $user->rights->banque->creer;
+	$permission = $user->rights->banque->creer;
 
-    $accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
-    if ($accounts < 0)
-    {
-        dol_print_error($db, $accounts->error, $accounts->errors);
-    } else {
-    	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    	print '<input type="hidden" name="token" value="'.newToken().'">';
-    	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
-    	print '<input type="hidden" name="type" value="'.$typeid.'">';
-    	print '<input type="hidden" name="id" value="'.$object->id.'">';
-    	print '<input type="hidden" name="action" value="list">';
+	$accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($accounts < 0)
+	{
+		dol_print_error($db, $accounts->error, $accounts->errors);
+	} else {
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
 
-    	print '<br>';
-    	$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
-    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
+		print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
-    	print "<table class='noborder' width='100%'>\n";
-        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
+		print "<table class='noborder' width='100%'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
-        if (count($accounts) > 0)
-        {
-        	$i = 0;
-            foreach ($accounts as $key => $account)
-            {
-            	$i++;
-            	if ($i > $limit) break;
+		if (count($accounts) > 0)
+		{
+			$i = 0;
+			foreach ($accounts as $key => $account)
+			{
+				$i++;
+				if ($i > $limit) break;
 
-                print "\t".'<tr class="oddeven">'."\n";
-                print '<td class="nowrap" valign="top">';
-                print $account->getNomUrl(1, 0);
-                print "</td>\n";
-                print '<td class="tdtop">'.$account->bank."</td>\n";
-                print '<td class="tdtop">'.$account->number."</td>\n";
-                // Link to delete from category
-                print '<td class="right">';
-                if ($permission)
-                {
-                    print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
-                    print $langs->trans("DeleteFromCat");
-                    print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
-                    print "</a>";
-                }
-                print "</tr>\n";
-            }
-        } else {
-            print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
-        }
-        print "</table>\n";
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap" valign="top">';
+				print $account->getNomUrl(1, 0);
+				print "</td>\n";
+				print '<td class="tdtop">'.$account->bank."</td>\n";
+				print '<td class="tdtop">'.$account->number."</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
 
-        print '</form>'."\n";
-    }
+		print '</form>'."\n";
+	}
 }
 
 // List of Project

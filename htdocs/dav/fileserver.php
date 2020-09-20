@@ -82,7 +82,7 @@ $tmpDir = $conf->dav->multidir_output[$entity]; // We need root dir, not a dir t
 
 
 // Authentication callback function
-$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function($username, $password) {
 	global $user;
 	global $conf;
 	global $dolibarr_main_authentication, $dolibarr_auto_user;
@@ -194,8 +194,8 @@ $server->addPlugin($lockPlugin);
 // Support for html frontend
 if (empty($conf->global->DAV_DISABLE_BROWSER))
 {
-    $browser = new \Sabre\DAV\Browser\Plugin();
-    $server->addPlugin($browser);
+	$browser = new \Sabre\DAV\Browser\Plugin();
+	$server->addPlugin($browser);
 }
 
 // Automatically guess (some) contenttypes, based on extension

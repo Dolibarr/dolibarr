@@ -77,7 +77,7 @@ if (!count($listofvars) && !count($listofstatus))
 	foreach ($arraylist as $listname)
 	{
 		print '<br>';
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';

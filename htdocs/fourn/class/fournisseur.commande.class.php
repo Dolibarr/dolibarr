@@ -388,7 +388,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->note_private = $obj->note_private;
 			$this->note_public = $obj->note_public;
 			$this->model_pdf = $obj->model_pdf;
-			$this->modelpdf = $obj->model_pdf;	// deprecated
+			$this->modelpdf = $obj->model_pdf; // deprecated
 
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
@@ -2020,8 +2020,8 @@ class CommandeFournisseur extends CommonOrder
 
 		if (!$error)
 		{
-        	// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-        	$this->deleteEcmFiles();
+			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+			$this->deleteEcmFiles();
 
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);

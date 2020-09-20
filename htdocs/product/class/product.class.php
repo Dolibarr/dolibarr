@@ -2078,7 +2078,7 @@ class Product extends CommonObject
 				$this->customcode                    = $obj->customcode;
 				$this->country_id                    = $obj->fk_country;
 				$this->country_code = getCountry($this->country_id, 2, $this->db);
-				$this->state_id                    = $obj->fk_state;
+				$this->state_id = $obj->fk_state;
 				$this->price                        = $obj->price;
 				$this->price_ttc                    = $obj->price_ttc;
 				$this->price_min                    = $obj->price_min;

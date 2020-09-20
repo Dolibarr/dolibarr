@@ -51,9 +51,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
 	$lastseparatorkeyfound = '';
-    $extrafields_collapse_num = '';
-    $extrafields_collapse_num_old = '';
-    $i = 0;
+	$extrafields_collapse_num = '';
+	$extrafields_collapse_num_old = '';
+	$i = 0;
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $tmpkeyextra => $tmplabelextra)
 	{
 		$i++;
@@ -94,19 +94,19 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra] == 'separate')
 		{
-            $extrafields_collapse_num = '';
-            $extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
-            if (!empty($extrafield_param) && is_array($extrafield_param)) {
-                $extrafield_param_list = array_keys($extrafield_param['options']);
+			$extrafields_collapse_num = '';
+			$extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
+			if (!empty($extrafield_param) && is_array($extrafield_param)) {
+				$extrafield_param_list = array_keys($extrafield_param['options']);
 
-                if (count($extrafield_param_list) > 0) {
-                    $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+				if (count($extrafield_param_list) > 0) {
+					$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
-                    if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-                        $extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
-                    }
-                }
-            }
+					if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+						$extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
+					}
+				}
+			}
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 
@@ -149,11 +149,11 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
 				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $tmpkeyextra)
-			    && empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra]))
+				&& empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra]))
 			{
-			    $fieldid = 'id';
-			    if ($object->table_element == 'societe') $fieldid = 'socid';
-			    print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$object->id.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+				$fieldid = 'id';
+				if ($object->table_element == 'societe') $fieldid = 'socid';
+				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$object->id.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -178,9 +178,9 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			//TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra)
 			{
-			    $fieldid = 'id';
-			    if ($object->table_element == 'societe') $fieldid = 'socid';
-			    print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
+				$fieldid = 'id';
+				if ($object->table_element == 'societe') $fieldid = 'socid';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';

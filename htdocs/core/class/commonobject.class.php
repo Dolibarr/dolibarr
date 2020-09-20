@@ -8319,7 +8319,7 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		switch ($this->element){
+		switch ($this->element) {
 			case 'propal':
 				$element = 'propale';
 				break;
@@ -8327,10 +8327,10 @@ abstract class CommonObject
 				$element = 'produit';
 				break;
 			case 'order_supplier':
-				$element ='fournisseur/commande';
+				$element = 'fournisseur/commande';
 				break;
 			case 'invoice_supplier':
-				$element = 'fournisseur/facture/' . get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+				$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 				break;
 			case 'shipping':
 				$element = 'expedition/sending';

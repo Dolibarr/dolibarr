@@ -274,11 +274,11 @@ if ($action != 'export_csv')
 	$sous_total_credit = 0;
 	$displayed_account = "";
 
-    $accountingaccountstatic = new AccountingAccount($db);
+	$accountingaccountstatic = new AccountingAccount($db);
 
 	$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
-	$sql .= " WHERE t.entity = ".$conf->entity;		// Never do sharing into accounting features
+	$sql .= " WHERE t.entity = ".$conf->entity; // Never do sharing into accounting features
 	$sql .= " AND t.doc_date < '".$db->idate($search_date_start)."'";
 	$sql .= " GROUP BY t.numero_compte";
 
@@ -292,12 +292,12 @@ if ($action != 'export_csv')
 
 	foreach ($object->lines as $line)
 	{
-        $accountingaccountstatic->fetch(null, $line->numero_compte, true);
-        if (!empty($accountingaccountstatic->account_number)) {
-            $accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
-        } else {
-            $accounting_account = length_accountg($line->numero_compte);
-        }
+		$accountingaccountstatic->fetch(null, $line->numero_compte, true);
+		if (!empty($accountingaccountstatic->account_number)) {
+			$accounting_account = $accountingaccountstatic->getNomUrl(0, 1);
+		} else {
+			$accounting_account = length_accountg($line->numero_compte);
+		}
 
 		$link = '';
 		$total_debit += $line->debit;

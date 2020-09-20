@@ -45,7 +45,7 @@ $msg_id = GETPOST('msg_id', 'int');
 $action = GETPOST('action', 'aZ09');
 
 if ($user->socid) {
-    $socid = $user->socid;
+	$socid = $user->socid;
 }
 
 // Security check
@@ -90,22 +90,22 @@ $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
-    $endyear = GETPOST($param_year, 'int');
-    $shownb = GETPOST($param_shownb, 'alpha');
-    $showtot = GETPOST($param_showtot, 'alpha');
+	$endyear = GETPOST($param_year, 'int');
+	$shownb = GETPOST($param_shownb, 'alpha');
+	$showtot = GETPOST($param_showtot, 'alpha');
 } else {
-    $tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
-    $endyear = $tmparray['year'];
-    $shownb = $tmparray['shownb'];
-    $showtot = $tmparray['showtot'];
+	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
+	$endyear = $tmparray['year'];
+	$shownb = $tmparray['shownb'];
+	$showtot = $tmparray['showtot'];
 }
 if (empty($shownb) && empty($showtot)) {
-    $showtot = 1;
+	$showtot = 1;
 }
 
 $nowarray = dol_getdate(dol_now(), true);
 if (empty($endyear)) {
-    $endyear = $nowarray['year'];
+	$endyear = $nowarray['year'];
 }
 
 $startyear = $endyear - 1;
@@ -238,38 +238,38 @@ if (!empty($dataseries) && count($dataseries) > 1) {
 	}
 
 	$data = array();
-    foreach ($dataseries as $key => $value) {
-        $data[] = array($value['label'], $value['data']);
-    }
-    $px1 = new DolGraph();
-    $mesg = $px1->isGraphKo();
-    if (!$mesg) {
-        $px1->SetData($data);
-        $px1->SetDataColor(array_values($colorseries));
+	foreach ($dataseries as $key => $value) {
+		$data[] = array($value['label'], $value['data']);
+	}
+	$px1 = new DolGraph();
+	$mesg = $px1->isGraphKo();
+	if (!$mesg) {
+		$px1->SetData($data);
+		$px1->SetDataColor(array_values($colorseries));
 
-        unset($data1);
-        $i = $startyear;
-        $legend = array();
-        while ($i <= $endyear) {
-            $legend[] = $i;
-            $i++;
-        }
-        $px1->setShowLegend(2);
-        $px1->SetType(array('pie'));
-        $px1->SetLegend($legend);
-        $px1->SetMaxValue($px1->GetCeilMaxValue());
-        //$px1->SetWidth($WIDTH);
-        $px1->SetHeight($HEIGHT);
-        $px1->SetYLabel($langs->trans("TicketStatByStatus"));
-        $px1->SetShading(3);
-        $px1->SetHorizTickIncrement(1);
-        $px1->SetCssPrefix("cssboxes");
-        $px1->mode = 'depth';
-        //$px1->SetTitle($langs->trans("TicketStatByStatus"));
+		unset($data1);
+		$i = $startyear;
+		$legend = array();
+		while ($i <= $endyear) {
+			$legend[] = $i;
+			$i++;
+		}
+		$px1->setShowLegend(2);
+		$px1->SetType(array('pie'));
+		$px1->SetLegend($legend);
+		$px1->SetMaxValue($px1->GetCeilMaxValue());
+		//$px1->SetWidth($WIDTH);
+		$px1->SetHeight($HEIGHT);
+		$px1->SetYLabel($langs->trans("TicketStatByStatus"));
+		$px1->SetShading(3);
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetCssPrefix("cssboxes");
+		$px1->mode = 'depth';
+		//$px1->SetTitle($langs->trans("TicketStatByStatus"));
 
-        $px1->draw($filenamenb, $fileurlnb);
-        print $px1->show($totalnb ? 0 : 1);
-    }
+		$px1->draw($filenamenb, $fileurlnb);
+		print $px1->show($totalnb ? 0 : 1);
+	}
 }
 print '</td></tr>';
 
@@ -318,77 +318,77 @@ $sql .= $db->plimit($max, 0);
 //print $sql;
 $result = $db->query($sql);
 if ($result) {
-    $num = $db->num_rows($result);
+	$num = $db->num_rows($result);
 
-    $i = 0;
+	$i = 0;
 
-    $transRecordedType = $langs->trans("LatestNewTickets", $max);
+	$transRecordedType = $langs->trans("LatestNewTickets", $max);
 
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><th colspan="5">'.$transRecordedType.'</th>';
-    print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
-    print '</tr>';
-    if ($num > 0) {
-        while ($i < $num) {
-            $objp = $db->fetch_object($result);
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><th colspan="5">'.$transRecordedType.'</th>';
+	print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
+	print '</tr>';
+	if ($num > 0) {
+		while ($i < $num) {
+			$objp = $db->fetch_object($result);
 
-            $tickesupstatic->id = $objp->rowid;
-            $tickesupstatic->ref = $objp->ref;
-            $tickesupstatic->track_id = $objp->track_id;
-            $tickesupstatic->fk_statut = $objp->fk_statut;
-            $tickesupstatic->progress = $objp->progress;
-            $tickesupstatic->subject = $objp->subject;
+			$tickesupstatic->id = $objp->rowid;
+			$tickesupstatic->ref = $objp->ref;
+			$tickesupstatic->track_id = $objp->track_id;
+			$tickesupstatic->fk_statut = $objp->fk_statut;
+			$tickesupstatic->progress = $objp->progress;
+			$tickesupstatic->subject = $objp->subject;
 
-            print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
-            // Ref
-            print '<td class="nowraponall">';
-            print $tickesupstatic->getNomUrl(1);
-            print "</td>\n";
+			// Ref
+			print '<td class="nowraponall">';
+			print $tickesupstatic->getNomUrl(1);
+			print "</td>\n";
 
-            // Creation date
-            print '<td class="left">';
-            print dol_print_date($db->jdate($objp->datec), 'dayhour');
-            print "</td>";
+			// Creation date
+			print '<td class="left">';
+			print dol_print_date($db->jdate($objp->datec), 'dayhour');
+			print "</td>";
 
-            // Subject
-            print '<td class="nowrap">';
-            print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
-            print "</td>\n";
+			// Subject
+			print '<td class="nowrap">';
+			print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
+			print "</td>\n";
 
-            // Type
-            print '<td class="nowrap">';
-            print $objp->type_label;
-            print '</td>';
+			// Type
+			print '<td class="nowrap">';
+			print $objp->type_label;
+			print '</td>';
 
-            // Category
-            print '<td class="nowrap">';
-            print $objp->category_label;
-            print "</td>";
+			// Category
+			print '<td class="nowrap">';
+			print $objp->category_label;
+			print "</td>";
 
-            // Severity
-            print '<td class="nowrap">';
-            print $objp->severity_label;
-            print "</td>";
+			// Severity
+			print '<td class="nowrap">';
+			print $objp->severity_label;
+			print "</td>";
 
-            print '<td class="nowraponall right">';
-            print $tickesupstatic->getLibStatut(5);
-            print "</td>";
+			print '<td class="nowraponall right">';
+			print $tickesupstatic->getLibStatut(5);
+			print "</td>";
 
-            print "</tr>\n";
-            $i++;
-        }
+			print "</tr>\n";
+			$i++;
+		}
 
-        $db->free();
-    } else {
-        print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
-    }
+		$db->free();
+	} else {
+		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
+	}
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
+	print '</div>';
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 print '</div></div></div>';

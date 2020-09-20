@@ -136,9 +136,9 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>1),
-    'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
-    'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
-    's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	's.town'=>array('label'=>"Town", 'checked'=>1),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
@@ -157,7 +157,7 @@ $arrayfields = array(
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-    'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
+	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
@@ -476,7 +476,7 @@ if ($resql)
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'cancelorders'=>$langs->trans("Cancel"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->facture->creer) $arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->commande->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -486,8 +486,8 @@ if ($resql)
 	$newcardbutton = '';
 	if ($contextpage == 'orderlist' && $user->rights->commande->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/commande/card.php?action=create');
-    }
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/commande/card.php?action=create');
+	}
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -650,7 +650,7 @@ if ($resql)
 	// Project title
 	if (!empty($arrayfields['p.title']['checked']))
 	{
-	    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirpdarty
 	if (!empty($arrayfields['s.nom']['checked']))
@@ -886,13 +886,13 @@ if ($resql)
 		$text_warning = '';
 		$nbprod = 0;
 
-        $companystatic->id = $obj->socid;
+		$companystatic->id = $obj->socid;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->name = $obj->name;
 		$companystatic->client = $obj->client;
 		$companystatic->email = $obj->email;
 		if (!isset($getNomUrl_cache[$obj->socid])) {
-		    $getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
+			$getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
 		}
 
 		$generic_commande->id = $obj->rowid;
@@ -1051,7 +1051,7 @@ if ($resql)
 			print '<td class="nowrap">';
 			if ($obj->project_id > 0)
 			{
-			    print $projectstatic->getNomUrl(1);
+				print $projectstatic->getNomUrl(1);
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -1060,13 +1060,13 @@ if ($resql)
 		// Project label
 		if (!empty($arrayfields['p.title']['checked']))
 		{
-		    print '<td class="nowrap">';
-		    if ($obj->project_id > 0)
-		    {
-		        print $projectstatic->title;
-		    }
-		    print '</td>';
-		    if (!$i) $totalarray['nbfield']++;
+			print '<td class="nowrap">';
+			if ($obj->project_id > 0)
+			{
+				print $projectstatic->title;
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Third party

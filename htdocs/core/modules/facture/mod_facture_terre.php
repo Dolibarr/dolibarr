@@ -30,34 +30,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
-    /**
-     * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
-     * @var string
-     */
-    public $version = 'dolibarr';
+	/**
+	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
+	 * @var string
+	 */
+	public $version = 'dolibarr';
 
-    /**
-     * Prefix for invoices
-     * @var string
-     */
-    public $prefixinvoice = 'FA';
+	/**
+	 * Prefix for invoices
+	 * @var string
+	 */
+	public $prefixinvoice = 'FA';
 
-    /**
-     * Prefix for credit note
-     * @var string
-     */
-    public $prefixcreditnote = 'AV';
+	/**
+	 * Prefix for credit note
+	 * @var string
+	 */
+	public $prefixcreditnote = 'AV';
 
-    /**
-     * Prefix for deposit
-     * @var string
-     */
-    public $prefixdeposit = 'AC';
+	/**
+	 * Prefix for deposit
+	 * @var string
+	 */
+	public $prefixdeposit = 'AC';
 
-    /**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 
 	/**
@@ -177,7 +177,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *
 	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
-     * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string       			Value
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')

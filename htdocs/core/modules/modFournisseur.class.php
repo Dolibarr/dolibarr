@@ -62,12 +62,12 @@ class modFournisseur extends DolibarrModules
 
 		// Data directories to create when module is enabled
 		$this->dirs = array(
-            "/fournisseur/temp",
-            "/fournisseur/commande",
-            "/fournisseur/commande/temp",
-            "/fournisseur/facture",
-            "/fournisseur/facture/temp"
-        );
+			"/fournisseur/temp",
+			"/fournisseur/commande",
+			"/fournisseur/commande/temp",
+			"/fournisseur/facture",
+			"/fournisseur/facture/temp"
+		);
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -190,12 +190,12 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'receptionner';
 
 		$r++;
-        $this->rights[$r][0] = 1189;
-        $this->rights[$r][1] = 'Check/Uncheck a supplier order reception';
-        $this->rights[$r][2] = 'w';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'commande_advance';
-        $this->rights[$r][5] = 'check';
+		$this->rights[$r][0] = 1189;
+		$this->rights[$r][1] = 'Check/Uncheck a supplier order reception';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande_advance';
+		$this->rights[$r][5] = 'check';
 
 		$r++;
 		$this->rights[$r][0] = 1188;
@@ -273,9 +273,9 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 
 
-	    // Menus
-	    //-------
-	    $this->menu = 1; // This module add menu entries. They are coded into menu manager.
+		// Menus
+		//-------
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
@@ -298,7 +298,7 @@ class modFournisseur extends DolibarrModules
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (! empty($conf->multicurrency->enabled))
+		if (!empty($conf->multicurrency->enabled))
 		{
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -433,7 +433,7 @@ class modFournisseur extends DolibarrModules
 			'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote", 'p.rowid'=>'PaymentId', 'pf.amount'=>'AmountPayment',
 			'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber', 'p.fk_bank'=>'IdTransaction', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (! empty($conf->multicurrency->enabled))
+		if (!empty($conf->multicurrency->enabled))
 		{
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -459,7 +459,7 @@ class modFournisseur extends DolibarrModules
 			's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
 			'f.rowid'=>"invoice", 'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.total_ht'=>"invoice",
 			'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice", 'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'p.rowid'=>'payment', 'pf.amount'=>'payment',
-		    'p.datep'=>'payment', 'p.num_paiement'=>'payment', 'p.fk_bank'=>'account', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project');
+			'p.datep'=>'payment', 'p.num_paiement'=>'payment', 'p.fk_bank'=>'account', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project');
 		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
@@ -508,7 +508,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn as p ON pf.fk_paiementfourn = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
-        $this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
+		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
 
 		// Order
@@ -527,7 +527,7 @@ class modFournisseur extends DolibarrModules
 			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (! empty($conf->multicurrency->enabled))
+		if (!empty($conf->multicurrency->enabled))
 		{
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -658,7 +658,7 @@ class modFournisseur extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

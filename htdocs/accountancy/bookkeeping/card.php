@@ -114,12 +114,12 @@ if ($action == "confirm_update") {
 			$object->credit = $credit;
 
 			if (floatval($debit) != 0.0) {
-				$object->montant = $debit;	// deprecated
+				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
 			if (floatval($credit) != 0.0) {
-				$object->montant = $credit;	// deprecated
+				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
 			}
@@ -175,13 +175,13 @@ if ($action == "confirm_update") {
 		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
-			$object->montant = $debit;	// deprecated
+			$object->montant = $debit; // deprecated
 			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if (floatval($credit) != 0.0) {
-			$object->montant = $credit;	// deprecated
+			$object->montant = $credit; // deprecated
 			$object->amount = $credit;
 			$object->sens = 'C';
 		}
@@ -245,7 +245,7 @@ if ($action == "confirm_update") {
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
-		$object->montant = 0;	// deprecated
+		$object->montant = 0; // deprecated
 		$object->amount = 0;
 
 		$result = $object->createStd($user, 0, $mode);

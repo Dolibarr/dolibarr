@@ -84,8 +84,8 @@ function getEntity($element, $shared = 1, $currentobject = null)
 
 	// fix different element names (France to English)
 	switch ($element) {
-		case 'contrat':			$element = 'contract';			break;	// "/contrat/class/contrat.class.php"
-		case 'order_supplier':	$element = 'supplier_order';	break;	// "/fourn/class/fournisseur.commande.class.php"
+		case 'contrat':			$element = 'contract'; break; // "/contrat/class/contrat.class.php"
+		case 'order_supplier':	$element = 'supplier_order'; break; // "/fourn/class/fournisseur.commande.class.php"
 	}
 
 	if (is_object($mc))
@@ -2749,7 +2749,7 @@ function getUserRemoteIP()
 			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];	// value is clean here
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here
 	}
 	return $ip;
 }

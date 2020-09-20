@@ -360,18 +360,18 @@ class Projects extends DolibarrApi
     }
     */
 
-    /**
-     * Update a task to given project
-     *
-     * @param int   $id             Id of project to update
-     * @param int   $taskid         Id of task to update
-     * @param array $request_data   Projectline data
-     *
-     * @url	PUT {id}/tasks/{taskid}
-     *
-     * @return object
-     */
-    /*
+	/**
+	 * Update a task to given project
+	 *
+	 * @param int   $id             Id of project to update
+	 * @param int   $taskid         Id of task to update
+	 * @param array $request_data   Projectline data
+	 *
+	 * @url	PUT {id}/tasks/{taskid}
+	 *
+	 * @return object
+	 */
+	/*
     public function putLine($id, $lineid, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
@@ -421,194 +421,194 @@ class Projects extends DolibarrApi
 
 
 
-    /**
-     * Update project general fields (won't touch lines of project)
-     *
-     * @param int   $id             Id of project to update
-     * @param array $request_data   Datas
-     *
-     * @return int
-     */
-    public function put($id, $request_data = null)
-    {
-        if (!DolibarrApiAccess::$user->rights->projet->creer) {
-            throw new RestException(401);
-        }
+	/**
+	 * Update project general fields (won't touch lines of project)
+	 *
+	 * @param int   $id             Id of project to update
+	 * @param array $request_data   Datas
+	 *
+	 * @return int
+	 */
+	public function put($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+			throw new RestException(401);
+		}
 
-        $result = $this->project->fetch($id);
-        if ($result <= 0) {
-            throw new RestException(404, 'Project not found');
-        }
+		$result = $this->project->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Project not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        foreach ($request_data as $field => $value) {
-            if ($field == 'id') continue;
-            $this->project->$field = $value;
-        }
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') continue;
+			$this->project->$field = $value;
+		}
 
-        if ($this->project->update(DolibarrApiAccess::$user) >= 0)
-        {
-            return $this->get($id);
-        } else {
-            throw new RestException(500, $this->project->error);
-        }
-    }
+		if ($this->project->update(DolibarrApiAccess::$user) >= 0)
+		{
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->project->error);
+		}
+	}
 
-    /**
-     * Delete project
-     *
-     * @param   int     $id         Project ID
-     *
-     * @return  array
-     */
-    public function delete($id)
-    {
-        if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
-            throw new RestException(401);
-        }
-        $result = $this->project->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Project not found');
-        }
+	/**
+	 * Delete project
+	 *
+	 * @param   int     $id         Project ID
+	 *
+	 * @return  array
+	 */
+	public function delete($id)
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
+			throw new RestException(401);
+		}
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        if (!$this->project->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when delete project : '.$this->project->error);
-        }
+		if (!$this->project->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete project : '.$this->project->error);
+		}
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Project deleted'
-            )
-        );
-    }
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Project deleted'
+			)
+		);
+	}
 
-    /**
-     * Validate a project.
-     * You can test this API with the following input message
-     * { "notrigger": 0 }
-     *
-     * @param   int $id             Project ID
-     * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
-     *
-     * @url POST    {id}/validate
-     *
-     * @return  array
-     * FIXME An error 403 is returned if the request has an empty body.
-     * Error message: "Forbidden: Content type `text/plain` is not supported."
-     * Workaround: send this in the body
-     * {
-     *   "notrigger": 0
-     * }
-     */
-    public function validate($id, $notrigger = 0)
-    {
-        if (!DolibarrApiAccess::$user->rights->projet->creer) {
-            throw new RestException(401);
-        }
-        $result = $this->project->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Project not found');
-        }
+	/**
+	 * Validate a project.
+	 * You can test this API with the following input message
+	 * { "notrigger": 0 }
+	 *
+	 * @param   int $id             Project ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @return  array
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->rights->projet->creer) {
+			throw new RestException(401);
+		}
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        $result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
-        if ($result == 0) {
-            throw new RestException(304, 'Error nothing done. May be object is already validated');
-        }
-        if ($result < 0) {
-            throw new RestException(500, 'Error when validating Project: '.$this->project->error);
-        }
+		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating Project: '.$this->project->error);
+		}
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Project validated'
-            )
-        );
-    }
-
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   object  $object    Object to clean
-     * @return    array    Array of cleaned object properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
-
-        unset($object->datec);
-        unset($object->datem);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);
-        unset($object->cond_reglement_id);
-        unset($object->cond_reglement);
-        unset($object->fk_delivery_address);
-        unset($object->shipping_method_id);
-        unset($object->fk_account);
-        unset($object->note);
-        unset($object->fk_incoterms);
-        unset($object->label_incoterms);
-        unset($object->location_incoterms);
-        unset($object->name);
-        unset($object->lastname);
-        unset($object->firstname);
-        unset($object->civility_id);
-        unset($object->mode_reglement_id);
-        unset($object->country);
-        unset($object->country_id);
-        unset($object->country_code);
-
-        unset($object->weekWorkLoad);
-        unset($object->weekWorkLoad);
-
-        //unset($object->lines);            // for task we use timespent_lines, but for project we use lines
-
-        unset($object->total_ht);
-        unset($object->total_tva);
-        unset($object->total_localtax1);
-        unset($object->total_localtax2);
-        unset($object->total_ttc);
-
-        unset($object->comments);
-
-        return $object;
-    }
-
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array           $data   Array with data to verify
-     * @return  array
-     * @throws  RestException
-     */
-    private function _validate($data)
-    {
-        $object = array();
-        foreach (self::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $object[$field] = $data[$field];
-        }
-        return $object;
-    }
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Project validated'
+			)
+		);
+	}
 
 
-    // TODO
-    // getSummaryOfTimeSpent
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->datec);
+		unset($object->datem);
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
+		unset($object->cond_reglement_id);
+		unset($object->cond_reglement);
+		unset($object->fk_delivery_address);
+		unset($object->shipping_method_id);
+		unset($object->fk_account);
+		unset($object->note);
+		unset($object->fk_incoterms);
+		unset($object->label_incoterms);
+		unset($object->location_incoterms);
+		unset($object->name);
+		unset($object->lastname);
+		unset($object->firstname);
+		unset($object->civility_id);
+		unset($object->mode_reglement_id);
+		unset($object->country);
+		unset($object->country_id);
+		unset($object->country_code);
+
+		unset($object->weekWorkLoad);
+		unset($object->weekWorkLoad);
+
+		//unset($object->lines);            // for task we use timespent_lines, but for project we use lines
+
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+
+		unset($object->comments);
+
+		return $object;
+	}
+
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException
+	 */
+	private function _validate($data)
+	{
+		$object = array();
+		foreach (self::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$object[$field] = $data[$field];
+		}
+		return $object;
+	}
+
+
+	// TODO
+	// getSummaryOfTimeSpent
 }

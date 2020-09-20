@@ -182,7 +182,7 @@ if (empty($reshook))
 		$search_date_creation = "";
 		$search_date_update = "";
 		$search_array_options = array();
-        $search_categ = 0;
+		$search_categ = 0;
 	}
 }
 
@@ -304,7 +304,7 @@ $text = $langs->trans("ListOfUsers");
 $newcardbutton = '';
 if ($canadduser)
 {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -325,11 +325,11 @@ print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sorto
 
 if (!empty($catid))
 {
-    print "<div id='ways'>";
-    $c = new Categorie($db);
-    $ways = $c->print_all_ways(' &gt; ', 'user/list.php');
-    print " &gt; ".$ways[0]."<br>\n";
-    print "</div><br>";
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways(' &gt; ', 'user/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
 }
 
 if ($sall)
@@ -343,10 +343,10 @@ $moreforfilter = '';
 // Filter on categories
 if (!empty($conf->categorie->enabled))
 {
-    $moreforfilter .= '<div class="divsearchfield">';
-    $moreforfilter .= $langs->trans('Categories').': ';
-    $moreforfilter .= $htmlother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
-    $moreforfilter .= '</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('Categories').': ';
+	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+	$moreforfilter .= '</div>';
 }
 
 $parameters = array();
@@ -356,9 +356,9 @@ else $moreforfilter = $hookmanager->resPrint;
 
 if ($moreforfilter)
 {
-    print '<div class="liste_titre liste_titre_bydiv centpercent">';
-    print $moreforfilter;
-    print '</div>';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -536,29 +536,29 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['u.firstname']['checked']))
 	{
-	    print '<td>'.$obj->firstname.'</td>';
+		print '<td>'.$obj->firstname.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.gender']['checked']))
 	{
-	    print '<td>';
-	    if ($obj->gender) print $langs->trans("Gender".$obj->gender);
-	    print '</td>';
+		print '<td>';
+		if ($obj->gender) print $langs->trans("Gender".$obj->gender);
+		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.employee']['checked']))
 	{
-	    print '<td>'.yn($obj->employee).'</td>';
+		print '<td>'.yn($obj->employee).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.accountancy_code']['checked']))
 	{
-	    print '<td>'.$obj->accountancy_code.'</td>';
+		print '<td>'.$obj->accountancy_code.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.email']['checked']))
 	{
-	    print '<td>'.$obj->email.'</td>';
+		print '<td>'.$obj->email.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.api_key']['checked']))
@@ -617,7 +617,7 @@ while ($i < min($num, $limit))
 			$user2->admin = $obj->admin2;
 			$user2->email = $obj->email2;
 			$user2->socid = $obj->fk_soc2;
-            $user2->statut = $obj->statut2;
+			$user2->statut = $obj->statut2;
 			print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
 			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
 			{
@@ -669,9 +669,9 @@ while ($i < min($num, $limit))
 	// Status
 	if (!empty($arrayfields['u.statut']['checked']))
 	{
-	    $userstatic->statut = $obj->statut;
-	    print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
-	    if (!$i) $totalarray['nbfield']++;
+		$userstatic->statut = $obj->statut;
+		print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td></td>';

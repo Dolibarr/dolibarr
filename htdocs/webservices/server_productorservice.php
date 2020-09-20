@@ -44,11 +44,11 @@ $langs->load("main");
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
-    $langs->load("admin");
-    dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
-    print $langs->trans("ToActivateModule");
-    exit;
+	$langs->load("admin");
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
 }
 
 // Create the soap Object
@@ -62,72 +62,72 @@ $server->wsdl->schemaTargetNamespace = $ns;
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-    'authentication',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-    	'login' => array('name'=>'login', 'type'=>'xsd:string'),
-        'password' => array('name'=>'password', 'type'=>'xsd:string'),
-        'entity' => array('name'=>'entity', 'type'=>'xsd:string')
-    )
+	'authentication',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
+		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
+		'login' => array('name'=>'login', 'type'=>'xsd:string'),
+		'password' => array('name'=>'password', 'type'=>'xsd:string'),
+		'entity' => array('name'=>'entity', 'type'=>'xsd:string')
+	)
 );
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-    'result',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label', 'type'=>'xsd:string')
-    )
+	'result',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
+		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string')
+	)
 );
 
 $productorservice_fields = array(
-    'id' => array('name'=>'id', 'type'=>'xsd:string'),
-    'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
-    'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-    'type' => array('name'=>'type', 'type'=>'xsd:string'),
-    'label' => array('name'=>'label', 'type'=>'xsd:string'),
-    'description' => array('name'=>'description', 'type'=>'xsd:string'),
-    'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
-    'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
-    'note' => array('name'=>'note', 'type'=>'xsd:string'),
-    'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
-    'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
-    'barcode' => array('name'=>'barcode', 'type'=>'xsd:string'),
-    'barcode_type' => array('name'=>'barcode_type', 'type'=>'xsd:string'),
-    'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
-    'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
-    'customcode' => array('name'=>'customcode', 'type'=>'xsd:string'),
+	'id' => array('name'=>'id', 'type'=>'xsd:string'),
+	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
+	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
+	'type' => array('name'=>'type', 'type'=>'xsd:string'),
+	'label' => array('name'=>'label', 'type'=>'xsd:string'),
+	'description' => array('name'=>'description', 'type'=>'xsd:string'),
+	'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
+	'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
+	'note' => array('name'=>'note', 'type'=>'xsd:string'),
+	'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
+	'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
+	'barcode' => array('name'=>'barcode', 'type'=>'xsd:string'),
+	'barcode_type' => array('name'=>'barcode_type', 'type'=>'xsd:string'),
+	'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
+	'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
+	'customcode' => array('name'=>'customcode', 'type'=>'xsd:string'),
 
-    'price_net' => array('name'=>'price_net', 'type'=>'xsd:string'),
-    'price' => array('name'=>'price', 'type'=>'xsd:string'),
-    'price_min_net' => array('name'=>'price_min_net', 'type'=>'xsd:string'),
-    'price_min' => array('name'=>'price_min', 'type'=>'xsd:string'),
+	'price_net' => array('name'=>'price_net', 'type'=>'xsd:string'),
+	'price' => array('name'=>'price', 'type'=>'xsd:string'),
+	'price_min_net' => array('name'=>'price_min_net', 'type'=>'xsd:string'),
+	'price_min' => array('name'=>'price_min', 'type'=>'xsd:string'),
 
-    'price_base_type' => array('name'=>'price_base_type', 'type'=>'xsd:string'),
+	'price_base_type' => array('name'=>'price_base_type', 'type'=>'xsd:string'),
 
-    'vat_rate' => array('name'=>'vat_rate', 'type'=>'xsd:string'),
-    'vat_npr' => array('name'=>'vat_npr', 'type'=>'xsd:string'),
-    'localtax1_tx' => array('name'=>'localtax1_tx', 'type'=>'xsd:string'),
-    'localtax2_tx' => array('name'=>'localtax2_tx', 'type'=>'xsd:string'),
+	'vat_rate' => array('name'=>'vat_rate', 'type'=>'xsd:string'),
+	'vat_npr' => array('name'=>'vat_npr', 'type'=>'xsd:string'),
+	'localtax1_tx' => array('name'=>'localtax1_tx', 'type'=>'xsd:string'),
+	'localtax2_tx' => array('name'=>'localtax2_tx', 'type'=>'xsd:string'),
 
-    'stock_alert' => array('name'=>'stock_alert', 'type'=>'xsd:string'),
-    'stock_real' => array('name'=>'stock_real', 'type'=>'xsd:string'),
-    'stock_pmp' => array('name'=>'stock_pmp', 'type'=>'xsd:string'),
-    'warehouse_ref' => array('name'=>'warehouse_ref', 'type'=>'xsd:string'), // Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
+	'stock_alert' => array('name'=>'stock_alert', 'type'=>'xsd:string'),
+	'stock_real' => array('name'=>'stock_real', 'type'=>'xsd:string'),
+	'stock_pmp' => array('name'=>'stock_pmp', 'type'=>'xsd:string'),
+	'warehouse_ref' => array('name'=>'warehouse_ref', 'type'=>'xsd:string'), // Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
 
-    'canvas' => array('name'=>'canvas', 'type'=>'xsd:string'),
-    'import_key' => array('name'=>'import_key', 'type'=>'xsd:string'),
+	'canvas' => array('name'=>'canvas', 'type'=>'xsd:string'),
+	'import_key' => array('name'=>'import_key', 'type'=>'xsd:string'),
 
-    'dir' => array('name'=>'dir', 'type'=>'xsd:string'),
-    'images' => array('name'=>'images', 'type'=>'tns:ImagesArray')
+	'dir' => array('name'=>'dir', 'type'=>'xsd:string'),
+	'images' => array('name'=>'images', 'type'=>'tns:ImagesArray')
 );
 
 
@@ -158,12 +158,12 @@ if (is_array($extrafield_array)) $productorservice_fields = array_merge($product
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-    'product',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    $productorservice_fields
+	'product',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	$productorservice_fields
 );
 
 
@@ -206,33 +206,33 @@ $server->wsdl->addComplexType(
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-    'filterproduct',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        //'limit' => array('name'=>'limit','type'=>'xsd:string'),
+	'filterproduct',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		//'limit' => array('name'=>'limit','type'=>'xsd:string'),
 		'type' => array('name'=>'type', 'type'=>'xsd:string'),
-	    'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
-	    'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
-    )
+		'status_tobuy' => array('name'=>'status_tobuy', 'type'=>'xsd:string'),
+		'status_tosell' => array('name'=>'status_tosell', 'type'=>'xsd:string'),
+	)
 );
 
 $server->wsdl->addComplexType(
-    'ProductsArray2',
-    'complexType',
-    'array',
-    'sequence',
-    '',
-    array(
-        'product' => array(
-            'name' => 'product',
-            'type' => 'tns:product',
-            'minOccurs' => '0',
-            'maxOccurs' => 'unbounded'
-        )
-    )
+	'ProductsArray2',
+	'complexType',
+	'array',
+	'sequence',
+	'',
+	array(
+		'product' => array(
+			'name' => 'product',
+			'type' => 'tns:product',
+			'minOccurs' => '0',
+			'maxOccurs' => 'unbounded'
+		)
+	)
 );
 
 
@@ -247,72 +247,72 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-    'getProductOrService',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'lang'=>'xsd:string'),
-    // Exit values
-    array('result'=>'tns:result', 'product'=>'tns:product'),
-    $ns,
-    $ns.'#getProductOrService',
-    $styledoc,
-    $styleuse,
-    'WS to get product or service'
+	'getProductOrService',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'lang'=>'xsd:string'),
+	// Exit values
+	array('result'=>'tns:result', 'product'=>'tns:product'),
+	$ns,
+	$ns.'#getProductOrService',
+	$styledoc,
+	$styleuse,
+	'WS to get product or service'
 );
 
 // Register WSDL
 $server->register(
-    'createProductOrService',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'product'=>'tns:product'),
-    // Exit values
-    array('result'=>'tns:result', 'id'=>'xsd:string'),
-    $ns,
-    $ns.'#createProductOrService',
-    $styledoc,
-    $styleuse,
-    'WS to create a product or service'
+	'createProductOrService',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'product'=>'tns:product'),
+	// Exit values
+	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	$ns,
+	$ns.'#createProductOrService',
+	$styledoc,
+	$styleuse,
+	'WS to create a product or service'
 );
 
 // Register WSDL
 $server->register(
-    'updateProductOrService',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'product'=>'tns:product'),
-    // Exit values
-    array('result'=>'tns:result', 'id'=>'xsd:string'),
-    $ns,
-    $ns.'#updateProductOrService',
-    $styledoc,
-    $styleuse,
-    'WS to update a product or service'
+	'updateProductOrService',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'product'=>'tns:product'),
+	// Exit values
+	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	$ns,
+	$ns.'#updateProductOrService',
+	$styledoc,
+	$styleuse,
+	'WS to update a product or service'
 );
 
 // Register WSDL
 $server->register(
-    'deleteProductOrService',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'listofid'=>'xsd:string'),
-    // Exit values
-    array('result'=>'tns:result', 'nbdeleted'=>'xsd:int'),
-    $ns,
-    $ns.'#deleteProductOrService',
-    $styledoc,
-    $styleuse,
-    'WS to delete a product or service'
+	'deleteProductOrService',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'listofid'=>'xsd:string'),
+	// Exit values
+	array('result'=>'tns:result', 'nbdeleted'=>'xsd:int'),
+	$ns,
+	$ns.'#deleteProductOrService',
+	$styledoc,
+	$styleuse,
+	'WS to delete a product or service'
 );
 
 // Register WSDL
 $server->register(
-    'getListOfProductsOrServices',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'filterproduct'=>'tns:filterproduct'),
-    // Exit values
-    array('result'=>'tns:result', 'products'=>'tns:ProductsArray2'),
-    $ns,
-    $ns.'#getListOfProductsOrServices',
-    $styledoc,
-    $styleuse,
-    'WS to get list of all products or services id and ref'
+	'getListOfProductsOrServices',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'filterproduct'=>'tns:filterproduct'),
+	// Exit values
+	array('result'=>'tns:result', 'products'=>'tns:ProductsArray2'),
+	$ns,
+	$ns.'#getListOfProductsOrServices',
+	$styledoc,
+	$styleuse,
+	'WS to get list of all products or services id and ref'
 );
 
 // Register WSDL
@@ -342,131 +342,131 @@ $server->register(
  */
 function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = '', $lang = '')
 {
-    global $db, $conf, $langs;
+	global $db, $conf, $langs;
 
-    dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-    $langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
-    $langs->setDefaultLang($langcode);
+	$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langs->setDefaultLang($langcode);
 
-    if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
-    // Init and check authentication
-    $objectresp = array();
-    $errorcode = ''; $errorlabel = '';
-    $error = 0;
-    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
-    // Check parameters
-    if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-    {
-        $error++;
-        $errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
-    }
+	// Init and check authentication
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
+	// Check parameters
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+	{
+		$error++;
+		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+	}
 
-    if (!$error)
-    {
-    	$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
-    	$langs->setDefaultLang($langcode);
+	if (!$error)
+	{
+		$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+		$langs->setDefaultLang($langcode);
 
-        $fuser->getrights();
+		$fuser->getrights();
 
-        $nbmax = 10;
-        if ($fuser->rights->produit->lire || $fuser->rights->service->lire)
-        {
-            $product = new Product($db);
-            $result = $product->fetch($id, $ref, $ref_ext);
+		$nbmax = 10;
+		if ($fuser->rights->produit->lire || $fuser->rights->service->lire)
+		{
+			$product = new Product($db);
+			$result = $product->fetch($id, $ref, $ref_ext);
 
-            if ($result > 0)
-            {
-            	$product->load_stock();
+			if ($result > 0)
+			{
+				$product->load_stock();
 
-            	$dir = (!empty($conf->product->dir_output) ? $conf->product->dir_output : $conf->service->dir_output);
-            	$pdir = get_exdir($product->id, 2, 0, 0, $product, 'product').$product->ref."/";
-            	$dir = $dir.'/'.$pdir;
+				$dir = (!empty($conf->product->dir_output) ? $conf->product->dir_output : $conf->service->dir_output);
+				$pdir = get_exdir($product->id, 2, 0, 0, $product, 'product').$product->ref."/";
+				$dir = $dir.'/'.$pdir;
 
-            	if (!empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label = $product->multilangs[$langs->defaultlang]["label"];
-            	if (!empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description = $product->multilangs[$langs->defaultlang]["description"];
-            	if (!empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note = $product->multilangs[$langs->defaultlang]["note"];
+				if (!empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label = $product->multilangs[$langs->defaultlang]["label"];
+				if (!empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description = $product->multilangs[$langs->defaultlang]["description"];
+				if (!empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note = $product->multilangs[$langs->defaultlang]["note"];
 
-            	$productorservice_result_fields = array(
-	            	'id' => $product->id,
-	            	'ref' => $product->ref,
-	            	'ref_ext' => $product->ref_ext,
-	            	'label' => $product->label,
-	            	'description' => $product->description,
-	            	'date_creation' => dol_print_date($product->date_creation, 'dayhourrfc'),
-	            	'date_modification' => dol_print_date($product->date_modification, 'dayhourrfc'),
-	            	'note' => $product->note,
-	            	'status_tosell' => $product->status,
-	            	'status_tobuy' => $product->status_buy,
-	            	'type' => $product->type,
-	            	'barcode' => $product->barcode,
-	            	'barcode_type' => $product->barcode_type,
-	            	'country_id' => $product->country_id > 0 ? $product->country_id : '',
-	            	'country_code' => $product->country_code,
-	            	'custom_code' => $product->customcode,
+				$productorservice_result_fields = array(
+					'id' => $product->id,
+					'ref' => $product->ref,
+					'ref_ext' => $product->ref_ext,
+					'label' => $product->label,
+					'description' => $product->description,
+					'date_creation' => dol_print_date($product->date_creation, 'dayhourrfc'),
+					'date_modification' => dol_print_date($product->date_modification, 'dayhourrfc'),
+					'note' => $product->note,
+					'status_tosell' => $product->status,
+					'status_tobuy' => $product->status_buy,
+					'type' => $product->type,
+					'barcode' => $product->barcode,
+					'barcode_type' => $product->barcode_type,
+					'country_id' => $product->country_id > 0 ? $product->country_id : '',
+					'country_code' => $product->country_code,
+					'custom_code' => $product->customcode,
 
-	            	'price_net' => $product->price,
-	            	'price' => $product->price_ttc,
-	            	'price_min_net' => $product->price_min,
-	            	'price_min' => $product->price_min_ttc,
-	            	'price_base_type' => $product->price_base_type,
-	            	'vat_rate' => $product->tva_tx,
-	            	//! French VAT NPR
-	            	'vat_npr' => $product->tva_npr,
-	            	//! Spanish local taxes
-	            	'localtax1_tx' => $product->localtax1_tx,
-	            	'localtax2_tx' => $product->localtax2_tx,
+					'price_net' => $product->price,
+					'price' => $product->price_ttc,
+					'price_min_net' => $product->price_min,
+					'price_min' => $product->price_min_ttc,
+					'price_base_type' => $product->price_base_type,
+					'vat_rate' => $product->tva_tx,
+					//! French VAT NPR
+					'vat_npr' => $product->tva_npr,
+					//! Spanish local taxes
+					'localtax1_tx' => $product->localtax1_tx,
+					'localtax2_tx' => $product->localtax2_tx,
 
-            	    'stock_real' => $product->stock_reel,
-            	    'stock_virtual' => $product->stock_theorique,
-	            	'stock_alert' => $product->seuil_stock_alerte,
-	            	'pmp' => $product->pmp,
-	            	'import_key' => $product->import_key,
-	            	'dir' => $pdir,
-            		'images' => $product->liste_photos($dir, $nbmax)
-            	);
+					'stock_real' => $product->stock_reel,
+					'stock_virtual' => $product->stock_theorique,
+					'stock_alert' => $product->seuil_stock_alerte,
+					'pmp' => $product->pmp,
+					'import_key' => $product->import_key,
+					'dir' => $pdir,
+					'images' => $product->liste_photos($dir, $nbmax)
+				);
 
-            	$elementtype = 'product';
+				$elementtype = 'product';
 
-                //Retreive all extrafield for thirdsparty
-            	// fetch optionals attributes and labels
-            	$extrafields = new ExtraFields($db);
-            	$extrafields->fetch_name_optionals_label($elementtype, true);
-            	//Get extrafield values
-            	$product->fetch_optionals();
+				//Retreive all extrafield for thirdsparty
+				// fetch optionals attributes and labels
+				$extrafields = new ExtraFields($db);
+				$extrafields->fetch_name_optionals_label($elementtype, true);
+				//Get extrafield values
+				$product->fetch_optionals();
 
-            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-            	{
-            		foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	            	{
-	            		$productorservice_result_fields = array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
-	            	}
-            	}
+				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				{
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					{
+						$productorservice_result_fields = array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+					}
+				}
 
-                // Create
-                $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'product'=>$productorservice_result_fields
-                );
-            }
-            else {
-                $error++;
-                $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-            }
-        }
-        else {
-            $error++;
-            $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
-        }
-    }
+				// Create
+				$objectresp = array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'product'=>$productorservice_result_fields
+				);
+			}
+			else {
+				$error++;
+				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+			}
+		}
+		else {
+			$error++;
+			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+		}
+	}
 
-    if ($error)
-    {
-        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-    }
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
 	//var_dump($objectresp);exit;
-    return $objectresp;
+	return $objectresp;
 }
 
 
@@ -534,16 +534,16 @@ function createProductOrService($authentication, $product)
 			$newobject->barcode_type = $product['barcode_type'];
 		}
 
-        $newobject->stock_reel = $product['stock_real'];
-        $newobject->pmp = $product['pmp'];
-        $newobject->seuil_stock_alert = $product['stock_alert'];
+		$newobject->stock_reel = $product['stock_real'];
+		$newobject->pmp = $product['pmp'];
+		$newobject->seuil_stock_alert = $product['stock_alert'];
 
-        $newobject->country_id = $product['country_id'];
-        if ($product['country_code']) $newobject->country_id = getCountry($product['country_code'], 3);
-        $newobject->customcode = $product['customcode'];
+		$newobject->country_id = $product['country_id'];
+		if ($product['country_code']) $newobject->country_id = getCountry($product['country_code'], 3);
+		$newobject->customcode = $product['customcode'];
 
-        $newobject->canvas = $product['canvas'];
-        /*foreach($product['lines'] as $line)
+		$newobject->canvas = $product['canvas'];
+		/*foreach($product['lines'] as $line)
         {
             $newline=new FactureLigne($db);
             $newline->type=$line['type'];
@@ -556,13 +556,13 @@ function createProductOrService($authentication, $product)
             $newline->qty=$line['qty'];
             $newline->fk_product=$line['product_id'];
         }*/
-        //var_dump($product['ref_ext']);
-        //var_dump($product['lines'][0]['type']);
+		//var_dump($product['ref_ext']);
+		//var_dump($product['lines'][0]['type']);
 
-        $elementtype = 'product';
+		$elementtype = 'product';
 
-        $extrafields = new ExtraFields($db);
-        $extrafields->fetch_name_optionals_label($elementtype, true);
+		$extrafields = new ExtraFields($db);
+		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -572,17 +572,17 @@ function createProductOrService($authentication, $product)
 			}
 		}
 
-        $db->begin();
+		$db->begin();
 
-        $result = $newobject->create($fuser, 0);
-        if ($result <= 0)
-        {
-            $error++;
-        }
+		$result = $newobject->create($fuser, 0);
+		if ($result <= 0)
+		{
+			$error++;
+		}
 
-        if (!$error)
-        {
-        	// Update stock if stock count is provided and differs from database after creation or update
+		if (!$error)
+		{
+			// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -619,25 +619,25 @@ function createProductOrService($authentication, $product)
 			}
 		}
 
-        if (!$error)
-        {
-            $db->commit();
-            $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
-        }
-        else {
-            $db->rollback();
-            $error++;
-            $errorcode = 'KO';
-            $errorlabel = $newobject->error;
-        }
-    }
+		if (!$error)
+		{
+			$db->commit();
+			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+		}
+		else {
+			$db->rollback();
+			$error++;
+			$errorcode = 'KO';
+			$errorlabel = $newobject->error;
+		}
+	}
 
-    if ($error)
-    {
-        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-    }
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
 
-    return $objectresp;
+	return $objectresp;
 }
 
 
@@ -727,10 +727,10 @@ function updateProductOrService($authentication, $product)
             $newline->qty=$line['qty'];
             $newline->fk_product=$line['product_id'];
         }*/
-        //var_dump($product['ref_ext']);
-        //var_dump($product['lines'][0]['type']);
+		//var_dump($product['ref_ext']);
+		//var_dump($product['lines'][0]['type']);
 
-        $elementtype = 'product';
+		$elementtype = 'product';
 
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
@@ -743,15 +743,15 @@ function updateProductOrService($authentication, $product)
 			}
 		}
 
-        $db->begin();
+		$db->begin();
 
-        $result = $newobject->update($newobject->id, $fuser);
-        if ($result <= 0)
-        {
-            $error++;
-        }
-        else {
-        	// Update stock if stock count is provided and differs from database after creation or update
+		$result = $newobject->update($newobject->id, $fuser);
+		if ($result <= 0)
+		{
+			$error++;
+		}
+		else {
+			// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -786,47 +786,47 @@ function updateProductOrService($authentication, $product)
 					}
 				}
 			}
-        }
+		}
 
-        if (!$error)
-        {
-            if ($newobject->price_base_type == 'HT')
-            {
-                $result = $newobject->updatePrice($newobject->price, $newobject->price_base_type, $fuser);
-                if ($result <= 0)
-                {
-                    $error++;
-                }
-            }
-            elseif ($newobject->price_base_type == 'TTC')
-            {
-                $result = $newobject->updatePrice($newobject->price_ttc, $newobject->price_base_type);
-                if ($result <= 0)
-                {
-                    $error++;
-                }
-            }
-        }
+		if (!$error)
+		{
+			if ($newobject->price_base_type == 'HT')
+			{
+				$result = $newobject->updatePrice($newobject->price, $newobject->price_base_type, $fuser);
+				if ($result <= 0)
+				{
+					$error++;
+				}
+			}
+			elseif ($newobject->price_base_type == 'TTC')
+			{
+				$result = $newobject->updatePrice($newobject->price_ttc, $newobject->price_base_type);
+				if ($result <= 0)
+				{
+					$error++;
+				}
+			}
+		}
 
-        if (!$error)
-        {
-            $db->commit();
-            $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
-        }
-        else {
-            $db->rollback();
-            $error++;
-            $errorcode = 'KO';
-            $errorlabel = $newobject->error;
-        }
-    }
+		if (!$error)
+		{
+			$db->commit();
+			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+		}
+		else {
+			$db->rollback();
+			$error++;
+			$errorcode = 'KO';
+			$errorlabel = $newobject->error;
+		}
+	}
 
-    if ($error)
-    {
-        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-    }
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
 
-    return $objectresp;
+	return $objectresp;
 }
 
 
@@ -1065,34 +1065,34 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							$dir = $dir.'/'.$pdir;
 
 							$products[] = array(
-						    	'id' => $tmpproduct->id,
+								'id' => $tmpproduct->id,
 					   			'ref' => $tmpproduct->ref,
 					   			'ref_ext' => $tmpproduct->ref_ext,
-					    		'label' => !empty($tmpproduct->multilangs[$langs->defaultlang]["label"]) ? $tmpproduct->multilangs[$langs->defaultlang]["label"] : $tmpproduct->label,
-					    		'description' => !empty($tmpproduct->multilangs[$langs->defaultlang]["description"]) ? $tmpproduct->multilangs[$langs->defaultlang]["description"] : $tmpproduct->description,
-					    		'date_creation' => dol_print_date($tmpproduct->date_creation, 'dayhourrfc'),
-					    		'date_modification' => dol_print_date($tmpproduct->date_modification, 'dayhourrfc'),
-					            'note' => !empty($tmpproduct->multilangs[$langs->defaultlang]["note"]) ? $tmpproduct->multilangs[$langs->defaultlang]["note"] : $tmpproduct->note,
-					            'status_tosell' => $tmpproduct->status,
-					            'status_tobuy' => $tmpproduct->status_buy,
-		                		'type' => $tmpproduct->type,
-						        'barcode' => $tmpproduct->barcode,
-						        'barcode_type' => $tmpproduct->barcode_type,
-		                		'country_id' => $tmpproduct->country_id > 0 ? $tmpproduct->country_id : '',
-						        'country_code' => $tmpproduct->country_code,
-						        'custom_code' => $tmpproduct->customcode,
+								'label' => !empty($tmpproduct->multilangs[$langs->defaultlang]["label"]) ? $tmpproduct->multilangs[$langs->defaultlang]["label"] : $tmpproduct->label,
+								'description' => !empty($tmpproduct->multilangs[$langs->defaultlang]["description"]) ? $tmpproduct->multilangs[$langs->defaultlang]["description"] : $tmpproduct->description,
+								'date_creation' => dol_print_date($tmpproduct->date_creation, 'dayhourrfc'),
+								'date_modification' => dol_print_date($tmpproduct->date_modification, 'dayhourrfc'),
+								'note' => !empty($tmpproduct->multilangs[$langs->defaultlang]["note"]) ? $tmpproduct->multilangs[$langs->defaultlang]["note"] : $tmpproduct->note,
+								'status_tosell' => $tmpproduct->status,
+								'status_tobuy' => $tmpproduct->status_buy,
+								'type' => $tmpproduct->type,
+								'barcode' => $tmpproduct->barcode,
+								'barcode_type' => $tmpproduct->barcode_type,
+								'country_id' => $tmpproduct->country_id > 0 ? $tmpproduct->country_id : '',
+								'country_code' => $tmpproduct->country_code,
+								'custom_code' => $tmpproduct->customcode,
 
-						        'price_net' => $tmpproduct->price,
-						        'price' => $tmpproduct->price_ttc,
-						        'vat_rate' => $tmpproduct->tva_tx,
+								'price_net' => $tmpproduct->price,
+								'price' => $tmpproduct->price_ttc,
+								'vat_rate' => $tmpproduct->tva_tx,
 
 								'price_base_type' => $tmpproduct->price_base_type,
 
-						        'stock_real' => $tmpproduct->stock_reel,
-		                		'stock_alert' => $tmpproduct->seuil_stock_alerte,
-						        'pmp' => $tmpproduct->pmp,
-		                		'import_key' => $tmpproduct->import_key,
-		                		'dir' => $pdir,
+								'stock_real' => $tmpproduct->stock_reel,
+								'stock_alert' => $tmpproduct->seuil_stock_alerte,
+								'pmp' => $tmpproduct->pmp,
+								'import_key' => $tmpproduct->import_key,
+								'dir' => $pdir,
 								'images' => $tmpproduct->liste_photos($dir, $nbmax)
 							);
 

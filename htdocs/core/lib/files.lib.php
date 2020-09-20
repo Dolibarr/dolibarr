@@ -2053,7 +2053,7 @@ function dol_uncompress($inputfile, $outputdir)
 			for ($i = 0; $i < $zip->numFiles; $i++) {
 				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
 					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
-					continue;	// Discard the file
+					continue; // Discard the file
 				}
 				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
 			}

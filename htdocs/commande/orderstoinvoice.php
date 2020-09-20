@@ -282,7 +282,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 											$array_options = $lines[$i]->array_options;
 										}
 
-                                        $result = $object->addline(
+										$result = $object->addline(
 											$desc,
 											$lines[$i]->subprice,
 											$lines[$i]->qty,
@@ -307,7 +307,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 											$lines[$i]->fk_fournprice,
 											$lines[$i]->pa_ht,
 											$lines[$i]->label,
-                                            $array_options
+											$array_options
 										);
 										if ($result > 0)
 										{
@@ -459,7 +459,7 @@ if ($action == 'create' && !$error)
 	// Other attributes
 	$parameters = array('objectsrc' => $objectsrc, 'idsrc' => $listoforders);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
 		$object = new Facture($db);
@@ -609,7 +609,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
-        print '</td>';
+		print '</td>';
 
 		//DATE ORDER
 		print '<td class="liste_titre" align="center">';
@@ -624,7 +624,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		//SEARCH BUTTON
 		print '<td class="liste_titre right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '</td>';
+		print '</td>';
 
 		//ALL/NONE
 		print '<td align="center" class="liste_titre">';
@@ -697,7 +697,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 			$i++;
 		}
 		print '</table>';
-        print '</div>';
+		print '</div>';
 
 		// Buttons actions
 		print '<br><div class="center"><input type="checkbox" '.(empty($conf->global->INVOICE_CLOSE_ORDERS_OFF_BY_DEFAULT_FORMASSINVOICE) ? ' checked="checked"' : '').' name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");

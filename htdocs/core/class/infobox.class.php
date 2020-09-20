@@ -28,21 +28,21 @@
  */
 class InfoBox
 {
-    /**
-     * Name of positions (See below)
-     *
-     * @return	string[]		Array with list of zones
-     */
-    public static function getListOfPagesForBoxes()
-    {
+	/**
+	 * Name of positions (See below)
+	 *
+	 * @return	string[]		Array with list of zones
+	 */
+	public static function getListOfPagesForBoxes()
+	{
 		global $conf;
 
 		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
 		{
-        	return array(
-        		0 => 'Home',
-        		27 => 'AccountancyHome'
-        	);
+			return array(
+				0 => 'Home',
+				27 => 'AccountancyHome'
+			);
 		} else {
 			return array(
 				0 => 'Home',

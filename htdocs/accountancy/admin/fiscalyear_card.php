@@ -300,16 +300,16 @@ if ($action == 'create')
 
 			if (!empty($user->rights->accounting->fiscalyear->write))
 			{
-    			/*
+				/*
     			 * Barre d'actions
     			 */
-    			print '<div class="tabsAction">';
+				print '<div class="tabsAction">';
 
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
-    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+				// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 
-    			print '</div>';
+				print '</div>';
 			}
 		}
 	} else {

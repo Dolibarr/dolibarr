@@ -112,7 +112,7 @@ if (($action == 'create' || $action == 'add') && !$error) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	// Load translation files required by the page
-    $langs->loadLangs(array("bills", "main", "products"));
+	$langs->loadLangs(array("bills", "main", "products"));
 
 	if (isset($_GET['orders_to_invoice'])) {
 		$orders_id = GETPOST('orders_to_invoice', '', 1);
@@ -303,22 +303,22 @@ if ($action == 'create' && !$error) {
 	if ($socid)
 		$res = $soc->fetch($socid);
 	if ($res) {
-        $cond_reglement_id = $soc->cond_reglement_supplier_id;
-        $mode_reglement_id = $soc->mode_reglement_supplier_id;
+		$cond_reglement_id = $soc->cond_reglement_supplier_id;
+		$mode_reglement_id = $soc->mode_reglement_supplier_id;
 	}
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';
 
-    $objectsrc = new CommandeFournisseur($db);
-    $listoforders = array();
-    foreach ($selected as $sel) {
-        $result = $objectsrc->fetch($sel);
-        if ($result > 0) {
-            $listoforders[] = $objectsrc->ref;
-        }
+	$objectsrc = new CommandeFournisseur($db);
+	$listoforders = array();
+	foreach ($selected as $sel) {
+		$result = $objectsrc->fetch($sel);
+		if ($result > 0) {
+			$listoforders[] = $objectsrc->ref;
+		}
 
-        if (empty($cond_reglement_id))  $cond_reglement_id = $objectsrc->cond_reglement_id;
-        if (empty($mode_reglement_id))  $mode_reglement_id = $objectsrc->mode_reglement_id;
-    }
+		if (empty($cond_reglement_id))  $cond_reglement_id = $objectsrc->cond_reglement_id;
+		if (empty($mode_reglement_id))  $mode_reglement_id = $objectsrc->mode_reglement_id;
+	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -530,7 +530,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		// print '<td class="liste_titre">';
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
-        print '</td>';
+		print '</td>';
 
 		// DATE ORDER
 		print '<td class="liste_titre center">';

@@ -80,33 +80,33 @@ $object = new Product($db);
 
 if (!$id && empty($ref))
 {
-    llxHeader("", $langs->trans("ProductStatistics"));
+	llxHeader("", $langs->trans("ProductStatistics"));
 
-    $type = GETPOST('type', 'int');
+	$type = GETPOST('type', 'int');
 
    	$helpurl = '';
-    if ($type == '0')
-    {
-        $helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-        //$title=$langs->trans("StatisticsOfProducts");
-        $title = $langs->trans("Statistics");
-    } elseif ($type == '1')
-    {
-        $helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-        //$title=$langs->trans("StatisticsOfServices");
-        $title = $langs->trans("Statistics");
-    } else {
-        $helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-        //$title=$langs->trans("StatisticsOfProductsOrServices");
-        $title = $langs->trans("Statistics");
-    }
+	if ($type == '0')
+	{
+		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+		//$title=$langs->trans("StatisticsOfProducts");
+		$title = $langs->trans("Statistics");
+	} elseif ($type == '1')
+	{
+		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		//$title=$langs->trans("StatisticsOfServices");
+		$title = $langs->trans("Statistics");
+	} else {
+		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		//$title=$langs->trans("StatisticsOfProductsOrServices");
+		$title = $langs->trans("Statistics");
+	}
 
-    $picto = 'product';
-    if ($type == 1) $picto = 'service';
+	$picto = 'product';
+	if ($type == 1) $picto = 'service';
 
-    print load_fiche_titre($title, $mesg, $picto);
+	print load_fiche_titre($title, $mesg, $picto);
 } else {
-    $result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref);
 
 	$title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
@@ -136,48 +136,48 @@ if ($result && (!empty($id) || !empty($ref)))
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
+	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
-    dol_fiche_end();
+	dol_fiche_end();
 }
 if (empty($id) & empty($ref))
 {
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $langs->trans("Chart");
-    $head[$h][2] = 'chart';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.$type : '');
+	$head[$h][1] = $langs->trans("Chart");
+	$head[$h][2] = 'chart';
+	$h++;
 
 	$title = $langs->trans("ListProductServiceByPopularity");
-    if ((string) $type == '1') {
-    	$title = $langs->trans("ListServiceByPopularity");
-    }
-    if ((string) $type == '0') {
-    	$title = $langs->trans("ListProductByPopularity");
-    }
+	if ((string) $type == '1') {
+		$title = $langs->trans("ListServiceByPopularity");
+	}
+	if ((string) $type == '0') {
+		$title = $langs->trans("ListProductByPopularity");
+	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $langs->trans("ProductsPerPopularity");
-    $head[$h][2] = 'popularity';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
+	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	$head[$h][2] = 'popularity';
+	$h++;
 
-    dol_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
+	dol_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
 }
 
 
 if ($result || empty($id))
 {
-    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 
 	if (empty($id))
 	{
-    	// Type
+		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("ProductsAndServices").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
 		print $form->selectarray('type', $array, $type);
@@ -186,12 +186,12 @@ if ($result || empty($id))
 		// Tag
 		if ($conf->categorie->enabled)
 		{
-    		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-    		//$moreforfilter.='<div class="divsearchfield">';
-    		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
-    		//$moreforfilter.='</div>';
-    		print $moreforfilter;
-    		print '</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
+			//$moreforfilter.='<div class="divsearchfield">';
+			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
+			//$moreforfilter.='</div>';
+			print $moreforfilter;
+			print '</td></tr>';
 		}
 	}
 
@@ -200,7 +200,7 @@ if ($result || empty($id))
 	$arrayyears = array();
 	for ($year = $currentyear - 10; $year < $currentyear + 10; $year++)
 	{
-	    $arrayyears[$year] = $year;
+		$arrayyears[$year] = $year;
 	}
 	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 	if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
@@ -317,18 +317,18 @@ if ($result || empty($id))
 				{
 					// TODO Load cachefile $graphfiles[$key]['file']
 				} else {
-				    $morefilters = '';
-				    if ($search_categ > 0)
-				    {
-				        $categ = new Categorie($db);
-				        $categ->fetch($search_categ);
-				        $listofprodids = $categ->getObjectsInCateg('product', 1);
-				        $morefilters = ' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
-				    }
-				    if ($search_categ == -2)
-				    {
-				        $morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
-				    }
+					$morefilters = '';
+					if ($search_categ > 0)
+					{
+						$categ = new Categorie($db);
+						$categ->fetch($search_categ);
+						$listofprodids = $categ->getObjectsInCateg('product', 1);
+						$morefilters = ' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
+					}
+					if ($search_categ == -2)
+					{
+						$morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
+					}
 
 					if ($key == 'propal')             $graph_data = $object->get_nb_propal($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'orders')             $graph_data = $object->get_nb_order($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
@@ -396,10 +396,10 @@ if ($result || empty($id))
 			// Date generation
 			if ($graphfiles[$key]['output'] && !$px->isGraphKo())
 			{
-			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
-			    else $dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
+				if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
+				else $dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 			} else {
-			    $dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
+				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).((string) $type != '' ? '&type='.$type : '').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
 
@@ -439,7 +439,7 @@ if ($result || empty($id))
 
 if (!$id)
 {
-    dol_fiche_end();
+	dol_fiche_end();
 }
 
 // End of page

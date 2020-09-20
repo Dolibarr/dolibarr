@@ -222,42 +222,42 @@ class MailingTargets // This can't be abstract as it is used for some method
         $result=$this->db->query($sql);
 		*/
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-        $sql .= " SET statut=3";
-        $sql .= " WHERE fk_mailing=".$mailing_id." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " SET statut=3";
+		$sql .= " WHERE fk_mailing=".$mailing_id." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
 
-        dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if (!$result)
-        {
-        	dol_print_error($this->db);
-        }
+		dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result)
+		{
+			dol_print_error($this->db);
+		}
 
-        $this->update_nb($mailing_id);
+		$this->update_nb($mailing_id);
 
-        $this->db->commit();
+		$this->db->commit();
 
-        return $j;
-    }
+		return $j;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Supprime tous les destinataires de la table des cibles
-     *
-     *  @param  int		$mailing_id        Id of emailing
-     *  @return	void
-     */
-    public function clear_target($mailing_id)
-    {
-        // phpcs:enable
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
-        $sql .= " WHERE fk_mailing = ".$mailing_id;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Supprime tous les destinataires de la table des cibles
+	 *
+	 *  @param  int		$mailing_id        Id of emailing
+	 *  @return	void
+	 */
+	public function clear_target($mailing_id)
+	{
+		// phpcs:enable
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " WHERE fk_mailing = ".$mailing_id;
 
-        if (!$this->db->query($sql))
-        {
-            dol_syslog($this->db->error());
-        }
+		if (!$this->db->query($sql))
+		{
+			dol_syslog($this->db->error());
+		}
 
-        $this->update_nb($mailing_id);
-    }
+		$this->update_nb($mailing_id);
+	}
 }

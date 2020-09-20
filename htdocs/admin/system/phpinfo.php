@@ -421,5 +421,5 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
 	$html .= "</td>";
 
-    return $html;
+	return $html;
 }

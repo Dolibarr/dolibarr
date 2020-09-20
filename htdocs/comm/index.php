@@ -738,7 +738,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</tr>';
 
 				$i++;
-				$total +=(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 

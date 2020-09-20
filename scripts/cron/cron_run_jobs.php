@@ -165,7 +165,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
-    $savconf = dol_clone($conf);
+	$savconf = dol_clone($conf);
 
 	// Loop over job
 	foreach ($qualifiedjobs as $line) {
@@ -203,8 +203,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 		    }
 
 		    // Reload langs
-		    $langcode = (empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT);
-		    if (! empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
+		    $langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+		    if (!empty($user->conf->MAIN_LANG_DEFAULT)) $langcode = $user->conf->MAIN_LANG_DEFAULT;
 		    if ($langs->getDefaultLang() != $langcode) $langs->setDefaultLang($langcode);
 		}
 

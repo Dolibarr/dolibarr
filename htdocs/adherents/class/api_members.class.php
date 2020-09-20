@@ -94,17 +94,17 @@ class Members extends DolibarrApi
      */
     public function getByThirdparty($thirdparty)
     {
-        if (! DolibarrApiAccess::$user->rights->adherent->lire) {
+        if (!DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
         }
 
         $member = new Adherent($this->db);
         $result = $member->fetch('', '', $thirdparty);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'member not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+        if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -127,23 +127,23 @@ class Members extends DolibarrApi
      */
     public function getByThirdpartyEmail($email)
     {
-        if (! DolibarrApiAccess::$user->rights->adherent->lire) {
+        if (!DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
         }
 
         $thirdparty = new Societe($this->db);
         $result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'thirdparty not found');
         }
 
         $member = new Adherent($this->db);
         $result = $member->fetch('', '', $thirdparty->id);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'member not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+        if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -166,23 +166,23 @@ class Members extends DolibarrApi
      */
     public function getByThirdpartyBarcode($barcode)
     {
-        if (! DolibarrApiAccess::$user->rights->adherent->lire) {
+        if (!DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
         }
 
         $thirdparty = new Societe($this->db);
         $result = $thirdparty->fetch('', '', '', $barcode);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'thirdparty not found');
         }
 
         $member = new Adherent($this->db);
         $result = $member->fetch('', '', $thirdparty->id);
-        if ( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'member not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+        if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

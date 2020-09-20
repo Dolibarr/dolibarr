@@ -48,9 +48,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -80,7 +80,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param	Translate	$langs		Object langs
 	 *  @return string      			Description of module
@@ -232,7 +232,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -240,7 +240,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function verif_prefixIsUsed()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
@@ -306,7 +306,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -318,7 +318,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
 		else $sql .= " WHERE code_client = '".$db->escape($code)."'";

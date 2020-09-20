@@ -63,12 +63,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	$result = $object->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
-        exit;
+		$db->commit();
+		header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
+		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -193,18 +193,18 @@ print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->no
 // Bank account
 if (!empty($conf->banque->enabled))
 {
-    if ($object->bank_account)
-    {
-    	$bankline = new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
+	if ($object->bank_account)
+	{
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
 		print $bankline->getNomUrl(1, 0, 'showall');
-    	print '</td>';
-    	print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
@@ -236,7 +236,7 @@ if ($resql)
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
-    print '<td>'.$langs->trans('Type').'</td>';
+	print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
@@ -256,10 +256,10 @@ if ($resql)
 			print $socialcontrib->getNomUrl(1);
 			print "</td>\n";
 			// Type
-            print '<td>';
-            print $socialcontrib->type_label;
-            /*print $socialcontrib->type;*/
-            print "</td>\n";
+			print '<td>';
+			print $socialcontrib->type_label;
+			/*print $socialcontrib->type;*/
+			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay

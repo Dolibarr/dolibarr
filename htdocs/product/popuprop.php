@@ -132,7 +132,7 @@ if ($type !== '') {
 }
 $sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 
-if (! empty($mode) && $mode != '-1') {
+if (!empty($mode) && $mode != '-1') {
 	$result = $db->query($sql);
 	if ($result)
 	{

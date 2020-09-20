@@ -42,4 +42,4 @@ if ($_GET['smp-status']) {
 	die('</body></html>');
 }
 
-    print 'NOOP';
+	print 'NOOP';

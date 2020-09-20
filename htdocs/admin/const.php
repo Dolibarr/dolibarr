@@ -155,7 +155,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
 {
-    ?>
+	?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();

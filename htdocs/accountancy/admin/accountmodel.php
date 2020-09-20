@@ -472,13 +472,13 @@ if ($id)
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
-                if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-                    print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-                } elseif (!empty($tabhelp[$id][$value])) {
-                    print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-                } else {
-                    print $valuetoshow;
-                }
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif (!empty($tabhelp[$id][$value])) {
+					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				} else {
+					print $valuetoshow;
+				}
 				print '</td>';
 			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;

@@ -245,7 +245,7 @@ else print "var received=0;";
 	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></span></center>
 </div>
 <?php
-if (! empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 	print '<div class="paymentbordline paddingtop paddingbottom">
 	<center>';
 	$filter = '';

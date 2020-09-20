@@ -28,41 +28,41 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
  */
 class StockMovements extends DolibarrApi
 {
-    /**
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object
-     */
-    static $FIELDS = array(
-        'product_id',
-        'warehouse_id',
-        'qty'
-    );
+	/**
+	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 */
+	static $FIELDS = array(
+		'product_id',
+		'warehouse_id',
+		'qty'
+	);
 
-    /**
-     * @var MouvementStock $stockmovement {@type MouvementStock}
-     */
-    public $stockmovement;
+	/**
+	 * @var MouvementStock $stockmovement {@type MouvementStock}
+	 */
+	public $stockmovement;
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        global $db, $conf;
-        $this->db = $db;
-        $this->stockmovement = new MouvementStock($this->db);
-    }
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		global $db, $conf;
+		$this->db = $db;
+		$this->stockmovement = new MouvementStock($this->db);
+	}
 
-    /**
-     * Get properties of a stock movement object
-     *
-     * Return an array with stock movement informations
-     *
-     * @param 	int 	$id ID of movement
-     * @return 	array|mixed data without useless information
-     *
-     * @throws 	RestException
-     */
-    /*
+	/**
+	 * Get properties of a stock movement object
+	 *
+	 * Return an array with stock movement informations
+	 *
+	 * @param 	int 	$id ID of movement
+	 * @return 	array|mixed data without useless information
+	 *
+	 * @throws 	RestException
+	 */
+	/*
     public function get($id)
     {
         if(! DolibarrApiAccess::$user->rights->stock->lire) {
@@ -237,13 +237,13 @@ class StockMovements extends DolibarrApi
         return false;
     }*/
 
-    /**
-     * Delete stock movement
-     *
-     * @param int $id   Stock movement ID
-     * @return array
-     */
-    /*
+	/**
+	 * Delete stock movement
+	 *
+	 * @param int $id   Stock movement ID
+	 * @return array
+	 */
+	/*
     public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
@@ -272,79 +272,79 @@ class StockMovements extends DolibarrApi
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   MouvementStock  $object    Object to clean
-     * @return    array    Array of cleaned object properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   MouvementStock  $object    Object to clean
+	 * @return    array    Array of cleaned object properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
 
-        // Remove useless data
-        unset($object->civility_id);
-        unset($object->firstname);
-        unset($object->lastname);
-        unset($object->name);
-        unset($object->location_incoterms);
-        unset($object->label_incoterms);
-        unset($object->fk_incoterms);
-        unset($object->lines);
-        unset($object->total_ht);
-        unset($object->total_ttc);
-        unset($object->total_tva);
-        unset($object->total_localtax1);
-        unset($object->total_localtax2);
-        unset($object->note);
-        unset($object->note_private);
-        unset($object->note_public);
-        unset($object->shipping_method_id);
-        unset($object->fk_account);
-        unset($object->model_pdf);
-        unset($object->fk_delivery_address);
-        unset($object->cond_reglement);
-        unset($object->cond_reglement_id);
-        unset($object->mode_reglement_id);
-        unset($object->barcode_type_coder);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type);
-        unset($object->country_code);
-        unset($object->country_id);
-        unset($object->country);
-        unset($object->thirdparty);
-        unset($object->contact);
-        unset($object->contact_id);
-        unset($object->user);
-        unset($object->fk_project);
-        unset($object->project);
-        unset($object->canvas);
+		// Remove useless data
+		unset($object->civility_id);
+		unset($object->firstname);
+		unset($object->lastname);
+		unset($object->name);
+		unset($object->location_incoterms);
+		unset($object->label_incoterms);
+		unset($object->fk_incoterms);
+		unset($object->lines);
+		unset($object->total_ht);
+		unset($object->total_ttc);
+		unset($object->total_tva);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->note);
+		unset($object->note_private);
+		unset($object->note_public);
+		unset($object->shipping_method_id);
+		unset($object->fk_account);
+		unset($object->model_pdf);
+		unset($object->fk_delivery_address);
+		unset($object->cond_reglement);
+		unset($object->cond_reglement_id);
+		unset($object->mode_reglement_id);
+		unset($object->barcode_type_coder);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type);
+		unset($object->country_code);
+		unset($object->country_id);
+		unset($object->country);
+		unset($object->thirdparty);
+		unset($object->contact);
+		unset($object->contact_id);
+		unset($object->user);
+		unset($object->fk_project);
+		unset($object->project);
+		unset($object->canvas);
 
-        //unset($object->eatby);        Filled correctly in read mode
-        //unset($object->sellby);       Filled correctly in read mode
+		//unset($object->eatby);        Filled correctly in read mode
+		//unset($object->sellby);       Filled correctly in read mode
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param array|null    $data    Data to validate
-     * @return array
-     *
-     * @throws RestException
-     */
-    private function _validate($data)
-    {
-        $stockmovement = array();
-        foreach (self::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $stockmovement[$field] = $data[$field];
-        }
-        return $stockmovement;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param array|null    $data    Data to validate
+	 * @return array
+	 *
+	 * @throws RestException
+	 */
+	private function _validate($data)
+	{
+		$stockmovement = array();
+		foreach (self::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$stockmovement[$field] = $data[$field];
+		}
+		return $stockmovement;
+	}
 }

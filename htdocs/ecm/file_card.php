@@ -43,8 +43,8 @@ $socid = GETPOST("socid", "int");
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -61,14 +61,14 @@ if (!$sortfield) $sortfield = "label";
 $section = GETPOST("section", 'alpha');
 if (!$section)
 {
-    dol_print_error('', 'Error, section parameter missing');
-    exit;
+	dol_print_error('', 'Error, section parameter missing');
+	exit;
 }
 $urlfile = GETPOST("urlfile");
 if (!$urlfile)
 {
-    dol_print_error('', "ErrorParamNotDefined");
-    exit;
+	dol_print_error('', "ErrorParamNotDefined");
+	exit;
 }
 
 // Load ecm object
@@ -76,8 +76,8 @@ $ecmdir = new EcmDirectory($db);
 $result = $ecmdir->fetch(GETPOST("section", 'alpha'));
 if (!$result > 0)
 {
-    dol_print_error($db, $ecmdir->error);
-    exit;
+	dol_print_error($db, $ecmdir->error);
+	exit;
 }
 $relativepath = $ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
@@ -141,7 +141,7 @@ if ($action == 'update')
     $newfile = $newdir.$newlabel;
     $newfileformove = $newfile;
     // If old file end with .noexe, new file must also end with .noexe
-    if (preg_match('/\.noexe$/', $oldfile) && ! preg_match('/\.noexe$/', $newfileformove)) {
+    if (preg_match('/\.noexe$/', $oldfile) && !preg_match('/\.noexe$/', $newfileformove)) {
     	$newfileformove .= '.noexe';
     }
     //var_dump($oldfile);var_dump($newfile);exit;
@@ -203,23 +203,23 @@ if ($action == 'update')
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}
 		}
-    }
+	}
 
-    if (!$error)
-    {
-        $db->commit();
+	if (!$error)
+	{
+		$db->commit();
 
-        $urlfile = $newlabel;
-        // If old file end with .noexe, new file must also end with .noexe
-        if (preg_match('/\.noexe$/', $newfileformove)) {
-        	$urlfile .= '.noexe';
-        }
+		$urlfile = $newlabel;
+		// If old file end with .noexe, new file must also end with .noexe
+		if (preg_match('/\.noexe$/', $newfileformove)) {
+			$urlfile .= '.noexe';
+		}
 
-        header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
-        exit;
-    } else {
-        $db->rollback();
-    }
+		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+		exit;
+	} else {
+		$db->rollback();
+	}
 }
 
 
@@ -377,20 +377,20 @@ dol_fiche_end();
 
 if ($action == 'edit')
 {
-    print '<div class="center">';
-    print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 
 
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_file')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
 if ($action != 'edit')
@@ -398,11 +398,11 @@ if ($action != 'edit')
 	// Actions buttons
 	print '<div class="tabsAction">';
 
-    if ($user->rights->ecm->setup)
-    {
-        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
-    }
-    /*
+	if ($user->rights->ecm->setup)
+	{
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+	}
+	/*
 	if ($user->rights->ecm->setup)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';

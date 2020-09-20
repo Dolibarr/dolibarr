@@ -301,80 +301,80 @@ class ZapierApi extends DolibarrApi
         }
     }*/
 
-    /**
-     * Delete hook
-     *
-     * @param   int     $id   Hook ID
-     * @return  array
-     *
-     * @url DELETE /hook/{id}
-     */
-    public function delete($id)
-    {
-        if (!DolibarrApiAccess::$user->rights->zapier->delete) {
-            throw new RestException(401);
-        }
-        $result = $this->hook->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Hook not found');
-        }
+	/**
+	 * Delete hook
+	 *
+	 * @param   int     $id   Hook ID
+	 * @return  array
+	 *
+	 * @url DELETE /hook/{id}
+	 */
+	public function delete($id)
+	{
+		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
+			throw new RestException(401);
+		}
+		$result = $this->hook->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Hook not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        if (!$this->hook->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when deleting Hook : '.$this->hook->error);
-        }
+		if (!$this->hook->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when deleting Hook : '.$this->hook->error);
+		}
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Hook deleted'
-            )
-        );
-    }
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Hook deleted'
+			)
+		);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   object  $object    Object to clean
-     * @return  array    Array of cleaned object properties
-     */
-    public function _cleanObjectDatas($object)
-    {
-        // phpcs:disable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   object  $object    Object to clean
+	 * @return  array    Array of cleaned object properties
+	 */
+	public function _cleanObjectDatas($object)
+	{
+		// phpcs:disable
+		$object = parent::_cleanObjectDatas($object);
 
-        /*unset($object->note);
+		/*unset($object->note);
         unset($object->address);
         unset($object->barcode_type);
         unset($object->barcode_type_code);
         unset($object->barcode_type_label);
         unset($object->barcode_type_coder);*/
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array       $data       Array of data to validate
-     * @param   array       $fields     Array of fields needed
-     * @return  array
-     *
-     * @throws  RestException
-     */
-    private function validate($data, $fields)
-    {
-        $hook = array();
-        foreach ($fields as $field) {
-            if (!isset($data[$field])) {
-                throw new RestException(400, $field." field missing");
-            }
-            $hook[$field] = $data[$field];
-        }
-        return $hook;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array       $data       Array of data to validate
+	 * @param   array       $fields     Array of fields needed
+	 * @return  array
+	 *
+	 * @throws  RestException
+	 */
+	private function validate($data, $fields)
+	{
+		$hook = array();
+		foreach ($fields as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, $field." field missing");
+			}
+			$hook[$field] = $data[$field];
+		}
+		return $hook;
+	}
 }

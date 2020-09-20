@@ -31,88 +31,88 @@ include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_validated_projects extends ModeleBoxes
 {
-    public $boxcode="validated_project";
-    public $boximg="object_projectpub";
-    public $boxlabel;
-    //var $depends = array("projet");
+	public $boxcode="validated_project";
+	public $boximg="object_projectpub";
+	public $boxlabel;
+	//var $depends = array("projet");
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param = '')
-    {
-        global $user, $langs;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param = '')
+	{
+		global $user, $langs;
 
-        // Load translation files required by the page
-        $langs->loadLangs(array('boxes', 'projects'));
+		// Load translation files required by the page
+		$langs->loadLangs(array('boxes', 'projects'));
 
-        $this->db = $db;
-        $this->boxlabel = "ValidatedProjects";
+		$this->db = $db;
+		$this->boxlabel = "ValidatedProjects";
 
-        $this->hidden = ! ($user->rights->projet->lire);
-    }
+		$this->hidden = ! ($user->rights->projet->lire);
+	}
 
-    /**
-    *  Load data for box to show them later
-    *
-    *  @param   int		$max        Maximum number of records to load
-    *  @return  void
-    */
-    public function loadBox($max = 5)
-    {
-        global $conf, $user, $langs;
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param   int		$max        Maximum number of records to load
+	 *  @return  void
+	 */
+	public function loadBox($max = 5)
+	{
+		global $conf, $user, $langs;
 
-        $this->max=$max;
+		$this->max=$max;
 
-        $totalMnt = 0;
-        $totalnb = 0;
-        $totalnbTask=0;
+		$totalMnt = 0;
+		$totalnb = 0;
+		$totalnbTask=0;
 
-        $textHead = $langs->trans("ValidatedProjects");
-        $this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$textHead = $langs->trans("ValidatedProjects");
+		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
-        // list the summary of the orders
-        if ($user->rights->projet->lire) {
-            include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-            $projectstatic = new Project($this->db);
+		// list the summary of the orders
+		if ($user->rights->projet->lire) {
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$projectstatic = new Project($this->db);
 
-            $socid=0;
-            //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			$socid=0;
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 
-            // Get list of project id allowed to user (in a string list separated by coma)
-            $projectsListId='';
-            if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			// Get list of project id allowed to user (in a string list separated by coma)
+			$projectsListId='';
+			if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
-            $sql = "SELECT p.rowid, p.ref as Ref, p.fk_soc as Client, p.dateo as startDate,";
-            $sql.= " (SELECT COUNT(t.rowid) FROM ".MAIN_DB_PREFIX."projet_task AS t";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
-            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_c_type_contact != 160 AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")) AS 'taskNumber'";
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
-            $sql.= " WHERE p.fk_statut = 1"; // Only open projects
+			$sql = "SELECT p.rowid, p.ref as Ref, p.fk_soc as Client, p.dateo as startDate,";
+			$sql.= " (SELECT COUNT(t.rowid) FROM ".MAIN_DB_PREFIX."projet_task AS t";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
+			$sql.= " WHERE t.fk_projet = p.rowid AND c.fk_c_type_contact != 160 AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")) AS 'taskNumber'";
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
+			$sql.= " WHERE p.fk_statut = 1"; // Only open projects
 			$sql.= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
 			$sql.= " AND c.fk_socpeople = ".$user->id;
 			$sql.= " GROUP BY p.ref";
-            $sql.= " ORDER BY p.dateo ASC";
+			$sql.= " ORDER BY p.dateo ASC";
 
-            $result = $this->db->query($sql);
-            if ($result) {
-                $num = $this->db->num_rows($result);
-                $i = 0;
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
+				$i = 0;
 				$this->info_box_contents[$i][] = array(
 					'td' => 'class="nowraponall"',
 					'text' => "Reference projet",
@@ -131,24 +131,24 @@ class box_validated_projects extends ModeleBoxes
 				);
 				$i++;
 
-                while ($i < min($num+1, $max+1)) {
-                    $objp = $this->db->fetch_object($result);
+				while ($i < min($num+1, $max+1)) {
+					$objp = $this->db->fetch_object($result);
 
-                    $projectstatic->id = $objp->rowid;
-                    $projectstatic->ref = $objp->Ref;
-                    $projectstatic->customer = $objp->Client;
-                    $projectstatic->startDate = $objp->startDate;
-                    $projectstatic->taskNumber = $objp->taskNumber;
+					$projectstatic->id = $objp->rowid;
+					$projectstatic->ref = $objp->Ref;
+					$projectstatic->customer = $objp->Client;
+					$projectstatic->startDate = $objp->startDate;
+					$projectstatic->taskNumber = $objp->taskNumber;
 
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $projectstatic->getNomUrl(1),
-                        'asis' => 1
-                    );
+					$this->info_box_contents[$i][] = array(
+						'td' => 'class="nowraponall"',
+						'text' => $projectstatic->getNomUrl(1),
+						'asis' => 1
+					);
 
-                    $sql = 'SELECT rowid, nom FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->Client;
+					$sql = 'SELECT rowid, nom FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->Client;
 					$resql = $this->db->query($sql);
-					if ($resql){
+					if ($resql) {
 						$socstatic = new Societe($this->db);
 						$obj = $this->db->fetch_object($resql);
 						$this->info_box_contents[$i][] = array(
@@ -162,34 +162,34 @@ class box_validated_projects extends ModeleBoxes
 						dol_print_error($this->db);
 					}
 
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'class="center"',
-                        'text' => $objp->startDate,
-                    );
+					$this->info_box_contents[$i][] = array(
+						'td' => 'class="center"',
+						'text' => $objp->startDate,
+					);
 
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'class="center"',
-                        'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
+					$this->info_box_contents[$i][] = array(
+						'td' => 'class="center"',
+						'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
 						'asis' => 1,
-                    );
-                    $i++;
-                }
-            }else {
-            	dol_print_error($this->db);
+					);
+					$i++;
+				}
+			}else {
+				dol_print_error($this->db);
 			}
-        }
-    }
+		}
+	}
 
-    /**
-     *	Method to show box
-     *
-     *	@param	array	$head       Array with properties of box title
-     *	@param  array	$contents   Array with properties of box lines
-     *  @param	int		$nooutput	No print, only return string
-     *	@return	string
-     */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
+	 *	@return	string
+	 */
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

@@ -363,11 +363,11 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val)
 {
-    $cssforfield = '';
-    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
-    if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-    if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
-    if (!empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+	$cssforfield = '';
+	if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+	if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	if (!empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -389,14 +389,14 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val)
 {
-    $cssforfield = '';
-    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
-    if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-    if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
-    if (!empty($arrayfields['t.'.$key]['checked']))
-    {
-        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
-    }
+	$cssforfield = '';
+	if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+	if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	if (!empty($arrayfields['t.'.$key]['checked']))
+	{
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -439,22 +439,22 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach ($object->fields as $key => $val)
 	{
-	    $cssforfield = '';
-	    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
-	    elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		$cssforfield = '';
+		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 
-	    if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	    elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 
-	    if (!empty($arrayfields['t.'.$key]['checked']))
-	    {
-	        print '<td';
-	        if ($cssforfield || $val['css']) print ' class="';
-	        print $cssforfield;
-	        if ($cssforfield && $val['css']) print ' ';
-	        print $val['css'];
-	        if ($cssforfield || $val['css']) print '"';
-	        print '>';
+		if (!empty($arrayfields['t.'.$key]['checked']))
+		{
+			print '<td';
+			if ($cssforfield || $val['css']) print ' class="';
+			print $cssforfield;
+			if ($cssforfield && $val['css']) print ' ';
+			print $val['css'];
+			if ($cssforfield || $val['css']) print '"';
+			print '>';
 			print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

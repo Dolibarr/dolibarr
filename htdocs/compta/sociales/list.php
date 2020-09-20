@@ -157,7 +157,7 @@ $totalnboflines = 0;
 $result = $db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+	$totalnboflines = $db->num_rows($result);
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -168,7 +168,7 @@ if ($resql)
 	$i = 0;
 
 	$param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_ref)    $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_label)  $param .= '&search_label='.urlencode($search_label);
@@ -195,7 +195,7 @@ if ($resql)
 	$center = '';
 	if ($year)
 	{
-	    $center = ($year ? "<a href='list.php?year=".($year - 1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year + 1)."'>".img_next()."</a>" : "");
+		$center = ($year ? "<a href='list.php?year=".($year - 1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year + 1)."'>".img_next()."</a>" : "");
 	}
 
 	print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -208,8 +208,8 @@ if ($resql)
 		print $countrynotdefined;
 		print '</div>';
 	} else {
-	    print '<div class="div-table-responsive">';
-	    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+		print '<div class="div-table-responsive">';
+		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre_filter">';
 		// Ref
@@ -220,19 +220,19 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
-	    print '</td>';
+		$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
+		print '</td>';
 		// Ref Project
 	   	if (!empty($conf->projet->enabled)) print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
-	    // Date
-	    print '<td class="liste_titre">&nbsp;</td>';
-	    // Period end date
+		// Date
+		print '<td class="liste_titre">&nbsp;</td>';
+		// Period end date
 		print '<td class="liste_titre center">';
 		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
 		$formother->select_year($search_year_lim ? $search_year_lim : -1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
-	    // Amount
+		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat maxwidth75" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 		print '</td>';
@@ -242,10 +242,10 @@ if ($resql)
 		print $form->selectarray('search_status', $liststatus, $search_status, 1);
 		print '</td>';
 
-        print '<td class="liste_titre maxwidthsearch">';
-        $searchpicto = $form->showFilterAndCheckAddButtons(0);
-        print $searchpicto;
-        print '</td>';
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
 		print "</tr>\n";
 
 		print '<tr class="liste_titre">';
@@ -295,7 +295,7 @@ if ($resql)
 				print '<td class="nowrap">';
 				if ($obj->project_id > 0)
 				{
-				    print $projectstatic->getNomUrl(1);
+					print $projectstatic->getNomUrl(1);
 				}
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;

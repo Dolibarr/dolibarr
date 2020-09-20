@@ -170,7 +170,7 @@ $parameters = array(
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } else {
-    print $hookmanager->resPrint;
+	print $hookmanager->resPrint;
 }

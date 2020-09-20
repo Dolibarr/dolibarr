@@ -46,8 +46,8 @@ if (empty($module)) $module = 'ecm';
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $section = $urlsection = GETPOST('section', 'alpha');
@@ -270,7 +270,7 @@ if (empty($action) || $action == 'delete_section')
 	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
-    /*
+	/*
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';

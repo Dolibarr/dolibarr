@@ -36,9 +36,9 @@ class RejetPrelevement
 	public $id;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 
 	/**
@@ -58,16 +58,16 @@ class RejetPrelevement
 		$this->facturer = array();
 
 		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
-    	$this->motifs[1] = $langs->trans("StatusMotif1");
-    	$this->motifs[2] = $langs->trans("StatusMotif2");
-    	$this->motifs[3] = $langs->trans("StatusMotif3");
-    	$this->motifs[4] = $langs->trans("StatusMotif4");
-    	$this->motifs[5] = $langs->trans("StatusMotif5");
-    	$this->motifs[6] = $langs->trans("StatusMotif6");
-    	$this->motifs[7] = $langs->trans("StatusMotif7");
-    	$this->motifs[8] = $langs->trans("StatusMotif8");
+		$this->motifs[1] = $langs->trans("StatusMotif1");
+		$this->motifs[2] = $langs->trans("StatusMotif2");
+		$this->motifs[3] = $langs->trans("StatusMotif3");
+		$this->motifs[4] = $langs->trans("StatusMotif4");
+		$this->motifs[5] = $langs->trans("StatusMotif5");
+		$this->motifs[6] = $langs->trans("StatusMotif6");
+		$this->motifs[7] = $langs->trans("StatusMotif7");
+		$this->motifs[8] = $langs->trans("StatusMotif8");
 
-    	$this->facturer[0] = $langs->trans("NoInvoiceRefused");
+		$this->facturer[0] = $langs->trans("NoInvoiceRefused");
 		$this->facturer[1] = $langs->trans("InvoiceRefused");
 	}
 
@@ -194,7 +194,7 @@ class RejetPrelevement
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
@@ -203,7 +203,7 @@ class RejetPrelevement
 	 */
 	private function _send_email($fac)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$userid = 0;

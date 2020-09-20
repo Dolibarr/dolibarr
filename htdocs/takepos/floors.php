@@ -58,36 +58,36 @@ if (empty($user->rights->takepos->run)) {
 
 if ($action == "getTables")
 {
-    $sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
-    $resql = $db->query($sql);
-    $rows = array();
-    while ($row = $db->fetch_array($resql)) {
-        $rows[] = $row;
-    }
-    echo json_encode($rows);
-    exit;
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
+	$resql = $db->query($sql);
+	$rows = array();
+	while ($row = $db->fetch_array($resql)) {
+		$rows[] = $row;
+	}
+	echo json_encode($rows);
+	exit;
 }
 
 if ($action == "update")
 {
-    if ($left > 95) $left = 95;
-    if ($top > 95) $top = 95;
-    if ($left > 3 or $top > 4) $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
-    else $db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid='".$place."'");
+	if ($left > 95) $left = 95;
+	if ($top > 95) $top = 95;
+	if ($left > 3 or $top > 4) $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
+	else $db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid='".$place."'");
 }
 
 if ($action == "updatename")
 {
-    $newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
-    if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
-    $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
+	$newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
+	if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
+	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
 }
 
 if ($action == "add")
 {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
-    $asdf = $db->query($sql);
-    $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
+	$asdf = $db->query($sql);
+	$db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
 
 

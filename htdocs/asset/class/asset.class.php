@@ -109,17 +109,17 @@ class Asset extends CommonObject
 	 */
 	public $entity;
 
-    /**
-     * @var string Asset label
-     */
-    public $label;
+	/**
+	 * @var string Asset label
+	 */
+	public $label;
 
 	public $amount;
 
 	/**
 	 * @var int Thirdparty ID
 	 */
-    public $fk_soc;
+	public $fk_soc;
 
 	/**
 	 * @var string description
@@ -130,21 +130,21 @@ class Asset extends CommonObject
 	public $note_private;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
 
 	public $tms;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	public $import_key;
@@ -377,7 +377,7 @@ class Asset extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -387,7 +387,7 @@ class Asset extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0 || $mode == 1)

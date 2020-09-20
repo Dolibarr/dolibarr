@@ -52,7 +52,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thi
 
 if ($contextpage == 'poslist')
 {
-    $_GET['optioncss'] = 'print';
+	$_GET['optioncss'] = 'print';
 }
 
 // Security check
@@ -231,9 +231,9 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 if ($action == "change")	// Change customer for TakePOS
 {
-    $idcustomer = GETPOST('idcustomer', 'int');
+	$idcustomer = GETPOST('idcustomer', 'int');
 
-    // Check if draft invoice already exists, if not create it
+	// Check if draft invoice already exists, if not create it
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
 	$result = $db->query($sql);
 	$num_lines = $db->num_rows($result);
@@ -251,9 +251,9 @@ if ($action == "change")	// Change customer for TakePOS
 		$db->query($sql);
 	}
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-    $resql = $db->query($sql);
-    ?>
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+	?>
 	    <script>
 	    console.log("Reload page invoice.php with place=<?php print $place; ?>");
 	    parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
@@ -265,7 +265,7 @@ if ($action == "change")	// Change customer for TakePOS
 	    });
 	    </script>
     <?php
-    exit;
+	exit;
 }
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
@@ -520,21 +520,21 @@ $num = $db->num_rows($resql);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && $action != 'list') {
-    $obj = $db->fetch_object($resql);
-    $id = $obj->rowid;
-    if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
-        if ($obj->client > 0) {
-            header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
-            exit;
-        }
-        if ($obj->fournisseur > 0) {
-            header("Location: ".DOL_URL_ROOT.'/fourn/card.php?socid='.$id);
-            exit;
-        }
-    }
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
+		if ($obj->client > 0) {
+			header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
+			exit;
+		}
+		if ($obj->fournisseur > 0) {
+			header("Location: ".DOL_URL_ROOT.'/fourn/card.php?socid='.$id);
+			exit;
+		}
+	}
 
-    header("Location: ".DOL_URL_ROOT.'/societe/card.php?socid='.$id);
-    exit;
+	header("Location: ".DOL_URL_ROOT.'/societe/card.php?socid='.$id);
+	exit;
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -612,7 +612,7 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 		if ($type == 'f') $label = 'NewSupplier';
 	}
 
-    $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -915,9 +915,9 @@ if (!empty($arrayfields['s.fk_stcomm']['checked']))
 }
 if (!empty($arrayfields['s2.nom']['checked']))
 {
-    print '<td class="liste_titre center">';
-    print '<input class="flat searchstring maxwidth75imp" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
-    print '</td>';
+	print '<td class="liste_titre center">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
+	print '</td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -1034,7 +1034,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
+		print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 	}
 	print '>';
 	if (!empty($arrayfields['s.rowid']['checked']))
@@ -1051,13 +1051,13 @@ while ($i < min($num, $limit))
 		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').'>';
 		if ($contextpage == 'poslist')
 		{
-		    print $obj->name;
+			print $obj->name;
 		} else {
-		    print $companystatic->getNomUrl(1, '', 100, 0, 1);
+			print $companystatic->getNomUrl(1, '', 100, 0, 1);
 		}
 		print "</td>\n";
 		$companystatic->name_alias = $savalias;
-        if (!$i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.name_alias']['checked']))
 	{
@@ -1244,13 +1244,13 @@ while ($i < min($num, $limit))
 	{
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">' . $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
 		foreach ($prospectstatic->cacheprospectstatus as $key => $val)
 		{
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm' . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 		}
 		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;
@@ -1258,14 +1258,14 @@ while ($i < min($num, $limit))
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked']))
 	{
-	    print '<td class="center">';
-	    if ($companystatic->fk_parent > 0)
-	    {
-	        $companyparent->fetch($companystatic->fk_parent);
-	        print $companyparent->getNomUrl(1);
-	    }
-	    print "</td>";
-	    if (!$i) $totalarray['nbfield']++;
+		print '<td class="center">';
+		if ($companystatic->fk_parent > 0)
+		{
+			$companyparent->fetch($companystatic->fk_parent);
+			print $companyparent->getNomUrl(1);
+		}
+		print "</td>";
+		if (!$i) $totalarray['nbfield']++;
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

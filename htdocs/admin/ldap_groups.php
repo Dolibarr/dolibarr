@@ -61,19 +61,19 @@ if ($action == 'setvalue' && $user->admin)
 	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
-    $valkey = '';
-    $key = GETPOST("key");
-    if ($key) $valkey = $conf->global->$key;
-    if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	$valkey = '';
+	$key = GETPOST("key");
+	if ($key) $valkey = $conf->global->$key;
+	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
 
-    if (!$error)
-    {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-    	$db->rollback();
-    	dol_print_error($db);
-    }
+	if (!$error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 

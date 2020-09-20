@@ -358,7 +358,7 @@ if (empty($reshook))
 							{
 								$fk_parent_line = 0;
 							}
-                            $result = $object->addline(
+							$result = $object->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
@@ -642,7 +642,7 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -652,8 +652,8 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->fournisseur->commande->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/commande/card.php?action=create');
-    }
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/commande/card.php?action=create');
+	}
 
 	// Fields title search
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1229,9 +1229,9 @@ if ($resql)
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>\n";
 	print '</div>';

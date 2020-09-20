@@ -74,13 +74,13 @@ if (empty($reshook))
     }
 
     if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-    	if (! (GETPOST('prodid', 'int') > 0)) {
+    	if (!(GETPOST('prodid', 'int') > 0)) {
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
     		$action = 'add_customer_price';
     	}
 
-    	if (! $error) {
+    	if (!$error) {
 	    	$update_child_soc = GETPOST('updatechildprice');
 
 	    	// add price by customer
@@ -239,7 +239,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
-    $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
@@ -414,7 +414,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {
-	    print '<br>';
+		print '<br>';
 		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
@@ -488,7 +488,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">'.$langs->trans("Ok").'</a></div>';
 		print "\n</div><br>\n";
 	} else {
-        // View mode
+		// View mode
 
 		/* ************************************************************************** */
 		/*                                                                            */
@@ -504,112 +504,112 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n</div>\n";
 
 
-        // Count total nb of records
-        $nbtotalofrecords = '';
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-        {
-            $nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-        }
+		// Count total nb of records
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+		}
 
-        $result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-        if ($result < 0)
-        {
-            setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-        }
+		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		if ($result < 0)
+		{
+			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+		}
 
-        $option = '&search_prod='.$search_prod.'&id='.$object->id;
+		$option = '&search_prod='.$search_prod.'&id='.$object->id;
 
-	    print '<!-- view specific price for each product -->'."\n";
+		print '<!-- view specific price for each product -->'."\n";
 
-	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
-        print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-        print '<input type="hidden" name="token" value="'.newToken().'">';
-        print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-        print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent">';
 
-        print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Product").'</td>';
-        print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
-        print '<td class="center">'.$langs->trans("PriceBase").'</td>';
-        print '<td class="right">'.$langs->trans("VAT").'</td>';
-        print '<td class="right">'.$langs->trans("HT").'</td>';
-        print '<td class="right">'.$langs->trans("TTC").'</td>';
-        print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
-        print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
-        print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
-        print '<td>&nbsp;</td>';
-        print '</tr>';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Product").'</td>';
+		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
+		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
+		print '<td class="right">'.$langs->trans("VAT").'</td>';
+		print '<td class="right">'.$langs->trans("HT").'</td>';
+		print '<td class="right">'.$langs->trans("TTC").'</td>';
+		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
+		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
+		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
 
-        if (count($prodcustprice->lines) > 0 || $search_prod)
-        {
-            print '<tr class="liste_titre">';
+		if (count($prodcustprice->lines) > 0 || $search_prod)
+		{
+			print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
-            print '<td class="liste_titre" colspan="8">&nbsp;</td>';
-            // Print the search button
-            print '<td class="liste_titre maxwidthsearch">';
-            $searchpicto = $form->showFilterAndCheckAddButtons(0);
-            print $searchpicto;
-            print '</td>';
-            print '</tr>';
-        }
+			print '<td class="liste_titre" colspan="8">&nbsp;</td>';
+			// Print the search button
+			print '<td class="liste_titre maxwidthsearch">';
+			$searchpicto = $form->showFilterAndCheckAddButtons(0);
+			print $searchpicto;
+			print '</td>';
+			print '</tr>';
+		}
 
-        if (count($prodcustprice->lines) > 0)
-        {
-            foreach ($prodcustprice->lines as $line)
-            {
-                print '<tr class="oddeven">';
+		if (count($prodcustprice->lines) > 0)
+		{
+			foreach ($prodcustprice->lines as $line)
+			{
+				print '<tr class="oddeven">';
 
-                $staticprod = new Product($db);
-                $staticprod->fetch($line->fk_product);
+				$staticprod = new Product($db);
+				$staticprod->fetch($line->fk_product);
 
-                print "<td>".$staticprod->getNomUrl(1)."</td>";
-                print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
+				print "<td>".$staticprod->getNomUrl(1)."</td>";
+				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
-                print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
-                print '<td class="right">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
-                print '<td class="right">'.price($line->price)."</td>";
-                print '<td class="right">'.price($line->price_ttc)."</td>";
-                print '<td class="right">'.price($line->price_min).'</td>';
-                print '<td class="right">'.price($line->price_min_ttc).'</td>';
+				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
+				print '<td class="right">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
+				print '<td class="right">'.price($line->price)."</td>";
+				print '<td class="right">'.price($line->price_ttc)."</td>";
+				print '<td class="right">'.price($line->price_min).'</td>';
+				print '<td class="right">'.price($line->price_min_ttc).'</td>';
 
-                // User
-                $userstatic = new User($db);
-                $userstatic->fetch($line->fk_user);
-                print '<td class="right">';
-                print $userstatic->getLoginUrl(1);
-                print '</td>';
+				// User
+				$userstatic = new User($db);
+				$userstatic->fetch($line->fk_user);
+				print '<td class="right">';
+				print $userstatic->getLoginUrl(1);
+				print '</td>';
 
-                // Action
-                if ($user->rights->produit->creer || $user->rights->service->creer)
-                {
-                    print '<td class="right nowraponall">';
-                    print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
-                    print img_info();
-                    print '</a>';
-                    print ' ';
-                    print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
-                    print img_edit('default', 0, 'style="vertical-align: middle;"');
-                    print '</a>';
-                    print ' ';
-                    print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
-                    print img_delete('default', 'style="vertical-align: middle;"');
-                    print '</a>';
-                    print '</td>';
-                }
+				// Action
+				if ($user->rights->produit->creer || $user->rights->service->creer)
+				{
+					print '<td class="right nowraponall">';
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
+					print img_info();
+					print '</a>';
+					print ' ';
+					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+					print img_edit('default', 0, 'style="vertical-align: middle;"');
+					print '</a>';
+					print ' ';
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+					print img_delete('default', 'style="vertical-align: middle;"');
+					print '</a>';
+					print '</td>';
+				}
 
-                print "</tr>\n";
-            }
-        } else {
-            $colspan = 9;
-            if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan += 1;
-            print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';
-        }
+				print "</tr>\n";
+			}
+		} else {
+			$colspan = 9;
+			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan += 1;
+			print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';
+		}
 
-        print "</table>";
+		print "</table>";
 
-        print "</form>";
+		print "</form>";
 	}
 }
 

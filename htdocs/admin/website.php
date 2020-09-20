@@ -411,7 +411,7 @@ print "<br>\n";
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1);
 }
 //var_dump($elementList);
 
@@ -420,205 +420,205 @@ if ($action == 'delete')
  */
 if ($id)
 {
-    // Complete requete recherche valeurs avec critere de tri
-    $sql = $tabsql[$id];
-    $sql .= $db->order($sortfield, $sortorder);
-    $sql .= $db->plimit($limit + 1, $offset);
-    //print $sql;
+	// Complete requete recherche valeurs avec critere de tri
+	$sql = $tabsql[$id];
+	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->plimit($limit + 1, $offset);
+	//print $sql;
 
-    $fieldlist = explode(',', $tabfield[$id]);
+	$fieldlist = explode(',', $tabfield[$id]);
 
-    print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<table class="noborder centpercent">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<table class="noborder centpercent">';
 
-    // Form to add a new line
-    if ($tabname[$id])
-    {
-        $alabelisused = 0;
-        $var = false;
+	// Form to add a new line
+	if ($tabname[$id])
+	{
+		$alabelisused = 0;
+		$var = false;
 
-        $fieldlist = explode(',', $tabfield[$id]);
+		$fieldlist = explode(',', $tabfield[$id]);
 
-        // Line for title
-        print '<tr class="liste_titre">';
-        foreach ($fieldlist as $field => $value)
-        {
-            // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de donnees
-            $valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
-            $valuetoshow = $langs->trans($valuetoshow); // try to translate
-            $align = '';
-            if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
-            if ($valuetoshow != '')
-            {
-                print '<td class="'.$align.'">';
-            	if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-            	elseif (!empty($tabhelp[$id][$value]))
-           		{
-           			if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
-           			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-           		} else print $valuetoshow;
-                print '</td>';
-            }
-            if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
-        }
+		// Line for title
+		print '<tr class="liste_titre">';
+		foreach ($fieldlist as $field => $value)
+		{
+			// Determine le nom du champ par rapport aux noms possibles
+			// dans les dictionnaires de donnees
+			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = $langs->trans($valuetoshow); // try to translate
+			$align = '';
+			if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
+			if ($valuetoshow != '')
+			{
+				print '<td class="'.$align.'">';
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				elseif (!empty($tabhelp[$id][$value]))
+		   		{
+		   			if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
+		   			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+		   		} else print $valuetoshow;
+				print '</td>';
+			}
+			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
+		}
 
-        print '<td colspan="4">';
-        print '</td>';
-        print '</tr>';
+		print '<td colspan="4">';
+		print '</td>';
+		print '</tr>';
 
-        // Line to enter new values
-        print "<tr ".$bcnd[$var].">";
+		// Line to enter new values
+		print "<tr ".$bcnd[$var].">";
 
-        $obj = new stdClass();
-        // If data was already input, we define them in obj to populate input fields.
-        if (GETPOST('actionadd', 'alpha'))
-        {
-            foreach ($fieldlist as $key=>$val)
-            {
-                if (GETPOST($val, 'alpha'))
-                	$obj->$val = GETPOST($val);
-            }
-        }
+		$obj = new stdClass();
+		// If data was already input, we define them in obj to populate input fields.
+		if (GETPOST('actionadd', 'alpha'))
+		{
+			foreach ($fieldlist as $key=>$val)
+			{
+				if (GETPOST($val, 'alpha'))
+					$obj->$val = GETPOST($val);
+			}
+		}
 
-        fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
+		fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
 
-        print '<td colspan="3" class="right">';
-        if ($action != 'edit')
-        {
-        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
-        }
-        print '</td>';
-        print "</tr>";
+		print '<td colspan="3" class="right">';
+		if ($action != 'edit')
+		{
+			print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+		}
+		print '</td>';
+		print "</tr>";
 
-        $colspan = count($fieldlist) + 2;
-    }
+		$colspan = count($fieldlist) + 2;
+	}
 
-    print '</table>';
-    print '</form>';
+	print '</table>';
+	print '</form>';
 
 
-    // List of websites in database
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        if ($num)
-        {
-            print '<br>';
+	// List of websites in database
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
+		{
+			print '<br>';
 
-            print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            print '<input type="hidden" name="page" value="'.$page.'">';
-            print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="page" value="'.$page.'">';
+			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
-            print '<table class="noborder centpercent">';
+			print '<table class="noborder centpercent">';
 
-            // Title of lines
-            print '<tr class="liste_titre">';
-            foreach ($fieldlist as $field => $value)
-            {
-                // Determine le nom du champ par rapport aux noms possibles
-                // dans les dictionnaires de donnees
-                $showfield = 1; // Par defaut
-                $align = "left";
-                $sortable = 1;
-                $valuetoshow = '';
-                /*
+			// Title of lines
+			print '<tr class="liste_titre">';
+			foreach ($fieldlist as $field => $value)
+			{
+				// Determine le nom du champ par rapport aux noms possibles
+				// dans les dictionnaires de donnees
+				$showfield = 1; // Par defaut
+				$align = "left";
+				$sortable = 1;
+				$valuetoshow = '';
+				/*
                 $tmparray=getLabelOfField($fieldlist[$field]);
                 $showfield=$tmp['showfield'];
                 $valuetoshow=$tmp['valuetoshow'];
                 $align=$tmp['align'];
                 $sortable=$tmp['sortable'];
 				*/
-                $valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
-                $valuetoshow = $langs->trans($valuetoshow); // try to translate
-                if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
-                if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
-                if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
+				$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+				$valuetoshow = $langs->trans($valuetoshow); // try to translate
+				if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
+				if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
+				if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
 
-                // Affiche nom du champ
-                if ($showfield)
-                {
-                    print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), "", "align=".$align, $sortfield, $sortorder);
-                }
-            }
+				// Affiche nom du champ
+				if ($showfield)
+				{
+					print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), "", "align=".$align, $sortfield, $sortorder);
+				}
+			}
 
 			print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "status", ($page ? 'page='.$page.'&' : ''), "", 'align="center"', $sortfield, $sortorder);
-            print getTitleFieldOfList('');
-            print getTitleFieldOfList('');
-            print '</tr>';
+			print getTitleFieldOfList('');
+			print getTitleFieldOfList('');
+			print '</tr>';
 
-            // Lines with values
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                //print_r($obj);
-                print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
-                if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code)))
-                {
-                    $tmpaction = 'edit';
-                    $parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook = $hookmanager->executeHooks('editWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-                    $error = $hookmanager->error; $errors = $hookmanager->errors;
+			// Lines with values
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				//print_r($obj);
+				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code)))
+				{
+					$tmpaction = 'edit';
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$reshook = $hookmanager->executeHooks('editWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+					$error = $hookmanager->error; $errors = $hookmanager->errors;
 
-                    if (empty($reshook)) fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
+					if (empty($reshook)) fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
 
-                    print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-                    print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
-                } else {
-	              	$tmpaction = 'view';
-                    $parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+				} else {
+				  	$tmpaction = 'view';
+					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
-                    $error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error; $errors = $hookmanager->errors;
 
-                    if (empty($reshook))
-                    {
-                        foreach ($fieldlist as $field => $value)
-                        {
-                            $showfield = 1;
-                        	$align = "left";
-                        	$fieldname = $fieldlist[$field];
-                            $valuetoshow = $obj->$fieldname;
+					if (empty($reshook))
+					{
+						foreach ($fieldlist as $field => $value)
+						{
+							$showfield = 1;
+							$align = "left";
+							$fieldname = $fieldlist[$field];
+							$valuetoshow = $obj->$fieldname;
 
 							// Show value for field
 							if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
-                        }
-                    }
+						}
+					}
 
-                    // Can an entry be erased or disabled ?
-                    $iserasable = 1; $isdisable = 1; // true by default
-                    if ($obj->status) $iserasable = 0; // We can't delete a website on. Disable it first.
+					// Can an entry be erased or disabled ?
+					$iserasable = 1; $isdisable = 1; // true by default
+					if ($obj->status) $iserasable = 0; // We can't delete a website on. Disable it first.
 
-                    $url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&amp;code='.(!empty($obj->code) ?urlencode($obj->code) : '').'&amp;';
+					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&amp;code='.(!empty($obj->code) ?urlencode($obj->code) : '').'&amp;';
 
-                    // Active
-                    print '<td align="center" class="nowrap">';
-                    print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status ? 1 : 0)].'">'.$actl[($obj->status ? 1 : 0)].'</a>';
-                    print "</td>";
+					// Active
+					print '<td align="center" class="nowrap">';
+					print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status ? 1 : 0)].'">'.$actl[($obj->status ? 1 : 0)].'</a>';
+					print "</td>";
 
-                    // Modify link
-                    print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					// Modify link
+					print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 
-                    // Delete link
-                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete">'.img_delete().'</a></td>';
-                    else print '<td class="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
+					// Delete link
+					if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete">'.img_delete().'</a></td>';
+					else print '<td class="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
-                    print "</tr>\n";
-                }
-                $i++;
-            }
+					print "</tr>\n";
+				}
+				$i++;
+			}
 
-            print '</table>';
+			print '</table>';
 
-            print '</form>';
-        }
-    } else {
-        dol_print_error($db);
-    }
+			print '</form>';
+		}
+	} else {
+		dol_print_error($db);
+	}
 }
 
 dol_fiche_end();
@@ -649,7 +649,7 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 
 	foreach ($fieldlist as $field => $value)
 	{
-	    $fieldname = $fieldlist[$field];
+		$fieldname = $fieldlist[$field];
 		if ($fieldlist[$field] == 'lang')
 		{
 			print '<td>';

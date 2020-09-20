@@ -168,7 +168,7 @@ if ($action == 'convert')
 						if ($ret < 0 || $retm < 0) $error++;
 						else $nbrecordsmodified++;
 					}
-                    unset($objectstatic);
+					unset($objectstatic);
 
 					$i++;
 				}

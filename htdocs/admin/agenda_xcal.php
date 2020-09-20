@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -41,23 +41,23 @@ $actionsave = GETPOST('save', 'alpha');
 // Sauvegardes parametres
 if ($actionsave)
 {
-    $i = 0;
+	$i = 0;
 
-    $db->begin();
+	$db->begin();
 
-    $i += dolibarr_set_const($db, 'MAIN_AGENDA_XCAL_EXPORTKEY', trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha')), 'chaine', 0, '', $conf->entity);
-    $i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_PAST_DELAY', trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY', 'alpha')), 'chaine', 0, '', $conf->entity);
-    $i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE', 'alpha')), 'chaine', 0, '', $conf->entity);
-    $i += dolibarr_set_const($db, 'AGENDA_EXPORT_FIX_TZ', trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_XCAL_EXPORTKEY', trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_PAST_DELAY', trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'AGENDA_EXPORT_FIX_TZ', trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha')), 'chaine', 0, '', $conf->entity);
 
-    if ($i >= 4)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-        setEventMessages($langs->trans("SaveFailed"), null, 'errors');
-    }
+	if ($i >= 4)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("SaveFailed"), null, 'errors');
+	}
 }
 
 
