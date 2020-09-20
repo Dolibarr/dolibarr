@@ -280,7 +280,7 @@ class InfoBox
                         $sql .= " values (";
                         $sql .= " ".$id.",";
                         $sql .= " ".$zone.",";
-                        $sql .= " '".$this->db->escape($colonne.$ii)."',";
+                        $sql .= " '".$db->escape($colonne.$ii)."',";
                         $sql .= " ".$userid.",";
                         $sql .= " ".$conf->entity;
                         $sql .= ")";
@@ -295,20 +295,17 @@ class InfoBox
                     }
                 }
             }
-            if ($error)
-            {
-                $error = $db->error();
-                $db->rollback();
-                return -2;
-            } else {
-                $db->commit();
-                return 1;
-            }
         } else {
-            $error = $db->lasterror();
-            $db->rollback();
-            dol_syslog(get_class()."::saveboxorder ".$error);
-            return -1;
+        	$error++;
+        }
+
+        if ($error)
+        {
+        	$db->rollback();
+        	return -2;
+        } else {
+        	$db->commit();
+        	return 1;
         }
     }
 }
