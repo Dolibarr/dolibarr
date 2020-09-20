@@ -461,7 +461,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport))
 		{
-			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? "'".$userofexpensereport->id."'" : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
+			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		}
 		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
 		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
@@ -845,24 +845,24 @@ class ExpenseReport extends CommonObject
 			$sql .= " WHERE de.fk_projet = ".$projectid;
 
 			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$i = 0;
 				$total_HT = 0;
 				$total_TTC = 0;
 
 				while ($i < $num)
 				{
-					$objp = $db->fetch_object($result);
+					$objp = $this->db->fetch_object($result);
 
 					$sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
-					$sql2 .= " WHERE d.rowid = '".$objp->fk_expensereport."'";
+					$sql2 .= " WHERE d.rowid = ".((int) $objp->fk_expensereport);
 
-					$result2 = $db->query($sql2);
-					$obj = $db->fetch_object($result2);
+					$result2 = $this->db->query($sql2);
+					$obj = $this->db->fetch_object($result2);
 
 					$objp->fk_user_author = $obj->fk_user_author;
 					$objp->ref = $obj->ref;
@@ -871,7 +871,7 @@ class ExpenseReport extends CommonObject
 
 					$total_HT = $total_HT + $objp->total_ht;
 					$total_TTC = $total_TTC + $objp->total_ttc;
-					$author = new User($db);
+					$author = new User($this->db);
 					$author->fetch($objp->fk_user_author);
 
 					print '<tr>';
@@ -920,7 +920,7 @@ class ExpenseReport extends CommonObject
 				print '<td>&nbsp;</td>';
 				print '</tr>';
 			} else {
-				$this->error = $db->lasterror();
+				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -1130,7 +1130,7 @@ class ExpenseReport extends CommonObject
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET ref = '".$num."',";
+		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".$user->id;
@@ -2354,7 +2354,7 @@ class ExpenseReport extends CommonObject
 
 		$type = 'expense_report';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2740,7 +2740,7 @@ function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $u
 {
 	global $db, $langs;
 
-	$tmpep = new ExpenseReport($db);
+	$tmpep = new ExpenseReport($this->db);
 
 	print '<select class="flat" name="'.$htmlname.'">';
 	if ($useempty) print '<option value="-1">&nbsp;</option>';
@@ -2787,15 +2787,15 @@ function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0,
 	$sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 	if ($active >= 0) $sql .= " WHERE c.active = ".$active;
 	$sql .= " ORDER BY c.label ASC";
-	$resql = $db->query($sql);
+	$resql = $this->db->query($sql);
 	if ($resql)
 	{
-		$num = $db->num_rows($resql);
+		$num = $this->db->num_rows($resql);
 		$i = 0;
 
 		while ($i < $num)
 		{
-			$obj = $db->fetch_object($resql);
+			$obj = $this->db->fetch_object($resql);
 			$out .= '<option value="'.$obj->id.'"';
 			if ($obj->code == $selected || $obj->id == $selected) $out .= ' selected';
 			$out .= '>';

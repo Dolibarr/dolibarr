@@ -152,7 +152,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
+        $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT.'/holiday', 'files', 1, '\.php', null, 'fullname');
         //$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
         foreach ($filesarray as $key => $file)
@@ -170,7 +170,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             	|| preg_match('/boxes\/box_/', $file['relativename'])
             	|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
             	|| preg_match('/modules\/(import|mailings|printing)\//', $file['relativename'])
-            	|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php'))) {
+            	|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
             	if (! in_array($file['name'], array(
             		'api.class.php',
             		'commonobject.class.php',
@@ -182,7 +182,11 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             		'translate.class.php',
             		'utils.class.php',
             		'modules_product.class.php',
-            		'modules_societe.class.php'
+            		'modules_societe.class.php',
+            		'TraceableDB.php',
+            		'expeditionbatch.class.php',
+            		'expensereport_ik.class.php',
+            		'expensereport_rule.class.php'
             	))) {
 	            	// Must must not found $db->
 	            	$ok=true;
@@ -200,7 +204,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             	}
             } else {
             	if (! in_array($file['name'], array(
-            		'extrafieldsinexport.inc.php'
+            		'extrafieldsinexport.inc.php',
+            		'DolQueryCollector.php'
             	))) {
 	            	// Must must not found $this->db->
 	            	$ok=true;

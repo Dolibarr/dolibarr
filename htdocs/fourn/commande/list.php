@@ -294,9 +294,9 @@ if (empty($reshook))
 				$sql .= ", targettype";
 				$sql .= ") VALUES (";
 				$sql .= $id_order;
-				$sql .= ", '".$object->origin."'";
+				$sql .= ", '".$db->escape($object->origin)."'";
 				$sql .= ", ".$object->id;
-				$sql .= ", '".$object->element."'";
+				$sql .= ", '".$db->escape($object->element)."'";
 				$sql .= ")";
 
 				if (!$db->query($sql))

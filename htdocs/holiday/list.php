@@ -311,7 +311,7 @@ if (!empty($search_valideur) && $search_valideur != -1) {
 }
 // Type
 if (!empty($search_type) && $search_type != -1) {
-	$sql .= ' AND cp.fk_type IN ('.$this->db->sanitize($db->escape($search_type)).')';
+	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($db->escape($search_type)).')';
 }
 // Status
 if (!empty($search_status) && $search_status != -1) {

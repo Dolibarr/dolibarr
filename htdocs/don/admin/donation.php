@@ -196,7 +196,7 @@ $type = 'donation';
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $resql = $db->query($sql);
 if ($resql)
 {
