@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+$year = GETPOST("year", 'int');
 
 /*
  * View
@@ -42,7 +43,7 @@ $mesg = '';
 print load_fiche_titre($langs->trans("StatisticsOfReceptions").' '.$_GET["year"], $mesg);
 
 $stats = new ReceptionStats($db);
-$data = $stats->getNbReceptionByMonth($_GET["year"]);
+$data = $stats->getNbReceptionByMonth(GETPOST("year", 'int'));
 
 dol_mkdir($conf->reception->dir_temp);
 
