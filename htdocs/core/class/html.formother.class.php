@@ -1012,7 +1012,7 @@ class FormOther
         // $boxidactivatedforuser will be array of boxes choosed by user
 
         $selectboxlist = '';
-        $boxactivated = InfoBox::listBoxes($this->db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+        $boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
         $boxidactivatedforuser = array();
         foreach ($boxactivated as $box)
@@ -1141,7 +1141,7 @@ class FormOther
         	// Load translation files required by the page
             $langs->loadLangs(array("boxes", "projects"));
 
-            $emptybox = new ModeleBoxes($this->db);
+            $emptybox = new ModeleBoxes($db);
 
             $boxlista .= "\n<!-- Box left container -->\n";
 
