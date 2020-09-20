@@ -57,7 +57,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'a
 $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $viewstatut = GETPOST('viewstatut');
 
 if (! $sortfield)
