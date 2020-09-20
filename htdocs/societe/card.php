@@ -1181,12 +1181,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
-	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus">';
+	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
 	    print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
 	    print '</td>';
 	    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
-		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
+	    	print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
 	    }
 	    print '</tr>';
 
@@ -1197,7 +1197,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         	{
         		// Firstname
 	            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
-		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.dol_escape_htmltag($object->firstname).'"></td>';
 	            print '</tr>';
 
 	            // Title
@@ -1209,7 +1209,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         // Alias names (commercial, trademark or alias names)
         print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	    print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'"></td></tr>';
+        print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
@@ -1274,7 +1274,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if (!empty($conf->barcode->enabled))
         {
         	print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
+	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
             print '</td></tr>';
         }
 
@@ -1284,7 +1284,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         print '</td>';
 	    print '<td colspan="3">';
 	    print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-        print $object->address;
+	    print dol_escape_htmltag($object->address);
         print '</textarea>';
         print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
         print '</td></tr>';
@@ -1857,7 +1857,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                     print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 } elseif ($object->codefournisseur_modifiable())
                 {
-                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+                	print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="15">';
                 } else {
                     print $object->code_fournisseur;
                     print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
@@ -1873,7 +1873,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             if (!empty($conf->barcode->enabled))
             {
                 print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
+	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
                 print '</td></tr>';
             }
 
@@ -1885,7 +1885,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             // Address
             print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-            print $object->address;
+	        print dol_escape_htmltag($object->address);
             print '</textarea>';
             print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
             print '</td></tr>';
@@ -2280,7 +2280,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if (!empty($conf->barcode->enabled))
         {
             print '<tr><td>';
-            print $langs->trans('Gencod').'</td><td>'.$object->barcode;
+            print $langs->trans('Gencod').'</td><td>'.dol_escape_htmltag($object->barcode);
             print '</td>';
             print '</tr>';
         }
@@ -2418,7 +2418,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if ($object->tva_intra)
         {
             $s = '';
-            $s .= $object->tva_intra;
+            $s .= dol_escape_htmltag($object->tva_intra);
             $s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
