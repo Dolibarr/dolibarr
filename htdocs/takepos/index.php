@@ -291,12 +291,18 @@ function LoadProducts(position, issubcat) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodivdesc"+ishow).hide();
-				$("#prodesc"+ishow).text("");
+				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)
+				{
+					echo '$("#prodivdesc"+ishow).hide();';
+					echo '$("#prodesc"+ishow).text("");';
+					echo '$("#proimg"+ishow).attr("title","");';
+					echo '$("#proimg"+ishow).attr("src","genimg/empty.png");';
+				} else {
+					echo '$("#probutton"+ishow).hide();';
+					echo '$("#probutton"+ishow).text("");';
+				}?>
 				$("#proprice"+ishow).attr("class", "hidden");
 				$("#proprice"+ishow).html("");
-				$("#proimg"+ishow).attr("title","");
-				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 				$("#prowatermark"+ishow).hide();
@@ -308,14 +314,22 @@ function LoadProducts(position, issubcat) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
 				?>
 				var titlestring = <?php echo $titlestring; ?>;
-				$("#prodivdesc"+ishow).show();
-				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)
+				{
+					echo '$("#prodivdesc"+ishow).show();';
+					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					echo '$("#proimg"+ishow).attr("title", titlestring);';
+					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
+				}
+				else {
+					echo '$("#probutton"+ishow).show();';
+					echo '$("#probutton"+ishow).text(data[parseInt(idata)][\'label\']);';
+				}
+				?>
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
 				}
-				$("#proimg"+ishow).attr("title", titlestring);
-				$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
@@ -1070,11 +1084,14 @@ if ($conf->global->TAKEPOS_WEIGHING_SCALE)
     				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				} else {
-    					print '<div class="" id="proprice'.$count.'"></div>';
-    					if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+						if ($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
+    					else {
+							print '<div class="" id="proprice'.$count.'"></div>';
+							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+						}
     				}
     				?>
-					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1)) { ?>
+					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1) && !$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) { ?>
     				<div class="description" id="prodivdesc<?php echo $count; ?>">
     					<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
     				</div>

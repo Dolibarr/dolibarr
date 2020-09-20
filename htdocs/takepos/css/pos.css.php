@@ -141,6 +141,27 @@ button.calcbutton3 {
     border-radius: 3px;
 }
 
+button.productbutton {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible; /* removes extra width in IE */
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
+	font-weight: bold;
+    background-color: #a3a6a3;
+    color: #fff;
+    /* border-color: unset; */
+    border-width: 0;
+    margin: 1px;
+	font-size: 14pt;
+    border-radius: 3px;
+}
+
 button.actionbutton {
     background: #EABCA6;
     border: 2px solid #EEE;
