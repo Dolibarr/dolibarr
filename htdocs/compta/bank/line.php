@@ -306,7 +306,7 @@ if ($result)
 		print '<div class="fichecenter2">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         $i++;
 
