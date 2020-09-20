@@ -58,6 +58,7 @@ class Products extends DolibarrApi
     public function __construct()
     {
         global $db, $conf;
+
         $this->db = $db;
         $this->product = new Product($this->db);
         $this->productsupplier = new ProductFournisseur($this->db);
@@ -749,8 +750,11 @@ class Products extends DolibarrApi
     public function getSupplierProducts($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $supplier = 0, $sqlfilters = '')
     {
         global $db, $conf;
+
         $obj_ret = array();
+
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+
         $sql = "SELECT t.rowid, t.ref, t.ref_ext";
         $sql .= " FROM ".MAIN_DB_PREFIX."product as t";
         if ($category > 0) {
@@ -921,7 +925,7 @@ class Products extends DolibarrApi
         $result = $this->db->query($sql);
 
         if (!$result) {
-            throw new RestException(503, 'Error when retrieve product attribute list : '.$db->lasterror());
+            throw new RestException(503, 'Error when retrieve product attribute list : '.$this->db->lasterror());
         }
 
         $return = [];
