@@ -970,7 +970,7 @@ function dol_string_unaccent($str)
  *  @param  array	$badcharstoreplace  List of forbidden characters
  * 	@return string          			Cleaned string
  *
- * 	@see    		dol_sanitizeFilename(), dol_string_unaccent()
+ * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
 function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 {
@@ -980,6 +980,21 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 	//$forbidden_chars_to_remove=array("(",")");
 
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
+}
+
+
+/**
+ *	Clean a string from all non printable ascii chars (0x00-0x1F and 0x7F). It removes also CR-LF
+ *  This can be used to sanitize a string and view its real content. Some hacks try to obfuscate attacks by inserting non printable chars.
+ *
+ *	@param	string	$str            	String to clean
+ * 	@return string          			Cleaned string
+ *
+ * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nospecial()
+ */
+function dol_string_nounprintableascii($str)
+{
+	return preg_replace('/[\x00-\x1F\x7F]/u', '', $str);
 }
 
 
