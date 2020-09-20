@@ -1065,7 +1065,29 @@ if ($placeid > 0)
 
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
-				$htmlforlines .= '<td class="right">'.$line->qty.'</td>';
+				$htmlforlines .= '<td class="right">';
+				if (!empty($conf->stock->enabled))
+				{
+					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+					$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
+					$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+					$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
+					$sql .= " WHERE ps.reel != 0";
+					$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
+					$sql .= " AND e.entity IN (".getEntity('stock').")";
+					$sql .= " AND ps.fk_product = ".$line->fk_product;
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						$stock_real = price2num($obj->reel, 'MS');
+						if ($line->qty>$stock_real) $htmlforlines .= "<b><span style='color:red'>";
+						$htmlforlines .= $line->qty.' ('.$langs->trans("Of").' '.$stock_real.')';
+						if ($line->qty>$stock_real) $htmlforlines .= "</span></b>";
+					}
+				}
+				else $htmlforlines .= $line->qty;
+				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">'.price($line->total_ttc).'</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
