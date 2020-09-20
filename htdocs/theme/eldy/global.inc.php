@@ -1612,51 +1612,63 @@ div.vmenu, td.vmenu {
 
 .menuhider { display: none !important; }
 
+
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-body.sidebar-collapse .side-nav {
-	display: none;
+	body.sidebar-collapse .side-nav {
+		display: none;
+	}
+
+	body.sidebar-collapse .login_block {
+		display: none;
+	}
+
+	.menuhider { display: block !important; }
+	.dropdown-user-image { display: none; }
+	.user-header { height: auto !important; color: var(--colorbackbody); }
+
+	#id-container {
+		width: 100%;
+	}
+	.side-nav {
+		border-bottom: 1px solid #BBB;
+		background: #FFF;
+		padding-left: 20px;
+		padding-right: 20px;
+		position: absolute;
+	    	z-index: 90;
+	}
+	div.blockvmenulogo
+	{
+		border-bottom: 0 !important;
+	}
+	div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
+		border-top: none !important;
+		border-left: none !important;
+		border-right: none !important;
+		border-bottom: 1px solid #e0e0e0;
+		padding-left: 0 !important;
+	}
+	div.vmenu, td.vmenu {
+		padding-right: 6px !important;
+	}
+	div.fiche {
+		margin-<?php print $left; ?>: 9px !important;
+		margin-<?php print $right; ?>: 10px !important;
+	}
+
+	.pagination .fa-chevron-left, .pagination .fa-chevron-right {
+		font-size: 1.2em;
+	}
 }
 
-body.sidebar-collapse .login_block {
-	display: none;
-}
-
-.menuhider { display: block !important; }
-.dropdown-user-image { display: none; }
-.user-header { height: auto !important; color: var(--colorbackbody); }
-
-#id-container {
-	width: 100%;
-}
-.side-nav {
-	border-bottom: 1px solid #BBB;
-	background: #FFF;
-	padding-left: 20px;
-	padding-right: 20px;
-	position: absolute;
-    	z-index: 90;
-}
-div.blockvmenulogo
+@media only screen and (min-width: 768px) and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-	border-bottom: 0 !important;
-}
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
-	border-top: none !important;
-	border-left: none !important;
-	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
-	padding-left: 0 !important;
-}
-div.vmenu, td.vmenu {
-	padding-right: 6px !important;
-}
-div.fiche {
-	margin-<?php print $left; ?>: 9px !important;
-	margin-<?php print $right; ?>: 10px !important;
-}
-<?php //} ?>
+	div.fiche {
+		margin-<?php print $left; ?>: 13px !important;
+		margin-<?php print $right; ?>: 14px !important;
+	}
 }
 
 
