@@ -579,10 +579,9 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @return object
 	 *
-	 * @throws 200
-	 * @throws 304
-	 * @throws 401
-	 * @throws 404
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 304 Error
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -640,10 +639,10 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @return array
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 405
+	 * @throws RestException 400 Bad parameters
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Error
 	 */
 	public function deleteLine($id, $lineid)
 	{

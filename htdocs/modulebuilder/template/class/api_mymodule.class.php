@@ -64,7 +64,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @url	GET myobjects/{id}
 	 *
-	 * @throws 	RestException
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
 	 */
 	public function get($id)
 	{

@@ -503,7 +503,7 @@ function createProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
 
@@ -675,7 +675,7 @@ function updateProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
     if (!$error)
@@ -841,8 +841,6 @@ function deleteProductOrService($authentication, $listofidstring)
 {
     global $db, $conf, $langs;
 
-    $now = dol_now();
-
     dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
 
     if ($authentication['entity']) $conf->entity = $authentication['entity'];
@@ -935,8 +933,6 @@ function deleteProductOrService($authentication, $listofidstring)
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
     global $db, $conf, $langs;
-
-    $now = dol_now();
 
     dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
 
