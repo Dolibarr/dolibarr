@@ -1136,9 +1136,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -1171,10 +1168,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
-
 	.box-flex-item {
 		margin: 3px 2px 3px 2px !important;
 	}
@@ -2734,8 +2727,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -5477,6 +5470,10 @@ span.noborderoncategories {
 /* ============================================================================== */
 /*  External lib multiselect with checkbox                                        */
 /* ============================================================================== */
+
+.multi-select-menu {
+	z-index: 10;
+}
 
 .multi-select-container {
   display: inline-block;

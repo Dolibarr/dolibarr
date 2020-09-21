@@ -5361,6 +5361,10 @@ span.noborderoncategories {
 /*  External lib multiselect with checkbox                                        */
 /* ============================================================================== */
 
+.multi-select-menu {
+	z-index: 10;
+}
+
 .multi-select-container {
   display: inline-block;
   position: relative;
