@@ -154,7 +154,7 @@ class User extends CommonObject
 	public $datelastlogin;
 	public $datepreviouslogin;
 	public $datestartvalidity;
-	public $dateedvalidity;
+	public $dateendvalidity;
 	public $photo;
 	public $lang;
 
@@ -1467,7 +1467,6 @@ class User extends CommonObject
 		$this->employee    	= $this->employee ? $this->employee : 0;
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
-		$this->birth        = trim($this->birth);
 		$this->pass         = trim($this->pass);
 		$this->api_key      = trim($this->api_key);
 		$this->address = $this->address ?trim($this->address) : trim($this->address);
@@ -1495,6 +1494,9 @@ class User extends CommonObject
 		$this->color = empty($this->color) ? '' : $this->color;
 		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend = empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
+		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+		$this->birth        = trim($this->birth);
 		$this->fk_warehouse = trim(empty($this->fk_warehouse) ? '' : $this->fk_warehouse);
 
 		// Check parameters
@@ -1541,6 +1543,8 @@ class User extends CommonObject
 		$sql .= ", color = '".$this->db->escape($this->color)."'";
 		$sql .= ", dateemployment=".(strval($this->dateemployment) != '' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
 		$sql .= ", dateemploymentend=".(strval($this->dateemploymentend) != '' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
+		$sql .= ", datestartvalidity=".(strval($this->datestartvalidity) != '' ? "'".$this->db->idate($this->datestartvalidity)."'" : 'null');
+		$sql .= ", dateendvalidity=".(strval($this->dateendvalidity) != '' ? "'".$this->db->idate($this->dateendvalidity)."'" : 'null');
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
