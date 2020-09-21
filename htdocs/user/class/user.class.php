@@ -1507,7 +1507,7 @@ class User extends CommonObject
 		if (empty($this->login))
 		{
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorFieldRequired", $this->login);
+			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
 		}
 
@@ -1558,7 +1558,6 @@ class User extends CommonObject
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse ? "'".$this->db->escape($this->fk_warehouse)."'" : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
-
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
