@@ -110,7 +110,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		 */
 		$methodName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($action)))));
 		$callback = array($this, $methodName);
-		if(is_callable($callback)){
+		if (is_callable($callback)){
 			dol_syslog(
 				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 			);
