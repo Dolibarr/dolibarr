@@ -591,7 +591,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -609,7 +609,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -627,7 +627,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -643,7 +643,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
