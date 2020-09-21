@@ -245,10 +245,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog');
     	}
 
-
-    	//print '<div class="tabsAction">';
-        //print '</div>';
-
     	$newcardbutton = '';
     	if (!empty($conf->agenda->enabled))
     	{
