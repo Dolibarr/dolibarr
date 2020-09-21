@@ -544,7 +544,7 @@ abstract class CommonInvoice extends CommonObject
 		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType = 'status9';
-		    } elseif ($alreadypaid <= 0) {
+		    } elseif ($alreadypaid == 0) {
 		        $labelStatus = $langs->trans('BillStatusNotPaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType = 'status1';
