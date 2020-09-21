@@ -39,7 +39,7 @@ $ok = 0;
 $err = error_reporting();
 error_reporting(0); // Disable all errors
 //error_reporting(E_ALL);
-@set_time_limit(900); // Need 900 on some OS like Windows 7/64
+@set_time_limit(1800); // Need 1800 on some very slow OS like Windows 7/64
 error_reporting($err);
 
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
