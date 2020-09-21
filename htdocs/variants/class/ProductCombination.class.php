@@ -676,7 +676,7 @@ class ProductCombination
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
 	{
-		global $db, $conf;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
@@ -790,7 +790,7 @@ class ProductCombination
 		$newcomb->variation_price_percentage = $price_var_percent;
 		$newcomb->variation_price = $price_impact[1];
 		$newcomb->variation_weight = $weight_impact;
-        $newcomb->variation_ref_ext = $db->escape($ref_ext);
+        $newcomb->variation_ref_ext = $this->db->escape($ref_ext);
 
 		// Init price level
 		if ($conf->global->PRODUIT_MULTIPRICES) {
