@@ -33,9 +33,9 @@ if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank
 $langs->loadLangs(array("bills", "banks", "companies"));
 
 // Security check
-$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm');
+$confirm = GETPOST('confirm', 'alpha');
 if ($user->socid) $socid = $user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
@@ -80,20 +80,20 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 	{
 		$db->commit();
 
-		$factures = array(); // TODO Get all id of invoices linked to this payment
-		foreach ($factures as $id)
+		$donations = array(); // TODO Get all id of donation linked to this payment
+		foreach ($donations as $id)
 		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
+			$donation = new Don($db);
+			$donation->fetch($id);
 
 			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
+			if (!empty(GETPOST('lang_id')))
 			{
 				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs->setDefaultLang(GETPOST('lang_id'));
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
+				$donation->generateDocument($donation->model_pdf, $outputlangs);
 			}
 		}
 
@@ -137,8 +137,7 @@ if ($action == 'delete')
  */
 if ($action == 'valide')
 {
-	$facid = GETPOST('facid', 'int');
-	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
+	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
 }
 
 
@@ -263,26 +262,13 @@ dol_fiche_end();
  */
 print '<div class="tabsAction">';
 
-/*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->rights->facture->paiement)
-		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
-}
-*/
-
 if (empty($action))
 {
 	if ($user->rights->don->supprimer)
 	{
 		if (!$disable_delete)
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}

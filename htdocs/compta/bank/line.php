@@ -43,7 +43,7 @@ if (!empty($conf->salaries->enabled)) $langs->load("salaries");
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST("rowid", 'int');
 $orig_account = GETPOST("orig_account");
@@ -138,15 +138,15 @@ if ($user->rights->banque->modifier && $action == "update")
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
-		if (isset($_POST['value']))      $sql .= " fk_type='".$db->escape($_POST['value'])."',";
-		if (isset($_POST['num_chq']))    $sql .= " num_chq='".$db->escape($_POST["num_chq"])."',";
-		if (isset($_POST['banque']))     $sql .= " banque='".$db->escape($_POST["banque"])."',";
-		if (isset($_POST['emetteur']))   $sql .= " emetteur='".$db->escape($_POST["emetteur"])."',";
+		if (isset($_POST['value']))      $sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+		if (isset($_POST['num_chq']))    $sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
+		if (isset($_POST['banque']))     $sql .= " banque='".$db->escape(GETPOST("banque"))."',";
+		if (isset($_POST['emetteur']))   $sql .= " emetteur='".$db->escape(GETPOST("emetteur"))."',";
 		// Blocked when conciliated
 		if (!$acline->rappro)
 		{
-			if (isset($_POST['label']))      $sql .= " label='".$db->escape($_POST["label"])."',";
-			if (isset($_POST['amount']))     $sql .= " amount='".$amount."',";
+			if (isset($_POST['label']))      $sql .= " label = '".$db->escape(GETPOST("label"))."',";
+			if (isset($_POST['amount']))     $sql .= " amount= '".$db->escape($amount)."',";
 			if (isset($_POST['dateomonth'])) $sql .= " dateo = '".$db->idate($dateop)."',";
 			if (isset($_POST['datevmonth'])) $sql .= " datev = '".$db->idate($dateval)."',";
 		}
@@ -212,7 +212,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         $db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-        $sql .= " SET num_releve=".($num_rel ? "'".$num_rel."'" : "null");
+        $sql .= " SET num_releve=".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
         if (empty($num_rel)) $sql .= ", rappro = 0";
         else $sql .= ", rappro = ".$rappro;
         $sql .= " WHERE rowid = ".$rowid;
@@ -296,7 +296,7 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account', 0);
+        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'accountline', 0);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -306,7 +306,7 @@ if ($result)
 		print '<div class="fichecenter2">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         $i++;
 

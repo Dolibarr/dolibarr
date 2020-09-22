@@ -99,7 +99,7 @@ class Boms extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
-        $tmpobject = new BOM($db);
+        $tmpobject = new BOM($this->db);
 
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
@@ -139,7 +139,7 @@ class Boms extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0)
             {
@@ -147,18 +147,18 @@ class Boms extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object($result);
-                $bom_static = new BOM($db);
+            	$obj = $this->db->fetch_object($result);
+            	$bom_static = new BOM($this->db);
                 if ($bom_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($bom_static);
                 }

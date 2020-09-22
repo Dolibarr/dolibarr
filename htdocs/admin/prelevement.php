@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin", "withdrawals"));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = 'paymentorder';
 
 
@@ -217,7 +217,7 @@ print load_fiche_titre($langs->trans("OrdersModelModule"),'','');
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
+$sql.= " WHERE type = '".$db->escape($type)."'";
 $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
@@ -298,7 +298,7 @@ foreach ($dirmodels as $reldir)
                                 if (in_array($name, $def))
                                 {
                                     print '<td class="center">'."\n";
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
                                     print img_picto($langs->trans("Enabled"),'switch_on');
                                     print '</a>';
                                     print '</td>';
@@ -306,7 +306,7 @@ foreach ($dirmodels as $reldir)
                                 else
                                 {
                                     print '<td class="center">'."\n";
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                                     print "</td>";
                                 }
 
@@ -318,7 +318,7 @@ foreach ($dirmodels as $reldir)
                                 }
                                 else
                                 {
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
                                 }
                                 print '</td>';
 

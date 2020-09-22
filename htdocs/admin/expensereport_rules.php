@@ -40,7 +40,7 @@ if (!$user->admin) accessforbidden();
 $error = false;
 $message = false;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 
 $apply_to = GETPOST('apply_to');
@@ -138,6 +138,7 @@ $rules = ExpenseReportRule::getAllRule();
 $tab_apply = array('A' => $langs->trans('All'), 'G' => $langs->trans('Group'), 'U' => $langs->trans('User'));
 $tab_rules_type = array('EX_DAY' => $langs->trans('Day'), 'EX_MON' => $langs->trans('Month'), 'EX_YEA' => $langs->trans('Year'), 'EX_EXP' => $langs->trans('OnExpense'));
 
+
 /*
  * View
  */
@@ -147,12 +148,13 @@ llxHeader('', $langs->trans("ExpenseReportsSetup"));
 $form = new Form($db);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ExpenseReportsRulesSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
 dol_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
 
-echo $langs->trans('ExpenseReportRulesDesc');
+echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportRulesDesc').'</span>';
+print '<br><br>';
 
 if ($action != 'edit')
 {
@@ -164,7 +166,7 @@ if ($action != 'edit')
 
 	echo '<tr class="liste_titre">';
 	echo '<th>'.$langs->trans('ExpenseReportApplyTo').'</th>';
-	echo '<th>'.$langs->trans('ExpenseReportDomain').'</th>';
+	echo '<th>'.$langs->trans('Type').'</th>';
 	echo '<th>'.$langs->trans('ExpenseReportLimitOn').'</th>';
 	echo '<th>'.$langs->trans('ExpenseReportDateStart').'</th>';
 	echo '<th>'.$langs->trans('ExpenseReportDateEnd').'</th>';
@@ -184,7 +186,7 @@ if ($action != 'edit')
 	echo '<td>'.$form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0).'</td>';
 	echo '<td>'.$form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0).'</td>';
 	echo '<td>'.$form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0).'</td>';
-	echo '<td><input type="text" value="" name="amount" class="amount" />'.$conf->currency.'</td>';
+	echo '<td><input type="text" value="" class="maxwidth100" name="amount" class="amount" /> '.$conf->currency.'</td>';
 	echo '<td>'.$form->selectyesno('restrictive', 0, 1).'</td>';
 	echo '<td class="right"><input type="submit" class="button" value="'.$langs->trans('Add').'" /></td>';
 	echo '</tr>';
@@ -207,7 +209,7 @@ echo '<table class="noborder centpercent">';
 
 echo '<tr class="liste_titre">';
 echo '<th>'.$langs->trans('ExpenseReportApplyTo').'</th>';
-echo '<th>'.$langs->trans('ExpenseReportDomain').'</th>';
+echo '<th>'.$langs->trans('Type').'</th>';
 echo '<th>'.$langs->trans('ExpenseReportLimitOn').'</th>';
 echo '<th>'.$langs->trans('ExpenseReportDateStart').'</th>';
 echo '<th>'.$langs->trans('ExpenseReportDateEnd').'</th>';
@@ -300,11 +302,11 @@ foreach ($rules as $rule)
 	echo '</td>';
 
 
-	echo '<td>';
+	echo '<td class="center">';
 	if ($object->id != $rule->id)
 	{
-		echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
-		echo '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$rule->id.'">'.img_delete().'</a>';
+		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
+		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$rule->id.'">'.img_delete().'</a>';
 	} else {
 		echo '<input type="submit" class="button" value="'.$langs->trans('Update').'" />&nbsp;';
 		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button">'.$langs->trans('Cancel').'</a>';

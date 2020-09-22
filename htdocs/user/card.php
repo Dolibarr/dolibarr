@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -60,6 +60,12 @@ $confirm	= GETPOST('confirm', 'alpha');
 $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
+
+$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
+$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
+$datestartvalidity = dol_mktime(0, 0, 0, GETPOST('datestartvaliditymonth', 'int'), GETPOST('datestartvalidityday', 'int'), GETPOST('datestartvalidityyear', 'int'));
+$dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), GETPOST('dateendvalidityday', 'int'), GETPOST('dateendvalidityyear', 'int'));
+$dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
 
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
@@ -158,7 +164,7 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
-            $object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;
 
 			$result = $object->delete($user);
 			if ($result < 0) {
@@ -202,8 +208,6 @@ if (empty($reshook)) {
 			$object->login = GETPOST("login", 'alphanohtml');
 			$object->api_key = GETPOST("api_key", 'alphanohtml');
 			$object->gender = GETPOST("gender", 'aZ09');
-			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
-			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'int');
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
@@ -226,10 +230,11 @@ if (empty($reshook)) {
 			}
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
-			$object->job = GETPOST("job", 'nohtml');
-			$object->signature = GETPOST("signature", 'none');
+			$object->job = GETPOST("job", 'alphanohtml');
+			$object->signature = GETPOST("signature", 'restricthtml');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
-			$object->note = GETPOST("note", 'none');
+			$object->note = GETPOST("note", 'restricthtml');
+			$object->note_private = GETPOST("note", 'restricthtml');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
 			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
@@ -246,11 +251,12 @@ if (empty($reshook)) {
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
-			$object->dateemployment = $dateemployment;
 
-			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
+			$object->dateemployment = $dateemployment;
 			$object->dateemploymentend = $dateemploymentend;
+			$object->datestartvalidity = $datestartvalidity;
+			$object->dateendvalidity = $dateendvalidity;
+			$object->birth = $dateofbirth;
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
@@ -363,8 +369,6 @@ if (empty($reshook)) {
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
 				$object->login = GETPOST("login", 'alphanohtml');
 				$object->gender = GETPOST("gender", 'aZ09');
-				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
-				$object->birth = $birth;
 				$object->pass = GETPOST("password", 'none');
 				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				if (!empty($user->admin)) $object->admin = GETPOST("admin", "int"); // admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
@@ -387,8 +391,8 @@ if (empty($reshook)) {
 					}
 				}
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
-				$object->job = GETPOST("job", 'nohtml');
-				$object->signature = GETPOST("signature", 'none');
+				$object->job = GETPOST("job", 'alphanohtml');
+				$object->signature = GETPOST("signature", 'restricthtml');
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
@@ -408,17 +412,18 @@ if (empty($reshook)) {
 				$object->weeklyhours = price2num($object->weeklyhours);
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 				$object->dateemployment = $dateemployment;
-				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
+				$object->datestartvalidity = $datestartvalidity;
+				$object->dateendvalidity = $dateendvalidity;
+				$object->birth = $dateofbirth;
 
-                if (!empty($conf->stock->enabled))
-                {
-				    $object->fk_warehouse = GETPOST('fk_warehouse', 'int');
-                }
+				if (!empty($conf->stock->enabled))
+				{
+					$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+				}
 
-                $object->lang = GETPOST('default_lang', 'aZ09');
+				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				if (!empty($conf->multicompany->enabled))
 				{
@@ -446,16 +451,16 @@ if (empty($reshook)) {
 				}
 				if (!empty($_FILES['photo']['name']))
 				{
-				    $isimage = image_format_supported($_FILES['photo']['name']);
-				    if ($isimage > 0)
-				    {
-    					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
-				    } else {
-				        $error++;
-				        $langs->load("errors");
-				        setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
-				        dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
-				    }
+					$isimage = image_format_supported($_FILES['photo']['name']);
+					if ($isimage > 0)
+					{
+						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+					} else {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+						dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
+					}
 				}
 
 				if (!$error) {
@@ -943,7 +948,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';
 	print '<td>';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 	print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
 	print '</td></tr>';
 
@@ -1115,7 +1120,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
-        print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
+		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
 		print "</td></tr>";
 	}
 
@@ -1153,7 +1158,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $langs->trans("Note");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', GETPOSTISSET('note') ?GETPOST('note', 'none') : '', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('note', GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : '', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 
@@ -1161,7 +1166,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
 	print '<td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('signature', GETPOST('signature'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1173,7 +1178,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	// Default warehouse
 	if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
-    {
+	{
 		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 		print '</td></tr>';
@@ -1182,7 +1187,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Position/Job
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'nohtml')).'">';
+	print '<input class="maxwidth200" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
@@ -1228,21 +1233,29 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Date employment
 	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 	print '<td>';
-	print $form->selectDate(GETPOST('dateemployment'), 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+	print $form->selectDate($dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
+
+	print ' - ';
+
+	print $form->selectDate($dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
-	// Date employment END
-	print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+	// Date validity
+	print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
 	print '<td>';
-	print $form->selectDate(GETPOST('dateemploymentend'), 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+	print $form->selectDate($datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
+
+	print ' - ';
+
+	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
 	// Date birth
-	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+	print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 	print '<td>';
-	print $form->selectDate(GETPOST('birth'), 'birth', 0, 0, 1, 'createuser', 1, 0);
+	print $form->selectDate($dateofbirth, 'dateofbirth', 0, 0, 1, 'createuser', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
@@ -1434,7 +1447,13 @@ if ($action == 'create' || $action == 'adduserldap')
 			{
 				if ($object->pass) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
 				else {
-					if ($user->admin) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+					if ($user->admin && $user->id == $object->id) {
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+						//$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';
+						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+						// TODO Add a feature to reveal the hash
+						$valuetoshow .= '<!-- Crypted into '.$object->pass_indatabase_crypted.' -->';
+					}
 					else $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}
 			}
@@ -1453,7 +1472,10 @@ if ($action == 'create' || $action == 'adduserldap')
 			if (!empty($conf->api->enabled) && $user->admin) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
-				if (!empty($object->api_key)) print preg_replace('/./', '*', $object->api_key);
+				if (!empty($object->api_key)) print '<span class="opacitymedium">'.preg_replace('/./', '*', $object->api_key).'</span>';
+				if ($user->admin || $user->id == $object->id) {
+					// TODO Add a feature to reveal the hash
+				}
 				print '</td></tr>';
 			}
 
@@ -1549,27 +1571,27 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			// Default warehouse
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
-            {
+			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$warehousestatic = new Entrepot($db);
 				$warehousestatic->fetch($object->fk_warehouse);
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print $warehousestatic->getNomUrl(1);
 				print '</td></tr>';
-            }
+			}
 
-            // Position/Job
-            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-            print '<td>'.$object->job.'</td>';
-            print '</tr>'."\n";
+			// Position/Job
+			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>'.dol_escape_htmltag($object->job).'</td>';
+			print '</tr>'."\n";
 
-            //$childids = $user->getAllChildIds(1);
+			//$childids = $user->getAllChildIds(1);
 
 			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read)))
 			{
-            	// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
-            	// However, he can see the valuation of timesheet of its subordinates even without these permissions.
+				// Even a superior can't see this info of its subordinates wihtout $user->rights->salaries->read and $user->rights->hrm->employee->read (setting/viewing is reserverd to HR people).
+				// However, he can see the valuation of timesheet of its subordinates even without these permissions.
 				$langs->load("salaries");
 
 				// THM
@@ -1611,24 +1633,32 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 			print '<td>';
 			if ($object->dateemployment) {
-				print '<span class="opacitymedium">'.$langs->trans("FromDate ").'</span>';
+				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
 				print dol_print_date($object->dateemployment, 'day');
 			}
-			//print '</td>';
-			//print "</tr>\n";
-
-			// Date employment
-			//print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			//print '<td>';
 			if ($object->dateemploymentend) {
-				print '<span class="opacitymedium"> - '.$langs->trans("To ").'</span>';
+				print '<span class="opacitymedium"> - '.$langs->trans("To").'</span> ';
 				print dol_print_date($object->dateemploymentend, 'day');
 			}
 			print '</td>';
 			print "</tr>\n";
 
+			// Date login validity
+			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<td>';
+			if ($object->datestartvalidity) {
+				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
+				print dol_print_date($object->datestartvalidity, 'day');
+			}
+			if ($object->dateendvalidity) {
+				print '<span class="opacitymedium"> - '.$langs->trans("To").'</span> ';
+				print dol_print_date($object->dateendvalidity, 'day');
+			}
+			print '</td>';
+			print "</tr>\n";
+
 			// Date of birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 			print '<td>';
 			print dol_print_date($object->birth, 'day');
 			print '</td>';
@@ -1696,24 +1726,24 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<td>'.dol_print_date($object->datepreviouslogin, "dayhour").'</td>';
 			print "</tr>\n";
 
-		    // Multicompany
+			// Multicompany
 			if (!empty($conf->multicompany->enabled) && is_object($mc))
 			{
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions'))
 				{
-				    if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
-				    {
-				     	print '<tr><td>'.$langs->trans("Entity").'</td><td>';
-				     	if (empty($object->entity)) {
-				     		print $langs->trans("AllEntities");
-				     	} else {
-				     		$mc->getInfo($object->entity);
-				     		print $mc->label;
-				     	}
-				     	print "</td></tr>\n";
-				    }
-                }
+					if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
+					{
+					 	print '<tr><td>'.$langs->trans("Entity").'</td><td>';
+					 	if (empty($object->entity)) {
+					 		print $langs->trans("AllEntities");
+					 	} else {
+					 		$mc->getInfo($object->entity);
+					 		print $mc->label;
+					 	}
+					 	print "</td></tr>\n";
+					}
+				}
 			}
 
 			// Other attributes
@@ -1857,10 +1887,10 @@ if ($action == 'create' || $action == 'adduserldap')
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
 				} else {
-				    if ($user->id == $id)
-				    {
-				        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
-				    }
+					if ($user->id == $id)
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
+					}
 				}
 				// Delete
 				if ($user->id <> $id && $candisableuser &&
@@ -2200,7 +2230,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		   	// Gender
 		   	print '<tr><td>'.$langs->trans("Gender").'</td>';
 		   	print '<td>';
-		   	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		   	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		   	if ($caneditfield) {
 		   		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ?GETPOST('gender') : $object->gender, 1);
 		   	} else {
@@ -2208,11 +2238,11 @@ if ($action == 'create' || $action == 'adduserldap')
 		   	}
 		   	print '</td></tr>';
 
-            // Employee
-            print '<tr>';
-            print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
-            if ($caneditfield) {
-                 print $form->selectyesno("employee", $object->employee, 1);
+			// Employee
+			print '<tr>';
+			print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
+			if ($caneditfield) {
+				 print $form->selectyesno("employee", $object->employee, 1);
 			} else {
 				if ($object->employee) {
 					print $langs->trans("Yes");
@@ -2220,9 +2250,9 @@ if ($action == 'create' || $action == 'adduserldap')
 					print $langs->trans("No");
 				}
 			}
-		    print '</td></tr>';
+			print '</td></tr>';
 
-		    // Hierarchy
+			// Hierarchy
 		   	print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
 		   	print '<td>';
 		   	if ($caneditfield)
@@ -2531,22 +2561,22 @@ if ($action == 'create' || $action == 'adduserldap')
 				print "</tr>\n";
 			}
 
-            // Multicompany
-            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
-            if (!empty($conf->multicompany->enabled) && is_object($mc))
-            {
-            	// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
-            	if (!method_exists($mc, 'formObjectOptions'))
-            	{
-            		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity)
-	            	{
-	            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1); // last parameter 1 means, show also a choice 0=>'all entities'
-	            		print "</td></tr>\n";
-	            	} else {
-	            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-	            	}
-	            }
+			// Multicompany
+			// TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+			if (!empty($conf->multicompany->enabled) && is_object($mc))
+			{
+				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+				if (!method_exists($mc, 'formObjectOptions'))
+				{
+					if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity)
+					{
+						print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+						print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1); // last parameter 1 means, show also a choice 0=>'all entities'
+						print "</td></tr>\n";
+					} else {
+						print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+					}
+				}
 			}
 
 			// Other attributes
@@ -2584,26 +2614,26 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			// Default warehouse
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
-            {
-                print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-                print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
-                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
-                print '</td></tr>';
-            }
+			{
+				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
+				print '</td></tr>';
+			}
 
-            // Position/Job
-            print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
-            print '<td>';
-            if ($caneditfield)
-            {
-            	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-            } else {
-            	print '<input type="hidden" name="job" value="'.$object->job.'">';
-            	print $object->job;
-            }
-            print '</td></tr>';
+			// Position/Job
+			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print '<input size="30" type="text" name="job" value="'.dol_escape_htmltag($object->job).'">';
+			} else {
+				print '<input type="hidden" name="job" value="'.dol_escape_htmltag($object->job).'">';
+				print dol_escape_htmltag($object->job);
+			}
+			print '</td></tr>';
 
-            if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
+			if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read)))
 			{
 				$langs->load("salaries");
@@ -2662,19 +2692,16 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<td>';
 			if ($caneditfield)
 			{
-				print $form->selectDate(GETPOST('dateemployment') ?GETPOST('dateemployment') : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+				print $form->selectDate($dateemployment ? $dateemployment : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
 			} else {
 				print dol_print_date($object->dateemployment, 'day');
 			}
-			print '</td>';
-			print "</tr>\n";
 
-			// Date employmentEnd
-			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			print '<td>';
+			if ($dateemployment && $dateemploymentend) print ' - ';
+
 			if ($caneditfield)
 			{
-				print $form->selectDate(GETPOST('dateemploymentend') ?GETPOST('dateemploymentend') : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+				print $form->selectDate($dateemploymentend ? $dateemploymentend : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 			} else {
 				print dol_print_date($object->dateemploymentend, 'day');
 			}
@@ -2682,12 +2709,33 @@ if ($action == 'create' || $action == 'adduserldap')
 			print "</tr>\n";
 
 
-			// Date birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			// Date login validity
+			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($caneditfield)
 			{
-				echo $form->selectDate(GETPOST('birth') ?GETPOST('birth') : $object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
+			} else {
+				print dol_print_date($object->datestartvalidity, 'day');
+			}
+
+			if ($datestartvalidity && $dateendvalidity) print ' - ';
+
+			if ($caneditfield)
+			{
+				print $form->selectDate($dateendvalidity ? $datendevalidity : $object->dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
+			} else {
+				print dol_print_date($object->dateendvalidity, 'day');
+			}
+			print '</td>';
+			print "</tr>\n";
+
+
+			// Date birth
+			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
+			print '<td>';
+			if ($caneditfield) {
+				echo $form->selectDate($dateofbirth ? $dateofbirth : $object->birth, 'dateofbirth', 0, 0, 1, 'updateuser', 1, 0);
 			} else {
 				print dol_print_date($object->birth, 'day');
 			}
@@ -2719,7 +2767,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			$genallowed = $user->rights->user->user->lire;
 			$delallowed = $user->rights->user->user->creer;
 
-			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

@@ -190,9 +190,9 @@ if (empty($reshook))
 		{
 			$object->titre = GETPOST('titre', 'nohtml'); // deprecated
 			$object->title = GETPOST('titre', 'nohtml');
-			$object->note_private = GETPOST('note_private', 'none');
-            $object->note_public = GETPOST('note_public', 'none');
-            $object->modelpdf = GETPOST('modelpdf', 'alpha');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
+            $object->note_public = GETPOST('note_public', 'restricthtml');
+            $object->model_pdf = GETPOST('modelpdf', 'alpha');
 			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
@@ -405,7 +405,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -650,7 +650,7 @@ if (empty($reshook))
 	    				$outputlangs = new Translate("", $conf);
 	    				$outputlangs->setDefaultLang($newlang);
 	    			    }
-	    			    $model=$object->modelpdf;
+	    			    $model=$object->model_pdf;
 	    			    $ret = $object->fetch($id); // Reload to get new records
 
 	    			    $result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -713,7 +713,7 @@ if (empty($reshook))
 		$date_end = '';
 		//$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		//$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none') ? GETPOST('product_desc', 'none') : GETPOST('desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
@@ -861,7 +861,7 @@ if (empty($reshook))
                                 }
 
                                 $ret = $object->fetch($id); // Reload to get new records
-                                $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                                $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                     }*/
 
 				$object->fetch($object->id); // Reload lines
@@ -964,8 +964,8 @@ if ($action == 'create')
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1, 'customer').'</td>';
 		print '</tr>';
 
-		$note_public = GETPOST('note_public', 'none') ?GETPOST('note_public', 'none') : $object->note_public;
-		$note_private = GETPOST('note_private', 'none') ?GETPOST('note_private', 'none') : $object->note_private;
+		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
+		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
 		// Help of substitution key
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
@@ -1425,9 +1425,9 @@ if ($action == 'create')
                 $list[] = str_replace(':', '|', $k).':'.$model;
             }
             $select = 'select;'.implode(',', $list);
-            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
+            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
         } else {
-            print $object->modelpdf;
+            print $object->model_pdf;
         }
         print "</td>";
         print '</tr>';

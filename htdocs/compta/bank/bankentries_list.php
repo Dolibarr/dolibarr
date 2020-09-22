@@ -56,7 +56,7 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "margins", 
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
@@ -217,7 +217,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
     $error = 0;
 
     // Definition, nettoyage parametres
-    $num_releve = trim(GETPOST("num_releve", "alpha"));
+    $num_releve = GETPOST("num_releve", "alpha");
 
     if ($num_releve)
     {
@@ -1141,13 +1141,17 @@ if ($resql)
                 $backgroundcolor = 'style="background: '.$color.';"';
             }
         }
+
+        $banklinestatic->id = $objp->rowid;
+        $banklinestatic->ref = $objp->rowid;
+
         print '<tr class="oddeven" '.$backgroundcolor.'>';
 
         // Ref
     	if (!empty($arrayfields['b.rowid']['checked']))
     	{
                 print '<td class="nowrap left">';
-                print "<a href=\"line.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+                print $banklinestatic->getNomUrl(1);
                 print '</td>';
                 if (!$i) $totalarray['nbfield']++;
     	}

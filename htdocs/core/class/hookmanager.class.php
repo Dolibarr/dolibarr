@@ -144,7 +144,7 @@ class HookManager
      */
 	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
 	{
-        if (!is_array($this->hooks) || empty($this->hooks)) return '';
+        if (!is_array($this->hooks) || empty($this->hooks)) return 0;	// No hook available, do nothing.
 
         $parameters['context'] = join(':', $this->contextarray);
         //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
@@ -225,14 +225,14 @@ class HookManager
 
         // Loop on each hook to qualify modules that have declared context
         $modulealreadyexecuted = array();
-        $resaction = 0; $error = 0; $result = '';
+        $resaction = 0; $error = 0;
         foreach ($this->hooks as $context => $modules)    // $this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (!empty($modules))
             {
                 foreach ($modules as $module => $actionclassinstance)
                 {
-                	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
+                	//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
                     // test to avoid running twice a hook, when a module implements several active contexts
                     if (in_array($module, $modulealreadyexecuted)) continue;
@@ -290,7 +290,7 @@ class HookManager
                     	}
                     }
 
-                    //print "After hook  ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction." result=".$result."<br>\n";
+                    //print "After hook  ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
                     unset($actionclassinstance->results);
                     unset($actionclassinstance->resprints);
@@ -298,6 +298,6 @@ class HookManager
             }
         }
 
-        return ($error ?-1 : $resaction);
+        return ($error ? -1 : $resaction);
 	}
 }

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 

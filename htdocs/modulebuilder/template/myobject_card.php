@@ -40,7 +40,7 @@
 //if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
 //if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
 //if (! defined("FORCECSP"))                 define('FORCECSP','none');					// Disable all Content Security Policies
-
+//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN','1');		// Force use of CSRF protection with tokens even for GET
 
 // Load Dolibarr environment
 $res = 0;
@@ -89,7 +89,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -157,7 +157,7 @@ if (empty($reshook))
 
 	if ($action == 'set_thirdparty' && $permissiontoadd)
 	{
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
+		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd)
 	{
@@ -165,7 +165,7 @@ if (empty($reshook))
 	}
 
 	// Actions to send emails
-	$triggersendname = 'MYOBJECT_SENTBYMAIL';
+	$triggersendname = 'MYMODULE_MYOBJECT_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
 	$trackid = 'myobject'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

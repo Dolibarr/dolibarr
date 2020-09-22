@@ -26,3 +26,4 @@ ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
 # Admin page
 #
 ZapierForDolibarrSetup = Setup of Zapier for Dolibarr
+ZapierDescription=Interface with Zapier

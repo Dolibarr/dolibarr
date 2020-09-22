@@ -39,7 +39,7 @@ $hookmanager->initHooks(array('projectsindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_project_user = GETPOST('search_project_user', 'int');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') $search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
@@ -53,7 +53,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 
-$max = 3;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 
 /*
@@ -337,11 +337,13 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall tdoverflowmax100">';
-		if ($obj->socid)
+		if ($obj->socid > 0)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->email = $obj->email;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);
@@ -360,7 +362,7 @@ if ($resql)
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '...';
+		print '<span class="opacitymedium">...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
+ * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +42,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
+
+if ($_SESSION["takeposterminal"] == "")
+{
+	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	elseif (!empty($_COOKIE["takeposterminal"])) $_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+}
 
 if ($setterminal > 0)
 {
 	$_SESSION["takeposterminal"] = $setterminal;
+	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, false, true); // Permanent takeposterminal var in a cookie
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
@@ -283,12 +291,18 @@ function LoadProducts(position, issubcat) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
-				$("#prodivdesc"+ishow).hide();
-				$("#prodesc"+ishow).text("");
+				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)
+				{
+					echo '$("#prodivdesc"+ishow).hide();';
+					echo '$("#prodesc"+ishow).text("");';
+					echo '$("#proimg"+ishow).attr("title","");';
+					echo '$("#proimg"+ishow).attr("src","genimg/empty.png");';
+				} else {
+					echo '$("#probutton"+ishow).hide();';
+					echo '$("#probutton"+ishow).text("");';
+				}?>
 				$("#proprice"+ishow).attr("class", "hidden");
 				$("#proprice"+ishow).html("");
-				$("#proimg"+ishow).attr("title","");
-				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 				$("#prowatermark"+ishow).hide();
@@ -300,14 +314,22 @@ function LoadProducts(position, issubcat) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
 				?>
 				var titlestring = <?php echo $titlestring; ?>;
-				$("#prodivdesc"+ishow).show();
-				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)
+				{
+					echo '$("#prodivdesc"+ishow).show();';
+					echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+					echo '$("#proimg"+ishow).attr("title", titlestring);';
+					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
+				}
+				else {
+					echo '$("#probutton"+ishow).show();';
+					echo '$("#probutton"+ishow).text(data[parseInt(idata)][\'label\']);';
+				}
+				?>
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
 				}
-				$("#proimg"+ishow).attr("title", titlestring);
-				$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
@@ -395,6 +417,15 @@ function ClickProduct(position) {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
+
+	ClearSearch();
+}
+
+function ChangeThirdparty(idcustomer) {
+	 console.log("ChangeThirdparty");
+		// Call page list.php to change customer
+		$("#poslines").load("../societe/list.php?action=change&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		});
 
 	ClearSearch();
 }
@@ -524,7 +555,11 @@ function Search2(keyCodeForEnter) {
 			// If there is only 1 answer
 			if ($('#search').val().length > 0 && data.length == 1) {
 				console.log($('#search').val()+' - '+data[0]['barcode']);
-				if ($('#search').val() == data[0]['barcode']) {
+				if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
+					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
+					ChangeThirdparty(data[0]['rowid']);
+				}
+				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
 					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
 					ClickProduct(0);
 				}
@@ -541,7 +576,7 @@ function Search2(keyCodeForEnter) {
 			}
 		});
 	}
-	
+
 }
 
 function Edit(number) {
@@ -726,6 +761,19 @@ function FullScreen() {
 	document.documentElement.requestFullscreen();
 }
 
+function WeighingScale(){
+	console.log("Weighing Scale");
+    $.ajax({
+        type: "POST",
+        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale/index.php',
+    })
+	.done(function( editnumber ) {
+		$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+                editnumber="";
+            });
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -734,8 +782,7 @@ $( document ).ready(function() {
 	//IF NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
 	{
-		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
-		else print "TerminalsDialog();";
+		print "TerminalsDialog();";
 	}
 	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
 	{
@@ -955,6 +1002,11 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 }
 
+if ($conf->global->TAKEPOS_WEIGHING_SCALE)
+{
+	$menus[$r++] = array('title'=>'<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action'=>'WeighingScale();');
+}
+
 ?>
 		<!-- Show buttons -->
 		<div class="div3">
@@ -1032,11 +1084,14 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
     				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				} else {
-    					print '<div class="" id="proprice'.$count.'"></div>';
-    					if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+						if ($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
+    					else {
+							print '<div class="" id="proprice'.$count.'"></div>';
+							print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+						}
     				}
     				?>
-					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1)) { ?>
+					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1) && !$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) { ?>
     				<div class="description" id="prodivdesc<?php echo $count; ?>">
     					<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
     				</div>

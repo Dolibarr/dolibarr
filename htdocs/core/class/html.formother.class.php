@@ -256,7 +256,7 @@ class FormOther
     	$sql = "SELECT r.taux, r.revenuestamp_type";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
     	$sql .= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
-    	$sql .= " AND c.code = '".$country_code."'";
+    	$sql .= " AND c.code = '".$this->db->escape($country_code)."'";
 
     	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
     	$resql = $this->db->query($sql);
@@ -1141,7 +1141,7 @@ class FormOther
         	// Load translation files required by the page
             $langs->loadLangs(array("boxes", "projects"));
 
-        	$emptybox = new ModeleBoxes($db);
+            $emptybox = new ModeleBoxes($db);
 
             $boxlista .= "\n<!-- Box left container -->\n";
 

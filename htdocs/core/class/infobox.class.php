@@ -41,7 +41,7 @@ class InfoBox
 		{
         	return array(
         		0 => 'Home',
-        		27 => 'Accountancy Home'
+        		27 => 'AccountancyHome'
         	);
 		} else {
 			return array(
@@ -72,7 +72,7 @@ class InfoBox
 				24 => 'expensereportindex',
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
-				27 => 'Accountancy Home'
+				27 => 'AccountancyHome'
 			);
 		}
     }
@@ -125,6 +125,7 @@ class InfoBox
 
                 if (!in_array($obj->box_id, $excludelist))
                 {
+                	$regs = array();
                     if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
                     {
                         $boxname = preg_replace('/\.php$/i', '', $regs[1]);
@@ -273,12 +274,13 @@ class InfoBox
                         //dol_syslog("aaaaa".count($listarray));
                         $i++;
                         $ii = sprintf('%02d', $i);
+
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
                         $sql .= "(box_id, position, box_order, fk_user, entity)";
                         $sql .= " values (";
                         $sql .= " ".$id.",";
                         $sql .= " ".$zone.",";
-                        $sql .= " '".$colonne.$ii."',";
+                        $sql .= " '".$db->escape($colonne.$ii)."',";
                         $sql .= " ".$userid.",";
                         $sql .= " ".$conf->entity;
                         $sql .= ")";
@@ -293,20 +295,17 @@ class InfoBox
                     }
                 }
             }
-            if ($error)
-            {
-                $error = $db->error();
-                $db->rollback();
-                return -2;
-            } else {
-                $db->commit();
-                return 1;
-            }
         } else {
-            $error = $db->lasterror();
-            $db->rollback();
-            dol_syslog(get_class()."::saveboxorder ".$error);
-            return -1;
+        	$error++;
+        }
+
+        if ($error)
+        {
+        	$db->rollback();
+        	return -2;
+        } else {
+        	$db->commit();
+        	return 1;
         }
     }
 }

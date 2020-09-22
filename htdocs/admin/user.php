@@ -38,7 +38,7 @@ if (!$user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
@@ -192,7 +192,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)

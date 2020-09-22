@@ -50,7 +50,7 @@ $langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -143,7 +143,7 @@ if ($action == 'add')
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$model = $object->modelpdf;
+		$model = $object->model_pdf;
 		$ret = $object->fetch($id); // Reload to get new records
 
 		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -189,7 +189,7 @@ if ($action == 'update_extras')
 	$object->oldcopy = dol_clone($object);
 
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 	if ($ret < 0) $error++;
 
 	if (!$error)
@@ -681,7 +681,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			$genallowed = $user->rights->expedition->livraison->lire;
 			$delallowed = $user->rights->expedition->livraison->creer;
 
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

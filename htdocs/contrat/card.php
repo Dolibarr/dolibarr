@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
@@ -568,7 +568,7 @@ if (empty($reshook))
 
 					$ret = $object->fetch($id); // Reload to get new records
 
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['prod_entry_mode']);
@@ -665,7 +665,7 @@ if (empty($reshook))
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
-			$objectline->description = GETPOST('product_desc', 'none');
+			$objectline->description = GETPOST('product_desc', 'restricthtml');
 			$objectline->price_ht = GETPOST('elprice');
 			$objectline->subprice = GETPOST('elprice');
 			$objectline->qty = GETPOST('elqty');
@@ -743,7 +743,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -811,7 +811,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error) {
@@ -1897,7 +1897,7 @@ if ($action == 'create')
 				print '</tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.GETPOST("comment", 'alphanohtml').'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2126,7 +2126,7 @@ if ($action == 'create')
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
 			// Show links to link elements

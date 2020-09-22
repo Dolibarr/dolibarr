@@ -30,14 +30,14 @@ Permission56005=See tickets of all third parties (not effective for external use
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
-TicketDictResolution=Ticket - Resolution
+TicketDictResolution=Ticket - Risoluzione
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
 
-TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortHELP=Richiesta di aiuto funzionale
 TicketTypeShortISSUE=Issue, bug o problemi
-TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortREQUEST=Richiesta di modifica o miglioramento
 TicketTypeShortPROJET=Progetto
 TicketTypeShortOTHER=Altro
 
@@ -72,7 +72,6 @@ Deleted=Deleted
 
 # Dict
 Type=Tipo
-Category=Analytic code
 Severity=Gravità
 
 # Email templates
@@ -128,12 +127,11 @@ TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=Gruppo
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketsPublicNotificationNewMessage=Invia e-mail quando viene aggiunto un nuovo messaggio
+TicketsPublicNotificationNewMessageHelp=Invia e-mail quando si aggiunge un nuovo messaggio dall'interfaccia pubblica (all'utente assegnato o all'e-mail di notifica a (aggiorna) e / o all'e-mail di notifica a)
+TicketPublicNotificationNewMessageDefaultEmail=Notifiche via email (aggiornamento)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Invia e-mail notifiche di nuovi messaggi a questo indirizzo se al ticket non è stato assegnato un utente o se l'utente non ha un indirizzo e-mail.
 #
 # Index & list page
 #
@@ -162,7 +160,7 @@ CreatedBy=Creato da
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=Gruppo
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
@@ -258,7 +256,7 @@ TicketPublicDesc=You can create a support ticket or check from an existing ID.
 YourTicketSuccessfullySaved=Ticket has been successfully saved!
 MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s.
 PleaseRememberThisId=Please keep the tracking number that we might ask you later.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
+TicketNewEmailSubject=Conferma creazione ticket - Rif. %s (ID biglietto pubblico %s)
 TicketNewEmailSubjectCustomer=New support ticket
 TicketNewEmailBody=Questa email automatica conferma che è stato registrato un nuovo ticket
 TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
@@ -277,7 +275,7 @@ Subject=Oggetto
 ViewTicket=Vedi ticket
 ViewMyTicketList=Vedi l'elenco dei miei ticket
 ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectAdmin=Nuovo biglietto creato - Rif. %s (ID biglietto pubblico %s)
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled

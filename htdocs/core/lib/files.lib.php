@@ -142,6 +142,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 
 							if (!$filter || preg_match('/'.$filter.'/i', $file))	// We do not search key $filter into all $path, only into $file part
 							{
+								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
 								$file_list[] = array(
@@ -223,8 +224,8 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 {
 	global $conf, $db;
 
-	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m,";
-	$sql .= " acl, position, share";
+	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
+	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) $sql .= ", description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
 	$sql .= " WHERE filepath = '".$db->escape($path)."'";
@@ -958,11 +959,11 @@ function dolCheckVirus($src_file)
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
-		$antivir=new AntiVir($db);
+		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
 		{
-			$reterrors=$antivir->errors;
+			$reterrors = $antivir->errors;
 			return $reterrors;
 		}
 	}
@@ -1049,7 +1050,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		{
 			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
-			if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
+			if (!preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash .= '/';
 
 			if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
 				$file_name .= '.noexe';
@@ -1155,6 +1156,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		return false;
 	}
 
+	$reshook = 0;
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -1168,12 +1170,12 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		$reshook = $hookmanager->executeHooks('deleteFile', $parameters, $object);
 	}
 
-	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok, -1 = ko
+	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok and replace, -1 = ko
 	{
+		dol_syslog("reshook=".$reshook);
 		if ($reshook < 0) return false;
 		return true;
 	} else {
-		//print "x".$file." ".$disableglob;exit;
 		$file_osencoded = dol_osencode($file); // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && !empty($file_osencoded))
 		{
@@ -1220,7 +1222,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 						// If error because it does not exists, we should return true, and we should return false if this is a permission problem
 					}
 				}
-			} else dol_syslog("No files to delete found", LOG_DEBUG);
+			} else {
+				dol_syslog("No files to delete found", LOG_DEBUG);
+			}
 		} else {
 			$ok = false;
 			if ($nophperrors) $ok = @unlink($file_osencoded);
@@ -2010,8 +2014,10 @@ function dol_uncompress($inputfile, $outputdir)
 		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 		$archive = new PclZip($inputfile);
-		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir);
-		//var_dump($result);
+
+		// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+
 		if (!is_array($result) && $result <= 0) return array('error'=>$archive->errorInfo(true));
 		else {
 			$ok = 1; $errmsg = '';
@@ -2032,14 +2038,26 @@ function dol_uncompress($inputfile, $outputdir)
 		}
 	}
 
-	if (class_exists('ZipArchive'))
+	if (class_exists('ZipArchive'))	// Must install php-zip to have it
 	{
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
 		if ($res === true)
 		{
-			$zip->extractTo($outputdir.'/');
+			//$zip->extractTo($outputdir.'/');
+			// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+			// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
+			// with -l is the range of dot to go back in path.
+			// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
+			for ($i = 0; $i < $zip->numFiles; $i++) {
+				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
+					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
+					continue;	// Discard the file
+				}
+				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
+			}
+
 			$zip->close();
 			return array();
 		} else {
@@ -2764,9 +2782,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 	// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
 	// If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
+	// If modulepart=module-abc			Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	else {
+		//var_dump($modulepart);
+		//var_dump($original_file);
 		if (preg_match('/^specimen/i', $original_file))	$accessallowed = 1; // If link to a file called specimen. Test must be done before changing $original_file int full path.
 		if ($fuser->admin) $accessallowed = 1; // If user is admin
+		$tmpmodulepart = explode('-', $modulepart);
+		if (!empty($tmpmodulepart[1])) {
+				$modulepart = $tmpmodulepart[0];
+				$original_file = $tmpmodulepart[1].'/'.$original_file;
+		}
 
 		// Define $accessallowed
 		$reg = array();
@@ -2822,6 +2848,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
 			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
 			$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
+			//var_dump($original_file);
 		}
 
 		// For modules who wants to manage different levels of permissions for documents

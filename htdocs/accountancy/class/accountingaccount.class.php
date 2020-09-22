@@ -448,9 +448,10 @@ class AccountingAccount extends CommonObject
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @param	int     $withcompletelabel		    0=Short label (field short label), 1=Complete label (field label)
+	 * @param	string	$option						'bookkeeping', 'bookkeepinglistbyaccount', 'accountcard'
 	 * @return  string	String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0)
+    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $option = '')
 	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -459,7 +460,16 @@ class AccountingAccount extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$this->id;
+		if (empty($option) || $option == 'bookkeeping') {
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$labelurl = $langs->trans("ShowAccountingAccountInBookKeeping");
+		} elseif ($option == 'bookkeepinglistbyaccount') {
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$labelurl = $langs->trans("ShowAccountingAccountInBookKeepingByAccount");
+		} elseif ($option == 'accountcard') {
+			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
+			$labelurl = $langs->trans("ShowAccountingAccount");
+		}
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -476,7 +486,7 @@ class AccountingAccount extends CommonObject
 			$labeltoshow = $this->labelshort;
 		}
 
-		$label = '<u>'.$langs->trans("ShowAccountingAccount").'</u>';
+		$label = '<u>'.$labelurl.'</u>';
 		if (!empty($this->account_number))
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 		if (!empty($labeltoshow))
@@ -488,7 +498,7 @@ class AccountingAccount extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowAccoutingAccount");
+				$label = $labelurl;
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

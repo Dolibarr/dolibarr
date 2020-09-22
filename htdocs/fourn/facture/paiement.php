@@ -129,7 +129,8 @@ if (empty($reshook))
 	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 	    $paiement_id = 0;
 	    $totalpayment = 0;
-	    $atleastonepaymentnotnull = 0;
+		$atleastonepaymentnotnull = 0;
+		$multicurrency_totalpayment = 0;
 
 	    // Generate payment array and check if there is payment higher than invoice and payment date before invoice date
 	    $tmpinvoice = new FactureFournisseur($db);
@@ -138,7 +139,7 @@ if (empty($reshook))
 	        if (substr($key, 0, 7) == 'amount_')
 	        {
 	            $cursorfacid = substr($key, 7);
-	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $amounts[$cursorfacid] = price2num(GETPOST($key));
 	            if (!empty($amounts[$cursorfacid])) {
 	            	$atleastonepaymentnotnull++;
 	            	if (is_numeric($amounts[$cursorfacid])) {
@@ -171,7 +172,7 @@ if (empty($reshook))
 	        } elseif (substr($key, 0, 21) == 'multicurrency_amount_')
 			{
 				$cursorfacid = substr($key, 21);
-	            $multicurrency_amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $multicurrency_amounts[$cursorfacid] = (GETPOST($key) ? price2num(GETPOST($key)) : 0);
 	            $multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
 	            if (!empty($multicurrency_amounts[$cursorfacid])) $atleastonepaymentnotnull++;
 	            $result = $tmpinvoice->fetch($cursorfacid);
@@ -300,9 +301,7 @@ if (empty($reshook))
 
 	        $paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 	        $paiement->note_private = GETPOST('comment', 'alpha');
-	        $paiement->num_paiement = $paiement->num_payment; // For backward compatibility
 	        $paiement->num_payment = $paiement->num_payment;
-	        $paiement->note         = $paiement->note_private; // For backward compatibility
 	        $paiement->note_private = $paiement->note_private;
 
 	        if (!$error)

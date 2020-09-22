@@ -41,12 +41,12 @@ if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
     exit;
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = $dolibarr_main_authentication;
 if (!$mode) $mode = 'http';
 
-$username = trim(GETPOST('username', 'alpha'));
-$passwordhash = trim(GETPOST('passwordhash', 'alpha'));
+$username = GETPOST('username', 'alphanohtml');
+$passwordhash = GETPOST('passwordhash', 'alpha');
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -100,16 +100,24 @@ if ($action == 'buildnewpassword' && $username)
     {
         $message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
     } else {
+    	$isanemail = preg_match('/@/', $username);
+
         $edituser = new User($db);
         $result = $edituser->fetch('', $username, '', 1);
-        if ($result == 0 && preg_match('/@/', $username))
+        if ($result == 0 && $isanemail)
         {
         	$result = $edituser->fetch('', '', '', 1, -1, $username);
         }
 
         if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
         {
-            $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
+        	$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+        	if (! $isanemail) {
+        		$message .= $langs->trans("IfLoginExistPasswordRequestSent");
+        	} else {
+            	$message .= $langs->trans("IfEmailExistPasswordRequestSent");
+        	}
+        	$message .= '</div>';
             $username = '';
         } else {
             if (!$edituser->email)
@@ -125,7 +133,14 @@ if ($action == 'buildnewpassword' && $username)
                     // Success
                     if ($edituser->send_password($user, $newpassword, 1) > 0)
                     {
-                    	$message = '<div class="ok'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';
+                    	$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+                    	if (! $isanemail) {
+                    		$message .= $langs->trans("IfLoginExistPasswordRequestSent");
+                    	} else {
+                    		$message .= $langs->trans("IfEmailExistPasswordRequestSent");
+                    	}
+                    	//$message .= $langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email));
+                    	$message .= '</div>';
                         $username = '';
                     } else {
                         $message .= '<div class="error">'.$edituser->error.'</div>';

@@ -50,7 +50,7 @@ $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'pro
 
 $socid = GETPOST('socid', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -78,7 +78,7 @@ $search_login = GETPOST('search_login', 'alpha');
 $search_product_category = GETPOST('search_product_category', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
@@ -88,7 +88,7 @@ $search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
 $search_availability = GETPOST('search_availability', 'int');
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
@@ -333,13 +333,13 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 if ($search_town)					$sql .= natural_search('s.town', $search_town);
 if ($search_zip)					$sql .= natural_search("s.zip", $search_zip);
 if ($search_state)					$sql .= natural_search("state.nom", $search_state);
-if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_ref)					$sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer)			$sql .= natural_search('p.ref_client', $search_refcustomer);
 if ($search_refproject)				$sql .= natural_search('pr.ref', $search_refproject);
 if ($search_project)				$sql .= natural_search('pr.title', $search_project);
-if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
+if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 
 if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
 if ($search_login)					$sql .= natural_search("u.login", $search_login);
@@ -361,7 +361,7 @@ if ($search_product_category > 0)	$sql .= " AND cp.fk_categorie = ".$db->escape(
 if ($socid > 0) $sql .= ' AND s.rowid = '.$socid;
 if ($search_status != '' && $search_status != '-1')
 {
-	$sql .= ' AND p.fk_statut IN ('.$db->escape($search_status).')';
+	$sql .= ' AND p.fk_statut IN ('.$db->sanitize($db->escape($search_status)).')';
 }
 if ($search_date_start)             $sql .= " AND p.datep >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)               $sql .= " AND p.datep <= '".$db->idate($search_date_end)."'";
@@ -472,6 +472,8 @@ if ($resql)
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
+		'prevalidate'=>$langs->trans("Validate"),
+		'presign'=>$langs->trans("Sign"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if ($user->rights->propal->cloturer) $arrayofmassactions['closed'] = $langs->trans("Close");
@@ -501,6 +503,16 @@ if ($resql)
 	$objecttmp = new Propal($db);
 	$trackid = 'pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
+
+	if ($massaction == 'presign')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSignature"), $langs->trans("ConfirmMassSignatureQuestion"), "sign", null, '', 0, 200, 500, 1);
+	}
 
 	if ($sall)
 	{
@@ -1270,10 +1282,72 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+
+	if ($action == 'validate') {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
+			$db->begin();
+			$error = 0;
+			foreach ($toselect as $checked) {
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 0) {
+						if ($tmpproposal->valid($user)) {
+							setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						} else {
+							setEventMessage($langs->trans('CantBeValidated'), 'errors');
+							$error++;
+						}
+					} else {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+						$error++;
+					}
+				}
+				dol_print_error($db);
+				$error++;
+			}
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+		}
+	}
+
+	if ($action == "sign") {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
+			$db->begin();
+			$error = 0;
+			foreach ($toselect as $checked) {
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 1) {
+						$tmpproposal->statut = 2;
+						if ($tmpproposal->update($user)) {
+							setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+						} else {
+							dol_print_error($db);
+							$error++;
+						}
+					} else {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+						$error++;
+					}
+				} else {
+					dol_print_error($db);
+					$error++;
+				}
+			}
+			if ($error) {
+				$db->rollback();
+			} else {
+				$db->commit();
+			}
+		}
+	}
 } else {
-	dol_print_error($db);
+		dol_print_error($db);
 }
 
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();

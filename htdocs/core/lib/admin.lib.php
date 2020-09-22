@@ -292,7 +292,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         		$sql = preg_replace('/llx_/i', MAIN_DB_PREFIX, $sql);
         	}
 
-            if (!empty($handler)) $sql = preg_replace('/__HANDLER__/i', "'".$handler."'", $sql);
+            if (!empty($handler)) $sql = preg_replace('/__HANDLER__/i', "'".$db->escape($handler)."'", $sql);
 
             $newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : $conf->entity), $sql);
 
@@ -1630,7 +1630,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
 	$db->begin();
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql .= " VALUES ('".$db->escape($name)."','".$type."',".$conf->entity.", ";
+    $sql .= " VALUES ('".$db->escape($name)."','".$db->escape($type)."',".$conf->entity.", ";
     $sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
     $sql .= (!empty($description) ? "'".$db->escape($description)."'" : "null");
     $sql .= ")";
@@ -1663,7 +1663,7 @@ function delDocumentModel($name, $type)
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE nom = '".$db->escape($name)."'";
-	$sql .= " AND type = '".$type."'";
+	$sql .= " AND type = '".$db->escape($type)."'";
 	$sql .= " AND entity = ".$conf->entity;
 
 	dol_syslog("admin.lib::delDocumentModel", LOG_DEBUG);
@@ -1767,6 +1767,14 @@ function email_admin_prepare_head()
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
+			$h++;
+		}
+
+		if ($conf->ticket->enabled)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
+			$head[$h][2] = 'common_ticket';
 			$h++;
 		}
 	}

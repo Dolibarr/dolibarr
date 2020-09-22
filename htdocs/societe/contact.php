@@ -68,7 +68,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycontact', 'globalcard'));
 
-if ($action == 'view' && $object->fetch($socid) <= 0)
+if ($object->fetch($socid) <= 0 && $action == 'view')
 {
 	$langs->load("errors");
 	print($langs->trans('ErrorRecordNotFound'));
@@ -76,7 +76,6 @@ if ($action == 'view' && $object->fetch($socid) <= 0)
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($socid);
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
 if (!empty($canvas))
@@ -87,10 +86,8 @@ if (!empty($canvas))
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 if (empty($user->rights->societe->contact->lire)) accessforbidden();
-
-
 
 
 /*

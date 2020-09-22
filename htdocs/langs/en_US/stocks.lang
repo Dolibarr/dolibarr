@@ -238,3 +238,6 @@ StockAtDatePastDesc=You can view here the stock (real stock) at a given date in 
 StockAtDateFutureDesc=You can view here the stock (virtual stock) at a given date in future
 CurrentStock=Current stock
 InventoryRealQtyHelp=Set value to 0 to reset qty<br>Keep field empty, or remove line, to keep unchanged
+UpdateByScaning=Update by scaning
+UpdateByScaningProductBarcode=Update by scan (product barcode)
+UpdateByScaningLot=Update by scan (lot|serial barcode)

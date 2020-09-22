@@ -129,8 +129,8 @@ if (empty($reshook))
 				$object->dateend				= $dateend;
 				$object->nbterm					= GETPOST('nbterm');
 				$object->rate = $rate;
-				$object->note_private = GETPOST('note_private', 'none');
-				$object->note_public = GETPOST('note_public', 'none');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->insurance_amount = GETPOST('insurance_amount', 'int');
 

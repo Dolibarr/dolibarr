@@ -101,7 +101,7 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	if ((empty($section) || $section == -1) && ($module != 'medias'))
 	{
 		?>
-		<script type="text/javascript">
+		<script>
     	jQuery(document).ready(function() {
 			jQuery('#<?php echo $nameforformuserfile ?>').hide();
     	});

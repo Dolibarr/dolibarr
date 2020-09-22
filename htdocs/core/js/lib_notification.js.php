@@ -39,37 +39,42 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
     print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
 	print 'var nowtime = Date.now();';
     print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
-    print 'var time_js_next_test = (nowtime + time_auto_update);'."\n";
+    print 'var time_js_next_test;'."\n";
     ?>
 
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
+		console.log("Ask Notification.permission");
         Notification.requestPermission()
     }
 
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
-    var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
+    //var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
+    var time_first_execution = <?php echo max(3, $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
     if (login != '') {
-    	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_test = "+time_js_next_test+" time_auto_update="+time_auto_update);
-    	setTimeout(first_execution, time_first_execution);
+    	setTimeout(first_execution, time_first_execution * 1000);
+        time_js_next_test = nowtime + time_first_execution;
+    	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
     } //first run auto check
 
 
     function first_execution() {
-    	console.log("Call first_execution time_auto_update (MAIN_BROWSER_NOTIFICATION_FREQUENCY) = "+time_auto_update);
-        check_events();	//one check before launching timer to launch other checks
-        setInterval(check_events, time_auto_update * 1000); //program time to run next check events
+    	console.log("Call first_execution then set repeat time to time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update);
+        check_events();	//one check before setting the new time for other checks
+        setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events
     }
 
     function check_events() {
     	if (Notification.permission === "granted")
     	{
-    		console.log("Call check_events time_js_next_test = date we are looking for event after ="+time_js_next_test);
+    	    time_js_next_test += time_auto_update;
+    		console.log("Call ajax to check_events with time_js_next_test = "+time_js_next_test);
+
             $.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
                 type: "post",   // Usually post or get
                 async: true,
-                data: {time: time_js_next_test},
+                data: { time_js_next_test: time_js_next_test },
                 success: function (result) {
                     var arr = JSON.parse(result);
                     if (arr.length > 0) {
@@ -79,13 +84,18 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 						}
 						?>
+						var listofreminderids = '';
 
                         $.each(arr, function (index, value) {
-                            var url="notdefined";
-                            var title="Not defined";
-                            var body = value['tipo'] + ': ' + value['titulo'];
+                            var url = "notdefined";
+                            var title = "Not defined";
+                            var body = value['type'] + ': ' + value['label'];
                             if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
                                 body += '\n' + value['location'];
+                            }
+
+                            if(value['type'] == 'agenda' && (value['event_date_start_formated'] != null || event_date_start_formated['event_date_start'] != '')) {
+                                body += '\n' + value['event_date_start_formated'];
                             }
 
                             if (value['type'] == 'agenda')
@@ -100,30 +110,41 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                             };
 
                             // We release the notify
+                            console.log("Send notification on browser");
                             var noti = new Notification(title, extra);
                             if (index==0 && audio)
                             {
                             	audio.play();
                             }
-                            noti.onclick = function (event) {
-                                console.log("An event to notify on browser was received");
-                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
-                                window.focus();
-                                window.open(url, '_blank');
-                                noti.close();
-                            };
+
+                            if (noti) {
+	                            noti.onclick = function (event) {
+	                                console.log("A click on notification on browser has been done");
+	                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
+	                                window.focus();
+	                                window.open(url, '_blank');
+	                                noti.close();
+	                            };
+
+	                            listofreminderids = listofreminderids + '-' + value['id_reminder']
+	                        }
                         });
+
+                        // Update status of all notifications we sent on browser (listofreminderids)
+                        console.log("Flag notification as done for listofreminderids="+listofreminderids);
+						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
+			                type: "post",   // Usually post or get
+			                async: true,
+			                data: { time_js_next_test: time_js_next_test }
+			                });
                     }
                 }
             });
         }
         else
         {
-        	console.log("Cancel check_events. Useless because Notification.permission is "+Notification.permission);
+        	console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
         }
-
-        time_js_next_test += time_auto_update;
-		console.log('Updated time_js_next_test. New value is '+time_js_next_test);
     }
     <?php
 }

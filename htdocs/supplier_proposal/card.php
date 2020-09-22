@@ -58,7 +58,7 @@ $error = 0;
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -191,7 +191,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -217,7 +217,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -266,9 +266,10 @@ if (empty($reshook))
 					$object->remise_absolue = GETPOST('remise_absolue');
 					$object->socid = GETPOST('socid');
 					$object->fk_project = GETPOST('projectid', 'int');
-					$object->modelpdf = GETPOST('model');
+					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note = GETPOST('note', 'none');
+					$object->note = GETPOST('note', 'restricthtml');
+					$object->note_private = GETPOST('note', 'restricthtml');
 					$object->statut = SupplierProposal::STATUS_DRAFT;
 
 					$id = $object->create_from($user);
@@ -284,9 +285,10 @@ if (empty($reshook))
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->fk_project = GETPOST('projectid', 'int');
-				$object->modelpdf = GETPOST('model');
+				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note = GETPOST('note', 'none');
+				$object->note = GETPOST('note', 'restricthtml');
+				$object->note_private = GETPOST('note', 'restricthtml');
 
 				$object->origin = GETPOST('origin');
 				$object->origin_id = GETPOST('originid');
@@ -436,7 +438,7 @@ if (empty($reshook))
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
 							}
-							$model = $object->modelpdf;
+							$model = $object->model_pdf;
 
 							$ret = $object->fetch($id); // Reload to get new records
 							$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -482,7 +484,7 @@ if (empty($reshook))
 		} else {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == SupplierProposal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note', 'none'));
+				$object->cloture($user, GETPOST('statut'), GETPOST('note', 'restricthtml'));
 			}
 		}
 	}
@@ -517,7 +519,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}	elseif ($action == "setabsolutediscount" && $usercancreate) {
 		if ($_POST["remise_id"]) {
@@ -780,7 +782,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -841,7 +843,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 		// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -963,7 +965,7 @@ if (empty($reshook))
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$ret = $object->fetch($id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -1039,7 +1041,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -1922,7 +1924,7 @@ if ($action == 'create')
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		print $formfile->showdocuments('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 
 		// Show links to link elements

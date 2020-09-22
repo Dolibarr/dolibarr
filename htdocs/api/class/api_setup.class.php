@@ -4,7 +4,7 @@
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
  * Copyright (C) 2018   Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2019   Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018-2020   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 
 /**
@@ -169,6 +170,107 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of states/provinces.
+     *
+     * The names of the states will be translated to the given language if
+     * the $lang parameter is provided. The value of $lang must be a language
+     * code supported by Dolibarr, for example 'en_US' or 'fr_FR'.
+     * The returned list is sorted by state ID.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $filter     To filter the countries by name
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array                List of countries
+     *
+     * @url     GET dictionary/states
+     *
+     * @throws RestException
+     */
+    public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $sqlfilters = '')
+    {
+        $list = array();
+
+        // Note: The filter is not applied in the SQL request because it must
+        // be applied to the translated names, not to the names in database.
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_departements as t";
+        $sql .= " WHERE 1 = 1";
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $obj = $this->db->fetch_object($result);
+                $state = new Cstate($this->db);
+                if ($state->fetch($obj->rowid) > 0) {
+                    if (empty($filter) || stripos($state->label, $filter) !== false) {
+                        $list[] = $this->_cleanObjectDatas($state);
+                    }
+                }
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of states');
+        }
+
+        return $list;
+    }
+
+    /**
+     * Get state by ID.
+     *
+     * @param int       $id        ID of state
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/states/{id}
+     *
+     * @throws RestException
+     */
+    public function getStateByID($id)
+    {
+        return $this->_fetchCstate($id, '');
+    }
+
+    /**
+     * Get state by Code.
+     *
+     * @param string    $code      Code of state
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/states/byCode/{code}
+     *
+     * @throws RestException
+     */
+    public function getStateByCode($code)
+    {
+        return $this->_fetchCstate('', $code);
+    }
+
+    /**
      * Get the list of countries.
      *
      * The names of the countries will be translated to the given language if
@@ -293,6 +395,29 @@ class Setup extends DolibarrApi
     public function getCountryByISO($iso, $lang = '')
     {
         return $this->_fetchCcountry('', '', $iso, $lang);
+    }
+
+    /**
+    * Get state.
+    *
+    * @param int       $id        ID of state
+    * @param string    $code      Code of state
+    * @return array 			   Array of cleaned object properties
+    *
+    * @throws RestException
+    */
+    private function _fetchCstate($id, $code = '')
+    {
+        $state = new Cstate($this->db);
+
+        $result = $state->fetch($id, $code);
+        if ($result < 0) {
+            throw new RestException(503, 'Error when retrieving state : '.$state->error);
+        } elseif ($result == 0) {
+            throw new RestException(404, 'State not found');
+        }
+
+        return $this->_cleanObjectDatas($state);
     }
 
     /**
@@ -1413,7 +1538,7 @@ class Setup extends DolibarrApi
      * @url     GET conf/{constantname}
      *
      * @throws RestException 403 Forbidden
-     * @throws RestException 500 Error Bad or unknown value for constantname
+     * @throws RestException 404 Error Bad or unknown value for constantname
      */
     public function getConf($constantname)
     {
@@ -1425,7 +1550,7 @@ class Setup extends DolibarrApi
     	}
 
     	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
-    		throw new RestException(500, 'Error Bad or unknown value for constantname');
+    		throw new RestException(404, 'Error Bad or unknown value for constantname');
     	}
     	if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $constantname)) {
     		throw new RestException(403, 'Forbidden');

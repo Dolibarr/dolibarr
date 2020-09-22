@@ -176,7 +176,7 @@ if ($action == 'update') {
                     if ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
                         $sql .= " SET accountancy_code_sell_export = ".$accounting->account_number;
                     }
-					$sql .= " WHERE rowid = ".$productid;
+					$sql .= " WHERE rowid = ".((int) $productid);
 
 					dol_syslog("/accountancy/admin/productaccount.php sql=".$sql, LOG_DEBUG);
 					if ($db->query($sql))
@@ -251,21 +251,21 @@ $sql .= " aa.rowid as aaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON";
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-    $sql .= " p.accountancy_code_buy = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
+    $sql .= " p.accountancy_code_buy = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 } elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA')
 {
-	$sql .= " p.accountancy_code_buy_intra = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
+	$sql .= " p.accountancy_code_buy_intra = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 } elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT')
 {
-	$sql .= " p.accountancy_code_buy_export = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
+	$sql .= " p.accountancy_code_buy_export = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 } elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL')
 {
-    $sql .= " p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
+	$sql .= " p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 } elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA')
 {
-    $sql .= " p.accountancy_code_sell_intra = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
+	$sql .= " p.accountancy_code_sell_intra = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 } else {
-    $sql .= " p.accountancy_code_sell_export = aa.account_number AND aa.fk_pcg_version = '".$pcgvercode."'";
+	$sql .= " p.accountancy_code_sell_export = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {

@@ -29,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "date";
@@ -147,7 +147,7 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr '.$bc[false].'><td style="padding-left: 8px">';
+print '<tr class="oddeven"><td style="padding-left: 8px">';
 print '<table class="centpercent">';
 print '<tr>';
 print '<td class="tdtop">';

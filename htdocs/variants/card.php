@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -90,9 +90,9 @@ if ($confirm == 'yes') {
 	if ($action == 'confirm_delete') {
 		$db->begin();
 
-		$res = $objectval->deleteByFkAttribute($object->id);
+		$res = $objectval->deleteByFkAttribute($object->id, $user);
 
-		if ($res < 1 || ($object->delete() < 1)) {
+		if ($res < 1 || ($object->delete($user) < 1)) {
 			$db->rollback();
 			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -105,7 +105,7 @@ if ($confirm == 'yes') {
 	} elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
-			if ($objectval->delete() < 1) {
+			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');

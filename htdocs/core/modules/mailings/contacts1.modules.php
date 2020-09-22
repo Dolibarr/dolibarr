@@ -75,7 +75,7 @@ class mailing_contacts1 extends MailingTargets
 		$langs->load("commercial");
 
 		$statssql = array();
-		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label,";
+		$statssql[0] = "SELECT '".$this->db->escape($langs->trans("NbOfCompaniesContacts"))."' as label,";
 		$statssql[0] .= " count(distinct(c.email)) as nb";
 		$statssql[0] .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$statssql[0] .= " WHERE c.entity IN (".getEntity('socpeople').")";
@@ -390,7 +390,7 @@ class mailing_contacts1 extends MailingTargets
 		{
 			//print "xx".$key;
 			if ($key == 'prospects') $sql .= " AND s.client=2";
-			foreach ($prospectlevel as $codelevel=>$valuelevel) if ($key == 'prospectslevel'.$codelevel) $sql .= " AND s.fk_prospectlevel='".$codelevel."'";
+			foreach ($prospectlevel as $codelevel=>$valuelevel) if ($key == 'prospectslevel'.$codelevel) $sql .= " AND s.fk_prospectlevel='".$this->db->escape($codelevel)."'";
 			if ($key == 'customers') $sql .= " AND s.client=1";
 			if ($key == 'suppliers') $sql .= " AND s.fournisseur=1";
 		}

@@ -212,7 +212,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -259,7 +259,7 @@ if (empty($reshook))
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}*/
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -309,7 +309,7 @@ if (empty($reshook))
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	}
@@ -440,7 +440,7 @@ if (empty($reshook))
 			}
 			$ret = $object->fetch($id); // Reload to get new records
 
-			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -651,8 +651,8 @@ if (empty($reshook))
 				$object->libelle = GETPOST('label', 'nohtml');
 				$object->date = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public = GETPOST('note_public', 'none');
-				$object->note_private = GETPOST('note_private', 'none');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -716,8 +716,8 @@ if (empty($reshook))
 				$object->label				= GETPOST('label', 'nohtml');
 				$object->date = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public = GETPOST('note_public', 'none');
-				$object->note_private = GETPOST('note_private', 'none');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -828,8 +828,8 @@ if (empty($reshook))
 				$object->libelle       = $_POST['label'];
 				$object->date          = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public   = GETPOST('note_public', 'none');
-				$object->note_private  = GETPOST('note_private', 'none');
+				$object->note_public   = GETPOST('note_public', 'restricthtml');
+				$object->note_private  = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account        = GETPOST('fk_account', 'int');
@@ -1020,7 +1020,7 @@ if (empty($reshook))
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
-				$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0)
 				{
 					dol_print_error($db, $object->error, $object->errors);
@@ -1057,7 +1057,7 @@ if (empty($reshook))
 			$productsupplier = new ProductFournisseur($db);
 			if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
 			{
-				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), GETPOST('productid'), 'none', GETPOST('socid', 'int')) < 0)
+				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), GETPOST('productid', 'int'), 'restricthtml', GETPOST('socid', 'int')) < 0)
 				{
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
@@ -1366,7 +1366,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1470,7 +1470,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1534,7 +1534,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -1771,7 +1771,9 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier']) ? $_POST['ref_supplier'] : $objectsrc->ref_supplier).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier']) ? $_POST['ref_supplier'] : $objectsrc->ref_supplier).'" type="text"';
+    if ($societe->id > 0) print ' autofocus';
+    print '></td>';
 	print '</tr>';
 
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td>';
@@ -2013,9 +2015,12 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-	$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1);
-	print '</td></tr>';
+	if (!empty($conf->banque->enabled))
+	{
+		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+		$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1);
+		print '</td></tr>';
+	}
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled))
@@ -2051,7 +2056,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'none') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2060,7 +2065,7 @@ if ($action == 'create')
 	// Private note
 	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'none') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2587,21 +2592,24 @@ if ($action == 'create')
 		}
 
 		// Bank Account
-		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
-		print '<td>';
-		if ($action != 'editbankaccount' && $usercancreate)
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-		} else {
-			 $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		if (!empty($conf->banque->enabled))
+		{
+			print '<tr><td class="nowrap">';
+			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print $langs->trans('BankAccount');
+			print '<td>';
+			if ($action != 'editbankaccount' && $usercancreate)
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($action == 'editbankaccount') {
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			} else {
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			}
+			print "</td>";
+			print '</tr>';
 		}
-		print "</td>";
-		print '</tr>';
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
@@ -2709,7 +2717,7 @@ if ($action == 'create')
 		if ($societe->localtax1_assuj == "1") $nbrows++;
 		if ($societe->localtax2_assuj == "1") $nbrows++;
 
-		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
+		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
 		$sql .= ' c.id as paiement_type,';
 		$sql .= ' pf.amount,';
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
@@ -2747,7 +2755,7 @@ if ($action == 'create')
 					$paymentstatic->id = $objp->rowid;
 					$paymentstatic->datepaye = $db->jdate($objp->dp);
 					$paymentstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-					$paymentstatic->num_paiement = $objp->num_paiement;
+					$paymentstatic->num_payment = $objp->num_payment;
 					$paymentstatic->payment_code = $objp->payment_code;
 
 					print '<tr class="oddeven">';
@@ -2756,7 +2764,7 @@ if ($action == 'create')
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
 					print '<td>';
-					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_paiement;
+					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
 					print '</td>';
 					if (!empty($conf->banque->enabled))
 					{
@@ -3188,7 +3196,7 @@ if ($action == 'create')
 					$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 					$genallowed = $usercanread;
 					$delallowed = $usercancreate;
-					$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
 					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 					$somethingshown = $formfile->numoffiles;

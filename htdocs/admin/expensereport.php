@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -152,7 +152,7 @@ elseif ($action == 'setdoc')
 {
     $db->begin();
 
-	$freetext = GETPOST('EXPENSEREPORT_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('EXPENSEREPORT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "EXPENSEREPORT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	$draft = GETPOST('EXPENSEREPORT_DRAFT_WATERMARK', 'alpha');
@@ -297,7 +297,7 @@ $type = 'expensereport';
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)

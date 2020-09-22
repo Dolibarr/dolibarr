@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
@@ -195,9 +195,9 @@ if (!$error && $xml)
             $i++;
             $out .= '<tr class="oddeven">';
             $out .= '<td>'.$i.'</td>'."\n";
-            $out .= '<td>'.$constname.'</td>'."\n";
-            $out .= '<td class="center">'.$constvalue.'</td>'."\n";
-            $out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
+            $out .= '<td>'.dol_escape_htmltag($constname).'</td>'."\n";
+            $out .= '<td class="center">'.dol_escape_htmltag($constvalue).'</td>'."\n";
+            $out .= '<td class="center">'.dol_escape_htmltag($valueforchecksum).'</td>'."\n";
             $out .= "</tr>\n";
         }
 
@@ -255,11 +255,11 @@ if (!$error && $xml)
 	            $i++;
 	            $out .= '<tr class="oddeven">';
 	            $out .= '<td>'.$i.'</td>'."\n";
-	            $out .= '<td>'.$file['filename'].'</td>'."\n";
+	            $out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
 	            $out .= '<td class="right">';
 	            if (!empty($file['expectedsize'])) $out .= dol_print_size($file['expectedsize']);
 	            $out .= '</td>'."\n";
-	            $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+	            $out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
 	            $out .= "</tr>\n";
 	        }
         } else {
@@ -294,9 +294,9 @@ if (!$error && $xml)
 	            $i++;
 	            $out .= '<tr class="oddeven">';
 	            $out .= '<td>'.$i.'</td>'."\n";
-	            $out .= '<td>'.$file['filename'].'</td>'."\n";
-	            $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
-	            $out .= '<td class="center">'.$file['md5'].'</td>'."\n";
+	            $out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
+	            $out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+	            $out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
 	            $out .= '<td class="right">';
 	            if ($file['expectedsize']) $out .= dol_print_size($file['expectedsize']);
 	            $out .= '</td>'."\n";
@@ -346,14 +346,14 @@ if (!$error && $xml)
                 $i++;
                 $out .= '<tr class="oddeven">';
                 $out .= '<td>'.$i.'</td>'."\n";
-                $out .= '<td>'.$file['filename'];
+                $out .= '<td>'.dol_escape_htmltag($file['filename']);
                 if (!preg_match('/^win/i', PHP_OS)) {
                 	$htmltext = $langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']); // The slash is included int file['filename']
                 	$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
                 }
                 $out .= '</td>'."\n";
-                $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
-                $out .= '<td class="center">'.$file['md5'].'</td>'."\n";
+                $out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+                $out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
                 $totalsize += $size;
                 $out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";

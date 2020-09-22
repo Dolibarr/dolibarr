@@ -278,7 +278,7 @@ if (empty($sortfield)) {
 	}
 }
 
-$searchkey = GETPOST('searchstring', 'none');
+$searchkey = GETPOST('searchstring', 'restricthtml');
 
 if ($action == 'replacesiteconfirm') {
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
@@ -395,7 +395,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 
 	$db->begin();
 
-	$categoryid = GETPOST('setcategory', 'none');
+	$categoryid = GETPOST('setcategory', 'restricthtml');
 	if ($categoryid > 0) {
 		$tmpwebsitepage = new WebsitePage($db);
 		$category = new Categorie($db);
@@ -1420,7 +1420,7 @@ if ($action == 'updatecss')
     	    $robotcontent.= "header('Content-type: text/css');\n";
     	    $robotcontent.= "// END PHP ?>\n";*/
 
-    		$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'none'))."\n";
+    		$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
 
     		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
     	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
@@ -1436,7 +1436,7 @@ if ($action == 'updatecss')
 
     		// Htaccess file
     		$htaccesscontent = '';
-    		$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'none'))."\n";
+    		$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
 
     		$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
     		if (!$result)
@@ -1486,7 +1486,7 @@ if ($action == 'updatecss')
        		$readmecontent.= "header('Content-type: application/manifest+json');\n";
        		$readmecontent.= "// END PHP ?>\n";*/
 
-       		$readmecontent .= trim(GETPOST('WEBSITE_README', 'none'))."\n";
+       		$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
 
        		/*$readmecontent.= '<?php // BEGIN PHP'."\n";
        		$readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
@@ -2939,7 +2939,7 @@ if ($action == 'editcss')
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $manifestjsoncontent);
 	}
 	else {
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'none');
+		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
 	}
 	if (!trim($manifestjsoncontent))
 	{

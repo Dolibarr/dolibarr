@@ -385,13 +385,16 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$nature = '';
 
 					// Must match array $sourceList defined into journals_list.php
-					if ($objp->nature == 2 && ! empty($conf->facture->enabled)) $nature="sells";
-					if ($objp->nature == 3 && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))) $nature="purchases";
-					if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
-					if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
-					if ($objp->nature == 1) $nature="various";
-					if ($objp->nature == 8) $nature="inventory";
-					if ($objp->nature == 9) $nature="hasnew";
+					if ($objp->nature == 2 && !empty($conf->facture->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES)) $nature = "sells";
+					if ($objp->nature == 3
+						&& (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))
+						&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES))
+						$nature = "purchases";
+					if ($objp->nature == 4 && !empty($conf->banque->enabled)) $nature = "bank";
+					if ($objp->nature == 5 && !empty($conf->expensereport->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) $nature = "expensereports";
+					if ($objp->nature == 1) $nature = "various";
+					if ($objp->nature == 8) $nature = "inventory";
+					if ($objp->nature == 9) $nature = "hasnew";
 
 					// To enable when page exists
 					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))

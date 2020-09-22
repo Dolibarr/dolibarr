@@ -45,7 +45,7 @@ $startyear = $year - 2;
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "members"));
+$langs->loadLangs(array("companies", "members", "banks"));
 
 
 /*
@@ -74,12 +74,12 @@ if ($mode) {
         $tab = 'statscountry';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY c.label, c.code";
         //print $sql;
     }
@@ -90,14 +90,14 @@ if ($mode) {
         $tab = 'statsstate';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY co.label, co.code, c.nom";
         //print $sql;
     }
@@ -107,14 +107,14 @@ if ($mode) {
         $tab = 'statsregion'; //onglet
 
         $data = array(); //tableau de donnée
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY co.label, co.code, r.nom"; //+
         //print $sql;
     }
@@ -124,12 +124,12 @@ if ($mode) {
         $tab = 'statstown';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY c.label, c.code, d.town";
         //print $sql;
     }
@@ -204,12 +204,12 @@ if ($mode && !count($data)) {
     print $langs->trans("NoValidatedMemberYet").'<br>';
     print '<br>';
 } else {
-    if ($mode == 'memberbycountry') print $langs->trans("MembersByCountryDesc").'<br>';
-    elseif ($mode == 'memberbystate') print $langs->trans("MembersByStateDesc").'<br>';
-    elseif ($mode == 'memberbytown') print $langs->trans("MembersByTownDesc").'<br>';
-    elseif ($mode == 'memberbyregion') print $langs->trans("MembersByRegion").'<br>'; //+
+    if ($mode == 'memberbycountry') print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
+    elseif ($mode == 'memberbystate') print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
+    elseif ($mode == 'memberbytown') print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
+    elseif ($mode == 'memberbyregion') print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
     else {
-        print $langs->trans("MembersStatisticsDesc").'<br>';
+    	print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
         print '<br>';
@@ -272,12 +272,13 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 }
 
 if ($mode) {
-    // Print array / Affiche le tableau
-    print '<table class="liste centpercent">';
+    // Print array
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="liste centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td class="center">'.$label2.'</td>';
-    print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
     print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
     print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
     print '</tr>';
@@ -294,6 +295,7 @@ if ($mode) {
     }
 
     print '</table>';
+    print '</div>';
 }
 
 

@@ -40,7 +40,7 @@ $langs->loadlangs(array('projects', 'companies'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST("ref", 'alpha', 1); // task ref
 $taskref = GETPOST("taskref", 'alpha'); // task ref
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
@@ -165,7 +165,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 	}
-	$result = $object->generateDocument($object->modelpdf, $outputlangs);
+	$result = $object->generateDocument($object->model_pdf, $outputlangs);
 	if ($result <= 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -627,7 +627,7 @@ if ($id > 0 || !empty($ref))
 			$genallowed = ($user->rights->projet->lire);
 			$delallowed = ($user->rights->projet->creer);
 
-			print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+			print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

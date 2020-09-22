@@ -26,12 +26,13 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "boxes"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 // Security check
@@ -61,6 +62,7 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 $staticrecruitmentjobposition = new RecruitmentJobPosition($db);
+$staticrecruitmentcandidature = new RecruitmentCandidature($db);
 
 llxHeader("", $langs->trans("RecruitmentArea"));
 
@@ -108,14 +110,14 @@ if ($conf->use_javascript_ajax)
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Recruitment").'</th></tr>'."\n";
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("JobPositions").'</th></tr>'."\n";
 		$listofstatus = array(0, 1, 3, 9);
 		foreach ($listofstatus as $status)
 		{
-			$dataseries[] = array($staticrecruitmentjobposition->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentjobposition->LibStatut($status, 1), ENT_QUOTES), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 			if ($status == RecruitmentJobPosition::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-			if ($status == RecruitmentJobPosition::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-			if ($status == RecruitmentJobPosition::STATUS_RECRUITED) $colorseries[$status] = $badgeStatus4;
+			if ($status == RecruitmentJobPosition::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus4;
+			if ($status == RecruitmentJobPosition::STATUS_RECRUITED) $colorseries[$status] = $badgeStatus6;
 			if ($status == RecruitmentJobPosition::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
 
 			if (empty($conf->use_javascript_ajax))
@@ -139,6 +141,84 @@ if ($conf->use_javascript_ajax)
 			$dolgraph->SetType(array('pie'));
 			$dolgraph->SetHeight('200');
 			$dolgraph->draw('idgraphstatus');
+			print $dolgraph->show($totalnb ? 0 : 1);
+
+			print '</td></tr>';
+		}
+		print "</table>";
+		print "</div>";
+
+		print "<br>";
+	} else {
+		dol_print_error($db);
+	}
+
+	$sql = "SELECT COUNT(t.rowid) as nb, status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as t";
+	$sql .= " GROUP BY t.status";
+	$sql .= " ORDER BY t.status ASC";
+	$resql = $db->query($sql);
+
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		$totalnb = 0;
+		$dataseries = array();
+		$colorseries = array();
+		$vals = array();
+
+		include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$vals[$obj->status] = $obj->nb;
+
+				$totalnb += $obj->nb;
+			}
+			$i++;
+		}
+		$db->free($resql);
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder nohover centpercent">';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Candidatures").'</th></tr>'."\n";
+		$listofstatus = array(0, 1, 3, 5, 8, 9);
+		foreach ($listofstatus as $status)
+		{
+			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentcandidature->LibStatut($status, 1), ENT_QUOTES), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+			if ($status == RecruitmentCandidature::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+			if ($status == RecruitmentCandidature::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+			if ($status == RecruitmentCandidature::STATUS_CONTRACT_PROPOSED) $colorseries[$status] = $badgeStatus4;
+			if ($status == RecruitmentCandidature::STATUS_CONTRACT_SIGNED) $colorseries[$status] = $badgeStatus5;
+			if ($status == RecruitmentCandidature::STATUS_REFUSED) $colorseries[$status] = $badgeStatus9;
+			if ($status == RecruitmentCandidature::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
+
+			if (empty($conf->use_javascript_ajax))
+			{
+				print '<tr class="oddeven">';
+				print '<td>'.$staticrecruitmentcandidature->LibStatut($status, 0).'</td>';
+				print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+				print "</tr>\n";
+			}
+		}
+		if ($conf->use_javascript_ajax)
+		{
+			print '<tr><td class="center" colspan="2">';
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->SetDataColor(array_values($colorseries));
+			$dolgraph->setShowLegend(2);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			$dolgraph->SetHeight('200');
+			$dolgraph->draw('idgraphstatuscandidature');
 			print $dolgraph->show($totalnb ? 0 : 1);
 
 			print '</td></tr>';
@@ -237,19 +317,18 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-$NBMAX = 3;
-$max = 3;
+$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-/* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT */
-// Last modified myobject
-if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
+// Last modified job position
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
 {
-	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
-	$sql.= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND s.fk_soc = $socid";
+	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid)	$sql .= " AND s.fk_soc = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -264,16 +343,16 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 		print '<th colspan="2">';
 		print $langs->trans("BoxTitleLatestModifiedJobPositions", $max);
 		print '</th>';
-		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentjobposition_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
 		if ($num)
 		{
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$staticrecruitmentjobposition->id=$objp->rowid;
-				$staticrecruitmentjobposition->ref=$objp->ref;
-				$staticrecruitmentjobposition->label=$objp->label;
+				$staticrecruitmentjobposition->id = $objp->rowid;
+				$staticrecruitmentjobposition->ref = $objp->ref;
+				$staticrecruitmentjobposition->label = $objp->label;
 				$staticrecruitmentjobposition->status = $objp->status;
 				$staticrecruitmentjobposition->date_creation = $objp->date_creation;
 
@@ -282,13 +361,16 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 				print '<td class="right nowrap">';
 				print "</td>";
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '<td class="right nowrap">';
+				print $staticrecruitmentjobposition->getLibStatut(3);
+				print "</td>";
 				print '</tr>';
 				$i++;
 			}
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	} else {
@@ -296,6 +378,66 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 	}
 }
 
+// Last modified job position
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
+{
+	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid)	$sql .= " AND s.fk_soc = $socid";
+	$sql .= " ORDER BY rc.tms DESC";
+	$sql .= $db->plimit($max, 0);
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="2">';
+		print $langs->trans("BoxTitleLatestModifiedCandidatures", $max);
+		print '</th>';
+		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '</tr>';
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+				$staticrecruitmentcandidature->id = $objp->rowid;
+				$staticrecruitmentcandidature->ref = $objp->ref;
+				$staticrecruitmentcandidature->email = $objp->email;
+				$staticrecruitmentcandidature->status = $objp->status;
+				$staticrecruitmentcandidature->date_creation = $objp->date_creation;
+				$staticrecruitmentcandidature->firstname = $objp->firstname;
+				$staticrecruitmentcandidature->lastname = $objp->lastname;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
+				print '<td class="right nowrap">';
+				print "</td>";
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '<td class="right nowrap">';
+				print $staticrecruitmentcandidature->getLibStatut(3);
+				print "</td>";
+				print '</tr>';
+				$i++;
+			}
+
+			$db->free($resql);
+		} else {
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		}
+		print "</table><br>";
+	} else {
+		dol_print_error($db);
+	}
+}
 
 print '</div></div></div>';
 

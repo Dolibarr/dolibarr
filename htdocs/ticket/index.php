@@ -142,11 +142,11 @@ if (!$user->rights->societe->client->voir && !$socid) {
 
 // External users restriction
 if ($user->socid > 0) {
-    $sql .= " AND t.fk_soc='".$user->socid."'";
+    $sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
     // For internals users,
     if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-        $sql .= " AND t.fk_user_assign=".$user->id;
+        $sql .= " AND t.fk_user_assign = ".$user->id;
     }
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -305,7 +305,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 
 if ($user->socid > 0) {
-    $sql .= " AND t.fk_soc='".$user->socid."'";
+    $sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
     // Restricted to assigned user only
     if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {

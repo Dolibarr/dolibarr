@@ -277,8 +277,8 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 			$sql .= ", ".(!empty($this->modelpdf) ? ("'".$this->db->escape($this->modelpdf)."'") : "NULL");
 			$sql .= ", '".$this->db->escape($user->id)."'";
-			$sql .= ", ".(!empty($facsrc->fk_project) ? "'".$facsrc->fk_project."'" : "null");
-			$sql .= ", ".(!empty($facsrc->fk_account) ? "'".$facsrc->fk_account."'" : "null");
+			$sql .= ", ".(!empty($facsrc->fk_project) ? "'".$this->db->escape($facsrc->fk_project)."'" : "null");
+			$sql .= ", ".(!empty($facsrc->fk_account) ? "'".$this->db->escape($facsrc->fk_account)."'" : "null");
 			$sql .= ", ".($facsrc->cond_reglement_id > 0 ? $this->db->escape($facsrc->cond_reglement_id) : "null");
 			$sql .= ", ".($facsrc->mode_reglement_id > 0 ? $this->db->escape($facsrc->mode_reglement_id) : "null");
 			$sql .= ", ".$this->usenewprice;
@@ -921,7 +921,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", fk_unit";
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ") VALUES (";
-			$sql .= "'".$facid."'";
+			$sql .= " ".((int) $facid);
 			$sql .= ", ".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 			$sql .= ", '".$this->db->escape($desc)."'";
 			$sql .= ", ".price2num($pu_ht);
@@ -932,7 +932,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", '".$this->db->escape($localtaxes_type[0])."'";
 			$sql .= ", ".price2num($txlocaltax2);
 			$sql .= ", '".$this->db->escape($localtaxes_type[2])."'";
-			$sql .= ", ".(!empty($fk_product) ? "'".$fk_product."'" : "null");
+			$sql .= ", ".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".price2num($remise_percent);
 			$sql .= ", ".price2num($pu_ht);
@@ -1083,7 +1083,7 @@ class FactureRec extends CommonInvoice
 	        }
 
 	        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
-	        $sql .= "fk_facture = '".$facid."'";
+	        $sql .= "fk_facture = ".((int) $facid);
 	        $sql .= ", label=".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 	        $sql .= ", description='".$this->db->escape($desc)."'";
 	        $sql .= ", price=".price2num($pu_ht);
@@ -1094,7 +1094,7 @@ class FactureRec extends CommonInvoice
 		    $sql .= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
 		    $sql .= ", localtax2_tx=".$txlocaltax2;
 		    $sql .= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
-	        $sql .= ", fk_product=".(!empty($fk_product) ? "'".$fk_product."'" : "null");
+		    $sql .= ", fk_product=".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
 	        $sql .= ", product_type=".$product_type;
 	        $sql .= ", remise_percent='".price2num($remise_percent)."'";
 	        $sql .= ", subprice='".price2num($pu_ht)."'";
@@ -1194,13 +1194,13 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
-		$sql .= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
+		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($today)."')";
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
 		if ($restrictioninvoiceid > 0)
 			$sql .= ' AND rowid = '.$restrictioninvoiceid;
-		$sql .= $db->order('entity', 'ASC');
+		$sql .= $this->db->order('entity', 'ASC');
 		//print $sql;exit;
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
@@ -1208,11 +1208,11 @@ class FactureRec extends CommonInvoice
 		);
 		$reshook = $hookmanager->executeHooks('beforeCreationOfRecurringInvoices', $parameters, $sql); // note that $sql might be modified by hooks
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$i = 0;
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
 			if ($num)
 				$this->output .= $langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
@@ -1222,14 +1222,14 @@ class FactureRec extends CommonInvoice
 
 			while ($i < $num)     // Loop on each template invoice. If $num = 0, test is false at first pass.
 			{
-				$line = $db->fetch_object($resql);
+				$line = $this->db->fetch_object($resql);
 
-				$db->begin();
+				$this->db->begin();
 
 				$invoiceidgenerated = 0;
 
 				$facture = null;
-				$facturerec = new FactureRec($db);
+				$facturerec = new FactureRec($this->db);
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0)
@@ -1239,7 +1239,7 @@ class FactureRec extends CommonInvoice
 
 					dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
-					$facture = new Facture($db);
+					$facture = new Facture($this->db);
 					$facture->fac_rec = $facturerec->id; // We will create $facture from this recurring invoice
 					$facture->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
@@ -1286,12 +1286,12 @@ class FactureRec extends CommonInvoice
 
 				if (!$error && $invoiceidgenerated >= 0)
 				{
-					$db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
 					$this->output .= $langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
 				} else {
-					$db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$parameters = array(
@@ -1308,7 +1308,7 @@ class FactureRec extends CommonInvoice
 			}
 
 			$conf->entity = $saventity; // Restore entity context
-		} else dol_print_error($db);
+		} else dol_print_error($this->db);
 
 		$this->output = trim($this->output);
 
@@ -1555,6 +1555,8 @@ class FactureRec extends CommonInvoice
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

@@ -158,19 +158,18 @@ if ($action == 'setlevel')
 	}
 }
 
+
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("SyslogSetup"));
 
 $form = new Form($db);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SyslogSetup"), $linkback, 'title_setup');
 print '<br>';
-
-$def = array();
 
 $syslogfacility = $defaultsyslogfacility = dolibarr_get_const($db, "SYSLOG_FACILITY", 0);
 $syslogfile = $defaultsyslogfile = dolibarr_get_const($db, "SYSLOG_FILE", 0);
@@ -188,7 +187,7 @@ if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
 //print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
 
 // Output mode
-print load_fiche_titre($langs->trans("SyslogOutput"));
+print load_fiche_titre($langs->trans("SyslogOutput"), '', '');
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -260,7 +259,7 @@ print "</form>\n";
 
 print '<br>'."\n\n";
 
-print load_fiche_titre($langs->trans("SyslogLevel"));
+print load_fiche_titre($langs->trans("SyslogLevel"), '', '');
 
 // Level
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

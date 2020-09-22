@@ -42,7 +42,7 @@ accessforbidden();
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -167,7 +167,7 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT', 'none'); // No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 

@@ -162,18 +162,19 @@ class Translate
      *
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
      *
-	 *  @param	string	$domain      		File name to load (.lang file). Must be "file" or "file@module" for module language files:
- 	 *										If $domain is "file@module" instead of "file" then we look for module lang file
-	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
-	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
-	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
-	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
-	 * 	@param	int		$forcelangdir		To force a different lang directory
-	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
-	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *  @param	string	$domain      				File name to load (.lang file). Must be "file" or "file@module" for module language files:
+ 	 *												If $domain is "file@module" instead of "file" then we look for module lang file
+	 *												in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
+	 *												then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
+	 *  @param	integer	$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
+	 * 	@param	int		$stopafterdirection			Stop when the DIRECTION tag is found (optimize speed)
+	 * 	@param	int		$forcelangdir				To force a different lang directory
+	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
+	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
+	 *	@return	int									<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs()
 	 */
-	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
+	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0)
 	{
 		global $conf, $db;
 
@@ -204,7 +205,8 @@ class Translate
 		}
 
         // Check cache
-		if (!empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain
+		if (!empty($this->_tab_loaded[$newdomain])
+			&& ($this->_tab_loaded[$newdomain] != 2 || empty($forceloadifalreadynotfound))) // File already loaded and found and not forced for this domain
 		{
 			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
@@ -517,12 +519,21 @@ class Translate
 
 		if ($fileread) $this->_tab_loaded[$newdomain] = 1; // Set domain file as loaded
 
-		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Marque ce cas comme non trouve (no lines found for language)
+		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Mark this case as not found (no lines found for language)
 
 		return 1;
 	}
 
-
+	/**
+	 * Get information with result of loading data for domain
+	 *
+	 * @param	string		$domain		Domain to check
+	 * @return 	int						0, 1, 2...
+	 */
+	public function isLoaded($domain)
+	{
+		return $this->_tab_loaded[$domain];
+	}
 
 	/**
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).

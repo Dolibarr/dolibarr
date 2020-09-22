@@ -173,9 +173,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param1"]="222";
         $_POST["param1"]="333";
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
-        $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
+        $_GET["param3"]='"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
         $_GET["param4"]='../dir';
         $_GET["param5"]="a_1-b";
+        $_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
+        $_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
+        $_POST["param8"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 
         // Test int
         $result=GETPOST('id', 'int');              // Must return nothing
@@ -197,7 +200,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param3", 'alpha');  // Must return string sanitized from char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'a/b#e(pr)qq-rr\cc');
+        $this->assertEquals($result, 'na/b#e(pr)qq-rr\cc');
 
         $result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
         print __METHOD__." result=".$result."\n";
@@ -218,11 +221,25 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
         $result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '');
+        $this->assertEquals('', $result);
 
         $result=GETPOST("param5", 'aZ09');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, $_GET["param5"]);
+        $this->assertEquals($_GET["param5"], $result);
+
+        $result=GETPOST("param6", 'nohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('">', $result);
+
+        // With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
+        $result=GETPOST("param7", 'restricthtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
+
+        // With alphanohtml, we must convert the html entities like &#110;
+        $result=GETPOST("param8", 'alphanohtml');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals("Hacker<svg onload='console.log(123)'", $result);
 
         return $result;
     }

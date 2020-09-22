@@ -48,7 +48,7 @@ $langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'b
 
 $socid = GETPOST('socid', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -62,7 +62,7 @@ $search_societe = GETPOST('search_societe', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
@@ -314,7 +314,7 @@ if ($search_multicurrency_montant_vat != '') $sql .= natural_search('sp.multicur
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('sp.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql .= ' AND s.rowid = '.$socid;
-if ($search_status >= 0 && $search_status != '') $sql .= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
+if ($search_status >= 0 && $search_status != '') $sql .= ' AND sp.fk_statut IN ('.$db->sanitize($db->escape($search_status)).')';
 $sql .= dolSqlDateFilter("sp.date_livraison", $day, $month, $year);
 $sql .= dolSqlDateFilter("sp.date_valid", $dayvalid, $monthvalid, $yearvalid);
 if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;

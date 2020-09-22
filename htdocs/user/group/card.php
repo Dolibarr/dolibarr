@@ -50,7 +50,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->loadLangs(array('users', 'other'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
@@ -129,9 +129,8 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= trim(GETPOST("nom", 'nohtml'));
-				//$object->nom = $object->name; // For backward compatibility
-				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+				$object->name	= GETPOST("nom", 'nohtml');
+				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -204,9 +203,8 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= trim(GETPOST("nom", 'nohtml'));
-			//$object->nom = $object->name; // For backward compatibility
-			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+			$object->name	= GETPOST("nom", 'nohtml');
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -495,7 +493,7 @@ else {
 	        $genallowed = $user->rights->user->user->creer;
 	        $delallowed = $user->rights->user->user->supprimer;
 
-	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 	        // Show links to link elements
 	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);

@@ -312,7 +312,7 @@ class printing_printgcp extends PrintingDriver
         $fileprint .= '/'.$file;
         $mimetype = dol_mimetype($fileprint);
         // select printer uri for module order, propal,...
-        $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
+        $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".$user->id;
         $result = $this->db->query($sql);
         if ($result)
         {

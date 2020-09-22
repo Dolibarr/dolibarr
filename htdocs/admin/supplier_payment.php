@@ -33,10 +33,10 @@ $langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scan_dir', 'alpha');
+$scandir = GETPOST('scandir', 'alpha');
 $type = 'supplier_payment';
 
 
@@ -179,7 +179,7 @@ print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)
@@ -267,7 +267,7 @@ foreach ($dirmodels as $reldir)
                             {
                                 print img_picto($langs->trans("Activated"), 'switch_on');
                             } else {
-                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
 

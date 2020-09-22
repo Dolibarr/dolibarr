@@ -34,7 +34,7 @@ $langs->loadLangs(array("website", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -51,7 +51,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -348,27 +348,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    /*$objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $objref . '/' . $objref . '.pdf';
-	    $filedir = $conf->website->dir_output . '/' . $objref;
-	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->website->read;	// If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->website->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('website', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
-
-	    // Show links to link elements
-	    /*$linktoelem = $form->showLinkToObjectBlock($object, null, array('websiteaccount'));
-	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-		*/
-
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+	    /*
 	    $MAXEVENT = 10;
 
 	    // List of actions on element
-	    /*
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
 	    $somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
  * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
@@ -64,7 +64,6 @@ if ($user->socid > 0) $id = $user->socid;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $action = GETPOST('action', 'aZ09');
-$mode = GETPOST("mode");
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -204,7 +203,7 @@ if (empty($reshook))
         $object->oldcopy = dol_clone($object);
 
         // Fill array 'array_options' with data from update form
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
         if ($ret < 0) $error++;
         if (!$error)
         {
@@ -592,7 +591,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -610,7 +609,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -628,7 +627,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
@@ -644,7 +643,7 @@ if ($object->id > 0)
 		$icon = 'bill';
 		if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+		$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';

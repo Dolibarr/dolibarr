@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2019 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
@@ -41,12 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *	Class to manage proposals
  */
 class Propal extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -825,7 +828,6 @@ class Propal extends CommonObject
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
 			$line->fetch($rowid);
-			$line->fetch_optionals();
 
 			$staticline = clone $line;
 
@@ -1059,10 +1061,10 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "NULL");
+		$sql .= ", ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
@@ -1494,7 +1496,8 @@ class Propal extends CommonObject
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
-				$this->modelpdf             = $obj->model_pdf;
+				$this->model_pdf            = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -1599,7 +1602,7 @@ class Propal extends CommonObject
 		if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
 		if (isset($this->note) || isset($this->note_private)) $this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 		if (!empty($this->duree_validite)) $this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 
@@ -2504,12 +2507,12 @@ class Propal extends CommonObject
 	 *	Close the commercial proposal
 	 *
 	 *	@param      User	$user		Object user that close
-	 *	@param      int		$statut		Statut
+	 *	@param      int		$status		Status
 	 *	@param      string	$note		Complete private note with this note
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-    public function cloture($user, $statut, $note = "", $notrigger = 0)
+    public function cloture($user, $status, $note = "", $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2521,19 +2524,19 @@ class Propal extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
+			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 			$triggerName = 'PROPAL_CLOSE_REFUSED';
 
-			if ($statut == self::STATUS_SIGNED)
+			if ($status == self::STATUS_SIGNED)
 			{
 				$triggerName = 'PROPAL_CLOSE_SIGNED';
-				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
+				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
 				$soc = new Societe($this->db);
@@ -2547,7 +2550,7 @@ class Propal extends CommonObject
 					return -2;
 				}
 			}
-			if ($statut == self::STATUS_BILLED)	// Why this ?
+			if ($status == self::STATUS_BILLED)	// ->cloture() can also be called when we set it to billed, after setting it to signed
 			{
 				$triggerName = 'PROPAL_CLASSIFY_BILLED';
 			}
@@ -2569,7 +2572,7 @@ class Propal extends CommonObject
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->statut = $statut;
+				$this->statut = $status;
 				$this->date_cloture = $now;
 				$this->note_private = $newprivatenote;
 			}
@@ -2911,9 +2914,9 @@ class Propal extends CommonObject
 
 		if (!$error)
 		{
-                    $main = MAIN_DB_PREFIX.'propaldet';
-                    $ef = $main."_extrafields";
-                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = ".$this->id.")";
+            $main = MAIN_DB_PREFIX.'propaldet';
+            $ef = $main."_extrafields";
+            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
@@ -2930,6 +2933,9 @@ class Propal extends CommonObject
 
 					if (!$error)
 					{
+						// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+						$this->deleteEcmFiles();
+
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
 						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
@@ -3341,6 +3347,8 @@ class Propal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -3539,7 +3547,7 @@ class Propal extends CommonObject
 
 		if ($user->rights->propal->lire)
 		{
-			$label = '<u>'.$langs->trans("Proposal").'</u>';
+			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Proposal").'</u>';
 			if (!empty($this->ref))
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!empty($this->ref_client))
@@ -3669,8 +3677,8 @@ class Propal extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->PROPALE_ADDON_PDF)) {
 				$modele = $conf->global->PROPALE_ADDON_PDF;
 			}

@@ -67,13 +67,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 if ($id > 0 || !empty($ref)) {
-    $ret = $object->fetch($id, $ref);
-	//    if ($ret > 0)
-	//        $ret = $object->fetch_thirdparty();
-    if ($ret <= 0) {
-        setEventMessages($object->error, $object->errors, 'errors');
-        $action = '';
-    }
+	$ret = $object->fetch($id, $ref);
+	if ($ret <= 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
 }
 
 
@@ -109,32 +107,32 @@ if (empty($reshook))
 		$object->fax = GETPOST("fax");
 
 		if (!empty($object->label)) {
-	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost(null, $object);
-	        if ($ret < 0) {
-	            $error++;
-	            $action = 'create';
-	        }
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
+				$action = 'create';
+			}
 
-	        if (!$error) {
-	            $id = $object->create($user);
-	            if ($id > 0) {
-	                setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			if (!$error) {
+				$id = $object->create($user);
+				if ($id > 0) {
+					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
-	                if (!empty($backtopage)) {
-	                    header("Location: ".$backtopage);
-	                    exit;
-	                } else {
-	                    header("Location: card.php?id=".$id);
-	                    exit;
-	                }
-	            } else {
-	                $action = 'create';
-	                setEventMessages($object->error, $object->errors, 'errors');
-	            }
-	        }
+					if (!empty($backtopage)) {
+						header("Location: ".$backtopage);
+						exit;
+					} else {
+						header("Location: card.php?id=".$id);
+						exit;
+					}
+				} else {
+					$action = 'create';
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
 		} else {
 			setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
 			$action = "create"; // Force retour sur page creation
@@ -148,7 +146,7 @@ if (empty($reshook))
 		$result = $object->delete($user);
 		if ($result > 0)
 		{
-		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
 			exit;
 		} else {
@@ -174,14 +172,14 @@ if (empty($reshook))
 			$object->phone = GETPOST("phone");
 			$object->fax = GETPOST("fax");
 
-	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost(null, $object);
-	        if ($ret < 0)   $error++;
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0)   $error++;
 
-	        if (!$error) {
-	            $ret = $object->update($id, $user);
-	            if ($ret < 0)   $error++;
-	        }
+			if (!$error) {
+				$ret = $object->update($id, $user);
+				if ($ret < 0)   $error++;
+			}
 
 			if ($error) {
 				$action = 'edit';
@@ -189,26 +187,26 @@ if (empty($reshook))
 			} else {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
-	            $action = '';
-	        }
+				$action = '';
+			}
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-	    $object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object);
 
-	    // Fill array 'array_options' with data from update form
-	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
-	    if ($ret < 0) $error++;
-	    if (!$error) {
-	        $result = $object->insertExtraFields();
-	        if ($result < 0) {
-	            setEventMessages($object->error, $object->errors, 'errors');
-	            $error++;
-	        }
-	    }
-	    if ($error) $action = 'edit_extras';
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		if ($ret < 0) $error++;
+		if (!$error) {
+			$result = $object->insertExtraFields();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) $action = 'edit_extras';
 	}
 
 	if ($cancel == $langs->trans("Cancel"))
@@ -291,10 +289,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Phone / Fax
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 	print img_picto('', 'object_phoning', 'class="paddingright"');
 	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
 	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
@@ -314,8 +312,8 @@ if ($action == 'create')
 	print '</select>';
 	print '</td></tr>';
 
-    // Other attributes
-    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	if ($conf->categorie->enabled) {
 		// Categories
@@ -336,7 +334,7 @@ if ($action == 'create')
 
 	print '</form>';
 } else {
-    $id = GETPOST("id", 'int');
+	$id = GETPOST("id", 'int');
 	if ($id > 0 || $ref)
 	{
 		$object = new Entrepot($db);
@@ -378,18 +376,18 @@ if ($action == 'create')
 
 			$morehtmlref = '<div class="refidno">';
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
-        	$morehtmlref .= '</div>';
+			$morehtmlref .= '</div>';
 
-            $shownav = 1;
-            if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+			$shownav = 1;
+			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-        	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
-        	print '<div class="fichecenter">';
-        	print '<div class="fichehalfleft">';
-        	print '<div class="underbanner clearboth"></div>';
+			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
+			print '<div class="underbanner clearboth"></div>';
 
-        	print '<table class="border centpercent tableforfield">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Parent entrepot
 			$parentwarehouse = new Entrepot($db);
@@ -412,8 +410,8 @@ if ($action == 'create')
 
 			// Nb of products
 			print '<tr><td>'.$langs->trans("NumberOfProducts").'</td><td>';
-            $valtoshow = price2num($calcproducts['nb'], 'MS');
-            print empty($valtoshow) ? '0' : $valtoshow;
+			$valtoshow = price2num($calcproducts['nb'], 'MS');
+			print empty($valtoshow) ? '0' : $valtoshow;
 			print "</td></tr>";
 
 			print '</table>';
@@ -434,7 +432,7 @@ if ($action == 'create')
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -452,14 +450,16 @@ if ($action == 'create')
 				print "</td></tr>";
 			}
 
-            // Other attributes
-            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+			// Other attributes
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
+
 			print "</table>";
 
 			print '</div>';
@@ -509,22 +509,22 @@ if ($action == 'create')
 			print "<tr class=\"liste_titre\">";
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-            print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            if (!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
-            print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+			print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-                print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            }
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-                print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-            }
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			}
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			}
 			if ($user->rights->stock->mouvement->creer) {
-                print_liste_field_titre('');
-            }
+				print_liste_field_titre('');
+			}
 			if ($user->rights->stock->creer) {
-                print_liste_field_titre('');
-            }
+				print_liste_field_titre('');
+			}
 			print "</tr>\n";
 
 			$totalunit = 0;
@@ -532,7 +532,7 @@ if ($action == 'create')
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql .= " ps.reel as value";
-            if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ",fk_unit";
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ",fk_unit";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -555,7 +555,7 @@ if ($action == 'create')
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql .= " WHERE fk_product=".$objp->rowid;
-						$sql .= " AND lang='".$langs->getDefaultLang()."'";
+						$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 						$sql .= " LIMIT 1";
 
 						$result = $db->query($sql);
@@ -589,35 +589,35 @@ if ($action == 'create')
 					print '</td>';
 					$totalunit += $objp->value;
 
-                    if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-                        // Units
-                        print '<td align="left">';
-                        if (is_null($productstatic->fk_unit))$productstatic->fk_unit = 1;
-                        print $langs->trans($productstatic->getLabelOfUnit());
-                        print '</td>';
-                    }
-                    // Price buy PMP
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+						// Units
+						print '<td align="left">';
+						if (is_null($productstatic->fk_unit))$productstatic->fk_unit = 1;
+						print $langs->trans($productstatic->getLabelOfUnit());
+						print '</td>';
+					}
+					// Price buy PMP
 					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
-                    // Total PMP
+					// Total PMP
 					print '<td class="right">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
-                    // Price sell min
-                    if (empty($conf->global->PRODUIT_MULTIPRICES))
-                    {
-                        $pricemin = $objp->price;
-                        print '<td class="right">';
-                        print price(price2num($pricemin, 'MU'), 1);
-                        print '</td>';
-                        // Total sell min
-                        print '<td class="right">';
-                        print price(price2num($pricemin * $objp->value, 'MT'), 1);
-                        print '</td>';
-                    }
-                    $totalvaluesell += price2num($pricemin * $objp->value, 'MT');
+					// Price sell min
+					if (empty($conf->global->PRODUIT_MULTIPRICES))
+					{
+						$pricemin = $objp->price;
+						print '<td class="right">';
+						print price(price2num($pricemin, 'MU'), 1);
+						print '</td>';
+						// Total sell min
+						print '<td class="right">';
+						print price(price2num($pricemin * $objp->value, 'MT'), 1);
+						print '</td>';
+					}
+					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
-                    if ($user->rights->stock->mouvement->creer)
+					if ($user->rights->stock->mouvement->creer)
 					{
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
@@ -629,15 +629,15 @@ if ($action == 'create')
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
-                    }
-                    if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-                        if ($i == 0) $units = $productstatic->fk_unit;
-                        elseif ($productstatic->fk_unit != $units) $sameunits = false;
-                    }
-                    print "</tr>";
-                    $i++;
-                }
-                $db->free($resql);
+					}
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+						if ($i == 0) $units = $productstatic->fk_unit;
+						elseif ($productstatic->fk_unit != $units) $sameunits = false;
+					}
+					print "</tr>";
+					$i++;
+				}
+				$db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total right">';
@@ -646,14 +646,14 @@ if ($action == 'create')
 				print '</td>';
 				print '<td class="liste_total">';
 				if (empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) print $langs->trans($productstatic->getLabelOfUnit());
-                print '</td>';
-                print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
-                if (empty($conf->global->PRODUIT_MULTIPRICES))
-                {
-                    print '<td class="liste_total">&nbsp;</td>';
-                    print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
-                }
-                print '<td class="liste_total">&nbsp;</td>';
+				print '</td>';
+				print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
+				if (empty($conf->global->PRODUIT_MULTIPRICES))
+				{
+					print '<td class="liste_total">&nbsp;</td>';
+					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
+				}
+				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
 			} else {
@@ -719,10 +719,10 @@ if ($action == 'create')
 			print '</td></tr>';
 
 			// Phone / Fax
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning', 'class="paddingright"');
 			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
@@ -741,14 +741,15 @@ if ($action == 'create')
 			print '</select>';
 			print '</td></tr>';
 
-            // Other attributes
-            $parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
-            $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-            print $hookmanager->resPrint;
-            if (empty($reshook))
-            {
-                print $object->showOptionals($extrafields, 'edit', $parameters);
-            }
+			// Other attributes
+			$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+			if (empty($reshook))
+			{
+				print $object->showOptionals($extrafields, 'edit', $parameters);
+			}
+
 			// Tags-Categories
 			if ($conf->categorie->enabled)
 			{
@@ -763,6 +764,7 @@ if ($action == 'create')
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
+
 			print '</table>';
 
 			dol_fiche_end();
@@ -779,46 +781,43 @@ if ($action == 'create')
 }
 
 /*
- * Documents generes
+ * Documents generated
  */
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+$modulepart = 'stock';
+
+if ($action != 'create' && $action != 'edit' && $action != 'delete')
 {
+	print '<br>';
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	print '<a name="builddoc"></a>'; // ancre
+
+	// Documents
+	$objectref = dol_sanitizeFileName($object->ref);
+	$relativepath = $object->ref.'/'.$objectref.'.pdf';
+	$filedir = $conf->stock->dir_output.'/'.$objectref;
+	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+	$genallowed = $usercanread;
+	$delallowed = $usercancreate;
 	$modulepart = 'stock';
 
-	if ($action != 'create' && $action != 'edit' && $action != 'delete')
-	{
-		print '<br/>';
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
+	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	$somethingshown = $formfile->numoffiles;
 
-	    // Documents
-	    $objectref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref.'/'.$objectref.'.pdf';
-	    $filedir = $conf->stock->dir_output.'/'.$objectref;
-	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	    $genallowed = $usercanread;
-	    $delallowed = $usercancreate;
-	    $modulepart = 'stock';
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
-	    $somethingshown = $formfile->numoffiles;
+	$MAXEVENT = 10;
 
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	$morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+	$morehtmlright .= $langs->trans("SeeAll");
+	$morehtmlright .= '</a>';
 
-	    $MAXEVENT = 10;
+	// List of actions on element
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
 
-	    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-	    $morehtmlright .= $langs->trans("SeeAll");
-	    $morehtmlright .= '</a>';
-
-	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
-
-	    print '</div></div></div>';
-	}
+	print '</div></div></div>';
 }
 
 // End of page

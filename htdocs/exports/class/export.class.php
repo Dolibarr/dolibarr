@@ -338,7 +338,7 @@ class Export
 				}
 				break;
 			default:
-			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type '".$InfoFieldList[0]."' (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERR);
+			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type ".$InfoFieldList[0]." (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERR);
 		}
 
 		return $szFilterQuery;
@@ -705,10 +705,10 @@ class Export
 		$sql .= 'filter';
 		$sql .= ') VALUES (';
 		$sql .= "'".$this->db->escape($this->model_name)."',";
-		$sql .= "'".$this->db->escape($this->datatoexport)."',";
-		$sql .= "'".$this->db->escape($this->hexa)."',";
-		$sql .= "'".$user->id."',";
-		$sql .= "'".$this->db->escape($this->hexafiltervalue)."'";
+		$sql .= " '".$this->db->escape($this->datatoexport)."',";
+		$sql .= " '".$this->db->escape($this->hexa)."',";
+		$sql .= ' '.($user->id > 0 ? $user->id : 'null').",";
+		$sql .= " '".$this->db->escape($this->hexafiltervalue)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);

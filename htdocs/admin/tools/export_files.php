@@ -30,17 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
-$file = trim(GETPOST('zipfilename_template', 'alpha'));
+$file = GETPOST('zipfilename_template', 'alpha');
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);
 $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "date";

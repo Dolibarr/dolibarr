@@ -116,26 +116,26 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($search_ref)
 	{
-		$sql .= " AND f.ref LIKE '%".$search_ref."%'";
+		$sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
 	}
 	if ($search_ref_supplier)
 	{
-		$sql .= " AND f.ref_supplier LIKE '%".$search_ref_supplier."%'";
+		$sql .= " AND f.ref_supplier LIKE '%".$db->escape($search_ref_supplier)."%'";
 	}
 
 	if ($search_company)
 	{
-		$sql .= " AND s.nom LIKE '%".$search_company."%'";
+		$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 	}
 
 	if ($search_amount_no_tax)
 	{
-		$sql .= " AND f.total_ht = '".$search_amount_no_tax."'";
+		$sql .= " AND f.total_ht = '".$db->escape($search_amount_no_tax)."'";
 	}
 
 	if ($search_amount_all_tax)
 	{
-		$sql .= " AND f.total_ttc = '".$search_amount_all_tax."'";
+		$sql .= " AND f.total_ttc = '".$db->escape($search_amount_all_tax)."'";
 	}
 
 	if (dol_strlen(GETPOST('sf_re')) > 0)

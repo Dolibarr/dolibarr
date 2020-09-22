@@ -56,7 +56,7 @@ if (!$sortfield) $sortfield = "s.datep,s.rowid";
 if (!$sortorder) $sortorder = "DESC,DESC";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$filtre = GETPOST("filtre", 'none');
+$filtre = GETPOST("filtre", 'restricthtml');
 
 if (!GETPOST('typeid', 'int'))
 {

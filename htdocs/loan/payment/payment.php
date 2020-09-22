@@ -160,8 +160,8 @@ if ($action == 'add_payment')
 			$payment->amount_interest	= $pay_amount_insurance;
 			$payment->paymenttype       = GETPOST('paymenttype', 'int');
 			$payment->num_payment		= GETPOST('num_payment');
-			$payment->note_private      = GETPOST('note_private', 'none');
-			$payment->note_public       = GETPOST('note_public', 'none');
+			$payment->note_private      = GETPOST('note_private', 'restricthtml');
+			$payment->note_public       = GETPOST('note_public', 'restricthtml');
 
 			if (!$error)
 			{
@@ -314,7 +314,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST["paymenttype"]) ? $_POST["paymenttype"] : $loan->paymenttype, "paymenttype");
+	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype", 'alphanohtml') : $loan->fk_typepayment, "paymenttype");
 	print "</td>\n";
 	print '</tr>';
 
@@ -328,7 +328,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
+	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("NotePrivate").'</td>';

@@ -57,7 +57,7 @@ if ($resql) {
 	}
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -130,7 +130,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
-$head = takepos_prepare_head();
+$head = takepos_admin_prepare_head();
 dol_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
@@ -274,14 +274,6 @@ print img_object('', 'category', 'class="paddingright"').$form->select_all_categ
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
-// VAT Grouped on ticket
-print '<tr class="oddeven"><td>';
-print $langs->trans('TicketVatGrouped');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
-print "</td></tr>\n";
-
 // Sort product
 print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
@@ -372,6 +364,13 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Delayed Pay Button
+print '<tr class="oddeven"><td>';
+print $langs->trans('AllowDelayedPayment');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Numbering module
 //print '<tr class="oddeven"><td>';
 //print $langs->trans("BillsNumberingModule");
@@ -428,14 +427,6 @@ print "</td></tr>\n";
 //
 //print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
 //print "</td></tr>\n";
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("EnableBarOrRestaurantFeatures");
-print '</td>';
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
-print "</td></tr>\n";
 
 print '</table>';
 print '</div>';

@@ -167,7 +167,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 				$object->note_public		= trim($_POST['note_public']);
 				$object->note				= trim($_POST['note']);
 				$object->ref_client			= $_POST['ref_client'];
-				$object->modelpdf = $_POST['model'];
+				$object->model_pdf = $_POST['model'];
 				$object->fk_project			= $_POST['projectid'];
 				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
@@ -199,9 +199,9 @@ if (($action == 'create' || $action == 'add') && !$error)
 							$sql .= ", targettype";
 							$sql .= ") VALUES (";
 							$sql .= $origin_id;
-							$sql .= ", '".$object->origin."'";
+							$sql .= ", '".$db->escape($object->origin)."'";
 							$sql .= ", ".$id;
-							$sql .= ", '".$object->element."'";
+							$sql .= ", '".$db->escape($object->element)."'";
 							$sql .= ")";
 
 							if ($db->query($sql))

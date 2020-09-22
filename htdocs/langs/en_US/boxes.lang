@@ -84,6 +84,7 @@ BoxTitleLastModifiedCustomerBills=Customer Invoices: last %s modified
 BoxTitleLastModifiedCustomerOrders=Sales Orders: last %s modified
 BoxTitleLastModifiedPropals=Latest %s modified proposals
 BoxTitleLatestModifiedJobPositions=Latest %s modified jobs 
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures 
 ForCustomersInvoices=Customers invoices
 ForCustomersOrders=Customers orders
 ForProposals=Proposals
@@ -101,3 +102,6 @@ SuspenseAccountNotDefined=Suspense account isn't defined
 BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
+# Pages
+AccountancyHome=Accountancy
+ValidatedProjects=Validated projects

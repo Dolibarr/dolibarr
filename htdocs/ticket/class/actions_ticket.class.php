@@ -184,7 +184,7 @@ class ActionsTicket
 			// MESSAGE
 
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
 			print '<input type="hidden" name="action" value="set_message">';
 		}
@@ -208,14 +208,25 @@ class ActionsTicket
 			$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
-			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_4, '95%');
+			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
+			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
 			// Deal with format differences (text / HTML)
 			if (dol_textishtml($object->message)) {
+				print '<div class="longmessagecut">';
 				print $object->message;
+				print '</div>';
+				/*print '<div class="clear center">';
+				print $langs->trans("More").'...';
+				print '</div>';*/
 			} else {
+				print '<div class="longmessagecut">';
 				print dol_nl2br($object->message);
+				print '</div>';
+				/*print '<div class="clear center">';
+				print $langs->trans("More").'...';
+				print '</div>';*/
 			}
 
 			//print '<div>' . $object->message . '</div>';
@@ -253,7 +264,7 @@ class ActionsTicket
 		$ret = $this->dao->loadCacheMsgsTicket();
 		if ($ret < 0) dol_print_error($this->dao->db);
 
-		$action = GETPOST('action', 'alpha');
+		$action = GETPOST('action', 'aZ09');
 
 		$this->viewTicketOriginalMessage($user, $action, $object);
 

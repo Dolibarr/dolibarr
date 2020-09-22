@@ -122,7 +122,7 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
         if ($ret < 0) $error++;
 
         if (!$error)
@@ -327,21 +327,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '</td></tr>';
 
     // Eat by
-    print '<tr><td>';
-    print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td><td>';
-    print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td>';
-    print '</tr>';
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+	}
 
     // Sell by
-    print '<tr><td>';
-    print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td><td>';
-    print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td>';
-    print '</tr>';
-
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+	}
     // Other attributes
     $cols = 2;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

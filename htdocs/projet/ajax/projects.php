@@ -35,7 +35,7 @@ require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $discard_closed = GETPOST('discardclosed', 'int');
 

@@ -101,7 +101,7 @@ class AccountancySystem
 	        $sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	        $sql .= " WHERE";
 	        if ($rowid) {
-	            $sql .= " a.rowid = '".$rowid."'";
+	            $sql .= " a.rowid = ".((int) $rowid);
 	        } elseif ($ref) {
 	            $sql .= " a.pcg_version = '".$this->db->escape($ref)."'";
 	        }

@@ -34,6 +34,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (!empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -43,6 +44,8 @@ if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/
  */
 class Reception extends CommonObject
 {
+	use CommonIncoterm;
+
 	public $element = "reception";
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
@@ -400,7 +403,8 @@ class Reception extends CommonObject
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->model_pdf            = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
@@ -783,7 +787,7 @@ class Reception extends CommonObject
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note = trim($this->note_private);
 		if (isset($this->note_public)) $this->note = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
 		// Check parameters
@@ -1008,21 +1012,20 @@ class Reception extends CommonObject
     public function fetch_lines()
 	{
 		// phpcs:enable
-		global $db;
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE fk_reception='.$this->id;
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!empty($resql)) {
 			$this->lines = array();
 			while ($obj = $resql->fetch_object()) {
-				$line = new CommandeFournisseurDispatch($db);
+				$line = new CommandeFournisseurDispatch($this->db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
 				$sql_commfourndet = 'SELECT qty, ref,  label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
 				$resql_commfourndet = $db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
-					$obj = $db->fetch_object($resql_commfourndet);
+					$obj = $this->db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
 					$line->description = $line->comment;
 					$line->desc = $line->comment;
@@ -1070,7 +1073,7 @@ class Reception extends CommonObject
 	{
 		global $conf, $langs;
 		$result = '';
-        $label = '<u>'.$langs->trans("Reception").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Reception").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 
@@ -1157,6 +1160,8 @@ class Reception extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1874,8 +1879,8 @@ class Reception extends CommonObject
 		{
 			$modele = 'squille';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->RECEPTION_ADDON_PDF)) {
 				$modele = $conf->global->RECEPTION_ADDON_PDF;
 			}

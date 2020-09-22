@@ -17,7 +17,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	min-height: 90px;
 	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 2px rgba(128, 128, 128, 0.2);
+	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
     border-radius: 2px;
     border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
@@ -25,6 +25,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box.info-box-sm {
     min-height: 80px;
     margin-bottom: 10px;
+    background: #fff;
 }
 .opened-dash-board-wrap .info-box.info-box-sm {
     border-radius: 0 0 0 20px;
@@ -77,7 +78,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.08) !important
+	background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.info-box-module .info-box-icon {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .info-box-sm .info-box-icon {
     height: 80px;
@@ -249,7 +255,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 
 .customer-back {
-	background-color: #99a17d !important;
+	background-color: #55955d !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -269,19 +275,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #a47080 !important;
+	<?php echo $prefix; ?>color: #b06080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
-	<?php echo $prefix; ?>color: #99a17d !important;
+	<?php echo $prefix; ?>color: #55955d !important;
 }
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
-	<?php echo $prefix; ?>color: #46a676 !important;
+	<?php echo $prefix; ?>color: #3bbfa8 !important;
 }
 .bg-infobox-bank_account{
-	<?php echo $prefix; ?>color: #b0a53e !important;
+	<?php echo $prefix; ?>color: #b0bb39 !important;
 }
 .bg-infobox-adherent, .bg-infobox-member {
 	<?php echo $prefix; ?>color: #79633f !important;
@@ -300,12 +306,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	color: #6c6aa8 !important;
 }
 .infobox-action{
-	color: #a47080 !important;
+	color: #b06080 !important;
 }
 .infobox-propal,
 .infobox-facture,
 .infobox-commande{
-	color: #99a17d !important;
+	color: #65955d !important;
 }
 .infobox-supplier_proposal,
 .infobox-invoice_supplier,
@@ -313,10 +319,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
-	color: #46a676 !important;
+	color: #3bbfa8 !important;
 }
 .infobox-bank_account{
-	color: #b0a53e !important;
+	color: #b0bb39 !important;
 }
 .infobox-adherent, .infobox-member {
 	color: #79633f !important;
@@ -373,23 +379,23 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .fa-weather-level0:before{
 	content: "\f185";
-	color : #cccccc;
+	color : #cfbf00;
 }
 .fa-weather-level1:before{
 	content: "\f6c4";
-	color : #cccccc;
+	color : #bc9526;
 }
 .fa-weather-level2:before{
-	content: "\f0c2";
-	color : #cccccc;
+	content: "\f743";
+	color : #b16000;
 }
 .fa-weather-level3:before{
 	content: "\f740";
-	color : #cccccc;
+	color : #b04000;
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b91f1f;
+	color : #b01000;
 }
 
 
@@ -436,7 +442,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 
 .info-box-module .info-box-content {
-	height: 6.4em;
+	height: 98px;
 }
 /* Disabled. This break the responsive on smartphone
 .box{

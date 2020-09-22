@@ -118,7 +118,7 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; color: var(--colortextlink); text-decoration: none;  }
+a:link, a:visited, a:hover, a:active { color: var(--colortextlink); text-decoration: none;  }
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
@@ -191,10 +191,6 @@ input, select {
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
-
-	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
-
 	border-radius: 3px;
     border-collapse: collapse;
     border: none;
@@ -220,7 +216,6 @@ input:invalid, select:invalid {
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
-    /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
 input:focus, select:focus {
@@ -319,6 +314,10 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+.logopublicpayment #dolpaymentlogo {
+	max-height: 100px;
+}
+
 a.buttonticket {
 	padding-left: 5px;
 	padding-right: 5px;
@@ -530,6 +529,17 @@ div.floatright
 .largenumber {
     font-size: 1.4em;
 }
+button[name='button_search_x'] span.fa.fa-search {
+    font-size: 1.3em;
+}
+button[name='button_removefilter_x'] span.fa.fa-remove {
+    opacity: 0.5;
+    font-size: 1.3em;
+}
+button:focus {
+	outline: none;
+}
+
 
 th .button {
     -webkit-box-shadow: none !important;
@@ -555,6 +565,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.centpercentwithoutmenu {
+	width: calc(100% - 200px);
 }
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
@@ -633,6 +646,9 @@ textarea.centpercent {
 .nobold {
 	font-weight: normal !important;
 }
+.uppercase {
+	text-transform: uppercase;
+}
 .nounderline {
     text-decoration: none;
 }
@@ -688,10 +704,18 @@ textarea.centpercent {
     font-size: 0.85em;
     opacity: 0.7;
 }
-
+.borderimp {
+	border: 1px solid #888 !important;
+}
 .text-warning{
     color : <?php print $textWarning; ?>
 }
+.longmessagecut {
+    max-height: 250px;
+    max-width: 100%;
+    overflow-y: scroll;
+}
+
 body[class*="colorblind-"] .text-warning{
     color : <?php print $colorblind_deuteranopes_textWarning; ?>
 }
@@ -747,8 +771,14 @@ span.fa.fa-plus-circle.paddingleft {
 #formuserfile {
 	margin-top: 4px;
 }
+#formuserfile input[type='file'] {
+    font-size: 1em;
+}
 #formuserfile_link {
 	margin-left: 1px;
+}
+#formuserfile_link input[type='text'] {
+    font-size: 1em;
 }
 .listofinvoicetype {
 	height: 28px;
@@ -806,6 +836,43 @@ div.divsearchfield {
 	padding: 3px;
 }
 
+.a-filter, .a-mesure {
+    border-radius: 50px;
+    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 8px 10px 8px 6px;
+}
+.a-filter:before {
+    content: "\f0b0";
+}
+.a-mesure:before {
+    content: "\f080";
+}
+.a-filter:before, .a-mesure:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.a-filter-disabled, .a-mesure-disabled {
+    border-radius: 50px;
+    background: var(--colorbacktitle1);
+    padding: 8px;
+    opacity: 0.6;
+}
+
+div.div-for-modal {
+	/* display: none; */
+	position:absolute;
+	top:calc(50% - 200px);
+	left:calc(50% - 250px);
+	width:500px;  /* adjust as per your needs */
+	height:400px;   /* adjust as per your needs */
+	background: #fff;
+    border: 1px solid #bbb;
+    box-shadow: 2px 2px 20px #ddd;
+    z-index: 100;
+}
 
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
@@ -910,6 +977,12 @@ select.flat.selectlimit {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 150px;
     overflow: hidden;
@@ -970,6 +1043,13 @@ select.flat.selectlimit {
 	font-weight: bold;
 	font-size: 1.2em;
 }
+.onlinepaymentbody .amountpaymentcomplete {
+    background-color: var(--amountpaymentcomplete);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -1070,6 +1150,15 @@ table[summary="list_of_modules"] .fa-cog {
 	height: 100px;
 }
 
+.maxscreenheightless200 {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(500, $_SESSION['dol_screenheight'] - 200) : 700; ?>px;	/* we guarantee height of 500 */
+}
+.maxscreenheightless300 {
+	max-height: <?php echo isset($_SESSION['dol_screenheight']) ? max(400, $_SESSION['dol_screenheight'] - 300) : 700; ?>px;	/* we guarantee height of 500 */
+}
+
+
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1123,6 +1212,8 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.maxwidth750 { max-width: 750px; }
+.maxwidth1000 { max-width: 1000px; }
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }
@@ -1182,9 +1273,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -1204,7 +1292,7 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300, .widthcentpercentminusx {
 		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}
@@ -1218,10 +1306,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
-
 	.box-flex-item {
 		margin: 3px 2px 3px 2px !important;
 	}
@@ -1408,11 +1492,22 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
-#id-left {
-/*	background-color: #fff;
-	border-right: 1px #888 solid;
-	height: calc(100% - 50px);*/
+
+/* DOL_XXX For having horizontal scroll into array (like with smartphone) */
+
+.classforhorizontalscrolloftabs #id-container {
+	width: 100%;
 }
+.classforhorizontalscrolloftabs .side-nav {
+	display: block;
+	float: left;
+}
+.classforhorizontalscrolloftabs #id-right {
+	width:calc(100% - 210px);
+	display: inline-block;
+}
+
+
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
@@ -1423,6 +1518,8 @@ td.showDragHandle {
 <?php } ?>
 
 .side-nav {
+	/*display: block;
+	float: left; */
 	display: table-cell;
 	border-<?php echo $right; ?>: 1px solid #E0E0E0;
 	box-shadow: 3px 0 6px -2px #eee;
@@ -1506,51 +1603,63 @@ div.vmenu, td.vmenu {
 
 .menuhider { display: none !important; }
 
+
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-body.sidebar-collapse .side-nav {
-	display: none;
+	body.sidebar-collapse .side-nav {
+		display: none;
+	}
+
+	body.sidebar-collapse .login_block {
+		display: none;
+	}
+
+	.menuhider { display: block !important; }
+	.dropdown-user-image { display: none; }
+	.user-header { height: auto !important; color: var(--colorbackbody); }
+
+	#id-container {
+		width: 100%;
+	}
+	.side-nav {
+		border-bottom: 1px solid #BBB;
+		background: #FFF;
+		padding-left: 20px;
+		padding-right: 20px;
+		position: absolute;
+	    	z-index: 90;
+	}
+	div.blockvmenulogo
+	{
+		border-bottom: 0 !important;
+	}
+	div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
+		border-top: none !important;
+		border-left: none !important;
+		border-right: none !important;
+		border-bottom: 1px solid #e0e0e0;
+		padding-left: 0 !important;
+	}
+	div.vmenu, td.vmenu {
+		padding-right: 6px !important;
+	}
+	div.fiche {
+		margin-<?php print $left; ?>: 9px !important;
+		margin-<?php print $right; ?>: 10px !important;
+	}
+
+	.pagination .fa-chevron-left, .pagination .fa-chevron-right {
+		font-size: 1.2em;
+	}
 }
 
-body.sidebar-collapse .login_block {
-	display: none;
-}
-
-.menuhider { display: block !important; }
-.dropdown-user-image { display: none; }
-.user-header { height: auto !important; color: var(--colorbackbody); }
-
-#id-container {
-	width: 100%;
-}
-.side-nav {
-	border-bottom: 1px solid #BBB;
-	background: #FFF;
-	padding-left: 20px;
-	padding-right: 20px;
-	position: absolute;
-    	z-index: 90;
-}
-div.blockvmenulogo
+@media only screen and (min-width: 768px) and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-	border-bottom: 0 !important;
-}
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
-	border-top: none !important;
-	border-left: none !important;
-	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
-	padding-left: 0 !important;
-}
-div.vmenu, td.vmenu {
-	padding-right: 6px !important;
-}
-div.fiche {
-	margin-<?php print $left; ?>: 9px !important;
-	margin-<?php print $right; ?>: 10px !important;
-}
-<?php //} ?>
+	div.fiche {
+		margin-<?php print $left; ?>: 13px !important;
+		margin-<?php print $right; ?>: 14px !important;
+	}
 }
 
 
@@ -1567,7 +1676,7 @@ div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
 div.fiche>table.table-fiche-title {
-	margin-bottom: 7px;
+	margin-bottom: 12px;
 }
 div.fichecenter {
 	width: 100%;
@@ -2054,90 +2163,7 @@ a.tmenuimage:hover{
 /* Do not load menu img for other if hidden to save bandwidth */
 
 <?php if (empty($dol_hide_topmenu)) { ?>
-    <?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-    <?php } else { ?>
-        div.mainmenu.home{
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
-            background-position-x: center;
-        }
-
-        div.mainmenu.billing {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money_over.png', 1) ?>);
-        }
-
-        div.mainmenu.accountancy {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money_over.png', 1) ?>);
-        }
-
-        div.mainmenu.agenda {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda_over.png', 1) ?>);
-        }
-
-        div.mainmenu.bank {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank_over.png', 1) ?>);
-        }
-
-        div.mainmenu.cashdesk {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png', 1) ?>);
-        }
-
-        div.mainmenu.takepos {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale_over.png', 1) ?>);
-        }
-
-        div.mainmenu.companies {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company_over.png', 1) ?>);
-        }
-
-        div.mainmenu.commercial {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial_over.png', 1) ?>);
-        }
-
-        div.mainmenu.ecm {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm_over.png', 1) ?>);
-        }
-
-        div.mainmenu.externalsite {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
-        }
-
-        div.mainmenu.ftp {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools_over.png', 1) ?>);
-        }
-
-        div.mainmenu.hrm {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday_over.png', 1) ?>);
-        }
-
-        div.mainmenu.members {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members_over.png', 1) ?>);
-        }
-
-        div.mainmenu.products {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products_over.png', 1) ?>);
-        }
-
-        div.mainmenu.mrp {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products_over.png', 1) ?>);
-        }
-
-        div.mainmenu.project {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project_over.png', 1) ?>);
-        }
-
-        div.mainmenu.ticket {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticket_over.png', 1) ?>);
-        }
-
-        div.mainmenu.tools {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools_over.png', 1) ?>);
-        }
-
-        div.mainmenu.website {
-            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite_over.png', 1) ?>);
-        }
-    <?php } ?>
+    <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
     <?php
     // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -2710,7 +2736,7 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
-    padding-top: 10px;
+    margin-top: 10px;
     padding-left: 6px;
     padding-right: 6px;
 	clear:both;
@@ -2780,8 +2806,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -2939,6 +2965,12 @@ div.tabs.nopaddingleft {
 .nopaddingright {
 	padding-<?php print $right; ?>: 0px;
 }
+.nopaddingtopimp {
+	padding-top: 0px !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0px !important;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3078,6 +3110,10 @@ table.paddingtopbottomonly tr td {
 .liste_titre_filter {
 	background: var(--colorbacktitle1) !important;
 }
+.liste_titre2 {
+    background: var(--colorbackhmenu1) !important;
+    color: #fff;
+}
 table:not(.listwithfilterbefore) tr.liste_titre_filter:first-of-type td.liste_titre {
     padding-top: 5px;
 }
@@ -3169,6 +3205,7 @@ div.refid  {
 	font-weight: bold;
   	color: var(--colortexttitlenotab);
   	font-size: 1.2em;
+  	word-break: break-word;
 }
 div.refidno  {
 	padding-top: 3px;
@@ -3317,7 +3354,17 @@ table.hidepaginationprevious .paginationprevious {
 table.hidepaginationnext .paginationnext {
 	display: none;
 }
-
+.tabBar .arearef .pagination.paginationref {
+    max-width: calc(30%);
+}
+.paginationafterarrows a.btnTitlePlus, .titre_right  a.btnTitlePlus {
+    border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+    /* text-shadow: 0px 0px 5px #ccc; */
+    /* filter: invert(0.3); */
+    font-size: 1.07em;
+}
 
 
 /* Set the color for hover lines */
@@ -3339,9 +3386,6 @@ table.hidepaginationnext .paginationnext {
 }
 <?php } ?>
 
-.nohover:hover {
-	background: unset !important;
-}
 .nohoverborder:hover {
 	border: unset;
 	box-shadow: unset;
@@ -3669,8 +3713,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     /* padding: 3px; */
 }
 .boxstats {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
     padding-top: 2px;
     padding-bottom: 2px;
     width: 118px;
@@ -3755,8 +3799,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext {
+span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
+}
+span.boxstatstext {
     line-height: 18px;
     color: var(--colortext);
 }
@@ -4053,6 +4099,7 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+    /* text-transform: capitalize; */
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
@@ -4060,10 +4107,10 @@ div.fiche > table.table-fiche-title:first-of-type div {
     /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
+
 div.titre {
     color: var(--colortexttitlenotab);
 }
-
 .secondary {
     color: var(--colortexttitlenotab);
 }
@@ -4075,7 +4122,7 @@ table.table-fiche-title .col-title div.titre{
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 
 
@@ -4212,7 +4259,7 @@ div.ui-tooltip {
 div.ui-tooltip.mytooltip {
 	border: none !important;
 	padding: 10px 15px;
-	border-radius: 0;
+	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
 	-moz-box-shadow:   0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
@@ -4222,6 +4269,8 @@ div.ui-tooltip.mytooltip {
 	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color : var(--tooltipfontcolor);
+	line-height: 1.6em;
+	min-width: 200px;
 }
 
 
@@ -4455,7 +4504,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { /* opacity: 0.6; */ background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px !important; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -4472,6 +4521,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
+div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); border-radius: 3px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
@@ -4480,10 +4530,15 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
-.cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
-.cal_peruserviewname { max-width: 140px; height: 22px; }
+.cal_peruserviewname { max-width: 140px; height: 30px !important; }
+.cal_event span.badge.badge-status { border: 1px solid #aaa; }
 table.cal_month tr td table.nobordernopadding tr td { padding: 0 2px 0 2px; }
+table.cal_month tr.liste_titre td.tdfordaytitle { min-width: 120px; }
+a.dayevent-aday {
+    padding-left: 8px;
+}
 
 .calendarviewcontainertr { height: 100px; }
 
@@ -5532,6 +5587,10 @@ span.noborderoncategories {
 /*  External lib multiselect with checkbox                                        */
 /* ============================================================================== */
 
+.multi-select-menu {
+	z-index: 10;
+}
+
 .multi-select-container {
   display: inline-block;
   position: relative;
@@ -6293,6 +6352,41 @@ div.tabsElem a.tab {
 
 
 /* ============================================================================== */
+/* CSS style for debugbar                                                         */
+/* ============================================================================== */
+
+span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
+    width: 250px !important;
+}
+.phpdebugbar-indicator span.phpdebugbar-tooltip {
+    opacity: .95 !important;
+}
+a.phpdebugbar-tab.phpdebugbar-active {
+	background-image: unset !important;
+}
+.phpdebugbar-indicator .fa {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+}
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error:before,
+div.phpdebugbar-widgets-exceptions a.phpdebugbar-widgets-editor-link:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
+{
+	font-family: "Font Awesome 5 Free" !important;
+}
+
+/* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */
 
@@ -6302,7 +6396,6 @@ div.tabsElem a.tab {
     writing-mode: vertical-rl;
     white-space: nowrap;
 }
-
 
 
 /* ============================================================================== */

@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'cron', 'members'));
 if (!$user->rights->cron->create) accessforbidden();
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtourl = GETPOST('backtourl', 'alpha');
@@ -126,19 +126,19 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
 if ($action == 'add')
 {
-	$object->jobtype = GETPOST('jobtype', 'alpha');
-	$object->label = GETPOST('label', 'alpha');
-	$object->command = GETPOST('command', 'alpha');
-	$object->priority = GETPOST('priority', 'int');
-	$object->classesname = GETPOST('classesname', 'alpha');
-	$object->objectname = GETPOST('objectname', 'alpha');
-	$object->methodename = GETPOST('methodename', 'alpha');
+	$object->jobtype = GETPOST('jobtype');
+	$object->label = GETPOST('label');
+	$object->command = GETPOST('command');
+	$object->classesname = GETPOST('classesname', 'alphanohtml');
+	$object->objectname = GETPOST('objectname', 'aZ09');
+	$object->methodename = GETPOST('methodename', 'aZ09');
 	$object->params = GETPOST('params');
 	$object->md5params = GETPOST('md5params');
-	$object->module_name = GETPOST('module_name', 'alpha');
-	$object->note = GETPOST('note', 'none');
+	$object->module_name = GETPOST('module_name');
+	$object->note_private = GETPOST('note', 'restricthtml');
 	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+	$object->priority = GETPOST('priority', 'int');
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
@@ -164,16 +164,16 @@ if ($action == 'update')
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
 	$object->command = GETPOST('command');
-	$object->classesname = GETPOST('classesname', 'alpha');
-	$object->priority = GETPOST('priority', 'int');
-	$object->objectname = GETPOST('objectname', 'alpha');
-	$object->methodename = GETPOST('methodename', 'alpha');
+	$object->classesname = GETPOST('classesname', 'alphanohtml');
+	$object->objectname = GETPOST('objectname', 'aZ09');
+	$object->methodename = GETPOST('methodename', 'aZ09');
 	$object->params = GETPOST('params');
 	$object->md5params = GETPOST('md5params');
-	$object->module_name = GETPOST('module_name', 'alpha');
-	$object->note = GETPOST('note', 'none');
+	$object->module_name = GETPOST('module_name');
+	$object->note_private = GETPOST('note', 'restricthtml');
 	$object->datestart = dol_mktime(GETPOST('datestarthour', 'int'), GETPOST('datestartmin', 'int'), 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 	$object->dateend = dol_mktime(GETPOST('dateendhour', 'int'), GETPOST('dateendmin', 'int'), 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
+	$object->priority = GETPOST('priority', 'int');
 	$object->datenextrun = dol_mktime(GETPOST('datenextrunhour', 'int'), GETPOST('datenextrunmin', 'int'), 0, GETPOST('datenextrunmonth', 'int'), GETPOST('datenextrunday', 'int'), GETPOST('datenextrunyear', 'int'));
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
@@ -382,7 +382,7 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
-	$doleditor = new DolEditor('note', $object->note, '', 160, 'dolibarr_notes', 'In', true, false, 0, ROWS_4, '90%');
+	$doleditor = new DolEditor('note', $object->note_private, '', 160, 'dolibarr_notes', 'In', true, false, 0, ROWS_4, '90%');
 	$doleditor->Create();
 	print "</td>";
 	print "<td>";
@@ -581,7 +581,9 @@ if (($action == "create") || ($action == "edit"))
 
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
-	print $langs->trans($object->note);
+	if (!is_null($object->note_private) && $object->note_private != '') {
+		print $langs->trans($object->note_private);
+	}
 	print "</td></tr>";
 
 	if (!empty($conf->multicompany->enabled))

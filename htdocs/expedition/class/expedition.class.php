@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
@@ -36,6 +36,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (!empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (!empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
@@ -46,6 +47,8 @@ if (!empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/exped
  */
 class Expedition extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -570,6 +573,7 @@ class Expedition extends CommonObject
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
+				$this->model_pdf            = $obj->model_pdf;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
@@ -698,7 +702,7 @@ class Expedition extends CommonObject
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-		$sql .= " ref='".$numref."'";
+		$sql .= " ref='".$this->db->escape($numref)."'";
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".$user->id;
@@ -1066,7 +1070,7 @@ class Expedition extends CommonObject
 		if (isset($this->trueWeight)) $this->weight = trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note = trim($this->note_private);
 		if (isset($this->note_public)) $this->note = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 
 
 
@@ -1506,6 +1510,9 @@ class Expedition extends CommonObject
 						if (!$error)
 						{
 							$this->db->commit();
+
+							// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+							$this->deleteEcmFiles();
 
 							// We delete PDFs
 							$ref = dol_sanitizeFileName($this->ref);

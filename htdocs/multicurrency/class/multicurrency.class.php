@@ -423,15 +423,15 @@ class MultiCurrency extends CommonObject
 	 * @param	double	$rate	new rate
 	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
 	 */
-    public function addRateFromDolibarr($code, $rate)
-    {
-        global $db, $user;
+	public function addRateFromDolibarr($code, $rate)
+	{
+		global $db, $user;
 
-		$currency = new MultiCurrency($db);
+		$currency = new MultiCurrency($this->db);
 		$currency->code = $code;
 		$currency->name = $code;
 
-	 	$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_currencies WHERE code_iso = \''.$db->escape($code).'\'';
+		$sql = 'SELECT label FROM '.MAIN_DB_PREFIX."c_currencies WHERE code_iso = '".$this->db->escape($code)."'";
 
 	 	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -449,26 +449,26 @@ class MultiCurrency extends CommonObject
 		}
 
 		return -1;
-    }
+	}
 
 	 /**
-	 * Add new entry into llx_multicurrency_rate
-	 *
-	 * @param double	$rate	rate value
-	 * @return int <0 if KO, >0 if OK
-     */
-    public function updateRate($rate)
-    {
-        return $this->addRate($rate);
-    }
+	  * Add new entry into llx_multicurrency_rate
+	  *
+	  * @param double	$rate	rate value
+	  * @return int <0 if KO, >0 if OK
+	  */
+	public function updateRate($rate)
+	{
+		return $this->addRate($rate);
+	}
 
 	/**
 	 * Fetch CurrencyRate object in $this->rate
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-    public function getRate()
-    {
+	public function getRate()
+	{
 	 	$sql = 'SELECT cr.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
 		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
@@ -480,40 +480,40 @@ class MultiCurrency extends CommonObject
 			$this->rate = new CurrencyRate($this->db);
 			return $this->rate->fetch($obj->rowid);
 		}
-    }
+	}
 
 	 /**
-	 * Get id of currency from code
-	 *
-	 * @param  DoliDB	$db		    object db
-	 * @param  string	$code	   code value search
-	 *
-	 * @return int                 0 if not found, >0 if OK
-	 */
-    public static function getIdFromCode(&$db, $code)
-    {
+	  * Get id of currency from code
+	  *
+	  * @param  DoliDB	$db		    object db
+	  * @param  string	$code	    code value search
+	  *
+	  * @return int                 0 if not found, >0 if OK
+	  */
+	public static function getIdFromCode($db, $code)
+	{
 	 	global $conf;
 
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."multicurrency WHERE code = '".$db->escape($code)."' AND entity = ".$conf->entity;
 
 	 	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return $obj->rowid;
 		else return 0;
-    }
+	}
 
 	 /**
-	 * Get id and rate of currency from code
-	 *
-	 * @param DoliDB	$db		        Object db
-	 * @param string	$code	        Code value search
-	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
-	 *
-	 * @return 	array	[0] => id currency
-	 *					[1] => rate
-	 */
-    public static function getIdAndTxFromCode(&$db, $code, $date_document = '')
-    {
+	  * Get id and rate of currency from code
+	  *
+	  * @param DoliDB	$db		        Object db
+	  * @param string	$code	        Code value search
+	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
+	  *
+	  * @return 	array	[0] => id currency
+	  *					[1] => rate
+	  */
+	public static function getIdAndTxFromCode($db, $code, $date_document = '')
+	{
 		global $conf;
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
@@ -541,34 +541,34 @@ class MultiCurrency extends CommonObject
 
 			return array(0, 1);
 		}
-    }
+	}
 
-    /**
-     * Get the conversion of amount with invoice rate
-     *
-     * @param	int		$fk_facture		id of facture
-     * @param	double	$amount			amount to convert
-     * @param	string	$way			dolibarr mean the amount is in dolibarr currency
-     * @param	string	$table			facture or facture_fourn
-     * @return	double					amount converted
-     */
-    public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
-    {
-        $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+	/**
+	 * Get the conversion of amount with invoice rate
+	 *
+	 * @param	int		$fk_facture		id of facture
+	 * @param	double	$amount			amount to convert
+	 * @param	string	$way			'dolibarr' mean the amount is in dolibarr currency
+	 * @param	string	$table			facture or facture_fourn
+	 * @return	double					amount converted
+	 */
+	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
+	{
+		$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
-        if ($multicurrency_tx)
-        {
-            if ($way == 'dolibarr') return $amount * $multicurrency_tx;
-            else return $amount / $multicurrency_tx;
-        } else return $amount;
-    }
+		if ($multicurrency_tx)
+		{
+			if ($way == 'dolibarr') return price2num($amount * $multicurrency_tx, 'MU');
+			else return price2num($amount / $multicurrency_tx, 'MU');
+		} else return $amount;
+	}
 
 	/**
 	 *  Get current invoite rate
 	 *
 	 *  @param	int 	$fk_facture 	id of facture
 	 *  @param 	string 	$table 			facture or facture_fourn
-     *  @return bool
+	 *  @return bool
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
@@ -599,7 +599,7 @@ class MultiCurrency extends CommonObject
 
 		if ($conf->currency != $conf->global->MULTICURRENCY_APP_SOURCE)
 		{
-		    $alternate_source = 'USD'.$conf->currency;
+			$alternate_source = 'USD'.$conf->currency;
 			if (!empty($TRate->{$alternate_source}))
 			{
 				$coef = $TRate->USDUSD / $TRate->{$alternate_source};
@@ -622,7 +622,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
 	 * @param   int     $addifnotfound      Add if not found
-     * @return  int							<0 if KO, >0 if OK
+	 * @return  int							<0 if KO, >0 if OK
 	 */
 	public static function syncRates($key, $addifnotfound = 0)
 	{
@@ -635,14 +635,14 @@ class MultiCurrency extends CommonObject
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
 		// TODO Use getURLContent() function instead.
-        $ch = curl_init($urlendpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $response = json_decode($response);
+		$ch = curl_init($urlendpoint);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($ch);
+		curl_close($ch);
+		$response = json_decode($response);
 
-        if ($response->success)
-        {
+		if ($response->success)
+		{
 			$TRate = $response->quotes;
 			$timestamp = $response->timestamp;
 
@@ -663,8 +663,8 @@ class MultiCurrency extends CommonObject
 			}
 
 			return 1;
-        } else {
-		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
+		} else {
+			dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 
 			return -1;

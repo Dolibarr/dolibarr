@@ -58,7 +58,7 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize
 <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
-<script type="text/javascript">
+<script>
 $(document).ready(function () {
 	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
@@ -246,23 +246,22 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 	}
 }
 
-// Google Adsense
+// TODO Replace this with a hook
+// Google Adsense (need Google module)
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
 	if (empty($conf->dol_use_jmobile))
 	{
 		?>
 	<div class="center"><br>
-		<script type="text/javascript"><!--
+		<script><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
 			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
 			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
 			//-->
 		</script>
-		<script type="text/javascript"
-			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-		</script>
+		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 	</div>
 		<?php
 	}

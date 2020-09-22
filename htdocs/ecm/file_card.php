@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ if ($action == 'update')
     $error = 0;
 
     $oldlabel = GETPOST('urlfile', 'alpha');
-    $newlabel = GETPOST('label', 'alpha');
+    $newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'));
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
     //$db->begin();
@@ -284,7 +284,7 @@ dol_banner_tab($object, '', $linkback, 0, '', '', $s);
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';

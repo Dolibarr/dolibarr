@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - propal
 PropalsDraft=Entwurf
 PropalStatusSigned=Unterzeichnet (auf Rechnung)
-PropalStatusClosedShort=geschlossen
 RefProposal=Angebots Nr.
 DatePropal=Datum des Angebots
 DateEndPropal=Ablauf der Bindefrist

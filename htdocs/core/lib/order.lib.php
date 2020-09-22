@@ -43,7 +43,7 @@ function commande_prepare_head(Commande $object)
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("OrderCard");
+		$head[$h][1] = $langs->trans("CustomerOrder");
 		$head[$h][2] = 'order';
 		$h++;
 	}

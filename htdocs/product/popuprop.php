@@ -203,7 +203,7 @@ if ($mode && $mode != '-1') {
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product=".$prodid;
-			$sql .= " AND lang='".$langs->getDefaultLang()."'";
+			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +109,7 @@ class Ticket extends CommonObject
 	/**
 	 * @var int  Ticket statut
 	 */
-	public $fk_statut;				// deprecated
+	public $fk_statut; // deprecated
 	public $status;
 
 	/**
@@ -171,39 +172,14 @@ class Ticket extends CommonObject
 	 */
 	public $notify_tiers_at_create;
 
+	public $email_msgid;
+
 	public $lines;
 
 	/**
 	 * @var string Regex pour les images
 	 */
 	public $regeximgext = '\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
-
-	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
-		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
-		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
-		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
-		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth200', 'autofocusoncreate'=>1),
-		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth150'),
-		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
-		'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty", 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
-		'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
-		'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),
-		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
-		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
-		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1),
-		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
-		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
-		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
-		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
-	);
 
 	/**
 	 * Status
@@ -216,6 +192,62 @@ class Ticket extends CommonObject
 	const STATUS_WAITING = 7;
 	const STATUS_CLOSED = 8;
 	const STATUS_CANCELED = 9;
+
+
+	/**
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	public $fields = array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
+		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
+		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
+		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
+		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth200', 'autofocusoncreate'=>1),
+		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth150 tdoverflowmax50'),
+		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketCategory', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
+		'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty", 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
+		'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
+		'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),
+		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
+		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
+		'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1),
+		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
+		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
+		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
+		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
+		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
+	);
+	// END MODULEBUILDER PROPERTIES
 
 
 	/**
@@ -347,6 +379,7 @@ class Ticket extends CommonObject
 			$sql .= "origin_email,";
 			$sql .= "fk_user_create,";
 			$sql .= "fk_user_assign,";
+			$sql .= "email_msgid,";
 			$sql .= "subject,";
 			$sql .= "message,";
 			$sql .= "fk_statut,";
@@ -369,6 +402,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".($this->fk_user_create > 0 ? $this->fk_user_create : ($user->id > 0 ? $user->id : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
+			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
 			$sql .= " ".(!isset($this->fk_statut) ? '0' : "'".$this->db->escape($this->fk_statut)."'").",";
@@ -437,12 +471,13 @@ class Ticket extends CommonObject
 	/**
 	 *  Load object in memory from the database
 	 *
-	 *  @param  int        	$id    		Id object
-	 *  @param	string		$ref		Ref
-	 *  @param	string		$track_id	Track id, a hash like ref
-	 *  @return int              		<0 if KO, >0 if OK
+	 *  @param  int        	$id    			Id object
+	 *  @param	string		$ref			Ref
+	 *  @param	string		$track_id		Track id, a hash like ref
+	 *  @param	string		$email_msgid	Email msgid
+	 *  @return int              			<0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $ref = '', $track_id = '')
+	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
 	{
 		global $langs;
 
@@ -455,6 +490,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
+		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
@@ -462,6 +498,7 @@ class Ticket extends CommonObject
 		$sql .= " t.origin_email,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
+		$sql .= " t.email_msgid,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
 		$sql .= " t.fk_statut as status,";
@@ -485,10 +522,12 @@ class Ticket extends CommonObject
 			$sql .= " WHERE t.rowid = ".$this->db->escape($id);
 		} else {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element, 1).")";
-			if ($track_id) {
-				$sql .= " AND t.track_id = '".$this->db->escape($track_id)."'";
-			} elseif ($ref) {
+			if (!empty($ref)) {
 				$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			} elseif ($track_id) {
+				$sql .= " AND t.track_id = '".$this->db->escape($track_id)."'";
+			} else {
+				$sql .= " AND t.email_msgid = '".$this->db->escape($email_msgid)."'";
 			}
 		}
 
@@ -508,11 +547,12 @@ class Ticket extends CommonObject
 				$this->origin_email = $obj->origin_email;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
+				$this->email_msgid = $obj->email_msgid;
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
 
 				$this->status = $obj->status;
-				$this->fk_statut = $this->status;		// For backward compatibility
+				$this->fk_statut = $this->status; // For backward compatibility
 
 				$this->resolution = $obj->resolution;
 				$this->progress = $obj->progress;
@@ -624,7 +664,7 @@ class Ticket extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$value.'\'';
+					$sql .= ' AND '.$key." = '".$this->db->scape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code') || ($key == 't.fk_soc')) {
 					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
@@ -1228,9 +1268,8 @@ class Ticket extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
-		$label = '<u>'.$langs->trans("Ticket").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Ticket").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
@@ -1661,24 +1700,27 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
-				if ($this->linkedObjectsIds)
-				{
-					foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
-						$fichinter = new Fichinter($this->db);
-						$fichinter->fetch($fichinter_id);
-						if ($fichinter->statut == 0) {
-							$result = $fichinter->setValid($user);
-							if (!$result) {
-								$this->errors[] = $fichinter->error;
-								$error++;
+				if (!empty($conf->ficheinter->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+					dol_syslog("We have closed the ticket, so we close all linked interventions");
+					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
+					if ($this->linkedObjectsIds)
+					{
+						foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
+							$fichinter = new Fichinter($this->db);
+							$fichinter->fetch($fichinter_id);
+							if ($fichinter->statut == 0) {
+								$result = $fichinter->setValid($user);
+								if (!$result) {
+									$this->errors[] = $fichinter->error;
+									$error++;
+								}
 							}
-						}
-						if ($fichinter->statut < 3) {
-							$result = $fichinter->setStatut(3);
-							if (!$result) {
-								$this->errors[] = $fichinter->error;
-								$error++;
+							if ($fichinter->statut < 3) {
+								$result = $fichinter->setStatut(3);
+								if (!$result) {
+									$this->errors[] = $fichinter->error;
+									$error++;
+								}
 							}
 						}
 					}
@@ -2200,7 +2242,7 @@ class Ticket extends CommonObject
 
 		$sql .= " AND tc.active=1";
 		if ($status >= 0) {
-			$sql .= " AND ec.statut = '".$status."'";
+			$sql .= " AND ec.statut = ".((int) $status);
 		}
 
 		$sql .= " ORDER BY t.lastname ASC";
@@ -2431,7 +2473,7 @@ class Ticket extends CommonObject
 
 		if (!$error) {
 			$object->subject = GETPOST('subject', 'alphanohtml');
-			$object->message = GETPOST("message", "none");
+			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 
 			$send_email = GETPOST('send_email', 'int');
@@ -2470,7 +2512,7 @@ class Ticket extends CommonObject
 							$assigned_user = new User($this->db);
 							$assigned_user->fetch($this->fk_user_assign);
 							if (!empty($assigned_user->email)) {
-								$sendto[] = $assigned_user->getFullName($langs) . " <" . $assigned_user->email . ">";
+								$sendto[] = $assigned_user->getFullName($langs)." <".$assigned_user->email.">";
 							} else {
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
@@ -2492,33 +2534,37 @@ class Ticket extends CommonObject
 
 						if (!empty($sendto)) {
 							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+							$subject = '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
-							$message .= "\n\n";
-							$message .= GETPOST('message', 'restricthtml');
+							$message .= '<br><br>';
+							$messagePost = GETPOST('message', 'restricthtml');
+							if (!dol_textishtml($messagePost)) {
+								$messagePost = dol_nl2br($messagePost);
+							}
+							$message .= $messagePost;
 
 							// Customer company infos
-							$message .= "\n\n";
+							$message .= '<br><br>';
 							$message .= "==============================================";
-							$message .= !empty($object->thirdparty->name) ? "\n" . $langs->trans('Thirdparty') . " : " . $object->thirdparty->name : '';
-							$message .= !empty($object->thirdparty->town) ? "\n" . $langs->trans('Town') . " : " . $object->thirdparty->town : '';
-							$message .= !empty($object->thirdparty->phone) ? "\n" . $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
+							$message .= !empty($object->thirdparty->name) ? '<br>'.$langs->trans('Thirdparty')." : ".$object->thirdparty->name : '';
+							$message .= !empty($object->thirdparty->town) ? '<br>'.$langs->trans('Town')." : ".$object->thirdparty->town : '';
+							$message .= !empty($object->thirdparty->phone) ? '<br>'.$langs->trans('Phone')." : ".$object->thirdparty->phone : '';
 
 							// Email send to
-							$message .= "\n\n";
+							$message .= '<br><br>';
 							if (!empty($assigned_user_dont_have_email)) {
-								$message .= "\n" . $langs->trans('NoEMail') . ' : ' . $assigned_user_dont_have_email;
+								$message .= '<br>'.$langs->trans('NoEMail').' : '.$assigned_user_dont_have_email;
 							}
 							foreach ($sendto as $val) {
-								$message .= "\n" . $langs->trans('TicketNotificationRecipient') . ' : ' . $val;
+								$message .= '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$val;
 							}
 
 							// URL ticket
-							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
-							$message .= "\n\n";
-							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : <a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>';
+							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
+							$message .= '<br><br>';
+							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>';
 
 							$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 						}
@@ -2539,21 +2585,25 @@ class Ticket extends CommonObject
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// altairis: set default subject
 							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+							$subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
-							$message_intro = $langs->trans('TicketNotificationEmailBody', "#" . $object->id);
+							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
 							$message = $langs->trans('TicketMessageMailIntroText');
-							$message .= "\n\n";
-							$message .= GETPOST('message', 'restricthtml');
+							$message .= '<br><br>';
+							$messagePost = GETPOST('message', 'restricthtml');
+							if (!dol_textishtml($messagePost)) {
+								$messagePost = dol_nl2br($messagePost);
+							}
+							$message .= $messagePost;
 
 							//  Coordonnées client
-							$message .= "\n\n";
-							$message .= "==============================================\n";
-							$message .= !empty($object->thirdparty->name) ? $langs->trans('Thirdparty') . " : " . $object->thirdparty->name : '';
-							$message .= !empty($object->thirdparty->town) ? "\n" . $langs->trans('Town') . " : " . $object->thirdparty->town : '';
-							$message .= !empty($object->thirdparty->phone) ? "\n" . $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
+							$message .= '<br><br>';
+							$message .= "==============================================<br>";
+							$message .= !empty($object->thirdparty->name) ? $langs->trans('Thirdparty')." : ".$object->thirdparty->name : '';
+							$message .= !empty($object->thirdparty->town) ? '<br>'.$langs->trans('Town')." : ".$object->thirdparty->town : '';
+							$message .= !empty($object->thirdparty->phone) ? '<br>'.$langs->trans('Phone')." : ".$object->thirdparty->phone : '';
 
 							// Build array to display recipient list
 							foreach ($internal_contacts as $key => $info_sendto) {
@@ -2563,19 +2613,19 @@ class Ticket extends CommonObject
 								}
 
 								if ($info_sendto['email'] != '') {
-									if (!empty($info_sendto['email'])) $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
+									if (!empty($info_sendto['email'])) $sendto[] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 
 									//Contact type
-									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
+									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
+									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 								}
 							}
-							$message .= "\n";
+							$message .= '<br>';
 							// URL ticket
-							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
+							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
 
 							// altairis: make html link on url
-							$message .= "\n" . $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : <a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>' . "\n";
+							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
 							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
@@ -2611,14 +2661,24 @@ class Ticket extends CommonObject
 							if (is_array($external_contacts) && count($external_contacts) > 0) {
 								// altairis: get default subject for email to external contacts
 								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-								$subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
-								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
-								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
+								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+								if (!dol_textishtml($message_intro)) {
+									$message_intro = dol_nl2br($message_intro);
+								}
+								if (!dol_textishtml($message_signature)) {
+									$message_signature = dol_nl2br($message_signature);
+								}
 
 								// We put intro after
-								$message = GETPOST('message');
-								$message .= "\n\n";
+								$messagePost = GETPOST('message', 'restricthtml');
+								if (!dol_textishtml($messagePost)) {
+									$messagePost = dol_nl2br($messagePost);
+								}
+								$message = $messagePost;
+								$message .= '<br><br>';
 
 								foreach ($external_contacts as $key => $info_sendto) {
 									// altairis: avoid duplicate emails to external contacts
@@ -2627,23 +2687,23 @@ class Ticket extends CommonObject
 									}
 
 									if ($info_sendto['email'] != '' && $info_sendto['email'] != $object->origin_email) {
-										if (!empty($info_sendto['email'])) $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
+										if (!empty($info_sendto['email'])) $sendto[] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 
-										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
+										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
+										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 									}
 								}
 
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
-										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $object->track_id;
-								$message .= "\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $object->track_id . '</a>' . "\n";
+										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
+								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
 
 								// Build final message
-								$message = $message_intro . $message;
+								$message = $message_intro.'<br><br>'.$message;
 
 								// Add signature
-								$message .= '<br>' . $message_signature;
+								$message .= '<br>'.$message_signature;
 
 								if (!empty($object->origin_email)) {
 									$sendto[] = $object->origin_email;
@@ -2732,8 +2792,6 @@ class Ticket extends CommonObject
 				$filename = $mimefilename_list;
 				$mimetype = $mimetype_list;
 
-				$message_to_send = dol_nl2br($message);
-
 				// Envoi du mail
 				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 					$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
@@ -2741,7 +2799,7 @@ class Ticket extends CommonObject
 				}
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$trackid = "tic".$this->id;
-				$mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid);
+				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, '', 'ticket');
 				if ($mailfile->error) {
 					setEventMessages($mailfile->error, null, 'errors');
 				} else {

@@ -167,7 +167,7 @@ function task_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$head[$h][1] = $langs->trans("Project");
+	$head[$h][1] = $langs->trans("Task");
 	$head[$h][2] = 'task_task';
 	$h++;
 
@@ -2144,7 +2144,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (empty($arrayidofprojects)) $arrayidofprojects[0] = -1;
 
 	// Get list of project with calculation on tasks
-	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, s.email, s.client, s.fournisseur,";
+	$sql2 .= " p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
 	$sql2 .= " p.dateo, p.datee,";
 	$sql2 .= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -2197,7 +2198,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if ($userAccess >= 0)
 			{
 				$projectstatic->ref = $objp->ref;
-				$projectstatic->statut = $objp->status; // deprecated
 				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
 				$projectstatic->datee = $db->jdate($objp->datee);
@@ -2216,6 +2216,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					$thirdpartystatic->id = $objp->fk_soc;
 					$thirdpartystatic->ref = $objp->socname;
 					$thirdpartystatic->name = $objp->socname;
+					$thirdpartystatic->client = $objp->client;
+					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->email = $objp->email;
 					print $thirdpartystatic->getNomUrl(1);
 				}
 				print '</td>';
@@ -2427,7 +2430,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $out .= '</b>';
 			$out .= '</a>';
 
-            $out .= '/';
+            $out .= ' / ';
 
 			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';

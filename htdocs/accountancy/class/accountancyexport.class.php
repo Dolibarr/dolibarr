@@ -809,8 +809,8 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
-			$date_doc = dol_print_date($line->doc_date, '%Y%m%d');
-			$date_valid = dol_print_date($line->date_validated, '%Y%m%d');
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
 
 			// FEC:JournalCode
 			print $line->code_journal.$separator;
@@ -822,25 +822,25 @@ class AccountancyExport
 			print $line->piece_num.$separator;
 
 			// FEC:EcritureDate
-			print $date_creation.$separator;
+			print $date_document . $separator;
 
 			// FEC:CompteNum
 			print $line->numero_compte.$separator;
 
 			// FEC:CompteLib
-			print $line->label_compte.$separator;
+			print dol_string_unaccent($line->label_compte) . $separator;
 
 			// FEC:CompAuxNum
 			print $line->subledger_account.$separator;
 
 			// FEC:CompAuxLib
-			print $line->subledger_label.$separator;
+			print dol_string_unaccent($line->subledger_label) . $separator;
 
 			// FEC:PieceRef
 			print $line->doc_ref.$separator;
 
 			// FEC:PieceDate
-			print $date_doc.$separator;
+			print dol_string_unaccent($date_creation) . $separator;
 
 			// FEC:EcritureLib
 			print $line->label_operation.$separator;
@@ -858,7 +858,7 @@ class AccountancyExport
 			print $line->date_lettering.$separator;
 
 			// FEC:ValidDate
-			print $date_valid.$separator;
+			print $date_validation . $separator;
 
 			// FEC:Montantdevise
 			print $line->multicurrency_amount.$separator;
@@ -1160,7 +1160,8 @@ class AccountancyExport
 			// TYPE C
 			if ($last_codeinvoice != $line->doc_ref) {
 				//recherche societe en fonction de son code client
-				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$line->thirdparty_code."'";
+				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe";
+				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
 
 				if ($resql && $this->db->num_rows($resql) > 0)

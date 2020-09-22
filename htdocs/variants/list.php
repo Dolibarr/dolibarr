@@ -18,7 +18,6 @@
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
 
@@ -66,7 +65,7 @@ print load_fiche_titre($title, $newcardbutton, 'product');
 
 $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 ?>
-	<script type="text/javascript">
+	<script>
 		$(document).ready(function(){
 			$(".imgupforline, .imgdownforline").hide();
 			$(".lineupdown").removeAttr('href');

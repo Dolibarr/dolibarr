@@ -1,6 +1,8 @@
 # How to use it ?
 
 The docker-compose.yml file is used to build and run Dolibarr in the current workspace.
+This docker image intended for developpement usage.
+For production usage you should consider other contributor reference like https://hub.docker.com/r/tuxgasy/dolibarr 
 
 Before build/run, define the variable HOST_USER_ID as following:
 
@@ -26,3 +28,4 @@ The URL to go to PhpMyAdmin is (login/password is root/root) :
 
 Setup the database connection during the installation process, please use mariad
 b (name of the database container) as database host.
+Setup documents folder, during the installation process, to /var/documents

@@ -69,7 +69,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="150">'.$langs->trans("ReportName").'</td>';
 	print '<td>';
 	print $reportname;
 	print '</td>';
@@ -80,7 +80,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	if ($calcmode)
 	{
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="150">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
 		print $calcmode;
 		if ($variante) print '<td></td>';

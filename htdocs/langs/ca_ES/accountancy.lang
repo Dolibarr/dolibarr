@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Gestiona un nombre diferent de zero al final d'un compte 
 BANK_DISABLE_DIRECT_INPUT=Des-habilitar l'enregistrament directe de transaccions al compte bancari 
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilita l'exportació d'esborrany en el diari
 ACCOUNTANCY_COMBO_FOR_AUX=Activa la llista de combo per al compte subsidiari (pot ser lent si tens molts tercers)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Diari de venda
 ACCOUNTING_PURCHASE_JOURNAL=Diari de compra
@@ -284,6 +285,7 @@ ShowTutorial=Mostrar Tutorial
 NotReconciled=No conciliat
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Aplica categories massives
 AddAccountFromBookKeepingWithNoCategories=Compte disponible encara no al grup personalitzat
 CategoryDeleted=La categoria per al compte contable ha sigut eliminada

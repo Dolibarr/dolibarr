@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
     /**
-     * @var Company Issuer object that emits
+     * @var Societe Issuer object that emits
      */
     public $emetteur;
 
@@ -226,7 +226,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Propale		$object				Object source to build document
+	 *	@param		Propal		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details

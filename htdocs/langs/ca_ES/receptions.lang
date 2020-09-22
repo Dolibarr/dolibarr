@@ -43,5 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Quantitat de producte des de coman
 ValidateOrderFirstBeforeReception=Primer has de validar la comanda abans de poder fer recepcions.
 ReceptionsNumberingModules=Mòdul de numeració per a recepcions
 ReceptionsReceiptModel=Plantilles de documents per a recepcions
-NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+NoMorePredefinedProductToDispatch=No hi ha més productes predefinits per ser enviats
 

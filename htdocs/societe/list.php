@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -64,9 +64,9 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml') ?GETPOST('search_all', '
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
 $search_id = trim(GETPOST("search_id", "int"));
-$search_nom = trim(GETPOST("search_nom", 'none'));
-$search_alias = trim(GETPOST("search_alias", 'none'));
-$search_nom_only = trim(GETPOST("search_nom_only", 'none'));
+$search_nom = trim(GETPOST("search_nom", 'restricthtml'));
+$search_alias = trim(GETPOST("search_alias", 'restricthtml'));
+$search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
 $search_barcode = trim(GETPOST("search_barcode", 'alpha'));
 $search_customer_code = trim(GETPOST('search_customer_code', 'alpha'));
 $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));
@@ -433,7 +433,6 @@ if ($search_sale == -2) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciau
 elseif ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid)                $sql .= " AND s.rowid = ".$socid;
 if ($search_sale && $search_sale != -2)    $sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 if (!$user->rights->fournisseur->lire) $sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 if ($search_sale == -2)    $sql .= " AND sc.fk_user IS NULL";
@@ -458,7 +457,7 @@ if ($search_town)          $sql .= natural_search("s.town", $search_town);
 if (strlen($search_zip))   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state)         $sql .= natural_search("state.nom", $search_state);
 if ($search_region)        $sql .= natural_search("region.nom", $search_region);
-if ($search_country && $search_country != '-1')       $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
+if ($search_country && $search_country != '-1')       $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
 if ($search_email)         $sql .= natural_search("s.email", $search_email);
 if (strlen($search_phone)) $sql .= natural_search("s.phone", $search_phone);
 if (strlen($search_fax))   $sql .= natural_search("s.fax", $search_fax);
@@ -471,7 +470,7 @@ if (strlen($search_idprof5)) $sql .= natural_search("s.idprof5", $search_idprof5
 if (strlen($search_idprof6)) $sql .= natural_search("s.idprof6", $search_idprof6);
 if (strlen($search_vat))     $sql .= natural_search("s.tva_intra", $search_vat);
 // Filter on type of thirdparty
-if ($search_type > 0 && in_array($search_type, array('1,3', '2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
+if ($search_type > 0 && in_array($search_type, array('1,3', '2,3'))) $sql .= " AND s.client IN (".$db->sanitize($db->escape($search_type)).")";
 if ($search_type > 0 && in_array($search_type, array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if ($search_status != '' && $search_status >= 0) $sql .= natural_search("s.status", $search_status, 2);
@@ -484,10 +483,12 @@ if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("s.fk_s
 if ($search_import_key)    $sql .= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 // Add where from hooks
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
+}
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -612,6 +613,11 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 	}
 
     $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
+} elseif ($user->rights->societe->creer && $contextpage == 'poslist')
+{
+	$label = 'MenuNewCustomer';
+
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place));
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -1047,7 +1053,7 @@ while ($i < min($num, $limit))
 	{
 		$savalias = $obj->name_alias;
 		if (!empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias = '';
-		print '<td class="tdoverflowmax200">';
+		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').'>';
 		if ($contextpage == 'poslist')
 		{
 		    print $obj->name;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha');
 $varname = GETPOST('varname', 'alpha');
@@ -155,6 +156,9 @@ if ($mode == 'setup' && $user->admin)
             // List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
             // We pass this param list in to 'state' because we need it before and after the redirect.
             $shortscope = 'userinfo_email,userinfo_profile,cloud_print';
+            if (!empty($conf->global->OAUTH_GSUITE)){
+            	$shortscope .= ',admin_directory_user';
+			}
             //$scope.=',gmail_full';
             $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');

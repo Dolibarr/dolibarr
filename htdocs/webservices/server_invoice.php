@@ -778,7 +778,7 @@ function updateInvoice($authentication, $invoice)
 					{
 						// Define output language
 						$outputlangs = $langs;
-						$object->generateDocument($object->modelpdf, $outputlangs);
+						$object->generateDocument($object->model_pdf, $outputlangs);
 					}
 				}
 				if ($invoice['status'] == Facture::STATUS_CLOSED)

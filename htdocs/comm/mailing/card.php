@@ -41,7 +41,7 @@ $langs->load("mails");
 if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) accessforbidden();
 
 $id = (GETPOST('mailid', 'int') ? GETPOST('mailid', 'int') : GETPOST('id', 'int'));
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $urlfrom = GETPOST('urlfrom');
 
@@ -211,7 +211,6 @@ if (empty($reshook))
 						$substitutionarray['__OTHER4__'] = $other4;
 						$substitutionarray['__OTHER5__'] = $other5;
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
-						$substitutionarray['__SIGNATURE__'] = $signature; // For backward compatibility
 						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
 
@@ -463,14 +462,14 @@ if (empty($reshook))
 	{
 		$mesgs = array();
 
-		$object->email_from     = trim($_POST["from"]);
-		$object->email_replyto  = trim($_POST["replyto"]);
-		$object->email_errorsto = trim($_POST["errorsto"]);
-		$object->titre          = trim($_POST["titre"]);
-		$object->sujet          = trim($_POST["sujet"]);
-		$object->body           = trim($_POST["bodyemail"]);
-		$object->bgcolor        = trim($_POST["bgcolor"]);
-		$object->bgimage        = trim($_POST["bgimage"]);
+		$object->email_from     = GETPOST("from");
+		$object->email_replyto  = GETPOST("replyto");
+		$object->email_errorsto = GETPOST("errorsto");
+		$object->titre          = GETPOST("titre");
+		$object->sujet          = GETPOST("sujet");
+		$object->body           = GETPOST("bodyemail", 'restricthtml');
+		$object->bgcolor        = GETPOST("bgcolor");
+		$object->bgimage        = GETPOST("bgimage");
 
 		if (!$object->titre) {
 			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
@@ -564,10 +563,10 @@ if (empty($reshook))
 		{
 			$mesgs = array();
 
-			$object->sujet          = trim($_POST["sujet"]);
-			$object->body           = trim($_POST["bodyemail"]);
-			$object->bgcolor        = trim($_POST["bgcolor"]);
-			$object->bgimage        = trim($_POST["bgimage"]);
+			$object->sujet          = GETPOST("sujet");
+			$object->body           = GETPOST("bodyemail", 'restricthtml');
+			$object->bgcolor        = GETPOST("bgcolor");
+			$object->bgimage        = GETPOST("bgimage");
 
 			if (!$object->sujet) {
 				$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTopic"));
@@ -739,7 +738,7 @@ if ($action == 'create')
 	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'none'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtml'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
 	$doleditor->Create();
 	print '</div>';
 

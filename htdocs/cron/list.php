@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin", "cron", "bills", "members"));
 
 if (!$user->rights->cron->read) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
@@ -347,7 +347,7 @@ if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text .= $langs->trans("War
 print info_admin($text);
 print '<br>';
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+//$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
 //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -358,9 +358,8 @@ print '<table class="noborder">';
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
-print '<input type="text" class="flat" name="search_label" value="'.$search_label.'" size="10">';
+print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
 print '</td>';
-print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -388,7 +387,6 @@ print_liste_field_titre("CronTask", '', '', "", $param, '', $sortfield, $sortord
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronMaxRun", $_SERVER["PHP_SELF"], "t.maxrun", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -432,11 +430,11 @@ if ($num > 0)
 		print '</td>';
 
 		// Label
-		print '<td>';
+		print '<td class="tdoverflowmax300">';
 		if (!empty($obj->label))
 		{
 			$object->ref = $langs->trans($obj->label);
-			print $object->getNomUrl(0, '', 1);
+			print '<span title="'.dol_escape_htmltag($langs->trans($obj->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
 			$object->ref = $obj->rowid;
 		} else {
 			//print $langs->trans('CronNone');
@@ -476,24 +474,21 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if (!empty($obj->datestart)) {print dol_print_date($db->jdate($obj->datestart), 'dayhour'); }
+		if (!empty($obj->datestart)) { print dol_print_date($db->jdate($obj->datestart), 'dayhour'); }
 		print '</td>';
 
 		print '<td class="center">';
-		if (!empty($obj->dateend)) {print dol_print_date($db->jdate($obj->dateend), 'dayhour'); }
+		if (!empty($obj->dateend)) { print dol_print_date($db->jdate($obj->dateend), 'dayhour'); }
 		print '</td>';
 
 		print '<td class="right">';
-		if (!empty($obj->maxrun)) {print $obj->maxrun; }
-		print '</td>';
-
-		print '<td class="right">';
-		if (!empty($obj->nbrun)) {print $obj->nbrun; } else {print '0'; }
+		if (!empty($obj->nbrun)) { print $obj->nbrun; } else {print '0'; }
+		if (!empty($obj->maxrun)) { print ' <span class="'.$langs->trans("Max").'">/ '.$obj->maxrun.'</span>'; }
 		print '</td>';
 
 		// Date start last run
 		print '<td class="center">';
-		if (!empty($datelastrun)) {print dol_print_date($datelastrun, 'dayhoursec'); }
+		if (!empty($datelastrun)) { print dol_print_date($datelastrun, 'dayhoursec'); }
 		print '</td>';
 
 		// Duration

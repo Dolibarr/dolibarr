@@ -272,7 +272,7 @@ if (!empty($extrafields))
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
-	print '<script type="text/javascript">';
+	print '<script>';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
@@ -297,7 +297,7 @@ if (!empty($extrafields))
 ?>
 
 
-<script type="text/javascript">
+<script>
 
 jQuery(document).ready(function()
 {

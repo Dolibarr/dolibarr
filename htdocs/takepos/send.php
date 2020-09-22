@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $facid = GETPOST('facid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
 if (empty($user->rights->takepos->run)) {

@@ -551,10 +551,10 @@ if (empty($reshook))
 			$db->begin();
 
             if (empty($newcu)) {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
             } else {
                 $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-                $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
             }
 
 			$resql = $db->query($sql);
@@ -577,8 +577,8 @@ if (empty($reshook))
 					}
 				} else {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
-					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$site_account."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$db->escape($site_account)."'";
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					$resql = $db->query($sql);
 				}
 			}
@@ -602,9 +602,9 @@ if (empty($reshook))
 			$db->begin();
 
             if (empty($newsup)) {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
                 // TODO Add site and site_account on oauth_token table
-                //$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+                //$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
             } else {
                 try {
                     $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
@@ -612,9 +612,9 @@ if (empty($reshook))
                     $tokenstring['type'] = $stripesup->type;
                     $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
                     $sql .= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
-                    $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$site_account."') AND fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                    $sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
                     // TODO Add site and site_account on oauth_token table
-                    $sql .= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+                    $sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
                 } catch (Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
@@ -630,7 +630,7 @@ if (empty($reshook))
                     $tokenstring['stripe_user_id'] = $stripesup->id;
                     $tokenstring['type'] = $stripesup->type;
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-                    $sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+                    $sql .= " VALUES ('".$db->escape($service)."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
                     // TODO Add site and site_account on oauth_token table
                 } catch (Exception $e) {
 					$error++;
@@ -1272,7 +1272,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
   	// List of Stripe payment modes
 	if (!empty($conf->stripe->enabled) && !empty($conf->stripeconnect->enabled) && $object->fournisseur && !empty($stripesupplieracc))
 	{
-        print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+        print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
         $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
@@ -1530,7 +1530,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$genallowed = $user->rights->societe->lire;
 		$delallowed = $user->rights->societe->creer;
 
-		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 		// Show direct download link
 		if (!empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD))

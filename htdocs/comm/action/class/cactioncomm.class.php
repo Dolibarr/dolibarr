@@ -139,7 +139,7 @@ class CActionComm
         $sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         $sql .= " WHERE 1=1";
         if ($active != '') $sql .= " AND active=".$active;
-        if (!empty($excludetype)) $sql .= " AND type <> '".$excludetype."'";
+        if (!empty($excludetype)) $sql .= " AND type <> '".$this->db->escape($excludetype)."'";
         if ($morefilter) $sql .= " AND ".$morefilter;
         $sql .= " ORDER BY module, position, type";
 

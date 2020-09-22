@@ -69,6 +69,7 @@ SocialContribution=Sociální nebo daňová daň
 SocialContributions=Sociální nebo daně za
 SocialContributionsDeductibles=Odečitatelné sociální či daně za
 SocialContributionsNondeductibles=Nondeductible sociální či daně za
+DateOfSocialContribution=Datum sociální nebo daňové daně
 LabelContrib=Příspěvek štítek
 TypeContrib=Typ příspěvku
 MenuSpecialExpenses=Zvláštní výdaje

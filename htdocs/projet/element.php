@@ -72,7 +72,7 @@ if (!empty($conf->mrp->enabled))		$langs->load("mrp");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $datesrfc = GETPOST('datesrfc');
 $dateerfc = GETPOST('dateerfc');
 $dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));

@@ -38,7 +38,7 @@ $langs->loadLangs(array('bills', 'products', 'stocks'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $key = GETPOST('key');
@@ -66,7 +66,7 @@ if ($id > 0 || !empty($ref))
 
 if ($cancel) $action = '';
 
-// Action association d'un sousproduit
+// Add subproduct to product
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error = 0;

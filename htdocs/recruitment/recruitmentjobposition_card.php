@@ -89,7 +89,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -108,6 +108,8 @@ $permissiontodelete = $user->rights->recruitment->recruitmentjobposition->delete
 $permissionnote = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->recruitment->multidir_output[isset($object->entity) ? $object->entity : 1];
+
+$usercanclose = $permissiontoadd;
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -162,6 +164,32 @@ if (empty($reshook))
 	if ($action == 'classin' && $permissiontoadd)
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
+	}
+	if ($action == 'confirm_closeas' && $usercanclose && !GETPOST('cancel', 'alpha')) {
+		if (!(GETPOST('status', 'int') > 0)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
+			$action = 'closeas';
+		} else {
+			// prevent browser refresh from closing proposal several times
+			if ($object->status == $object::STATUS_VALIDATED)
+			{
+				$db->begin();
+
+				$result = $object->cloture($user, GETPOST('status', 'int'), GETPOST('note_private', 'restricthtml'));
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+
+				if (!$error)
+				{
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+		}
 	}
 
 	// Actions to send emails
@@ -286,22 +314,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
+	if ($action == 'closeas')
 	{
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		//Form to close proposal (signed or not)
 		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(3=>$object->LibStatut($object::STATUS_RECRUITED), 9=>$object->LibStatut($object::STATUS_CANCELED))),
+			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+
+		/*if (!empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$formquestion = array_merge($formquestion, array(
+				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
+			));
+		}*/
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 	}
 
 	// Call Hook formConfirm
@@ -482,6 +512,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
+			// Close as recruited/canceled
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if ($usercanclose) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+					print '>'.$langs->trans('Close').'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Close').'</a>';
+				}
+			}
+
 			// Clone
 			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=recruitmentjobposition">'.$langs->trans("ToClone").'</a>'."\n";
@@ -497,9 +537,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}*/
 			if ($permissiontoadd)
 			{
-				if ($object->status == $object::STATUS_VALIDATED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
-				} else {
+				if ($object->status == $object::STATUS_CANCELED) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}

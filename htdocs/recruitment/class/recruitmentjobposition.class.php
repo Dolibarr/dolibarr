@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class RecruitmentJobPosition extends CommonObject
 {
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'recruitment';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -93,10 +98,10 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
 		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp',),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
@@ -117,7 +122,7 @@ class RecruitmentJobPosition extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>900, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
@@ -386,10 +391,12 @@ class RecruitmentJobPosition extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
+				} elseif (strpos($value, '%') === false) {
+					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -656,6 +663,99 @@ class RecruitmentJobPosition extends CommonObject
 	}
 
 	/**
+	 *	Close the commercial proposal
+	 *
+	 *	@param      User	$user		Object user that close
+	 *	@param      int		$status		Statut
+	 *	@param      string	$note		Complete private note with this note
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int         		<0 if KO, >0 if OK
+	 */
+	public function cloture($user, $status, $note = "", $notrigger = 0)
+	{
+		global $langs, $conf;
+
+		$error = 0;
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET status = ".$status.", note_private = '".$this->db->escape($newprivatenote)."'";
+		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$modelpdf = $this->model_pdf;
+			$triggerName = 'RECRUITMENTJOB_CLOSE_REFUSED';
+
+			if ($status == self::STATUS_RECRUITED)
+			{
+				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
+				$modelpdf = $this->model_pdf;
+
+				if ($result < 0)
+				{
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				// Define output language
+				$outputlangs = $langs;
+				if (!empty($conf->global->MAIN_MULTILANGS))
+				{
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
+			}
+
+			if (!$error)
+			{
+				$this->oldcopy = clone $this;
+				$this->status = $status;
+				$this->date_cloture = $now;
+				$this->note_private = $newprivatenote;
+			}
+
+			if (!$notrigger && empty($error))
+			{
+				// Call trigger
+				$result = $this->call_trigger($triggerName, $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+
+			if (!$error)
+			{
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->status = $this->oldcopy->status;
+				$this->date_cloture = $this->oldcopy->date_cloture;
+				$this->note_private = $this->oldcopy->note_private;
+
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
 	 *	Set back to validated status
 	 *
 	 *	@param	User	$user			Object user that modify
@@ -698,9 +798,10 @@ class RecruitmentJobPosition extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("PositionToBeFilled").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("PositionToBeFilled").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
@@ -812,8 +913,9 @@ class RecruitmentJobPosition extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_RECRUITED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -974,8 +1076,8 @@ class RecruitmentJobPosition extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_recruitmentjobposition';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
 			}

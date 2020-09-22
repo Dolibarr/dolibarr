@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Nastavení odchozí pošty (pro modul %s)
 DefaultOutgoingEmailSetup=Výchozí nastavení odchozí pošty
 Information=Informace
 ContactsWithThirdpartyFilter=Kontakty s filtrem subjektu
+Unanswered=Unanswered
+Answered=Odpovězeno
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013-2019  Philippe Grand	            <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2020  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
  *
@@ -41,70 +41,70 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 class pdf_strato extends ModelePDFContract
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+	 * @var DoliDb Database handler
+	 */
+	public $db;
 
 	/**
-     * @var string model name
-     */
-    public $name;
+	 * @var string model name
+	 */
+	public $name;
 
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+	 * @var string model description (short text)
+	 */
+	public $description;
 
 	/**
-     * @var string document type
-     */
-    public $type;
+	 * @var string document type
+	 */
+	public $type;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
-     * @var int page_largeur
-     */
-    public $page_largeur;
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
 
 	/**
-     * @var int page_hauteur
-     */
-    public $page_hauteur;
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
 
 	/**
-     * @var array format
-     */
-    public $format;
+	 * @var array format
+	 */
+	public $format;
 
 	/**
-     * @var int marge_gauche
-     */
+	 * @var int marge_gauche
+	 */
 	public $marge_gauche;
 
 	/**
-     * @var int marge_droite
-     */
+	 * @var int marge_droite
+	 */
 	public $marge_droite;
 
 	/**
-     * @var int marge_haute
-     */
+	 * @var int marge_haute
+	 */
 	public $marge_haute;
 
 	/**
-     * @var int marge_basse
-     */
+	 * @var int marge_basse
+	 */
 	public $marge_basse;
 
 	/**
@@ -160,21 +160,21 @@ class pdf_strato extends ModelePDFContract
 		$this->posxdesc = $this->marge_gauche + 1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Function to build pdf onto disk
-     *
-     *  @param		CommonObject	$object				Id of object to generate
-     *  @param		object			$outputlangs		Lang output object
-     *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int				$hidedetails		Do not show line details
-     *  @param		int				$hidedesc			Do not show desc
-     *  @param		int				$hideref			Do not show ref
-     *  @return		int									1=OK, 0=KO
-     */
-    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-    {
-        // phpcs:enable
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param		CommonObject	$object				Id of object to generate
+	 *  @param		object			$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int				$hidedetails		Do not show line details
+	 *  @param		int				$hidedesc			Do not show desc
+	 *  @param		int				$hideref			Do not show ref
+	 *  @return		int									1=OK, 0=KO
+	 */
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -186,7 +186,7 @@ class pdf_strato extends ModelePDFContract
 
 		if ($conf->contrat->dir_output)
 		{
-            $object->fetch_thirdparty();
+			$object->fetch_thirdparty();
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -221,26 +221,26 @@ class pdf_strato extends ModelePDFContract
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-                $pdf = pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-                $heightforinfotot = 50; // Height reserved to output the info and total part
-		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
-                $pdf->SetAutoPageBreak(1, 0);
+				$pdf = pdf_getInstance($this->format);
+				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
+				$heightforinfotot = 50; // Height reserved to output the info and total part
+				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				$pdf->SetAutoPageBreak(1, 0);
 
-                if (class_exists('TCPDF'))
-                {
-                    $pdf->setPrintHeader(false);
-                    $pdf->setPrintFooter(false);
-                }
-                $pdf->SetFont(pdf_getPDFFont($outputlangs));
-                // Set path to the background PDF File
-                if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-                {
-                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
-                    $tplidx = $pdf->importPage(1);
-                }
+				if (class_exists('TCPDF'))
+				{
+					$pdf->setPrintHeader(false);
+					$pdf->setPrintFooter(false);
+				}
+				$pdf->SetFont(pdf_getPDFFont($outputlangs));
+				// Set path to the background PDF File
+				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+				{
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$tplidx = $pdf->importPage(1);
+				}
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -341,12 +341,12 @@ class pdf_strato extends ModelePDFContract
 						}
 
 						$txtpredefinedservice = '';
-                        $txtpredefinedservice = $objectligne->product_label;
-                        if ($objectligne->product_label)
-                        {
-                        	$txtpredefinedservice .= ' - ';
-                        	$txtpredefinedservice .= $objectligne->product_label;
-                        }
+						$txtpredefinedservice = $objectligne->product_label;
+						if ($objectligne->product_label)
+						{
+							$txtpredefinedservice .= ' - ';
+							$txtpredefinedservice .= $objectligne->product_label;
+						}
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
@@ -359,7 +359,7 @@ class pdf_strato extends ModelePDFContract
 						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF))
 						{
 							$txt .= '<br>';
-	                        $txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
+							$txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
 							if ($objectligne->date_cloture) $txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
 						}
 
@@ -476,8 +476,8 @@ class pdf_strato extends ModelePDFContract
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
 				if (!empty($conf->global->MAIN_UMASK))
@@ -500,7 +500,7 @@ class pdf_strato extends ModelePDFContract
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -518,7 +518,7 @@ class pdf_strato extends ModelePDFContract
 		if ($hidetop) $hidetop = -1;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-        /*
+		/*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
 		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
@@ -548,16 +548,16 @@ class pdf_strato extends ModelePDFContract
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 3); // Rect takes a length in 3rd parameter and 4th parameter
 	}
 
-    /**
-     * Show footer signature of page
-     * @param   PDF         $pdf            Object PDF
-     * @param   int         $tab_top        tab height position
-     * @param   int         $tab_height     tab height
-     * @param   Translate   $outputlangs    Object language for output
-     * @return void
-     */
+	/**
+	 * Show footer signature of page
+	 * @param   TCPDF       $pdf            Object PDF
+	 * @param   int         $tab_top        tab height position
+	 * @param   int         $tab_height     tab height
+	 * @param   Translate   $outputlangs    Object language for output
+	 * @return void
+	 */
 	protected function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
-    {
+	{
 		$pdf->SetDrawColor(128, 128, 128);
 		$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite) / 2);
 		$posy = $tab_top + $tab_height + 3 + 3;
@@ -573,20 +573,20 @@ class pdf_strato extends ModelePDFContract
 
 		$pdf->SetXY($posmiddle + 5, $posy + 5);
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posmiddle - 5, 20, '', 1);
-    }
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     *  Show top header of page.
-     *
-     *  @param	PDF			$pdf     		Object PDF
-     *  @param  CommonObject		$object     	Object to show
-     *  @param  int	    	$showaddress    0=no, 1=yes
-     *  @param  Translate	$outputlangs	Object lang for output
-     *  @return	void
-     */
+	/**
+	 *  Show top header of page.
+	 *
+	 *  @param	TCPDF		$pdf     		Object PDF
+	 *  @param  CommonObject	$object     	Object to show
+	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @return	void
+	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
-    {
+	{
 		global $conf, $langs;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -617,8 +617,8 @@ class pdf_strato extends ModelePDFContract
 		{
 			if (is_readable($logo))
 			{
-			    $height = pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -754,7 +754,7 @@ class pdf_strato extends ModelePDFContract
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
-     *
+	 *
 	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param	CommonObject		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output

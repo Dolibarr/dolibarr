@@ -922,7 +922,7 @@ class Dolresource extends CommonObject
         global $conf, $langs;
 
         $result = '';
-        $label = '<u>'.$langs->trans("ShowResource").'</u>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         /*if (isset($this->status)) {

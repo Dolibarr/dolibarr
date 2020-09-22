@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -77,6 +77,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW", GETPOST("MAIN_MAIL_SMTPS_PW", 'none'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", GETPOST("MAIN_MAIL_EMAIL_TLS", 'int'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED", GETPOST("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED", 'int'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED", GETPOST("MAIN_MAIL_EMAIL_DKIM_ENABLED", 'int'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_DOMAIN", GETPOST("MAIN_MAIL_EMAIL_DKIM_DOMAIN", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -156,6 +157,8 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
@@ -187,6 +190,8 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").val('.$conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED.');
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
@@ -211,6 +216,8 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").val('.$conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED.');
+                            jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val('.$conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED.');
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").removeAttr("disabled");
@@ -233,12 +240,16 @@ if ($action == 'edit')
                         initfields();
                     });
                     jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
-						if (jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val() == 1)
+						if (jQuery("#MAIN_MAIL_EMAIL_TLS").val() == 1)
 							jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
+						else
+							jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").val(0);
 					});
 					jQuery("#MAIN_MAIL_EMAIL_STARTTLS").change(function() {
-						if (jQuery("#MAIN_MAIL_EMAIL_TLS").val() == 1)
+						if (jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val() == 1)
 							jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
+						else
+							jQuery("#MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").val(0);
                     });
                })';
         print '</script>'."\n";
@@ -269,14 +280,12 @@ if ($action == 'edit')
 	print '<input class="flat" name="MAIN_MAIL_FORCE_SENDTO" size="32" value="'.(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO) ? $conf->global->MAIN_MAIL_FORCE_SENDTO : '').'" />';
 	print '</td></tr>';
 
+	print '</table>';
 
-	//Add user to select destinaries list
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
-	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT', $conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT, 1);
-	print '</td></tr>';
+	print '<br>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -408,6 +417,17 @@ if ($action == 'edit')
 	} else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
+	// SMTP_ALLOW_SELF_SIGNED
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
+	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print $form->selectyesno('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED', (!empty($conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED) ? $conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED : 0), 1);
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print yn(0).' ('.$langs->trans("NotSupported").')';
+	print '</td></tr>';
+
 	// DKIM
 	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer'))))
@@ -434,8 +454,12 @@ if ($action == 'edit')
     print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">'.(!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY : '').'</textarea>';
     print '</td></tr>';
 
-    // Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '</table>';
+
+	print '<br>';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
@@ -451,9 +475,6 @@ if ($action == 'edit')
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
 	print '</td></tr>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
-
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="'.(!empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : '');
@@ -463,6 +484,11 @@ if ($action == 'edit')
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="'.(!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) ? $conf->global->MAIN_MAIL_AUTOCOPY_TO : '');
 	print '"></td></tr>';
+
+	// Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
+	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT', $conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT, 1);
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -498,17 +524,23 @@ if ($action == 'edit')
 	}
 	print '</td></tr>';
 
-	//Add user to select destinaries list
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
+	print '</table>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '<br>';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 	if (empty($text)) $text = $langs->trans("Undefined").img_warning();
 	print $text;
+
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+		print $form->textwithpicto('', $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC"), 1, 'warning');
+	}
+
 	print '</td></tr>';
 
 	// Host server
@@ -561,6 +593,17 @@ if ($action == 'edit')
 	} else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 	print '</td></tr>';
 
+	// SMTP_ALLOW_SELF_SIGNED
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print yn($conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED);
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+	print '</td></tr>';
+
 
 	if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer')
 	{
@@ -591,8 +634,16 @@ if ($action == 'edit')
 	    print '</td></tr>';
 	}
 
-    // Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	print '</table>';
+
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+		print info_admin($langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC"), 0, 0, 'warning');
+	}
+
+	print '<br>';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
@@ -645,9 +696,6 @@ if ($action == 'edit')
 	}
 	print '</td></tr>';
 
-	// Separator
-	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
-
 	// Errors To
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
@@ -665,6 +713,9 @@ if ($action == 'edit')
 		print '&nbsp;';
 	}
 	print '</td></tr>';
+
+	//Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
 
 	print '</table>';
 
@@ -717,7 +768,7 @@ if ($action == 'edit')
 		$text = '';
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 		{
-			$text .= $langs->trans("WarningPHPMail"); // To encourage to use SMTPS
+			//$text .= $langs->trans("WarningPHPMail"); // To encourage to use SMTPS
 		}
 
 		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')

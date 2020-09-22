@@ -120,9 +120,9 @@ if ($action == 'add' && $permtoadd)
 		}
 	}
 
-	$ref = trim(GETPOST("ref", 'alpha'));
-	$label = trim(GETPOST("label", 'alpha'));
-	$desc = trim(GETPOST("desc", 'alpha'));
+	$ref = GETPOST("ref", 'alpha');
+	$label = GETPOST("label", 'alpha');
+	$desc = GETPOST("desc", 'alpha');
 	$catParent = GETPOST("catParent", 'alpha'); // Can be an int (with ECM) or a string (with generic filemanager)
 	if ($catParent == '-1') $catParent = 0;
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2020  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2018  Charlene Benke          <charlies@patas-monkey.com>
@@ -65,7 +65,7 @@ $confirm	= GETPOST('confirm', 'alpha');
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
-$note_public = GETPOST('note_public', 'none');
+$note_public = GETPOST('note_public', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
 
 //PDF
@@ -167,7 +167,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->modelpdf : GETPOST('model', 'alpha'), $outputlangs);
+				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->model_pdf : GETPOST('model', 'alpha'), $outputlangs);
 			}
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -192,7 +192,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->modelpdf : GETPOST('model', 'alpha'), $outputlangs);
+				$result = fichinter_create($db, $object, (!GETPOST('model', 'alpha')) ? $object->model_pdf : GETPOST('model', 'alpha'), $outputlangs);
 			}
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -207,11 +207,11 @@ if (empty($reshook))
 	    $object->fk_project		= GETPOST('projectid', 'int');
 	    $object->fk_contrat		= GETPOST('contratid', 'int');
 	    $object->author = $user->id;
-	    $object->description	= GETPOST('description', 'none');
+	    $object->description	= GETPOST('description', 'restricthtml');
 	    $object->ref = $ref;
-	    $object->modelpdf = GETPOST('model', 'alpha');
-	    $object->note_private = GETPOST('note_private', 'none');
-	    $object->note_public = GETPOST('note_public', 'none');
+	    $object->model_pdf = GETPOST('model', 'alpha');
+	    $object->note_private = GETPOST('note_private', 'restricthtml');
+	    $object->note_public = GETPOST('note_public', 'restricthtml');
 
 		if ($object->socid > 0)
 		{
@@ -415,7 +415,7 @@ if (empty($reshook))
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contrat		= GETPOST('contratid', 'int');
 		$object->author = $user->id;
-		$object->description	= GETPOST('description', 'alpha');
+		$object->description	= GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 
 		$result = $object->update($user);
@@ -454,7 +454,7 @@ if (empty($reshook))
 	// Add line
 	elseif ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc', 'none') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC))
+		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC))
  		{
 			$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
@@ -473,7 +473,7 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			$desc = GETPOST('np_desc', 'none');
+			$desc = GETPOST('np_desc', 'restricthtml');
 			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ?convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
 
@@ -506,7 +506,7 @@ if (empty($reshook))
 			{
 				$db->commit();
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
 			} else {
@@ -573,7 +573,7 @@ if (empty($reshook))
 		}
 		$object->fetch_thirdparty();
 
-		$desc = GETPOST('np_desc');
+		$desc = GETPOST('np_desc', 'alpha');
 		$date_inter = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int'));
 
@@ -603,7 +603,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
@@ -638,7 +638,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 	}
 
 	/*
@@ -658,7 +658,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
@@ -676,7 +676,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->modelpdf, $outputlangs);
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
@@ -701,7 +701,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -830,8 +830,8 @@ if ($action == 'create')
 
 			$soc = $objectsrc->thirdparty;
 
-			$note_private = (!empty($objectsrc->note) ? $objectsrc->note : (!empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private', 'none')));
-			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public', 'none'));
+			$note_private = (!empty($objectsrc->note) ? $objectsrc->note : (!empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private', 'restricthtml')));
+			$note_public = (!empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public', 'restricthtml'));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
@@ -906,7 +906,7 @@ if ($action == 'create')
 		{
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
-			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1);
+			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1, 1);
 			if ($numcontrat == 0)
 			{
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
@@ -1238,7 +1238,7 @@ if ($action == 'create')
 		if ($action == 'contrat')
 		{
 			$formcontract = new Formcontract($db);
-			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
+			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
 		} else {
 			if ($object->fk_contrat)
             {
@@ -1653,7 +1653,7 @@ if ($action == 'create')
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->rights->ficheinter->lire;
 		$delallowed = $user->rights->ficheinter->creer;
-		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));

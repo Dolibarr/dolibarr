@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin)
 	accessforbidden();
@@ -365,10 +365,14 @@ foreach ($configfileparameters as $key => $value)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
+			if ($newkey == 'dolibarr_main_db_pass') {
+				if (empty($dolibarr_main_prod)) {
+					print '<!-- '.${$newkey}.' -->';
+				}
+				print '**********';
+			}
 			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-			elseif ($newkey == 'dolibarr_main_document_root_alt')
-			{
+			elseif ($newkey == 'dolibarr_main_document_root_alt') {
 				$tmparray = explode(',', ${$newkey});
 				$i = 0;
 				foreach ($tmparray as $value2)
@@ -382,8 +386,7 @@ foreach ($configfileparameters as $key => $value)
 					}
 					++$i;
 				}
-			} elseif ($newkey == 'dolibarr_main_instance_unique_id')
-			{
+			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
 			    //print $conf->file->instance_unique_id;
 			    global $dolibarr_main_cookie_cryptkey;
 			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
@@ -392,6 +395,20 @@ foreach ($configfileparameters as $key => $value)
 			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 			    }
 			    print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
+			} elseif ($newkey == 'dolibarr_main_prod') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (empty($valuetoshow)) {
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 1));
+				}
+			} elseif ($newkey == 'dolibarr_nocsrfcheck') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (!empty($valuetoshow)) {
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
+				}
 			} else {
 			    print ${$newkey};
 			}
@@ -446,7 +463,16 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
-		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
+		print '<td class="tdoverflowmax300">';
+		if (preg_match('/(_pass|password|_pw|_key|securekey|serverkey|secret\d?|p12key|exportkey|_PW_[a-z]+|token)$/i', $obj->name)) {
+			if (empty($dolibarr_main_prod)) {
+				print '<!-- '.$obj->value.' -->';
+			}
+			print '**********';
+		} else {
+			print dol_escape_htmltag($obj->value);
+		}
+		print '</td>'."\n";
 		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		print "</tr>\n";
 

@@ -171,7 +171,7 @@ if ($nolinesbefore) {
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
-				echo ((GETPOST('prod_entry_mode', 'alpha') == 'free' || ! empty($conf->global->MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT)) ? ' checked' : '');
+				echo ((GETPOST('prod_entry_mode', 'alpha') == 'free' || !empty($conf->global->MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT)) ? ' checked' : '');
 				echo '> ';
 				// Show type selector
 				echo $langs->trans("FreeLineOfType");
@@ -224,7 +224,7 @@ if ($nolinesbefore) {
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
 				{
 					?>
-				<script type="text/javascript">
+				<script>
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
 						$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -259,7 +259,7 @@ if ($nolinesbefore) {
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
 				{
 					?>
-				<script type="text/javascript">
+				<script>
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
 						$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -306,7 +306,7 @@ if ($nolinesbefore) {
 		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 		$toolbarname = 'dolibarr_details';
 		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname = 'dolibarr_notes';
-		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'none'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
+		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
 		if (!empty($conf->service->enabled) && $object->element == 'facturerec')
@@ -362,7 +362,7 @@ if ($nolinesbefore) {
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
-		print $form->selectUnits($line->fk_unit, "units");
+		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
@@ -423,6 +423,27 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 	print '<td colspan="'.($coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1)).'">';
 	$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+
+	$prefillDates = false;
+
+	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && !empty($object->lines))
+	{
+		for ($i = count($object->lines) - 1; $i >= 0; $i--)
+		{
+			$lastline = $object->lines[$i];
+
+			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end)))
+			{
+				$date_start_prefill = $lastline->date_start;
+				$date_end_prefill = $lastline->date_end;
+
+				$prefillDates = true;
+				break;
+			}
+		}
+	}
+
+
 	if (!empty($object->element) && $object->element == 'contrat')
 	{
 		print $langs->trans("DateStartPlanned").' ';
@@ -435,7 +456,33 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 		print ' '.$langs->trans('to').' ';
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 	};
+
+	if ($prefillDates)
+	{
+		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
+	}
+
 	print '<script>';
+
+	if ($prefillDates)
+	{
+		?>
+        function prefill_service_dates()
+        {
+            $('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, '%d/%m/%Y')); ?>").trigger('change');
+            $('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, '%d/%m/%Y')); ?>").trigger('change');
+
+            return false; // Prevent default link behaviour (which is go to href URL)
+        }
+
+        $(document).ready(function()
+        {
+            $('#prefill_service_dates').click(prefill_service_dates);
+        });
+
+		<?php
+	}
+
 	if (!$date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';

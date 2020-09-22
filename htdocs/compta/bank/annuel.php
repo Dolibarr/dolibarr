@@ -91,7 +91,7 @@ $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql .= " AND b.amount >= 0";
 if (!empty($id))
-	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
+	$sql .= " AND b.fk_account IN (".$db->sanitize($db->escape($id)).")";
 $sql .= " GROUP BY dm";
 
 $resql = $db->query($sql);
@@ -117,7 +117,7 @@ $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql .= " AND b.amount <= 0";
 if (!empty($id))
-	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
+	$sql .= " AND b.fk_account IN (".$db->sanitize($db->escape($id)).")";
 $sql .= " GROUP BY dm";
 
 $resql = $db->query($sql);
@@ -240,7 +240,7 @@ $sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if (!empty($id))
-	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
+	$sql .= " AND b.fk_account IN (".$db->sanitize($db->escape($id)).")";
 
 $resql = $db->query($sql);
 if ($resql)
