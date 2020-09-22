@@ -1667,7 +1667,7 @@ if ($id > 0)
 			print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder" '.$checked.'></td></tr>';
 
 			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
-			if (!empty($checked)) print '<input type="hidden" name="actioncommreminder_id" value="'.$actionCommReminder->id.'">';
+
 			print '<hr>';
 			print load_fiche_titre($langs->trans("AddReminder"), '', '');
 
