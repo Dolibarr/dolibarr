@@ -14,6 +14,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// FIXME: conflit entre paramètres d'URL et paramètres POST (action=filter vs. action=add)
 
 /**
  *      \file       htdocs/multicurrency/multicurrency_rates.php
@@ -197,8 +198,9 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 	// entire form is inside cell because HTML does not allow forms inside tables unless they are inside cells
 	echo '<td>'
 		 .'<form method="post" id="form-add-new">'
-		 .'<input type="hidden" name="action" value="add" />'
-		 .'<input class="button" type="submit" value="' . $langs->trans('Add') . '"></a>'
+		 .'<button class="button" name="action" value="add">'
+		 . $langs->trans('Add')
+		 . '</button>'
 		 .'</form>'
 		 .'</td>';
 	echo '</tr>';
@@ -307,9 +309,7 @@ function _getCellDefault($rawValue, $mode='view', $inputName='', $formId=NULL) {
 				'value' => $rawValue,
 				'name' => $inputName,
 			);
-			if ($formId !== NULL) {
-				$inputAttributes['form'] = $formId;
-			}
+			if ($formId !== NULL) {$inputAttributes['form'] = $formId;}
 			return _tagWithAttributes('input', $inputAttributes);
 		case 'raw':
 			return $rawValue;
@@ -345,9 +345,7 @@ function _getCellDate($rawValue, $mode='view', $inputName='', $formId=NULL) {
 				'value' => preg_replace('/^(.*?) .*/', '$1', $rawValue),
 				'name' => $inputName,
 			);
-			if ($formId !== NULL) {
-				$inputAttributes['form'] = $formId;
-			}
+			if ($formId !== NULL) {$inputAttributes['form'] = $formId;}
 			return _tagWithAttributes('input', $inputAttributes);
 		case 'raw':
 			return $rawValue;
@@ -391,9 +389,7 @@ function _getCellNumber($rawValue, $mode='view', $inputName='', $formId=NULL) {
 				'pattern' => '\d+(?:[.,]\d+)?',
 				'required' => 'required',
 			);
-			if ($formId !== NULL) {
-				$inputAttributes['form'] = $formId;
-			}
+			if ($formId !== NULL) {$inputAttributes['form'] = $formId;}
 			return _tagWithAttributes('input', $inputAttributes);
 		case 'raw':
 			return $rawValue;
