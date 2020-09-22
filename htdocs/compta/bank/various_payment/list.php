@@ -240,8 +240,10 @@ if ($result)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_ref)						$param .= '&search_ref='.urlencode($search_ref);
 	if ($search_label)						$param .= '&search_label='.urlencode($search_label);
-	if ($search_date_start)					$param .= '&search_date_start='.urlencode($search_date_start);
-	if ($search_date_end)					$param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_datep_start)				$param .= '&search_datep_start='.urlencode($search_datep_start);
+	if ($search_datep_end)					$param .= '&search_datep_end='.urlencode($search_datep_end);
+	if ($search_datev_start)				$param .= '&search_datev_start='.urlencode($search_datev_start);
+	if ($search_datev_end)					$param .= '&search_datev_end='.urlencode($search_datev_end);
 	if ($typeid > 0)						$param .= '&typeid='.urlencode($typeid);
 	if ($search_amount_deb)					$param .= '&search_amount_deb='.urlencode($search_amount_deb);
 	if ($search_amount_cred)				$param .= '&search_amount_cred='.urlencode($search_amount_cred);
@@ -306,12 +308,10 @@ if ($result)
 	if ($arrayfields['datep']['checked']) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_datep_start ? $search_datep_start : -1, 'search_date_start', 0, 0, 1);
+		print $form->selectDate($search_datep_start ? $search_datep_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_datep_end ? $search_datep_end : -1, 'search_date_end', 0, 0, 1);
+		print $form->selectDate($search_datep_end ? $search_datep_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -320,12 +320,10 @@ if ($result)
 	if ($arrayfields['datev']['checked']) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_datev_start ? $search_datev_start : -1, 'search_date_value_start', 0, 0, 1);
+		print $form->selectDate($search_datev_start ? $search_datev_start : -1, 'search_date_value_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_datev_end ? $search_datev_end : -1, 'search_date_value_end', 0, 0, 1);
+		print $form->selectDate($search_datev_end ? $search_datev_end : -1, 'search_date_value_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -333,7 +331,7 @@ if ($result)
 	// Payment type
 	if ($arrayfields['type']['checked']) {
 		print '<td class="liste_titre left">';
-		$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
+		$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16, 1, 'maxwidth100');
 		print '</td>';
 	}
 
@@ -347,14 +345,14 @@ if ($result)
 	// Bank account
 	if ($arrayfields['bank']['checked']) {
 		print '<td class="liste_titre">';
-		$form->select_comptes($search_bank_account, 'search_account', 0, '', 1);
+		$form->select_comptes($search_bank_account, 'search_account', 0, '', 1, '', 0, 'maxwidth100');
 		print '</td>';
 	}
 
 	// Bank entry
 	if ($arrayfields['entry']['checked']) {
-		print '<td class="liste_titre right">';
-		print '<input name="search_bank_entry" class="flat" type="text" size="8" value="'.$search_bank_entry.'">';
+		print '<td class="liste_titre left">';
+		print '<input name="search_bank_entry" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_bank_entry).'">';
 		print '</td>';
 	}
 
@@ -379,14 +377,14 @@ if ($result)
 	// Debit
 	if ($arrayfields['debit']['checked']) {
 		print '<td class="liste_titre right">';
-		print '<input name="search_amount_deb" class="flat" type="text" size="8" value="'.$search_amount_deb.'">';
+		print '<input name="search_amount_deb" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_amount_deb).'">';
 		print '</td>';
 	}
 
 	// Credit
 	if ($arrayfields['credit']['checked']) {
 		print '<td class="liste_titre right">';
-		print '<input name="search_amount_cred" class="flat" type="text" size="8" value="'.$search_amount_cred.'">';
+		print '<input name="search_amount_cred" class="flat maxwidth50" type="text" size="8" value="'.dol_escape_htmltag($search_amount_cred).'">';
 		print '</td>';
 	}
 
@@ -471,7 +469,7 @@ if ($result)
 		// Project
 		if ($arrayfields['project']['checked']) {
 			$proj->fetch($obj->fk_project);
-			print '<td>'.$proj->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">'.$proj->getNomUrl(1).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
