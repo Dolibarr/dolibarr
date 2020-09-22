@@ -357,7 +357,7 @@ if (!defined('NOTOKENRENEWAL'))
 	$_SESSION['newtoken'] = $token;
 }
 
-dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
+//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
 //$dolibarr_nocsrfcheck=1;
 // Check token
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
@@ -563,6 +563,10 @@ if (!defined('NOLOGIN'))
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr'))
 		{
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
+			if ($login === '--bad-login-validity--') {
+				$login = '';
+			}
+
 			if ($login)
 			{
 				$dol_authmode = $conf->authmode; // This properties is defined only when logged, to say what mode was successfully used
@@ -623,7 +627,7 @@ if (!defined('NOLOGIN'))
 			exit;
 		}
 
-		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
+		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));	// login was retreived previously when checking password.
 		if ($resultFetchUser <= 0)
 		{
 			dol_syslog('User not found, connexion refused');
