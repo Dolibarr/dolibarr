@@ -18,3 +18,11 @@ MulticurrencyReceived=Received, original currency
 MulticurrencyRemainderToTake=Remaining amount, original currency
 MulticurrencyPaymentAmount=Payment amount, original currency
 AmountToOthercurrency=Amount To (in currency of receiving account)
+
+ErrorCallbackNotFound=Callback not found: %s
+CurrencyRateSetup=Multi-currency exchange rates
+MulticurrencyRateDeleted=Exchange rate deleted
+MulticurrencyDateSync=Date
+MulticurrencyRate=Exchange rate
+MulticurrencyCode=Currency code
+MulticurrencyEntity=Entity

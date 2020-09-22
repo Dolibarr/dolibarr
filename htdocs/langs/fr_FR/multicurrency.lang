@@ -18,3 +18,11 @@ MulticurrencyReceived=Reçu, devise originale
 MulticurrencyRemainderToTake=Montant restant, devise d'origine
 MulticurrencyPaymentAmount=Montant du règlement (devise d'origine)
 AmountToOthercurrency=Montant destination (en devise du compte de réception)
+
+ErrorCallbackNotFound=Callback introuvable : %s
+CurrencyRateSetup=Taux de change multi-devise
+MulticurrencyRateDeleted=Taux de change supprimé
+MulticurrencyDateSync=Date
+MulticurrencyRate=Taux de change
+MulticurrencyCode=Code devise
+MulticurrencyEntity=Entité
