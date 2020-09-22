@@ -2162,7 +2162,7 @@ class Product extends CommonObject
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 						$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
-						$sql .= " WHERE entity IN (".getEntity('productprice').") AND product_price <= " . $this->db->idate(dol_now());
+						$sql .= " WHERE entity IN (".getEntity('productprice').") AND product_price <= '" . $this->db->idate(dol_now()) . "'";
 						$sql .= " AND price_level=".$i;
 						$sql .= " AND fk_product = ".$this->id;
 						$sql .= " ORDER BY date_price DESC, rowid DESC";
