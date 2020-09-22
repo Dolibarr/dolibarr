@@ -461,7 +461,6 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // Show description of content
