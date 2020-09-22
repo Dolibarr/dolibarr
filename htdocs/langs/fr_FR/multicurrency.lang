@@ -26,3 +26,4 @@ MulticurrencyDateSync=Date
 MulticurrencyRate=Taux de change
 MulticurrencyCode=Code devise
 MulticurrencyEntity=Entité
+UnknownAction=Action non reconnue : "%s"

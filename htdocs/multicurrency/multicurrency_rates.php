@@ -53,80 +53,70 @@ $hookmanager->initHooks(array('multicurrency_rates'));
 // Load translation files required by the page
 
 $action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
-$confirm = GETPOST('confirm', 'alpha');
-$id = GETPOST('id', 'int');
-$rowid = GETPOST('rowid', 'alpha');
-$entity = GETPOST('entity', 'int');
-$code = GETPOST('code', 'alpha');
 
-$acts =array(); $actl =array();
-$acts[0] = "activate";
-$acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
-
-$listoffset = GETPOST('listoffset');
-$listlimit = GETPOST('listlimit') > 0 ?GETPOST('listlimit') : 1000; // To avoid too long dictionaries
-$active = 1;
-
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $listlimit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-// TODO: sorting, filtering, paginating
-
+// column definition
+$TVisibleColumn = array(
+	'rate.date_sync'
+	=> array('callback' => 'Date'),
+	'rate.rate'
+	=> array('callback' => 'Number'),
+	'currency.code'
+	=> array('callback' => 'CurrencyCode'),
+	//		'rate.entity'
+	//			=> array('callback' => 'Entity'),
+);
 
 /*
  * Actions
  */
-
-_handleActions($db);
+_completeColumns($db, $TVisibleColumn);
+_handleActions($db, $TVisibleColumn);
 exit;
 
-function _handleActions($db) {
+function _handleActions($db, $TVisibleColumn) {
+	global $langs;
 	$action = GETPOST('action', 'alpha');
 	if (empty($action)) $action = 'view';
 
 	$callbackName = '_action' . _camel($action);
 	if (!function_exists($callbackName)) {
-		setEventMessages('UnknownAction', array(), 'errors');
+		setEventMessages($langs->trans('UnknownAction', $action), array(), 'errors');
 		header('Location: ' . $_SERVER['PHP_SELF']);
 		exit;
 	}
-	call_user_func($callbackName, $db);
+	call_user_func($callbackName, $db, $TVisibleColumn);
 }
 
 /**
  * @param DoliDB $db
+ * @param array $TVisibleColumn
  * @param string $mode
  * @param int|null $targetId ID of the row targeted for edition, deletion, etc.
  */
-function _mainView($db, $mode='view', $targetId=NULL) {
+function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 	global $langs;
 	$title = $langs->trans('CurrencyRateSetup');
 	$limit = 123;
 
-	// column definition
-	$TVisibleColumn = array(
-		'rate.date_sync'
-			=> array('callback' => 'Date'),
-		'rate.rate'
-			=> array('callback' => 'Number'),
-		'currency.code'
-			=> array('callback' => 'CurrencyCode'),
-//		'rate.entity'
-//			=> array('callback' => 'Entity'),
-	);
-	foreach ($TVisibleColumn as $colSelect => &$colParam) { $colParam['name'] = _columnAlias($colSelect); }
-	unset($colParam);
+	$TSQLFilter = array();
+	foreach ($TVisibleColumn as $colSelect => $colParam) {
+		if (isset($colParam['filter_value']) && !empty($colParam['filter_value'])) {
+			$cbName = '_getSQLFilter' . ucfirst($colParam['callback']);
+			if (function_exists($cbName)) {
+				$sqlFilter = call_user_func($cbName, $db, $colParam);
+			} else {
+				$sqlFilter = ' AND ' . $colParam['name'] . ' = '
+							 . '"' . $db->escape($colParam['filter_value']) . '"';
+			}
+			$TSQLFilter[] = $sqlFilter;
+		}
+	}
 
 	$sql = /** @lang SQL */
 		'SELECT rate.rowid, ' . join(', ', array_keys($TVisibleColumn)) . ' FROM ' . MAIN_DB_PREFIX . 'multicurrency_rate rate'
 		. ' LEFT JOIN ' . MAIN_DB_PREFIX . 'multicurrency currency ON rate.fk_multicurrency = currency.rowid'
 		. ' WHERE rate.entity IN (' . getEntity('multicurrency') . ')'
+		. (count($TSQLFilter) ? join('', $TSQLFilter) : '')
 		. ' ORDER BY rate.date_sync DESC'
 		. ' LIMIT ' . intval($limit);
 	$resql = $db->query($sql);
@@ -159,32 +149,22 @@ function _mainView($db, $mode='view', $targetId=NULL) {
 		 . '</colgroup>';
 
 
-	// En-têtes de colonnes
-	echo '<thead>';
-	echo '<tr id="title-row">';
-	foreach ($TVisibleColumn as $colSelect => $colParam) {
-		echo '<th class="' . $colParam['name'] . '">';
-		echo $langs->trans('Multicurrency' . _camel(ucfirst($colParam['name'])));
-		echo '</th>';
-	}
-	echo '<th class="actions"></th>';
-	echo '</tr>';
-
 	// Formulaire des filtres de recherche
-	echo '<tr id="filter-row">';
+	echo '<thead>';
+	echo '<tr id="filter-row" class="liste_titre_filter">';
 	foreach ($TVisibleColumn as $colSelect => $colParam) {
-		echo '<td class="' . $colParam['name'] . '">';
+		echo '<td class="liste_titre ' . $colParam['name'] . '">';
 		echo _getCellContent(
-			GETPOST('search_' . $colParam['name']),
+			$colParam['filter_value'],
 			$colParam,
 			'search',
 			'form-filter'
 		);
 		echo '</td>';
 	}
-	echo '<td class="actions">'
+	echo '<td class="liste_titre actions">'
 		 . '<form method="get" id="form-filter" action="' . $_SERVER["PHP_SELF"] . '">'
-		 . '<button class="like-link" name="action" value="search">'
+		 . '<button class="like-link" name="action" value="filter">'
 		 . '<span class="fa fa-search" >&nbsp;</span>'
 		 . '</button>'
 		 . '<button class="like-link" name="action" value="remove_filters">'
@@ -192,6 +172,16 @@ function _mainView($db, $mode='view', $targetId=NULL) {
 		 . '</button>'
 		 . '</form>'
 		 . '</td>';
+	echo '</tr>';
+
+	// En-têtes de colonnes
+	echo '<tr class="liste_titre" id="title-row">';
+	foreach ($TVisibleColumn as $colSelect => $colParam) {
+		echo '<th class="liste_titre ' . $colParam['name'] . '">';
+		echo $langs->trans('Multicurrency' . _camel(ucfirst($colParam['name'])));
+		echo '</th>';
+	}
+	echo '<th class="liste_titre actions"></th>';
 	echo '</tr>';
 	echo '</thead>';
 
@@ -326,9 +316,10 @@ function _getCellDefault($rawValue, $mode='view', $inputName='', $formId=NULL) {
 		case 'text':
 			return strip_tags($rawValue);
 		case 'search':
-			return '<input name="search_' . $inputName . '" value="'
-				   . htmlspecialchars(GETPOST('search_' . $inputName), ENT_QUOTES)
-				   . '" />';
+			return '<input name="search_' . $inputName . '"'
+				   . ' value="' . htmlspecialchars(GETPOST('search_' . $inputName), ENT_QUOTES) . '"'
+				   . ' form="' . $formId . '"'
+				   . ' />';
 	}
 	return $rawValue;
 }
@@ -363,9 +354,20 @@ function _getCellDate($rawValue, $mode='view', $inputName='', $formId=NULL) {
 		case 'text':
 			return strip_tags($rawValue);
 		case 'search':
-			return '<input name="search_' . $inputName . '" value="'
-				   . htmlspecialchars(GETPOST('search_' . $inputName), ENT_QUOTES)
-				   . '" />';
+			$select = _tagWithAttributes('select', array(
+				'form' => $formId,
+				'name' => 'search_' . $inputName
+			));
+			$y = intval(dol_print_date(dol_now(), '%Y'));
+			$emptyOptParams = array('value' => '');
+			if (empty($rawValue)) { $emptyOptParams['selected'] = 'selected'; }
+			$options = array(_tagWithAttributes('option', $emptyOptParams));
+			$options += array_map(function($i) use ($rawValue) {
+				$optParams = array('value' => $i);
+				if ($rawValue == $i) $optParams['selected'] = 'selected';
+				return _tagWithAttributes('option', $optParams) . $i . '</option>';
+			}, range($y-10, $y+1));
+			return $select . join("\n", $options) . '</select>';
 	}
 	return $rawValue;
 }
@@ -398,9 +400,10 @@ function _getCellNumber($rawValue, $mode='view', $inputName='', $formId=NULL) {
 		case 'text':
 			return strip_tags($rawValue);
 		case 'search':
-			return '<input name="search_' . $inputName . '" value="'
-				   . htmlspecialchars(GETPOST('search_' . $inputName), ENT_QUOTES)
-				   . '" />';
+			return '<input name="search_' . $inputName . '"'
+				   . ' value="' . htmlspecialchars(GETPOST('search_' . $inputName), ENT_QUOTES) . '"'
+				   . ' form="' . $formId . '"'
+				   . ' />';
 	}
 	return $rawValue;
 }
@@ -413,6 +416,7 @@ function _getCellNumber($rawValue, $mode='view', $inputName='', $formId=NULL) {
  */
 function _getCellCurrencyCode($rawValue, $mode='view', $inputName='', $formId=NULL) {
 	global $db, $langs;
+	if ($formId) $formId = htmlspecialchars($formId, ENT_QUOTES);
 	$form = new Form($db);
 	switch ($mode) {
 		case 'view': case 'modify': // 'modify' because the currency code is read-only
@@ -423,7 +427,7 @@ function _getCellCurrencyCode($rawValue, $mode='view', $inputName='', $formId=NU
 				// add form attribute to the output of selectCurrency
 				$select = preg_replace(
 					'/^<select /i',
-					'<select form="' . htmlspecialchars($formId, ENT_QUOTES) . '" ',
+					'<select form="' . $formId . '" ',
 					$select
 				);
 			}
@@ -433,45 +437,19 @@ function _getCellCurrencyCode($rawValue, $mode='view', $inputName='', $formId=NU
 		case 'text':
 			return strip_tags($rawValue);
 		case 'search':
-			return '<input name="search_' . $inputName . '" value="'
-				   . htmlspecialchars(GETPOST('search_' . $inputName), ENT_QUOTES)
-				   . '"'
-				   . ' />';
+			$select = $form->selectMultiCurrency($rawValue, 'search_' . $inputName, 1);
+			if ($formId) {
+				// add form attribute to the output of selectCurrency
+				$select = preg_replace(
+					'/^<select /i',
+					'<select form="' . $formId . '" ',
+					$select
+				);
+			}
+			return $select;
 	}
 	return $rawValue;
 }
-
-///**
-// * @param $rawValue
-// * @param string $mode
-// * @param string $inputName
-// * @return string
-// */
-//function _getCellEntity($rawValue, $mode='view', $inputName='', $formId=NULL) {
-//	global $db, $langs;
-//	$form = new Form($db);
-//	switch ($mode) {
-//		case 'view': case 'modify': // 'modify' because the entity is read-only
-//		return intval($rawValue);
-//		case 'new':
-//			$mc = new ActionsMulticompany($db);
-//			$select = $mc->select_entities($rawValue, $inputName);
-//			if ($formId) {
-//				// add form attribute to the output of selectCurrency
-//				$select = preg_replace(
-//					'/^<select /i',
-//					'<select form="' . htmlspecialchars($formId, ENT_QUOTES) . '" ',
-//					$select
-//				);
-//			}
-//			return $select;
-//		case 'raw':
-//			return $rawValue;
-//		case 'text':
-//			return strip_tags($rawValue);
-//	}
-//	return $rawValue;
-//}
 
 /**
  * @param array $colParam
@@ -558,15 +536,29 @@ function _camel($str) {
  * Default: view all currency rates
  * @param DoliDB $db
  */
-function _actionView($db) {
-	_mainView($db, 'view', intval(GETPOST('id', 'int')));
+function _actionView($db, $TVisibleColumn) {
+	_mainView($db, $TVisibleColumn, 'view', intval(GETPOST('id', 'int')));
+}
+
+function _actionFilter($db, $TVisibleColumn) {
+	_mainView($db, $TVisibleColumn);
+}
+
+function _actionRemoveFilters($db, $TVisibleColumn) {
+	foreach ($TVisibleColumn as $colSelect => &$colParam) {
+		if (isset($colParam['filter_value'])) {
+			unset($colParam['filter_value']);
+		}
+	}
+	unset($colParam);
+	_mainView($db, $TVisibleColumn);
 }
 
 /**
  * Add a new currency rate
  * @param DoliDB $db
  */
-function _actionAdd($db) {
+function _actionAdd($db, $TVisibleColumn) {
 	global $langs, $conf;
 	$dateSync = GETPOST('date_sync', 'alpha');
 	$rate = GETPOST('rate', 'int');
@@ -583,23 +575,23 @@ function _actionAdd($db) {
 	if (!$resql) {
 		setEventMessages($langs->trans('TODOSaveFailed'), array(), 'errors');
 	}
-	_mainView($db, 'view');
+	_mainView($db, $TVisibleColumn, 'view');
 }
 
 /**
  * Show a currency rate in edit mode
  * @param DoliDB $db
  */
-function _actionModify($db) {
+function _actionModify($db, $TVisibleColumn) {
 	$id = intval(GETPOST('id', 'int'));
-	_mainView($db, 'modify', $id);
+	_mainView($db, $TVisibleColumn, 'modify', $id);
 }
 
 /**
  * Saves a currency rate
  * @param $db
  */
-function _actionUpdate($db) {
+function _actionUpdate($db, $TVisibleColumn) {
 	global $langs;
 	$id = intval(GETPOST('id', 'int'));
 	$dateSync = GETPOST('date_sync', 'alpha');
@@ -624,14 +616,14 @@ function _actionUpdate($db) {
 	} else {
 		setEventMessages($langs->trans('Saved'), array(), 'mesgs');
 	}
-	_mainView($db);
+	_mainView($db, $TVisibleColumn);
 }
 
 /**
  * Show a confirm form prior to deleting a currency rate
  * @param DoliDB $db
  */
-function _actionDelete($db) {
+function _actionDelete($db, $TVisibleColumn) {
 	global $langs;
 	global $delayedhtmlcontent;
 	$id = intval(GETPOST('id', 'int'));
@@ -650,14 +642,14 @@ function _actionDelete($db) {
 		0,
 		1
 	);
-	_mainView($db, 'view');
+	_mainView($db, $TVisibleColumn, 'view');
 }
 
 /**
  * Delete a currency rate
  * @param DoliDB $db
  */
-function _actionConfirmDelete($db) {
+function _actionConfirmDelete($db, $TVisibleColumn) {
 	global $langs;
 	$id = intval(GETPOST('id', 'int'));
 	if ($id === 0) {
@@ -672,7 +664,7 @@ function _actionConfirmDelete($db) {
 			setEventMessages($langs->trans('MulticurrencyRateDeleted'), array(), 'mesgs');
 		}
 	}
-	_mainView($db, 'view');
+	_mainView($db, $TVisibleColumn, 'view');
 }
 
 /**
@@ -685,4 +677,64 @@ function _setEventMessageOnce($message, $level='errors') {
 	if (!in_array($message, $_SESSION['dol_events'][$level])) {
 		setEventMessages($message, array(), $level);
 	}
+}
+
+/**
+ * Completes the column definition array with values from HTTP query
+ * @param DoliDB $db
+ * @param array $TVisibleColumn
+ */
+function _completeColumns($db, &$TVisibleColumn) {
+	foreach ($TVisibleColumn as $colSelect => &$colParam) {
+		$colParam['name'] = _columnAlias($colSelect);
+		if (GETPOSTISSET('search_' . $colParam['name'])) {
+			$searchValue = GETPOST('search_' . $colParam['name']);
+			if (empty($searchValue)) continue;
+			$colParam['filter_value'] = $searchValue;
+		}
+	}
+	unset($colParam);
+//	$confirm = GETPOST('confirm', 'alpha');
+//	$listoffset = GETPOST('listoffset');
+//	$listlimit = GETPOST('listlimit') > 0 ?GETPOST('listlimit') : 1000; // To avoid too long dictionaries
+//	$sortfield = GETPOST("sortfield", 'alpha');
+//	$sortorder = GETPOST("sortorder", 'alpha');
+//	$page = GETPOST("page", 'int');
+//	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+//	$offset = $listlimit * $page;
+//	$pageprev = $page - 1;
+//	$pagenext = $page + 1;
+}
+
+/**
+ * @param DoliDB $db
+ * @param array $colParam
+ * @return string
+ */
+function _getSQLFilterNumber($db, $colParam) {
+	$filterVal = $colParam['filter_value'];
+	// apply price2num to every part of the string delimited by '<' or '>'
+	$filterVal = join(
+		'',
+		array_map(
+			'price2num',
+			preg_split(
+				'/([><])/',
+				$filterVal,
+				-1,
+				PREG_SPLIT_DELIM_CAPTURE
+			)
+		)
+	);
+	$sqlFilter = natural_search($colParam['name'], $filterVal, 1);
+	return $sqlFilter;
+}
+
+function _getSQLFilterDate($db, $colParam) {
+	$year = intval($colParam['filter_value']);
+	$yearPlusOne = ($year+1) . '-01-01 00:00:00';
+	$year .= '-01-01 00:00:00';
+	$sqlFilter = ' AND (rate.date_sync > "' . $year . '"'
+				. ' AND rate.date_sync < "' . ($yearPlusOne) . '")';
+	return $sqlFilter;
 }

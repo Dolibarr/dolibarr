@@ -26,3 +26,4 @@ MulticurrencyDateSync=Date
 MulticurrencyRate=Exchange rate
 MulticurrencyCode=Currency code
 MulticurrencyEntity=Entity
+UnknownAction=Unknown action : "%s"
