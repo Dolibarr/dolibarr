@@ -1496,7 +1496,7 @@ class Invoices extends DolibarrApi
         	{
         	    $amount = price2num($amountarray["multicurrency_amount"], 'MT');
         	}
-			
+
 			if ($amount > $remainstopay && $accepthigherpayment == false) {
 				$this->db->rollback();
         		throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
