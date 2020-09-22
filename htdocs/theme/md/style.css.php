@@ -1461,6 +1461,22 @@ td.showDragHandle {
 <?php } ?>
 }
 
+/* DOL_XXX For having horizontal scroll into array (like with smartphone) */
+
+.classforhorizontalscrolloftabs #id-container {
+	width: 100%;
+}
+.classforhorizontalscrolloftabs .side-nav {
+	display: block;
+	float: left;
+}
+.classforhorizontalscrolloftabs #id-right {
+	width:calc(100% - 210px);
+	display: inline-block;
+}
+
+
+
 .side-nav {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
@@ -1513,9 +1529,10 @@ td.showDragHandle {
 ?>
 }
 
-/*
-*	Slide animation
-*/
+
+/**
+ *	Slide animation
+ */
 .side-nav-vert, #id-right {
 	transition: padding-left 0.5s ease, margin-left 0.5s ease;
 }

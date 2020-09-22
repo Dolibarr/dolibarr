@@ -191,10 +191,6 @@ input, select {
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
-
-	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
-
 	border-radius: 3px;
     border-collapse: collapse;
     border: none;
@@ -220,7 +216,6 @@ input:invalid, select:invalid {
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
-    /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
 input:focus, select:focus {
@@ -570,6 +565,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.centpercentwithoutmenu {
+	width: calc(100% - 200px);
 }
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
@@ -1495,20 +1493,20 @@ td.showDragHandle {
 	padding-bottom: 20px;
 }
 
-/* For having horizontal scroll into array (like with smartphone) */
-/*
-#id-container {
+/* DOL_XXX For having horizontal scroll into array (like with smartphone) */
+
+.classforhorizontalscrolloftabs #id-container {
 	width: 100%;
 }
-.side-nav {
+.classforhorizontalscrolloftabs .side-nav {
 	display: block;
 	float: left;
 }
-#id-right {
+.classforhorizontalscrolloftabs #id-right {
 	width:calc(100% - 210px);
 	display: inline-block;
 }
-*/
+
 
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>

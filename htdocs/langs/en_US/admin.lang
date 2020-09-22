@@ -1075,6 +1075,7 @@ LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
 ValueOfConstantKey=Value of a configuration constant
+ConstantIsOn=Option %s is on
 NbOfDays=No. of days
 AtEndOfMonth=At end of month
 CurrentNext=Current/Next
