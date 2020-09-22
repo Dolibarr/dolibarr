@@ -41,25 +41,25 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 	if (!empty($_SERVER["REMOTE_USER"]))
 	{
 		$login = $_SERVER["REMOTE_USER"];
-	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-	$tmpuser = new User($db);
-	$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
+		$tmpuser = new User($db);
+		$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
 
-	$now = dol_now();
-	if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
-		// Load translation files required by the page
-		$langs->loadLangs(array('main', 'errors'));
-		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
-		return '--bad-login-validity--';
-	}
-	if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
-		// Load translation files required by the page
-		$langs->loadLangs(array('main', 'errors'));
-		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
-		return '--bad-login-validity--';
+		$now = dol_now();
+		if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
+			// Load translation files required by the page
+			$langs->loadLangs(array('main', 'errors'));
+			$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+			return '--bad-login-validity--';
+		}
+		if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
+			// Load translation files required by the page
+			$langs->loadLangs(array('main', 'errors'));
+			$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+			return '--bad-login-validity--';
+		}
 	}
 
 	return $login;
