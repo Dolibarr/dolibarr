@@ -1409,14 +1409,15 @@ class Invoices extends DolibarrApi
      *
      * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
      * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
-     * @param int     $paymentid          {@from body}  Payment mode Id {@min 1}
-     * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
-     * @param int     $accountid          {@from body}  Account Id {@min 1}
-     * @param string  $num_payment        {@from body}  Payment number (optional)
-     * @param string  $comment            {@from body}  Note private (optional)
-     * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
-     * @param string  $chqbank            {@from body}  Issuer bank name (optional)
-     * @param string  $ref_ext            {@from body}  External reference (optional)
+     * @param int     $paymentid           {@from body}  Payment mode Id {@min 1}
+     * @param string  $closepaidinvoices   {@from body}  Close paid invoices {@choice yes,no}
+     * @param int     $accountid           {@from body}  Account Id {@min 1}
+     * @param string  $num_payment         {@from body}  Payment number (optional)
+     * @param string  $comment             {@from body}  Note private (optional)
+     * @param string  $chqemetteur         {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
+     * @param string  $chqbank             {@from body}  Issuer bank name (optional)
+     * @param string  $ref_ext             {@from body}  External reference (optional)
+     * @param bool    $accepthigherpayment {@from body}  Accept higher payments that it remains to be paid (optional)
      *
      * @url     POST /paymentsdistributed
      *
@@ -1426,7 +1427,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function addPaymentDistributed($arrayofamounts, $datepaye, $paymentid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '', $ref_ext = '')
+    public function addPaymentDistributed($arrayofamounts, $datepaye, $paymentid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '', $ref_ext = '', $accepthigherpayment = false)
     {
         global $conf;
 
@@ -1484,7 +1485,7 @@ class Invoices extends DolibarrApi
         	$totalpaye = $this->invoice->getSommePaiement($is_multicurrency);
         	$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
         	$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
-        	$amount = price2num($total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+        	$remainstopay = $amount = price2num($total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
         	if (!$is_multicurrency && $amountarray["amount"] != 'remain')
         	{
@@ -1495,6 +1496,11 @@ class Invoices extends DolibarrApi
         	{
         	    $amount = price2num($amountarray["multicurrency_amount"], 'MT');
         	}
+			
+			if ($amount > $remainstopay && $accepthigherpayment == false) {
+				$this->db->rollback();
+        		throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
+			}
 
         	if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
         	    $amount = -$amount;
