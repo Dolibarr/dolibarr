@@ -21,7 +21,7 @@ CREATE TABLE llx_actioncomm_reminder(
 	typeremind varchar(32) NOT NULL, 
 	fk_user integer NOT NULL, 
 	offsetvalue integer NOT NULL, 
-	offsetunit varchar(1) NOT NULL,
+	offsetunit varchar(10) NOT NULL,
     status integer NOT NULL DEFAULT 0,
 	entity integer NOT NULL DEFAULT 1,
 	fk_actioncomm integer NOT NULL,

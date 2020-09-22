@@ -393,7 +393,7 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-                //Create eminder
+                //Create reminder
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
@@ -1223,15 +1223,15 @@ if ($action == 'create')
                             $(".reminderparameters").hide();
                             }
 	            		 });
-	            		 
-	            		$("#selectremindertype").click(function(){	         
+
+	            		$("#selectremindertype").change(function(){
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
 	            		    };
-	            		});	            		 	   	
+	            		});
                    })';
         print '</script>'."\n";
     }
@@ -1642,6 +1642,90 @@ if ($id > 0)
 		}
 
 		print '</table>';
+
+		/***** START BACKPORT V13.0 *****/
+
+		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+		{
+			$actionCommReminder = new ActionCommReminder($db);
+
+			$checked = '';
+			$sql = "SELECT acr.rowid FROM ".MAIN_DB_PREFIX."actioncomm_reminder acr WHERE acr.fk_actioncomm = ".$id;
+			$resql = $db->query($sql);
+			if ($resql && $db->num_rows($resql))
+			{
+				$obj = $db->fetch_object($resql);
+
+				$res = $actionCommReminder->fetch($obj->rowid);
+				if ($res > 0)
+				{
+					$checked = 'checked';
+				}
+			}
+			//checkbox create reminder
+			print '<br>';
+			print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder" '.$checked.'></td></tr>';
+
+			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
+			if (!empty($checked)) print '<input type="hidden" name="actioncommreminder_id" value="'.$actionCommReminder->id.'">';
+			print '<hr>';
+			print load_fiche_titre($langs->trans("AddReminder"), '', '');
+
+			print '<table class="border centpercent">';
+
+			//Reminder
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
+			print '<input type="number" name="offsetvalue" value="'.$actionCommReminder->offsetvalue.'" size="5">';
+			print '</td></tr>';
+
+			//Time Type
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
+			print $form->select_type_duration('offsetunit', $actionCommReminder->offsetunit);
+			print '</td></tr>';
+
+			//Reminder Type
+			$TRemindTypes = array();
+			if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
+			if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind);
+			print '</td></tr>';
+
+			$hide = '';
+			if ($actionCommReminder->typeremind) $hide = 'style="display:none;"';
+
+			//Mail Model
+			print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+			print $form->select_model_mail('actioncommsend', 'actioncomm_send', 1);
+			print '</td></tr>';
+
+			print '</table>';
+			print '</div>';
+
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
+	            		$("#addreminder").click(function(){
+	            		    if (this.checked) {
+	            		      $(".reminderparameters").show();
+                            } else {
+                            $(".reminderparameters").hide();
+                            }
+	            		 });
+
+	            		$("#selectremindertype").change(function(){
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    };
+	            		});
+
+                   })';
+			print '</script>'."\n";
+		}
+
+		/***** END BACKPORT V13.0 *****/
 
 		dol_fiche_end();
 
