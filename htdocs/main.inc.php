@@ -144,7 +144,9 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
 				print $errormessage;
 				// Add entry into error log
-				error_log($errormessage);
+				if (function_exists('error_log')) {
+					error_log($errormessage);
+				}
 				// TODO Add entry into security audit table
 				exit;
 			}
