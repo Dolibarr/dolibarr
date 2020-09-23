@@ -72,7 +72,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all',
 
 if ($statut < -1) $statut = '';
 
-// To do * change the left menu member to get filter and not statut set 
+// To do * change the left menu member to get filter and not statut set
 elseif ($statut === "-1") $filter = 'draft';
 elseif ($statut === "0") $filter = 'resiliated';
 elseif ($statut === "1" && $filter != 'uptodate' && $filter  != 'outofdate') $filter = 'validated';
