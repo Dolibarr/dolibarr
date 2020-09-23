@@ -413,7 +413,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				for ($i = 0; $i < $nblines; $i++)
 				{
 					// Fetch optionals
-					if(empty($object->lines[$i]->array_options)){
+					if (empty($object->lines[$i]->array_options)){
 						$object->lines[$i]->fetch_optionals();
 					}
 
