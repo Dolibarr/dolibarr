@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
+$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
 
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
@@ -413,23 +413,27 @@ if (empty($reshook) && $action == 'add')
 
                     $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
-                    $actionCommReminder->fk_user = $user;
-                    $actionCommReminder->offsetunit = $offsetunit;
-                    $actionCommReminder->offsetvalue = $offsetvalue;
-                    $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
-                    $actionCommReminder->fk_actioncomm = $object->id;
-                    if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+					$actionCommReminder->offsetunit = $offsetunit;
+					$actionCommReminder->offsetvalue = $offsetvalue;
+					$actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+					$actionCommReminder->fk_actioncomm = $object->id;
+					if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
-                    $res = $actionCommReminder->create($user);
+					foreach ($object->userassigned as $userassigned)
+					{
+						$actionCommReminder->fk_user = $userassigned['id'];
+						$res = $actionCommReminder->create($user);
 
-                    if ($res <= 0){
-                        // If error
-                        $db->rollback();
-                        $langs->load("errors");
-                        $error = $langs->trans('ErrorReminderActionCommCreation');
-                        setEventMessages($error, null, 'errors');
-                        $action = 'create'; $donotclearsession = 1;
-                    }
+						if ($res <= 0){
+							// If error
+							$db->rollback();
+							$langs->load("errors");
+							$error = $langs->trans('ErrorReminderActionCommCreation');
+							setEventMessages($error, null, 'errors');
+							$action = 'create'; $donotclearsession = 1;
+							break;
+						}
+					}
                 }
 
                 $db->commit();
@@ -649,6 +653,53 @@ if (empty($reshook) && $action == 'update')
 			if ($result > 0)
 			{
 				unset($_SESSION['assignedtouser']);
+
+				// delete reminders to recreate them
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE fk_actioncomm = ".$object->id;
+				$resql = $db->query($sql);
+
+				//Create reminder
+				if ($addreminder == 'on'){
+					$actionCommReminder = new ActionCommReminder($db);
+
+					if ($offsetunit == 'minute'){
+						$dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
+					} elseif ($offsetunit == 'hour'){
+						$dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
+					} elseif ($offsetunit == 'day') {
+						$dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
+					} elseif ($offsetunit == 'week') {
+						$dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'w');
+					} elseif ($offsetunit == 'month') {
+						$dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'm');
+					} elseif ($offsetunit == 'year') {
+						$dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
+					}
+
+					$actionCommReminder->dateremind = $dateremind;
+					$actionCommReminder->typeremind = $remindertype;
+					$actionCommReminder->offsetunit = $offsetunit;
+					$actionCommReminder->offsetvalue = $offsetvalue;
+					$actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+					$actionCommReminder->fk_actioncomm = $object->id;
+					if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+
+					foreach ($object->userassigned as $userassigned)
+					{
+						$actionCommReminder->fk_user = $userassigned['id'];
+						$res = $actionCommReminder->create($user);
+
+						if ($res <= 0){
+							// If error
+							$db->rollback();
+							$langs->load("errors");
+							$error = $langs->trans('ErrorReminderActionCommCreation');
+							setEventMessages($error, null, 'errors');
+							$action = 'create'; $donotclearsession = 1;
+							break;
+						}
+					}
+				}
 
 				$db->commit();
 			}
@@ -1692,7 +1743,7 @@ if ($id > 0)
 			print '</td></tr>';
 
 			$hide = '';
-			if ($actionCommReminder->typeremind) $hide = 'style="display:none;"';
+			if ($actionCommReminder->typeremind == 'browser') $hide = 'style="display:none;"';
 
 			//Mail Model
 			print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
@@ -1993,6 +2044,26 @@ if ($id > 0)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
+
+		// Notification
+		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+		{
+			$sql = "SELECT acr.rowid FROM ".MAIN_DB_PREFIX."actioncomm_reminder acr WHERE acr.fk_actioncomm = ".$id;
+			$resql = $db->query($sql);
+
+			if ($resql && $db->num_rows($resql))
+			{
+				$obj = $db->fetch_object($resql);
+				$actionCommReminder = new ActionCommReminder($db);
+				$actionCommReminder->fetch($obj->rowid);
+
+				print '<tr><td>'.$langs->trans('Notifications').'</td><td colspan="3">';
+				print $actionCommReminder->offsetvalue.' '.$actionCommReminder->offsetunit.' '.lcfirst($langs->trans('Before'));
+				$TRemindTypes = array('email' => $langs->trans('Email'), 'browser' => $langs->trans('BrowserPush'));
+				print ' ' .lcfirst($langs->trans('By')).' '.$TRemindTypes[$actionCommReminder->typeremind];
+				print '</td></tr>';
+			}
+		}
 
         // Other attributes
         $cols = 3;
