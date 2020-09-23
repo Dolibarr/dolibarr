@@ -424,7 +424,7 @@ function ClickProduct(position) {
 function ChangeThirdparty(idcustomer) {
 	 console.log("ChangeThirdparty");
 		// Call page list.php to change customer
-		$("#poslines").load("../societe/list.php?action=change&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		$("#poslines").load("../societe/list.php?action=change&type=c&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
 	ClearSearch();
@@ -440,7 +440,7 @@ function deleteline() {
 
 function Customer() {
 	console.log("Open box to select the thirdparty place="+place);
-	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
+	$.colorbox({href:"../societe/list.php?type=c&contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
 }
 
 function History()
