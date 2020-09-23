@@ -701,6 +701,15 @@ class User extends CommonObject
 				$sql .= " AND ".$wherefordel;
 			}
 
+			// avoid admin can remove his own important rights
+			if($this->admin == 1)
+			{
+				$sql .= " AND id NOT IN (251, 252, 253, 254, 255, 256)";	// other users rights
+				$sql .= " AND id NOT IN (341, 342, 343, 344)";				// own rights
+				$sql .= " AND id NOT IN (351, 352, 353, 354)";				// groups rights
+				$sql .= " AND id NOT IN (358)";								// user export
+			}
+
 			$result = $this->db->query($sql);
 			if ($result)
 			{
