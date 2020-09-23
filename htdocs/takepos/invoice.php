@@ -1081,7 +1081,7 @@ if ($placeid > 0)
 					if ($resql) {
 						$obj = $db->fetch_object($resql);
 						$stock_real = price2num($obj->reel, 'MS');
-						$htmlforlines .= $line->qty
+						$htmlforlines .= $line->qty;
 						if ($line->qty>$stock_real) $htmlforlines .= '<b><span style="color: var(--amountremaintopaycolor)">';
 						$htmlforlines .= ' <span class="opacitymedium">('.$langs->trans("Stock").' '.$stock_real.')</span>';
 						if ($line->qty>$stock_real) $htmlforlines .= "</span></b>";
