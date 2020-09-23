@@ -577,18 +577,6 @@ function _actionAdd($db, $TVisibleColumn) {
 		if ($rescreate <= 0) {
 			setEventMessages($langs->trans('MulticurrencyErrorCouldNotCreateRate', $rate, $code), array(), 'errors');
 		}
-//		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . 'multicurrency_rate (`date_sync`, `rate`, `fk_multicurrency`, `entity`)'
-//			   . ' VALUES ('
-//			   . ' "' . $db->escape($dateSync) . '"'
-//			   . ', "' . $db->escape($rate) . '"'
-//			   . ', ' . intval($multiCurrency->id)
-////			   . ', (SELECT rowid FROM llx_multicurrency WHERE code = "'. $db->escape($code) . '" AND entity IN ('. getEntity('multicurrency') .') LIMIT 1)'
-//			   . ',"' . $db->escape($entity) . '"'
-//			   .')';
-//		$resql = $db->query($sql);
-//		if (!$resql) {
-//			setEventMessages($langs->trans('MulticurrencyErrorCouldNotCreateRate', $rate, $code), array(), 'errors');
-//		}
 	}
 	_mainView($db, $TVisibleColumn, 'view');
 }
@@ -611,15 +599,6 @@ function _actionUpdate($db, $TVisibleColumn) {
 	$id = intval(GETPOST('id', 'int'));
 	$dateSync = GETPOST('date_sync', 'alpha');
 	$rate = GETPOST('rate', 'int');
-//	$date = date_parse($dateSync);
-//	$date = dol_mktime(
-//		$date['hour'],
-//		$date['minute'],
-//		$date['second'],
-//		$date['month'],
-//		$date['day'],
-//		$date['year']
-//	);
 	$mcRate = new CurrencyRate($db);
 	$resfetch = $mcRate->fetch($id);
 	if ($resfetch <= 0) {
@@ -628,12 +607,6 @@ function _actionUpdate($db, $TVisibleColumn) {
 		$mcRate->date_sync = $dateSync;
 		$mcRate->rate = $rate;
 		$resupdate = $mcRate->update();
-//		$sql = /** @lang SQL */
-//			'UPDATE ' . MAIN_DB_PREFIX . 'multicurrency_rate SET'
-//			. '   date_sync = "' . $db->idate($date) . '",'
-//			. '   rate = "' . price2num($rate) . '"'
-//			. ' WHERE rowid = ' . $id;
-//		$resql = $db->query($sql);
 		if ($resupdate <= 0) {
 			setEventMessages($langs->trans($db->lasterror), array(), 'errors');
 		} else {
@@ -690,9 +663,6 @@ function _actionConfirmDelete($db, $TVisibleColumn) {
 		if ($resfetch <= 0) {
 			setEventMessages($langs->trans('MulticurrencyErrorCouldNotFetchRate', $id), array(), 'errors');
 		} else {
-//			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'multicurrency_rate'
-//				   . ' WHERE rowid = ' . $id;
-//			$resql = $db->query($sql);
 			$resdelete = $mcRate->delete();
 			if ($resdelete <= 0) {
 				setEventMessages($db->lasterror, array(), 'errors');
@@ -801,13 +771,3 @@ function _formHiddenInputs($TVisibleColumn) {
 	));
 	return $ret;
 }
-
-///**
-// * Avoids generating a different token for every <form> on the page;
-// *
-// * @return string  new session token on first call; same token on subsequent calls
-// */
-//function newToken() {
-//	static $token = null; if ($token === null) $token = newToken();
-//	return $token;
-//}
