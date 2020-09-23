@@ -628,6 +628,7 @@ function _actionDelete($db, $TVisibleColumn) {
 	$form = new Form($db);
 	$formParams = array(
 		'id' => $id,
+		'token' => newToken(),
 	);
 	foreach ($TVisibleColumn as $colSelect => $colParam) {
 		if (isset($colParam['filter_value'])) {
