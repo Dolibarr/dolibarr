@@ -611,7 +611,7 @@ if (!empty($type))
 
 // Show the new button only when this page is not opend from the Extended POS (pop-up window)
 // but allow it too, when a user has the rights to create a new customer
-if($contextpage != 'poslist')
+if ($contextpage != 'poslist')
 {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
 	if (!empty($socid)) $url .= '&socid='.$socid;

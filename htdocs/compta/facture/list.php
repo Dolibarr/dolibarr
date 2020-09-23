@@ -675,7 +675,7 @@ if ($resql)
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show the new button only when this page is not opend from the Extended POS
-	if($contextpage != 'poslist')
+	if ($contextpage != 'poslist')
 	{
 		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
 		if (!empty($socid)) $url .= '&socid='.$socid;
