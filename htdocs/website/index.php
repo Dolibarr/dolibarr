@@ -2424,8 +2424,6 @@ if (!GETPOST('hide_websitemenu'))
 					 });
 				 });
 				 </script>';
-
-
 			}
 
 			print '</span>';
