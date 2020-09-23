@@ -2058,7 +2058,7 @@ if ($id > 0)
 				$actionCommReminder->fetch($obj->rowid);
 
 				print '<tr><td>'.$langs->trans('Notifications').'</td><td colspan="3">';
-				print $actionCommReminder->offsetvalue.' '.$actionCommReminder->offsetunit.' '.lcfirst($langs->trans('Before'));
+				print $actionCommReminder->offsetvalue.' '.$langs->trans($actionCommReminder->offsetunit).' '.lcfirst($langs->trans('Before'));
 				$TRemindTypes = array('email' => $langs->trans('Email'), 'browser' => $langs->trans('BrowserPush'));
 				print ' ' .lcfirst($langs->trans('By')).' '.$TRemindTypes[$actionCommReminder->typeremind];
 				print '</td></tr>';
