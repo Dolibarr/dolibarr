@@ -609,9 +609,13 @@ if (!empty($type))
 	if ($type == 'f') $label = 'NewSupplier';
 }
 
-$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
-if (!empty($socid)) $url .= '&socid='.$socid;
-$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer && $contextpage != 'poslist');
+// Show the new button only when this page is not opend from the Extended POS (pop-up window)
+if($contextpage != 'poslist')
+{
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
+}
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -694,6 +698,7 @@ if ($moreforfilter)
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+// Show the massaction checkboxes only when this page is not opend from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
@@ -1301,7 +1306,7 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 	}
 
-	// Action column
+	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 	print '<td class="nowrap center">';
 	if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{

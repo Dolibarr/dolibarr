@@ -674,9 +674,13 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
-	if (!empty($socid)) $url .= '&socid='.$socid;
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->facture->creer && $contextpage != 'poslist');
+	// Show the new button only when this page is not opend from the Extended POS
+	if($contextpage != 'poslist')
+	{
+		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->facture->creer);
+	}
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -754,6 +758,7 @@ if ($resql)
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';
@@ -1564,7 +1569,7 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 			}
 
-			// Action column
+			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 			print '<td class="nowrap" align="center">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			{
@@ -1595,6 +1600,7 @@ if ($resql)
 
 	print "</form>\n";
 
+	// Show the file area only when this page is not opend from the Extended POS
 	if ($contextpage != 'poslist') {
 		$hidegeneratedfilelistifempty = 1;
 		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
