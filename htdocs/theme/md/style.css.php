@@ -1205,6 +1205,7 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
+.maxwidth250 { max-width: 250px; }
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }

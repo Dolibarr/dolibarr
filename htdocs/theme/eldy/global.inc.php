@@ -1209,6 +1209,7 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
+.maxwidth250 { max-width: 250px; }
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
@@ -1270,6 +1271,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+.widthcentpercentminusx {
+	width: calc(100% - 50px) !important;
+	display: inline-block;
+}
+
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -1292,7 +1298,7 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300, .widthcentpercentminusx {
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300 {
 		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}

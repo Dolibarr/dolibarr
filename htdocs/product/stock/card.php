@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formproduct->selectWarehouses('', 'fk_parent', '', 1);
+	print $formproduct->selectWarehouses('ifone', 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Description
