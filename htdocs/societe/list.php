@@ -617,7 +617,7 @@ if ($contextpage != 'poslist')
 	if (!empty($socid)) $url .= '&socid='.$socid;
 	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
 } elseif ($user->rights->societe->creer) {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?type=c&contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
 	$label = 'MenuNewCustomer';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
