@@ -385,11 +385,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		$savid = ((int) $_POST['id']);
 		unset($_POST);
 		//unset($_POST['action']);
-		unset($_POST['confirm']);
+		//unset($_POST['confirm']);
 		unset($_GET['confirm']);
 		unset($_GET['action']);
 		$_POST['id'] = ((int) $savid);
-		$_POST['action'] = '';
 	}
 }
 
