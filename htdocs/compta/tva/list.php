@@ -146,11 +146,9 @@ if ($result)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 
-	$newcardbutton = '';
-	if ($user->rights->tax->charges->creer)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/tva/card.php?action=create');
-    }
+	$url = DOL_URL_ROOT.'/compta/tva/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

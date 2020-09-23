@@ -153,11 +153,9 @@ if ($result)
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 	if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
-	$newcardbutton = '';
-	if (!empty($user->rights->salaries->write))
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

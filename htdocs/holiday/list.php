@@ -432,11 +432,7 @@ if ($resql)
 	} else {
 		$title = $langs->trans("ListeCP");
 
-		$newcardbutton = '';
-		if ($user->rights->holiday->write)
-		{
-			$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create');
-	    }
+		$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}

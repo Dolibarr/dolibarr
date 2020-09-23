@@ -320,7 +320,10 @@ if ($resql)
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fichinter/card.php?action=create', '', $user->rights->ficheinter->creer);
+
+	$url = DOL_URL_ROOT.'/fichinter/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->rights->ficheinter->creer);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

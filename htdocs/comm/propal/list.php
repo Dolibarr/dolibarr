@@ -480,11 +480,9 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->propal->creer)
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/propal/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->rights->propal->creer);
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
