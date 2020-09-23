@@ -195,7 +195,7 @@ if ($action == 'setdesiredstock' && !empty($user->rights->produit->creer))
 // Correct stock
 if ($action == "correct_stock" && !$cancel)
 {
-	if (!(GETPOST("id_entrepot") > 0))
+	if (!(GETPOST("id_entrepot", 'int') > 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
