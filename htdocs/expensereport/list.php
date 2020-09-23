@@ -372,11 +372,9 @@ if ($resql)
 	} else {
 		$title = $langs->trans("ListTripsAndExpenses");
 
-		$newcardbutton = '';
-		if ($user->rights->expensereport->creer)
-		{
-            $newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expensereport/card.php?action=create');
-		}
+		$url = DOL_URL_ROOT.'/expensereport/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}

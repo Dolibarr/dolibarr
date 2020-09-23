@@ -598,26 +598,28 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete'] = '<span
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->societe->creer && $contextpage != 'poslist')
-{
-	$typefilter = '';
-	$label = 'MenuNewThirdParty';
+$typefilter = '';
+$label = 'MenuNewThirdParty';
 
-	if (!empty($type))
-	{
-		$typefilter = '&amp;type='.$type;
-		if ($type == 'p') $label = 'MenuNewProspect';
-		if ($type == 'c') $label = 'MenuNewCustomer';
-		if ($type == 'f') $label = 'NewSupplier';
-	}
-
-    $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
-} elseif ($user->rights->societe->creer && $contextpage == 'poslist')
+if (!empty($type))
 {
+	$typefilter = '&amp;type='.$type;
+	if ($type == 'p') $label = 'MenuNewProspect';
+	if ($type == 'c') $label = 'MenuNewCustomer';
+	if ($type == 'f') $label = 'NewSupplier';
+}
+
+// Show the new button only when this page is not opend from the Extended POS (pop-up window)
+// but allow it too, when a user has the rights to create a new customer
+if ($contextpage != 'poslist')
+{
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
+} elseif ($user->rights->societe->creer) {
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
 	$label = 'MenuNewCustomer';
-
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place));
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -701,6 +703,7 @@ if ($moreforfilter)
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+// Show the massaction checkboxes only when this page is not opend from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
@@ -1308,7 +1311,7 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 	}
 
-	// Action column
+	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 	print '<td class="nowrap center">';
 	if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{

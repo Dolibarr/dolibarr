@@ -541,21 +541,18 @@ if ($resql)
 	if ($type === "") $perm = ($user->rights->produit->creer || $user->rights->service->creer);
 	elseif ($type == Product::TYPE_SERVICE) $perm = $user->rights->service->creer;
 	elseif ($type == Product::TYPE_PRODUCT) $perm = $user->rights->produit->creer;
-	if ($perm)
-	{
-		$oldtype = $type;
-		$params = array();
-		if ($type === "") $params['forcenohideoftext'] = 1;
-		if ($type === "") {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', 1, $params);
-			$type = Product::TYPE_SERVICE;
-		}
-		$label = 'NewProduct';
-		if ($type == Product::TYPE_SERVICE) $label = 'NewService';
-		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', 1, $params);
-
-		$type = $oldtype;
+	$oldtype = $type;
+	$params = array();
+	if ($type === "") $params['forcenohideoftext'] = 1;
+	if ($type === "") {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
+		$type = Product::TYPE_SERVICE;
 	}
+	$label = 'NewProduct';
+	if ($type == Product::TYPE_SERVICE) $label = 'NewService';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', $perm, $params);
+
+	$type = $oldtype;
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
