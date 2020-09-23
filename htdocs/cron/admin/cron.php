@@ -61,7 +61,8 @@ if (!empty($actionsave))
  *	View
  */
 
-llxHeader();
+$help_url = '';
+llxHeader('', '', $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
@@ -81,10 +82,10 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
-print "<td>&nbsp;</td>";
+print "<td></td>";
 print "</tr>";
 
-print '<tr class="impair">';
+print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
 $disabled = '';
 if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled = ' disabled="disabled"';
