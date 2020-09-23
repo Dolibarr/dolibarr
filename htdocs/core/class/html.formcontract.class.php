@@ -89,18 +89,18 @@ class FormContract
 		$sql .= " ORDER BY c.ref ";
 
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
 			if ($showempty) print '<option value="0">&nbsp;</option>';
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $db->fetch_object($resql);
+					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
 					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire)
 					{
@@ -150,7 +150,7 @@ class FormContract
 				}
 			}
 			print '</select>';
-			$db->free($resql);
+			$this->db->free($resql);
 
 			if (!empty($conf->use_javascript_ajax))
 			{
@@ -161,7 +161,7 @@ class FormContract
 
 			return $num;
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 			return -1;
 		}
     }

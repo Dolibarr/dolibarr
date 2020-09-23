@@ -152,7 +152,7 @@ class SupplierInvoices extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0)
 			{
@@ -160,25 +160,25 @@ class SupplierInvoices extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result) {
 			$i = 0;
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			while ($i < $min)
 			{
-				$obj = $db->fetch_object($result);
-				$invoice_static = new FactureFournisseur($db);
+				$obj = $this->db->fetch_object($result);
+				$invoice_static = new FactureFournisseur($this->db);
 				if ($invoice_static->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($invoice_static);
 				}
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve supplier invoice list : '.$db->lasterror());
+			throw new RestException(503, 'Error when retrieve supplier invoice list : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No supplier invoice found');
@@ -579,10 +579,9 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @return object
 	 *
-	 * @throws 200
-	 * @throws 304
-	 * @throws 401
-	 * @throws 404
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 304 Error
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -640,10 +639,10 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @return array
 	 *
-	 * @throws 400
-	 * @throws 401
-	 * @throws 404
-	 * @throws 405
+	 * @throws RestException 400 Bad parameters
+	 * @throws RestException 401 Not allowed
+	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Error
 	 */
 	public function deleteLine($id, $lineid)
 	{

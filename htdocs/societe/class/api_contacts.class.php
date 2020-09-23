@@ -99,6 +99,48 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
+	 * Get properties of a contact object by Email
+	 *
+	 * @param 	string 	$email 					Email of contact
+	 * @param   int    $includecount        Count and return also number of elements the contact is used as a link for
+	 * @return 	array|mixed data without useless information
+	 *
+	 * @url GET email/{email}
+	 *
+	 * @throws RestException 401     Insufficient rights
+	 * @throws RestException 404     User or group not found
+	 */
+    public function getByEmail($email, $includecount = 0)
+	{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
+		{
+			throw new RestException(401, 'No permission to read contacts');
+		}
+		if (empty($email)) {
+			$result = $this->contact->initAsSpecimen();
+		} else {
+			$result = $this->contact->fetch('', '', '', $email);
+		}
+
+		if (!$result)
+		{
+			throw new RestException(404, 'Contact not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
+		{
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($includecount)
+		{
+		    $this->contact->load_ref_elements();
+		}
+
+		return $this->_cleanObjectDatas($this->contact);
+	}
+
+	/**
 	 * List contacts
 	 *
 	 * Get a list of contacts
@@ -160,7 +202,7 @@ class Contacts extends DolibarrApi
 
     	// Select contacts of given category
     	if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
 			$sql .= " AND c.fk_socpeople = t.rowid ";
     	}
 
@@ -175,7 +217,7 @@ class Contacts extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-		$sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
 		if ($limit)
 		{
@@ -185,18 +227,18 @@ class Contacts extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
 			while ($i < $min)
 			{
-				$obj = $db->fetch_object($result);
-				$contact_static = new Contact($db);
+				$obj = $this->db->fetch_object($result);
+				$contact_static = new Contact($this->db);
 				if ($contact_static->fetch($obj->rowid))
 				{
 		            if ($includecount)

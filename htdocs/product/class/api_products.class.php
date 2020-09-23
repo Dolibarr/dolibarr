@@ -58,6 +58,7 @@ class Products extends DolibarrApi
     public function __construct()
     {
         global $db, $conf;
+
         $this->db = $db;
         $this->product = new Product($this->db);
         $this->productsupplier = new ProductFournisseur($this->db);
@@ -178,7 +179,7 @@ class Products extends DolibarrApi
         $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
         // Select products of given category
         if ($category > 0) {
-            $sql .= " AND c.fk_categorie = ".$db->escape($category);
+        	$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
             $sql .= " AND c.fk_product = t.rowid ";
         }
         if ($mode == 1) {
@@ -197,32 +198,32 @@ class Products extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $product_static = new Product($db);
+            	$obj = $this->db->fetch_object($result);
+            	$product_static = new Product($this->db);
                 if ($product_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No product found');
@@ -445,8 +446,7 @@ class Products extends DolibarrApi
 
     /**
      * Remove subproduct.
-     *
-     *  Unlink a product/service from a parent product/service
+     * Unlink a product/service from a parent product/service
      *
      * @param  int $id             Id of parent product/service
      * @param  int $subproduct_id  Id of child product/service
@@ -750,8 +750,11 @@ class Products extends DolibarrApi
     public function getSupplierProducts($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $supplier = 0, $sqlfilters = '')
     {
         global $db, $conf;
+
         $obj_ret = array();
+
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+
         $sql = "SELECT t.rowid, t.ref, t.ref_ext";
         $sql .= " FROM ".MAIN_DB_PREFIX."product as t";
         if ($category > 0) {
@@ -762,12 +765,12 @@ class Products extends DolibarrApi
         $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
         if ($supplier > 0) {
-            $sql .= " AND s.fk_soc = ".$db->escape($supplier);
+        	$sql .= " AND s.fk_soc = ".$this->db->escape($supplier);
         }
         $sql .= " AND s.fk_product = t.rowid";
         // Select products of given category
         if ($category > 0) {
-            $sql .= " AND c.fk_categorie = ".$db->escape($category);
+        	$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
             $sql .= " AND c.fk_product = t.rowid";
         }
         if ($mode == 1) {
@@ -785,22 +788,22 @@ class Products extends DolibarrApi
             $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
+            	$obj = $this->db->fetch_object($result);
 
                 $product_fourn = new ProductFournisseur($this->db);
                 $product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
@@ -814,7 +817,7 @@ class Products extends DolibarrApi
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No product found');
@@ -878,21 +881,71 @@ class Products extends DolibarrApi
 
     /**
      * Get attributes.
-     *
+	 *
+     * @param  string $sortfield  Sort field
+     * @param  string $sortorder  Sort order
+     * @param  int    $limit      Limit for list
+     * @param  int    $page       Page number
+     * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:color)"
      * @return array
      *
      * @throws RestException
      *
      * @url GET attributes
      */
-    public function getAttributes()
+    public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
 
-        $prodattr = new ProductAttribute($this->db);
-        return $prodattr->fetchAll();
+        $sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.rang, t.entity";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product_attribute as t";
+        $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
+
+        // Add sql filters
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if (!$result) {
+            throw new RestException(503, 'Error when retrieve product attribute list : '.$this->db->lasterror());
+        }
+
+        $return = [];
+        while ($result = $this->db->fetch_object($query)) {
+            $tmp = new ProductAttribute($this->db);
+            $tmp->id = $result->rowid;
+            $tmp->ref = $result->ref;
+            $tmp->ref_ext = $result->ref_ext;
+            $tmp->label = $result->label;
+            $tmp->rang = $result->rang;
+            $tmp->entity = $result->entity;
+
+            $return[] = $this->_cleanObjectDatas($tmp);
+        }
+
+        if (!count($return)) {
+            throw new RestException(404, 'No product attribute found');
+        }
+
+        return $return;
     }
 
     /**
@@ -917,8 +970,24 @@ class Products extends DolibarrApi
         $result = $prodattr->fetch((int) $id);
 
         if ($result < 0) {
-            throw new RestException(404, "Attribute not found");
+            throw new RestException(404, "Product attribute not found");
         }
+
+        $fields = ["id", "ref", "ref_ext", "label", "rang", "entity"];
+
+        foreach ($prodattr as $field => $value) {
+            if (!in_array($field, $fields)) {
+                unset($prodattr->{$field});
+            }
+        }
+
+        $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
+        $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $prodattr->id)." AND pac.entity IN (".getEntity('product').")";
+
+		$resql = $this->db->query($sql);
+        $obj = $this->db->fetch_object($resql);
+        $prodattr->is_used_by_products = (int) $obj->nb;
 
         return $prodattr;
     }
@@ -940,7 +1009,7 @@ class Products extends DolibarrApi
             throw new RestException(401);
         }
 
-        $sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
+        $sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
 
         $query = $this->db->query($sql);
 
@@ -953,8 +1022,65 @@ class Products extends DolibarrApi
         $attr = [];
         $attr['id'] = $result->rowid;
         $attr['ref'] = $result->ref;
+        $attr['ref_ext'] = $result->ref_ext;
         $attr['label'] = $result->label;
         $attr['rang'] = $result->rang;
+		$attr['entity'] = $result->entity;
+
+        $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
+        $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $result->rowid)." AND pac.entity IN (".getEntity('product').")";
+
+		$resql = $this->db->query($sql);
+        $obj = $this->db->fetch_object($resql);
+
+        $attr["is_used_by_products"] = (int) $obj->nb;
+
+        return $attr;
+    }
+
+    /**
+     * Get attributes by ref_ext.
+     *
+     * @param  string $ref_ext External reference of Attribute
+     * @return array
+     *
+     * @throws RestException 500
+     * @throws RestException 401
+     *
+     * @url GET attributes/ref_ext/{ref_ext}
+     */
+    public function getAttributesByRefExt($ref_ext)
+    {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(401);
+        }
+
+        $sql = "SELECT rowid, ref, ref_ext, label, rang, entity FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref_ext LIKE '".trim($ref_ext)."' AND entity IN (".getEntity('product').")";
+
+        $query = $this->db->query($sql);
+
+        if (!$this->db->num_rows($query)) {
+            throw new RestException(404);
+        }
+
+        $result = $this->db->fetch_object($query);
+
+        $attr = [];
+        $attr['id'] = $result->rowid;
+        $attr['ref'] = $result->ref;
+        $attr['ref_ext'] = $result->ref_ext;
+        $attr['label'] = $result->label;
+        $attr['rang'] = $result->rang;
+		$attr['entity'] = $result->entity;
+
+        $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
+        $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $result->rowid)." AND pac.entity IN (".getEntity('product').")";
+
+		$resql = $this->db->query($sql);
+        $obj = $this->db->fetch_object($resql);
+        $attr["is_used_by_products"] = (int) $obj->nb;
 
         return $attr;
     }
@@ -964,6 +1090,7 @@ class Products extends DolibarrApi
      *
      * @param  string $ref   Reference of Attribute
      * @param  string $label Label of Attribute
+     * @param  string $ref_ext   Reference of Attribute
      * @return int
      *
      * @throws RestException 500
@@ -971,7 +1098,7 @@ class Products extends DolibarrApi
      *
      * @url POST attributes
      */
-    public function addAttributes($ref, $label)
+    public function addAttributes($ref, $label, $ref_ext = '')
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -980,6 +1107,7 @@ class Products extends DolibarrApi
         $prodattr = new ProductAttribute($this->db);
         $prodattr->label = $label;
         $prodattr->ref = $ref;
+        $prodattr->ref_ext = $ref_ext;
 
         $resid = $prodattr->create(DolibarrApiAccess::$user);
         if ($resid <= 0) {
@@ -1202,7 +1330,18 @@ class Products extends DolibarrApi
         }
 
         $objectval = new ProductAttributeValue($this->db);
-        return $objectval->fetchAllByProductAttribute((int) $id);
+
+        $return = $objectval->fetchAllByProductAttribute((int) $id);
+
+        if (count($return) == 0) {
+            throw new RestException(404, 'Attribute values not found');
+        }
+
+		foreach ($return as $key => $val) {
+			$return[$key] = $this->_cleanObjectDatas($return[$key]);
+        }
+
+        return $return;
     }
 
     /**
@@ -1224,19 +1363,19 @@ class Products extends DolibarrApi
         $return = array();
 
         $sql = 'SELECT ';
-        $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
-        $sql .= "WHERE v.fk_product_attribute = ( SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".strtoupper(trim($ref))."' LIMIT 1)";
+        $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value as v';
+        $sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".$this->db->escape(trim($ref))."')";
 
-        $query = $this->db->query($sql);
+        $resql = $this->db->query($sql);
 
-        while ($result = $this->db->fetch_object($query)) {
+        while ($result = $this->db->fetch_object($resql)) {
             $tmp = new ProductAttributeValue($this->db);
             $tmp->fk_product_attribute = $result->fk_product_attribute;
             $tmp->id = $result->rowid;
             $tmp->ref = $result->ref;
             $tmp->value = $result->value;
 
-            $return[] = $tmp;
+            $return[] = $this->_cleanObjectDatas($tmp);
         }
 
         return $return;
@@ -1419,7 +1558,8 @@ class Products extends DolibarrApi
      * @param  float $price_impact Price impact of variant
      * @param  bool $price_impact_is_percent Price impact in percent (true or false)
      * @param  array $features List of attributes pairs id_attribute->id_value. Example: array(id_color=>id_Blue, id_size=>id_small, id_option=>id_val_a, ...)
-     * @param  bool|string $reference Customized reference of variant
+     * @param  string $reference Customized reference of variant
+     * @param  string $ref_ext External reference of variant
      * @return int
      *
      * @throws RestException 500
@@ -1428,7 +1568,7 @@ class Products extends DolibarrApi
      *
      * @url POST {id}/variants
      */
-    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = false)
+    public function addVariant($id, $weight_impact, $price_impact, $price_impact_is_percent, $features, $reference = '', $ref_ext = '')
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -1459,7 +1599,7 @@ class Products extends DolibarrApi
 
         $prodcomb = new ProductCombination($this->db);
 
-        $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
+        $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference, $ref_ext);
         if ($result > 0)
         {
             return $result;
@@ -1650,14 +1790,15 @@ class Products extends DolibarrApi
      * @param  string $ref_ext            Ref ext of element
      * @param  string $barcode            Barcode of element
      * @param  int    $includestockdata   Load also information about stock (slower)
-     * @param  bool   $includesubproducts Load information about subproducts
+     * @param  bool   $includesubproducts Load information about subproducts (if product is a virtual product)
+	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
      * @return array|mixed                Data without useless information
      *
      * @throws RestException 401
      * @throws RestException 403
      * @throws RestException 404
      */
-    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false)
+    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -1703,6 +1844,14 @@ class Products extends DolibarrApi
 
             $this->product->sousprods = $childs;
         }
+
+		if ($includeparentid) {
+			$prodcomb = new ProductCombination($this->db);
+			$this->product->fk_product_parent = null;
+			if (($fk_product_parent = $prodcomb->fetchByFkProductChild($this->product->id)) > 0) {
+				$this->product->fk_product_parent = $fk_product_parent;
+			}
+		}
 
         return $this->_cleanObjectDatas($this->product);
     }

@@ -390,7 +390,7 @@ if ($object->format == "D")
 	for ($i = 0; isset($toutsujet[$i]); $i++)
 	{
 		$tmp = explode('@', $toutsujet[$i]);
-		print '<td class="sujet">'.$tmp[0].'</td>'."\n";
+		print '<td class="sujet">'.dol_escape_htmltag($tmp[0]).'</td>'."\n";
 	}
 
 	print '</tr>'."\n";

@@ -234,6 +234,7 @@ if (empty($reshook))
 			$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 			$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 			{
 				// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -241,9 +242,9 @@ if (empty($reshook))
 				// Get record from code
 				$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-				$sql .= " AND t.code ='".$vatratecode."'";
+				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 				$resql = $db->query($sql);
 				if ($resql)
 				{

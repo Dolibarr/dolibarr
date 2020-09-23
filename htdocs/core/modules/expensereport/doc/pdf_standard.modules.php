@@ -1029,7 +1029,7 @@ class pdf_standard extends ModeleExpenseReport
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-		$sql .= " WHERE e.rowid = '".$object->id."'";
+		$sql .= " WHERE e.rowid = ".((int) $object->id);
 		$sql .= " AND p.fk_expensereport = e.rowid";
 		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 		$sql .= " ORDER BY dp";

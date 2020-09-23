@@ -242,7 +242,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'src_object_type,';
 		$sql .= 'src_object_id';
 		$sql .= ') VALUES (';
-		$sql .= " '".$ref."', ";
+		$sql .= " '".$this->db->escape($ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.$this->entity.',';

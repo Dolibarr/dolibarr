@@ -75,9 +75,10 @@ if (!is_object($objecttmp))
 }
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey = (($id && GETPOST($id, 'alpha')) ?GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
+$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 
-// TODO Add a security test to avoid to get content of all tables
+// Add a security test to avoid to get content of all tables
+restrictedArea($user, $objecttmp->element, $id);
 
 $arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1);
 

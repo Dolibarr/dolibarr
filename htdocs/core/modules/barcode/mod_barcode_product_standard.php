@@ -245,7 +245,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	{
         // phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE barcode = '".$code."'";
+		$sql .= " WHERE barcode = '".$db->escape($code)."'";
 		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
 
 		$resql = $db->query($sql);

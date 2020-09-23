@@ -111,7 +111,7 @@ class Warehouses extends DolibarrApi
         $sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
     	// Select warehouses of given category
     	if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+    		$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
 			$sql .= " AND c.fk_warehouse = t.rowid ";
     	}
         // Add sql filters
@@ -125,7 +125,7 @@ class Warehouses extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0)
             {
@@ -133,26 +133,26 @@ class Warehouses extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             $i = 0;
-            $num = $db->num_rows($result);
+            $num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $warehouse_static = new Entrepot($db);
+            	$obj = $this->db->fetch_object($result);
+            	$warehouse_static = new Entrepot($this->db);
                 if ($warehouse_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($warehouse_static);
                 }
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve warehouse list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve warehouse list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No warehouse found');

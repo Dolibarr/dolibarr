@@ -80,7 +80,6 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-/** @var $apiService Service */
 $apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token

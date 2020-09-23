@@ -282,7 +282,7 @@ if (!$user->rights->projet->all->lire) $projectsListId = $object->getProjectsAut
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype = array();
 $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql .= " WHERE ctc.element = '".$object->element."'";
+$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
 $sql .= " AND ctc.source = 'internal'";
 $resql = $db->query($sql);
 if ($resql)
@@ -459,7 +459,6 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // Show description of content

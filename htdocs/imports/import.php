@@ -1147,7 +1147,7 @@ if ($step == 4 && $datatoimport)
 		// List of existing import profils
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
-		$sql .= " WHERE type = '".$datatoimport."'";
+		$sql .= " WHERE type = '".$db->escape($datatoimport)."'";
 		$sql .= " ORDER BY rowid";
 		$resql = $db->query($sql);
 		if ($resql)

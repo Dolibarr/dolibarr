@@ -317,8 +317,8 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-$NBMAX = 3;
-$max = 3;
+$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Last modified job position
 if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)

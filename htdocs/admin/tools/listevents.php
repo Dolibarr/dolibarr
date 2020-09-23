@@ -46,7 +46,7 @@ $langs->loadLangs(array("companies", "admin", "users", "other"));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -234,6 +234,20 @@ if ($result)
 		$formquestion = array();
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge', $formquestion, 'no', 1);
 	}
+
+	// Check some parameters
+	// TODO Add a tab with this and other information
+	/*
+	global $dolibarr_main_prod, $dolibarr_nocsrfcheck;
+	if (empty($dolibarr_main_prod)) {
+		print $langs->trans("Warning").' dolibarr_main_prod = '.$dolibarr_main_prod;
+		print ' '.img_warning($langs->trans('SwitchThisForABetterSecurity', 1)).'<br>';
+	}
+	if (!empty($dolibarr_nocsrfcheck)) {
+		print $langs->trans("Warning").' dolibarr_nocsrfcheck = '.$dolibarr_nocsrfcheck;
+		print ' '.img_warning($langs->trans('SwitchThisForABetterSecurity', 0)).'<br>';
+	}
+	*/
 
 	print '<div class="div-table-responsive">';
 	print '<table class="liste centpercent">';

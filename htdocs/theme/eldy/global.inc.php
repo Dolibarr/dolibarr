@@ -191,10 +191,6 @@ input, select {
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
-
-	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
-
 	border-radius: 3px;
     border-collapse: collapse;
     border: none;
@@ -220,7 +216,6 @@ input:invalid, select:invalid {
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
-    /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
 input:focus, select:focus {
@@ -570,6 +565,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.centpercentwithoutmenu {
+	width: calc(100% - 200px);
 }
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
@@ -1275,9 +1273,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -1311,10 +1306,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
-
 	.box-flex-item {
 		margin: 3px 2px 3px 2px !important;
 	}
@@ -1502,20 +1493,20 @@ td.showDragHandle {
 	padding-bottom: 20px;
 }
 
-/* For having horizontal scroll into array (like with smartphone) */
-/*
-#id-container {
+/* DOL_XXX For having horizontal scroll into array (like with smartphone) */
+
+.classforhorizontalscrolloftabs #id-container {
 	width: 100%;
 }
-.side-nav {
+.classforhorizontalscrolloftabs .side-nav {
 	display: block;
 	float: left;
 }
-#id-right {
+.classforhorizontalscrolloftabs #id-right {
 	width:calc(100% - 210px);
 	display: inline-block;
 }
-*/
+
 
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
@@ -1612,51 +1603,63 @@ div.vmenu, td.vmenu {
 
 .menuhider { display: none !important; }
 
+
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-body.sidebar-collapse .side-nav {
-	display: none;
+	body.sidebar-collapse .side-nav {
+		display: none;
+	}
+
+	body.sidebar-collapse .login_block {
+		display: none;
+	}
+
+	.menuhider { display: block !important; }
+	.dropdown-user-image { display: none; }
+	.user-header { height: auto !important; color: var(--colorbackbody); }
+
+	#id-container {
+		width: 100%;
+	}
+	.side-nav {
+		border-bottom: 1px solid #BBB;
+		background: #FFF;
+		padding-left: 20px;
+		padding-right: 20px;
+		position: absolute;
+	    	z-index: 90;
+	}
+	div.blockvmenulogo
+	{
+		border-bottom: 0 !important;
+	}
+	div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
+		border-top: none !important;
+		border-left: none !important;
+		border-right: none !important;
+		border-bottom: 1px solid #e0e0e0;
+		padding-left: 0 !important;
+	}
+	div.vmenu, td.vmenu {
+		padding-right: 6px !important;
+	}
+	div.fiche {
+		margin-<?php print $left; ?>: 9px !important;
+		margin-<?php print $right; ?>: 10px !important;
+	}
+
+	.pagination .fa-chevron-left, .pagination .fa-chevron-right {
+		font-size: 1.2em;
+	}
 }
 
-body.sidebar-collapse .login_block {
-	display: none;
-}
-
-.menuhider { display: block !important; }
-.dropdown-user-image { display: none; }
-.user-header { height: auto !important; color: var(--colorbackbody); }
-
-#id-container {
-	width: 100%;
-}
-.side-nav {
-	border-bottom: 1px solid #BBB;
-	background: #FFF;
-	padding-left: 20px;
-	padding-right: 20px;
-	position: absolute;
-    	z-index: 90;
-}
-div.blockvmenulogo
+@media only screen and (min-width: 768px) and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-	border-bottom: 0 !important;
-}
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
-	border-top: none !important;
-	border-left: none !important;
-	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
-	padding-left: 0 !important;
-}
-div.vmenu, td.vmenu {
-	padding-right: 6px !important;
-}
-div.fiche {
-	margin-<?php print $left; ?>: 9px !important;
-	margin-<?php print $right; ?>: 10px !important;
-}
-<?php //} ?>
+	div.fiche {
+		margin-<?php print $left; ?>: 13px !important;
+		margin-<?php print $right; ?>: 14px !important;
+	}
 }
 
 
@@ -2803,8 +2806,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -3202,6 +3205,7 @@ div.refid  {
 	font-weight: bold;
   	color: var(--colortexttitlenotab);
   	font-size: 1.2em;
+  	word-break: break-word;
 }
 div.refidno  {
 	padding-top: 3px;
@@ -3795,8 +3799,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext {
+span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
+}
+span.boxstatstext {
     line-height: 18px;
     color: var(--colortext);
 }
@@ -5580,6 +5586,10 @@ span.noborderoncategories {
 /* ============================================================================== */
 /*  External lib multiselect with checkbox                                        */
 /* ============================================================================== */
+
+.multi-select-menu {
+	z-index: 10;
+}
 
 .multi-select-container {
   display: inline-block;

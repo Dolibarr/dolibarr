@@ -70,7 +70,7 @@ print load_fiche_titre($title, '', 'intervention');
 dol_mkdir($dir);
 
 $stats = new FichinterStats($db, $socid, $mode, ($userid > 0 ? $userid : 0));
-if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);

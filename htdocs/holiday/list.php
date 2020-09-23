@@ -83,7 +83,7 @@ $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -311,7 +311,7 @@ if (!empty($search_valideur) && $search_valideur != -1) {
 }
 // Type
 if (!empty($search_type) && $search_type != -1) {
-	$sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($db->escape($search_type)).')';
 }
 // Status
 if (!empty($search_status) && $search_status != -1) {

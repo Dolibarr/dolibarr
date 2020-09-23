@@ -30,7 +30,6 @@ include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
-$grant_query = '';
 $step = 2;
 $ok = 0;
 
@@ -445,8 +444,8 @@ if ($ok && GETPOST('standard', 'alpha'))
 						if ($obj2 && $obj2->nb == 0)
 						{
 							// Module not found, so we canremove entry
-							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity.")";
-							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$obj->file."' AND entity = ".$obj->entity;
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity.")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity;
 
 							if (GETPOST('standard', 'alpha') == 'confirmed')
 							{
@@ -782,7 +781,7 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
 						if (GETPOST('clean_menus') == 'confirmed')
 						{
-							$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$modulecond."'";
+							$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$db->escape($modulecond)."'";
 							$resql2 = $db->query($sql2);
 							if (!$resql2)
 							{

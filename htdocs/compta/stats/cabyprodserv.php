@@ -60,6 +60,9 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 $selected_type = GETPOST('search_type', 'int');
 if ($selected_type == '') $selected_type = -1;
 
+// Hook
+$hookmanager->initHooks(array('cabyprodservlist'));
+
 // Date range
 $year = GETPOST("year");
 $month = GETPOST("month");

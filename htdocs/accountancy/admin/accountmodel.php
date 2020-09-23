@@ -280,7 +280,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = '".$rowid."'";
+		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -302,7 +302,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
-	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -323,9 +323,9 @@ if ($action == $acts[0])
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -341,9 +341,9 @@ if ($action == $acts[1])
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -359,9 +359,9 @@ if ($action == 'activate_favorite')
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);
@@ -377,9 +377,9 @@ if ($action == 'disable_favorite')
 	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = ".((int) $rowid);
 	} elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$db->escape($code)."'";
 	}
 
 	$result = $db->query($sql);

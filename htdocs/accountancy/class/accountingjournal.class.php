@@ -108,7 +108,7 @@ class AccountingJournal extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE";
 			if ($rowid) {
-				$sql .= " rowid = ".(int) $rowid;
+				$sql .= " rowid = ".((int) $rowid);
 			} elseif ($journal_code)
 			{
 				$sql .= " code = '".$this->db->escape($journal_code)."'";

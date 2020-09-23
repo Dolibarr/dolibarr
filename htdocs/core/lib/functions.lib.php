@@ -95,7 +95,7 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		$out = '';
 		$addzero = array('user', 'usergroup', 'c_email_templates', 'email_template', 'default_values');
 		if (in_array($element, $addzero)) $out .= '0,';
-		$out .= $conf->entity;
+		$out .= ((int) $conf->entity);
 		return $out;
 	}
 }
@@ -545,6 +545,60 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
+	// Check rule
+	if ($check == 'array') {
+		if (!is_array($out) || empty($out)) {
+			$out = array();
+		} else {
+			foreach ($out as $outkey => $outval) {
+				$out[$outkey] = checkVal($outval, 'alphanohtml', $filter, $options);
+			}
+		}
+	}
+	else {
+		$out = checkVal($out, $check, $filter, $options);
+	}
+
+	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
+	if ($paramname == 'backtopage') {
+		$out = str_replace('\\', '/', $out);
+		$out = preg_replace(array('/^\/\/+/', '/^[a-z]*:/i'), '', $out);
+	}
+
+	// Code for search criteria persistence.
+	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
+	if (empty($method) || $method == 3 || $method == 4)
+	{
+		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield')))
+		{
+			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
+
+			// We save search key only if $out not empty that means:
+			// - posted value not empty, or
+			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+
+			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
+			{
+				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
+			}
+		}
+	}
+
+	return $out;
+}
+
+
+/**
+ *  Return a value after checking on a rule.
+ *
+ *  @param  string  $out	     Value to get/check
+ *  @param  string  $check	     Type of check
+ *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array         Value found (string or array), or '' if check fails
+ */
+function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
 	// Check is done after replacement
 	switch ($check)
 	{
@@ -580,9 +634,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				if (preg_match('/[^a-z0-9_\-\.,]+/i', $out)) $out = '';
 			}
 			break;
-		case 'array':
-			if (!is_array($out) || empty($out)) $out = array();
-			break;
 		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
@@ -598,6 +649,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 			$out = dol_string_onlythesehtmltags($out, 0);
+			// TODO We can also remove all javascripts reference
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -605,27 +657,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			break;
 	}
 
-	// Code for search criteria persistence.
-	// Save data into session if key start with 'search_' or is 'smonth', 'syear', 'month', 'year'
-	if (empty($method) || $method == 3 || $method == 4)
-	{
-		if (preg_match('/^search_/', $paramname) || in_array($paramname, array('sortorder', 'sortfield')))
-		{
-			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
-
-			// We save search key only if $out not empty that means:
-			// - posted value not empty, or
-			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
-
-			if ($out != '')		// $out = '0' or 'abc', it is a search criteria to keep
-			{
-				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
-			}
-		}
-	}
-
 	return $out;
 }
+
 
 
 if (!function_exists('dol_getprefix'))
@@ -937,7 +971,7 @@ function dol_string_unaccent($str)
  *  @param  array	$badcharstoreplace  List of forbidden characters
  * 	@return string          			Cleaned string
  *
- * 	@see    		dol_sanitizeFilename(), dol_string_unaccent()
+ * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
 function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 {
@@ -947,6 +981,21 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 	//$forbidden_chars_to_remove=array("(",")");
 
 	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
+}
+
+
+/**
+ *	Clean a string from all non printable ascii chars (0x00-0x1F and 0x7F). It removes also CR-LF
+ *  This can be used to sanitize a string and view its real content. Some hacks try to obfuscate attacks by inserting non printable chars.
+ *
+ *	@param	string	$str            	String to clean
+ * 	@return string          			Cleaned string
+ *
+ * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nospecial()
+ */
+function dol_string_nounprintableascii($str)
+{
+	return preg_replace('/[\x00-\x1F\x7F]/u', '', $str);
 }
 
 
@@ -1301,19 +1350,28 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	{
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
+		$widthofpopup = 200;
 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) { $tabsname = str_replace("@", "", $picto); }
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<a href="#" class="tab moretab inline-block tabunactive reposition">'.$langs->trans("More").'... ('.$nbintab.')</a>';
-		$out .= '<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
+		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';	// Do not use "reposition" class in the "More".
+		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
 		$out .= '<div></div>';
 		$out .= "</div>\n";
 
 		$out .= "<script>";
-		$out .= "$('#moretabs".$tabsname."').mouseenter( function() { console.log('mouseenter ".$left."'); $('#moretabsList".$tabsname."').css('".$left."','auto');});";
+		$out .= "$('#moretabs".$tabsname."').mouseenter( function() {
+			var x = this.offsetLeft, y = this.offsetTop;
+			console.log('mouseenter ".$left." x='+x+' y='+y+' window.innerWidth='+window.innerWidth);
+			if ((window.innerWidth - x) < ".($widthofpopup+10).") {
+				$('#moretabsList".$tabsname."').css('".$right."','8px');
+			}
+			$('#moretabsList".$tabsname."').css('".$left."','auto');
+			});
+		";
 		$out .= "$('#moretabs".$tabsname."').mouseleave( function() { console.log('mouseleave ".$left."'); $('#moretabsList".$tabsname."').css('".$left."','-999em');});";
 		$out .= "</script>";
 	}
@@ -3801,7 +3859,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		$result = ($nodiv ? '' : '<div class="'.$class.' hideonsmartphone'.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
 
 		if ($textfordropdown) {
-			$tmpresult .= '<span class="'.$class.'text opacitymedium">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
+			$tmpresult .= '<span class="'.$class.'text opacitymedium cursorpointer">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
 			$tmpresult .= '<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery(".'.$class.'text").click(function() {
@@ -4048,17 +4106,17 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) {
 		$out .= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '.$moreattrib;
-		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 		$out .= '>';
 	} else {
 		$out .= '<'.$tag.' class="'.$prefix.'liste_titre" '.$moreattrib;
-		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 		$out .= '>';
 	}
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
-		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', $moreparam);
+		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', (is_scalar($moreparam) ? $moreparam : ''));
 		$options = preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i', '', $options);
 		$options = preg_replace('/&+/i', '&', $options);
 		if (!preg_match('/^&/', $options)) $options = '&'.$options;
@@ -4098,7 +4156,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 
 	if (empty($thead) && $field)    // If this is a sort field
 	{
-		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', $moreparam);
+		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', (is_scalar($moreparam) ? $moreparam : ''));
 		$options = preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i', '', $options);
 		$options = preg_replace('/&+/i', '&', $options);
 		if (!preg_match('/^&/', $options)) $options = '&'.$options;
@@ -4824,10 +4882,10 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = "", $thirdparty_sell
 	// By default, search value of local tax on line of common tax
 	$sql = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-   	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
+   	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdparty_seller->country_code)."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-   	if ($vatratecode) $sql .= " AND t.code ='".$vatratecode."'"; // If we have the code, we use it in priority
-   	else $sql .= " AND t.recuperableonly ='".$vatnpr."'";
+   	if ($vatratecode) $sql .= " AND t.code ='".$db->escape($vatratecode)."'"; // If we have the code, we use it in priority
+   	else $sql .= " AND t.recuperableonly ='".$db->escape($vatnpr)."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql = $db->query($sql);
 
@@ -4875,9 +4933,9 @@ function get_localtax_by_third($local)
 	global $db, $mysoc;
 	$sql = "SELECT t.localtax1, t.localtax2 ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
-	$sql .= " WHERE c.code = '".$mysoc->country_code."' AND t.active = 1 AND t.taux=(";
+	$sql .= " WHERE c.code = '".$db->escape($mysoc->country_code)."' AND t.active = 1 AND t.taux=(";
 	$sql .= "  SELECT max(tt.taux) FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
-	$sql .= "  WHERE c.code = '".$mysoc->country_code."' AND tt.active = 1";
+	$sql .= "  WHERE c.code = '".$db->escape($mysoc->country_code)."' AND tt.active = 1";
 	$sql .= "  )";
 
 	$resql = $db->query($sql);
@@ -4923,11 +4981,11 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // vat in spain use the buyer country ??
-		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";*/
-		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'";    // vat in spain use the buyer country ??
+		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";*/
+		$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-		if ($vatratecode) $sql .= " AND t.code = '".$vatratecode."'";
+		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -4978,10 +5036,10 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		}
 
 		$sql .= ", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'"; // local tax in spain use the buyer country ??
-		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($buyer->country_code)."'"; // local tax in spain use the buyer country ??
+		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($seller->country_code)."'";
 		$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-		if ($vatratecode) $sql .= " AND t.code = '".$vatratecode."'";
+		if ($vatratecode) $sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 	}
 
 	$resql = $db->query($sql);
@@ -5055,7 +5113,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			// If vat of product for the country not found or not defined, we return the first higher vat of country.
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
 			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -5120,7 +5178,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdparty_seller->country_code)."'";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
 
@@ -5536,9 +5594,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 	);
+
 	$allowed_tags_string = join("><", $allowed_tags);
-	$allowed_tags_string = preg_replace('/^>/', '', $allowed_tags_string);
-	$allowed_tags_string = preg_replace('/<$/', '', $allowed_tags_string);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
@@ -5547,6 +5604,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if ($removeclassattribute) {
 		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $stringtoclean);
 	}
+	// TODO Remove '/href=("|\'|)javascript/' string ?
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
 
@@ -6071,25 +6129,25 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'adherent' && $object->id > 0)
 			{
-				$substitutionarray['__MEMBER_ID__'] = $object->id;
+				$substitutionarray['__MEMBER_ID__'] = (isset($object->id) ? $object->id : '');
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
-				$substitutionarray['__MEMBER_FIRSTNAME__'] = $object->firstname;
-				$substitutionarray['__MEMBER_LASTNAME__'] = $object->lastname;
+				$substitutionarray['__MEMBER_FIRSTNAME__'] = (isset($object->firstname) ? $object->firstname : '');
+				$substitutionarray['__MEMBER_LASTNAME__'] = (isset($object->lastname) ? $object->lastname : '');
 				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__'] = $object->getFullName($outputlangs);
-				$substitutionarray['__MEMBER_COMPANY__'] = $object->societe;
-				$substitutionarray['__MEMBER_ADDRESS__'] = $object->address;
-				$substitutionarray['__MEMBER_ZIP__'] = $object->zip;
-				$substitutionarray['__MEMBER_TOWN__'] = $object->town;
-				$substitutionarray['__MEMBER_COUNTRY__'] = $object->country;
-				$substitutionarray['__MEMBER_EMAIL__'] = $object->email;
-				$substitutionarray['__MEMBER_BIRTH__'] = $birthday;
-				$substitutionarray['__MEMBER_PHOTO__'] = $object->photo;
-				$substitutionarray['__MEMBER_LOGIN__'] = $object->login;
-				$substitutionarray['__MEMBER_PASSWORD__'] = $object->pass;
-				$substitutionarray['__MEMBER_PHONE__'] = $object->phone;
-				$substitutionarray['__MEMBER_PHONEPRO__'] = $object->phone_perso;
-				$substitutionarray['__MEMBER_PHONEMOBILE__'] = $object->phone_mobile;
-				$substitutionarray['__MEMBER_TYPE__'] = $object->type;
+				$substitutionarray['__MEMBER_COMPANY__'] = (isset($object->societe) ? $object->societe : '');
+				$substitutionarray['__MEMBER_ADDRESS__'] = (isset($object->address) ? $object->address : '');
+				$substitutionarray['__MEMBER_ZIP__'] = (isset($object->zip) ? $object->zip : '');
+				$substitutionarray['__MEMBER_TOWN__'] = (isset($object->town) ? $object->town : '');
+				$substitutionarray['__MEMBER_COUNTRY__'] = (isset($object->country) ? $object->country : '');
+				$substitutionarray['__MEMBER_EMAIL__'] = (isset($object->email) ? $object->email : '');
+				$substitutionarray['__MEMBER_BIRTH__'] = (isset($birthday) ? $birthday : '');
+				$substitutionarray['__MEMBER_PHOTO__'] = (isset($object->photo) ? $object->photo : '');
+				$substitutionarray['__MEMBER_LOGIN__'] = (isset($object->login) ? $object->login : '');
+				$substitutionarray['__MEMBER_PASSWORD__'] = (isset($object->pass) ? $object->pass : '');
+				$substitutionarray['__MEMBER_PHONE__'] = (isset($object->phone) ? $object->phone : '');
+				$substitutionarray['__MEMBER_PHONEPRO__'] = (isset($object->phone_perso) ? $object->phone_perso : '');
+				$substitutionarray['__MEMBER_PHONEMOBILE__'] = (isset($object->phone_mobile) ? $object->phone_mobile : '');
+				$substitutionarray['__MEMBER_TYPE__'] = (isset($object->type) ? $object->type : '');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
@@ -7895,7 +7953,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	if ($alldata == 1)
 	{
-		if ($isAllowedForPreview) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath),);
+		if ($isAllowedForPreview) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath));
 		else return array();
 	}
 
@@ -7923,7 +7981,6 @@ function ajax_autoselect($htmlname, $addlink = '')
 	if ($addlink) $out .= ' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
 	return $out;
 }
-
 
 /**
  *	Return if a file is qualified for preview

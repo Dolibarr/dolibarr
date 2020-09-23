@@ -1061,7 +1061,7 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "NULL");
+		$sql .= ", ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";

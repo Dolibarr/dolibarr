@@ -112,16 +112,16 @@ class FormProduct
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
 		if (!empty($fk_product))
 		{
-			$sql .= " AND ps.fk_product = '".$fk_product."'";
+			$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			if (!empty($batch))
 			{
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
 			}
 		}
 		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql .= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+			$sql .= " AND e.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
 		} else {
 			$sql .= " AND e.statut = 1";
 		}

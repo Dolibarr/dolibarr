@@ -46,7 +46,7 @@ $fieldname = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "ASC";
@@ -57,7 +57,7 @@ $offset = $limit * $page;
 
 $dir = $conf->bank->dir_output.'/checkdeposits/';
 $filterdate = dol_mktime(0, 0, 0, GETPOST('fdmonth'), GETPOST('fdday'), GETPOST('fdyear'));
-$filteraccountid = GETPOST('accountid');
+$filteraccountid = GETPOST('accountid', 'int');
 
 $object = new RemiseCheque($db);
 
@@ -152,10 +152,10 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 	}
 }
 
-if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banque->cheque)
+if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->rights->banque->cheque)
 {
 	$object->id = $id;
-	$result = $object->removeCheck($_GET["lineid"]);
+	$result = $object->removeCheck(GETPOST("lineid", "int"));
 	if ($result === 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -206,7 +206,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
 if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
 	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
-	$rejected_check = GETPOST('bankid');
+	$rejected_check = GETPOST('bankid', 'int');
 
 	$object->fetch($id);
 	$paiement_id = $object->rejectCheck($rejected_check, $reject_date);
@@ -394,7 +394,7 @@ if ($action == 'new')
 	$sql .= " AND b.fk_bordereau = 0";
 	$sql .= " AND b.amount > 0";
 	if ($filterdate)          $sql .= " AND b.dateo = '".$db->idate($filterdate)."'";
-    if ($filteraccountid > 0) $sql .= " AND ba.rowid= '".$filteraccountid."'";
+    if ($filteraccountid > 0) $sql .= " AND ba.rowid = ".((int) $filteraccountid);
 	$sql .= $db->order("b.dateo,b.rowid", "ASC");
 
 	$resql = $db->query($sql);

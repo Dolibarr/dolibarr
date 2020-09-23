@@ -710,7 +710,7 @@ if ($id > 0 || $ref)
 			{
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-				$sql .= " WHERE m.fk_product = '".$object->id."'";
+				$sql .= " WHERE m.fk_product = ".((int) $object->id);
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);

@@ -122,7 +122,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dated,'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -142,7 +142,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT date_format(dated,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(dated,'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(dated,'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');

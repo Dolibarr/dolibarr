@@ -49,14 +49,21 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 }
 
 /**
- * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
+ * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
- * @param		string		$val		Value
+ * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function testSqlAndScriptInject($val, $type)
 {
+	$val = html_entity_decode($val, ENT_QUOTES);	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	// TODO loop to decode until no more thing to decode ?
+
+	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
+	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val);	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	//var_dump($val);
+
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
 	if ($type == 1 || $type == 3)
@@ -80,19 +87,22 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
-	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	// For XSS Injection done by closing textarea to execute content into a textarea field
 	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
 	// All examples on page: http://ha.ckers.org/xss.html#XSScalc
 	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
-	$inj += preg_match('/<script/i', $val);
-	$inj += preg_match('/<iframe/i', $val);
 	$inj += preg_match('/<audio/i', $val);
+	$inj += preg_match('/<embed/i', $val);
+	$inj += preg_match('/<iframe/i', $val);
+	$inj += preg_match('/<object/i', $val);
+	$inj += preg_match('/<script/i', $val);
 	$inj += preg_match('/Set\.constructor/i', $val); // ECMA script 6
 	if (!defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
-	$inj += preg_match('/base[\s]+href/si', $val);
+	$inj += preg_match('/base\s+href/si', $val);
+	$inj += preg_match('/=data:/si', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
 	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val); //
@@ -104,11 +114,8 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
-	//if ($type == 1)
-	//{
-		$inj += preg_match('/javascript:/i', $val);
-		$inj += preg_match('/vbscript:/i', $val);
-	//}
+	$inj += preg_match('/javascript\s*:/i', $val);
+	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1) $inj += preg_match('/"/i', $val); // We refused " in GET parameters value
 	if ($type == 2) $inj += preg_match('/[;"]/', $val); // PHP_SELF is a file system path. It can contains spaces.
@@ -132,7 +139,15 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			{
 				//$var[$key] = $value;	// This is useless
 			} else {
-				print 'Access refused by SQL/Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
+				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
+				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
+				print $errormessage;
+				// Add entry into error log
+				if (function_exists('error_log')) {
+					error_log($errormessage);
+				}
+				// TODO Add entry into security audit table
 				exit;
 			}
 		}
@@ -344,15 +359,14 @@ if (!defined('NOTOKENRENEWAL'))
 	$_SESSION['newtoken'] = $token;
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
+//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
 //$dolibarr_nocsrfcheck=1;
 // Check token
-//var_dump((! defined('NOCSRFCHECK')).' '.empty($dolibarr_nocsrfcheck).' '.(! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)).' '.$_SERVER['REQUEST_METHOD'].' '.(! GETPOSTISSET('token')));
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
 	// Check all cases that need a token (all POST and some GET)
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' || (GETPOSTISSET('action') && defined('CSRFCHECK_WITH_TOKEN')) || in_array(GETPOST('action', 'aZ09'), array('add', 'update')))
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' || (GETPOSTISSET('action') && defined('CSRFCHECK_WITH_TOKEN')) || in_array(GETPOST('action', 'aZ09'), array('add', 'update', 'install')))
 	{
 		if (!GETPOSTISSET('token')) {
 			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
@@ -368,8 +382,14 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
 		//if ($conf->global->MAIN_FEATURES_LEVEL >= 1) setEventMessages('Unset POST and GET params by CSRF protection in main.inc.php (Token provided was not generated by the previous page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
+		$savid = ((int) $_POST['id']);
 		unset($_POST);
+		//unset($_POST['action']);
+		unset($_POST['confirm']);
 		unset($_GET['confirm']);
+		unset($_GET['action']);
+		$_POST['id'] = ((int) $savid);
+		$_POST['action'] = '';
 	}
 }
 
@@ -519,7 +539,7 @@ if (!defined('NOLOGIN'))
 
 		$allowedmethodtopostusername = 2;
 		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) $allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');
-		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username", "alpha", $allowedmethodtopostusername));
+		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
 		$passwordtotest = GETPOST('password', 'none', $allowedmethodtopostusername);
 		$entitytotest = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
@@ -544,6 +564,10 @@ if (!defined('NOLOGIN'))
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr'))
 		{
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
+			if ($login === '--bad-login-validity--') {
+				$login = '';
+			}
+
 			if ($login)
 			{
 				$dol_authmode = $conf->authmode; // This properties is defined only when logged, to say what mode was successfully used
@@ -604,7 +628,7 @@ if (!defined('NOLOGIN'))
 			exit;
 		}
 
-		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
+		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));	// login was retreived previously when checking password.
 		if ($resultFetchUser <= 0)
 		{
 			dol_syslog('User not found, connexion refused');
@@ -935,8 +959,7 @@ if (!defined('NOLOGIN'))
 	$user->getrights();
 }
 
-
-dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
+dol_syslog("--- Access to ".$_SERVER["REQUEST_METHOD"].' '.$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -1376,6 +1399,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 // jQuery plugin "mutiselect", "multiple-select", "select2", ...
             	$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n"; // We include full because we need the support of containerCssClass
+            }
+            if (! defined('DISABLE_MULTISELECT'))     // jQuery plugin "mutiselect" to select with checkboxes. Can be removed once we have an enhanced search tool
+            {
+            	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/jquery.multi-select.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
 		}
 

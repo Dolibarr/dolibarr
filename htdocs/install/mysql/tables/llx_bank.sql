@@ -39,4 +39,7 @@ create table llx_bank
   banque          varchar(255),             -- banque pour les cheques
   emetteur        varchar(255),             -- emetteur du cheque
   author          varchar(40)               -- a supprimer apres migration
+  origin_id       integer,
+  origin_type     varchar(64) NULL,
+  import_key	  varchar(14)
 )ENGINE=innodb;

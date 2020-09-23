@@ -313,7 +313,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	{
         // phpcs:enable
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE ref = '".$code."'";
+		$sql .= " WHERE ref = '".$db->escape($code)."'";
 		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;
 
 		$resql = $db->query($sql);

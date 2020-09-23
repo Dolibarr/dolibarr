@@ -276,7 +276,7 @@ class Tickets extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -287,13 +287,13 @@ class Tickets extends DolibarrApi
             $sql .= $this->db->plimit($limit, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num) {
-                $obj = $db->fetch_object($result);
-                $ticket_static = new Ticket($db);
+            	$obj = $this->db->fetch_object($result);
+            	$ticket_static = new Ticket($this->db);
                 if ($ticket_static->fetch($obj->rowid)) {
                     if ($ticket_static->fk_user_assign > 0) {
                         $userStatic = new User($this->db);

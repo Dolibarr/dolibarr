@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-				$sql .= " WHERE socid = '".$socid."'";
+				$sql .= " WHERE socid = ".((int) $socid);
 				$sql .= " AND entity = ".$conf->entity;
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -1454,7 +1454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 
 		// Type
@@ -1471,10 +1471,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 		print '</tr>';
 
 		// Password

@@ -294,9 +294,9 @@ if (empty($reshook))
 				$sql .= ", targettype";
 				$sql .= ") VALUES (";
 				$sql .= $id_order;
-				$sql .= ", '".$object->origin."'";
+				$sql .= ", '".$db->escape($object->origin)."'";
 				$sql .= ", ".$object->id;
-				$sql .= ", '".$object->element."'";
+				$sql .= ", '".$db->escape($object->element)."'";
 				$sql .= ")";
 
 				if (!$db->query($sql))
@@ -535,16 +535,16 @@ if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$db
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
-	$sql .= " AND cf.fk_statut IN (".$db->escape($db->escape(GETPOST('statut', 'intcomma'))).")";
+	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape(GETPOST('statut', 'intcomma'))).")";
 if ($search_status != '' && $search_status >= 0)
-	$sql .= " AND cf.fk_statut IN (".$db->escape($search_status).")";
+	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 $sql .= dolSqlDateFilter("cf.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
 $sql .= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
 if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_user > 0) $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='supplier_order' AND tc.source='internal' AND ec.element_id = cf.rowid AND ec.fk_socpeople = ".$db->escape($search_user);
@@ -769,17 +769,17 @@ if ($resql)
 	// Ref
 	if (!empty($arrayfields['cf.ref']['checked']))
 	{
-		print '<td class="liste_titre"><input size="8" type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
+		print '<td class="liste_titre"><input size="8" type="text" class="flat maxwidth75" name="search_ref" value="'.$search_ref.'"></td>';
 	}
 	// Ref customer
 	if (!empty($arrayfields['cf.ref_supplier']['checked']))
 	{
-		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_refsupp" value="'.$search_refsupp.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_refsupp" value="'.$search_refsupp.'"></td>';
 	}
 	// Project ref
 	if (!empty($arrayfields['p.project_ref']['checked']))
 	{
-		print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	}
 	// Request author
 	if (!empty($arrayfields['u.login']['checked']))
@@ -935,7 +935,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['cf.ref']['checked']))            print_liste_field_titre($arrayfields['cf.ref']['label'], $_SERVER["PHP_SELF"], "cf.ref", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['cf.ref_supplier']['checked']))   print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.ref_supplier']['checked']))   print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100imp ');
 	if (!empty($arrayfields['p.project_ref']['checked'])) 	   print_liste_field_titre($arrayfields['p.project_ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['u.login']['checked'])) 	       print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['s.nom']['checked']))             print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);

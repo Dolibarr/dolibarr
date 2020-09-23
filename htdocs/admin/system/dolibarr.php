@@ -365,7 +365,12 @@ foreach ($configfileparameters as $key => $value)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
+			if ($newkey == 'dolibarr_main_db_pass') {
+				if (empty($dolibarr_main_prod)) {
+					print '<!-- '.${$newkey}.' -->';
+				}
+				print '**********';
+			}
 			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			elseif ($newkey == 'dolibarr_main_document_root_alt') {
 				$tmparray = explode(',', ${$newkey});
@@ -395,7 +400,14 @@ foreach ($configfileparameters as $key => $value)
 
 				$valuetoshow = ${$newkey};
 				if (empty($valuetoshow)) {
-					print img_warning($langs->trans('SwitchThisForABetterSecurity'));
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 1));
+				}
+			} elseif ($newkey == 'dolibarr_nocsrfcheck') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (!empty($valuetoshow)) {
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
 				}
 			} else {
 			    print ${$newkey};
@@ -451,7 +463,16 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
-		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
+		print '<td class="tdoverflowmax300">';
+		if (preg_match('/(_pass|password|_pw|_key|securekey|serverkey|secret\d?|p12key|exportkey|_PW_[a-z]+|token)$/i', $obj->name)) {
+			if (empty($dolibarr_main_prod)) {
+				print '<!-- '.$obj->value.' -->';
+			}
+			print '**********';
+		} else {
+			print dol_escape_htmltag($obj->value);
+		}
+		print '</td>'."\n";
 		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		print "</tr>\n";
 

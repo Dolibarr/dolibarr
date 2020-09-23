@@ -27,10 +27,11 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -1362,6 +1363,7 @@ $projecttmp = new Project($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankaccountstatic = new Account($db);
 $ecmfilesstatic = new EcmFiles($db);
+$formexpensereport = new FormExpenseReport($db);
 
 // Create
 if ($action == 'create')
@@ -2289,7 +2291,7 @@ if ($action == 'create')
 
 							// Select type
 							print '<td class="center">';
-							print select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print $formexpensereport->selectTypeExpenseReport($line->fk_c_type_fees, 'fk_c_type_fees');
 							print '</td>';
 
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
@@ -2448,7 +2450,7 @@ if ($action == 'create')
 
 					// Select type
 					print '<td class="center">';
-					print select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
+					print $formexpensereport->selectTypeExpenseReport($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))

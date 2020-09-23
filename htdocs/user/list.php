@@ -51,7 +51,7 @@ $mode = GETPOST("mode", 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
@@ -224,21 +224,21 @@ if ($reshook > 0) {
 }
 if ($socid > 0) $sql .= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
-if ($search_supervisor > 0)   $sql .= " AND u.fk_user IN (".$db->escape($search_supervisor).")";
+if ($search_supervisor > 0)   $sql .= " AND u.fk_user IN (".$db->sanitize($db->escape($search_supervisor)).")";
 if ($search_thirdparty != '') $sql .= natural_search(array('s.nom'), $search_thirdparty);
 if ($search_login != '')      $sql .= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql .= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql .= natural_search("u.firstname", $search_firstname);
-if ($search_gender != '' && $search_gender != '-1')     $sql .= " AND u.gender = '".$search_gender."'";
+if ($search_gender != '' && $search_gender != '-1')     $sql .= natural_search("u.gender", $search_gender);
 if (is_numeric($search_employee) && $search_employee >= 0) {
 	$sql .= ' AND u.employee = '.(int) $search_employee;
 }
 if ($search_accountancy_code != '')  $sql .= natural_search("u.accountancy_code", $search_accountancy_code);
 if ($search_email != '')             $sql .= natural_search("u.email", $search_email);
 if ($search_api_key != '')           $sql .= natural_search("u.api_key", $search_api_key);
-if ($search_statut != '' && $search_statut >= 0) $sql .= " AND u.statut IN (".$db->escape($search_statut).")";
+if ($search_statut != '' && $search_statut >= 0) $sql .= " AND u.statut IN (".$db->sanitize($db->escape($search_statut)).")";
 if ($sall)                           $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-if ($catid > 0)     $sql .= " AND cu.fk_categorie = ".$catid;
+if ($catid > 0)     $sql .= " AND cu.fk_categorie = ".((int) $catid);
 if ($catid == -2)   $sql .= " AND cu.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql .= " AND cu.fk_categorie IS NULL";

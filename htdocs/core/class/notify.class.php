@@ -171,7 +171,7 @@ class Notify
 				if ($notifcode)
 				{
 					if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
-					else $sql .= " AND a.code = '".$notifcode."'"; // New usage
+					else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 				}
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
 				if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
@@ -214,7 +214,7 @@ class Notify
 				if ($notifcode)
 				{
 					if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
-					else $sql .= " AND a.code = '".$notifcode."'"; // New usage
+					else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 				}
 				$sql .= " AND c.entity IN (".getEntity('user').")";
 				if ($userid > 0) $sql .= " AND c.rowid = ".$userid;
@@ -355,7 +355,7 @@ class Notify
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
-			else $sql .= " AND a.code = '".$notifcode."'"; // New usage
+			else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			$sql .= " AND s.rowid = ".$object->socid;
 
 			$sql .= "\nUNION\n";

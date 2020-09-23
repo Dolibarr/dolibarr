@@ -45,7 +45,7 @@ $startyear = $year - 2;
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "members"));
+$langs->loadLangs(array("companies", "members", "banks"));
 
 
 /*
@@ -272,12 +272,13 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 }
 
 if ($mode) {
-    // Print array / Affiche le tableau
-    print '<table class="liste centpercent">';
+    // Print array
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="liste centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td class="center">'.$label2.'</td>';
-    print '<td class="right">'.$langs->trans("NbOfMembers").' ('.$langs->trans("AllTime").')</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
     print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
     print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
     print '</tr>';
@@ -294,6 +295,7 @@ if ($mode) {
     }
 
     print '</table>';
+    print '</div>';
 }
 
 

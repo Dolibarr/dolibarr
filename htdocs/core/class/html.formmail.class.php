@@ -1296,7 +1296,7 @@ class FormMail extends Form
 		$sql .= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
-		if (is_object($outputlangs)) $sql .= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		if (is_object($outputlangs)) $sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		$sql .= $this->db->order("lang,label", "ASC");
 		//print $sql;
 
@@ -1330,7 +1330,7 @@ class FormMail extends Form
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
 		if ($active >= 0) $sql .= " AND active = ".$active;
-		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages
+		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
 		$sql .= $this->db->order("position,lang,label", "ASC");
 		//print $sql;
 

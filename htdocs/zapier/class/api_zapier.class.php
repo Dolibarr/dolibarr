@@ -174,7 +174,7 @@ class ZapierApi extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $tmpobject = new Hook($db);
+        $tmpobject = new Hook($this->db);
         if ($tmpobject->ismultientitymanaged) {
             $sql .= ' AND t.entity IN ('.getEntity('hook').')';
         }
@@ -200,23 +200,23 @@ class ZapierApi extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-		$result = $db->query($sql);
+        $result = $this->db->query($sql);
 		$i = 0;
         if ($result) {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             while ($i < $num) {
-                $obj = $db->fetch_object($result);
-                $hook_static = new Hook($db);
+            	$obj = $this->db->fetch_object($result);
+            	$hook_static = new Hook($this->db);
                 if ($hook_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($hook_static);
                 }

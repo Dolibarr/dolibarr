@@ -356,7 +356,9 @@ class RssParser
 					if (!empty($rss->channel['title']))				$this->_title = (string) $rss->channel['title'];
 					//if (!empty($rss->channel['rss_description']))	$this->_description = (string) $rss->channel['rss_description'];
 
-					$this->_imageurl = $this->getAtomImageUrl($rss->channel);
+					if (!empty($rss->channel)) {
+						$this->_imageurl = $this->getAtomImageUrl($rss->channel);
+					}
 				}
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
 					$tmprss = xml2php($rss); $items = $tmprss['entry'];

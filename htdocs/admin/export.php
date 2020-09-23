@@ -90,7 +90,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
-echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
+print ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</td></tr>';
 
 print '<tr class="oddeven">';

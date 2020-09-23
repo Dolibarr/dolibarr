@@ -107,7 +107,7 @@ class pdf_baleine extends ModelePDFProjects
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 

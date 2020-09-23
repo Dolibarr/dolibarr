@@ -2108,9 +2108,9 @@ class Form
 		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray))
 		{
-			$selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
+			$selectFieldsGrouped = ", sum(".$this->db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock"; // e.statut is null if there is no record in stock
 		} else {
-			$selectFieldsGrouped = ", ".$db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
+			$selectFieldsGrouped = ", ".$this->db->ifsql("p.stock IS NULL", 0, "p.stock")." AS stock";
 		}
 
 		$sql = "SELECT ";
@@ -2163,7 +2163,7 @@ class Form
 		{
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
-			$sql .= ' AND e.statut IN ('.$this->db->escape(implode(',', $warehouseStatusArray)).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
+			$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
 		// include search in supplier ref
@@ -2183,7 +2183,7 @@ class Form
 		// Multilang : we add translation
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='".$langs->getDefaultLang()."'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -2226,19 +2226,19 @@ class Form
 			foreach ($scrit as $crit)
 			{
 				if ($i > 0) $sql .= " AND ";
-				$sql .= "(p.ref LIKE '".$db->escape($prefix.$crit)."%' OR p.label LIKE '".$db->escape($prefix.$crit)."%'";
-				if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.label LIKE '".$db->escape($prefix.$crit)."%'";
+				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION))
 				{
-					$sql .= " OR p.description LIKE '".$db->escape($prefix.$crit)."%'";
-					if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.description LIKE '".$db->escape($prefix.$crit)."%'";
+					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
+					if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " OR pl.description LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
-				if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql .= " OR pfp.ref_fourn LIKE '".$db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) $sql .= " OR pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%'";
 				$sql .= ")";
 				$i++;
 			}
 			if (count($scrit) > 1) $sql .= ")";
-		  	if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '".$db->escape($prefix.$filterkey)."%'";
+			if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			$sql .= ')';
 		}
 		if (count($warehouseStatusArray))
@@ -2253,10 +2253,10 @@ class Form
 			//ASC OR DESC order
 			($conf->global->PRODUCT_SORT_BY_CATEGORY == 1) ? $sql .= "ASC" : $sql .= "DESC";
 		} else {
-			$sql .= $db->order("p.ref");
+			$sql .= $this->db->order("p.ref");
 		}
 
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
 		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
@@ -2503,9 +2503,9 @@ class Form
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
-			$sql .= " WHERE fk_product='".$objp->rowid."'";
+			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
-			$sql .= " AND price_level=".$price_level;
+			$sql .= " AND price_level = ".((int) $price_level);
 			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
@@ -2770,7 +2770,7 @@ class Form
 			$sql .= ')';
 		}
 		$sql .= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
 
@@ -4913,10 +4913,10 @@ class Form
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj = $db->fetch_object($resql)) $TCurrency[$obj->code] = $obj->code;
+			while ($obj = $this->db->fetch_object($resql)) $TCurrency[$obj->code] = $obj->code;
 		}
 
 		$out = '';
@@ -5280,10 +5280,11 @@ class Form
 	 *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
+	 *  @param	string 		$placeholder    Placeholder
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '')
 	{
 		global $conf, $langs;
 
@@ -5420,6 +5421,7 @@ class Form
 					$retstring .= '<div class="nowrap inline-block">';
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
+					$retstring .= ($placeholder ? ' placeholder="'.$placeholder.'"' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
@@ -5782,6 +5784,7 @@ class Form
 
 	/**
 	 * Generic method to select a component from a combo list.
+	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
 	 * @param 	string			$objectdesc			ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]
@@ -6460,11 +6463,12 @@ class Form
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
-			} elseif ($addjscombo == 2)
+			} elseif ($addjscombo == 2 && ! defined('DISABLE_MULTISELECT'))
 			{
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
+				$out .= 'console.log(\'addjscombo=2 for htmlname='.$htmlname.'\');';
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({
 								containerHTML: \'<div class="multi-select-container">\',
@@ -7015,7 +7019,7 @@ class Form
 		// phpcs:enable
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE type = '".$type."'";
+		$sql .= " WHERE type = '".$this->db->escape($type)."'";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
 		if ($result)
@@ -7157,7 +7161,7 @@ class Form
 		}
 
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
-		$ret .= '<div class="inline-block floatleft valignmiddle maxwidth750 refid'.(($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '').'">';
+		$ret .= '<div class="inline-block floatleft valignmiddle maxwidth750 marginbottomonly refid'.(($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '').'">';
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe')
@@ -7459,10 +7463,10 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=ug.entity";
-			if ($force_entity) $sql .= " WHERE ug.entity IN (0,".$force_entity.")";
+			if ($force_entity) $sql .= " WHERE ug.entity IN (0, ".$force_entity.")";
 			else $sql .= " WHERE ug.entity IS NOT NULL";
 		} else {
-			$sql .= " WHERE ug.entity IN (0,".$conf->entity.")";
+			$sql .= " WHERE ug.entity IN (0, ".$conf->entity.")";
 		}
 		if (is_array($exclude) && $excludeGroups) $sql .= " AND ug.rowid NOT IN ('".$excludeGroups."')";
 		if (is_array($include) && $includeGroups) $sql .= " AND ug.rowid IN ('".$includeGroups."')";

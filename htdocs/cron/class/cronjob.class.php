@@ -1008,6 +1008,15 @@ class Cronjob extends CommonObject
     				$retval = $this->lastresult;
     				$error++;
 			    }
+			    if (in_array(strtolower(trim($this->methodename)), array('executecli')))
+			    {
+			    	$this->error = $langs->trans('CronMethodNotAllowed', $this->methodename, $this->objectname);
+			    	dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+			    	$this->lastoutput = $this->error;
+			    	$this->lastresult = -1;
+			    	$retval = $this->lastresult;
+			    	$error++;
+			    }
 			}
 
 			// Load langs

@@ -1060,7 +1060,7 @@ if ($step == 4 && $datatoexport)
         // List of existing export profils
     	$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE type = '".$datatoexport."'";
+		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
 		if (empty($conf->global->EXPORTS_SHARE_MODELS))$sql .= " AND fk_user=".$user->id;
 		$sql .= " ORDER BY rowid";
 		$resql = $db->query($sql);
@@ -1081,7 +1081,7 @@ if ($step == 4 && $datatoexport)
 				$i++;
 			}
 		} else {
-			dol_print_error($this->db);
+			dol_print_error($db);
 		}
 
         print '</table>';
