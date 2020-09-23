@@ -665,6 +665,7 @@ if (empty($reshook))
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
+			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
 			$objectline->price_ht = GETPOST('elprice');
 			$objectline->subprice = GETPOST('elprice');
@@ -1436,8 +1437,6 @@ if ($action == 'create')
 		$usemargins = 0;
 		if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'propal', 'commande'))) $usemargins = 1;
 
-		$var = false;
-
 		// Title line for service
 		$cursorline = 1;
 		print '<div id="contrat-lines-container" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
@@ -1448,7 +1447,6 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline - 1]->id.'">';
-			print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
 			print '<input type="hidden" name="fournprice" value="'.(!empty($object->lines[$cursorline - 1]->fk_fournprice) ? $object->lines[$cursorline - 1]->fk_fournprice : 0).'">';
 
 			// Area with common detail of line
@@ -1632,17 +1630,29 @@ if ($action == 'create')
 					// Ligne carac
 					print '<tr class="oddeven">';
 					print '<td>';
-					if ($objp->fk_product)
+					if ($objp->fk_product > 0)
 					{
-						$productstatic->id = $objp->fk_product;
-						$productstatic->type = $objp->ptype;
-						$productstatic->ref = $objp->pref;
-						$productstatic->entity = $objp->pentity;
-						print $productstatic->getNomUrl(1, '', 32);
-						print $objp->label ? ' - '.dol_trunc($objp->label, 32) : '';
+						$canchangeproduct = 1;
+						if (empty($canchangeproduct)) {
+							$productstatic->id = $objp->fk_product;
+							$productstatic->type = $objp->ptype;
+							$productstatic->ref = $objp->pref;
+							$productstatic->entity = $objp->pentity;
+							print $productstatic->getNomUrl(1, '', 32);
+							print $objp->label ? ' - '.dol_trunc($objp->label, 32) : '';
+							print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
+						} else {
+							$senderissupplier = 0;
+							if (empty($senderissupplier)) {
+								print $form->select_produits((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
+							} else {
+								print $form->select_produits_fournisseurs((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
+							}
+						}
 						print '<br>';
 					} else {
 						print $objp->label ? $objp->label.'<br>' : '';
+						print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0).'">';
 					}
 
 					// editeur wysiwyg

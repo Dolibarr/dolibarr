@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -29,6 +29,7 @@
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * $canchangeproduct (0 by default, 1 to allow to change the product if it is a predefined product)
  */
 
 // Protection to avoid direct call of template
@@ -42,12 +43,12 @@ if (empty($object) || !is_object($object))
 $usemargins = 0;
 if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;
 
-global $forceall, $senderissupplier, $inputalsopricewithtax;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $canchangeproduct;
 if (empty($dateSelector)) $dateSelector = 0;
 if (empty($forceall)) $forceall = 0;
 if (empty($senderissupplier)) $senderissupplier = 0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
-
+if (empty($canchangeproduct)) $canchangeproduct = 0;
 
 // Define colspan for the button 'Add'
 $colspan = 3; // Col total ht + col edit + col delete
@@ -71,27 +72,33 @@ $coldisplay++;
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-	<input type="hidden" id="product_id" name="productid" value="<?php echo (!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
 		<?php
-		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+		if (empty($canchangeproduct)) {
+			if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+			?>
+			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
+			<?php
+			if ($line->product_type == 1) echo img_object($langs->trans('ShowService'), 'service');
+			else print img_object($langs->trans('ShowProduct'), 'product');
+			echo ' '.$line->ref;
+			?>
+			</a>
+			<?php
+			echo ' - '.nl2br($line->product_label);
+			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
+		} else {
+			if ($senderissupplier) {
+				print $form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+			} else {
+				print $form->select_produits(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+			}
+		}
 		?>
-		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
-		<?php
-		if ($line->product_type == 1) echo img_object($langs->trans('ShowService'), 'service');
-		else print img_object($langs->trans('ShowProduct'), 'product');
-		echo ' '.$line->ref;
-		?>
-		</a>
-		<?php
-		echo ' - '.nl2br($line->product_label);
-		?>
-
 		<br><br>
-
 	<?php }	?>
 
 	<?php
