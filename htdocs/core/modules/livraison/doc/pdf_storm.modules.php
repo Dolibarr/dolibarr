@@ -187,8 +187,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$dir = $conf->expedition->dir_output."/receipt";
 				$file = $dir."/SPECIMEN.pdf";
 			}
-			else
-			{
+			else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->expedition->dir_output."/receipt/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -237,8 +236,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product') . $objphoto->id ."/photos/";
 							$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';
 						}
-						else
-						{
+						else {
 							$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
 							$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product') . $objphoto->id ."/photos/";	// alternative
 						}
@@ -258,13 +256,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 										{
 											$filename= $obj['photo_vignette'];
 										}
-										else
-										{
+										else {
 											$filename=$obj['photo'];
 										}
 									}
-									else
-									{
+									else {
 										$filename=$obj['photo'];
 									}
 
@@ -397,8 +393,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
 				}
-				else
-				{
+				else {
 					$height_note = 0;
 				}
 
@@ -437,12 +432,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 					$posYAfterImage=0;
 					$posYAfterDescription=0;
-					if($this->getColumnStatus('photo'))
+					if ($this->getColumnStatus('photo'))
 					{
 						// We start with Photo of product line
 						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
 						{
-
 							$pdf->AddPage('', '', true);
 							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 							//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
@@ -451,10 +445,9 @@ class pdf_storm extends ModelePDFDeliveryOrder
 							$curY = $tab_top_newpage;
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 						}
 
 
@@ -468,7 +461,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 
 					// Description of product line
-					if($this->getColumnStatus('desc')) {
+					if ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction();
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
@@ -494,10 +487,9 @@ class pdf_storm extends ModelePDFDeliveryOrder
 								// Allows data in the first page if description is long enough to break in multiples pages
 								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
-								else
-									$showpricebeforepagebreak = 0;
+								else $showpricebeforepagebreak = 0;
 							}
-						} else    // No pagebreak
+						} else // No pagebreak
 						{
 							$pdf->commitTransaction();
 						}
@@ -566,8 +558,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -582,8 +573,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
-						else
-						{
+						else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -601,8 +591,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
-				else
-				{
+				else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -642,8 +631,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 				return 1; // No error
 			}
-			else
-			{
+			else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
@@ -773,8 +761,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			}
-			else
-			{
+			else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
@@ -797,8 +784,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		{
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_delivery, "%d %b %Y", false, $outputlangs, true), '', 'R');
 		}
-		else
-		{
+		else {
 			$pdf->SetTextColor(255, 0, 0);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryNotValidated"), '', 'R');
 			$pdf->SetTextColor(0, 0, 60);
@@ -1023,16 +1009,16 @@ class pdf_storm extends ModelePDFDeliveryOrder
 			'border-left' => true, // add left line separator
 		);
 
-//		$rank = $rank + 10;
-//		$this->cols['weight'] = array(
-//			'rank' => $rank,
-//			'width' => 30, // in mm
-//			'status' => false,
-//			'title' => array(
-//				'textkey' => 'WeightVolShort'
-//			),
-//			'border-left' => true, // add left line separator
-//		);
+		//      $rank = $rank + 10;
+		//      $this->cols['weight'] = array(
+		//          'rank' => $rank,
+		//          'width' => 30, // in mm
+		//          'status' => false,
+		//          'title' => array(
+		//              'textkey' => 'WeightVolShort'
+		//          ),
+		//          'border-left' => true, // add left line separator
+		//      );
 
 		$rank = $rank + 10;
 		$this->cols['qty_shipped'] = array(
@@ -1080,10 +1066,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		{
 			$this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
 		}
-		else
-		{
+		else {
 			$this->cols = $hookmanager->resArray;
 		}
 	}
-
 }
