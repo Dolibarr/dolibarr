@@ -2,6 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****
 For users:
 NEW: Add module Credit transfer SEPA to manage payment of supplier using bank credit transfer SEPA files
@@ -21,6 +22,52 @@ Following changes may create regressions for some external modules, but were nec
 * If you build a class that implement CommonObject to use the incoterm properties or method (->fk_incoterm, ->label_incoterm, ->location_incoterm),
   you must now also include declaration of the Trait CommonIncoterm in your class. All incoterm functions were moved into this Trait. 
 * The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alpahnohtml');
+
+
+***** ChangeLog for 12.0.3 compared to 12.0.2 *****
+FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename
+FIX: 11.0 - expenses lines overlapping the total amounts frame
+FIX: 12.0 - round value of virtual stock on product stock reassort list
+FIX: #14469
+FIX: #14474 Error when deleting
+FIX: #14530
+FIX: #14703
+FIX: - Accountancy balance Error SQL on entity
+FIX: Bad number of subscription (forgotten when member was resiliated)
+FIX: bad route url to delete subproduct with API
+FIX: Category for suplements not saved
+FIX: Compatibility with modules without document generation
+FIX: Cron load lang
+FIX: CSS
+FIX: Error management. Do no try to approve PO if validation fails.
+FIX: expenses lines overlapping the frame for total amounts.
+FIX: Filter in "billed" of orders was not saved
+FIX: infinite fetch object linked loop
+FIX: Intervention lose html tags when updating
+FIX: JS CRASH - bad usage of moreparam
+FIX: lang fr retained warranty
+FIX: Look and feel v12: First tab must be name of object
+FIX: missing entity check
+FIX: missing param for hook
+FIX: Missing transaction on PO actions
+FIX: MySql Strict mode
+FIX: param entity in html form file
+FIX: Problems on FEC format
+FIX: round stock value on product list
+FIX: - Send mail from contact : select mail model
+FIX: set sales representatives on create company card
+FIX: Setup of stock increase/decrease
+FIX: sign of amount with credit note and multicurrencies
+FIX: Static property called as non static
+FIX: task leftmenu
+FIX: title button attribute id empty
+FIX: unit price divided by quantity when accepting supplier price proposal
+FIX: Update extrafields on line only if it is supported
+FIX: Update line of BOM
+FIX: using decimal on stock correction
+FIX: Visualization rights correction on last modified contacts box
+FIX: Wrong redirection
+FIX: Yogosha report 4425 (backport)
 
 ***** ChangeLog for 12.0.2 compared to 12.0.1 *****
 FIX: computation of the bottom margin of <body> returns NaN because body is not loaded yet

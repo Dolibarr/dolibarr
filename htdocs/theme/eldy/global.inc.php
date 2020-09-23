@@ -118,7 +118,7 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { color: var(--colortextlink); text-decoration: none;  }
+a:link, a:visited, a:hover, a:active, .classlink { color: var(--colortextlink); text-decoration: none;  }
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
@@ -1866,7 +1866,7 @@ div.attacharea {
 }
 div.attachareaformuserfileecm {
 	padding-top: 0;
-	padding-bottom: 0;
+	padding-bottom: 6px;
 }
 
 div.arearef {
@@ -4418,7 +4418,7 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 4px 0 4px 0;
+	padding: 5px 0 5px 0;
 	z-index: 1000;
 }
 .websitebar .buttonDelete, .websitebar .button {

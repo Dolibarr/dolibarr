@@ -313,8 +313,6 @@ if (empty($reshook))
  * View
  */
 
-$htmlother = new FormOther($db);
-
 $title = $langs->trans("ProductsAndServices");
 
 if ($search_type != '' && $search_type != '-1')

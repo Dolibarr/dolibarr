@@ -95,9 +95,10 @@ $fieldstosearchall = array(
 	's.nom'=>"ThirdParty",
 	'f.description'=>'Description',
 	'f.note_public'=>'NotePublic',
+	'fd.description'=>'DescriptionOfLine',
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"] = "NotePrivate";
-if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['f.description']);
+if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['fd.description']);
 
 // Definition of fields for list
 $arrayfields = array(

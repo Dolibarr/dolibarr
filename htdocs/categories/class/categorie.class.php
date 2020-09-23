@@ -1616,9 +1616,10 @@ class Categorie extends CommonObject
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
 	 * 	@param		int		$maxlength		Max length of text
+	 *  @param		string	$moreparam		More param on URL link
 	 *	@return		string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '')
 	{
 		global $langs;
 
@@ -1632,7 +1633,7 @@ class Categorie extends CommonObject
 			if (colorIsLight($this->color)) $forced_color = 'categtextblack';
 		}
 
-		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'&backtopage='.urlencode($_SERVER['PHP_SELF']).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.$moreparam.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($moreparam?'?'.$moreparam:'')).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color.'">';
 		$linkend = '</a>';
 
 		$picto = 'category';
