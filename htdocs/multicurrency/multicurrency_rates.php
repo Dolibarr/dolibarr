@@ -14,8 +14,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// FIXME: conflit entre paramètres d'URL et paramètres POST (action=filter vs. action=add)
-
 /**
  *      \file       htdocs/multicurrency/multicurrency_rates.php
  *		\ingroup    multicurrency
@@ -29,9 +27,10 @@ $res=@include("../main.inc.php");				// For root directory
  * @var DoliDB $db
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+//require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+//require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 dol_include_once('/multicompany/class/actions_multicompany.class.php', 'ActionsMulticompany');
 /** @var Translate $langs */
 $langs->loadLangs(array(
@@ -97,7 +96,7 @@ function _handleActions($db, $TVisibleColumn) {
 function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 	global $langs;
 	$title = $langs->trans('CurrencyRateSetup');
-	$limit = 123;
+	$limit = 1000;
 
 	$TSQLFilter = array();
 	foreach ($TVisibleColumn as $colSelect => $colParam) {
@@ -139,7 +138,7 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 		 . '  cursor: pointer;'
 		 .'}'
 		 .'col.small-col {'
-		 . '  width: 10%'
+		 . '  width: 5%'
 		 .'}'
 		 . '</style>';
 
@@ -165,6 +164,7 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 	}
 	echo '<td class="liste_titre actions">'
 		 . '<form method="get" id="form-filter" action="' . $_SERVER["PHP_SELF"] . '">'
+		 . '<input type="hidden" name="token" value="' . newToken() . '" />'
 		 . '<button class="like-link" name="action" value="filter">'
 		 . '<span class="fa fa-search" >&nbsp;</span>'
 		 . '</button>'
@@ -197,7 +197,8 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 	}
 	// entire form is inside cell because HTML does not allow forms inside tables unless they are inside cells
 	echo '<td>'
-		 .'<form method="post" id="form-add-new">'
+		 .'<form method="post" id="form-add-new" action="' . $_SERVER["PHP_SELF"] . '">'
+		 . _formHiddenInputs($TVisibleColumn)
 		 .'<button class="button" name="action" value="add">'
 		 . $langs->trans('Add')
 		 . '</button>'
@@ -234,6 +235,7 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 		// save form (for the row in edit mode)
 		if ($row_is_in_edit_mode) {
 			echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" id="' . $form_update_name . '" style="display: inline;">'
+				 . _formHiddenInputs($TVisibleColumn)
 				 . '<input type="hidden" name="id" value="' . $objId . '">'
 				 . '<input type="hidden" name="action" value="update">'
 				 . '<input type="submit" class="button" value="'
@@ -245,6 +247,7 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 		// edit + delete buttons (for rows not in edit mode)
 		else {
 			echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" id="form-edit-' . $objId . '" style="display: inline;">'
+				 . _formHiddenInputs($TVisibleColumn)
 				 . '<input type="hidden" name="id" value="' . $objId . '">'
 				 . '<input type="hidden" name="action" value="modify">'
 				 . '<button class="like-link">'
@@ -252,6 +255,7 @@ function _mainView($db, $TVisibleColumn, $mode='view', $targetId=NULL) {
 				 . '</button>'
 				 . '</form>';
 			echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" id="form-delete-' . $objId . '" style="display: inline;">'
+				 . _formHiddenInputs($TVisibleColumn)
 				 . '<input type="hidden" name="id" value="' . $objId . '">'
 				 . '<input type="hidden" name="action" value="delete">'
 				 . '<button class="like-link">'
@@ -560,16 +564,31 @@ function _actionAdd($db, $TVisibleColumn) {
 	$rate = GETPOST('rate', 'int');
 	$code = GETPOST('code', 'aZ09');
 	$entity = intval($conf->entity);
-	$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . 'multicurrency_rate (`date_sync`, `rate`, `fk_multicurrency`, `entity`)'
-		   . ' VALUES ('
-		   . ' "' . $db->escape($dateSync) . '"'
-		   . ' ,"' . $db->escape($rate) . '"'
-		   . ' , (SELECT rowid FROM llx_multicurrency WHERE code = "'. $db->escape($code) . '" AND entity IN ('. getEntity('multicurrency') .') LIMIT 1)'
-		   . ' ,"' . $db->escape($entity) . '"'
-		   .')';
-	$resql = $db->query($sql);
-	if (!$resql) {
-		setEventMessages($langs->trans('TODOSaveFailed'), array(), 'errors');
+	$multiCurrency = new MultiCurrency($db);
+	$resfetch = $multiCurrency->fetch(null, $code);
+	if ($resfetch <= 0) {
+		setEventMessages($langs->trans('MulticurrencyErrorCurrencyCodeNotFound', $code), array(), 'errors');
+	} else {
+		$mcRate = new CurrencyRate($db);
+		$mcRate->date_sync = $dateSync;
+		$mcRate->rate = $rate;
+		$mcRate->entity = $entity;
+		$rescreate = $mcRate->create($multiCurrency->id);
+		if ($rescreate <= 0) {
+			setEventMessages($langs->trans('MulticurrencyErrorCouldNotCreateRate', $rate, $code), array(), 'errors');
+		}
+//		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . 'multicurrency_rate (`date_sync`, `rate`, `fk_multicurrency`, `entity`)'
+//			   . ' VALUES ('
+//			   . ' "' . $db->escape($dateSync) . '"'
+//			   . ', "' . $db->escape($rate) . '"'
+//			   . ', ' . intval($multiCurrency->id)
+////			   . ', (SELECT rowid FROM llx_multicurrency WHERE code = "'. $db->escape($code) . '" AND entity IN ('. getEntity('multicurrency') .') LIMIT 1)'
+//			   . ',"' . $db->escape($entity) . '"'
+//			   .')';
+//		$resql = $db->query($sql);
+//		if (!$resql) {
+//			setEventMessages($langs->trans('MulticurrencyErrorCouldNotCreateRate', $rate, $code), array(), 'errors');
+//		}
 	}
 	_mainView($db, $TVisibleColumn, 'view');
 }
@@ -592,26 +611,36 @@ function _actionUpdate($db, $TVisibleColumn) {
 	$id = intval(GETPOST('id', 'int'));
 	$dateSync = GETPOST('date_sync', 'alpha');
 	$rate = GETPOST('rate', 'int');
-	$date = date_parse($dateSync);
-	$date = dol_mktime(
-		$date['hour'],
-		$date['minute'],
-		$date['second'],
-		$date['month'],
-		$date['day'],
-		$date['year']
-	);
-	$sql = /** @lang SQL */
-		'UPDATE ' . MAIN_DB_PREFIX . 'multicurrency_rate SET'
-		. '   date_sync = "' . $db->idate($date) . '",'
-		. '   rate = "' . price2num($rate) . '"'
-		. ' WHERE rowid = ' . $id;
-	$resql = $db->query($sql);
-	if (!$resql) {
-		setEventMessages($langs->trans($db->lasterror), array(), 'errors');
+//	$date = date_parse($dateSync);
+//	$date = dol_mktime(
+//		$date['hour'],
+//		$date['minute'],
+//		$date['second'],
+//		$date['month'],
+//		$date['day'],
+//		$date['year']
+//	);
+	$mcRate = new CurrencyRate($db);
+	$resfetch = $mcRate->fetch($id);
+	if ($resfetch <= 0) {
+		setEventMessages($langs->trans('MulticurrencyErrorCouldNotFetchRate', $id), array(), 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), array(), 'mesgs');
+		$mcRate->date_sync = $dateSync;
+		$mcRate->rate = $rate;
+		$resupdate = $mcRate->update();
+//		$sql = /** @lang SQL */
+//			'UPDATE ' . MAIN_DB_PREFIX . 'multicurrency_rate SET'
+//			. '   date_sync = "' . $db->idate($date) . '",'
+//			. '   rate = "' . price2num($rate) . '"'
+//			. ' WHERE rowid = ' . $id;
+//		$resql = $db->query($sql);
+		if ($resupdate <= 0) {
+			setEventMessages($langs->trans($db->lasterror), array(), 'errors');
+		} else {
+			setEventMessages($langs->trans('MulticurrencyRateSaved'), array(), 'mesgs');
+		}
 	}
+
 	_mainView($db, $TVisibleColumn);
 }
 
@@ -627,6 +656,11 @@ function _actionDelete($db, $TVisibleColumn) {
 	$formParams = array(
 		'id' => $id,
 	);
+	foreach ($TVisibleColumn as $colSelect => $colParam) {
+		if (isset($colParam['filter_value'])) {
+			$formParams['search_' . $colParam['name']] = $colParam['filter_value'];
+		}
+	}
 	if (isset($page)) $formParams['page'] = $page;
 	$formParams = http_build_query($formParams);
 	$delayedhtmlcontent .= $form->formconfirm(
@@ -648,16 +682,23 @@ function _actionDelete($db, $TVisibleColumn) {
 function _actionConfirmDelete($db, $TVisibleColumn) {
 	global $langs;
 	$id = intval(GETPOST('id', 'int'));
-	if ($id === 0) {
+	if (empty($id)) {
 		setEventMessages($langs->trans('WrongID'), array(), 'errors');
 	} else {
-		$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'multicurrency_rate'
-			. ' WHERE rowid = ' . $id;
-		$resql = $db->query($sql);
-		if (!$resql) {
-			setEventMessages($db->lasterror, array(), 'errors');
+		$mcRate = new CurrencyRate($db);
+		$resfetch = $mcRate->fetch($id);
+		if ($resfetch <= 0) {
+			setEventMessages($langs->trans('MulticurrencyErrorCouldNotFetchRate', $id), array(), 'errors');
 		} else {
-			setEventMessages($langs->trans('MulticurrencyRateDeleted'), array(), 'mesgs');
+//			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'multicurrency_rate'
+//				   . ' WHERE rowid = ' . $id;
+//			$resql = $db->query($sql);
+			$resdelete = $mcRate->delete();
+			if ($resdelete <= 0) {
+				setEventMessages($db->lasterror, array(), 'errors');
+			} else {
+				setEventMessages($langs->trans('MulticurrencyRateDeleted'), array(), 'mesgs');
+			}
 		}
 	}
 	_mainView($db, $TVisibleColumn, 'view');
@@ -734,3 +775,39 @@ function _getSQLFilterDate($db, $colParam) {
 				. ' AND rate.date_sync < "' . ($yearPlusOne) . '")';
 	return $sqlFilter;
 }
+
+/**
+ * Returns the hidden <input/> fields that need to be attached to all
+ * forms (such as search parameters).
+ *
+ * @param $TVisibleColumn
+ * @return string
+ */
+function _formHiddenInputs($TVisibleColumn) {
+	$ret = '';
+	foreach ($TVisibleColumn as $colSelect => $colParam) {
+		if (isset($colParam['filter_value'])) {
+			$ret .= "\n" . _tagWithAttributes('input', array(
+					'type' => 'hidden',
+					'name' => 'search_' . $colParam['name'],
+					'value' => $colParam['filter_value'],
+				));
+		}
+	}
+	$ret .= "\n" . _tagWithAttributes('input', array(
+		'type' => 'hidden',
+		'name' => 'token',
+		'value' => newToken()
+	));
+	return $ret;
+}
+
+///**
+// * Avoids generating a different token for every <form> on the page;
+// *
+// * @return string  new session token on first call; same token on subsequent calls
+// */
+//function newToken() {
+//	static $token = null; if ($token === null) $token = newToken();
+//	return $token;
+//}

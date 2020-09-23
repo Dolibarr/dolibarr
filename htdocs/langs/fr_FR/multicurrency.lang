@@ -20,10 +20,15 @@ MulticurrencyPaymentAmount=Montant du règlement (devise d'origine)
 AmountToOthercurrency=Montant destination (en devise du compte de réception)
 
 ErrorCallbackNotFound=Callback introuvable : %s
+MulticurrencyErrorCouldNotCreateRate=Impossible de créer le taux "%s" sur la devise "%s"
+MulticurrencyErrorCurrencyCodeNotFound=Code devise introuvable : "%s"
+MulticurrencyErrorCouldNotFetchRate=Taux de change %d introuvable
 CurrencyRateSetup=Taux de change multi-devise
+MulticurrencyRateSetup=Modifier les taux de change
 MulticurrencyRateDeleted=Taux de change supprimé
 MulticurrencyDateSync=Date
 MulticurrencyRate=Taux de change
 MulticurrencyCode=Code devise
 MulticurrencyEntity=Entité
+MulticurrencyRateSaved=Taux de change enregistré
 UnknownAction=Action non reconnue : "%s"
