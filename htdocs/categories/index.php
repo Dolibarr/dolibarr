@@ -77,7 +77,7 @@ print load_fiche_titre($title, $newcardbutton, 'object_category');
 
 // Search categories
 if (empty($nosearch)) {
-	print '<div class="fichecenter"><div class="fichethirdleft">';
+	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 	print '<form method="post" action="index.php?type='.$type.'">';
@@ -95,7 +95,7 @@ if (empty($nosearch)) {
 	print '</table></form>';
 
 
-	print '</div><div class="fichetwothirdright">';
+	print '</div><div class="fichehalfright">';
 
 
 	/*
