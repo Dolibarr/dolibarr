@@ -157,7 +157,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param      Object		$object				Object to generate
+	 *  @param      Livraison	$object				Object to generate
 	 *  @param      Translate	$outputlangs		Lang output object
 	 *  @param      string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param      int			$hidedetails		Do not show line details
@@ -417,6 +417,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++)
 				{
+					// Fetch optionals
+					if(empty($object->lines[$i]->array_options)){
+						$object->lines[$i]->fetch_optionals();
+					}
+
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
