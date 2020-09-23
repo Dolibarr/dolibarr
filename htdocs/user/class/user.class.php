@@ -702,7 +702,7 @@ class User extends CommonObject
 			}
 
 			// avoid admin can remove his own important rights
-			if($this->admin == 1)
+			if ($this->admin == 1)
 			{
 				$sql .= " AND id NOT IN (251, 252, 253, 254, 255, 256)";	// other users rights
 				$sql .= " AND id NOT IN (341, 342, 343, 344)";				// own rights
