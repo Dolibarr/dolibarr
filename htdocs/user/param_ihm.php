@@ -35,7 +35,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 
 $canreaduser = ($user->admin || $user->rights->user->user->lire);
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
 if ($id)

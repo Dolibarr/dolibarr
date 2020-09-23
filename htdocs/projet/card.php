@@ -39,7 +39,7 @@ $langs->loadLangs(array('projects', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
@@ -119,12 +119,12 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 		$error = 0;
-		if (empty($_POST["ref"]))
+		if (! GETPOST('ref'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
 		}
-		if (empty($_POST["title"]))
+		if (! GETPOST('title'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
@@ -148,13 +148,13 @@ if (empty($reshook))
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alpha');
-			$object->title           = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alpha');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
+			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public          = GETPOST('public', 'alphanohtml');
+			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
+			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
 			$object->date_c = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
@@ -248,10 +248,10 @@ if (empty($reshook))
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
-			$object->title        = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
-			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
@@ -529,7 +529,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	print '<tr><td class="tdtop">';
@@ -653,7 +653,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('description', GETPOST("description", 'none'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -971,7 +971,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= $object->title;
+		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
 		if ($object->thirdparty->id > 0)

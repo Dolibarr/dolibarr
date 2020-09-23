@@ -82,6 +82,12 @@ function getEntity($element, $shared = 1, $currentobject = null)
 {
 	global $conf, $mc;
 
+	// fix different element names (France to English)
+	switch ($element) {
+		case 'contrat':			$element = 'contract';			break;	// "/contrat/class/contrat.class.php"
+		case 'order_supplier':	$element = 'supplier_order';	break;	// "/fourn/class/fournisseur.commande.class.php"
+	}
+
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared, $currentobject);
@@ -271,12 +277,13 @@ function GETPOSTISSET($paramname)
  *                               'none'=no check (only for param that should have very rich content)
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alpha'=check it's text and sign
+ *                               'alpha'=Same than alphanohtml since v13
+ *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'array'=check it's array
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                               'nohtml', 'alphanohtml'=check there is no html content
+ *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
  *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
@@ -549,13 +556,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		case 'intcomma':
 			if (preg_match('/[^0-9,-]+/i', $out)) $out = '';
 			break;
-		case 'alpha':
-			if (!is_array($out)) {
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('"', '../'), '', trim($out));
-			}
-			break;
 		case 'san_alpha':
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
@@ -586,12 +586,13 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		case 'nohtml':
 			$out = dol_string_nohtmltag($out, 0);
 			break;
+		case 'alpha':		// No html and no " and no ../
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out))
 			{
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('"', '../'), '', trim($out));
+				$out = str_replace(array('&quot;', '"', '../'), '', trim($out));
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
@@ -1197,11 +1198,11 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if ($morehtmlright) $out .= '<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>'; // Output right area first so when space is missing, text is in front of tabs and not under.
 
 	// Show title
-	if (!empty($title) && $showtitle)
+	if (!empty($title) && $showtitle && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 		$limittitle = 30;
 		$out .= '<a class="tabTitle">';
-		if ($picto && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
+		if ($picto) $out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
 		$out .= '<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out .= '</a>';
 	}
@@ -1626,7 +1627,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id))
 	{
-		$morehtmlref .= '<div style="clear: both;"></div><div class="refidno">';
+		$morehtmlref .= '<div style="clear: both;"></div>';
+		$morehtmlref .= '<div class="refidno">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref .= '</div>';
 	}
@@ -2692,7 +2694,15 @@ function dol_print_ip($ip, $mode = 0)
  */
 function getUserRemoteIP()
 {
-	$ip = empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? (empty($_SERVER['HTTP_CLIENT_IP']) ? (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']) : $_SERVER['HTTP_CLIENT_IP']) : $_SERVER['HTTP_X_FORWARDED_FOR'];
+	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);
+		} else {
+			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
+		}
+	} else {
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];	// value is clean here
+	}
 	return $ip;
 }
 
@@ -3150,8 +3160,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Define $color
 			$arrayconvpictotocolor = array(
-				'address'=>'#aaa', 'building'=>'#aaa', 'bom'=>'#a69944',
-				'companies'=>'#aaa', 'company'=>'#aaa', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
+				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
+				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#37a', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
@@ -5484,23 +5494,24 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
+	// We remove entities BEFORE stripping (in case of a separator char is encoded and not the other, the strip will fails)
+	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
+
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
 	} else {
 		$pattern = "/<[^<>]+>/";
-		// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
 		$temp = preg_replace($pattern, "", $temp); // pass 1
 		// $temp after pass 1: <a href="/myurl" title="A title">0000-021
 		$temp = preg_replace($pattern, "", $temp); // pass 2
 		// $temp after pass 2: 0000-021
 	}
 
-	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
-
-	// Supprime aussi les retours
+	// Remove also CR LF
 	if ($removelinefeed == 1) $temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 
-	// et les espaces doubles
+	// and double spaces
 	while (strpos($temp, "  "))
 	{
 		$temp = str_replace("  ", " ", $temp);
@@ -5714,7 +5725,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * @param   string	$a					Operand a
  * @param   string	$b					Operand b (ENT_QUOTES=convert simple and double quotes)
  * @param   string	$c					Operand c
- * @param	string	$keepsomeentities	Entities but &amp;, <, >, " are not converted.
+ * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded
  */
 function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
@@ -7880,19 +7891,16 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	if (empty($conf->use_javascript_ajax)) return '';
 
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'svg+xml', 'webp');
-	//$mime_preview[]='vnd.oasis.opendocument.presentation';
-	//$mime_preview[]='archive';
-	$num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
+	$isAllowedForPreview = dolIsAllowedForPreview($relativepath);
 
 	if ($alldata == 1)
 	{
-		if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath),);
+		if ($isAllowedForPreview) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : ''), 'mime'=>dol_mimetype($relativepath),);
 		else return array();
 	}
 
-	// old behavior
-	if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : '')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
+	// old behavior, return a string
+	if ($isAllowedForPreview) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param ? '&'.$param : '')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
 	else return '';
 }
 
@@ -7918,13 +7926,40 @@ function ajax_autoselect($htmlname, $addlink = '')
 
 
 /**
+ *	Return if a file is qualified for preview
+ *
+ *	@param	string	$file		Filename we looking for information
+ *	@return int					1 If allowed, 0 otherwise
+ *  @see    dol_mimetype(), image_format_supported() from images.lib.php
+ */
+function dolIsAllowedForPreview($file)
+{
+	global $conf;
+
+	// Check .noexe extension in filename
+	if (preg_match('/\.noexe$/i', $file)) return 0;
+
+	// Check mime types
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'webp');
+	if (!empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) $mime_preview[] = 'svg+xml';
+	//$mime_preview[]='vnd.oasis.opendocument.presentation';
+	//$mime_preview[]='archive';
+	$num_mime = array_search(dol_mimetype($file, '', 1), $mime_preview);
+	if ($num_mime !== false) return 1;
+
+	// By default, not allowed for preview
+	return 0;
+}
+
+
+/**
  *	Return mime type of a file
  *
  *	@param	string	$file		Filename we looking for MIME type
  *  @param  string	$default    Default mime type if extension not found in known list
  * 	@param	int		$mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language, 4=css of font fa
  *	@return string 		    	Return a mime type family (text/xxx, application/xxx, image/xxx, audio, video, archive)
- *  @see    image_format_supported() from images.lib.php
+ *  @see    dolIsAllowedForPreview(), image_format_supported() from images.lib.php
  */
 function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 {
@@ -7944,6 +7979,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	if (preg_match('/\.ini$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'ini'; $famime = 'file-text-o'; }
 	if (preg_match('/\.md$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'md'; $famime = 'file-text-o'; }
 	if (preg_match('/\.css$/i', $tmpfile)) { $mime = 'text/css'; $imgmime = 'css.png'; $srclang = 'css'; $famime = 'file-text-o'; }
+	if (preg_match('/\.lang$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'lang'; $famime = 'file-text-o'; }
 	// Certificate files
 	if (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) { $mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o'; }
 	// XML based (HTML/XML/XAML)
@@ -8675,10 +8711,7 @@ function currentToken()
 }
 
 /**
- * Start a table with headers and a optinal clickable number
- * (don't forget to use "finishSimpleTable()" after the last table row)
- *
- * @see finishSimpleTable
+ * Start a table with headers and a optinal clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
  * @param string	$header		The first left header of the table (automatic translated)
  * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
@@ -8686,6 +8719,8 @@ function currentToken()
  * @param integer	$emptyRows	(optional) The count of empty rows after the first header
  * @param integer	$number		(optional) The number that is shown right after the first header, when not set the link is shown on the right side of the header as "FullList"
  * @return void
+ *
+ * @see finishSimpleTable()
  */
 function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, $number = -1)
 {
@@ -8740,14 +8775,12 @@ function startSimpleTable($header, $link = "", $arguments = "", $emptyRows = 0, 
 }
 
 /**
- * Add the correct HTML close tags for "startSimpleTable(...)"
- * (use after the last table line)
+ * Add the correct HTML close tags for "startSimpleTable(...)" (use after the last table line)
  *
- * @see startSimpleTable
+ * @param 	bool 	$addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
+ * @return 	void
  *
- * @param bool $addLineBreak	(optional) Add a extra line break after the complete table (\<br\>)
- *
- * @return void
+ * @see startSimpleTable()
  */
 function finishSimpleTable($addLineBreak = false)
 {

@@ -175,7 +175,7 @@ if (empty($reshook))
 			{
 				$db->begin();
 
-				$result = $object->cloture($user, GETPOST('status', 'int'), GETPOST('note_private', 'none'));
+				$result = $object->cloture($user, GETPOST('status', 'int'), GETPOST('note_private', 'restricthtml'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');

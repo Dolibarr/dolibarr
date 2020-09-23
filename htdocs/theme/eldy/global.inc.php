@@ -979,6 +979,12 @@ select.flat.selectlimit {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 150px;
     overflow: hidden;
@@ -1208,6 +1214,8 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.maxwidth750 { max-width: 750px; }
+.maxwidth1000 { max-width: 1000px; }
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }

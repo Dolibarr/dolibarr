@@ -29,7 +29,7 @@ $langs->loadLangs(array("admin", "other", "modulebuilder"));
 if (!$user->admin || empty($conf->modulebuilder->enabled))
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 /*
@@ -37,7 +37,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
  */
 if ($action == "update")
 {
-	$res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
+	$res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_NAME', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_NAME', 'nohtml'), 'chaine', 0, '', $conf->entity);

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'fckeditor'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 // Possible modes are:
 // dolibarr_details
 // dolibarr_notes

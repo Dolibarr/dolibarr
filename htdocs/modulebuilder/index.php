@@ -1187,7 +1187,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj))
 		{
 			$addfieldentry = array(
 				'name'=>GETPOST('propname', 'aZ09'), 'label'=>GETPOST('proplabel', 'alpha'), 'type'=>GETPOST('proptype', 'alpha'),
-				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'none'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'int'), 'enabled'=>GETPOST('propenabled', 'int'),
 				'position'=>GETPOST('propposition', 'int'), 'notnull'=>GETPOST('propnotnull', 'int'), 'index'=>GETPOST('propindex', 'int'), 'searchall'=>GETPOST('propsearchall', 'int'),
 				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha')
@@ -1463,7 +1463,13 @@ if ($action == 'savefile' && empty($cancel))
 			dol_copy($pathoffile, $pathoffilebackup, 0, 1);
 		}
 
-		$content = GETPOST('editfilecontent', 'none');
+		$check = 'restricthtml';
+		$srclang = dol_mimetype($pathoffile, '', 3);
+		if ($srclang == 'md') $check = 'restricthtml';
+		if ($srclang == 'lang') $check = 'restricthtml';
+		if ($srclang == 'php') $check = 'none';
+
+		$content = GETPOST('editfilecontent', $check);
 
 		// Save file on disk
 		if ($content)
@@ -2571,7 +2577,7 @@ if ($module == 'initmodule')
 								print '<td><input class="text maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
-								print '<td><input class="text maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'none')).'"></td>';
+								print '<td><input class="text maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'restricthtml')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth50" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex', 'alpha')).'"></td>';

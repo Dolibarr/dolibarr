@@ -675,7 +675,7 @@ class FormMail extends Form
 						{
 							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
-						$withtoselected = GETPOST("receiver", 'none'); // Array of selected value
+						$withtoselected = GETPOST("receiver", 'restricthtml'); // Array of selected value
 						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 						{
 							$withtoselected = array_keys($tmparray);
@@ -699,7 +699,7 @@ class FormMail extends Form
 				{
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtoselected = GETPOST("receiveruser", 'none'); // Array of selected value
+				$withtoselected = GETPOST("receiveruser", 'restricthtml'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 				{
 					$withtoselected = array_keys($tmparray);
@@ -763,7 +763,7 @@ class FormMail extends Form
 				{
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtoselected = GETPOST("receiverccuser", 'none'); // Array of selected value
+				$withtoselected = GETPOST("receiverccuser", 'restricthtml'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 				{
 					$withtoselected = array_keys($tmparray);
@@ -886,7 +886,7 @@ class FormMail extends Form
 			// Message
 			if (!empty($this->withbody))
 			{
-				$defaultmessage = GETPOST('message', 'none');
+				$defaultmessage = GETPOST('message', 'restricthtml');
 				if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1')
 				{
 					if ($arraydefaultmessage && $arraydefaultmessage->content) {
@@ -1144,7 +1144,7 @@ class FormMail extends Form
 	{
 		global $conf, $langs, $form;
 
-		$defaulttopic = GETPOST('subject', 'none');
+		$defaulttopic = GETPOST('subject', 'restricthtml');
 		if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
 				$defaulttopic = $arraydefaultmessage->topic;

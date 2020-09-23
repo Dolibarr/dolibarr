@@ -2473,7 +2473,7 @@ class Ticket extends CommonObject
 
 		if (!$error) {
 			$object->subject = GETPOST('subject', 'alphanohtml');
-			$object->message = GETPOST("message", "none");
+			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 
 			$send_email = GETPOST('send_email', 'int');

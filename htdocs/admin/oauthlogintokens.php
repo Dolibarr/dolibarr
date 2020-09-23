@@ -34,7 +34,7 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha');
 $varname = GETPOST('varname', 'alpha');

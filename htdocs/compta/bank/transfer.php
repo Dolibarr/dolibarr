@@ -37,7 +37,7 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (!$user->rights->banque->transfer)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $error = 0;
 
 

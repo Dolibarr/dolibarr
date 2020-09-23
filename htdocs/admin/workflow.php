@@ -33,7 +33,7 @@ if (!$user->admin) accessforbidden();
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

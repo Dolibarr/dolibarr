@@ -300,8 +300,8 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			}
 
 			$replyto = dol_string_nospecial($_POST['replytoname'], ' ', array(",")).' <'.$_POST['replytomail'].'>';
-			$message = GETPOST('message', 'none');
-			$subject = GETPOST('subject', 'none');
+			$message = GETPOST('message', 'restricthtml');
+			$subject = GETPOST('subject', 'restricthtml');
 
 			// Make a change into HTML code to allow to include images from medias directory with an external reabable URL.
 			// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />

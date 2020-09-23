@@ -6690,7 +6690,9 @@ abstract class CommonObject
 							break;
 						case "create":
 						case "edit":
-							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
+							$check = 'restricthtml';
+							// TODO Use check = 'alphahtml' or 'int' for some types
+							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, $check); // GETPOST can get value from GET, POST or setup of default values.
 							// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 							if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 							{
@@ -6765,7 +6767,7 @@ abstract class CommonObject
 						// HTML, select, integer and text add default value
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 						{
-							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
+							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'restricthtml', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
 							else $value = $this->array_options['options_'.$key];
 						}
 
@@ -6775,7 +6777,7 @@ abstract class CommonObject
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 						$out .= '<td class="';
 						//$out .= "titlefield";
-						//if (GETPOST('action', 'none') == 'create') $out.='create';
+						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters

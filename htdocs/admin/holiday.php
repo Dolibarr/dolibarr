@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "errors", "holiday"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -145,7 +145,7 @@ elseif ($action == 'setdoc')
 	dolibarr_set_const($db, "HOLIDAY_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other')
 {
-	$freetext = GETPOST('HOLIDAY_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('HOLIDAY_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "HOLIDAY_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');

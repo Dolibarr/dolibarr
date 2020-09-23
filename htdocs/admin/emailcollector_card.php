@@ -148,7 +148,7 @@ if (GETPOST('addoperation', 'alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
-	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'restricthtml');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;
@@ -168,7 +168,7 @@ if ($action == 'updateoperation')
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
 
-	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'none');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'restricthtml');
 
 	$result = $emailcollectoroperation->update($user);
 

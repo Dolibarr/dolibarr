@@ -70,7 +70,7 @@ if ($action == 'updateMask')
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    $free = GETPOST('DELIVERY_FREE_TEXT', 'none'); // No alpha here, we want exact string
+    $free = GETPOST('DELIVERY_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
     $res = dolibarr_set_const($db, "DELIVERY_FREE_TEXT", $free, 'chaine', 0, '', $conf->entity);
 
     if (!$res > 0) $error++;

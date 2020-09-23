@@ -1001,6 +1001,12 @@ select.flat.selectlimit {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 150px;
     overflow: hidden;

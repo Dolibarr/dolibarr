@@ -2013,8 +2013,10 @@ function dol_uncompress($inputfile, $outputdir)
 		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 		$archive = new PclZip($inputfile);
-		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir);
-		//var_dump($result);
+
+		// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+
 		if (!is_array($result) && $result <= 0) return array('error'=>$archive->errorInfo(true));
 		else {
 			$ok = 1; $errmsg = '';
@@ -2035,14 +2037,26 @@ function dol_uncompress($inputfile, $outputdir)
 		}
 	}
 
-	if (class_exists('ZipArchive'))
+	if (class_exists('ZipArchive'))	// Must install php-zip to have it
 	{
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
 		if ($res === true)
 		{
-			$zip->extractTo($outputdir.'/');
+			//$zip->extractTo($outputdir.'/');
+			// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+			// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
+			// with -l is the range of dot to go back in path.
+			// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
+			for ($i = 0; $i < $zip->numFiles; $i++) {
+				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
+					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
+					continue;	// Discard the file
+				}
+				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
+			}
+
 			$zip->close();
 			return array();
 		} else {

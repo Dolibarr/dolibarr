@@ -68,7 +68,7 @@ $error = 0;
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
@@ -355,8 +355,8 @@ if (empty($reshook))
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note_private = GETPOST('note_private', 'none');
-					$object->note_public = GETPOST('note_public', 'none');
+					$object->note_private = GETPOST('note_private', 'restricthtml');
+					$object->note_public = GETPOST('note_public', 'restricthtml');
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
@@ -383,8 +383,8 @@ if (empty($reshook))
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note_private = GETPOST('note_private', 'none');
-				$object->note_public = GETPOST('note_public', 'none');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
@@ -627,7 +627,7 @@ if (empty($reshook))
 			{
 				$db->begin();
 
-				$result = $object->cloture($user, GETPOST('statut', 'int'), GETPOST('note_private', 'none'));
+				$result = $object->cloture($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -792,9 +792,9 @@ if (empty($reshook))
 	} elseif ($action == 'addline' && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'none') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$product_desc = (GETPOSTISSET('dp_desc') ?GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
@@ -1152,7 +1152,7 @@ if (empty($reshook))
 			$info_bits |= 0x01;
 
 			// Clean parameters
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1316,7 +1316,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 		if (!$error)
 		{

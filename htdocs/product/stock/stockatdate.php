@@ -49,7 +49,7 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'alpha');
 $date = '';
@@ -65,7 +65,7 @@ $productid = GETPOST('productid', 'int');
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
 
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;

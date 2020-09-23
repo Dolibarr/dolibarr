@@ -38,7 +38,7 @@ $langs->loadLangs(array("bills", "other", "companies"));
 
 $id		= (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
 $ref	= GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;

@@ -42,7 +42,7 @@ global $mysoc;
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
@@ -94,8 +94,8 @@ function fail($message)
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
 $selectedline = GETPOST('selectedline', 'int');
-$desc = GETPOST('desc', 'alpha');
-$pay = GETPOST('pay', 'alpha');
+$desc = GETPOST('desc', 'alphanohtml');
+$pay = GETPOST('pay', 'aZ09');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
 $invoiceid = GETPOST('invoiceid', 'int');

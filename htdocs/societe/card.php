@@ -85,7 +85,6 @@ if (!($object->id > 0) && $action == 'view')
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($socid);
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
 if (!empty($canvas))
@@ -96,7 +95,7 @@ if (!empty($canvas))
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 
 $permissiontoread = $user->rights->societe->lire;
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -343,7 +342,7 @@ if (empty($reshook))
         // Fill array 'array_options' with data from update form
         $extrafields->fetch_name_optionals_label($object->table_element);
 
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
         if ($ret < 0) $error++;
 
         if (!$error)

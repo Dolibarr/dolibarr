@@ -37,7 +37,7 @@ $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 
 
@@ -72,7 +72,7 @@ if ($action == 'setmod')
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 

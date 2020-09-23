@@ -43,7 +43,7 @@ $langs->loadLangs(array("admin", "products"));
 if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');

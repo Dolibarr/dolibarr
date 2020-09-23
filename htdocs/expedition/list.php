@@ -77,7 +77,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortfield) $sortfield = "e.ref";
 if (!$sortorder) $sortorder = "DESC";
@@ -363,7 +363,7 @@ if ($resql)
 	// $url = DOL_URL_ROOT.'/expedition/card.php?action=create';
 	// if (!empty($socid)) $url .= '&socid='.$socid;
 	// $newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', $url, '', $user->rights->expedition->creer);
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '' , $user->rights->expedition->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->rights->expedition->creer);
 
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
