@@ -397,7 +397,7 @@ if (empty($reshook) && $action == 'add')
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
-                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
+                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
 
                     $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
@@ -1697,6 +1697,7 @@ if ($id > 0)
 							print $langs->trans("Done");
 							print ' </span>';
 						}
+						print '<br />';
 					}
 				}
 			}
@@ -1985,7 +1986,7 @@ if ($id > 0)
         {
         	$filtreuserid = $user->id;
         	if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
-        	$object->loadReminders('', $filteruserid);
+        	$object->loadReminders('', $filteruserid, false);
 
         	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
 
@@ -1996,7 +1997,7 @@ if ($id > 0)
         			print $TRemindTypes[$actioncommreminder->typeremind];
         			if ($actioncommreminder->fk_user > 0) {
         				$tmpuserstatic->fetch($actioncommreminder->fk_user);
-        				print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
+        				print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
         			}
         			print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
         			if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
@@ -2008,6 +2009,7 @@ if ($id > 0)
         				print $langs->trans("Done");
         				print ' </span>';
         			}
+        			print '<br />';
         		}
         	}
 
