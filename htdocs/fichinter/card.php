@@ -173,7 +173,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
@@ -198,7 +198,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $user->rights->ficheinter->creer)
 	{
@@ -372,11 +372,11 @@ if (empty($reshook))
 							}
 						}
 		            } else {
-		                $mesg = $srcobject->error;
+						$mesg = $srcobject->error;
 		                $error++;
 		            }
 		        } else {
-		            $mesg = $object->error;
+					$mesg = $object->error;
 		            $error++;
 		        }
 		    } else {
@@ -406,7 +406,7 @@ if (empty($reshook))
 		    	}
 	        }
 	    } else {
-	    	$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 	        $action = 'create';
 	    }
 	} elseif ($action == 'update' && $user->rights->ficheinter->creer)
@@ -456,17 +456,17 @@ if (empty($reshook))
 	{
 		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC))
  		{
-			$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")).'</div>';
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description"));
 			$error++;
 		}
 		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int'))
 		{
-			$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration")).'</div>';
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration"));
 			$error++;
 		}
 		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0)
 		{
-			$mesg = '<div class="error">'.$langs->trans("ErrorValueTooHigh").'</div>';
+			$mesg = $langs->trans("ErrorValueTooHigh");
 			$error++;
 		}
 		if (!$error)
@@ -538,7 +538,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			$mesg = $object->error;
 		}
 	}
 
@@ -735,9 +735,9 @@ if (empty($reshook))
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+					$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 				} else {
-					$mesg = '<div class="error">'.$object->error.'</div>';
+					$mesg = $object->error;
 				}
 			}
 		}
