@@ -623,7 +623,12 @@ if (!defined('NOLOGIN'))
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit");
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) return 'ERROR_NOT_LOGGED';
-			else dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));
+			else {
+				if ($_SERVER["HTTP_USER_AGENT"] == 'securitytest') {
+					http_response_code(401);		// It makes easier to understand if session was broken during security tests
+				}
+				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));
+			}
 			exit;
 		}
 
