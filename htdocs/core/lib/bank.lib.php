@@ -113,7 +113,7 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'info';
     $h++;*/
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
+//	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
     return $head;
 }
