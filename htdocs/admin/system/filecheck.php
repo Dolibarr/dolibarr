@@ -91,6 +91,7 @@ if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || !empty($conf->global->MAIN_AL
 $enableremotecheck = true;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
 print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile))
