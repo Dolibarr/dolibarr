@@ -306,6 +306,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN entity integer NOT NULL DEFAULT 1;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_actioncomm integer NOT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_email_template integer;
+ALTER TABLE llx_actioncomm_reminder CHANGE offsetunit offsetunit VARCHAR(10);
 
 ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
 ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk_user, typeremind, offsetvalue, offsetunit, fk_actioncomm);
