@@ -1685,7 +1685,7 @@ if ($id > 0)
 						print $TRemindTypes[$actioncommreminder->typeremind];
 						if ($actioncommreminder->fk_user > 0) {
 							$tmpuserstatic->fetch($actioncommreminder->fk_user);
-							print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
+							print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
 						}
 						print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
 						if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
