@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
+$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -393,7 +393,7 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-                //Create eminder
+                //Create reminder
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
@@ -401,23 +401,28 @@ if (empty($reshook) && $action == 'add')
 
                     $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
-                    $actionCommReminder->fk_user = $user;
                     $actionCommReminder->offsetunit = $offsetunit;
                     $actionCommReminder->offsetvalue = $offsetvalue;
                     $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
                     $actionCommReminder->fk_actioncomm = $object->id;
                     if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
-                    $res = $actionCommReminder->create($user);
+                    // the notification must be created for every user assigned to the event
+					foreach ($object->userassigned as $userassigned)
+					{
+						$actionCommReminder->fk_user = $userassigned['id'];
+						$res = $actionCommReminder->create($user);
 
-                    if ($res <= 0){
-                        // If error
-                        $error++;
-                        $langs->load("errors");
-                        $error = $langs->trans('ErrorReminderActionCommCreation').' '.$actionCommReminder->error;
-                        setEventMessages($error, $actionCommReminder->errors, 'errors');
-                        $action = 'create'; $donotclearsession = 1;
-                    }
+						if ($res <= 0){
+							// If error
+							$db->rollback();
+							$langs->load("errors");
+							$error = $langs->trans('ErrorReminderActionCommCreation');
+							setEventMessages($error, null, 'errors');
+							$action = 'create'; $donotclearsession = 1;
+							break;
+						}
+					}
                 }
 
                 if ($error) {
@@ -1236,7 +1241,7 @@ if ($action == 'create')
                             }
 	            		 });
 
-	            		$("#selectremindertype").click(function(){
+	            		$("#selectremindertype").change(function(){
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
