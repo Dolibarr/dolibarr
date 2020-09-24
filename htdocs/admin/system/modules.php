@@ -170,8 +170,8 @@ foreach ($modules as $key=>$module) {
 	$newModule->picto			= GetModulePicto($module, $module->name.' - '.$modules_files[$key]);
 	$newModule->permission_id	= '';
 	$newModule->permission_text	= '';
-	
-	if(!$arrayfields['text']['checked']) {
+
+	if (!$arrayfields['text']['checked']) {
 		if ($module->rights) {
 			foreach ($module->rights as $rights) {
 				if (empty($rights[0])) {
@@ -180,28 +180,26 @@ foreach ($modules as $key=>$module) {
 
 				array_push($rights_ids, $rights[0]);
 
-				if(!empty($newModule->permission_id)) $newModule->permission_id .= ",";
+				if (!empty($newModule->permission_id)) $newModule->permission_id .= ",";
 				$newModule->permission_id .= $rights[0];
-
 			}
 		}
 
 		$module_list[] = $newModule;
-
 	} else {
 		if ($module->rights) {
 			foreach ($module->rights as $rights) {
 				if (empty($rights[0])) {
 					continue;
 				}
-	
+
 				$newModule->permission_id	= $rights[0];
 				$newModule->permission_text	= $rights[1];
-	
+
 				array_push($rights_ids, $rights[0]);
-	
+
 				$module_list[] = $newModule;
-	
+
 				$newModule = new stdClass();
 				$newModule->name	= $module->getName();
 				$newModule->version	= $module->getVersion();
@@ -216,7 +214,7 @@ foreach ($modules as $key=>$module) {
 
 // pre-filter list
 $filtered_module_list = array();
-foreach($module_list as $module) {
+foreach ($module_list as $module) {
 	if ($search_name && !stristr($module->name, $search_name))						continue;
 	if ($search_version && !stristr($module->version, $search_version))				continue;
 	if ($search_id && !stristr($module->id, $search_id))							continue;
@@ -291,16 +289,24 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print '</tr>';
 
 // sort list
-if ($sortfield == "name" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) { return strcasecmp($a->name, $b->name); });
-if ($sortfield == "name" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) { return strcasecmp($b->name, $a->name); });
-if ($sortfield == "version" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) { return strcasecmp($a->version, $b->version); });
-if ($sortfield == "version" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {	return strcasecmp($b->version, $a->version); });
-if ($sortfield == "id" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {	return $a->id > $b->id; });
-if ($sortfield == "id" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {	return $b->id > $a->id; });
+if ($sortfield == "name" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return strcasecmp($a->name, $b->name); });
+if ($sortfield == "name" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return strcasecmp($b->name, $a->name); });
+if ($sortfield == "version" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return strcasecmp($a->version, $b->version); });
+if ($sortfield == "version" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return strcasecmp($b->version, $a->version); });
+if ($sortfield == "id" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return $a->id > $b->id; });
+if ($sortfield == "id" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return $b->id > $a->id; });
 if ($sortfield == "permission" && $sortorder == "asc") usort($filtered_module_list, "comparePermissionIdAsc");
 if ($sortfield == "permission" && $sortorder == "desc") usort($filtered_module_list, "comparePermissionIdDesc");
-if ($sortfield == "text" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) { return strcasecmp($a->permission_text, $b->permission_text); });
-if ($sortfield == "text" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) { return strcasecmp($b->permission_text, $a->permission_text); });
+if ($sortfield == "text" && $sortorder == "asc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return strcasecmp($a->permission_text, $b->permission_text); });
+if ($sortfield == "text" && $sortorder == "desc") usort($filtered_module_list, function (stdClass $a, stdClass $b) {
+	return strcasecmp($b->permission_text, $a->permission_text); });
 
 foreach ($filtered_module_list as $module) {
 	print '<tr class="oddeven">';
@@ -365,8 +371,10 @@ function getModulePicto($module, $alt)
  */
 function comparePermissionIdAsc($a, $b)
 {
-	$lista = array_map(function($stringa) { return (int)$stringa; }, explode(", ", $a->permission_id));
-	$listb = array_map(function($stringb) { return (int)$stringb; }, explode(", ", $b->permission_id));
+	$lista = array_map(function ($stringa) {
+		return (int) $stringa; }, explode(", ", $a->permission_id));
+	$listb = array_map(function ($stringb) {
+		return (int) $stringb; }, explode(", ", $b->permission_id));
 
 	return max($lista) > max($listb);
 }
@@ -380,8 +388,10 @@ function comparePermissionIdAsc($a, $b)
  */
 function comparePermissionIdDesc($a, $b)
 {
-	$lista = array_map(function($stringa) { return (int)$stringa; }, explode(", ", $a->permission_id));
-	$listb = array_map(function($stringb) { return (int)$stringb; }, explode(", ", $b->permission_id));
+	$lista = array_map(function ($stringa) {
+		return (int) $stringa; }, explode(", ", $a->permission_id));
+	$listb = array_map(function ($stringb) {
+		return (int) $stringb; }, explode(", ", $b->permission_id));
 
 	return max($lista) < max($listb);
 }
