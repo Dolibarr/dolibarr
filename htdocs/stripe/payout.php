@@ -216,7 +216,7 @@ if (!$rowid) {
 			print '</td>';
 			print "</tr>\n";
 		}
-	} catch(Exception $e) {
+	} catch (Exception $e) {
 		print '<tr><td colspan="6">'.$e->getMessage().'</td></td>';
 	}
 	print "</table>";
