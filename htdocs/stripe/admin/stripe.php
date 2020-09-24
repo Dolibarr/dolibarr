@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -433,16 +433,21 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (!empty($conf->use_javascript_ajax))
+print '<input class="minwidth300"  type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
+if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+	$langs->load("errors");
+	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';

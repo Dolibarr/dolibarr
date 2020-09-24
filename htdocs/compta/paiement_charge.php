@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("bills");
 
 $chid = GETPOST("id", 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $amounts = array();
 
 // Security check
@@ -112,8 +112,8 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$paiement->amounts      = $amounts; // Tableau de montant
     		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
     		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$paiement->note         = GETPOST("note", 'none');
-    		$paiement->note_private = GETPOST("note", 'none');
+    		$paiement->note         = GETPOST("note", 'restricthtml');
+    		$paiement->note_private = GETPOST("note", 'restricthtml');
 
     		if (!$error)
     		{

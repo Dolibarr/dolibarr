@@ -349,8 +349,8 @@ class ProductFournisseur extends Product
 			// TODO Add localtax1 and localtax2
 			//$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
 			//$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
-			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
-			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
+			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$this->db->escape($localtaxtype1)."'":"'0'").",";
+			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$this->db->escape($localtaxtype2)."'":"'0'").",";
 			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " info_bits = ".$newnpr.",";
 			$sql .= " charges = ".$charges.","; // deprecated

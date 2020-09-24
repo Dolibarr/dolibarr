@@ -710,7 +710,7 @@ class PaymentVarious extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$banklineid;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$banklineid;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

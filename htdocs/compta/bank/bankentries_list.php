@@ -56,7 +56,7 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "margins", 
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
@@ -811,19 +811,19 @@ if ($resql)
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort').' :';
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From').' ';
-	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to')).'</div>';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From').' ';
-	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to')).'</div>';
 	$moreforfilter .= '</div>';
 
 	if (!empty($conf->categorie->enabled))
@@ -1141,13 +1141,17 @@ if ($resql)
                 $backgroundcolor = 'style="background: '.$color.';"';
             }
         }
+
+        $banklinestatic->id = $objp->rowid;
+        $banklinestatic->ref = $objp->rowid;
+
         print '<tr class="oddeven" '.$backgroundcolor.'>';
 
         // Ref
     	if (!empty($arrayfields['b.rowid']['checked']))
     	{
                 print '<td class="nowrap left">';
-                print "<a href=\"line.php?rowid=".$objp->rowid.'&save_lastsearch_values=1">'.img_object($langs->trans("ShowPayment").': '.$objp->rowid, 'account', 'class="classfortooltip"').' '.$objp->rowid."</a> &nbsp; ";
+                print $banklinestatic->getNomUrl(1);
                 print '</td>';
                 if (!$i) $totalarray['nbfield']++;
     	}

@@ -119,7 +119,7 @@ class SalariesStats extends Stats
     {
         $sql = "SELECT date_format(datep,'%m') as dm, sum(".$this->field.")";
         $sql .= " FROM ".$this->from;
-        $sql .= " WHERE date_format(datep,'%Y') = '".$year."'";
+        $sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
         $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -140,7 +140,7 @@ class SalariesStats extends Stats
     {
         $sql = "SELECT date_format(datep,'%m') as dm, avg(".$this->field.")";
         $sql .= " FROM ".$this->from;
-        $sql .= " WHERE date_format(datep,'%Y') = '".$year."'";
+        $sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
         $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');

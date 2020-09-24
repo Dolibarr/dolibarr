@@ -540,7 +540,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql = "SELECT rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql .= " WHERE active = 1";
-					$sql .= " AND code='".$thirdparty->country_code."'";
+					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
 					if ($resql)

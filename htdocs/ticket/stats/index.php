@@ -70,7 +70,7 @@ print load_fiche_titre($title, '', 'ticket');
 dol_mkdir($dir);
 
 $stats = new TicketStats($db, $socid, ($userid > 0 ? $userid : 0));
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 
 // Build graphic number of object

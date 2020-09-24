@@ -50,7 +50,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->loadLangs(array('users', 'other'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
@@ -130,7 +130,7 @@ if (empty($reshook)) {
 				$action = "create"; // Go back to create page
 			} else {
 				$object->name	= GETPOST("nom", 'nohtml');
-				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 			$object->oldcopy = clone $object;
 
 			$object->name	= GETPOST("nom", 'nohtml');
-			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);

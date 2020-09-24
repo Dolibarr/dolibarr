@@ -48,7 +48,7 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -65,8 +65,8 @@ $fk_supplier = GETPOST('fk_supplier', 'int');
 $fk_entrepot = GETPOST('fk_entrepot', 'int');
 $texte = '';
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -312,6 +312,9 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 $sql .= ' '.$sqldesiredtock.' as desiredstockcombined, '.$sqlalertstock.' as seuil_stock_alertecombined,';
 $sql .= ' s.fk_product,';
 $sql .= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+	$sql .= ', SUM('.$db->ifsql("s.reel IS NULL OR s.fk_entrepot <> ".$fk_entrepot, "0", "s.reel").') as stock_real_warehouse';
+}
 
 // Add fields from hooks
 $parameters = array();
@@ -530,18 +533,20 @@ if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
-	print $langs->trans("CurentlyUsingVirtualStock").' - ';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=physical&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UsePhysicalStock").'</a><br>';
+	print $langs->trans("CurentlyUsingVirtualStock");
+	print ' (<a href="'.$_SERVER["PHP_SELF"].'?mode=physical&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UsePhysicalStock").'</a>)';
+	print '<br>';
 }
 if ($usevirtualstock == 0)
 {
 	print $langs->trans("CurentSelectionMode").': ';
-	print $langs->trans("CurentlyUsingPhysicalStock").' - ';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=virtual&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UseVirtualStock").'</a><br>';
+	print $langs->trans("CurentlyUsingPhysicalStock");
+	print ' (<a href="'.$_SERVER["PHP_SELF"].'?mode=virtual&fk_supplier='.$fk_supplier.'&fk_entrepot='.$fk_entrepot.'">'.$langs->trans("UseVirtualStock").'</a>)';
+	print '<br>';
 }
 print '<br>'."\n";
 
-print '<form name="formFilterWarehouse" method="POST" action="">';
+print '<form name="formFilterWarehouse" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="search_ref" value="'.$search_ref.'">';
@@ -636,11 +641,13 @@ $param .= '&fk_supplier='.$fk_supplier;
 $param .= '&fk_entrepot='.$fk_entrepot;
 
 $stocklabel = $langs->trans('Stock');
+$stocklabelbis = $langs->trans('Stock');
 if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
 if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0)
 {
-    $stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
+	$stocklabelbis = $stocklabel.' (Selected warehouse)';
+	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 $texte = $langs->trans('Replenishment');
 
@@ -689,6 +696,10 @@ if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre
 print '<td class="liste_titre right">'.$form->textwithpicto($langs->trans('IncludeEmptyDesiredStock'), $langs->trans('IncludeProductWithUndefinedAlerts')).'&nbsp;<input type="checkbox" id="includeproductswithoutdesiredqty" name="includeproductswithoutdesiredqty" '.(!empty($includeproductswithoutdesiredqtychecked) ? $includeproductswithoutdesiredqtychecked : '').'></td>';
 print '<td class="liste_titre right"></td>';
 print '<td class="liste_titre right">'.$langs->trans('AlertOnly').'&nbsp;<input type="checkbox" id="salert" name="salert" '.(!empty($alertchecked) ? $alertchecked : '').'></td>';
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0)
+{
+	print '<td class="liste_titre">&nbsp;</td>';
+}
 print '<td class="liste_titre right">';
 if (! empty($conf->global->STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER)) {
 	print $langs->trans('IncludeAlsoDraftOrders').'&nbsp;<input type="checkbox" id="draftorder" name="draftorder" '.(!empty($draftchecked) ? $draftchecked : '').'>';
@@ -715,6 +726,10 @@ if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre('Dura
 print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('StockLimitShort', $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', '', $sortfield, $sortorder, 'right ');
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0)
+{
+	print_liste_field_titre($stocklabelbis, $_SERVER["PHP_SELF"], 'stock_real_warehouse', $param, '', '', $sortfield, $sortorder, 'right ');
+}
 print_liste_field_titre('Ordered', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
@@ -757,8 +772,10 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
+			//TODO $stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->;
 		} else {
 			$stock = $prod->stock_reel;
+			$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
@@ -774,13 +791,20 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//print $prod->stats_reception['qty'];
 		$ordered = $prod->stats_commande_fournisseur['qty'] - $prod->stats_reception['qty'];
 
-		$desiredstock = ($objp->desiredstockpse ? $objp->desiredstockpse : $objp->desiredstock);
-		$alertstock = ($objp->seuil_stock_alertepse ? $objp->seuil_stock_alertepse : $objp->seuil_stock_alerte);
+		$desiredstock = $objp->desiredstock;
+		$alertstock = $objp->seuil_stock_alerte;
+		$desiredstockwarehouse = ($objp->desiredstockpse ? $objp->desiredstockpse : '');
+		$alertstockwarehouse = ($objp->seuil_stock_alertepse ? $objp->seuil_stock_alertepse : '');
 
 		$warning = '';
 		if ($alertstock && ($stock < $alertstock))
 		{
 			$warning = img_warning($langs->trans('StockTooLow')).' ';
+		}
+		$warningwarehouse = '';
+		if ($alertstockwarehouse && ($stockwarehouse < $alertstockwarehouse))
+		{
+			$warningwarehouse = img_warning($langs->trans('StockTooLow')).' ';
 		}
 
 		//depending on conf, use either physical stock or
@@ -788,6 +812,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		if (empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
 		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
+		if (empty($usevirtualstock)) $stocktobuywarehouse = max(max($desiredstockwarehouse, $alertstockwarehouse) - $stockwarehouse - $ordered, 0);
+		else $stocktobuywarehouse = max(max($desiredstockwarehouse, $alertstockwarehouse) - $stockwarehouse, 0); //ordered is already in $stock in virtual mode
 
 		$picto = '';
 		if ($ordered > 0)
@@ -803,57 +829,67 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), 'help');
 		}
 
-		print '<tr class="oddeven">';
+		$variants = $prod->hasVariants();
+		if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
+			print '<tr class="oddeven">';
 
-		// Select field
-		print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
+			// Select field
+			print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
 
-		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
+			print '<td class="nowrap">'.$prod->getNomUrl(1, 'stock').'</td>';
 
-		print '<td>'.$objp->label;
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
-		print '</td>';
+			print '<td>'.$objp->label;
+			print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+			print '</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1)
-		{
-			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
-				$duration = $regs[1].' '.$langs->trans('DurationYear');
-			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
-				$duration = $regs[1].' '.$langs->trans('DurationMonth');
-			} elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
-				$duration = $regs[1].' '.$langs->trans('DurationDay');
-			} else {
-				$duration = $objp->duration;
+			if (!empty($conf->service->enabled) && $type == 1)
+			{
+				$regs = array();
+				if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
+					$duration = $regs[1].' '.$langs->trans('DurationYear');
+				} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
+					$duration = $regs[1].' '.$langs->trans('DurationMonth');
+				} elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
+					$duration = $regs[1].' '.$langs->trans('DurationDay');
+				} else {
+					$duration = $objp->duration;
+				}
+				print '<td class="center">'.$duration.'</td>';
 			}
-			print '<td class="center">'.$duration.'</td>';
+
+			// Desired stock
+			print '<td class="right">'.($fk_entrepot > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
+
+			// Limit stock for alert
+			print '<td class="right">'.($fk_entrepot > 0 ? $alertstockwarehouse : $alertstock).'</td>';
+
+			// Current stock (all warehouses)
+			print '<td class="right">'.$warning.$stock.'</td>';
+
+			// Current stock (warehouse selected only)
+			if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0)
+			{
+				print '<td class="right">'.$warningwarehouse.$stockwarehouse.'</td>';
+			}
+
+			// Already ordered
+			print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
+
+			// To order
+			print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.($fk_entrepot > 0 ? $stocktobuywarehouse : $stocktobuy).'"></td>';
+
+			// Supplier
+			print '<td class="right">';
+	        print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
+	        print '</td>';
+
+			// Fields from hook
+			$parameters = array('objp'=>$objp);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+
+			print '</tr>';
 		}
-
-		// Desired stock
-		print '<td class="right">'.$desiredstock.'</td>';
-
-		// Limit stock for alert
-		print '<td class="right">'.$alertstock.'</td>';
-
-		// Current stock (all warehouses)
-		print '<td class="right">'.$warning.$stock.'</td>';
-
-		// Already ordered
-		print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
-
-		// To order
-		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
-
-		// Supplier
-		print '<td class="right">';
-        print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
-        print '</td>';
-
-		// Fields from hook
-		$parameters = array('objp'=>$objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
-		print '</tr>';
 	}
 	$i++;
 }

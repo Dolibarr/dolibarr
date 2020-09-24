@@ -160,8 +160,8 @@ if ($action == 'add_payment')
 			$payment->amount_interest	= $pay_amount_insurance;
 			$payment->paymenttype       = GETPOST('paymenttype', 'int');
 			$payment->num_payment		= GETPOST('num_payment');
-			$payment->note_private      = GETPOST('note_private', 'none');
-			$payment->note_public       = GETPOST('note_public', 'none');
+			$payment->note_private      = GETPOST('note_private', 'restricthtml');
+			$payment->note_public       = GETPOST('note_public', 'restricthtml');
 
 			if (!$error)
 			{

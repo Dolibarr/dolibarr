@@ -428,7 +428,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
-		$nb = $board::countAccountToReconcile(); // Get nb of account to reconciliate
+		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
 		if ($nb > 0) {
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
@@ -826,7 +826,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 			$boxwork .= '<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
 			$boxwork .= '<div class="boxstatscontent">';
-			$boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
+			$boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' <span>'.$board->label.'</span></span><br>';
 			$boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0) ? ' dashboardlineok' : '').'">'.$board->nbtodo.'</span></a>';
 			if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 				$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0) ? ' dashboardlineok' : '').'">'.price($board->total).'</span></a>';

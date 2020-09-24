@@ -118,7 +118,7 @@ body {
 th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
-a:link, a:visited, a:hover, a:active { color: var(--colortextlink); text-decoration: none;  }
+a:link, a:visited, a:hover, a:active, .classlink { color: var(--colortextlink); text-decoration: none;  }
 a:hover { text-decoration: underline; color: var(--colortextlink); }
 a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
@@ -191,10 +191,6 @@ input, select {
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
-
-	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
-    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
-
 	border-radius: 3px;
     border-collapse: collapse;
     border: none;
@@ -220,7 +216,6 @@ input:invalid, select:invalid {
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
-    /* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
 input:focus, select:focus {
@@ -571,6 +566,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.centpercentwithoutmenu {
+	width: calc(100% - 200px);
+}
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
@@ -773,8 +771,14 @@ span.fa.fa-plus-circle.paddingleft {
 #formuserfile {
 	margin-top: 4px;
 }
+#formuserfile input[type='file'] {
+    font-size: 1em;
+}
 #formuserfile_link {
 	margin-left: 1px;
+}
+#formuserfile_link input[type='text'] {
+    font-size: 1em;
 }
 .listofinvoicetype {
 	height: 28px;
@@ -832,6 +836,43 @@ div.divsearchfield {
 	padding: 3px;
 }
 
+.a-filter, .a-mesure {
+    border-radius: 50px;
+    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 8px 10px 8px 6px;
+}
+.a-filter:before {
+    content: "\f0b0";
+}
+.a-mesure:before {
+    content: "\f080";
+}
+.a-filter:before, .a-mesure:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.a-filter-disabled, .a-mesure-disabled {
+    border-radius: 50px;
+    background: var(--colorbacktitle1);
+    padding: 8px;
+    opacity: 0.6;
+}
+
+div.div-for-modal {
+	/* display: none; */
+	position:absolute;
+	top:calc(50% - 200px);
+	left:calc(50% - 250px);
+	width:500px;  /* adjust as per your needs */
+	height:400px;   /* adjust as per your needs */
+	background: #fff;
+    border: 1px solid #bbb;
+    box-shadow: 2px 2px 20px #ddd;
+    z-index: 100;
+}
 
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
@@ -936,6 +977,12 @@ select.flat.selectlimit {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 150px;
     overflow: hidden;
@@ -996,6 +1043,13 @@ select.flat.selectlimit {
 	font-weight: bold;
 	font-size: 1.2em;
 }
+.onlinepaymentbody .amountpaymentcomplete {
+    background-color: var(--amountpaymentcomplete);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -1155,9 +1209,12 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
+.maxwidth250 { max-width: 250px; }
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.maxwidth750 { max-width: 750px; }
+.maxwidth1000 { max-width: 1000px; }
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }
@@ -1214,12 +1271,14 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+.widthcentpercentminusx {
+	width: calc(100% - 50px) !important;
+	display: inline-block;
+}
+
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -1239,7 +1298,7 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300 {
 		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}
@@ -1253,10 +1312,6 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	body {
-		font-size: <?php print is_numeric($fontsize) ? ($fontsize + 3).'px' : $fontsize; ?>;
-	}
-
 	.box-flex-item {
 		margin: 3px 2px 3px 2px !important;
 	}
@@ -1444,20 +1499,20 @@ td.showDragHandle {
 	padding-bottom: 20px;
 }
 
-/* For having horizontal scroll into array (like with smartphone) */
-/*
-#id-container {
+/* DOL_XXX For having horizontal scroll into array (like with smartphone) */
+
+.classforhorizontalscrolloftabs #id-container {
 	width: 100%;
 }
-.side-nav {
+.classforhorizontalscrolloftabs .side-nav {
 	display: block;
 	float: left;
 }
-#id-right {
+.classforhorizontalscrolloftabs #id-right {
 	width:calc(100% - 210px);
 	display: inline-block;
 }
-*/
+
 
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
@@ -1554,51 +1609,63 @@ div.vmenu, td.vmenu {
 
 .menuhider { display: none !important; }
 
+
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-body.sidebar-collapse .side-nav {
-	display: none;
+	body.sidebar-collapse .side-nav {
+		display: none;
+	}
+
+	body.sidebar-collapse .login_block {
+		display: none;
+	}
+
+	.menuhider { display: block !important; }
+	.dropdown-user-image { display: none; }
+	.user-header { height: auto !important; color: var(--colorbackbody); }
+
+	#id-container {
+		width: 100%;
+	}
+	.side-nav {
+		border-bottom: 1px solid #BBB;
+		background: #FFF;
+		padding-left: 20px;
+		padding-right: 20px;
+		position: absolute;
+	    	z-index: 90;
+	}
+	div.blockvmenulogo
+	{
+		border-bottom: 0 !important;
+	}
+	div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
+		border-top: none !important;
+		border-left: none !important;
+		border-right: none !important;
+		border-bottom: 1px solid #e0e0e0;
+		padding-left: 0 !important;
+	}
+	div.vmenu, td.vmenu {
+		padding-right: 6px !important;
+	}
+	div.fiche {
+		margin-<?php print $left; ?>: 9px !important;
+		margin-<?php print $right; ?>: 10px !important;
+	}
+
+	.pagination .fa-chevron-left, .pagination .fa-chevron-right {
+		font-size: 1.2em;
+	}
 }
 
-body.sidebar-collapse .login_block {
-	display: none;
-}
-
-.menuhider { display: block !important; }
-.dropdown-user-image { display: none; }
-.user-header { height: auto !important; color: var(--colorbackbody); }
-
-#id-container {
-	width: 100%;
-}
-.side-nav {
-	border-bottom: 1px solid #BBB;
-	background: #FFF;
-	padding-left: 20px;
-	padding-right: 20px;
-	position: absolute;
-    	z-index: 90;
-}
-div.blockvmenulogo
+@media only screen and (min-width: 768px) and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
-	border-bottom: 0 !important;
-}
-div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
-	border-top: none !important;
-	border-left: none !important;
-	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
-	padding-left: 0 !important;
-}
-div.vmenu, td.vmenu {
-	padding-right: 6px !important;
-}
-div.fiche {
-	margin-<?php print $left; ?>: 9px !important;
-	margin-<?php print $right; ?>: 10px !important;
-}
-<?php //} ?>
+	div.fiche {
+		margin-<?php print $left; ?>: 13px !important;
+		margin-<?php print $right; ?>: 14px !important;
+	}
 }
 
 
@@ -1615,7 +1682,7 @@ div.fiche>table:first-child {
 	margin-bottom: 15px;
 }
 div.fiche>table.table-fiche-title {
-	margin-bottom: 7px;
+	margin-bottom: 12px;
 }
 div.fichecenter {
 	width: 100%;
@@ -1805,7 +1872,7 @@ div.attacharea {
 }
 div.attachareaformuserfileecm {
 	padding-top: 0;
-	padding-bottom: 0;
+	padding-bottom: 6px;
 }
 
 div.arearef {
@@ -2745,8 +2812,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -3144,6 +3211,7 @@ div.refid  {
 	font-weight: bold;
   	color: var(--colortexttitlenotab);
   	font-size: 1.2em;
+  	word-break: break-word;
 }
 div.refidno  {
 	padding-top: 3px;
@@ -3294,6 +3362,14 @@ table.hidepaginationnext .paginationnext {
 }
 .tabBar .arearef .pagination.paginationref {
     max-width: calc(30%);
+}
+.paginationafterarrows a.btnTitlePlus, .titre_right  a.btnTitlePlus {
+    border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+    /* text-shadow: 0px 0px 5px #ccc; */
+    /* filter: invert(0.3); */
+    font-size: 1.07em;
 }
 
 
@@ -3729,8 +3805,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
-span.boxstatstext {
+span.boxstatstext span:not(.fas) {
 	opacity: 0.5;
+}
+span.boxstatstext {
     line-height: 18px;
     color: var(--colortext);
 }
@@ -4050,7 +4128,7 @@ table.table-fiche-title .col-title div.titre{
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 
 
@@ -4346,7 +4424,7 @@ span[phptag] {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
-	padding: 4px 0 4px 0;
+	padding: 5px 0 5px 0;
 	z-index: 1000;
 }
 .websitebar .buttonDelete, .websitebar .button {
@@ -5515,6 +5593,10 @@ span.noborderoncategories {
 /*  External lib multiselect with checkbox                                        */
 /* ============================================================================== */
 
+.multi-select-menu {
+	z-index: 10;
+}
+
 .multi-select-container {
   display: inline-block;
   position: relative;
@@ -6292,7 +6374,23 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	font-family: "Font Awesome 5 Free";
 	font-weight: 600;
 }
-
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error:before,
+div.phpdebugbar-widgets-exceptions a.phpdebugbar-widgets-editor-link:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
+{
+	font-family: "Font Awesome 5 Free" !important;
+}
 
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */

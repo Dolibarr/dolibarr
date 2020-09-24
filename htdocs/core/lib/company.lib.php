@@ -574,7 +574,7 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 
 	// If no translation, we read table to get label by default
 	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
-	$sql .= " WHERE code_iso='".$code_iso."'";
+	$sql .= " WHERE code_iso='".$db->escape($code_iso)."'";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -607,7 +607,7 @@ function getFormeJuridiqueLabel($code)
 	if (!$code) return '';
 
 	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-	$sql .= " WHERE code='$code'";
+	$sql .= " WHERE code='".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
 	$resql = $db->query($sql);

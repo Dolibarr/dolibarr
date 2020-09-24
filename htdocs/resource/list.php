@@ -39,7 +39,7 @@ $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
 $sortorder      = GETPOST('sortorder', 'alpha');
-$sortfield      = GETPOST('sortfield', 'alpha');
+$sortfield      = GETPOST('sortfield', 'aZ09comma');
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'resourcelist';

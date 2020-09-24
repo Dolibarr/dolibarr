@@ -36,6 +36,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 if (!empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (!empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
@@ -46,6 +47,8 @@ if (!empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/exped
  */
 class Expedition extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -699,7 +702,7 @@ class Expedition extends CommonObject
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-		$sql .= " ref='".$numref."'";
+		$sql .= " ref='".$this->db->escape($numref)."'";
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".$user->id;

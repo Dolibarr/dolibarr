@@ -83,8 +83,8 @@ $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -311,7 +311,7 @@ if (!empty($search_valideur) && $search_valideur != -1) {
 }
 // Type
 if (!empty($search_type) && $search_type != -1) {
-	$sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($db->escape($search_type)).')';
 }
 // Status
 if (!empty($search_status) && $search_status != -1) {
@@ -425,18 +425,14 @@ if ($resql)
 
 		if ($canedit)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 
 		print '</div>';
 	} else {
 		$title = $langs->trans("ListeCP");
 
-		$newcardbutton = '';
-		if ($user->rights->holiday->write)
-		{
-			$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request');
-	    }
+		$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}

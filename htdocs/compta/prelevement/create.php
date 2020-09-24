@@ -46,7 +46,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -185,7 +185,7 @@ if ($mesg) print $mesg;
 print '<div class="tabsAction">'."\n";
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
 	if ($pricetowithdraw) {

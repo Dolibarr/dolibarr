@@ -37,8 +37,8 @@ $hookmanager->initHooks(array('contractindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies', 'contracts'));
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $statut = GETPOST('statut') ?GETPOST('statut') : 1;

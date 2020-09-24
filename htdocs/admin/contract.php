@@ -33,7 +33,7 @@ $langs->loadLangs(array("admin", "errors", "contracts"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -143,7 +143,7 @@ elseif ($action == 'setdoc')
 	dolibarr_set_const($db, "CONTRACT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other')
 {
-	$freetext = GETPOST('CONTRACT_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('CONTRACT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res1 = dolibarr_set_const($db, "CONTRACT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	$draft = GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
@@ -287,7 +287,7 @@ print load_fiche_titre($langs->trans("TemplatePDFContracts"), '', '');
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)

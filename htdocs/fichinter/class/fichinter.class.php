@@ -1132,7 +1132,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql .= " SET fk_contrat = '".$contractid."'";
+			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))

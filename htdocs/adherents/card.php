@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -82,7 +82,7 @@ if (!empty($canvas)) {
 }
 
 // Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
 if ($id > 0) {
 	// Load member
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
-				$sql .= " WHERE socid = '".$socid."'";
+				$sql .= " WHERE socid = ".((int) $socid);
 				$sql .= " AND entity = ".$conf->entity;
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -254,7 +254,7 @@ if (empty($reshook)) {
 			$object->firstname   = trim(GETPOST("firstname", 'alphanohtml'));
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
-			$object->login       = trim(GETPOST("login", 'alpha'));
+			$object->login       = trim(GETPOST("login", 'alphanohtml'));
 			$object->pass        = trim(GETPOST("pass", 'alpha'));
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
@@ -404,10 +404,9 @@ if (empty($reshook)) {
 		// $facebook=GETPOST("member_facebook", 'alpha');
 		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-		$login = GETPOST("member_login", 'alpha');
+		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'alpha');
 		$photo = GETPOST("photo", 'alpha');
-		//$comment=GETPOST("comment",'none');
 		$morphy = GETPOST("morphy", 'alphanohtml');
 		$public = GETPOST("public", 'alphanohtml');
 
@@ -836,7 +835,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(isset($_POST["member_login"]) ?GETPOST("member_login", 'alpha', 2) : $object->login).'" autofocus="autofocus"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="member_login" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("member_login") ? GETPOST("member_login", 'alphanohtml', 2) : $object->login).'" autofocus="autofocus"></td></tr>';
 		}
 
 		// Password
@@ -884,7 +883,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -942,7 +941,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Birth Date
-		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
+		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1063,7 +1062,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(isset($_POST["login"]) ?GETPOST("login", 'alpha', 2) : $object->login).'"></td></tr>';
+			print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").' / '.$langs->trans("Id").'</span></td><td><input type="text" name="login" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alphanohtml', 2) : $object->login).'"></td></tr>';
 		}
 
 		// Password
@@ -1107,7 +1106,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Gender
 		print '<tr><td>'.$langs->trans("Gender").'</td>';
 		print '<td>';
-		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
+		$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td></tr>';
 
@@ -1175,7 +1174,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Birth Date
-		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
+		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1455,7 +1454,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 
 		// Type
@@ -1472,10 +1471,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 		print '</tr>';
 
 		// Password
@@ -1570,7 +1569,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield tableforfield" width="100%">';
 
 		// Birth Date
-		print '<tr><td class="titlefield">'.$langs->trans("DateToBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';

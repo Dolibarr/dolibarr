@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if ($action == 'setvalue' && $user->admin)
 {
@@ -72,11 +72,14 @@ if ($action == 'setvalue' && $user->admin)
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) $error++;
-	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) $error++;
+	if (empty($conf->use_javascript_ajax)) {
+		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!$result > 0) {
+			$error++;
+		}
+	}
 
-	if (!$error)
-  	{
+	if (!$error) {
   		$db->commit();
   		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
   	} else {
@@ -120,7 +123,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'paypalaccount', '', -1);
 
-print $langs->trans("PaypalDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("PaypalDesc")."</span><br>\n";
 
 // Test if php curl exist
 if (!function_exists('curl_version'))
@@ -156,7 +159,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
 print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
-print ' &nbsp; '.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': admin-facilitator_api1.example.com, paypal_api1.mywebsite.com</span>';
 print '</td></tr>';
 
 
@@ -169,7 +172,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
 print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.$conf->global->PAYPAL_API_SIGNATURE.'">';
-print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF';
+print '<br><span class="opacitymedium">'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF</span>';
 print '</td></tr>';
 
 
@@ -199,9 +202,9 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("VendorName").'</td><td>';
+print $langs->trans("PublicVendorName").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
-print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
 if (!empty($conf->banque->enabled))
@@ -215,7 +218,7 @@ if (!empty($conf->banque->enabled))
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
-print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
@@ -248,8 +251,8 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
+print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp;  <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -260,15 +263,25 @@ print "</tr>\n";
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
-if (!empty($conf->use_javascript_ajax))
+print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-	print '</td></tr>';
+}
+if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+	$langs->load("errors");
+	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
+}
+print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-	print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN) ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
-	print '</td></tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("SecurityTokenIsUnique").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
+}
+print '</td></tr>';
 
 print '</table>';
 

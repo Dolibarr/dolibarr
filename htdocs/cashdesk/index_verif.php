@@ -89,7 +89,7 @@ if ($retour >= 0)
 
 	$sql = "SELECT rowid, lastname, firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user";
-	$sql .= " WHERE login = '".$username."'";
+	$sql .= " WHERE login = '".$db->escape($username)."'";
 	$sql .= " AND entity IN (0,".$conf->entity.")";
 
 	$result = $db->query($sql);

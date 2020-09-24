@@ -33,7 +33,7 @@ $langs->loadLangs(array('admin', 'errors', 'mrp', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -152,7 +152,7 @@ elseif ($action == 'setdoc')
 	}
 } elseif ($action == 'set_MRP_MO_FREE_TEXT')
 {
-	$freetext = GETPOST("MRP_MO_FREE_TEXT", 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST("MRP_MO_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "MRP_MO_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
@@ -293,7 +293,7 @@ print load_fiche_titre($langs->trans("MOsModelModule"), '', '');
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)

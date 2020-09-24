@@ -349,7 +349,7 @@ if ($object->id > 0)
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
     				}*/
 					if ($conf->barcode->enabled || $conf->productbatch->enabled) {
-						print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
 					}
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
@@ -380,6 +380,15 @@ if ($object->id > 0)
 		}
 		print '</div>'."\n";
 	}
+
+	if ($action == 'updatebyscaning') {
+		print '<div class="div-for-modal">';
+
+		print 'TODO';
+
+		print '</div>';
+	}
+
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

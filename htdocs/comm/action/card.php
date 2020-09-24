@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socpeopleassigned = GETPOST('socpeopleassigned', 'array');
@@ -119,6 +119,12 @@ $hookmanager->initHooks(array('actioncard', 'globalcard'));
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+$TRemindTypes = array();
+if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
+if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+
+$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
 
 /*
@@ -320,7 +326,7 @@ if (empty($reshook) && $action == 'add')
 		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby", "int");
 	}
 
-	$object->note_private = trim(GETPOST("note", "none"));
+	$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 	if (isset($_POST["contactid"])) $object->contact = $contact;
 
@@ -493,7 +499,7 @@ if (empty($reshook) && $action == 'update')
             $object->contact_id = key($object->socpeopleassigned);
         }
 		$object->fk_project  = GETPOST("projectid", 'int');
-		$object->note_private = trim(GETPOST("note", "none"));
+		$object->note_private = trim(GETPOST("note", "restricthtml"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
 
@@ -789,12 +795,20 @@ if (empty($reshook)) {
 }
 
 
+
 /*
  * View
  */
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
+
+$arrayrecurrulefreq = array(
+	'no'=>$langs->trans("OnceOnly"),
+	'MONTHLY'=>$langs->trans("EveryMonth"),
+	'WEEKLY'=>$langs->trans("EveryWeek"),
+	//'DAYLY'=>$langs->trans("EveryDay")
+);
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
@@ -945,14 +959,8 @@ if ($action == 'create')
 	if ($userepeatevent)
 	{
 		// Repeat
-		print '<tr><td>'.$langs->trans("RepeatEvent").'</td><td colspan="3">';
+		print '<tr><td></td><td colspan="3">';
 		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
-		$arrayrecurrulefreq = array(
-		'no'=>$langs->trans("No"),
-		'MONTHLY'=>$langs->trans("EveryMonth"),
-		'WEEKLY'=>$langs->trans("EveryWeek"),
-		//'DAYLY'=>$langs->trans("EveryDay")
-		);
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
 		$selectedrecurrulebyday = '';
@@ -1013,7 +1021,7 @@ if ($action == 'create')
     // Location
     if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     {
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.(GETPOST('location') ?GETPOST('location') : $object->location).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth300" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
     }
 
 	// Assigned to
@@ -1082,9 +1090,9 @@ if ($action == 'create')
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
-				print $form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
+				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
 			} else {
-				print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
+				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
 			}
 		}
 		print '</td></tr>';
@@ -1093,7 +1101,7 @@ if ($action == 'create')
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 		$preselectedids = GETPOST('socpeopleassigned', 'array');
 		if (GETPOST('contactid', 'int')) $preselectedids[GETPOST('contactid', 'int')] = GETPOST('contactid', 'int');
-		print $form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
+		print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
@@ -1105,7 +1113,7 @@ if ($action == 'create')
 		$projectid = GETPOST('projectid', 'int');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container" >';
-
+		print img_picto('', 'project', 'class="paddingrightonly"');
 		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
@@ -1128,7 +1136,7 @@ if ($action == 'create')
 		print '</td></tr>';
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Task").'</td><td id="project-task-input-container" >';
-
+		print img_picto('', 'projecttask', 'class="paddingrightonly"');
 		$projectsListId = false;
 		if (!empty($projectid)) { $projectsListId = $projectid; }
 		$tid = GETPOST("projecttaskid") ?GETPOST("projecttaskid") : '';
@@ -1164,7 +1172,7 @@ if ($action == 'create')
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -1205,9 +1213,6 @@ if ($action == 'create')
         print '</td></tr>';
 
         //Reminder Type
-        $TRemindTypes = array();
-        if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-        if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
         print $form->selectarray('selectremindertype', $TRemindTypes);
         print '</td></tr>';
@@ -1298,7 +1303,7 @@ if ($id > 0)
 		$object->contact_id   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
-		$object_private = GETPOST("note", 'none');
+		$object_private = GETPOST("note", 'restricthtml');
 	}
 
 	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
@@ -1389,7 +1394,7 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
 
 		// Date start
-		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
+		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
             print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart');
         } elseif (GETPOST("afaire") == 2) {
@@ -1397,9 +1402,7 @@ if ($id > 0)
         } else {
             print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
         }
-		print '</td></tr>';
-		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+        print ' - ';
 		if (GETPOST("afaire") == 1) {
             print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
         } elseif (GETPOST("afaire") == 2) {
@@ -1414,14 +1417,8 @@ if ($id > 0)
 		if ($userepeatevent)
 		{
 			// Repeat
-			print '<tr><td>'.$langs->trans("RepeatEvent").'</td><td colspan="3">';
+			print '<tr><td></td><td colspan="3">';
 			print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
-			$arrayrecurrulefreq = array(
-				'no'=>$langs->trans("No"),
-				'MONTHLY'=>$langs->trans("EveryMonth"),
-				'WEEKLY'=>$langs->trans("EveryWeek"),
-				//'DAYLY'=>$langs->trans("EveryDay"),
-			);
 			$selectedrecurrulefreq = 'no';
 			$selectedrecurrulebymonthday = '';
 			$selectedrecurrulebyday = '';
@@ -1469,7 +1466,7 @@ if ($id > 0)
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent = GETPOST("percentage") ? GETPOST("percentage") : $object->percentage;
-		$formactions->form_select_status_action('formaction', $percent, 1);
+		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
 
         // Location
@@ -1554,7 +1551,7 @@ if ($id > 0)
 		print '<br><hr><br>';
 
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		if ($conf->societe->enabled)
 		{
@@ -1566,14 +1563,14 @@ if ($id > 0)
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
-			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
+			print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
 			print '</td></tr>';
 
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print $form->selectcontacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
+			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'quatrevingtpercent', false, 0, 0, array(), 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -1585,6 +1582,7 @@ if ($id > 0)
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
+			print img_picto('', 'project', 'class="paddingrightonly"');
 			$numprojet = $formproject->select_projects(($object->socid > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth500');
 			if ($numprojet == 0)
 			{
@@ -1660,6 +1658,48 @@ if ($id > 0)
 		}
 
 		print '</table>';
+
+		// Reminders
+		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+		{
+			$filtreuserid = $user->id;
+			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
+			$object->loadReminders('', $filteruserid);
+
+			print '<hr>';
+
+			print '<table class="border tableforfield centpercent">';
+
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
+
+			if (count($object->reminders) > 0) {
+				if (count($object->reminders) > 0) {
+					$tmpuserstatic = new User($db);
+
+					foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
+						print $TRemindTypes[$actioncommreminder->typeremind];
+						if ($actioncommreminder->fk_user > 0) {
+							$tmpuserstatic->fetch($actioncommreminder->fk_user);
+							print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
+						}
+						print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+						if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
+							print ' - <span class="opacitymedium">';
+							print $langs->trans("NotSent");
+							print ' </span>';
+						} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
+							print ' - <span class="opacitymedium">';
+							print $langs->trans("Done");
+							print ' </span>';
+						}
+					}
+				}
+			}
+
+			print '</td></tr>';
+
+			print '</table>';
+		}
 
 		dol_fiche_end();
 
@@ -1750,6 +1790,7 @@ if ($id > 0)
 		dol_banner_tab($object, 'id', $linkback, ($user->socid ? 0 : 1), 'id', 'ref', $morehtmlref);
 
 	    print '<div class="fichecenter">';
+	    print '<div class="fichehalfleft">';
 
 		print '<div class="underbanner clearboth"></div>';
 
@@ -1759,17 +1800,17 @@ if ($id > 0)
 		// Type
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$langs->trans($object->type).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
 		}
 
         // Full day event
-        print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
 
 		// Date start
-		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
 		if (!$object->fulldayevent) print dol_print_date($object->datep, 'dayhour');
 		else print dol_print_date($object->datep, 'day');
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
@@ -1777,7 +1818,7 @@ if ($id > 0)
 		print '</tr>';
 
 		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
         if (!$object->fulldayevent) print dol_print_date($object->datef, 'dayhour');
 		else print dol_print_date($object->datef, 'day');
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
@@ -1786,11 +1827,11 @@ if ($id > 0)
         // Location
 	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     	{
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td>'.$object->location.'</td></tr>';
     	}
 
 		// Assigned to
-    	print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
+    	print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td>';
 		$listofuserid = array();
 		if (empty($donotclearsession))
 		{
@@ -1840,7 +1881,7 @@ if ($id > 0)
 		// Done by
 		if ($conf->global->AGENDA_ENABLE_DONEBY)
 		{
-			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
 			if ($object->userdoneid > 0)
 			{
 				$tmpuser = new User($db);
@@ -1852,14 +1893,16 @@ if ($id > 0)
 
 		// Categories
 		if ($conf->categorie->enabled) {
-			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
 			print "</td></tr>";
 		}
 
 		print '</table>';
 
-		print '<br>';
+		print '</div>';
+
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
@@ -1867,7 +1910,7 @@ if ($id > 0)
 		if ($conf->societe->enabled)
 		{
 		    // Related company
-		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
+		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -1879,7 +1922,7 @@ if ($id > 0)
 
 			// Related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 
 			if (!empty($object->socpeopleassigned))
 			{
@@ -1907,7 +1950,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td>';
 		print ($object->priority ? $object->priority : '');
 		print '</td></tr>';
 
@@ -1918,24 +1961,59 @@ if ($id > 0)
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
 			$link = dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-			print '<td colspan="3">';
+			print '<td>';
 			if (empty($link)) print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';
 			else print $link;
 			print '</td></tr>';
 		}
 
 		// Description
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3" class="wordbreak">';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 
         // Other attributes
-        $cols = 3;
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+        // Reminders
+        if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+        {
+        	$filtreuserid = $user->id;
+        	if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
+        	$object->loadReminders('', $filteruserid);
+
+        	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
+
+        	if (count($object->reminders) > 0) {
+        		$tmpuserstatic = new User($db);
+
+        		foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
+        			print $TRemindTypes[$actioncommreminder->typeremind];
+        			if ($actioncommreminder->fk_user > 0) {
+        				$tmpuserstatic->fetch($actioncommreminder->fk_user);
+        				print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
+        			}
+        			print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+        			if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
+        				print ' - <span class="opacitymedium">';
+        				print $langs->trans("NotSent");
+        				print ' </span>';
+        			} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
+        				print ' - <span class="opacitymedium">';
+        				print $langs->trans("Done");
+        				print ' </span>';
+        			}
+        		}
+        	}
+
+        	print '</td></tr>';
+        }
 
 		print '</table>';
 
 		print '</div>';
+		print '</div>';
+		print '<div class="clearboth"></div>';
 
 		dol_fiche_end();
 	}

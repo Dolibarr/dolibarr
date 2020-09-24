@@ -39,6 +39,7 @@ create table llx_product
   note                          text,
   customcode                    varchar(32),                        -- Optionnal custom code
   fk_country                    integer DEFAULT NULL,               -- Optionnal id of original country
+  fk_state                      integer DEFAULT NULL,               -- Optionnal id of original state/province
   price                         double(24,8) DEFAULT 0,
   price_ttc                     double(24,8) DEFAULT 0,
   price_min                     double(24,8) DEFAULT 0,

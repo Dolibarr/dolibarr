@@ -503,7 +503,7 @@ function createProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
 
@@ -593,7 +593,7 @@ function createProductOrService($authentication, $product)
 
 				if ($savstockreal != $getstockreal)
 				{
-					$warehouse = new Entrepot($this->db);
+					$warehouse = new Entrepot($db);
 					$warehouse->fetch(0, $product['warehouse_ref']);
 					if ($warehouse->id > 0)
 					{
@@ -675,7 +675,7 @@ function updateProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
     if (!$error)
@@ -762,7 +762,7 @@ function updateProductOrService($authentication, $product)
 
 				if ($savstockreal != $getstockreal)
 				{
-					$warehouse = new Entrepot($this->db);
+					$warehouse = new Entrepot($db);
 					$warehouse->fetch(0, $product['warehouse_ref']);
 					if ($warehouse->id > 0)
 					{
@@ -840,8 +840,6 @@ function updateProductOrService($authentication, $product)
 function deleteProductOrService($authentication, $listofidstring)
 {
     global $db, $conf, $langs;
-
-    $now = dol_now();
 
     dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
 
@@ -935,8 +933,6 @@ function deleteProductOrService($authentication, $listofidstring)
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
     global $db, $conf, $langs;
-
-    $now = dol_now();
 
     dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
 

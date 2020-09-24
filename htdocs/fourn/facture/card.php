@@ -651,8 +651,8 @@ if (empty($reshook))
 				$object->libelle = GETPOST('label', 'nohtml');
 				$object->date = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public = GETPOST('note_public', 'none');
-				$object->note_private = GETPOST('note_private', 'none');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -716,8 +716,8 @@ if (empty($reshook))
 				$object->label				= GETPOST('label', 'nohtml');
 				$object->date = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public = GETPOST('note_public', 'none');
-				$object->note_private = GETPOST('note_private', 'none');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id	= GETPOST('cond_reglement_id');
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account			= GETPOST('fk_account', 'int');
@@ -828,8 +828,8 @@ if (empty($reshook))
 				$object->libelle       = $_POST['label'];
 				$object->date          = $datefacture;
 				$object->date_echeance = $datedue;
-				$object->note_public   = GETPOST('note_public', 'none');
-				$object->note_private  = GETPOST('note_private', 'none');
+				$object->note_public   = GETPOST('note_public', 'restricthtml');
+				$object->note_private  = GETPOST('note_private', 'restricthtml');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account        = GETPOST('fk_account', 'int');
@@ -1057,7 +1057,7 @@ if (empty($reshook))
 			$productsupplier = new ProductFournisseur($db);
 			if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
 			{
-				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), GETPOST('productid'), 'none', GETPOST('socid', 'int')) < 0)
+				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), GETPOST('productid', 'int'), 'restricthtml', GETPOST('socid', 'int')) < 0)
 				{
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
@@ -1534,7 +1534,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -2056,7 +2056,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'none') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2065,7 +2065,7 @@ if ($action == 'create')
 	// Private note
 	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'none') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';

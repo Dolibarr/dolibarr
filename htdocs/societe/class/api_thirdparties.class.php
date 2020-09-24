@@ -160,7 +160,9 @@ class Thirdparties extends DolibarrApi
 
     	// Select thirdparties of given category
     	if ($category > 0) {
-			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; } elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; } else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
+    		if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid"; }
+    		elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid"; }
+    		else { $sql .= " AND ((c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid))"; }
     	}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
@@ -183,7 +185,7 @@ class Thirdparties extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		if ($limit) {
 			if ($page < 0)
@@ -192,26 +194,26 @@ class Thirdparties extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
 			while ($i < $min)
 			{
-				$obj = $db->fetch_object($result);
-				$soc_static = new Societe($db);
+				$obj = $this->db->fetch_object($result);
+				$soc_static = new Societe($this->db);
 				if ($soc_static->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($soc_static);
 				}
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
+			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'Thirdparties not found');
@@ -313,7 +315,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$this->companytoremove = new Societe($db);
+		$this->companytoremove = new Societe($this->db);
 
 		$result = $this->companytoremove->fetch($idtodelete); // include the fetch of extra fields
 		if (!$result) {
@@ -332,7 +334,7 @@ class Thirdparties extends DolibarrApi
 		// Call same code than into action 'confirm_merge'
 
 
-		$db->begin();
+		$this->db->begin();
 
 		// Recopy some data
 		$object->client = $object->client | $soc_origin->client;
@@ -369,7 +371,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// Merge categories
-		$static_cat = new Categorie($db);
+		$static_cat = new Categorie($this->db);
 		$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
 		$object->setCategories($custcats, 'customer');
 		$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
@@ -426,10 +428,10 @@ class Thirdparties extends DolibarrApi
 			{
 				require_once DOL_DOCUMENT_ROOT.$object_file;
 
-				if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+				if (!$errors && !$object_name::replaceThirdparty($this->db, $soc_origin->id, $object->id))
 				{
 					$errors++;
-					//setEventMessages($db->lasterror(), null, 'errors');
+					//setEventMessages($this->db->lasterror(), null, 'errors');
 				}
 			}
 		}
@@ -477,11 +479,11 @@ class Thirdparties extends DolibarrApi
 
 		if ($error)
 		{
-			$db->rollback();
+			$this->db->rollback();
 
 			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
 		} else {
-			$db->commit();
+			$this->db->commit();
 		}
 
 		return $this->get($id);
@@ -1155,7 +1157,7 @@ class Thirdparties extends DolibarrApi
 		if ($id) $sql .= " WHERE fk_soc  = ".$id." ";
 
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows == 0) {
 			throw new RestException(404, 'Account not found');
@@ -1167,11 +1169,11 @@ class Thirdparties extends DolibarrApi
 
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($result);
-				$account = new CompanyBankAccount($db);
+				$obj = $this->db->fetch_object($result);
+				$account = new CompanyBankAccount($this->db);
 				if ($account->fetch($obj->rowid)) {
 					$accounts[] = $account;
 				}
@@ -1435,7 +1437,7 @@ class Thirdparties extends DolibarrApi
 		$sql .= " WHERE fk_soc = $id";
 		if ($site) $sql .= " AND site ='$site'";
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows == 0) {
 			throw new RestException(404, 'This thirdparty does not have any gateway attached or does not exist.');
@@ -1445,11 +1447,11 @@ class Thirdparties extends DolibarrApi
 
 		$accounts = array();
 
-		$num = $db->num_rows($result);
+		$num = $this->db->num_rows($result);
 		while ($i < $num)
 		{
-			$obj = $db->fetch_object($result);
-			$account = new SocieteAccount($db);
+			$obj = $this->db->fetch_object($result);
+			$account = new SocieteAccount($this->db);
 
 			if ($account->fetch($obj->rowid)) {
 				$accounts[] = $account;
@@ -1505,8 +1507,8 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(422, 'Unprocessable Entity: You must pass the site attribute in your request data !');
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
-		$result = $db->query($sql);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."'";
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows == 0) {
 			$account = new SocieteAccount($this->db);
@@ -1560,8 +1562,8 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = $id AND site = '$site' ";
-		$result = $db->query($sql);
+		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = $id AND site = '".$this->db->escape($site)."'";
+		$result = $this->db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
 		if ($result->num_rows == 0) {
@@ -1586,15 +1588,15 @@ class Thirdparties extends DolibarrApi
 			// We found an existing SocieteAccount entity, we are replacing it
 		} else {
 			if (isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
-				$result = $db->query($sql);
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
+				$result = $this->db->query($sql);
 
 				if ($result->num_rows !== 0) {
 					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) from $site to ".$request_data['site']." but another SocieteAccount entity already exists with this site key.");
 				}
 			}
 
-			$obj = $db->fetch_object($result);
+			$obj = $this->db->fetch_object($result);
 
 			$account = new SocieteAccount($this->db);
 			$account->id = $obj->rowid;
@@ -1644,21 +1646,21 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '$site' ";
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows == 0) {
 			throw new RestException(404, "This thirdparty does not have $site gateway attached or does not exist.");
 		} else {
 			// If the user tries to edit the site member, we check first if
 			if (isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$request_data['site']."' ";
-				$result = $db->query($sql);
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
+				$result = $this->db->query($sql);
 
 				if ($result->num_rows !== 0)
 					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from $site to ".$request_data['site']." but another SocieteAccount entity already exists for this thirdparty with this site key.");
 			}
 
-			$obj = $db->fetch_object($result);
+			$obj = $this->db->fetch_object($result);
 			$account = new SocieteAccount($this->db);
 			$account->fetch($obj->rowid);
 
@@ -1690,20 +1692,19 @@ class Thirdparties extends DolibarrApi
 	 */
     public function deleteSocieteAccount($id, $site)
     {
-		global /** @var Database $db */
-		$db;
+		global $db;
 
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '$site' ";
-		$result = $db->query($sql);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '".$this->db->escape($site)."'";
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows == 0) {
 			throw new RestException(404);
 		} else {
-			$obj = $db->fetch_object($result);
+			$obj = $this->db->fetch_object($result);
 			$account = new SocieteAccount($this->db);
 			$account->fetch($obj->rowid);
 
@@ -1727,8 +1728,7 @@ class Thirdparties extends DolibarrApi
 	 */
     public function deleteSocieteAccounts($id)
     {
-		global /** @var Database $db */
-		$db;
+		global $db;
 
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -1739,20 +1739,20 @@ class Thirdparties extends DolibarrApi
 		 */
 
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".$id;
 
-		$result = $db->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows == 0) {
 			throw new RestException(404, 'This third party does not have any gateway attached or does not exist.');
 		} else {
 			$i = 0;
 
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($result);
-				$account = new SocieteAccount($db);
+				$obj = $this->db->fetch_object($result);
+				$account = new SocieteAccount($this->db);
 				$account->fetch($obj->rowid);
 
 				if ($account->delete(DolibarrApiAccess::$user) < 0) {

@@ -44,7 +44,7 @@ $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');

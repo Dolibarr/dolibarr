@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 $langs->loadLangs(array("products", "other"));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha') ?GETPOST('modulepart', 'alpha') : 'produit|service';
 $original_file = GETPOST("file");
 $backtourl = GETPOST('backtourl');

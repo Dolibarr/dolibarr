@@ -38,6 +38,7 @@
  *	\brief      File for third party class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
@@ -45,6 +46,8 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class Societe extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -692,20 +695,6 @@ class Societe extends CommonObject
      */
 	public $logo_squarred_mini;
 
-	/**
-     * @var int ID Incoterms
-     */
-	public $fk_incoterms;
-
-	/**
-	 * @var string Incoterms Location
-	 */
-	public $location_incoterms;
-
-    /**
-     * @var string Incoterm label
-     */
-	public $label_incoterms; //Used into tooltip
 
 	// Multicurrency
 	/**
@@ -724,6 +713,35 @@ class Societe extends CommonObject
 	 */
 	public $bank_account;
 
+	/**
+	 * Third party is no customer
+	 */
+	const NO_CUSTOMER = 0;
+
+	/**
+	 * Third party is a customer
+	 */
+	const CUSTOMER = 1;
+
+	/**
+	 * Third party is a prospect
+	 */
+	const PROSPECT = 2;
+
+	/**
+	 * Third party is a customer and a prospect
+	 */
+	const CUSTOMER_AND_PROSPECT = 3;
+
+	/**
+	 * Third party is no supplier
+	 */
+	const NO_SUPPLIER = 0;
+
+	/**
+	 * Third party is a supplier
+	 */
+	const SUPPLIER = 1;
 
 	/**
 	 *    Constructor
@@ -802,12 +820,11 @@ class Societe extends CommonObject
 		{
 			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
 			$sql .= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($user->id) ? "'".$user->id."'" : "null");
+			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".$this->status;
-			$sql .= ", ".(!empty($this->ref_int) ? "'".$this->db->escape($this->ref_int)."'" : "null");
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 			$sql .= ", 0";
 			$sql .= ", ".(int) $this->fk_incoterms;
@@ -2724,7 +2741,7 @@ class Societe extends CommonObject
 
 		$sql = "SELECT rowid, email, phone_mobile, lastname, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -3168,7 +3185,7 @@ class Societe extends CommonObject
 	 	}
 
 		 //Verify duplicate entries
-		$sql = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe').")";
+		$sql = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
 		if ($socid) $sql .= " AND rowid <> ".$socid;
 		$resql = $this->db->query($sql);
 		if ($resql)

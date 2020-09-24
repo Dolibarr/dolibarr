@@ -38,7 +38,7 @@ $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -180,7 +180,7 @@ elseif ($action == 'setdoc')
 	}
 } elseif ($action == 'set_INVOICE_FREE_TEXT')
 {
-	$freetext = GETPOST('INVOICE_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('INVOICE_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "INVOICE_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
@@ -421,7 +421,7 @@ $type = 'invoice';
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)

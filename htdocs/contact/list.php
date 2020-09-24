@@ -44,7 +44,7 @@ $langs->loadLangs(array("companies", "suppliers", "categories"));
 
 $socialnetworks = getArrayOfSocialNetworks();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -104,8 +104,8 @@ $type = GETPOST("type", 'aZ');
 $view = GETPOST("view", 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $userid = GETPOST('userid', 'int');
 $begin = GETPOST('begin');
@@ -538,11 +538,7 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete'] = '<span
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->societe->contact->creer)
-{
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create');
-}
+$newcardbutton = dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $user->rights->societe->contact->creer);
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

@@ -1649,7 +1649,7 @@ class Contact extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
 		$sql .= " WHERE sc.fk_soc =".$this->socid;
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
-		$sql .= " AND tc.element='".$element."'";
+		$sql .= " AND tc.element='".$this->db->escape($element)."'";
 		$sql .= " AND tc.active=1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);

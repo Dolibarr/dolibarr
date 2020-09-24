@@ -394,24 +394,6 @@ abstract class CommonObject
 	public $comments = array();
 
 	/**
-	 * @var int
-	 * @see setIncoterms()
-	 */
-	public $fk_incoterms;
-
-	/**
-	 * @var string
-	 * @see SetIncoterms()
-	 */
-	public $label_incoterms;
-
-	/**
-	 * @var string
-	 * @see display_incoterms()
-	 */
-	public $location_incoterms;
-
-	/**
 	 * @var string The name
 	 */
 	public $name;
@@ -1046,8 +1028,8 @@ abstract class CommonObject
 		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql .= " statut = ".$statut;
-		if ($type_contact_id) $sql .= ", fk_c_type_contact = '".$type_contact_id."'";
-		if ($fk_socpeople) $sql .= ", fk_socpeople = '".$fk_socpeople."'";
+		if ($type_contact_id) $sql .= ", fk_c_type_contact = ".((int) $type_contact_id);
+		if ($fk_socpeople) $sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		$sql .= " where rowid = ".$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1407,9 +1389,9 @@ abstract class CommonObject
 		if ($source == 'internal') $sql .= " AND c.entity IN (".getEntity('user').")";
 		if ($source == 'external') $sql .= " AND c.entity IN (".getEntity('societe').")";
 		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$element."'";
-		$sql .= " AND tc.source = '".$source."'";
-		if ($code) $sql .= " AND tc.code = '".$code."'";
+		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+		if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		$sql .= " AND tc.active = 1";
 		if ($status) $sql .= " AND ec.statut = ".$status;
 
@@ -3261,16 +3243,16 @@ abstract class CommonObject
 		{
 			if ($justsource)
 			{
-				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-				if ($withtargettype) $sql .= " AND targettype = '".$targettype."'";
+				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
+				if ($withtargettype) $sql .= " AND targettype = '".$this->db->escape($targettype)."'";
 			} elseif ($justtarget)
 			{
-				$sql .= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
-				if ($withsourcetype) $sql .= " AND sourcetype = '".$sourcetype."'";
+				$sql .= "fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
+				if ($withsourcetype) $sql .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
 			}
 		} else {
-			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
-			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
+			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."')";
+			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."')";
 		}
 		$sql .= ' ORDER BY '.$orderby;
 
@@ -3879,98 +3861,6 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Return incoterms informations
-	 *    TODO Use a cache for label get
-	 *
-	 *    @return	string	incoterms info
-	 */
-	public function display_incoterms()
-	{
-		// phpcs:enable
-		$out = '';
-
-		$this->label_incoterms = '';
-		if (!empty($this->fk_incoterms))
-		{
-			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$res = $this->db->fetch_object($result);
-				$out .= $res->code;
-			}
-		}
-
-		$out .= (($out && $this->location_incoterms) ? ' - ' : '').$this->location_incoterms;
-
-		return $out;
-	}
-
-	/**
-	 *    Return incoterms informations for pdf display
-	 *
-	 *    @return	string		incoterms info
-	 */
-	public function getIncotermsForPDF()
-	{
-		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			if ($num > 0)
-			{
-				$res = $this->db->fetch_object($resql);
-				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
-			} else {
-				return '';
-			}
-		} else {
-			$this->errors[] = $this->db->lasterror();
-			return false;
-		}
-	}
-
-	/**
-	 *    Define incoterms values of current object
-	 *
-	 *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
-	 * 	  @param 	string  $location		 location of incoterm
-	 *    @return	int     		<0 if KO, >0 if OK
-	 */
-	public function setIncoterms($id_incoterm, $location)
-	{
-		if ($this->id && $this->table_element)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
-			$sql .= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$this->fk_incoterms = $id_incoterm;
-				$this->location_incoterms = $location;
-
-				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-				$res = $this->db->query($sql);
-				if ($res)
-				{
-					$obj = $this->db->fetch_object($res);
-					$this->label_incoterms = $obj->libelle;
-				}
-				return 1;
-			} else {
-				$this->errors[] = $this->db->lasterror();
-				return -1;
-			}
-		} else return -1;
 	}
 
 
@@ -4951,7 +4841,7 @@ abstract class CommonObject
 		// Request to get translation values for object
 		$sql = "SELECT rowid, property, lang , value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
-		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " WHERE type_object = '".$this->db->escape($element)."'";
 		$sql .= " AND fk_object = ".$this->id;
 
 		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
@@ -5851,11 +5741,9 @@ abstract class CommonObject
 		}
 
 		// Set value of $morecss. For this, we use in priority showsize from parameters, then $val['css'] then autodefine
-		if (empty($morecss) && !empty($val['css']))
-		{
+		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
-		} elseif (empty($morecss))
-		{
+		} elseif (empty($morecss)) {
 			if ($type == 'date')
 			{
 				$morecss = 'minwidth100imp';
@@ -5902,16 +5790,16 @@ abstract class CommonObject
 		{
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('real')))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', $type))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif ($type == 'text')
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -6800,7 +6688,9 @@ abstract class CommonObject
 							break;
 						case "create":
 						case "edit":
-							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
+							$check = 'restricthtml';
+							// TODO Use check = 'alphahtml' or 'int' for some types
+							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, $check); // GETPOST can get value from GET, POST or setup of default values.
 							// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 							if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 							{
@@ -6875,7 +6765,7 @@ abstract class CommonObject
 						// HTML, select, integer and text add default value
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 						{
-							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
+							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'restricthtml', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
 							else $value = $this->array_options['options_'.$key];
 						}
 
@@ -6885,7 +6775,7 @@ abstract class CommonObject
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 						$out .= '<td class="';
 						//$out .= "titlefield";
-						//if (GETPOST('action', 'none') == 'create') $out.='create';
+						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
@@ -8403,7 +8293,7 @@ abstract class CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_product)";
 		$sql .= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_product = '".$fromId."'";
+		$sql .= " WHERE fk_product = ".((int) $fromId);
 
 		if (!$this->db->query($sql))
 		{
@@ -8449,7 +8339,7 @@ abstract class CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
 		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql.= " AND filepath = '".$element."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();

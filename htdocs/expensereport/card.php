@@ -27,10 +27,11 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -60,7 +61,7 @@ $date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int
 $fk_project = GETPOST('fk_project', 'int');
 $vatrate = GETPOST('vatrate', 'alpha');
 $ref = GETPOST("ref", 'alpha');
-$comments = GETPOST('comments', 'none');
+$comments = GETPOST('comments', 'restricthtml');
 $fk_c_type_fees = GETPOST('fk_c_type_fees', 'int');
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 'int');
 
@@ -227,8 +228,8 @@ if (empty($reshook))
 		$object->fk_statut = 1;
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
 		$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
-		$object->note_public = GETPOST('note_public', 'none');
-		$object->note_private = GETPOST('note_private', 'none');
+		$object->note_public = GETPOST('note_public', 'restricthtml');
+		$object->note_private = GETPOST('note_private', 'restricthtml');
 		// Fill array 'array_options' with data from add form
 		if (!$error)
 		{
@@ -280,8 +281,8 @@ if (empty($reshook))
 		}
 
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
-		$object->note_public = GETPOST('note_public', 'none');
-		$object->note_private = GETPOST('note_private', 'none');
+		$object->note_public = GETPOST('note_public', 'restricthtml');
+		$object->note_private = GETPOST('note_private', 'restricthtml');
 		$object->fk_user_modif = $user->id;
 
 		$result = $object->update($user);
@@ -299,7 +300,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -1261,7 +1262,7 @@ if (empty($reshook))
 		$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
 		$projet_id = $fk_project;
-		$comments = GETPOST('comments', 'none');
+		$comments = GETPOST('comments', 'restricthtml');
 		$qty = GETPOST('qty', 'int');
 		$vatrate = GETPOST('vatrate', 'alpha');
 
@@ -1362,6 +1363,7 @@ $projecttmp = new Project($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankaccountstatic = new Account($db);
 $ecmfilesstatic = new EcmFiles($db);
+$formexpensereport = new FormExpenseReport($db);
 
 // Create
 if ($action == 'create')
@@ -2289,7 +2291,7 @@ if ($action == 'create')
 
 							// Select type
 							print '<td class="center">';
-							print select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print $formexpensereport->selectTypeExpenseReport($line->fk_c_type_fees, 'fk_c_type_fees');
 							print '</td>';
 
 							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
@@ -2448,7 +2450,7 @@ if ($action == 'create')
 
 					// Select type
 					print '<td class="center">';
-					print select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
+					print $formexpensereport->selectTypeExpenseReport($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))

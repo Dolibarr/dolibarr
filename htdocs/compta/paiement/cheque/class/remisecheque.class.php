@@ -211,7 +211,7 @@ class RemiseCheque extends CommonObject
 				$sql .= " WHERE b.fk_type = 'CHQ'";
 				$sql .= " AND b.amount > 0";
 				$sql .= " AND b.fk_bordereau = 0";
-				$sql .= " AND b.fk_account='".$account_id."'";
+				$sql .= " AND b.fk_account = ".((int) $account_id);
 				if ($limit) $sql .= $this->db->plimit($limit);
 
 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
@@ -358,7 +358,7 @@ class RemiseCheque extends CommonObject
 		if ($this->errno == 0 && $numref)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET statut = 1, ref = '".$numref."'";
+			$sql .= " SET statut = 1, ref = '".$this->db->escape($numref)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND statut = 0";
@@ -662,6 +662,7 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$this->errno = 0;
+
 		$this->db->begin();
 		$total = 0;
 		$nb = 0;
@@ -681,8 +682,8 @@ class RemiseCheque extends CommonObject
 			$this->db->free($resql);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET amount = '".price2num($total)."'";
-			$sql .= ", nbcheque = ".$nb;
+			$sql .= " SET amount = ".price2num($total);
+			$sql .= ", nbcheque = ".((int) $nb);
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND entity = ".$conf->entity;
 
@@ -722,8 +723,8 @@ class RemiseCheque extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 			$sql .= " SET fk_bordereau = 0";
-			$sql .= " WHERE rowid = '".$account_id."'";
-			$sql .= " AND fk_bordereau = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $account_id);
+			$sql .= " AND fk_bordereau = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -774,18 +775,18 @@ class RemiseCheque extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 		$sql .= ' WHERE pf.fk_paiement = '.$payment->id;
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$rejectedPayment = new Paiement($db);
+			$rejectedPayment = new Paiement($this->db);
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
 			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement', 'code', 'id', 1);
 			$rejectedPayment->num_payment = $payment->num_payment;
 
-			while ($obj = $db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
-				$invoice = new Facture($db);
+				$invoice = new Facture($this->db);
 				$invoice->fetch($obj->fk_facture);
 				$invoice->set_unpaid($user);
 

@@ -567,7 +567,7 @@ class AdvanceTargetingMailing extends CommonObject
 					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key])) {
-							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key])."')";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
@@ -587,7 +587,7 @@ class AdvanceTargetingMailing extends CommonObject
 						if (is_array($arrayquery['options_'.$key])) {
 							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
 						} elseif (!empty($arrayquery['options_'.$key])) {
-							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key])."')";
 						}
 					}
 				}
@@ -664,13 +664,13 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = $this->transformToSQL('t.firstname', $arrayquery['contact_firstname']);
 			}
 			if (!empty($arrayquery['contact_country']) && count($arrayquery['contact_country'])) {
-				$sqlwhere[] = " (t.fk_pays IN (".$this->db->escape(implode(',', $arrayquery['contact_country']))."))";
+				$sqlwhere[] = " (t.fk_pays IN (".$this->db->sanitize($this->db->escape(implode(',', $arrayquery['contact_country'])))."))";
 			}
 			if (!empty($arrayquery['contact_status']) && count($arrayquery['contact_status']) > 0) {
-				$sqlwhere[] = " (t.statut IN (".$this->db->escape(implode(',', $arrayquery['contact_status']))."))";
+				$sqlwhere[] = " (t.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $arrayquery['contact_status'])))."))";
 			}
 			if (!empty($arrayquery['contact_civility']) && count($arrayquery['contact_civility']) > 0) {
-				$sqlwhere[] = " (t.civility IN ('".$this->db->escape(implode("','", $arrayquery['contact_civility']))."'))";
+				$sqlwhere[] = " (t.civility IN ('".$this->db->sanitize($this->db->escape(implode("','", $arrayquery['contact_civility'])))."'))";
 			}
 			if ($arrayquery['contact_no_email'] != '') {
 				$tmpwhere = '';
@@ -708,7 +708,7 @@ class AdvanceTargetingMailing extends CommonObject
 					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 					($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key.'_cnct'])."')";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
@@ -732,7 +732,7 @@ class AdvanceTargetingMailing extends CommonObject
 						if (is_array($arrayquery['options_'.$key.'_cnct'])) {
 							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key.'_cnct'])."'))";
 						} elseif (!empty($arrayquery['options_'.$key.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key.'_cnct'])."')";
 						}
 					}
 				}
@@ -810,7 +810,7 @@ class AdvanceTargetingMailing extends CommonObject
 							if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 								($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 								if (!empty($arrayquery['options_'.$key])) {
-									$sqlwhere[] = " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+									$sqlwhere[] = " (tse.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key])."')";
 								}
 							} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 								($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
@@ -830,7 +830,7 @@ class AdvanceTargetingMailing extends CommonObject
 								if (is_array($arrayquery['options_'.$key])) {
 									$sqlwhere[] = " (tse.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
 								} elseif (!empty($arrayquery['options_'.$key])) {
-									$sqlwhere[] = " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+									$sqlwhere[] = " (tse.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key])."')";
 								}
 							}
 						}

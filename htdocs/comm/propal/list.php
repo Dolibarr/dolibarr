@@ -50,7 +50,7 @@ $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'pro
 
 $socid = GETPOST('socid', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -333,13 +333,13 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 if ($search_town)					$sql .= natural_search('s.town', $search_town);
 if ($search_zip)					$sql .= natural_search("s.zip", $search_zip);
 if ($search_state)					$sql .= natural_search("state.nom", $search_state);
-if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_ref)					$sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer)			$sql .= natural_search('p.ref_client', $search_refcustomer);
 if ($search_refproject)				$sql .= natural_search('pr.ref', $search_refproject);
 if ($search_project)				$sql .= natural_search('pr.title', $search_project);
-if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
+if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 
 if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
 if ($search_login)					$sql .= natural_search("u.login", $search_login);
@@ -361,7 +361,7 @@ if ($search_product_category > 0)	$sql .= " AND cp.fk_categorie = ".$db->escape(
 if ($socid > 0) $sql .= ' AND s.rowid = '.$socid;
 if ($search_status != '' && $search_status != '-1')
 {
-	$sql .= ' AND p.fk_statut IN ('.$db->escape($search_status).')';
+	$sql .= ' AND p.fk_statut IN ('.$db->sanitize($db->escape($search_status)).')';
 }
 if ($search_date_start)             $sql .= " AND p.datep >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)               $sql .= " AND p.datep <= '".$db->idate($search_date_end)."'";
@@ -480,11 +480,9 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->propal->creer)
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/propal/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/comm/propal/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->rights->propal->creer);
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -638,12 +636,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -652,12 +648,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1);
+		print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1);
+		print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -666,12 +660,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1);
+		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1);
+		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '</td>';
 	}

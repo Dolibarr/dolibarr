@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'errors', 'other', 'projects'));
 if (!$user->admin) accessforbidden();
 
 $value = GETPOST('value', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'project';
@@ -508,7 +508,7 @@ $def = array();
 
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 
 $resql = $db->query($sql);
@@ -657,7 +657,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 	$sql = "SELECT nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-	$sql .= " WHERE type = '".$type."'";
+	$sql .= " WHERE type = '".$db->escape($type)."'";
 	$sql .= " AND entity = ".$conf->entity;
 
 	$resql = $db->query($sql);

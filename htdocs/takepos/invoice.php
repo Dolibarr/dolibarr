@@ -42,7 +42,7 @@ global $mysoc;
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
@@ -94,8 +94,8 @@ function fail($message)
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
 $selectedline = GETPOST('selectedline', 'int');
-$desc = GETPOST('desc', 'alpha');
-$pay = GETPOST('pay', 'alpha');
+$desc = GETPOST('desc', 'alphanohtml');
+$pay = GETPOST('pay', 'aZ09');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
 $invoiceid = GETPOST('invoiceid', 'int');
@@ -169,11 +169,11 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
-		$sql .= "fk_soc = '".$invoice->socid."' ";
-		$sql .= "AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
-		$sql .= "AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
-		$sql .= "ORDER BY rowid DESC";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE";
+		$sql .= " fk_soc = ".((int) $invoice->socid);
+		$sql .= " AND type <> ".Facture::TYPE_CREDIT_NOTE;
+		$sql .= " AND fk_statut >= ".$invoice::STATUS_VALIDATED;
+		$sql .= " ORDER BY rowid DESC";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -394,7 +394,7 @@ if ($action == "deleteline") {
 		$invoice->deleteline($idline);
 		$invoice->fetch($placeid);
 	} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture='".$placeid."' order by rowid DESC";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
 		$resql = $db->query($sql);
 		$row = $db->fetch_array($resql);
 		$deletelineid = $row[0];
@@ -427,7 +427,7 @@ if ($action == "delete") {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".$placeid;
 			$resql2 = $db->query($sql);
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
-			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$sql .= " WHERE ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"])."-".$db->escape($place).")'";
 			$resql3 = $db->query($sql);
 
 			$invoice->update_price(1);
@@ -1065,7 +1065,30 @@ if ($placeid > 0)
 
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
-				$htmlforlines .= '<td class="right">'.$line->qty.'</td>';
+				$htmlforlines .= '<td class="right">';
+				if (!empty($conf->stock->enabled))
+				{
+					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+					$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
+					$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+					$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
+					$sql .= " WHERE ps.reel != 0";
+					$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
+					$sql .= " AND e.entity IN (".getEntity('stock').")";
+					$sql .= " AND ps.fk_product = ".$line->fk_product;
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						$stock_real = price2num($obj->reel, 'MS');
+						$htmlforlines .= $line->qty;
+						if ($line->qty && $line->qty > $stock_real) $htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
+						$htmlforlines .= ' <span class="posstocktoolow">('.$langs->trans("Stock").' '.$stock_real.')</span>';
+						if ($line->qty && $line->qty > $stock_real) $htmlforlines .= "</span>";
+					}
+				}
+				else $htmlforlines .= $line->qty;
+				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">'.price($line->total_ttc).'</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";

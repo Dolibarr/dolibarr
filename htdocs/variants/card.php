@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');

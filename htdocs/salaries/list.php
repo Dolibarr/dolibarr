@@ -56,7 +56,7 @@ if (!$sortfield) $sortfield = "s.datep,s.rowid";
 if (!$sortorder) $sortorder = "DESC,DESC";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$filtre = GETPOST("filtre", 'none');
+$filtre = GETPOST("filtre", 'restricthtml');
 
 if (!GETPOST('typeid', 'int'))
 {
@@ -153,11 +153,9 @@ if ($result)
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 	if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
-	$newcardbutton = '';
-	if (!empty($user->rights->salaries->write))
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -186,12 +184,10 @@ if ($result)
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
 	// Type

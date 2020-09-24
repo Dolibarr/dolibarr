@@ -171,7 +171,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// MRP
+	// MRP - GPAO
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->bom->enabled) || !empty($conf->mrp->enabled)),
 		'perms'=>(!empty($user->rights->bom->read) || !empty($user->rights->mrp->read)),
@@ -186,7 +186,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'target' => $atarget,
 		'mainmenu' => "mrp",
 		'leftmenu' => '',
-		'position' => 30,
+		'position' => 31,
 		'id' => $id,
 		'idsel' => 'mrp',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
@@ -223,26 +223,22 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Commercial
+	// Commercial (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
 	$tmpentry = array(
-		'enabled'=>(!empty($conf->propal->enabled) ||
-			!empty($conf->commande->enabled) ||
-			!empty($conf->fournisseur->enabled) ||
-			!empty($conf->supplier_proposal->enabled) ||
-			!empty($conf->supplier_order->enabled) ||
-			!empty($conf->contrat->enabled) ||
-			!empty($conf->ficheinter->enabled)
-			) ? 1 : 0,
-		'perms'=>(!empty($user->rights->propal->lire) ||
-			!empty($user->rights->commande->lire) ||
-			!empty($user->rights->fournisseur->lire) ||
-			!empty($user->rights->supplier_proposal->lire) ||
-			!empty($user->rights->supplier_order->lire) ||
-			!empty($user->rights->contrat->lire) ||
-			!empty($user->rights->ficheinter->lire) ||
-			!empty($user->rights->supplier_order->lire) ||
-			!empty($user->rights->fournisseur->commande->lire)
-			),
+		'enabled'=>(!empty($conf->propal->enabled)
+			|| !empty($conf->commande->enabled)
+			|| !empty($conf->supplier_proposal->enabled)
+			|| !empty($conf->supplier_order->enabled)
+			|| !empty($conf->contrat->enabled)
+			|| !empty($conf->ficheinter->enabled)
+		) ? 1 : 0,
+		'perms'=>(!empty($user->rights->propal->lire)
+			|| !empty($user->rights->commande->lire)
+			|| !empty($user->rights->supplier_proposal->lire)
+			|| !empty($user->rights->supplier_order->lire)
+			|| !empty($user->rights->contrat->lire)
+			|| !empty($user->rights->ficheinter->lire)
+		),
 		'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
 
@@ -893,7 +889,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 
 		/*
-		 * Menu COMMERCIAL
+		 * Menu COMMERCIAL (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
 		 */
 		if ($mainmenu == 'commercial')
 		{
@@ -1614,13 +1610,17 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$langs->load("stocks");
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 					{
-						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
-						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
-						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
+						if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
+							$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
+							$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->rights->stock->lire);
+						}
 					} else {
-						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
-						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
-						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
+						if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
+							$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
+							$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
+						}
 					}
 				}
 			}
@@ -1655,7 +1655,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 
 		/*
-		 * Menu PRODUCTS-SERVICES MRP
+		 * Menu PRODUCTS-SERVICES MRP - GPAO
 		 */
 		if ($mainmenu == 'mrp')
 		{
@@ -1769,7 +1769,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$langs->loadLangs(array("holiday", "trips"));
 
 				$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'hrm');
-				$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=request", $langs->trans("New"), 1, $user->rights->holiday->write);
+				$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=create", $langs->trans("New"), 1, $user->rights->holiday->write);
 				$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=hrm", $langs->trans("List"), 1, $user->rights->holiday->read);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm") {
 					$newmenu->add("/holiday/list.php?search_statut=1&mainmenu=hrm&leftmenu=hrm", $langs->trans("DraftCP"), 2, $user->rights->holiday->read);

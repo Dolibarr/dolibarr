@@ -80,8 +80,8 @@ if ($action == 'add' || GETPOST("modify"))
 		{
 			// Supprime boite box_external_rss de definition des boites
             /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
-			$sql.= " SET name = '".$boxlabel."'";
-	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
+			$sql.= " SET name = '".$db->escape($boxlabel)."'";
+	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape($_POST["norss"])." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)

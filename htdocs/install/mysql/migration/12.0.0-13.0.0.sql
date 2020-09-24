@@ -176,6 +176,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	lastname varchar(128),
 	email varchar(255),
 	phone varchar(64),
+	date_birth date,
 	remuneration_requested integer, 
 	remuneration_proposed integer,
 	email_msgid varchar(255),
@@ -186,6 +187,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN entity integer NOT NULL DEFAULT 1;
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_recruitment_origin INTEGER NULL;
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN date_birth date;
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_ref (ref);
@@ -273,6 +275,7 @@ ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float; 
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float; 
 
+ALTER TABLE llx_product ADD COLUMN fk_state integer DEFAULT NULL;
 
 ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
@@ -322,3 +325,6 @@ ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_paiement ADD COLUMN ref_ext varchar(255) AFTER ref;
 
+ALTER TABLE llx_bank ADD COLUMN origin_id integer;
+ALTER TABLE llx_bank ADD COLUMN origin_type varchar(64) NULL;
+ALTER TABLE llx_bank ADD COLUMN import_key varchar(14);

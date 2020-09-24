@@ -41,12 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *	Class to manage price ask supplier
  */
 class SupplierProposal extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -915,7 +918,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "null");
+		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";

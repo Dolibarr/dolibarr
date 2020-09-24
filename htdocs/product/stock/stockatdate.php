@@ -49,7 +49,7 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'alpha');
 $date = '';
@@ -64,8 +64,8 @@ $now = dol_now();
 $productid = GETPOST('productid', 'int');
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -124,7 +124,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot";
 	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-		$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
 	}
 	if ($productid > 0) {
 		$sql .= " AND ps.fk_product = ".$productid;
@@ -175,7 +175,7 @@ if ($date && $dateIsValid) {
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot";
 	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-		$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
 	}
 	if ($mode == 'future') {
 		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";

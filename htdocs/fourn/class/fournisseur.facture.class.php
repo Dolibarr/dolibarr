@@ -190,14 +190,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fournisseur;
 
-	/**
-	 * @var int ID Incorterms
-	 */
-	public $fk_incoterms;
-
-	public $location_incoterms;
-	public $label_incoterms; //Used into tooltip
-
 	public $extraparams = array();
 
 	// Multicurrency
@@ -2400,7 +2392,6 @@ class FactureFournisseur extends CommonInvoice
 			return $numref;
 		} else {
 			$this->error = $obj->error;
-			//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
 			return false;
 		}
 	}
@@ -2722,15 +2713,13 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function isCreditNoteUsed()
 	{
-		global $db;
-
 		$isUsed = false;
 
 		$sql = "SELECT fk_invoice_supplier FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_invoice_supplier_source=".$this->id;
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if (!empty($resql)) {
-			$obj = $db->fetch_object($resql);
-			if (!empty($obj->fk_invoice_supplier))$isUsed = true;
+			$obj = $this->db->fetch_object($resql);
+			if (!empty($obj->fk_invoice_supplier)) $isUsed = true;
 		}
 
 		return $isUsed;

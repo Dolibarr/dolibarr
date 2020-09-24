@@ -63,8 +63,13 @@ $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
+$sign = 1;
+if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
+	$sign = -1;
+}
 
-$coldisplay = 0; ?>
+$coldisplay = 0;
+?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
 <?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
@@ -197,14 +202,14 @@ print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')'
 //print vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
 ?></td>
 
-	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php print price($line->subprice); ?></td>
+	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
 
 <?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php print price($line->multicurrency_subprice); ?></td>
+	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
 <?php }
 
 if ($inputalsopricewithtax) { ?>
-	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ?price($line->pu_ttc) : price($line->subprice)); ?></td>
+	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ? price($sign * $line->pu_ttc) : price($sign * $line->subprice)); ?></td>
 <?php } ?>
 
 	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
@@ -247,7 +252,7 @@ if ($this->situation_cycle_ref)
 	$coldisplay++;
 	$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 	$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-	print '<td align="right" class="linecolcycleref2 nowrap">'.price($tmp[0]).'</td>';
+	print '<td align="right" class="linecolcycleref2 nowrap">'.price($sign * $tmp[0]).'</td>';
 }
 
 if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
@@ -262,6 +267,7 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
   	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
     <?php }
 }
+// Price total without tax
 if ($line->special_code == 3) { ?>
 	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php print $langs->trans('Option'); ?></td>
 <?php } else {
@@ -291,19 +297,19 @@ if ($line->special_code == 3) { ?>
 
 		print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
 	}
-	print price($line->total_ht);
+	print price($sign * $line->total_ht);
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 	    print '</span>';
 	}
 	print '</td>';
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecolutotalht_currency nowrap right">'.price($line->multicurrency_total_ht).'</td>';
+		print '<td class="linecolutotalht_currency nowrap right">'.price($sign * $line->multicurrency_total_ht).'</td>';
 		$coldisplay++;
 	}
 }
 if ($outputalsopricetotalwithtax) {
-    print '<td class="linecolht nowrap right">'.price($line->total_ttc).'</td>';
+	print '<td class="linecolht nowrap right">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
 }
 

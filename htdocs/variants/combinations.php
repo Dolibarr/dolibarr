@@ -40,7 +40,7 @@ $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 $reference = GETPOST('reference', 'alpha');
 $form = new Form($db);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');

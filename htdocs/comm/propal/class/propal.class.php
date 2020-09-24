@@ -41,12 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *	Class to manage proposals
  */
 class Propal extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -1058,7 +1061,7 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "NULL");
+		$sql .= ", ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
