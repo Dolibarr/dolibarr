@@ -288,7 +288,7 @@ if (empty($reshook))
 		$search_alias = '';
 		$search_categ_cus = 0;
 		$search_categ_sup = 0;
-		$search_sale = ''; 
+		$search_sale = '';
 		$search_barcode = "";
 		$search_customer_code = '';
 		$search_supplier_code = '';
