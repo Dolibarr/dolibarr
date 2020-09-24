@@ -80,7 +80,7 @@ if ($user->socid > 0)	// Protection if external user
 	accessforbidden();
 }
 // Security check
-$result = restrictedArea($user, 'asset', $id, '');
+$result = restrictedArea($user, 'asset', $id);
 
 
 // Initialize array of search criterias
