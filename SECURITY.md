@@ -97,19 +97,19 @@ Scope is the web application (back office) and the APIs.
 
 ## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
 * "Self" XSS
-* Missing cookie flags
 * SSL/TLS best practices
 * Denial of Service attacks
 * Clickjacking/UI redressing
-* Physical or social engineering attempts
+* Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
 * Presence of autocomplete attribute on web forms
 * Vulnerabilities affecting outdated browsers or platforms
-* Issues that require physical access to a victim’s computer/device
 * Logout and other instances of low-severity Cross-Site Request Forgery
+* Missing cookie flags
 * Missing security-related HTTP headers which do not lead directly to a vulnerability
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Reports on features flagged as "experimental" or "development"
-* Software version disclosure when logged user is admin
+* Software version or private IP disclosure when logged user is admin
 * Stack traces or path disclosure when logged user is admin
+* Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
 

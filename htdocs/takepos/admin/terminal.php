@@ -202,11 +202,11 @@ if (!empty($conf->stock->enabled))
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)
-	print '<td>';
+	print '<td class="minwidth300">';
 	if (!$disabled)
 	{
-		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled);
-		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
+		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?&terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}

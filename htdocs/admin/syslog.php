@@ -212,6 +212,12 @@ foreach ($syslogModules as $moduleName)
 	print '<td width="140">';
 	print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
 	print $module->getName();
+	if ($moduleName == 'mod_syslog_syslog') {
+		if (! $module->isActive()) {
+			$langs->load("errors");
+			print $form->textwithpicto('', $langs->trans("ErrorPHPNeedModule", 'SysLog'));
+		}
+	}
 	print '</td>';
 
 	print '<td class="nowrap">';

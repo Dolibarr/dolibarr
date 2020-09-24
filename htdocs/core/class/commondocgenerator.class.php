@@ -397,6 +397,8 @@ abstract class CommonDocGenerator
 		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
 
+        $array_key.'_incoterms'=>(method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
+
 		$array_key.'_bank_iban'=>$bank_account->iban,
 		$array_key.'_bank_bic'=>$bank_account->bic,
 

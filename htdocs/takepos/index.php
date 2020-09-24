@@ -836,7 +836,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-home"></span></a>
+				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>

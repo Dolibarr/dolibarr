@@ -65,6 +65,9 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Security check
+if (!empty($user->socid)) $socid = $user->socid;
+$result = restrictedArea($user, 'asset', $id);
 
 $permissiontoread = $user->rights->asset->read;
 $permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php

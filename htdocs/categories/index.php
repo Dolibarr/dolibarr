@@ -39,6 +39,7 @@ if (!$user->rights->categorie->lire) accessforbidden();
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
+$nosearch = GETPOST('nosearch', 'int');
 
 $categstatic = new Categorie($db);
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
@@ -49,6 +50,8 @@ if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backwar
  */
 
 $form = new Form($db);
+
+$moreparam = ($nosearch ? '&nosearch=1' : '');
 
 $typetext = $type;
 if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategoriesArea');
@@ -64,70 +67,69 @@ $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css
 
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
-
 $newcardbutton = '';
 if (!empty($user->rights->categorie->creer)) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).$moreparam);
 }
 
 print load_fiche_titre($title, $newcardbutton, 'object_category');
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+// Search categories
+if (empty($nosearch)) {
+	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
-/*
- * Zone recherche produit/service
- */
-print '<form method="post" action="index.php?type='.$type.'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
+	print '<form method="post" action="index.php?type='.$type.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
+	print '<input type="hidden" name="nosearch" value="'.$nosearch.'">';
 
 
-print '<table class="noborder nohover centpercent">';
-print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("Search").'</td>';
-print '</tr>';
-print '<tr class="oddeven nohover"><td>';
-print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-print '</table></form>';
+	print '<table class="noborder nohover centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="3">'.$langs->trans("Search").'</td>';
+	print '</tr>';
+	print '<tr class="oddeven nohover"><td>';
+	print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+	print '</table></form>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 
-/*
- * Categories found
- */
-if ($catname || $id > 0)
-{
-	$cats = $categstatic->rechercher($id, $catname, $typetext);
-
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
-
-	foreach ($cats as $cat)
+	/*
+	 * Categories found
+	 */
+	if ($catname || $id > 0)
 	{
-		print "\t".'<tr class="oddeven">'."\n";
-		print "\t\t<td>";
-		$categstatic->id = $cat->id;
-		$categstatic->ref = $cat->label;
-		$categstatic->label = $cat->label;
-		$categstatic->type = $cat->type;
-		$categstatic->color = $cat->color;
-		print '<span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>';
-		print $categstatic->getNomUrl(1, '');
-		print '</span>';
-		print "</td>\n";
-		print "\t\t<td>";
-		print dolGetFirstLineOfText($cat->description);
-		print "</td>\n";
-		print "\t</tr>\n";
-	}
-	print "</table>";
-} else print '&nbsp;';
+		$cats = $categstatic->rechercher($id, $catname, $typetext);
 
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-print '</div></div></div>';
+		foreach ($cats as $cat)
+		{
+			print "\t".'<tr class="oddeven">'."\n";
+			print "\t\t<td>";
+			$categstatic->id = $cat->id;
+			$categstatic->ref = $cat->label;
+			$categstatic->label = $cat->label;
+			$categstatic->type = $cat->type;
+			$categstatic->color = $cat->color;
+			print '<span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>';
+			print $categstatic->getNomUrl(1, '');
+			print '</span>';
+			print "</td>\n";
+			print "\t\t<td>";
+			print dolGetFirstLineOfText($cat->description);
+			print "</td>\n";
+			print "\t</tr>\n";
+		}
+		print "</table>";
+	} else print '&nbsp;';
+
+	print '</div></div>';
+}
 
 print '<div class="fichecenter"><br>';
 
@@ -156,7 +158,7 @@ foreach ($fulltree as $key => $val)
 	$categstatic->ref = $val['label'];
 	$categstatic->color = $val['color'];
 	$categstatic->type = $type;
-	$li = $categstatic->getNomUrl(1, '', 60);
+	$li = $categstatic->getNomUrl(1, '', 60, $moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam));
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$counter = '';
@@ -172,7 +174,7 @@ foreach ($fulltree as $key => $val)
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.$counter.
-		'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td></tr></table>'
+		'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'">'.img_view().'</a></td></tr></table>'
 	);
 }
 

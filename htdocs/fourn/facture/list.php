@@ -508,11 +508,9 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->fournisseur->facture->creer)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/facture/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->facture->creer);
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

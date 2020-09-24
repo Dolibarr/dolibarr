@@ -811,19 +811,19 @@ if ($resql)
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateOperationShort').' :';
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From').' ';
-	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to')).'</div>';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateValueShort').' : ';
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('From').' ';
-	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
 	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('to').' '.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0).'</div>';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to')).'</div>';
 	$moreforfilter .= '</div>';
 
 	if (!empty($conf->categorie->enabled))

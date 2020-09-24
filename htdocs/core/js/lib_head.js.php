@@ -1130,4 +1130,15 @@ $(document).ready(function() {
 });
 <?php } ?>
 
+// Force to hide menus when page is inside an iFrame
+$(document).ready(function() {
+	if (window.location !== window.parent.location ) {
+		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
+		// The page is in an iframe
+		jQuery(".side-nav-vert, .side-nav").hide();
+		jQuery(".id-container").css('width', '100%');
+
+	}
+});
+
 // End of lib_head.js.php

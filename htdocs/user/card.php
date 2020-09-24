@@ -61,6 +61,12 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
+$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
+$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
+$datestartvalidity = dol_mktime(0, 0, 0, GETPOST('datestartvaliditymonth', 'int'), GETPOST('datestartvalidityday', 'int'), GETPOST('datestartvalidityyear', 'int'));
+$dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), GETPOST('dateendvalidityday', 'int'), GETPOST('dateendvalidityyear', 'int'));
+$dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
+
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
 $canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
@@ -202,8 +208,6 @@ if (empty($reshook)) {
 			$object->login = GETPOST("login", 'alphanohtml');
 			$object->api_key = GETPOST("api_key", 'alphanohtml');
 			$object->gender = GETPOST("gender", 'aZ09');
-			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
-			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'int');
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
@@ -247,11 +251,12 @@ if (empty($reshook)) {
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
-			$object->dateemployment = $dateemployment;
 
-			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
+			$object->dateemployment = $dateemployment;
 			$object->dateemploymentend = $dateemploymentend;
+			$object->datestartvalidity = $datestartvalidity;
+			$object->dateendvalidity = $dateendvalidity;
+			$object->birth = $dateofbirth;
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
@@ -364,8 +369,6 @@ if (empty($reshook)) {
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
 				$object->login = GETPOST("login", 'alphanohtml');
 				$object->gender = GETPOST("gender", 'aZ09');
-				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
-				$object->birth = $birth;
 				$object->pass = GETPOST("password", 'none');
 				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				if (!empty($user->admin)) $object->admin = GETPOST("admin", "int"); // admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
@@ -409,10 +412,11 @@ if (empty($reshook)) {
 				$object->weeklyhours = price2num($object->weeklyhours);
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 				$object->dateemployment = $dateemployment;
-				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
+				$object->datestartvalidity = $datestartvalidity;
+				$object->dateendvalidity = $dateendvalidity;
+				$object->birth = $dateofbirth;
 
 				if (!empty($conf->stock->enabled))
 				{
@@ -1229,21 +1233,29 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Date employment
 	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 	print '<td>';
-	print $form->selectDate(GETPOST('dateemployment'), 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+	print $form->selectDate($dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
+
+	print ' - ';
+
+	print $form->selectDate($dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
-	// Date employment END
-	print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+	// Date validity
+	print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
 	print '<td>';
-	print $form->selectDate(GETPOST('dateemploymentend'), 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+	print $form->selectDate($datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
+
+	print ' - ';
+
+	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
 	// Date birth
-	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+	print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 	print '<td>';
-	print $form->selectDate(GETPOST('birth'), 'birth', 0, 0, 1, 'createuser', 1, 0);
+	print $form->selectDate($dateofbirth, 'dateofbirth', 0, 0, 1, 'createuser', 1, 0);
 	print '</td>';
 	print "</tr>\n";
 
@@ -1621,24 +1633,32 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 			print '<td>';
 			if ($object->dateemployment) {
-				print '<span class="opacitymedium">'.$langs->trans("FromDate ").'</span>';
+				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
 				print dol_print_date($object->dateemployment, 'day');
 			}
-			//print '</td>';
-			//print "</tr>\n";
-
-			// Date employment
-			//print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			//print '<td>';
 			if ($object->dateemploymentend) {
-				print '<span class="opacitymedium"> - '.$langs->trans("To ").'</span>';
+				print '<span class="opacitymedium"> - '.$langs->trans("To").'</span> ';
 				print dol_print_date($object->dateemploymentend, 'day');
 			}
 			print '</td>';
 			print "</tr>\n";
 
+			// Date login validity
+			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<td>';
+			if ($object->datestartvalidity) {
+				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
+				print dol_print_date($object->datestartvalidity, 'day');
+			}
+			if ($object->dateendvalidity) {
+				print '<span class="opacitymedium"> - '.$langs->trans("To").'</span> ';
+				print dol_print_date($object->dateendvalidity, 'day');
+			}
+			print '</td>';
+			print "</tr>\n";
+
 			// Date of birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 			print '<td>';
 			print dol_print_date($object->birth, 'day');
 			print '</td>';
@@ -2672,19 +2692,16 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<td>';
 			if ($caneditfield)
 			{
-				print $form->selectDate(GETPOST('dateemployment') ?GETPOST('dateemployment') : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 0);
+				print $form->selectDate($dateemployment ? $dateemployment : $object->dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
 			} else {
 				print dol_print_date($object->dateemployment, 'day');
 			}
-			print '</td>';
-			print "</tr>\n";
 
-			// Date employmentEnd
-			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			print '<td>';
+			if ($dateemployment && $dateemploymentend) print ' - ';
+
 			if ($caneditfield)
 			{
-				print $form->selectDate(GETPOST('dateemploymentend') ?GETPOST('dateemploymentend') : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
+				print $form->selectDate($dateemploymentend ? $dateemploymentend : $object->dateemploymentend, 'dateemploymentend', 0, 0, 1, 'formdateemploymentend', 1, 0);
 			} else {
 				print dol_print_date($object->dateemploymentend, 'day');
 			}
@@ -2692,12 +2709,33 @@ if ($action == 'create' || $action == 'adduserldap')
 			print "</tr>\n";
 
 
-			// Date birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			// Date login validity
+			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($caneditfield)
 			{
-				echo $form->selectDate(GETPOST('birth') ?GETPOST('birth') : $object->birth, 'birth', 0, 0, 1, 'updateuser', 1, 0);
+				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 1);
+			} else {
+				print dol_print_date($object->datestartvalidity, 'day');
+			}
+
+			if ($datestartvalidity && $dateendvalidity) print ' - ';
+
+			if ($caneditfield)
+			{
+				print $form->selectDate($dateendvalidity ? $datendevalidity : $object->dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0);
+			} else {
+				print dol_print_date($object->dateendvalidity, 'day');
+			}
+			print '</td>';
+			print "</tr>\n";
+
+
+			// Date birth
+			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
+			print '<td>';
+			if ($caneditfield) {
+				echo $form->selectDate($dateofbirth ? $dateofbirth : $object->birth, 'dateofbirth', 0, 0, 1, 'updateuser', 1, 0);
 			} else {
 				print dol_print_date($object->birth, 'day');
 			}

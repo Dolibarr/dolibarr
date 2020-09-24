@@ -325,3 +325,6 @@ ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_paiement ADD COLUMN ref_ext varchar(255) AFTER ref;
 
+ALTER TABLE llx_bank ADD COLUMN origin_id integer;
+ALTER TABLE llx_bank ADD COLUMN origin_type varchar(64) NULL;
+ALTER TABLE llx_bank ADD COLUMN import_key varchar(14);

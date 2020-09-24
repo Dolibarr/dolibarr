@@ -311,6 +311,7 @@ if (GETPOST('withtab', 'alpha')) $param .= '&withtab='.urlencode(GETPOST('withta
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
