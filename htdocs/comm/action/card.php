@@ -1669,7 +1669,7 @@ if ($id > 0)
 		{
 			$filtreuserid = $user->id;
 			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
-			$object->loadReminders('', $filteruserid);
+			$object->loadReminders('', $filteruserid, false);
 
 			print '<hr>';
 
