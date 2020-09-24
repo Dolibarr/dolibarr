@@ -784,7 +784,11 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("AddIntervention"), '', 'intervention');
 
-	dol_htmloutput_mesg($mesg);
+	if($error > 0) {
+		dol_htmloutput_errors($mesg);
+	} else {
+		dol_htmloutput_mesg($mesg);
+	}
 
 	if ($socid) $res = $soc->fetch($socid);
 
@@ -1058,7 +1062,11 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
-	dol_htmloutput_mesg($mesg);
+	if($error > 0) {
+		dol_htmloutput_errors($mesg);
+	} else {
+		dol_htmloutput_mesg($mesg);
+	}
 
 	$head = fichinter_prepare_head($object);
 
