@@ -44,7 +44,7 @@ Add, into file ~/git/sqlmap/data/xml/payloads/boolean_blind.xml, the custom rule
 Introduce a vulnerability by changing the GETPOST on parameter search_status into GETPOST('search_status', 'none') and removing $db->sanitize when parameter is used;
 
 ./sqlmap.py  -A "securitytest" --threads=4 -u "http://localhostdev/comm/propal/list.php?search_status=*" --dbms=mysql --os=linux --technique=B --batch --skip-waf \
-	--cookie="DOLSESSID_xxxxxx=yyyyyyyy;" --prefix='1' -v 5 > sqlmap.txt
+	--cookie="DOLSESSID_xxxxxx=yyyyyyyy;" --prefix='1' -v 4 > sqlmap.txt
 
 Check vulnerability is found into sqlmap.txt. Scanner is working.
 
