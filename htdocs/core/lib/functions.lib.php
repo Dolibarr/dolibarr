@@ -7735,7 +7735,7 @@ function dol_getmypid()
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
  * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '1,3,4') for search into a multiselect string ('1,2')
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
@@ -7760,22 +7760,22 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	$res = '';
 	if (!is_array($fields)) $fields = array($fields);
 
-	$nboffields = count($fields);
-	$end2 = count($crits);
 	$j = 0;
 	foreach ($crits as $crit)
 	{
+
 		$i = 0; $i2 = 0;
 		$newres = '';
 		foreach ($fields as $field)
 		{
+			$crit = trim($crit);
 			if ($mode == 1)
 			{
 				$operator = '=';
-				$newcrit = preg_replace('/([<>=]+)/', '', trim($crit));
+				$newcrit = preg_replace('/([<>=]+)/', '', $crit);
 
 				$reg = array();
-				preg_match('/([<>=]+)/', trim($crit), $reg);
+				preg_match('/([<>=]+)/', $crit, $reg);
 				if ($reg[1])
 				{
 					$operator = $reg[1];
@@ -7785,7 +7785,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit))
 					{
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$numnewcrit;
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit);	// should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -7793,41 +7793,45 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 			} elseif ($mode == 2 || $mode == -2)
 			{
-				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '')."IN (".$db->escape(trim($crit)).")";
+				$crit = preg_replace('/[^0-9,]/', '', $crit);	// ID are always integer
+				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
+				$newres .= $crit ? "IN (".$db->sanitize($db->escape($crit)).")" : "IN (0)";
 				if ($mode == -2) $newres .= ' OR '.$field.' IS NULL';
 				$i2++; // a criteria was added to string
 			} elseif ($mode == 3 || $mode == -3)
 			{
-				$tmparray = explode(',', trim($crit));
+				$tmparray = explode(',', $crit);
 				if (count($tmparray))
 				{
 					$listofcodes = '';
 					foreach ($tmparray as $val)
 					{
+						$val = trim($val);
 						if ($val)
 						{
 							$listofcodes .= ($listofcodes ? ',' : '');
-							$listofcodes .= "'".$db->escape(trim($val))."'";
+							$listofcodes .= "'".$db->escape($val)."'";
 						}
 					}
-					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$listofcodes.")";
+					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$db->sanitize($listofcodes).")";
 					$i2++; // a criteria was added to string
 				}
 				if ($mode == -3) $newres .= ' OR '.$field.' IS NULL';
 			} elseif ($mode == 4)
 			{
-				$tmparray = explode(',', trim($crit));
+				$tmparray = explode(',', $crit);
 				if (count($tmparray))
 				{
 					$listofcodes = '';
 					foreach ($tmparray as $val)
 					{
+						$val = trim($val);
 						if ($val)
 						{
-							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape(trim($val)).',%\'';
-							$newres .= ' OR '.$field.' = \''.$db->escape(trim($val)).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).',%\'';
+							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape($val).',%\'';
+							$newres .= ' OR '.$field.' = \''.$db->escape($val).'\'';
+							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).'\'';
+							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).',%\'';
 							$newres .= ')';
 							$i2++;
 						}
