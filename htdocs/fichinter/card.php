@@ -1331,8 +1331,13 @@ if ($action == 'create')
 			{
 				print '<br>';
 				print '<table class="noborder centpercent">';
-
 				print '<tr class="liste_titre">';
+
+				// No.
+				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+					print '<td width="5" class="center linecolnum"></td>';
+				}
+
 				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
 				print '<td class="liste_titre center">'.$langs->trans('Date').'</td>';
 				print '<td class="liste_titre right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
@@ -1344,11 +1349,16 @@ if ($action == 'create')
 			{
 				$objp = $db->fetch_object($resql);
 
-
 				// Ligne en mode visu
 				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid)
 				{
 					print '<tr class="oddeven">';
+
+					// No.
+					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+						print '<td class="center linecolnum">'.($i + 1).'</td>';
+					}
+
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 					print dol_htmlentitiesbr($objp->description);
@@ -1409,6 +1419,12 @@ if ($action == 'create')
 				if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id', 'int') == $objp->rowid)
 				{
 					print '<tr class="oddeven nohover">';
+
+					// No.
+					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+						print '<td class="center linecolnum">'.($i + 1).'</td>';
+					}
+
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
@@ -1461,9 +1477,15 @@ if ($action == 'create')
 			{
 				if (!$num)
 				{
-				    print '<br><table class="noborder centpercent">';
+					print '<br>';
+					print '<table class="noborder centpercent">';
+					print '<tr class="liste_titre">';
 
-    				print '<tr class="liste_titre">';
+					// No.
+					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+						print '<td width="5" class="center linecolnum"></td>';
+					}
+
     				print '<td>';
     				print '<a name="add"></a>'; // ancre
     				print $langs->trans('Description').'</td>';
@@ -1474,6 +1496,12 @@ if ($action == 'create')
 				}
 
 				print '<tr class="oddeven nohover">'."\n";
+
+				// No.
+				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+					print '<td class="center linecolnum">'.($i + 1).'</td>';
+				}
+
                 print '<td>';
                 // editeur wysiwyg
                 if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
