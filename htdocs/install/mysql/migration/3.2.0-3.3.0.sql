@@ -315,6 +315,7 @@ ALTER TABLE llx_c_chargesociales ADD COLUMN accountancy_code varchar(15) DEFAULT
 
 -- Tables for accountancy expert
 DROP TABLE llx_accountingaccount;
+DROP TABLE llx_accounting_account;
 DROP TABLE llx_accountingsystem;
 DROP TABLE llx_accounting_system;
 
