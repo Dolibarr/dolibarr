@@ -7763,12 +7763,11 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	$j = 0;
 	foreach ($crits as $crit)
 	{
-
+		$crit = trim($crit);
 		$i = 0; $i2 = 0;
 		$newres = '';
 		foreach ($fields as $field)
 		{
-			$crit = trim($crit);
 			if ($mode == 1)
 			{
 				$operator = '=';
