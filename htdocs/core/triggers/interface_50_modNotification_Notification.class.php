@@ -78,12 +78,6 @@ class InterfaceNotification extends DolibarrTriggers
 	{
 		if (empty($conf->notification->enabled)) return 0; // Module not active, we do nothing
 
-		if ($action == 'ACTION_DELETE')
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE fk_actioncomm = ".$object->id;
-			$resql = $this->db->query($sql);
-		}
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 		$notify = new Notify($this->db);
 
