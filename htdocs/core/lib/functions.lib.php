@@ -3896,20 +3896,21 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	$out = '';
 	$syslog = '';
 
-	// Si erreur intervenue avant chargement langue
+	// If error occurs before the $lang object was loaded
 	if (!$langs)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
 		$langs->load("main");
 	}
-	// Load translation files required by the page
+
+	// Load translation files required by the error messages
 	$langs->loadLangs(array('main', 'errors'));
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		$out .= $langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $out .= "You use an experimental or develop level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
+		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $out .= "You use an experimental or develop level of features, so please do NOT report any bugs or vulnerability, except if problem is confirmed after moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out .= $langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		$out .= "<b>".$langs->trans("Date").":</b> ".dol_print_date(time(), 'dayhourlog')."<br>\n";
@@ -3919,7 +3920,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		{
 			$out .= "<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
 		}
-		$out .= "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+		$out .= "<b>".$langs->trans("Server").":</b> ".dol_htmlentities($_SERVER["SERVER_SOFTWARE"])."<br>\n";
 		if (function_exists("php_uname"))
 		{
 			$out .= "<b>".$langs->trans("OS").":</b> ".php_uname()."<br>\n";
@@ -3927,8 +3928,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<b>".$langs->trans("UserAgent").":</b> ".dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT, 'UTF-8')."<br>\n";
 		$out .= "<br>\n";
 		$out .= "<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8')."<br>\n";
-		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ?dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8') : '')."<br>\n";
-		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? $conf->standard_menu : '')."<br>\n";
+		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8') : '')."<br>\n";
+		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu) : '')."<br>\n";
 		$out .= "<br>\n";
 		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
 		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
@@ -3948,9 +3949,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 		{
 			$out .= "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror() ?dol_escape_htmltag($db->lastqueryerror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out .= "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno() ?dol_escape_htmltag($db->lasterrno()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ?dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror() ? dol_escape_htmltag($db->lastqueryerror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out .= "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno() ? dol_escape_htmltag($db->lasterrno()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ? dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<br>\n";
 		} else // Mode CLI
 		{
@@ -3997,8 +3998,14 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 	}
 
-	if (empty($dolibarr_main_prod)) print $out;
-	else {
+	// Return a http error code if possible
+	if (! headers_sent()) {
+		http_response_code(500);
+	}
+
+	if (empty($dolibarr_main_prod)) {
+		print $out;
+	} else {
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		$langs->load("errors");
@@ -4006,7 +4013,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
 	}
-	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
+
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 
