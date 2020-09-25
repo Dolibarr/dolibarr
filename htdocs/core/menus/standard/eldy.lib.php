@@ -447,6 +447,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Show personalized menus
 	$menuArbo = new Menubase($db, 'eldy');
+
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Return tabMenu with only top entries
 
 	$num = count($newTabMenu);
@@ -455,34 +456,39 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
+		$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
+		// url = url from host, shorturl = relative path into dolibarr sources
+		$url = $shorturl = $newTabMenu[$i]['url'];
+		if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url']))	// Do not change url content for external links
+		{
+			$tmp = explode('?', $newTabMenu[$i]['url'], 2);
+			$url = $shorturl = $tmp[0];
+			$param = (isset($tmp[1]) ? $tmp[1] : '');
+
+			if (!preg_match('/mainmenu/i', $param) || !preg_match('/leftmenu/i', $param)) $param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
+			$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
+			//$shorturl = $shorturl.($param?'?'.$param:'');
+			$shorturl = $url;
+			if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
+		}
+
 		$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
-
-			// url = url from host, shorturl = relative path into dolibarr sources
-			$url = $shorturl = $newTabMenu[$i]['url'];
-			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url']))	// Do not change url content for external links
-			{
-				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
-				$url = $shorturl = $tmp[0];
-				$param = (isset($tmp[1]) ? $tmp[1] : '');
-
-				if (!preg_match('/mainmenu/i', $param) || !preg_match('/leftmenu/i', $param)) $param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
-				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
-				//$shorturl = $shorturl.($param?'?'.$param:'');
-				$shorturl = $url;
-				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
-			}
-
 			// Define the class (top menu selected or not)
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname = 'class="tmenusel"';
 			elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname = 'class="tmenusel"';
 			else $classname = 'class="tmenu"';
-		} elseif ($showmode == 2) $classname = 'class="tmenu"';
+		} elseif ($showmode == 2) {
+			$classname = 'class="tmenu"';
+		}
 
-		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
+		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget),
+			($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']),
+			($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''),
+			$newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
 
 	// Sort on position
@@ -516,7 +522,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
 		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo nohover"', 1);
-
 
 		print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
 

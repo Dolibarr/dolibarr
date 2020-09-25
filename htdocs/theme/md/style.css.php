@@ -56,6 +56,10 @@ if (empty($user->id) && !empty($_SESSION['dol_login']))
 {
 	$user->fetch('', $_SESSION['dol_login'], '', 1);
 	$user->getrights();
+
+	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	$menumanager->loadMenu();
 }
 
 
