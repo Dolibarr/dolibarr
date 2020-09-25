@@ -555,6 +555,21 @@ if (empty($reshook))
 	    }
 	}
 
+	// Reopen
+	elseif ($action == 'confirm_reopen' && $user->rights->ficheinter->creer)
+	{
+		$result = $object->setStatut(Fichinter::STATUS_VALIDATED);
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			$mesg = $object->error;
+		}
+	}
+
 	/*
 	 *  Mise a jour d'une ligne d'intervention
 	 */
@@ -1099,6 +1114,12 @@ if ($action == 'create')
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify', '', 0, 1);
 	}
 
+	// Confirm back to open
+	if ($action == 'reopen')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Reopen'), $langs->trans('ConfirmReopenIntervention', $object->ref), 'confirm_reopen', '', 0, 1);
+	}
+
 	// Confirm deletion of line
 	if ($action == 'ask_deleteline')
 	{
@@ -1566,6 +1587,15 @@ if ($action == 'create')
 					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
 					else print $langs->trans("SetToDraft");
 					print '</a></div>';
+				}
+
+				// Reopen
+				if ($object->statut > Fichinter::STATUS_CLOSED)
+				{
+					if ($user->rights->ficheinter->creer)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans('Reopen').'</a></div>';
+					} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Reopen').'</a></div>';
 				}
 
 				// Send
