@@ -1182,6 +1182,7 @@ function check_value($mask, $value)
 
 	$hasglobalcounter = false;
 	// Extract value for mask counter, mask raz and mask offset
+	$reg = array();
 	if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
 	{
 		$masktri = $reg[1].(isset($reg[2]) ? $reg[2] : '').(isset($reg[3]) ? $reg[3] : '');
@@ -1192,12 +1193,12 @@ function check_value($mask, $value)
 		$masktri = '00000';
 		$maskcounter = '00000';
 	}
-
 	$maskraz = -1;
 	$maskoffset = 0;
 	if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
 
 	// Extract value for third party mask counter
+	$regClientRef = array();
 	if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
 	{
 		$maskrefclient = $regClientRef[1].$regClientRef[2];
