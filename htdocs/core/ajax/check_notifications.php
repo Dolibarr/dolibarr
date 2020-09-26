@@ -61,18 +61,17 @@ if ($action == 'stopreminder') {
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 
 	// Set the reminder as done
-	foreach ($listofreminderidsarray as $listofreminderid) {
-		if (empty($listofreminderid)) continue;
+	//foreach ($listofreminderidsarray as $listofreminderid) {
+	//	if (empty($listofreminderid)) continue;
 		//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
 		$sql .= ' WHERE status = 0 AND rowid IN ('.$db->sanitize($db->escape($listofreminderid)).')';
 		$sql .= ' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
-/*		$resql = $db->query($sql);
+		$resql = $db->query($sql);
 		if (!$resql) {
 			dol_print_error($db);
 		}
-*/
-	}
+	//}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -141,7 +140,6 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
     	$sql .= ' WHERE a.code <> "AC_OTH_AUTO"';
     	$sql .= ' AND (';
     	$sql .= " (ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
-//    	$sql .= " OR (a.datep BETWEEN '".$db->idate($starttime)."' AND '".$db->idate($time + $time_update - 1)."')";
     	$sql .= ' )';
     } else {
     	$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
@@ -157,8 +155,8 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
             // Message must be formated and translated to be used with javascript directly
             $event = array();
             $event['type'] = 'agenda';
-            $event['id'] = $obj->id;
             $event['id_reminder'] = $obj->id_reminder;
+            $event['id_agenda'] = $obj->id_agenda;
             $event['id_user'] = $obj->id_user_reminder;
             $event['code'] = $obj->code;
             $event['label'] = $obj->label;
@@ -166,7 +164,7 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
             $event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard');
             $event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard');
 
-            $eventfound[$obj->id] = $event;
+            $eventfound[$obj->id_agenda] = $event;
         }
     } else {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
