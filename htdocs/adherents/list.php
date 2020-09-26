@@ -604,7 +604,7 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		'validated'=>$langs->trans("Validated"),
 		'uptodate'=>$langs->trans("MemberStatusPaidShort"),
 		'outofdate'=>$langs->trans("MemberStatusActiveLateShort"),
-		'resiliated'=>$langs->trans("Resiliated"
+		'resiliated'=>$langs->trans("Resiliated")
 	);
 	print $form->selectarray('filter', $listfilter, $filter, "");
 	print '</td>';
