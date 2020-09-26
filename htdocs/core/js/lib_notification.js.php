@@ -74,10 +74,12 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
             $.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
                 type: "post",   // Usually post or get
                 async: true,
-                data: { time_js_next_test: time_js_next_test },
+                data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: 'notrequired' },
+                dataType: "json",
                 success: function (result) {
-                    var arr = JSON.parse(result);
-                    if (arr.length > 0) {
+                	console.log(result);
+                    var arrayofpastreminders = Object.values(result.pastreminders);
+                    if (arrayofpastreminders && arrayofpastreminders.length > 0) {
                     	var audio = null;
                         <?php
 						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
@@ -86,27 +88,29 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 						?>
 						var listofreminderids = '';
 
-                        $.each(arr, function (index, value) {
+                        $.each(arrayofpastreminders, function (index, value) {
+							console.log(index);
+                        	console.log(value);
                             var url = "notdefined";
                             var title = "Not defined";
-                            var body = value['type'] + ': ' + value['label'];
-                            if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
-                                body += '\n' + value['location'];
+                            var body = value.label;
+                            if (value.type == 'agenda' && value.location != null && value.location != '') {
+                                body += '\n' + value.location;
                             }
 
-                            if(value['type'] == 'agenda' && (value['event_date_start_formated'] != null || event_date_start_formated['event_date_start'] != '')) {
-                                body += '\n' + value['event_date_start_formated'];
+                            if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
+                                body += '\n' + value.event_date_start_formated;
                             }
 
-                            if (value['type'] == 'agenda')
+                            if (value.type == 'agenda')
                             {
-                             	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value['id'];
-                                title = '<?php print $langs->trans('Agenda') ?>';
+                             	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id;
+                                title = '<?php print $langs->trans('AgendaReminder') ?>';
                             }
                             var extra = {
                                 icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
                                 body: body,
-                                tag: value['id']
+                                tag: value.id
                             };
 
                             // We release the notify
@@ -126,7 +130,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 	                                noti.close();
 	                            };
 
-	                            listofreminderids = listofreminderids + '-' + value['id_reminder']
+	                            listofreminderids = (listofreminderids == '' ? '' : listofreminderids + ',') + value.id_reminder
 	                        }
                         });
 
@@ -135,8 +139,10 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
 			                type: "post",   // Usually post or get
 			                async: true,
-			                data: { time_js_next_test: time_js_next_test }
+			                data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
 			                });
+                    } else {
+                    	console.log("No past reminder found, next try at "+time_js_next_test);
                     }
                 }
             });
