@@ -63,14 +63,14 @@ if ($action == 'stopreminder') {
 	// Set the reminder as done
 	//foreach ($listofreminderidsarray as $listofreminderid) {
 	//	if (empty($listofreminderid)) continue;
-		//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
-		$sql .= ' WHERE status = 0 AND rowid IN ('.$db->sanitize($db->escape($listofreminderid)).')';
-		$sql .= ' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
-		$resql = $db->query($sql);
-		if (!$resql) {
-			dol_print_error($db);
-		}
+	//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
+	$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
+	$sql .= ' WHERE status = 0 AND rowid IN ('.$db->sanitize($db->escape($listofreminderid)).')';
+	$sql .= ' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+	}
 	//}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
