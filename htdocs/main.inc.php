@@ -75,6 +75,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
+		$inj += preg_match('/<svg/i', $val);	// <svg can be allowed in POST
 	}
 	if ($type == 3)
 	{
@@ -174,7 +175,10 @@ if (!empty($_SERVER["PHP_SELF"]))
 // Sanity check on GET parameters
 if (!defined('NOSCANGETFORINJECTION') && !empty($_SERVER["QUERY_STRING"]))
 {
-	$morevaltochecklikeget = array($_SERVER["QUERY_STRING"]);
+	// Note: QUERY_STRING is url encoded, but $_GET and $_POST are already decoded
+	// Because the analyseVarsForSqlAndScriptsInjection is designed for already url decoded value, we must decode QUERY_STRING
+	// Another solution is to provide $_GET as parameter
+	$morevaltochecklikeget = array(urldecode($_SERVER["QUERY_STRING"]));
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget, 1);
 }
 // Sanity check on POST
