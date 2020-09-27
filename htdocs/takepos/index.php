@@ -842,7 +842,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-content">
 		<div class="modal-header">
 		<span class="close">&times;</span>
-		<h2><?php print $langs->trans("Terminal");?></h2>
+		<h3><?php print $langs->trans("TerminalSelect");?></h3>
 	</div>
 	<div class="modal-body">
 		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal");?> 1</button>
@@ -852,9 +852,6 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
 		}
 		?>
-	</div>
-	<div class="modal-footer">
-		<h3><?php print $langs->trans("TerminalSelect");?></h3>
 	</div>
 </div>
 
