@@ -674,7 +674,7 @@ div#moreinfo, div#infowarehouse {
 .modal {
   display: none; /* Hidden by default */
   position: fixed;
-  z-index: 1;
+  z-index: 20;
   left: 0;
   top: 0;
   width: 100%;
@@ -706,12 +706,6 @@ div#moreinfo, div#infowarehouse {
 }
 
 .modal-body {padding: 2px 16px;}
-
-.modal-footer {
-  padding: 2px 16px;
-  background-color: #2b4161;
-  color: white;
-}
 
 .modal-content {
   position: relative;
