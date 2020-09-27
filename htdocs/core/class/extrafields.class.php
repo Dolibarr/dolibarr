@@ -133,6 +133,19 @@ class ExtraFields
 	public $attribute_list;
 
 	/**
+	 * @var array Array to store if field is summable
+	 * @deprecated
+	 */
+	public $attribute_totalizable;
+
+	/**
+	 * @var array Array to store entity id of extrafield
+	 * @deprecated
+	 */
+	public $attribute_entityid;
+
+
+	/**
 	 * @var array New array to store extrafields definition
 	 */
 	public $attributes;
