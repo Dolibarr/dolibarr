@@ -16,7 +16,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function getName()
 	{
-		return 'Syslog';
+		return 'Syslogd';
 	}
 
 	/**

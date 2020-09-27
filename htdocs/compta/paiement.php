@@ -47,7 +47,7 @@ $accountid = GETPOST('accountid', 'int');
 $paymentnum	= GETPOST('num_paiement', 'alpha');
 $socid      = GETPOST('socid', 'int');
 
-$sortfield	= GETPOST('sortfield', 'alpha');
+$sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
@@ -524,7 +524,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td class="tdtop">';
-		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'none').'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea></td></tr>';
 
         print '</table>';
 

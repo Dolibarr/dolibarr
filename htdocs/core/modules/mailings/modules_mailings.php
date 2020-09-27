@@ -175,7 +175,7 @@ class MailingTargets // This can't be abstract as it is used for some method
        			$sql .= " tag,";
         		$sql .= " source_type)";
         		$sql .= " VALUES (".$mailing_id.",";
-        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'").",";
+        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$this->db->escape($targetarray['fk_contact'])."'").",";
         		$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
         		$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
         		$sql .= "'".$this->db->escape($targetarray['email'])."',";

@@ -38,6 +38,7 @@ if ($user->socid > 0)
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('accountancyindex'));
 
+
 /*
  * Actions
  */
@@ -53,6 +54,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
     $result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
     if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
 }
+
 
 /*
  * View

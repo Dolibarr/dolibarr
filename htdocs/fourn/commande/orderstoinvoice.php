@@ -49,7 +49,7 @@ if (!$user->rights->fournisseur->facture->creer)
 
 $id = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST("facid")); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $sref = GETPOST('sref');
 $sref_client = GETPOST('sref_client');
@@ -163,8 +163,8 @@ if (($action == 'create' || $action == 'add') && !$error) {
 			$object->label = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
-			$object->note_public = GETPOST('note_public', 'none');
-			$object->note_private = GETPOST('note_private', 'none');
+			$object->note_public = GETPOST('note_public', 'restricthtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$projectid = GETPOST('projectid', 'int');
@@ -445,10 +445,10 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	// Show orders we can bill
 	if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
 	{
-		$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")"; // Must match filter in htdocs/fourn/card.php
+		$sql .= " AND c.fk_statut IN (".$db->sanitize($db->escape(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY)).")"; // Must match filter in htdocs/fourn/card.php
 	} else {
 		// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
-		$sql .= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+		$sql .= " AND c.fk_statut IN (".$db->sanitize($db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS)).")";
 	}
 
 	$sql .= " AND c.billed = 0";

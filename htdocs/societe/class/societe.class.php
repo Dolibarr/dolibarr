@@ -713,6 +713,35 @@ class Societe extends CommonObject
 	 */
 	public $bank_account;
 
+	/**
+	 * Third party is no customer
+	 */
+	const NO_CUSTOMER = 0;
+
+	/**
+	 * Third party is a customer
+	 */
+	const CUSTOMER = 1;
+
+	/**
+	 * Third party is a prospect
+	 */
+	const PROSPECT = 2;
+
+	/**
+	 * Third party is a customer and a prospect
+	 */
+	const CUSTOMER_AND_PROSPECT = 3;
+
+	/**
+	 * Third party is no supplier
+	 */
+	const NO_SUPPLIER = 0;
+
+	/**
+	 * Third party is a supplier
+	 */
+	const SUPPLIER = 1;
 
 	/**
 	 *    Constructor
@@ -748,7 +777,7 @@ class Societe extends CommonObject
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
 	 *    @param	User	$user       Object of user that ask creation
-	 *    @return   int         		>= 0 if OK, < 0 if KO
+	 *    @return   int         		>=0 if OK, <0 if KO
 	 */
     public function create(User $user)
 	{
@@ -791,12 +820,11 @@ class Societe extends CommonObject
 		{
 			$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
 			$sql .= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($user->id) ? "'".$user->id."'" : "null");
+			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".$this->status;
-			$sql .= ", ".(!empty($this->ref_int) ? "'".$this->db->escape($this->ref_int)."'" : "null");
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 			$sql .= ", 0";
 			$sql .= ", ".(int) $this->fk_incoterms;
@@ -941,7 +969,10 @@ class Societe extends CommonObject
 				} elseif ($rescode == -4)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
+				} else {
+					$this->errors[] = 'ErrorUnknownOnCustomerCodeCheck';
 				}
+
 				$result = -3;
 			}
 		}
@@ -960,9 +991,11 @@ class Societe extends CommonObject
 				} elseif ($rescode == -3)
 				{
 					$this->errors[] = 'ErrorSupplierCodeAlreadyUsed';
-				} elseif ($rescode == -5)
+				} elseif ($rescode == -4)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
+				} else {
+					$this->errors[] = 'ErrorUnknownOnSupplierCodeCheck';
 				}
 				$result = -3;
 			}
@@ -2713,7 +2746,7 @@ class Societe extends CommonObject
 
 		$sql = "SELECT rowid, email, phone_mobile, lastname, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2961,6 +2994,10 @@ class Societe extends CommonObject
 
 		   	dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
 		   	$result = $mod->verif($this->db, $this->code_client, $this, 0);
+		   	if ($result) {	// If error
+		   		$this->error = $mod->error;
+		   		$this->errors = $mod->errors;
+		   	}
 			return $result;
 		} else {
 			return 0;
@@ -2996,6 +3033,10 @@ class Societe extends CommonObject
 
 			dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
 			$result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
+			if ($result) {	// If error
+				$this->error = $mod->error;
+				$this->errors = $mod->errors;
+			}
 			return $result;
 		} else {
 			return 0;
@@ -3157,7 +3198,7 @@ class Societe extends CommonObject
 	 	}
 
 		 //Verify duplicate entries
-		$sql = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$value."' AND entity IN (".getEntity('societe').")";
+		$sql = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
 		if ($socid) $sql .= " AND rowid <> ".$socid;
 		$resql = $this->db->query($sql);
 		if ($resql)

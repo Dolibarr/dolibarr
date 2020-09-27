@@ -141,7 +141,7 @@ if (!$error && $massaction == 'confirm_presend')
 	   	$massaction = 'presend';
 	}
 
-	if (!GETPOST('subject', 'none'))
+	if (!GETPOST('subject', 'restricthtml'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTopic")), null, 'warnings');
@@ -376,8 +376,8 @@ if (!$error && $massaction == 'confirm_presend')
 				}
 
 				$replyto = $from;
-				$subject = GETPOST('subject', 'none');
-				$message = GETPOST('message', 'none');
+				$subject = GETPOST('subject', 'restricthtml');
+				$message = GETPOST('message', 'restricthtml');
 
 				$sendtobcc = GETPOST('sendtoccc');
 				if ($objectclass == 'Propal') 				$sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc ? ", " : "").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
@@ -648,9 +648,9 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			$sql .= ", targettype";
 			$sql .= ") VALUES (";
 			$sql .= $id_order;
-			$sql .= ", '".$objecttmp->origin."'";
+			$sql .= ", '".$db->escape($objecttmp->origin)."'";
 			$sql .= ", ".$objecttmp->id;
-			$sql .= ", '".$objecttmp->element."'";
+			$sql .= ", '".$db->escape($objecttmp->element)."'";
 			$sql .= ")";
 
 			if (!$db->query($sql))

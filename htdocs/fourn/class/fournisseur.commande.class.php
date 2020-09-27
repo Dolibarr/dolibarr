@@ -1297,7 +1297,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".$user->id;
 		$sql .= ", ".self::STATUS_DRAFT;
 		$sql .= ", ".$this->db->escape($this->source);
-		$sql .= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
+		$sql .= ", '".$this->db->escape($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)."'";
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
@@ -1843,7 +1843,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
-			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$batch."'" : "null");
+			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null");
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::dispatchProduct", LOG_DEBUG);
@@ -2414,10 +2414,10 @@ class CommandeFournisseur extends CommonOrder
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 			$sql .= " (fk_commande, label, description, fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
-			$sql .= " VALUES (".$idc.", '".$this->db->escape($label)."','".$this->db->escape($comclient->lines[$i]->desc)."'";
-			$sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
-			$sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
-			$sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."');";
+			$sql .= " VALUES (".$idc.", '".$this->db->escape($label)."', ".$this->db->escape($comclient->lines[$i]->desc);
+			$sql .= ",".$comclient->lines[$i]->fk_product.", ".price2num($comclient->lines[$i]->price);
+			$sql .= ", ".$comclient->lines[$i]->qty.", ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
+			$sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0', '".$this->db->escape($ref)."');";
 			if ($this->db->query($sql))
 			{
 				$this->update_price();
@@ -2927,14 +2927,14 @@ class CommandeFournisseur extends CommonOrder
 		{
 			$sql = "SELECT rowid, code, libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX.'c_input_method';
-			$sql .= " WHERE active=1 AND rowid = ".$db->escape($this->methode_commande_id);
+			$sql .= " WHERE active=1 AND rowid = ".$this->db->escape($this->methode_commande_id);
 
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				if ($db->num_rows($resql))
+				if ($this->db->num_rows($resql))
 				{
-					$obj = $db->fetch_object($resql);
+					$obj = $this->db->fetch_object($resql);
 
 					$string = $langs->trans($obj->code);
 					if ($string == $obj->code)
@@ -2943,7 +2943,7 @@ class CommandeFournisseur extends CommonOrder
 					}
 					return $string;
 				}
-			} else dol_print_error($db);
+			} else dol_print_error($this->db);
 		}
 
 		return '';

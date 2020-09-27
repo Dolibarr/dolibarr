@@ -255,7 +255,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 
 .customer-back {
-	background-color: #95a55d !important;
+	background-color: #55955d !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;

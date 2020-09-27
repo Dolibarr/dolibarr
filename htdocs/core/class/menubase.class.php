@@ -622,7 +622,7 @@ class Menubase
 		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
-		$sql .= " AND m.menu_handler IN ('".$menu_handler."','all')";
+		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
 		if ($type_user == 0) $sql .= " AND m.usertype IN (0,2)";
 		if ($type_user == 1) $sql .= " AND m.usertype IN (1,2)";
 		$sql .= " ORDER BY m.position, m.rowid";

@@ -38,7 +38,7 @@ $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 $floor = GETPOST('floor', 'int');
 if ($floor == "") $floor = 1;
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 

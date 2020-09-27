@@ -251,7 +251,7 @@ $key = 'ONLINE_PAYMENT_MESSAGE_KO';
 if (!empty($conf->global->$key)) print $conf->global->$key;
 
 $type = GETPOST('s', 'alpha');
-$ref = GETPOST('ref', 'none');
+$ref = GETPOST('ref', 'alphanohtml');
 $tag = GETPOST('tag', 'alpha');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if ($type || $tag)

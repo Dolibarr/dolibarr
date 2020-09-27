@@ -297,8 +297,8 @@ if ($resql)
 	/*
 	$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
 	$sql .= "SET";
-	$sql .= " cash='".$cash."'";
-    $sql .= ", card='".$bank."'";
+	$sql .= " cash='".$db->escape($cash)."'";
+    $sql .= ", card='".$db->escape($bank)."'";
 	$sql .= " where rowid=".$id;
 	$db->query($sql);
 	*/

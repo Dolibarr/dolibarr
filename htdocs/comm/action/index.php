@@ -79,7 +79,7 @@ if (!$user->rights->agenda->allactions->read || $filter == 'mine')  // If no per
 	$filtert = $user->id;
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $resourceid = GETPOST("search_resourceid", "int");
 $year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
 $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
@@ -118,13 +118,13 @@ if ($action == 'default')	// When action is default, we want a calendar view and
 {
 	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
-if (GETPOST('viewcal', 'none') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week') {
+if (GETPOST('viewcal', 'restricthtml') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week') {
 	$action = 'show_month'; $day = '';
 } // View by month
-if (GETPOST('viewweek', 'none') || GETPOST('action', 'alpha') == 'show_week') {
+if (GETPOST('viewweek', 'restricthtml') || GETPOST('action', 'alpha') == 'show_week') {
 	$action = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
 } // View by week
-if (GETPOST('viewday', 'none') || GETPOST('action', 'alpha') == 'show_day') {
+if (GETPOST('viewday', 'restricthtml') || GETPOST('action', 'alpha') == 'show_day') {
 	$action = 'show_day'; $day = ($day ? $day : date("d"));
 } // View by day
 
@@ -810,7 +810,7 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 	if ($action == 'show_day')
 	{
 		// Request only leaves for the current selected day
-		$sql .= " AND '".$year."-".$month."-".$day."' BETWEEN x.date_debut AND x.date_fin";
+		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";
 	} elseif ($action == 'show_week')
 	{
 		// TODO: Add filter to reduce database request

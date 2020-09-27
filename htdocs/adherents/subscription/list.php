@@ -33,10 +33,9 @@ $langs->loadLangs(array("members", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'subscriptionlist'; // To manage different context of search
 
 $statut = (GETPOSTISSET("statut") ?GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -154,8 +153,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '')
 {
-    $sql .= " AND c.dateadh >= '".$date_select."-01-01 00:00:00'";
-    $sql .= " AND c.dateadh < '".($date_select + 1)."-01-01 00:00:00'";
+    $sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
+    $sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (c.rowid = ".$db->escape($search_ref).")";

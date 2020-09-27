@@ -397,6 +397,8 @@ abstract class CommonDocGenerator
 		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
 
+        $array_key.'_incoterms'=>(method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
+
 		$array_key.'_bank_iban'=>$bank_account->iban,
 		$array_key.'_bank_bic'=>$bank_account->bic,
 
@@ -604,7 +606,7 @@ abstract class CommonDocGenerator
 				if ($columns != "")
 				{
 					$columns = substr($columns, 0, strlen($columns) - 2);
-					$resql = $this->db->query("SELECT $columns FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields AS ex INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$line->ref_supplier."'");
+					$resql = $this->db->query("SELECT ".$columns." FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields AS ex INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
 
 					if ($this->db->num_rows($resql) > 0)
 					{

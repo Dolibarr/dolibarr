@@ -1031,8 +1031,8 @@ class ActionComm extends CommonObject
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
 		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
 		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", fk_user_action=".($userownerid > 0 ? "'".$userownerid."'" : "null");
-		$sql .= ", fk_user_done=".($userdoneid > 0 ? "'".$userdoneid."'" : "null");
+		$sql .= ", fk_user_action = ".($userownerid > 0 ? "'".$this->db->escape($userownerid)."'" : "null");
+		$sql .= ", fk_user_done = ".($userdoneid > 0 ? "'".$this->db->escape($userdoneid)."'" : "null");
 		if (!empty($this->fk_element)) $sql .= ", fk_element=".($this->fk_element ? $this->db->escape($this->fk_element) : "null");
 		if (!empty($this->elementtype)) $sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
 		$sql .= " WHERE id=".$this->id;
@@ -1127,7 +1127,7 @@ class ActionComm extends CommonObject
 	 *  Load all objects with filters.
 	 *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
 	 *
-	 *  @param		DoliDb	$db				Database handler
+	 *  @param		DoliDb	$db				Not used
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
@@ -1160,7 +1160,7 @@ class ActionComm extends CommonObject
 				$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
 			}
 			else {
-				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
+				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) $sql .= $filter;

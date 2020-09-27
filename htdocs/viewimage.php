@@ -93,7 +93,7 @@ function llxFooter()
 require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
@@ -236,7 +236,7 @@ if (!$accessallowed)
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
 {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
-	print "ErrorFileNameInvalid: ".$original_file;
+	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
 	exit;
 }
 

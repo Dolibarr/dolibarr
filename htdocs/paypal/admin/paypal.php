@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if ($action == 'setvalue' && $user->admin)
 {
@@ -202,7 +202,7 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("VendorName").'</td><td>';
+print $langs->trans("PublicVendorName").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
@@ -269,7 +269,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 	$langs->load("errors");
-	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", PAYMENT_SECURITY_ACCEPT_ANY_TOKEN), '', 'pictowarning marginleftonly');
+	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
 print '</td></tr>';
 

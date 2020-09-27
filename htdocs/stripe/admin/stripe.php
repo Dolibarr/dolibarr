@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -157,7 +157,7 @@ print load_fiche_titre($langs->trans("ModuleSetup").' Stripe', $linkback);
 
 $head = stripeadmin_prepare_head();
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -446,7 +446,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 if (! empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 	$langs->load("errors");
-	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", PAYMENT_SECURITY_ACCEPT_ANY_TOKEN), '', 'pictowarning marginleftonly');
+	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
 print '</td></tr>';
 

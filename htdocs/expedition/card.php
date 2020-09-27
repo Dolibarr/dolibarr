@@ -164,7 +164,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -216,8 +216,8 @@ if (empty($reshook))
 		$object->shipping_method_id		= GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
 		$object->ref_int = GETPOST('ref_int', 'alpha');
-		$object->note_private = GETPOST('note_private', 'none');
-		$object->note_public = GETPOST('note_public', 'none');
+		$object->note_private = GETPOST('note_private', 'restricthtml');
+		$object->note_public = GETPOST('note_public', 'restricthtml');
 		$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 		$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 

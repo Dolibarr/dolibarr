@@ -40,7 +40,7 @@ $langs->loadLangs(array('companies', 'bills', 'interventions'));
 if (!empty($conf->projet->enabled))     $langs->load("projects");
 if (!empty($conf->contrat->enabled))    $langs->load("contracts");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -65,8 +65,8 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 $diroutputmassaction = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -95,9 +95,10 @@ $fieldstosearchall = array(
 	's.nom'=>"ThirdParty",
 	'f.description'=>'Description',
 	'f.note_public'=>'NotePublic',
+	'fd.description'=>'DescriptionOfLine',
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"] = "NotePrivate";
-if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['f.description']);
+if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['fd.description']);
 
 // Definition of fields for list
 $arrayfields = array(
@@ -319,7 +320,10 @@ if ($resql)
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fichinter/card.php?action=create', '', $user->rights->ficheinter->creer);
+
+	$url = DOL_URL_ROOT.'/fichinter/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->rights->ficheinter->creer);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

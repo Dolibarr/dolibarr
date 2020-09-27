@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('account', 'int') ? GETPOST('account', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $dvid = GETPOST('dvid', 'alpha');

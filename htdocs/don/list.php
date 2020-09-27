@@ -96,7 +96,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS 
 $sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
 if ($search_status != '' && $search_status != '-4')
 {
-	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
 if (trim($search_ref) != '')
 {

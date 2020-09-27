@@ -36,10 +36,10 @@ $now = dol_now();
 $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');
-$forbarcode = GETPOST('forbarcode');
-$fk_barcode_type = GETPOST('fk_barcode_type');
-$mode = GETPOST('mode');
-$modellabel = GETPOST("modellabel"); // Doc template to use
+$forbarcode = GETPOST('forbarcode', 'alphanohtml');
+$fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+$mode = GETPOST('mode', 'aZ09');
+$modellabel = GETPOST("modellabel", 'aZ09'); // Doc template to use
 $numberofsticker = GETPOST('numberofsticker', 'int');
 
 $mesg = '';
@@ -57,8 +57,8 @@ $thirdpartytmp = new Societe($db);
 if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 {
 	$action = ''; // We reset because we don't want to build doc
-	if (GETPOST('productid') > 0) {
-		$result = $producttmp->fetch(GETPOST('productid'));
+	if (GETPOST('productid', 'int') > 0) {
+		$result = $producttmp->fetch(GETPOST('productid', 'int'));
 		if ($result < 0) {
 			setEventMessage($producttmp->error, 'errors');
 		}
@@ -76,9 +76,9 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 {
 	$action = ''; // We reset because we don't want to build doc
-	if (GETPOST('socid') > 0)
+	if (GETPOST('socid', 'int') > 0)
 	{
-		$thirdpartytmp->fetch(GETPOST('socid'));
+		$thirdpartytmp->fetch(GETPOST('socid', 'int'));
 		$forbarcode = $thirdpartytmp->barcode;
 		$fk_barcode_type = $thirdpartytmp->barcode_type_code;
 
@@ -381,7 +381,7 @@ if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)
     print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
     print '<br>';
     print '<div class="showforproductselector">';
-    $form->select_produits(GETPOST('productid'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
+    $form->select_produits(GETPOST('productid', 'int'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
     print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
     print '</div>';
 }
@@ -391,7 +391,7 @@ if (!empty($user->rights->societe->lire))
     print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
     print '<br>';
     print '<div class="showforthirdpartyselector">';
-    print $form->select_company(GETPOST('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+    print $form->select_company(GETPOST('socid', 'int'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
     print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
     print '</div>';
 }

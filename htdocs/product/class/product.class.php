@@ -929,7 +929,7 @@ class Product extends CommonObject
 					{
 						if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined') {
 							// We discard this line, we will create it later
-							$sqlclean = "DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$valueforundefinedlot."') AND fk_product_stock = ".$ObjW->id;
+							$sqlclean = "DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$this->db->escape($valueforundefinedlot)."') AND fk_product_stock = ".$ObjW->id;
 							$result = $this->db->query($sqlclean);
 							if (!$result) {
 								dol_print_error($this->db);
@@ -1612,7 +1612,7 @@ class Product extends CommonObject
 			// If price per customer
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-			$prodcustprice = new Productcustomerprice($db);
+			$prodcustprice = new Productcustomerprice($this->db);
 
 			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
 
@@ -1749,7 +1749,7 @@ class Product extends CommonObject
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql .= " WHERE pfp.fk_product = ".$product_id;
-				if ($fourn_ref != 'none') { $sql .= " AND pfp.ref_fourn = '".$fourn_ref."'";
+				if ($fourn_ref != 'none') { $sql .= " AND pfp.ref_fourn = '".$this->db->escape($fourn_ref)."'";
 				}
 				if ($fk_soc > 0) { $sql .= " AND pfp.fk_soc = ".$fk_soc;
 				}
@@ -1922,18 +1922,18 @@ class Product extends CommonObject
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
-			$sql .= " price_base_type='".$newpricebase."',";
+			$sql .= " price_base_type='".$this->db->escape($newpricebase)."',";
 			$sql .= " price=".$price.",";
 			$sql .= " price_ttc=".$price_ttc.",";
 			$sql .= " price_min=".$price_min.",";
 			$sql .= " price_min_ttc=".$price_min_ttc.",";
 			$sql .= " localtax1_tx=".($localtax1 >= 0 ? $localtax1 : 'NULL').",";
 			$sql .= " localtax2_tx=".($localtax2 >= 0 ? $localtax2 : 'NULL').",";
-			$sql .= " localtax1_type=".($localtaxtype1 != '' ? "'".$localtaxtype1."'" : "'0'").",";
-			$sql .= " localtax2_type=".($localtaxtype2 != '' ? "'".$localtaxtype2."'" : "'0'").",";
+			$sql .= " localtax1_type=".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
+			$sql .= " localtax2_type=".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " tva_tx='".price2num($newvat)."',";
-			$sql .= " recuperableonly='".$newnpr."'";
+			$sql .= " recuperableonly='".$this->db->escape($newnpr)."'";
 			$sql .= " WHERE rowid = ".$id;
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -2942,7 +2942,7 @@ class Product extends CommonObject
 		global $db, $conf, $user, $hookmanager;
 
 		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(".$db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
+		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(".$this->db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -3672,8 +3672,8 @@ class Product extends CommonObject
 		// phpcs:enable
 		$sql = "SELECT fk_product_pere, qty, incdec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
-		$sql .= " WHERE fk_product_pere  = '".$fk_parent."'";
-		$sql .= " AND fk_product_fils = '".$fk_child."'";
+		$sql .= " WHERE fk_product_pere  = ".((int) $fk_parent);
+		$sql .= " AND fk_product_fils = ".((int) $fk_child);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -4698,7 +4698,7 @@ class Product extends CommonObject
 		$sql .= " AND w.rowid = ps.fk_entrepot";
 		$sql .= " AND ps.fk_product = ".$this->id;
 		if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
-			$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+			$sql .= " AND w.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
 		}
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
@@ -5371,17 +5371,17 @@ class Product extends CommonObject
 		global $conf, $db;
 
 		$sql = "SELECT rowid, level, fk_level, var_percent, var_min_percent FROM ".MAIN_DB_PREFIX."product_pricerules";
-		$query = $db->query($sql);
+		$query = $this->db->query($sql);
 
 		$rules = array();
 
-		while ($result = $db->fetch_object($query)) {
+		while ($result = $this->db->fetch_object($query)) {
 			$rules[$result->level] = $result;
 		}
 
 		//Because prices can be based on other level's prices, we temporarily store them
 		$prices = array(
-		1 => $baseprice
+			1 => $baseprice
 		);
 
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {

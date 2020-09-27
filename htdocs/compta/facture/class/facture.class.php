@@ -481,8 +481,8 @@ class Facture extends CommonInvoice
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
 			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
-			$this->note_public       = GETPOST('note_public', 'none') ? GETPOST('note_public', 'none') : $_facrec->note_public;
-			$this->note_private      = GETPOST('note_private', 'none') ? GETPOST('note_private', 'none') : $_facrec->note_private;
+			$this->note_public       = GETPOST('note_public', 'none') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
+			$this->note_private      = GETPOST('note_private', 'none') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->modelpdf          = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->modelpdf;
 			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
@@ -612,7 +612,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".setEntity($this);
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->type)."'";
-		$sql .= ", '".$socid."'";
+		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->remise_absolue : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->remise_percent : 'NULL');
@@ -627,7 +627,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape($this->fk_fac_rec_source)."'" : "null");
 		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null");
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "null");
+		$sql .= ", ".($user->id > 0 ? (int) $user->id : "null");
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".$this->cond_reglement_id;
 		$sql .= ", ".$this->mode_reglement_id;
@@ -715,7 +715,7 @@ class Facture extends CommonInvoice
 				}
 
 				$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-				$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+				$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 				$resqlcontact = $this->db->query($sqlcontact);
 				if ($resqlcontact)

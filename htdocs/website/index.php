@@ -59,7 +59,7 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -108,7 +108,7 @@ $objectpage = new WebsitePage($db);
 $object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
 
 // If website not defined, we take first found
-if (!($websiteid > 0) && empty($websitekey))
+if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite')
 {
 	foreach ($object->records as $key => $valwebsite)
 	{
@@ -278,7 +278,7 @@ if (empty($sortfield)) {
 	}
 }
 
-$searchkey = GETPOST('searchstring', 'none');
+$searchkey = GETPOST('searchstring', 'restricthtml');
 
 if ($action == 'replacesiteconfirm') {
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
@@ -395,7 +395,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 
 	$db->begin();
 
-	$categoryid = GETPOST('setcategory', 'none');
+	$categoryid = GETPOST('setcategory', 'restricthtml');
 	if ($categoryid > 0) {
 		$tmpwebsitepage = new WebsitePage($db);
 		$category = new Categorie($db);
@@ -1420,7 +1420,7 @@ if ($action == 'updatecss')
     	    $robotcontent.= "header('Content-type: text/css');\n";
     	    $robotcontent.= "// END PHP ?>\n";*/
 
-    		$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'none'))."\n";
+    		$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
 
     		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
     	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
@@ -1436,7 +1436,7 @@ if ($action == 'updatecss')
 
     		// Htaccess file
     		$htaccesscontent = '';
-    		$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'none'))."\n";
+    		$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
 
     		$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
     		if (!$result)
@@ -1486,7 +1486,7 @@ if ($action == 'updatecss')
        		$readmecontent.= "header('Content-type: application/manifest+json');\n";
        		$readmecontent.= "// END PHP ?>\n";*/
 
-       		$readmecontent .= trim(GETPOST('WEBSITE_README', 'none'))."\n";
+       		$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
 
        		/*$readmecontent.= '<?php // BEGIN PHP'."\n";
        		$readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
@@ -2182,7 +2182,7 @@ $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
 $formother = new FormOther($db);
 
-$help_url = '';
+$helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
 
 $arrayofjs = array(
 	'/includes/ace/src/ace.js',
@@ -2204,7 +2204,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
@@ -2276,45 +2276,6 @@ if (!GETPOST('hide_websitemenu'))
 	$disabled = '';
 	if (empty($user->rights->website->write)) $disabled = ' disabled="disabled"';
 
-	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar">';
-
-
-	// ***** Part for web sites
-	print '<!-- Bar for website -->';
-	print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
-	print $langs->trans("Website").' : ';
-	print '</span>';
-
-	print '<span class="websiteselection hideonsmartphoneimp">';
-	print '<a href="'.$_SERVER["PHP_SEFL"].'?action=createsite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
-	print '</span>';
-
-	// List of website
-	print '<span class="websiteselection">';
-	$out = '';
-	$out .= '<select name="website" class="minwidth100 maxwidth300 maxwidth150onsmartphone" id="website">';
-	if (empty($object->records)) $out .= '<option value="-1">&nbsp;</option>';
-	// Loop on each sites
-	$i = 0;
-	foreach ($object->records as $key => $valwebsite)
-	{
-		if (empty($websitekey)) $websitekey = $valwebsite->ref;
-
-		$out .= '<option value="'.$valwebsite->ref.'"';
-		if ($websitekey == $valwebsite->ref) $out .= ' selected'; // To preselect a value
-		$out .= '>';
-		$out .= $valwebsite->ref;
-		$out .= '</option>';
-		$i++;
-	}
-	$out .= '</select>';
-	$out .= ajax_combobox('website');
-	print $out;
-	//print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
-	print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshsite" value="'.$langs->trans("Load").'">';
-
-
 	if ($websitekey)
 	{
 		$virtualurl = '';
@@ -2331,70 +2292,146 @@ if (!GETPOST('hide_websitemenu'))
 	if (!is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
-	if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
-	{
-		print ' &nbsp; ';
 
-		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+	//var_dump($objectpage);exit;
+	print '<div class="centpercent websitebar">';
 
-		$importlabel = $langs->trans("ImportSite");
-		$exportlabel = $langs->trans("ExportSite");
-		if (! empty($conf->dol_optimize_smallscreen)) {
-			$importlabel = $langs->trans("Import");
-			$exportlabel = $langs->trans("Export");
+	//
+	// Toolbar for websites
+	//
+
+	print '<!-- Bar for website -->';
+	if ($action != 'file_manager') {
+		print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print $langs->trans("Website").' : ';
+		print '</span>';
+
+		$urltocreatenewwebsite = $_SERVER["PHP_SEFL"].'?action=createsite';
+		if (empty($conf->use_javascript_ajax)) {
+			print '<span class="websiteselection hideonsmartphoneimp">';
+			print '<a href="'.$urltocreatenewwebsite.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
+			print '</span>';
 		}
 
-		if ($atleastonepage)
+		// List of website
+		print '<span class="websiteselection">';
+		$out = '';
+		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
+		if (empty($object->records)) $out .= '<option value="-1">&nbsp;</option>';
+		if (! empty($conf->use_javascript_ajax)) {
+			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddWebsite").'</span>';
+			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
+		}
+		// Loop on each sites
+		$i = 0;
+		foreach ($object->records as $key => $valwebsite)
 		{
-			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+			if (empty($websitekey)) {
+				if ($action != 'createsite') $websitekey = $valwebsite->ref;
+			}
+
+			$out .= '<option value="'.$valwebsite->ref.'"';
+			if ($websitekey == $valwebsite->ref) $out .= ' selected'; // To preselect a value
+			//$outoption = $valwebsite->getLibStatut(3).' '.$valwebsite->ref.' ';
+			$outoption = (($valwebsite->status == $valwebsite::STATUS_DRAFT)?'<span class="opacitymedium">':'').$valwebsite->ref.(($valwebsite->status == $valwebsite::STATUS_DRAFT)?'</span>':'');
+			$out .= ' data-html="'.dol_escape_htmltag($outoption).'"';
+			$out .= '>';
+			$out .= $valwebsite->ref;
+			$out .= '</option>';
+			$i++;
 		}
-		else {
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+		$out .= '</select>';
+		$out .= ajax_combobox('website');
+
+		if (!empty($conf->use_javascript_ajax)) {
+			$out .= '<script language="javascript">';
+			$out .= 'jQuery(document).ready(function () {';
+			$out .= '	jQuery("#website").change(function () {';
+			$out .= '   	console.log("We select "+jQuery("#website option:selected").val());';
+			$out .= '   	if (jQuery("#website option:selected").val() == \'-2\') {';
+			$out .= '  			window.location.href = "'.$urltocreatenewwebsite.'";';
+			$out .= '		} else {';
+			$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website="+jQuery("#website option:selected").val();';
+			$out .= '       }';
+			$out .= '   });';
+			$out .= '});';
+			$out .= '</script>';
 		}
+		print $out;
 
-		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
-		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
-
-		print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
-
-		print ' &nbsp; ';
-
-		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
-		//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
-		print '<script language="javascript">
-			jQuery(document).ready(function () {
-           		jQuery(".button_file_manager").click(function () {
-					var $dialog = $(\'<div></div>\').html(\'<iframe style="border: 0px;" src="'.DOL_URL_ROOT.'/website/index.php?hide_websitemenu=1&dol_hide_topmenu=1&dol_hide_leftmenu=1&file_manager=1&website='.$websitekey.'&pageid='.$pageid.'" width="100%" height="100%"></iframe>\')
-					.dialog({
-						autoOpen: false,
-						modal: true,
-						height: 500,
-						width: \'80%\',
-						title: "'.dol_escape_js($langs->trans("FileManager")).'"
-					});
-					$dialog.dialog(\'open\');
-				});
-			});
-			</script>';
-		*/
-
-		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
-
-		if (! empty($conf->categorie->enabled)) {
-			print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+		if (empty($conf->use_javascript_ajax)) {
+			print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshsite" value="'.$langs->trans("Load").'">';
 		}
 
-		if (! empty($conf->global->WEBSITE_ADD_REGENERATE_BUTTON)) {
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
+		{
+			print ' &nbsp; ';
+
+			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+
+			$importlabel = $langs->trans("ImportSite");
+			$exportlabel = $langs->trans("ExportSite");
+			if (! empty($conf->dol_optimize_smallscreen)) {
+				$importlabel = $langs->trans("Import");
+				$exportlabel = $langs->trans("Export");
+			}
+
+			if ($atleastonepage)
+			{
+				print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+			}
+			else {
+				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
+			}
+
+			//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+
+			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
+
+			print ' &nbsp; ';
+
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
+
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
 		}
+
+		print '</span>';
+
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
+		{
+			print '<span class="websiteselection">';
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+
+			if (! empty($conf->categorie->enabled)) {
+				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+
+				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+				print '<a class="button bordertransp button_categories"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+				print '<script language="javascript">
+				 jQuery(document).ready(function () {
+					 jQuery(".button_categories").click(function () {
+						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref.'" width="100%" height="98%"></iframe>\')
+						 .dialog({
+						 	autoOpen: false,
+						 	modal: true,
+						 	height: (window.innerHeight - 150),
+						 	width: \'80%\',
+						 	title: "'.dol_escape_js($langs->transnoentitiesnoconv("Categories")).'"
+						 });
+						 $dialog.dialog(\'open\');
+					 });
+				 });
+				 </script>';
+			}
+
+			print '</span>';
+		}
+	} else {
+		print '<input type="hidden" name="website" id="website" value='.$websitekey.'">';
 	}
 
-	print '</span>';
-
-
-	// Toolbar for websites
 
 	print '<span class="websitetools websiteselection">';
 
@@ -2405,7 +2442,7 @@ if (!GETPOST('hide_websitemenu'))
 
 		print '<span class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl ? $virtualurl : '#').'" class="valignmiddle">';
-		$linktotestonwebserver .= '<span class="hideonsmartphone">'.$langs->trans("TestDeployOnWeb", $virtualurl).' </span>'.img_picto('', 'globe');
+		$linktotestonwebserver .= '<span class="hideonsmartphone paddingrightonly">'.$langs->trans("TestDeployOnWeb", $virtualurl).'</span>'.img_picto('', 'globe');
 		$linktotestonwebserver .= '</a>';
 		$htmltext = '';
 		if (empty($object->fk_default_home))
@@ -2469,8 +2506,10 @@ if (!GETPOST('hide_websitemenu'))
 
 	print '</span>';
 
-
+	//
 	// Toolbar for pages
+	//
+
 	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager)
 	{
 		print '</div>'; // Close current websitebar to open a new one
@@ -2483,7 +2522,6 @@ if (!GETPOST('hide_websitemenu'))
 		print '</span>';
 
 		print '<span class="websiteselection hideonsmartphoneimp">';
-		//print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
 		print '</span>';
 
@@ -2491,7 +2529,28 @@ if (!GETPOST('hide_websitemenu'))
 
 		if ($action != 'addcontainer')
 		{
-			print '<span class="websiteselection">'.$formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone').'</span>';
+			print '<span class="websiteselection">';
+			print $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
+			print '</span>';
+
+			$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
+
+			$out = '';
+			if (!empty($conf->use_javascript_ajax)) {
+				$out .= '<script language="javascript">';
+				$out .= 'jQuery(document).ready(function () {';
+				$out .= '	jQuery("#pageid").change(function () {';
+				$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
+				$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
+				$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
+				$out .= '		} else {';
+				$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
+				$out .= '       }';
+				$out .= '   });';
+				$out .= '});';
+				$out .= '</script>';
+			}
+			print $out;
 		}
 		else {
 			print $langs->trans("New");
@@ -2939,7 +2998,7 @@ if ($action == 'editcss')
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $manifestjsoncontent);
 	}
 	else {
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'none');
+		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
 	}
 	if (!trim($manifestjsoncontent))
 	{
@@ -3142,7 +3201,7 @@ if ($action == 'createsite')
 	if (GETPOST('WEBSITE_OTHERLANG'))   $siteotherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
-	print $langs->trans('Ref');
+	print $form->textwithpicto($langs->trans('WebSite'), $langs->trans("Example").': www.mywebsite.com, myportal, ...');
 	print '</td><td>';
 	print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'" autofocus>';
 	print '</td></tr>';

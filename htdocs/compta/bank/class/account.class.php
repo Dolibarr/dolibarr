@@ -390,11 +390,11 @@ class Account extends CommonObject
 		$sql .= ", label";
 		$sql .= ", type";
 		$sql .= ") VALUES (";
-		$sql .= "'".$line_id."'";
-		$sql .= ", '".$url_id."'";
-		$sql .= ", '".$url."'";
+		$sql .= " ".((int) $line_id);
+		$sql .= ", '".$this->db->escape($url_id)."'";
+		$sql .= ", '".$this->db->escape($url)."'";
 		$sql .= ", '".$this->db->escape($label)."'";
-		$sql .= ", '".$type."'";
+		$sql .= ", '".$this->db->escape($type)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add_url_line", LOG_DEBUG);
@@ -434,7 +434,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_url";
 		if ($fk_bank > 0) {
 			$sql .= " WHERE fk_bank = ".$fk_bank;
-		} else { $sql .= " WHERE url_id = ".$url_id." AND type = '".$type."'";
+		} else { $sql .= " WHERE url_id = ".$url_id." AND type = '".$this->db->escape($type)."'";
 		}
 		$sql .= " ORDER BY type, label";
 
@@ -1315,7 +1315,7 @@ class Account extends CommonObject
 	 *
 	 *      @return int     Nb of account we can reconciliate
 	 */
-	public static function countAccountToReconcile()
+	public function countAccountToReconcile()
 	{
 		global $db, $conf, $user;
 
@@ -1331,12 +1331,12 @@ class Account extends CommonObject
 		$sql .= " WHERE ba.rappro > 0 and ba.clos = 0";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql .= " AND ba.courant != 2";
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$obj = $db->fetch_object($resql);
+			$obj = $this->db->fetch_object($resql);
 			$nb = $obj->nb;
-		} else dol_print_error($db);
+		} else dol_print_error($this->db);
 
 		return $nb;
 	}
@@ -1825,7 +1825,7 @@ class AccountLine extends CommonObject
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) $sql .= " AND b.num_chq='".$this->db->escape($num)."'";
 		elseif ($ref) $sql .= " AND b.rowid='".$this->db->escape($ref)."'";
-		else $sql .= " AND b.rowid=".$rowid;
+		else $sql .= " AND b.rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2421,7 +2421,7 @@ class AccountLine extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

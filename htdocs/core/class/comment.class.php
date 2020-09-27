@@ -349,25 +349,25 @@ class Comment extends CommonObject
 			$sql .= " c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 			$sql .= " WHERE c.fk_element = ".$fk_element;
-			$sql .= " AND c.element_type = '".$db->escape($element_type)."'";
+			$sql .= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql .= " AND c.entity = ".$conf->entity;
 			$sql .= " ORDER BY c.tms DESC";
 
 			dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$num_rows = $db->num_rows($resql);
+				$num_rows = $this->db->num_rows($resql);
 				if ($num_rows > 0)
 				{
-					while ($obj = $db->fetch_object($resql))
+					while ($obj = $this->db->fetch_object($resql))
 					{
 						$comment = new self($db);
 						$comment->fetch($obj->rowid);
 						$this->comments[] = $comment;
 					}
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			} else {
 				$this->errors[] = "Error ".$this->db->lasterror();
 				return -1;

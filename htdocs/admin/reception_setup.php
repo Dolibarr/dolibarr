@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin", "receptions", 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -76,7 +76,7 @@ if ($action == 'updateMask')
 	}
 } elseif ($action == 'set_param')
 {
-	$freetext = GETPOST('RECEPTION_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('RECEPTION_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "RECEPTION_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 	if ($res <= 0)
 	{
@@ -301,7 +301,7 @@ $def = array();
 
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 
 $resql = $db->query($sql);

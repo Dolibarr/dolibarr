@@ -1122,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
-		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->escape($status).")";
+		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1302,8 +1302,8 @@ class Holiday extends CommonObject
     {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-		$sql .= " value = '".$value."'";
-		$sql .= " WHERE name = '".$name."'";
+		$sql .= " value = '".$this->db->escape($value)."'";
+		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
 		dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1498,7 +1498,7 @@ class Holiday extends CommonObject
 
 		$sql = "SELECT value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_config";
-		$sql .= " WHERE name = '".$name."'";
+		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
 		$result = $this->db->query($sql);
 
@@ -1522,7 +1522,7 @@ class Holiday extends CommonObject
 	 */
 	public function createCPusers($single = false, $userid = '')
 	{
-		// Si c'est l'ensemble des utilisateurs à ajouter
+		// do we have to add balance for all users ?
 		if (!$single)
 		{
 			dol_syslog(get_class($this).'::createCPusers');
@@ -1532,7 +1532,7 @@ class Holiday extends CommonObject
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
 				$sql .= " (fk_user, nb_holiday)";
-				$sql .= " VALUES ('".$users['rowid']."','0')";
+				$sql .= " VALUES (".((int) $users['rowid'])."', '0')";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) dol_print_error($this->db);
@@ -1540,7 +1540,7 @@ class Holiday extends CommonObject
 		} else {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
 			$sql .= " (fk_user, nb_holiday)";
-			$sql .= " VALUES ('".$userid."','0')";
+			$sql .= " VALUES (".((int) $userid)."', '0')";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) dol_print_error($this->db);
@@ -1557,7 +1557,7 @@ class Holiday extends CommonObject
     {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
-		$sql .= " WHERE fk_user = '".$user_id."'";
+		$sql .= " WHERE fk_user = ".((int) $user_id);
 
 		$this->db->query($sql);
 	}
@@ -1925,11 +1925,11 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$fk_user_action."',";
-		$sql .= " '".$fk_user_update."',";
+		$sql .= " '".$this->db->escape($fk_user_action)."',";
+		$sql .= " '".$this->db->escape($fk_user_update)."',";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$prev_solde."',";
-		$sql .= " '".$new_solde."',";
+		$sql .= " '".$this->db->escape($prev_solde)."',";
+		$sql .= " '".$this->db->escape($new_solde)."',";
 		$sql .= " ".$fk_type;
 		$sql .= ")";
 

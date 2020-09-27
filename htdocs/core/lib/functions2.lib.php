@@ -579,6 +579,7 @@ function clean_url($url, $http = 1)
 	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
 	// To include the minus sign in a char class, we must not escape it but put it at the end of the class
 	// Also, there's no need of escape a dot sign in a class
+	$regs = array();
 	if (preg_match('/^(https?:[\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?/i', $url, $regs))
 	{
 		$proto = $regs[1];
@@ -737,6 +738,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//$date=dol_stringtotime('20130101');
 
 	$hasglobalcounter = false;
+	$reg = array();
 	// Extract value for mask counter, mask raz and mask offset
 	if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $mask, $reg))
 	{
@@ -755,6 +757,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (dol_strlen($maskcounter) < 3 && empty($conf->global->MAIN_COUNTER_WITH_LESS_3_DIGITS)) return 'ErrorCounterMustHaveMoreThan3Digits';
 
 	// Extract value for third party mask counter
+	$regClient = array();
 	if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
 	{
 		$maskrefclient = $regClientRef[1].$regClientRef[2];
@@ -774,6 +777,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	// Extract value for third party type
+	$regType = array();
 	if (preg_match('/\{(t+)\}/i', $mask, $regType))
 	{
 		$masktype = $regType[1];
@@ -802,6 +806,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskperso = array();
 	$maskpersonew = array();
 	$tmpmask = $mask;
+	$regKey = array();
 	while (preg_match('/\{([A-Z]+)\-([1-9])\}/', $tmpmask, $regKey))
 	{
 		$maskperso[$regKey[1]] = '{'.$regKey[1].'-'.$regKey[2].'}';
@@ -918,19 +923,19 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			elseif ($yearlen == 2) $yearcomp1 = sprintf("%02d", date("y", $date) + $yearoffset + 1);
 
 			$sqlwhere .= "(";
-			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") >= '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
 			$sqlwhere .= " OR";
-			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp1."'";
+			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp1)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
 			$sqlwhere .= ')';
 		} elseif ($resetEveryMonth)
 		{
-			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
 		} else // reset is done on january
 		{
-			$sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$yearcomp."')";
+			$sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$db->escape($yearcomp)."')";
 		}
 	}
 	//print "sqlwhere=".$sqlwhere." yearcomp=".$yearcomp."<br>\n";	// sqlwhere and yearcomp defined only if we ask a reset
@@ -969,7 +974,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$maskLike."'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 	if ($bentityon) // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1016,7 +1021,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$maskLike."'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1071,14 +1076,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike)."'";
 			if ($bentityon) // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			elseif (!empty($forceentity))
 				$sql .= " AND entity IN (".$forceentity.")";
 			if ($where) $maskrefclient_sql .= $where; //use the same optional where as general mask
 			if ($sqlwhere) $maskrefclient_sql .= ' AND '.$sqlwhere; //use the same sqlwhere as general mask
-			$maskrefclient_sql .= ' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient) + 1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
+			$maskrefclient_sql .= ' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient) + 1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$db->escape($maskrefclient_clientcode)."')";
 
 			dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
 			$maskrefclient_resql = $db->query($maskrefclient_sql);
@@ -1177,6 +1182,7 @@ function check_value($mask, $value)
 
 	$hasglobalcounter = false;
 	// Extract value for mask counter, mask raz and mask offset
+	$reg = array();
 	if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
 	{
 		$masktri = $reg[1].(isset($reg[2]) ? $reg[2] : '').(isset($reg[3]) ? $reg[3] : '');
@@ -1187,12 +1193,12 @@ function check_value($mask, $value)
 		$masktri = '00000';
 		$maskcounter = '00000';
 	}
-
 	$maskraz = -1;
 	$maskoffset = 0;
 	if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
 
 	// Extract value for third party mask counter
+	$regClientRef = array();
 	if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
 	{
 		$maskrefclient = $regClientRef[1].$regClientRef[2];

@@ -199,9 +199,9 @@ if (($action == 'create' || $action == 'add') && !$error)
 							$sql .= ", targettype";
 							$sql .= ") VALUES (";
 							$sql .= $origin_id;
-							$sql .= ", '".$object->origin."'";
+							$sql .= ", '".$db->escape($object->origin)."'";
 							$sql .= ", ".$id;
-							$sql .= ", '".$object->element."'";
+							$sql .= ", '".$db->escape($object->element)."'";
 							$sql .= ")";
 
 							if ($db->query($sql))

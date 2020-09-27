@@ -1028,8 +1028,8 @@ abstract class CommonObject
 		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql .= " statut = ".$statut;
-		if ($type_contact_id) $sql .= ", fk_c_type_contact = '".$type_contact_id."'";
-		if ($fk_socpeople) $sql .= ", fk_socpeople = '".$fk_socpeople."'";
+		if ($type_contact_id) $sql .= ", fk_c_type_contact = ".((int) $type_contact_id);
+		if ($fk_socpeople) $sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		$sql .= " where rowid = ".$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1389,9 +1389,9 @@ abstract class CommonObject
 		if ($source == 'internal') $sql .= " AND c.entity IN (".getEntity('user').")";
 		if ($source == 'external') $sql .= " AND c.entity IN (".getEntity('societe').")";
 		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$element."'";
-		$sql .= " AND tc.source = '".$source."'";
-		if ($code) $sql .= " AND tc.code = '".$code."'";
+		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+		if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		$sql .= " AND tc.active = 1";
 		if ($status) $sql .= " AND ec.statut = ".$status;
 
@@ -3243,16 +3243,16 @@ abstract class CommonObject
 		{
 			if ($justsource)
 			{
-				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-				if ($withtargettype) $sql .= " AND targettype = '".$targettype."'";
+				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
+				if ($withtargettype) $sql .= " AND targettype = '".$this->db->escape($targettype)."'";
 			} elseif ($justtarget)
 			{
-				$sql .= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
-				if ($withsourcetype) $sql .= " AND sourcetype = '".$sourcetype."'";
+				$sql .= "fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
+				if ($withsourcetype) $sql .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
 			}
 		} else {
-			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
-			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
+			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."')";
+			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."')";
 		}
 		$sql .= ' ORDER BY '.$orderby;
 
@@ -4841,7 +4841,7 @@ abstract class CommonObject
 		// Request to get translation values for object
 		$sql = "SELECT rowid, property, lang , value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
-		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " WHERE type_object = '".$this->db->escape($element)."'";
 		$sql .= " AND fk_object = ".$this->id;
 
 		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
@@ -5741,11 +5741,9 @@ abstract class CommonObject
 		}
 
 		// Set value of $morecss. For this, we use in priority showsize from parameters, then $val['css'] then autodefine
-		if (empty($morecss) && !empty($val['css']))
-		{
+		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
-		} elseif (empty($morecss))
-		{
+		} elseif (empty($morecss)) {
 			if ($type == 'date')
 			{
 				$morecss = 'minwidth100imp';
@@ -5792,16 +5790,16 @@ abstract class CommonObject
 		{
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('real')))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', $type))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif ($type == 'text')
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -6641,7 +6639,7 @@ abstract class CommonObject
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-					// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
+					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
 					{
@@ -6686,11 +6684,17 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix];
+							$value = $this->array_options["options_".$key.$keysuffix];	// Value may be clean or formated later
 							break;
 						case "create":
 						case "edit":
-							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
+							// We get the value of property found with GETPOST so it takes into account:
+							// default values overwrite, restore back to list link, ... (but not 'default value in database' of field)
+							$check = 'alphanohtml';
+							if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text'))) {
+								$check = 'restricthtml';
+							}
+							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, $check, 3); // GETPOST can get value from GET, POST or setup of default values overwrite.
 							// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 							if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 							{
@@ -6755,18 +6759,18 @@ abstract class CommonObject
 							{
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
 						{
-							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
 						}
-						// HTML, select, integer and text add default value
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
+
+						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int')))
 						{
-							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
-							else $value = $this->array_options['options_'.$key];
+							if ($action == 'create') $value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 						}
 
 						$labeltoshow = $langs->trans($label);
@@ -6775,7 +6779,7 @@ abstract class CommonObject
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 						$out .= '<td class="';
 						//$out .= "titlefield";
-						//if (GETPOST('action', 'none') == 'create') $out.='create';
+						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
@@ -6800,6 +6804,8 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value);
 								break;
 							case "create":
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								break;
 							case "edit":
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 								break;
@@ -8293,7 +8299,7 @@ abstract class CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_product)";
 		$sql .= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_product = '".$fromId."'";
+		$sql .= " WHERE fk_product = ".((int) $fromId);
 
 		if (!$this->db->query($sql))
 		{
@@ -8339,7 +8345,7 @@ abstract class CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
 		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql.= " AND filepath = '".$element."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();

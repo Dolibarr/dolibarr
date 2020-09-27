@@ -78,7 +78,7 @@ if (!empty($canvas))
 
 // Security check
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
@@ -207,8 +207,8 @@ if (empty($reshook))
 		$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
 		$object->fax = GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
-		$object->note_public = GETPOST("note_public", 'none');
-		$object->note_private = GETPOST("note_private", 'none');
+		$object->note_public = GETPOST("note_public", 'restricthtml');
+		$object->note_private = GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
 		$object->statut			= 1; //Defult status to Actif
@@ -395,8 +395,8 @@ if (empty($reshook))
 			$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
 			$object->fax = GETPOST("fax", 'alpha');
 			$object->priv = GETPOST("priv", 'int');
-			$object->note_public = GETPOST("note_public", 'none');
-			$object->note_private = GETPOST("note_private", 'none');
+			$object->note_public = GETPOST("note_public", 'restricthtml');
+			$object->note_private = GETPOST("note_private", 'restricthtml');
 			$object->roles = GETPOST("roles", 'array');
 
 			// Fill array 'array_options' with data from add form
@@ -1249,9 +1249,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 	}
 
-	if (!empty($id) && $action != 'edit' && $action != 'create')
-	{
-		$objsoc = new Societe($db);
+    // Select mail models is same action as presend
+    if (GETPOST('modelselected', 'alpha')) {
+        $action = 'presend';
+    }
+
+    if (!empty($id) && $action != 'edit' && $action != 'create')
+    {
+        $objsoc = new Societe($db);
 
 		// View mode
 

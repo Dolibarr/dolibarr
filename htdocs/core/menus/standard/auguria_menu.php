@@ -68,14 +68,14 @@ class MenuManager
     	global $conf, $user, $langs;
 
    		// On sauve en session le menu principal choisi
-    	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"] = $_GET["mainmenu"];
-    	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"] = $_GET["idmenu"];
+    	if (GETPOSTISSET("mainmenu")) $_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
+    	if (GETPOSTISSET("idmenu"))   $_SESSION["idmenu"] = GETPOST("idmenu", 'int');
 
     	// Read mainmenu and leftmenu that define which menu to show
-    	if (isset($_GET["mainmenu"]))
+    	if (GETPOSTISSET("mainmenu"))
     	{
     		// On sauve en session le menu principal choisi
-    		$mainmenu = $_GET["mainmenu"];
+    		$mainmenu = GETPOST("mainmenu", 'aZ09');
     		$_SESSION["mainmenu"] = $mainmenu;
     		$_SESSION["leftmenuopened"] = "";
     	} else {
@@ -84,10 +84,10 @@ class MenuManager
     	}
 		if (!empty($forcemainmenu)) $mainmenu = $forcemainmenu;
 
-    	if (isset($_GET["leftmenu"]))
+    	if (GETPOSTISSET("leftmenu"))
     	{
     		// On sauve en session le menu principal choisi
-    		$leftmenu = $_GET["leftmenu"];
+    		$leftmenu = GETPOST("leftmenu", 'aZ09');
     		$_SESSION["leftmenu"] = $leftmenu;
 
     		if ($_SESSION["leftmenuopened"] == $leftmenu)	// To collapse

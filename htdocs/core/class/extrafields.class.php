@@ -133,6 +133,19 @@ class ExtraFields
 	public $attribute_list;
 
 	/**
+	 * @var array Array to store if field is summable
+	 * @deprecated
+	 */
+	public $attribute_totalizable;
+
+	/**
+	 * @var array Array to store entity id of extrafield
+	 * @deprecated
+	 */
+	public $attribute_entityid;
+
+
+	/**
 	 * @var array New array to store extrafields definition
 	 */
 	public $attributes;
@@ -426,7 +439,7 @@ class ExtraFields
 			$sql .= " help,";
 			$sql .= " totalizable";
 			$sql .= " )";
-			$sql .= " VALUES('".$attrname."',";
+			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " '".$this->db->escape($type)."',";
 			$sql .= " ".$pos.",";
@@ -494,8 +507,8 @@ class ExtraFields
 			{
 				$sql = "SELECT COUNT(rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
-				$sql .= " WHERE elementtype = '".$elementtype."'";
-				$sql .= " AND name = '".$attrname."'";
+				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
+				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
 				$resql = $this->db->query($sql);
 				if ($resql)
@@ -539,9 +552,9 @@ class ExtraFields
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-			$sql .= " WHERE name = '".$attrname."'";
+			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
-			$sql .= " AND elementtype = '".$elementtype."'";
+			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -724,15 +737,15 @@ class ExtraFields
 			{
 				// We dont want on all entities, we delete all and current
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-				$sql_del .= " WHERE name = '".$attrname."'";
+				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
-				$sql_del .= " AND elementtype = '".$elementtype."'";
+				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
-				$sql_del .= " WHERE name = '".$attrname."'";
+				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity = 0";
-				$sql_del .= " AND elementtype = '".$elementtype."'";
+				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
 			$resql1 = $this->db->query($sql_del);
 
@@ -761,7 +774,7 @@ class ExtraFields
 			$sql .= " enabled,";
 			$sql .= " help";
 			$sql .= ") VALUES (";
-			$sql .= "'".$attrname."',";
+			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " '".$this->db->escape($type)."',";
@@ -829,7 +842,7 @@ class ExtraFields
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,printable,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
-		if ($elementtype) $sql .= " WHERE elementtype = '".$elementtype."'"; // Filed with object->table_element
+		if ($elementtype) $sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
 		$sql .= " ORDER BY pos";
 
 		$resql = $this->db->query($sql);

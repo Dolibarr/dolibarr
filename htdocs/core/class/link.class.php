@@ -98,7 +98,7 @@ class Link extends CommonObject
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."links (entity, datea, url, label, objecttype, objectid)";
-        $sql .= " VALUES ('".$conf->entity."', '".$this->db->idate($this->datea)."'";
+        $sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
         $sql .= ", '".$this->db->escape($this->url)."'";
         $sql .= ", '".$this->db->escape($this->label)."'";
         $sql .= ", '".$this->db->escape($this->objecttype)."'";
@@ -175,7 +175,7 @@ class Link extends CommonObject
         $this->db->begin();
 
         $sql  = "UPDATE ".MAIN_DB_PREFIX."links SET ";
-        $sql .= "entity = '".$conf->entity."'";
+        $sql .= "entity = ".$conf->entity;
         $sql .= ", datea = '".$this->db->idate(dol_now())."'";
         $sql .= ", url = '".$this->db->escape($this->url)."'";
         $sql .= ", label = '".$this->db->escape($this->label)."'";
@@ -235,7 +235,7 @@ class Link extends CommonObject
         global $conf;
 
         $sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
-        $sql .= " WHERE objecttype = '".$objecttype."' AND objectid = ".$objectid;
+        $sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".$objectid;
         if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
         if ($sortfield) {
             if (empty($sortorder)) {
@@ -286,7 +286,7 @@ class Link extends CommonObject
         global $conf;
 
         $sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
-        $sql .= " WHERE objecttype = '".$objecttype."' AND objectid = ".$objectid;
+        $sql .= " WHERE objecttype = '".$db->escape($objecttype)."' AND objectid = ".$objectid;
         if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
 
         $resql = $db->query($sql);

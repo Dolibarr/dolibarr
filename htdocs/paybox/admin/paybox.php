@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 if ($action == 'setvalue' && $user->admin)
@@ -110,7 +110,7 @@ $head[$h][1] = $langs->trans("PayBox");
 $head[$h][2] = 'payboxaccount';
 $h++;
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 

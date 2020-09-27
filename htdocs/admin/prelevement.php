@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin", "withdrawals"));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = 'paymentorder';
 
 
@@ -217,7 +217,7 @@ print load_fiche_titre($langs->trans("OrdersModelModule"),'','');
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
+$sql.= " WHERE type = '".$db->escape($type)."'";
 $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)

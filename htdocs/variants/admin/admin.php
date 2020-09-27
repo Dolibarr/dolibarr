@@ -50,7 +50,9 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 
 dol_fiche_head(array(), 'general', $tab, 0, 'product');
 
-print '<form method="post">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("Parameters").'</td>'."\n";

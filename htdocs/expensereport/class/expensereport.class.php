@@ -461,7 +461,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " , date_fin = '".$this->db->idate($this->date_fin)."'";
 		if ($userofexpensereport && is_object($userofexpensereport))
 		{
-			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? "'".$userofexpensereport->id."'" : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
+			$sql .= " , fk_user_author = ".($userofexpensereport->id > 0 ? $userofexpensereport->id : "null"); // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		}
 		$sql .= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
 		$sql .= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid : "null");
@@ -845,24 +845,24 @@ class ExpenseReport extends CommonObject
 			$sql .= " WHERE de.fk_projet = ".$projectid;
 
 			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$i = 0;
 				$total_HT = 0;
 				$total_TTC = 0;
 
 				while ($i < $num)
 				{
-					$objp = $db->fetch_object($result);
+					$objp = $this->db->fetch_object($result);
 
 					$sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
-					$sql2 .= " WHERE d.rowid = '".$objp->fk_expensereport."'";
+					$sql2 .= " WHERE d.rowid = ".((int) $objp->fk_expensereport);
 
-					$result2 = $db->query($sql2);
-					$obj = $db->fetch_object($result2);
+					$result2 = $this->db->query($sql2);
+					$obj = $this->db->fetch_object($result2);
 
 					$objp->fk_user_author = $obj->fk_user_author;
 					$objp->ref = $obj->ref;
@@ -871,7 +871,7 @@ class ExpenseReport extends CommonObject
 
 					$total_HT = $total_HT + $objp->total_ht;
 					$total_TTC = $total_TTC + $objp->total_ttc;
-					$author = new User($db);
+					$author = new User($this->db);
 					$author->fetch($objp->fk_user_author);
 
 					print '<tr>';
@@ -920,7 +920,7 @@ class ExpenseReport extends CommonObject
 				print '<td>&nbsp;</td>';
 				print '</tr>';
 			} else {
-				$this->error = $db->lasterror();
+				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -1130,7 +1130,7 @@ class ExpenseReport extends CommonObject
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET ref = '".$num."',";
+		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($this->date_valid)."',";
 		$sql .= " fk_user_valid = ".$user->id;
@@ -2354,7 +2354,7 @@ class ExpenseReport extends CommonObject
 
 		$type = 'expense_report';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2723,89 +2723,4 @@ class ExpenseReportLine
 			return -2;
 		}
 	}
-}
-
-
-/**
- *    Retourne la liste deroulante des differents etats d'une note de frais.
- *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
- *
- *    @param    int     $selected       preselect status
- *    @param    string  $htmlname       Name of HTML select
- *    @param    int     $useempty       1=Add empty line
- *    @param    int     $useshortlabel  Use short labels
- *    @return   string                  HTML select with status
- */
-function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
-{
-	global $db, $langs;
-
-	$tmpep = new ExpenseReport($db);
-
-	print '<select class="flat" name="'.$htmlname.'">';
-	if ($useempty) print '<option value="-1">&nbsp;</option>';
-	$arrayoflabels = $tmpep->statuts;
-	if ($useshortlabel) $arrayoflabels = $tmpep->statuts_short;
-	foreach ($arrayoflabels as $key => $val)
-	{
-		if ($selected != '' && $selected == $key)
-		{
-			print '<option value="'.$key.'" selected>';
-		} else {
-			print '<option value="'.$key.'">';
-		}
-		print $langs->trans($val);
-		print '</option>';
-	}
-	print '</select>';
-}
-
-/**
- *  Return list of types of notes with select value = id
- *
- *  @param      int     $selected       Preselected type
- *  @param      string  $htmlname       Name of field in form
- *  @param      int     $showempty      Add an empty field
- *  @param      int     $active         1=Active only, 0=Unactive only, -1=All
- *  @return     string                  Select html
- */
-function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0, $active = 1)
-{
-	global $db, $langs, $user;
-	$langs->load("trips");
-
-	$out = '';
-
-	$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-	if ($showempty)
-	{
-		$out .= '<option value="-1"';
-		if ($selected == -1) $out .= ' selected';
-		$out .= '>&nbsp;</option>';
-	}
-
-	$sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-	if ($active >= 0) $sql .= " WHERE c.active = ".$active;
-	$sql .= " ORDER BY c.label ASC";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			$out .= '<option value="'.$obj->id.'"';
-			if ($obj->code == $selected || $obj->id == $selected) $out .= ' selected';
-			$out .= '>';
-			if ($obj->code != $langs->trans($obj->code)) $out .= $langs->trans($obj->code);
-			else $out .= $langs->trans($obj->type);
-			$i++;
-		}
-	}
-	$out .= '</select>';
-	$out .= ajax_combobox($htmlname);
-
-	return $out;
 }

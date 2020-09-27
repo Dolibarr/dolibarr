@@ -664,7 +664,7 @@ class Ticket extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$value.'\'';
+					$sql .= ' AND '.$key." = '".$this->db->scape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code') || ($key == 't.fk_soc')) {
 					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
@@ -2242,7 +2242,7 @@ class Ticket extends CommonObject
 
 		$sql .= " AND tc.active=1";
 		if ($status >= 0) {
-			$sql .= " AND ec.statut = '".$status."'";
+			$sql .= " AND ec.statut = ".((int) $status);
 		}
 
 		$sql .= " ORDER BY t.lastname ASC";
@@ -2473,7 +2473,7 @@ class Ticket extends CommonObject
 
 		if (!$error) {
 			$object->subject = GETPOST('subject', 'alphanohtml');
-			$object->message = GETPOST("message", "none");
+			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 
 			$send_email = GETPOST('send_email', 'int');

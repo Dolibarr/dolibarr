@@ -126,7 +126,7 @@ NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient emai
 # Module Notifications
 Notifications=Notifications
 NotificationsAuto=Notifications Auto.
-NoNotificationsWillBeSent=No automtic email notifications are planned for this event type and company
+NoNotificationsWillBeSent=No automatic email notifications are planned for this event type and company
 ANotificationsWillBeSent=1 automatic notification will be sent by email
 SomeNotificationsWillBeSent=%s automatic notifications will be sent by email
 AddNewNotification=Activate a new automatic email notification target/event

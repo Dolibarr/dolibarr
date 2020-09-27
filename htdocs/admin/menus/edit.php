@@ -31,7 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
-$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+$cancel = GETPOST('cancel', 'alphanohtml'); // We click on a Cancel button
+$confirm = GETPOST('confirm');
 
 if (!$user->admin) accessforbidden();
 
@@ -69,9 +70,9 @@ if ($action == 'update')
 	if (!$cancel)
 	{
 		$leftmenu = ''; $mainmenu = '';
-		if (GETPOST('menuIdParent', 'alpha') && !is_numeric(GETPOST('menuIdParent', 'alpha')))
+		if (GETPOST('menuIdParent', 'alphanohtml') && !is_numeric(GETPOST('menuIdParent', 'alphanohtml')))
 		{
-			$tmp = explode('&', GETPOST('menuIdParent', 'alpha'));
+			$tmp = explode('&', GETPOST('menuIdParent', 'alphanohtml'));
 			foreach ($tmp as $s)
 			{
 				if (preg_match('/fk_mainmenu=/', $s))
@@ -89,21 +90,21 @@ if ($action == 'update')
 		$result = $menu->fetch(GETPOST('menuId', 'int'));
 		if ($result > 0)
 		{
-			$menu->title = GETPOST('titre', 'alpha');
+			$menu->title = GETPOST('titre', 'alphanohtml');
 			$menu->leftmenu = GETPOST('leftmenu', 'aZ09');
-			$menu->url = GETPOST('url', 'alpha');
-			$menu->langs = GETPOST('langs', 'alpha');
+			$menu->url = GETPOST('url', 'alphanohtml');
+			$menu->langs = GETPOST('langs', 'alphanohtml');
 			$menu->position = GETPOST('position', 'int');
-			$menu->enabled = GETPOST('enabled', 'alpha');
-			$menu->perms = GETPOST('perms', 'alpha');
-			$menu->target = GETPOST('target', 'alpha');
-			$menu->user = GETPOST('user', 'alpha');
-			$menu->mainmenu = GETPOST('propertymainmenu', 'alpha');
-			if (is_numeric(GETPOST('menuIdParent', 'alpha')))
+			$menu->enabled = GETPOST('enabled', 'alphanohtml');
+			$menu->perms = GETPOST('perms', 'alphanohtml');
+			$menu->target = GETPOST('target', 'alphanohtml');
+			$menu->user = GETPOST('user', 'alphanohtml');
+			$menu->mainmenu = GETPOST('propertymainmenu', 'alphanohtml');
+			if (is_numeric(GETPOST('menuIdParent', 'alphanohtml')))
 			{
-				$menu->fk_menu = GETPOST('menuIdParent', 'alpha');
+				$menu->fk_menu = GETPOST('menuIdParent', 'alphanohtml');
 			} else {
-			   	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu = 0;
+			   	if (GETPOST('type', 'alphanohtml') == 'top') $menu->fk_menu = 0;
 			   	else $menu->fk_menu = -1;
 				$menu->fk_mainmenu = $mainmenu;
 				$menu->fk_leftmenu = $leftmenu;
@@ -138,9 +139,9 @@ if ($action == 'add')
 	}
 
 	$leftmenu = ''; $mainmenu = '';
-	if (GETPOST('menuId', 'alpha', 3) && !is_numeric(GETPOST('menuId', 'alpha', 3)))
+	if (GETPOST('menuId', 'alphanohtml', 3) && !is_numeric(GETPOST('menuId', 'alphanohtml', 3)))
 	{
-		$tmp = explode('&', GETPOST('menuId', 'alpha', 3));
+		$tmp = explode('&', GETPOST('menuId', 'alphanohtml', 3));
 		foreach ($tmp as $s)
 		{
 			if (preg_match('/fk_mainmenu=/', $s))
@@ -198,21 +199,21 @@ if ($action == 'add')
 	{
 		$menu = new Menubase($db);
 		$menu->menu_handler = preg_replace('/_menu$/', '', GETPOST('menu_handler', 'aZ09'));
-		$menu->type = GETPOST('type', 'alpha');
-		$menu->title = GETPOST('titre', 'alpha');
-		$menu->url = GETPOST('url', 'alpha');
-		$menu->langs = GETPOST('langs', 'alpha');
+		$menu->type = GETPOST('type', 'alphanohtml');
+		$menu->title = GETPOST('titre', 'alphanohtml');
+		$menu->url = GETPOST('url', 'alphanohtml');
+		$menu->langs = GETPOST('langs', 'alphanohtml');
 		$menu->position = GETPOST('position', 'int');
-		$menu->enabled = GETPOST('enabled', 'alpha');
-		$menu->perms = GETPOST('perms', 'alpha');
-		$menu->target = GETPOST('target', 'alpha');
-		$menu->user = GETPOST('user', 'alpha');
-		$menu->mainmenu = GETPOST('propertymainmenu', 'alpha');
-		if (is_numeric(GETPOST('menuId', 'alpha', 3)))
+		$menu->enabled = GETPOST('enabled', 'alphanohtml');
+		$menu->perms = GETPOST('perms', 'alphanohtml');
+		$menu->target = GETPOST('target', 'alphanohtml');
+		$menu->user = GETPOST('user', 'alphanohtml');
+		$menu->mainmenu = GETPOST('propertymainmenu', 'alphanohtml');
+		if (is_numeric(GETPOST('menuId', 'alphanohtml', 3)))
 		{
-			$menu->fk_menu = GETPOST('menuId', 'alpha', 3);
+			$menu->fk_menu = GETPOST('menuId', 'alphanohtml', 3);
 		} else {
-			if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu = 0;
+			if (GETPOST('type', 'alphanohtml') == 'top') $menu->fk_menu = 0;
 			else $menu->fk_menu = -1;
 			$menu->fk_mainmenu = $mainmenu;
 			$menu->fk_leftmenu = $leftmenu;
@@ -231,26 +232,27 @@ if ($action == 'add')
 }
 
 // delete
-if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($action == 'confirm_delete' && $confirm == 'yes')
 {
-	$this->db->begin();
+	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
 	$result = $db->query($sql);
 
 	if ($result == 0)
 	{
-		$this->db->commit();
+		$db->commit();
 
 		llxHeader();
 		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
 		llxFooter();
 		exit;
 	} else {
-		$this->db->rollback();
+		$db->rollback();
 
 		$reload = 0;
 		$_GET["action"] = '';
+		$action = '';
 	}
 }
 
@@ -353,7 +355,7 @@ if ($action == 'create')
 
 	// Mainmenu code
 	print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-   	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha') ?GETPOST("propertymainmenu", 'alpha') : '').'"></td>';
+   	print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOSTISSET("propertymainmenu") ? GETPOST("propertymainmenu", 'alphanohtml') : '').'"></td>';
 	print '<td>';
 	print $langs->trans("Example").': mytopmenukey';
 	print '</td></tr>';
@@ -364,23 +366,23 @@ if ($action == 'create')
 	{
 		print '<td>'.$parent_rowid.'<input type="hidden" name="menuId" value="'.$parent_rowid.'"></td>';
 	} else {
-		print '<td><input type="text" class="minwidth300" id="menuId" name="menuId" value="'.(GETPOST("menuId", 'int') ?GETPOST("menuId", 'int') : '').'"></td>';
+		print '<td><input type="text" class="minwidth300" id="menuId" name="menuId" value="'.(GETPOSTISSET("menuId") ? GETPOST("menuId", 'int') : '').'"></td>';
 	}
 	print '<td>'.$langs->trans('DetailMenuIdParent');
 	print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
 	print '</td></tr>';
 
 	// Title
-	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alpha')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
 	// URL
-	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url", 'alpha').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="minwidth500" name="url" value="'.GETPOST("url", 'alphanohtml').'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
 	// Langs
 	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" class="minwidth300" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
 	// Position
-	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(isset($_POST["position"]) ? $_POST["position"] : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(GETPOSTISSET("position") ? GETPOST("position", 'int') : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
@@ -389,10 +391,10 @@ if ($action == 'create')
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	// Enabled
-	print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ?GETPOST("enabled", 'alpha') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? GETPOST("enabled", 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
 	// Perms
-	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ?GETPOST('perms', 'alpha') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	print '</table>';
 
@@ -454,7 +456,7 @@ if ($action == 'create')
 	     }
 	     else
 	     {*/
-		print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alpha') ?GETPOST("propertymainmenu", 'alpha') : $menu->mainmenu).'"></td>';
+		print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alphanohtml') ?GETPOST("propertymainmenu", 'alphanohtml') : $menu->mainmenu).'"></td>';
 		//}
 		print '<td>';
 		print $langs->trans("Example").': mytopmenukey';

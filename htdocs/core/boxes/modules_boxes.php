@@ -143,10 +143,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 		global $conf;
 
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
-		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
+		$sql = "SELECT b.rowid as id, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql .= " WHERE b.entity = ".$conf->entity;
-		$sql .= " AND b.rowid = ".$rowid;
+		$sql .= " AND b.rowid = ".((int) $rowid);
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
 
 		$resql = $this->db->query($sql);
@@ -155,7 +155,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
-				$this->rowid = $obj->rowid;
+				$this->id = $obj->id;
+				$this->rowid = $obj->id;	// For backward compatibility
 				$this->box_id = $obj->box_id;
 				$this->position = $obj->position;
 				$this->box_order = $obj->box_order;
@@ -422,6 +423,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			{
 				while (($file = readdir($handle)) !== false)
 				{
+					$reg = array();
 					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg))
 					{
 						if (preg_match('/\.back$/', $file)) continue;

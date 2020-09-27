@@ -195,7 +195,7 @@ if ($action == 'setdesiredstock' && !empty($user->rights->produit->creer))
 // Correct stock
 if ($action == "correct_stock" && !$cancel)
 {
-	if (!(GETPOST("id_entrepot") > 0))
+	if (!(GETPOST("id_entrepot", 'int') > 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -710,7 +710,7 @@ if ($id > 0 || $ref)
 			{
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-				$sql .= " WHERE m.fk_product = '".$object->id."'";
+				$sql .= " WHERE m.fk_product = ".((int) $object->id);
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);

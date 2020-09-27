@@ -43,7 +43,7 @@ if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 } else {
 	$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 }
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $idproduct = GETPOST('idproduct', 'int');
 

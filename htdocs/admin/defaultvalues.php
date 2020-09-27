@@ -37,7 +37,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'error
 if (!$user->admin) accessforbidden();
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
@@ -61,7 +61,7 @@ $defaulturl = preg_replace('/^\//', '', $defaulturl);
 
 $urlpage = GETPOST('urlpage', 'alphanohtml');
 $key = GETPOST('key', 'alphanohtml');
-$value = GETPOST('value', 'none');
+$value = GETPOST('value', 'restricthtml');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));

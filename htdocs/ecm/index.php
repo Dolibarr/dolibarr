@@ -83,7 +83,7 @@ $error = 0;
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit", 'none') && !empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
     $relativepath = '';
@@ -127,7 +127,6 @@ if ($action == 'confirm_deletefile')
 
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile', 'alpha');
-
 		$ret = dol_delete_file($file); // This include also the delete from file index in database.
 		if ($ret)
 		{

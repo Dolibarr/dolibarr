@@ -19,9 +19,9 @@
  */
 
 /**
- * 	\file       htdocs/compta/prelevement/bons.php
+ * 	\file       htdocs/compta/prelevement/orders_list.php
  * 	\ingroup    prelevement
- * 	\brief      Page liste des bons de prelevements
+ * 	\brief      Page to list direct debit orders or credit transfer orders
  */
 
 require '../../main.inc.php';
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -41,8 +41,8 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $type = GETPOST('type', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;

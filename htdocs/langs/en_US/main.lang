@@ -1092,3 +1092,6 @@ APPROVEDInDolibarr=Record %s approved
 DefaultMailModel=Default Mail Model
 PublicVendorName=Public name of vendor
 DateOfBirth=Date of birth
+SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry=Security token has expired, so action has been canceled. Please try again.
+UpToDate=Up-to-date
+OutOfDate=Out-of-date

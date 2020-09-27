@@ -516,7 +516,7 @@ class FormCompany extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
-		if ($country_codeid) $sql .= " AND c.code = '".$country_codeid."'";
+		if ($country_codeid) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
 		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY c.code";
 

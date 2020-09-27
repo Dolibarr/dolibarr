@@ -51,7 +51,7 @@ $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
 $id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 if ($user->socid) $socid = $user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
@@ -131,7 +131,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
-		$object->description	= GETPOST('description', 'alpha');
+		$object->description	= GETPOST('description', 'restricthtml');
 		$object->socid			= GETPOST('socid', 'alpha');
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contract	= GETPOST('contractid', 'int');

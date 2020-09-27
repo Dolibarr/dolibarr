@@ -50,6 +50,9 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
     $subcat = true;
 }
 
+// Hook
+$hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
+
 // Security check
 if ($user->socid > 0) $socid = $user->socid;
 if (!empty($conf->comptabilite->enabled)) $result = restrictedArea($user, 'compta', '', '', 'resultat');

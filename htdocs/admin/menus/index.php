@@ -42,7 +42,7 @@ foreach ($dirmenus as $dirmenu)
     $dirsmartphone[] = $dirmenu.'smartphone';
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $menu_handler_top = $conf->global->MAIN_MENU_STANDARD;

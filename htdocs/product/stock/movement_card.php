@@ -457,7 +457,7 @@ $sql .= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
 if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
 $sql .= dolSqlDateFilter('m.datem', 0, $month, $year);
-if ($idproduct > 0) $sql .= " AND p.rowid = '".$idproduct."'";
+if ($idproduct > 0) $sql .= " AND p.rowid = ".((int) $idproduct);
 if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
 if (!empty($search_movement))      $sql .= natural_search('m.label', $search_movement);
 if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);

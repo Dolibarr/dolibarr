@@ -63,7 +63,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC))
 			}
 		}
 	}
-} elseif (GETPOST('linkit', 'none') && !empty($conf->global->MAIN_UPLOAD_DOC))
+} elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
     $link = GETPOST('link', 'alpha');
     if ($link)

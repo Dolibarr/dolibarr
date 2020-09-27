@@ -904,7 +904,7 @@ class DoliDBPgsql extends DoliDB
 		$listtables = array();
 
 		$like = '';
-		if ($table) $like = " AND table_name LIKE '".$table."'";
+		if ($table) $like = " AND table_name LIKE '".$this->escape($table)."'";
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like." ORDER BY table_name");
         if ($result)
         {
@@ -942,7 +942,7 @@ class DoliDBPgsql extends DoliDB
 		$sql .= "	'' as \"Privileges\"";
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema='public' ";
-		$sql .= "	AND table_name='".$table."'";
+		$sql .= "	AND table_name='".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
 		dol_syslog($sql, LOG_DEBUG);
@@ -992,7 +992,7 @@ class DoliDBPgsql extends DoliDB
 			{
 				if (preg_match("/null/i", $field_desc['default']))
 				    $sqlfields[$i] .= " default ".$field_desc['default'];
-				else $sqlfields[$i] .= " default '".$field_desc['default']."'";
+			    else $sqlfields[$i] .= " default '".$this->escape($field_desc['default'])."'";
 			} elseif (preg_match("/^[^\s]/i", $field_desc['null']))
 			    $sqlfields[$i]  .= " ".$field_desc['null'];
 
@@ -1008,7 +1008,7 @@ class DoliDBPgsql extends DoliDB
 			$i = 0;
 			foreach ($unique_keys as $key => $value)
 			{
-				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$value."')";
+				$sqluq[$i] = "UNIQUE KEY '".$key."' ('".$this->escape($value)."')";
 				$i++;
 			}
 		}
@@ -1090,9 +1090,9 @@ class DoliDBPgsql extends DoliDB
     public function DDLDescTable($table, $field = "")
 	{
         // phpcs:enable
-		$sql = "SELECT attname FROM pg_attribute, pg_type WHERE typname = '".$table."' AND attrelid = typrelid";
+		$sql = "SELECT attname FROM pg_attribute, pg_type WHERE typname = '".$this->escape($table)."' AND attrelid = typrelid";
 		$sql .= " AND attname NOT IN ('cmin', 'cmax', 'ctid', 'oid', 'tableoid', 'xmin', 'xmax')";
-		if ($field) $sql .= " AND attname = '".$field."'";
+		if ($field) $sql .= " AND attname = '".$this->escape($field)."'";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$this->_results = $this->query($sql);
@@ -1130,7 +1130,7 @@ class DoliDBPgsql extends DoliDB
             if (preg_match("/null/i", $field_desc['default'])) {
                 $sql .= " default ".$field_desc['default'];
 			} else {
-				$sql .= " default '".$field_desc['default']."'";
+				$sql .= " default '".$this->escape($field_desc['default'])."'";
 			}
 		}
 		if (preg_match("/^[^\s]/i", $field_desc['extra'])) {

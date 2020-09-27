@@ -47,7 +47,7 @@ $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
@@ -883,10 +883,8 @@ SCRIPT;
 					foreach ($extralabels as $key => $value) {
 						// Show field if not hidden
 						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-							if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
-                            if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) $extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
-							else $extratitle = $langs->trans($value);
-							$arrayfields['ef.'.$key] = array('label'=>$extratitle, 'checked'=>0, 'position'=>(end($arrayfields)['position']+1));
+							$extratitle = $langs->trans($value);
+							$arrayfields['ef.'.$key] = array('label'=>$extratitle, 'checked'=>0, 'position'=>(end($arrayfields)['position']+1), 'langfile'=>$extrafields->attributes["product_fournisseur_price"]['langfile'][$key], 'help'=>$extrafields->attributes["product_fournisseur_price"]['help'][$key]);
 						}
 					}
 				}
