@@ -759,8 +759,6 @@ function WeighingScale(){
 	});
 }
 
-
-
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -849,10 +847,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal");?> 1</button>
 		<?php
-			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
-			{
-				print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
-			}
+		for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+		{
+			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
+		}
 		?>
 	</div>
 	<div class="modal-footer">
