@@ -295,7 +295,7 @@ if ($search_categ == -2) $sql .= " AND cm.fk_categorie IS NULL";
 $sql .= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_type > 0) $sql .= " AND t.rowid=".$db->escape($search_type);
-if ($statut !== '') $sql .= " AND d.statut in (".$db->escape($statut).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
+if ($statut !== '') $sql .= " AND d.statut IN (".$db->sanitize($db->escape($statut)).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql .= " AND 1 = 2"; // Always wrong
@@ -314,7 +314,7 @@ if ($search_state)    $sql .= natural_search("state.nom", $search_state);
 if ($search_phone)      $sql .= natural_search("d.phone", $search_phone);
 if ($search_phone_perso)      $sql .= natural_search("d.phone_perso", $search_phone_perso);
 if ($search_phone_mobile)      $sql .= natural_search("d.phone_mobile", $search_phone_mobile);
-if ($search_country) $sql .= " AND d.country IN (".$search_country.')';
+if ($search_country) $sql .= " AND d.country IN (".$db->sanitize($db->escape($search_country)).')';
 if ($filter == 'uptodate') $sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
 if ($filter == 'outofdate') $sql .= " AND ((datefin IS NULL OR datefin < '".$db->idate($now)."') AND t.subscription = 1)";
 
