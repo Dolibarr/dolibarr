@@ -39,7 +39,7 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productlotlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $search_entity = GETPOST('search_entity', 'int');

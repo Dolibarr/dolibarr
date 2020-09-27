@@ -194,6 +194,7 @@ $text = '';
 if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 {
     $langs->load("members");
+    $reg = array();
     if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
     else $text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
     $text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
@@ -256,9 +257,9 @@ if ($source == 'proposal')
 
 
 
-if (!$found && !$mesg) $mesg = $langs->trans("ErrorBadParameters");
+if (!$found && !$mesg) $mesg = $langs->transonentitiesnoconv("ErrorBadParameters");
 
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
+if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
 
 print '</table>'."\n";
 print "\n";

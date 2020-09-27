@@ -1617,13 +1617,12 @@ if ($action == 'create')
 		// Show object lines
 		if (!empty($object->lines))
 		{
-			//$disableedit=1;
-			//$disablemove=1;
+			$canchangeproduct = 1;
 			$ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line
-		if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
+		if ($object->statut == $object::STATUS_DRAFT && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
 		{
 			if ($action != 'editline')
 			{

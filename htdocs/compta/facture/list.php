@@ -674,10 +674,12 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->facture->creer && $contextpage != 'poslist')
+	// Show the new button only when this page is not opend from the Extended POS
+	if ($contextpage != 'poslist')
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/facture/card.php?action=create');
+		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->facture->creer);
 	}
 
 	$i = 0;
@@ -756,6 +758,7 @@ if ($resql)
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';
@@ -804,12 +807,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -818,12 +819,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1);
+		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1);
+		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -838,8 +837,7 @@ if ($resql)
 		print '</div>';
 		print '<div class="nowrap">';
 		print $langs->trans('to').' ';*/
-		print $langs->trans("Before").' ';
-		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1);
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
 		print '</div>';
 		print '</td>';
@@ -1566,7 +1564,7 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 			}
 
-			// Action column
+			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 			print '<td class="nowrap" align="center">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			{
@@ -1597,6 +1595,7 @@ if ($resql)
 
 	print "</form>\n";
 
+	// Show the file area only when this page is not opend from the Extended POS
 	if ($contextpage != 'poslist') {
 		$hidegeneratedfilelistifempty = 1;
 		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;

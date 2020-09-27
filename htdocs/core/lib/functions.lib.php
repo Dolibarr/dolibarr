@@ -389,7 +389,6 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 								if ($qualified)
 								{
-									//var_dump($user->default_values[$relativepathstring][$defkey]['createform']);
 									if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname]))
 									{
 										$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
@@ -1350,19 +1349,28 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	{
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
+		$widthofpopup = 200;
 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) { $tabsname = str_replace("@", "", $picto); }
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<a href="#" class="tab moretab inline-block tabunactive reposition">'.$langs->trans("More").'... ('.$nbintab.')</a>';
-		$out .= '<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
+		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';	// Do not use "reposition" class in the "More".
+		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
 		$out .= '<div></div>';
 		$out .= "</div>\n";
 
 		$out .= "<script>";
-		$out .= "$('#moretabs".$tabsname."').mouseenter( function() { console.log('mouseenter ".$left."'); $('#moretabsList".$tabsname."').css('".$left."','auto');});";
+		$out .= "$('#moretabs".$tabsname."').mouseenter( function() {
+			var x = this.offsetLeft, y = this.offsetTop;
+			console.log('mouseenter ".$left." x='+x+' y='+y+' window.innerWidth='+window.innerWidth);
+			if ((window.innerWidth - x) < ".($widthofpopup+10).") {
+				$('#moretabsList".$tabsname."').css('".$right."','8px');
+			}
+			$('#moretabsList".$tabsname."').css('".$left."','auto');
+			});
+		";
 		$out .= "$('#moretabs".$tabsname."').mouseleave( function() { console.log('mouseleave ".$left."'); $('#moretabsList".$tabsname."').css('".$left."','-999em');});";
 		$out .= "</script>";
 	}
@@ -3850,7 +3858,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		$result = ($nodiv ? '' : '<div class="'.$class.' hideonsmartphone'.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> '.$text.($nodiv ? '' : '</div>');
 
 		if ($textfordropdown) {
-			$tmpresult .= '<span class="'.$class.'text opacitymedium">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
+			$tmpresult .= '<span class="'.$class.'text opacitymedium cursorpointer">'.$langs->trans($textfordropdown).' '.img_picto($langs->trans($textfordropdown), '1downarrow').'</span>';
 			$tmpresult .= '<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					jQuery(".'.$class.'text").click(function() {
@@ -3887,20 +3895,21 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	$out = '';
 	$syslog = '';
 
-	// Si erreur intervenue avant chargement langue
+	// If error occurs before the $lang object was loaded
 	if (!$langs)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
 		$langs->load("main");
 	}
-	// Load translation files required by the page
+
+	// Load translation files required by the error messages
 	$langs->loadLangs(array('main', 'errors'));
 
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		$out .= $langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $out .= "You use an experimental or develop level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
+		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $out .= "You use an experimental or develop level of features, so please do NOT report any bugs or vulnerability, except if problem is confirmed after moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out .= $langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		$out .= "<b>".$langs->trans("Date").":</b> ".dol_print_date(time(), 'dayhourlog')."<br>\n";
@@ -3910,7 +3919,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		{
 			$out .= "<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
 		}
-		$out .= "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
+		$out .= "<b>".$langs->trans("Server").":</b> ".dol_htmlentities($_SERVER["SERVER_SOFTWARE"])."<br>\n";
 		if (function_exists("php_uname"))
 		{
 			$out .= "<b>".$langs->trans("OS").":</b> ".php_uname()."<br>\n";
@@ -3918,8 +3927,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<b>".$langs->trans("UserAgent").":</b> ".dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT, 'UTF-8')."<br>\n";
 		$out .= "<br>\n";
 		$out .= "<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8')."<br>\n";
-		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ?dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8') : '')."<br>\n";
-		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? $conf->standard_menu : '')."<br>\n";
+		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8') : '')."<br>\n";
+		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu) : '')."<br>\n";
 		$out .= "<br>\n";
 		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
 		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
@@ -3939,9 +3948,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 		{
 			$out .= "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
-			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror() ?dol_escape_htmltag($db->lastqueryerror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out .= "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno() ?dol_escape_htmltag($db->lasterrno()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
-			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ?dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out .= "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror() ? dol_escape_htmltag($db->lastqueryerror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out .= "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno() ? dol_escape_htmltag($db->lasterrno()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
+			$out .= "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror() ? dol_escape_htmltag($db->lasterror()) : $langs->trans("ErrorNoRequestInError"))."<br>\n";
 			$out .= "<br>\n";
 		} else // Mode CLI
 		{
@@ -3988,8 +3997,14 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 	}
 
-	if (empty($dolibarr_main_prod)) print $out;
-	else {
+	// Return a http error code if possible
+	if (! headers_sent()) {
+		http_response_code(500);
+	}
+
+	if (empty($dolibarr_main_prod)) {
+		print $out;
+	} else {
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		$langs->load("errors");
@@ -3997,7 +4012,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
 	}
-	//else print 'Sorry, an error occured but the parameter $dolibarr_main_prod is defined in conf file so no message is reported to your browser. Please read the log file for error message.';
+
 	dol_syslog("Error ".$syslog, LOG_ERR);
 }
 
@@ -4095,15 +4110,14 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	//var_dump('field='.$field.' field1='.$field1.' sortfield='.$sortfield.' sortfield1='.$sortfield1);
 	// If field is used as sort criteria we use a specific css class liste_titre_sel
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
+	$liste_titre = 'liste_titre';
 	if ($field1 && ($sortfield1 == $field1 || $sortfield1 == preg_replace("/^[^\.]+\./", "", $field1))) {
-		$out .= '<'.$tag.' class="'.$prefix.'liste_titre_sel" '.$moreattrib;
-		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-		$out .= '>';
-	} else {
-		$out .= '<'.$tag.' class="'.$prefix.'liste_titre" '.$moreattrib;
-		$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-		$out .= '>';
+		$liste_titre = 'liste_titre_sel';
 	}
+	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
+	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+	$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+	$out .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink))    // If this is a sort field
 	{
@@ -6118,7 +6132,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			$birthday = dol_print_date($object->birth, 'day');
 
-			if (is_object($object) && $object->element == 'adherent' && $object->id > 0)
+			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0)
 			{
 				$substitutionarray['__MEMBER_ID__'] = (isset($object->id) ? $object->id : '');
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
@@ -7720,7 +7734,7 @@ function dol_getmypid()
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
  * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of ID separated with comma (Example '1,3,4')
- * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '1,3,4') for search into a multiselect string ('1,2')
+ * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
@@ -7745,11 +7759,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	$res = '';
 	if (!is_array($fields)) $fields = array($fields);
 
-	$nboffields = count($fields);
-	$end2 = count($crits);
 	$j = 0;
 	foreach ($crits as $crit)
 	{
+		$crit = trim($crit);
 		$i = 0; $i2 = 0;
 		$newres = '';
 		foreach ($fields as $field)
@@ -7757,10 +7770,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 			if ($mode == 1)
 			{
 				$operator = '=';
-				$newcrit = preg_replace('/([<>=]+)/', '', trim($crit));
+				$newcrit = preg_replace('/([<>=]+)/', '', $crit);
 
 				$reg = array();
-				preg_match('/([<>=]+)/', trim($crit), $reg);
+				preg_match('/([<>=]+)/', $crit, $reg);
 				if ($reg[1])
 				{
 					$operator = $reg[1];
@@ -7770,7 +7783,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit))
 					{
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$numnewcrit;
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit);	// should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -7778,41 +7791,45 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 			} elseif ($mode == 2 || $mode == -2)
 			{
-				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '')."IN (".$db->escape(trim($crit)).")";
+				$crit = preg_replace('/[^0-9,]/', '', $crit);	// ID are always integer
+				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
+				$newres .= $crit ? "IN (".$db->sanitize($db->escape($crit)).")" : "IN (0)";
 				if ($mode == -2) $newres .= ' OR '.$field.' IS NULL';
 				$i2++; // a criteria was added to string
 			} elseif ($mode == 3 || $mode == -3)
 			{
-				$tmparray = explode(',', trim($crit));
+				$tmparray = explode(',', $crit);
 				if (count($tmparray))
 				{
 					$listofcodes = '';
 					foreach ($tmparray as $val)
 					{
+						$val = trim($val);
 						if ($val)
 						{
 							$listofcodes .= ($listofcodes ? ',' : '');
-							$listofcodes .= "'".$db->escape(trim($val))."'";
+							$listofcodes .= "'".$db->escape($val)."'";
 						}
 					}
-					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$listofcodes.")";
+					$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -3 ? 'NOT ' : '')."IN (".$db->sanitize($listofcodes).")";
 					$i2++; // a criteria was added to string
 				}
 				if ($mode == -3) $newres .= ' OR '.$field.' IS NULL';
 			} elseif ($mode == 4)
 			{
-				$tmparray = explode(',', trim($crit));
+				$tmparray = explode(',', $crit);
 				if (count($tmparray))
 				{
 					$listofcodes = '';
 					foreach ($tmparray as $val)
 					{
+						$val = trim($val);
 						if ($val)
 						{
-							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape(trim($val)).',%\'';
-							$newres .= ' OR '.$field.' = \''.$db->escape(trim($val)).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).'\'';
-							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape(trim($val)).',%\'';
+							$newres .= ($i2 > 0 ? ' OR (' : '(').$field.' LIKE \''.$db->escape($val).',%\'';
+							$newres .= ' OR '.$field.' = \''.$db->escape($val).'\'';
+							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).'\'';
+							$newres .= ' OR '.$field.' LIKE \'%,'.$db->escape($val).',%\'';
 							$newres .= ')';
 							$i2++;
 						}

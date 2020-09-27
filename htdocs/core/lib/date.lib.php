@@ -466,8 +466,8 @@ function dol_get_next_week($day, $week, $month, $year)
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
  * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
- *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
+ *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
+ *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
  *  @return		int						Date for first day, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
@@ -500,6 +500,28 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 	$datelim -= (3600 * 24);
 
 	return $datelim;
+}
+
+/**	Return GMT time for last hour of a given GMT date (it removes hours, min and second part)
+ *
+ *	@param		int			$date		Date
+ *  @return		int						Date for last hour of a given date
+ */
+function dol_get_last_hour($date)
+{
+	$tmparray = dol_getdate($date);
+	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
+}
+
+/**	Return GMT time for first hour of a given GMT date (it removes hours, min and second part)
+ *
+ *	@param		int			$date		Date
+ *  @return		int						Date for last hour of a given date
+ */
+function dol_get_first_hour($date)
+{
+	$tmparray = dol_getdate($date);
+	return dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
 }
 
 /**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.

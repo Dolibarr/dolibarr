@@ -53,8 +53,7 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 $holiday = new Holiday($db);
 $holidaystatic = new Holiday($db);
 
-$max = 3;
-
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 
 /*

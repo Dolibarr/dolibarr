@@ -95,9 +95,10 @@ $fieldstosearchall = array(
 	's.nom'=>"ThirdParty",
 	'f.description'=>'Description',
 	'f.note_public'=>'NotePublic',
+	'fd.description'=>'DescriptionOfLine',
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"] = "NotePrivate";
-if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['f.description']);
+if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['fd.description']);
 
 // Definition of fields for list
 $arrayfields = array(
@@ -319,7 +320,10 @@ if ($resql)
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fichinter/card.php?action=create', '', $user->rights->ficheinter->creer);
+
+	$url = DOL_URL_ROOT.'/fichinter/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->rights->ficheinter->creer);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

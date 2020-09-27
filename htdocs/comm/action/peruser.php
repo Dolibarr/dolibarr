@@ -110,8 +110,8 @@ if ($dateselect > 0)
 $tmp = empty($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_h = GETPOST('begin_h', 'int') != '' ?GETPOST('begin_h', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOST('end_h', 'int') ?GETPOST('end_h', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOST('begin_h', 'int') != '' ? GETPOST('begin_h', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOST('end_h', 'int') ? GETPOST('end_h', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) $begin_h = 9;
 if ($end_h < 1 || $end_h > 24) $end_h = 18;
 if ($end_h <= $begin_h) $end_h = $begin_h + 1;

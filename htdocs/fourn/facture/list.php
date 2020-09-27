@@ -166,11 +166,11 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
 	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
-	'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
-	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1"),
-	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1"),
-	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+	'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1, 'position'=>105),
+	'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0, 'position'=>110),
+	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1", 'position'=>95),
+	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1", 'position'=>100),
+	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0, 'position'=>115),
 	'u.login'=>array('label'=>"Author", 'checked'=>1),
 	'dynamount_payed'=>array('label'=>$langs->trans("Payed"), 'checked'=>0),
 	'rtp'=>array('label'=>$langs->trans("Rest"), 'checked'=>0),
@@ -318,6 +318,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 if (!$search_all) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 if ($search_all || $search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det as pd ON f.rowid=pd.fk_facture_fourn';
 if ($search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -326,7 +327,6 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -508,11 +508,9 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->fournisseur->facture->creer)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/facture/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->facture->creer);
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

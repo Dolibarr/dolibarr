@@ -241,14 +241,13 @@ print '<div with="100%" id="tablepublicpayment">';
 print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 $error = 0;
-$var = false;
 $found = true;
 
 print '<br>';
 
 // Label
 print $langs->trans("Label").' : ';
-print '<b>'.$object->label.'</b><br>';
+print '<b>'.dol_escape_htmltag($object->label).'</b><br>';
 
 // Date
 print  $langs->trans("DateExpected").' : ';
@@ -263,7 +262,7 @@ print '</b><br>';
 // Remuneration
 print  $langs->trans("Remuneration").' : ';
 print '<b>';
-print $object->remuneration_suggested;
+print dol_escape_htmltag($object->remuneration_suggested);
 print '</b><br>';
 
 // Contact

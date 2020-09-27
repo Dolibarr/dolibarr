@@ -94,6 +94,7 @@ $result = restrictedArea($user, 'modulebuilder', null);
 
 $error = 0;
 
+$form = new Form($db);
 
 // Define $listofmodules
 $dirsrootforscan = array($dirread);
@@ -101,7 +102,7 @@ $dirsrootforscan = array($dirread);
 if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT))) { $dirsrootforscan[] = DOL_DOCUMENT_ROOT; }
 
 // Search modules to edit
-$textforlistofdirs = '<!-- Scanned dir -->'."\n";
+$textforlistofdirs = '<!-- Directory scanned -->'."\n";
 $listofmodules = array();
 $i = 0;
 foreach ($dirsrootforscan as $dirread)
@@ -170,6 +171,10 @@ foreach ($dirsrootforscan as $dirread)
 	if (empty($i)) $textforlistofdirs .= $langs->trans("DirScanned").' : ';
 	else $textforlistofdirs .= ', ';
 	$textforlistofdirs .= '<strong class="wordbreakimp">'.$dirread.'</strong>';
+	if ($dirread == DOL_DOCUMENT_ROOT) {
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) $textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MAIN_FEATURES_LEVEL"));
+		if (! empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT)) $textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MODULEBUILDER_ADD_DOCUMENT_ROOT"));
+	}
 	$i++;
 }
 
@@ -1562,7 +1567,7 @@ llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
 	//'/includes/ace/src/ext-chromevox.js'
-	), array());
+	), array(), '', 'classforhorizontalscrolloftabs');
 
 
 $text = $langs->trans("ModuleBuilder");
@@ -2558,6 +2563,7 @@ if ($module == 'initmodule')
 							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
+							print '<th class="center">'.$langs->trans("CSSViewClass").'</th>';
 							print '<th class="center">'.$langs->trans("KeyForTooltip").'</th>';
 							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
@@ -2589,6 +2595,7 @@ if ($module == 'initmodule')
 								print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
 								//print '<td class="center"><input class="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
@@ -2629,6 +2636,7 @@ if ($module == 'initmodule')
 									$propsearchall = $propval['searchall'];
 									$propisameasure = $propval['isameasure'];
 									$propcss = $propval['css'];
+									$propcssview = $propval['cssview'];
 									$prophelp = $propval['help'];
 									$propshowoncombobox = $propval['showoncombobox'];
 									//$propdisabled=$propval['disabled'];
@@ -2637,63 +2645,70 @@ if ($module == 'initmodule')
 									print '<tr class="oddeven">';
 
 									print '<td>';
-									print $propname;
+									print dol_escape_htmltag($propname);
 									print '</td>';
 									print '<td>';
-									print $proplabel;
+									print dol_escape_htmltag($proplabel);
 									print '</td>';
-									print '<td class="wordbreak">';
-									print $proptype;
+									print '<td class="tdoverflowmax200">';
+									print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 									print '</td>';
-									print '<td class="wordbreak">';
+									print '<td class="tdoverflowmax200">';
 									if ($proparrayofkeyval) {
-										print json_encode($proparrayofkeyval);
+										print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+										print dol_escape_htmltag(json_encode($proparrayofkeyval));
+										print '</span>';
 									}
 									print '</td>';
 									print '<td class="center">';
-									print $propnotnull;
+									print dol_escape_htmltag($propnotnull);
 									print '</td>';
 									print '<td>';
-									print $propdefault;
+									print dol_escape_htmltag($propdefault);
 									print '</td>';
 									print '<td class="center">';
 									print $propindex ? '1' : '';
 									print '</td>';
 									print '<td class="center">';
-									print $propforeignkey ? $propforeignkey : '';
+									print $propforeignkey ? dol_escape_htmltag($propforeignkey) : '';
 									print '</td>';
 									print '<td class="right">';
-									print $propposition;
+									print dol_escape_htmltag($propposition);
 									print '</td>';
 									print '<td class="center">';
-									print $propenabled ? $propenabled : '';
+									print $propenabled ? dol_escape_htmltag($propenabled) : '';
 									print '</td>';
 									print '<td class="center">';
-									print $propvisible ? $propvisible : '0';
+									print $propvisible ? dol_escape_htmltag($propvisible) : '0';
 									print '</td>';
 									print '<td class="center">';
-									print $propnoteditable ? $propnoteditable : '';
+									print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
 									print '</td>';
 									print '<td class="center">';
 									print $propsearchall ? '1' : '';
 									print '</td>';
 									print '<td class="center">';
-									print $propisameasure ? $propisameasure : '';
+									print $propisameasure ? dol_escape_htmltag($propisameasure) : '';
 									print '</td>';
 									print '<td class="center">';
-									print $propcss ? $propcss : '';
+									print $propcss ? dol_escape_htmltag($propcss) : '';
 									print '</td>';
 									print '<td class="center">';
-									print $prophelp ? $prophelp : '';
+									print $propcssview ? dol_escape_htmltag($propcssview) : '';
+									print '</td>';
+									print '<td class="tdoverflowmax200">';
+									print $prophelp ? dol_escape_htmltag($prophelp) : '';
 									print '</td>';
 									print '<td class="center">';
-									print $propshowoncombobox ? $propshowoncombobox : '';
+									print $propshowoncombobox ? dol_escape_htmltag($propshowoncombobox) : '';
 									print '</td>';
 									/*print '<td class="center">';
 									print $propdisabled?$propdisabled:'';
 									print '</td>';*/
-									print '<td>';
-									print $propcomment;
+									print '<td class="tdoverflowmax200">';
+									print '<span title="'.dol_escape_htmltag($propcomment).'">';
+									print dol_escape_htmltag($propcomment);
+									print '</span>';
 									print '</td>';
 									print '<td class="center">';
 									if ($propname != 'rowid')

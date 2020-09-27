@@ -58,7 +58,7 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = 3;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
 
 /*
@@ -523,7 +523,7 @@ if ($user->rights->agenda->myactions->read) {
  * Actions to do
  */
 if ($user->rights->agenda->myactions->read) {
-	show_array_actions_to_do(10);
+	show_array_actions_to_do($max);
 }
 
 
@@ -545,12 +545,12 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY c.tms DESC";
-	$sql .= $db->plimit(5, 0);
+	$sql .= $db->plimit($max + 1, 0);
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		startSimpleTable($langs->trans("LastContracts", 5), "", "", 2);
+		startSimpleTable($langs->trans("LastContracts", $max), "", "", 2);
 
 		if ($num > 0) {
 			$i = 0;
@@ -604,16 +604,25 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$total = 0;
+		$total = $total_ttc = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=1", 4, $num);
 
 		if ($num > 0) {
 			$i = 0;
+			$othernb = 0;
 
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
 
 				$propalstatic->id = $obj->propalid;
 				$propalstatic->ref = $obj->ref;
@@ -655,11 +664,20 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '</tr>';
 
 				$i++;
-				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+				$total += $obj->total_ht;
+				$total_ttc += $obj->total_ttc;
+			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 		}
 
-		addSummaryTableLine(5, $num, $nbofloop, $total, "NoProposal", true);
+		addSummaryTableLine(5, $num, $nbofloop, empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $total_ttc : $total, "NoProposal", true);
 		finishSimpleTable(true);
 
 		$db->free($resql);
@@ -687,16 +705,25 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$total = 0;
+		$total = $total_ttc = 0;
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("OrdersOpened", "commande/list.php", "search_status=".Commande::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
 			$i = 0;
+			$othernb = 0;
 
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
 
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
@@ -738,11 +765,20 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</tr>';
 
 				$i++;
-				$total +=(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+				$total += $obj->total_ht;
+				$total_ttc += $obj->total_ttc;
+			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 		}
 
-		addSummaryTableLine(5, $num, $nbofloop, $total, "None", true);
+		addSummaryTableLine(5, $num, $nbofloop, empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $total_ttc : $total, "None", true);
 		finishSimpleTable(true);
 
 		$db->free($resql);

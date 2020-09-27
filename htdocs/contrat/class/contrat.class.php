@@ -1911,7 +1911,6 @@ class Contrat extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
 
 		if ($mode == 4 || $mode == 6 || $mode == 7)

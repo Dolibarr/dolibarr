@@ -4038,7 +4038,7 @@ class Form
 	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
 	 * 	   @param  	string			$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
 	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 *     @param  	int				$height          	Force height of box (0 = auto)
+	 *     @param  	int|string		$height          	Force height of box (0 = auto)
 	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int				$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      		    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
@@ -4058,7 +4058,7 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 210;
+			$height = 220;
 			if (is_array($formquestion) && count($formquestion) > 2) {
 				$height += ((count($formquestion) - 2) * 24);
 			}
@@ -5280,10 +5280,11 @@ class Form
 	 *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
+	 *  @param	string 		$placeholder    Placeholder
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '')
 	{
 		global $conf, $langs;
 
@@ -5420,6 +5421,7 @@ class Form
 					$retstring .= '<div class="nowrap inline-block">';
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
+					$retstring .= ($placeholder ? ' placeholder="'.$placeholder.'"' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
@@ -6461,11 +6463,12 @@ class Form
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
 						});'."\n";
-			} elseif ($addjscombo == 2)
+			} elseif ($addjscombo == 2 && ! defined('DISABLE_MULTISELECT'))
 			{
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
+				$out .= 'console.log(\'addjscombo=2 for htmlname='.$htmlname.'\');';
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({
 								containerHTML: \'<div class="multi-select-container">\',
@@ -7158,7 +7161,7 @@ class Form
 		}
 
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
-		$ret .= '<div class="inline-block floatleft valignmiddle maxwidth750 refid'.(($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '').'">';
+		$ret .= '<div class="inline-block floatleft valignmiddle maxwidth750 marginbottomonly refid'.(($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '').'">';
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe')

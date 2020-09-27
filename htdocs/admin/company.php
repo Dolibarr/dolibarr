@@ -558,7 +558,7 @@ $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
@@ -568,7 +568,7 @@ print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="'.d
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-print '<input name="capital" id="capital" class="minwidth100" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL).'"></td></tr>';
+print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL).'"></td></tr>';
 
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';

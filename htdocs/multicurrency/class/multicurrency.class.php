@@ -756,7 +756,8 @@ class CurrencyRate extends CommonObjectLine
 		$error = 0;
 		$this->rate = price2num($this->rate);
 		if (empty($this->entity) || $this->entity <= 0) $this->entity = $conf->entity;
-		$now = date('Y-m-d H:i:s');
+		// if no date defined on object, use current date
+		if (empty($this->date_sync)) $this->date_sync = date('Y-m-d H:i:s');
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
@@ -766,9 +767,9 @@ class CurrencyRate extends CommonObjectLine
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.$this->rate.',';
-		$sql .= ' \''.$now.'\',';
-		$sql .= ' \''.$fk_multicurrency.'\',';
-		$sql .= ' \''.$this->entity.'\'';
+		$sql .= ' \'' . $this->date_sync . '\',';
+		$sql .= ' \'' . $fk_multicurrency . '\',';
+		$sql .= ' \'' . $this->entity . '\'';
 		$sql .= ')';
 
 		$this->db->begin();
@@ -864,9 +865,10 @@ class CurrencyRate extends CommonObjectLine
 		$this->rate = price2num($this->rate);
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' rate='.$this->rate;
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql .= ' rate=' . $this->rate;
+		if ($this->date_sync) $sql .= ', date_sync="' . $this->db->escape($this->date_sync) . '"';
+		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
 

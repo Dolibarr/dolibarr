@@ -447,6 +447,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Show personalized menus
 	$menuArbo = new Menubase($db, 'eldy');
+
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Return tabMenu with only top entries
 
 	$num = count($newTabMenu);
@@ -455,34 +456,39 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
+		$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
+		// url = url from host, shorturl = relative path into dolibarr sources
+		$url = $shorturl = $newTabMenu[$i]['url'];
+		if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url']))	// Do not change url content for external links
+		{
+			$tmp = explode('?', $newTabMenu[$i]['url'], 2);
+			$url = $shorturl = $tmp[0];
+			$param = (isset($tmp[1]) ? $tmp[1] : '');
+
+			if (!preg_match('/mainmenu/i', $param) || !preg_match('/leftmenu/i', $param)) $param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
+			$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
+			//$shorturl = $shorturl.($param?'?'.$param:'');
+			$shorturl = $url;
+			if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
+		}
+
 		$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
-
-			// url = url from host, shorturl = relative path into dolibarr sources
-			$url = $shorturl = $newTabMenu[$i]['url'];
-			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url']))	// Do not change url content for external links
-			{
-				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
-				$url = $shorturl = $tmp[0];
-				$param = (isset($tmp[1]) ? $tmp[1] : '');
-
-				if (!preg_match('/mainmenu/i', $param) || !preg_match('/leftmenu/i', $param)) $param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
-				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
-				//$shorturl = $shorturl.($param?'?'.$param:'');
-				$shorturl = $url;
-				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
-			}
-
 			// Define the class (top menu selected or not)
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname = 'class="tmenusel"';
 			elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname = 'class="tmenusel"';
 			else $classname = 'class="tmenu"';
-		} elseif ($showmode == 2) $classname = 'class="tmenu"';
+		} elseif ($showmode == 2) {
+			$classname = 'class="tmenu"';
+		}
 
-		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
+		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget),
+			($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']),
+			($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''),
+			$newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
 
 	// Sort on position
@@ -516,7 +522,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
 		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo nohover"', 1);
-
 
 		print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
 
@@ -1482,7 +1487,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "withdraw") {
 					$newmenu->add("/compta/prelevement/create.php?mainmenu=bank", $langs->trans("NewStandingOrder"), 1, $user->rights->prelevement->bons->creer);
 
-					$newmenu->add("/compta/prelevement/bons.php?mainmenu=bank", $langs->trans("WithdrawalsReceipts"), 1, $user->rights->prelevement->bons->lire);
+					$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("WithdrawalsReceipts"), 1, $user->rights->prelevement->bons->lire);
 					$newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->rights->prelevement->bons->lire);
 					$newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank", $langs->trans("Rejects"), 1, $user->rights->prelevement->bons->lire);
 					$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->rights->prelevement->bons->lire);
@@ -1497,7 +1502,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "banktransfer") {
 					$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank", $langs->trans("NewPaymentByBankTransfer"), 1, $user->rights->paymentbybanktransfer->create);
 
-					$newmenu->add("/compta/prelevement/bons.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferReceipts"), 1, $user->rights->paymentbybanktransfer->read);
+					$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferReceipts"), 1, $user->rights->paymentbybanktransfer->read);
 					$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->rights->paymentbybanktransfer->read);
 					$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank", $langs->trans("Rejects"), 1, $user->rights->paymentbybanktransfer->read);
 					$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->rights->paymentbybanktransfer->read);
@@ -1874,8 +1879,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/adherents/list.php?leftmenu=members", $langs->trans("List"), 1, $user->rights->adherent->lire);
 				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1", $langs->trans("MenuMembersToValidate"), 2, $user->rights->adherent->lire);
 				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1", $langs->trans("MenuMembersValidated"), 2, $user->rights->adherent->lire);
-				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=uptodate", $langs->trans("MenuMembersUpToDate"), 2, $user->rights->adherent->lire);
-				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=outofdate", $langs->trans("MenuMembersNotUpToDate"), 2, $user->rights->adherent->lire);
+				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=withoutsubscription", $langs->trans("WithoutSubscription"), 3, $user->rights->adherent->lire);
+				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=uptodate", $langs->trans("UpToDate"), 3, $user->rights->adherent->lire);
+				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=outofdate", $langs->trans("OutOfDate"), 3, $user->rights->adherent->lire);
 				$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=0", $langs->trans("MenuMembersResiliated"), 2, $user->rights->adherent->lire);
 				$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->rights->adherent->lire);
 

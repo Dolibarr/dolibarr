@@ -20,3 +20,17 @@ MulticurrencyPaymentAmount=Payment amount, original currency
 AmountToOthercurrency=Amount To (in currency of receiving account)
 CurrencyRateSyncSucceed=Currency rate synchronization done successfuly
 MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments
+
+ErrorCallbackNotFound=Callback not found: %s
+MulticurrencyErrorCouldNotCreateRate=Unable to create exchange rate "%s" for currency "%s"
+MulticurrencyErrorCurrencyCodeNotFound=Currency code not found: "%s"
+MulticurrencyErrorCouldNotFetchRate=Exchange rate #%d not found
+CurrencyRateSetup=Multi-currency exchange rates
+MulticurrencyRateSetup=Edit exchange rates
+MulticurrencyRateDeleted=Exchange rate deleted
+MulticurrencyDateSync=Date
+MulticurrencyRate=Exchange rate
+MulticurrencyCode=Currency code
+MulticurrencyEntity=Entity
+MulticurrencyRateSaved=Exchange rate saved
+UnknownAction=Unknown action : "%s"

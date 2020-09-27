@@ -36,7 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
  */
 function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 {
-    global $_POST, $db, $conf, $langs;
+    global $db, $conf, $langs;
 
     dol_syslog("functions_openid::check_user_password_openid usertotest=".$usertotest);
 
@@ -57,7 +57,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
             $openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
             $openid->Redirect(); // This will redirect user to OpenID Server
         } else {
-            $error = $openid->GetError();
+        	$_SESSION["dol_loginmesg"] = $openid->GetError();
             return false;
         }
         return false;
@@ -72,7 +72,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
         {
             // OK HERE KEY IS VALID
 
-            $sql = "SELECT login";
+            $sql = "SELECT login, entity, datestartvalidity, dateendvalidity";
             $sql .= " FROM ".MAIN_DB_PREFIX."user";
             $sql .= " WHERE openid = '".$db->escape($_GET['openid_identity'])."'";
             $sql .= " AND entity IN (0,".($_SESSION["dol_entity"] ? $_SESSION["dol_entity"] : 1).")";
@@ -84,13 +84,27 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
                 $obj = $db->fetch_object($resql);
                 if ($obj)
                 {
+                	$now = dol_now();
+                	if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
+                		// Load translation files required by the page
+                		$langs->loadLangs(array('main', 'errors'));
+                		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+                		return '--bad-login-validity--';
+                	}
+                	if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
+                		// Load translation files required by the page
+                		$langs->loadLangs(array('main', 'errors'));
+                		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+                		return '--bad-login-validity--';
+                	}
+
                     $login = $obj->login;
                 }
             }
         } elseif ($openid->IsError() === true)
         {
             // ON THE WAY, WE GOT SOME ERROR
-            $error = $openid->GetError();
+        	$_SESSION["dol_loginmesg"] = $openid->GetError();
             return false;
         } else {
             // Signature Verification Failed

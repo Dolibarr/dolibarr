@@ -53,7 +53,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 
-$max = 3;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 
 /*
@@ -362,7 +362,7 @@ if ($resql)
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '...';
+		print '<span class="opacitymedium">...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;
