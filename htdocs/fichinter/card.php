@@ -173,7 +173,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
@@ -198,7 +198,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $user->rights->ficheinter->creer)
 	{
@@ -372,11 +372,11 @@ if (empty($reshook))
 							}
 						}
 		            } else {
-		                $mesg = $srcobject->error;
+						$mesg = $srcobject->error;
 		                $error++;
 		            }
 		        } else {
-		            $mesg = $object->error;
+					$mesg = $object->error;
 		            $error++;
 		        }
 		    } else {
@@ -406,7 +406,7 @@ if (empty($reshook))
 		    	}
 	        }
 	    } else {
-	    	$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 	        $action = 'create';
 	    }
 	} elseif ($action == 'update' && $user->rights->ficheinter->creer)
@@ -456,17 +456,17 @@ if (empty($reshook))
 	{
 		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC))
  		{
-			$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")).'</div>';
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description"));
 			$error++;
 		}
 		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int'))
 		{
-			$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration")).'</div>';
+			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration"));
 			$error++;
 		}
 		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0)
 		{
-			$mesg = '<div class="error">'.$langs->trans("ErrorValueTooHigh").'</div>';
+			$mesg = $langs->trans("ErrorValueTooHigh");
 			$error++;
 		}
 		if (!$error)
@@ -538,7 +538,7 @@ if (empty($reshook))
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			$mesg = $object->error;
 		}
 	}
 
@@ -553,6 +553,20 @@ if (empty($reshook))
 	    } else {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
+	}
+
+	// Reopen
+	elseif ($action == 'confirm_reopen' && $user->rights->ficheinter->creer)
+	{
+		$result = $object->setStatut(Fichinter::STATUS_VALIDATED);
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else {
+			$mesg = $object->error;
+		}
 	}
 
 	/*
@@ -735,9 +749,9 @@ if (empty($reshook))
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+					$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 				} else {
-					$mesg = '<div class="error">'.$object->error.'</div>';
+					$mesg = $object->error;
 				}
 			}
 		}
@@ -784,7 +798,11 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("AddIntervention"), '', 'intervention');
 
-	dol_htmloutput_mesg($mesg);
+	if ($error > 0) {
+		dol_htmloutput_errors($mesg);
+	} else {
+		dol_htmloutput_mesg($mesg);
+	}
 
 	if ($socid) $res = $soc->fetch($socid);
 
@@ -1058,7 +1076,11 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
-	dol_htmloutput_mesg($mesg);
+	if ($error > 0) {
+		dol_htmloutput_errors($mesg);
+	} else {
+		dol_htmloutput_mesg($mesg);
+	}
 
 	$head = fichinter_prepare_head($object);
 
@@ -1097,6 +1119,12 @@ if ($action == 'create')
 	if ($action == 'modify')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify', '', 0, 1);
+	}
+
+	// Confirm back to open
+	if ($action == 'reopen')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Reopen'), $langs->trans('ConfirmReopenIntervention', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirm deletion of line
@@ -1594,6 +1622,15 @@ if ($action == 'create')
 					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
 					else print $langs->trans("SetToDraft");
 					print '</a></div>';
+				}
+
+				// Reopen
+				if ($object->statut > Fichinter::STATUS_CLOSED)
+				{
+					if ($user->rights->ficheinter->creer)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans('Reopen').'</a></div>';
+					} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Reopen').'</a></div>';
 				}
 
 				// Send
