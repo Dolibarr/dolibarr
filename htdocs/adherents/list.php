@@ -44,8 +44,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mem
 // Security check
 $result = restrictedArea($user, 'adherent');
 
-$filter = GETPOST("filter", 'alpha');
-$statut = GETPOST("statut", 'intcomma');
 $search = GETPOST("search", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -65,12 +63,19 @@ $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
+$search_filter = GETPOST("search_filter", 'alpha');
+$search_status = GETPOST("search_status", 'intcomma');
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
+$filter = GETPOST("filter", 'alpha');
+if ($filter) $search_filter = $filter; // For backward compatibility
+$statut = GETPOST("statut", 'alpha');
+if ($statut != '') $search_status = $statut; // For backward compatibility
+
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-if ($statut < -1) $statut = '';
+if ($search_status < -1) $search_status = '';
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -166,6 +171,9 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$statut = '';
+		$filter = '';
+
 		$search = "";
 		$search_ref = "";
 		$search_lastname = "";
@@ -186,9 +194,10 @@ if (empty($reshook)) {
 		$search_phone_mobile = '';
 		$search_morphy = "";
 		$search_categ = "";
+		$search_filter = "";
+		$search_status = "";
 		$catid = "";
 		$sall = "";
-		$statut = '';
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -273,7 +282,10 @@ if ($search_categ == -2) $sql .= " AND cm.fk_categorie IS NULL";
 $sql .= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_type > 0) $sql .= " AND t.rowid=".$db->escape($search_type);
-if ($statut != '') $sql .= " AND d.statut in (".$db->escape($statut).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
+if ($search_filter == 'withoutsubscription') $sql .= " AND (datefin IS NULL OR t.subscription = 0)";
+if ($search_filter == 'uptodate') $sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+if ($search_filter == 'outofdate') $sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+if ($search_status != '') $sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql .= " AND 1 = 2"; // Always wrong
@@ -293,8 +305,6 @@ if ($search_phone)      $sql .= natural_search("d.phone", $search_phone);
 if ($search_phone_perso)      $sql .= natural_search("d.phone_perso", $search_phone_perso);
 if ($search_phone_mobile)      $sql .= natural_search("d.phone_mobile", $search_phone_mobile);
 if ($search_country) $sql .= " AND d.country IN (".$search_country.')';
-if ($filter == 'uptodate') $sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
-if ($filter == 'outofdate') $sql .= " AND ((datefin IS NULL OR datefin < '".$db->idate($now)."') AND t.subscription = 1)";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -341,13 +351,14 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $titre = $langs->trans("MembersList");
-if (GETPOSTISSET("statut")) {
-	if ($statut == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
-	if ($statut == '-1') { $titre = $langs->trans("MembersListToValid"); }
-	if ($statut == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); }
-	if ($statut == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
-	if ($statut == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
-	if ($statut == '0') { $titre = $langs->trans("MembersListResiliated"); }
+if (GETPOSTISSET("search_status")) {
+	if ($search_status == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
+	if ($search_status == '-1') { $titre = $langs->trans("MembersListToValid"); }
+	if ($search_status == '1' && $filter == '') { $titre = $langs->trans("MembersValidated"); }
+	if ($search_status == '1' && $filter == 'withoutsubscription') { $titre = $langs->trans("MembersWithSubscriptionToReceive"); }
+	if ($search_status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
+	if ($search_status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
+	if ($search_status == '0') { $titre = $langs->trans("MembersListResiliated"); }
 } elseif ($action == 'search') {
 	$titre = $langs->trans("MembersListQualified");
 }
@@ -362,7 +373,6 @@ $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($sall != "") $param .= "&sall=".urlencode($sall);
-if ($statut != "") $param .= "&statut=".urlencode($statut);
 if ($search_ref)   $param .= "&search_ref=".urlencode($search_ref);
 if ($search_civility) $param .= "&search_civility=".urlencode($search_civility);
 if ($search_firstname) $param .= "&search_firstname=".urlencode($search_firstname);
@@ -380,7 +390,8 @@ if ($search_country != '') $param .= "&search_country=".urlencode($search_countr
 if ($search_phone != '') $param .= "&search_phone=".urlencode($search_phone);
 if ($search_phone_perso != '') $param .= "&search_phone_perso=".urlencode($search_phone_perso);
 if ($search_phone_mobile != '') $param .= "&search_phone_mobile=".urlencode($search_phone_mobile);
-if ($filter)         $param .= "&filter=".urlencode($filter);
+if ($search_filter && $search_filter != '-1') $param .= "&search_filter=".urlencode($search_filter);
+if ($search_status != "" && $search_status != '-1') $param .= "&search_status=".urlencode($search_status);
 if ($search_type > 0)       $param .= "&search_type=".urlencode($search_type);
 if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -549,6 +560,8 @@ if (!empty($arrayfields['d.email']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre left">';
+	$selectarray=array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }
 // Extra fields
@@ -563,7 +576,7 @@ if (!empty($arrayfields['d.datec']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-//Birthday
+// Birthday
 if (!empty($arrayfields['d.birth']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -581,7 +594,7 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		'1'=>$langs->trans("Validated"),
 		'0'=>$langs->trans("Resiliated")
 	);
-	print $form->selectarray('statut', $liststatus, $statut, -2);
+	print $form->selectarray('search_status', $liststatus, $search_status, -2);
 	print '</td>';
 }
 // Action column
