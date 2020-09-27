@@ -138,7 +138,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc";
-  $sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas";
+	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql .= ", s.code_client";
 	$sql .= ", s.email";
 	$sql .= ", s.entity";
