@@ -479,16 +479,17 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity			Entity to set
  *  @param	int		$revertonoff	Revert on/off
- *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$forcenoajax	1=Force to use a ahref link instead of ajax code.
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcenoajax = 0)
 {
 	global $conf, $langs;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 
-	if (empty($conf->use_javascript_ajax))
+	if (empty($conf->use_javascript_ajax) || $forcenoajax)
 	{
 		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

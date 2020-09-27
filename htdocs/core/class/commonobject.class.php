@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
@@ -8249,5 +8249,50 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return 1;
+	}
+
+	/**
+	 * Delete related files of object in database
+	 *
+	 * @return bool
+	 */
+	public function deleteEcmFiles()
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		switch ($this->element){
+			case 'propal':
+				$element = 'propale';
+				break;
+			case 'product':
+				$element = 'produit';
+				break;
+			case 'order_supplier':
+				$element ='fournisseur/commande';
+				break;
+			case 'invoice_supplier':
+				$element = 'fournisseur/facture/' . get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+				break;
+			case 'shipping':
+				$element = 'expedition/sending';
+				break;
+			default:
+				$element = $this->element;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
+		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+		$sql.= " AND filepath = '".$element."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return false;
+		}
+
+		$this->db->commit();
+		return true;
 	}
 }

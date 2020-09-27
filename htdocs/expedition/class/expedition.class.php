@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
@@ -1324,6 +1324,9 @@ class Expedition extends CommonObject
 						if (!$error)
 						{
 							$this->db->commit();
+
+							// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+							$this->deleteEcmFiles();
 
 							// We delete PDFs
 							$ref = dol_sanitizeFileName($this->ref);

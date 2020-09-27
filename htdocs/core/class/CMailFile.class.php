@@ -486,6 +486,9 @@ class CMailFile
 				{
 					//$this->message->attach(Swift_Attachment::fromPath($filename_list[$i],$mimetype_list[$i]));
 					$attachment = Swift_Attachment::fromPath($filename_list[$i], $mimetype_list[$i]);
+					if (!empty($mimefilename_list[$i])) {
+						$attachment->setFilename($mimefilename_list[$i]);
+					}
 					$this->message->attach($attachment);
 				}
 			}
