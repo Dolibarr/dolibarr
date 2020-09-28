@@ -981,6 +981,12 @@ if ($action == 'addcontainer')
 
 	if (!$error)
 	{
+		if (GETPOSTISSET('WEBSITE_OBJECTCLASS')){
+            $objectpage->fk_typeobject = GETPOST('WEBSITE_OBJECTCLASS');
+        }
+        if (GETPOSTISSET('WEBSITE_OBJECTID')){
+            $objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
+        }
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;
@@ -1657,7 +1663,12 @@ if ($action == 'updatemeta')
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
-
+		if(GETPOSTISSET('WEBSITE_OBJECTCLASS')){
+            $objectpage->fk_typeobject = GETPOST('WEBSITE_OBJECTCLASS', 'alpha');
+        }
+        if(GETPOSTISSET('WEBSITE_OBJECTID')){
+            $objectpage->fk_typeobject = GETPOST('WEBSITE_OBJECTID','aZ09');
+        }
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
 
@@ -3577,6 +3588,18 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, null, null, "90%");
 		print "</td></tr>";
 	}
+
+	print '<tr><td class="titlefieldcreate">';
+    print 'ObjectClass';
+    print '</td><td>';
+    print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="/path/class/ObjectClass.class.php" >';
+    print '</td></tr>';
+
+    print '<tr><td class="titlefieldcreate">';
+    print 'ObjectID';
+    print '</td><td>';
+    print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
+    print '</td></tr>';
 
 
 	$fuser = new User($db);
