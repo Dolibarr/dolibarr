@@ -370,11 +370,11 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' || ((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) || in_array(GETPOST('action', 'aZ09'), array('add', 'update', 'install', 'delete', 'deletepro')))
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' || ((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) || in_array(GETPOST('action', 'aZ09'), array('add', 'update', 'install', 'delete', 'deleteprof')))
 	{
 		if (!GETPOSTISSET('token')) {
 			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
-			print "Access by POST method (or to a page with CSRFCHECK_WITH_TOKEN on) is refused by CSRF protection in main.inc.php. Token not provided.\n";
+			print "Access to this page this way (POST method or page with CSRFCHECK_WITH_TOKEN on or having a sensible value for action parameter) is refused by CSRF protection in main.inc.php. Token not provided.\n";
 			print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file or MAIN_SECURITY_CSRF_WITH_TOKEN to 0 into setup).\n";
 			die;
 		}
