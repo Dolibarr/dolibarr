@@ -57,6 +57,7 @@ $changeaccount_sell = GETPOST('changeaccount_sell', 'array');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
+$search_vat = GETPOST('search_vat', 'alpha');
 $search_current_account = GETPOST('search_current_account', 'alpha');
 $search_current_account_valid = GETPOST('search_current_account_valid', 'alpha');
 if ($search_current_account_valid == '') $search_current_account_valid = 'withoutvalidaccount';
@@ -102,6 +103,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_ref = '';
     $search_label = '';
     $search_desc = '';
+	$search_vat = '';
     $search_onsell = '';
     $search_onpurchase = '';
     $search_current_account = '';
@@ -136,7 +138,7 @@ if ($action == 'update') {
 		if (!empty($chk_prod)) {
 			$accounting = new AccountingAccount($db);
 
-			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
+			//$msg .= '<div><span class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
@@ -152,7 +154,7 @@ if ($action == 'update') {
 				}
 				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
-					$msg .= '<div><font color="red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br/> <pre>'.$sql.'</pre></font></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br/> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
 					$db->begin();
@@ -243,7 +245,7 @@ $pcgverid = $conf->global->CHARTOFACCOUNTS;
 $pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
 if (empty($pcgvercode)) $pcgvercode = $pcgverid;
 
-$sql = "SELECT p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy,";
+$sql = "SELECT p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy, p.tva_tx,";
 $sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 $sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 $sql .= " p.tms, p.fk_product_type as product_type,";
@@ -311,6 +313,9 @@ if (strlen(trim($search_label))) {
 if (strlen(trim($search_desc))) {
 	$sql .= natural_search("p.description", $search_desc);
 }
+if (strlen(trim($search_vat))) {
+	$sql .= natural_search("p.tva_tx", price2num($search_vat), 1);
+}
 if ($search_onsell != '' && $search_onsell != '-1') $sql .= natural_search('p.tosell', $search_onsell, 1);
 if ($search_onpurchase != '' && $search_onpurchase != '-1') $sql .= natural_search('p.tobuy', $search_onpurchase, 1);
 
@@ -343,6 +348,7 @@ if ($result)
     if ($search_ref > 0) $param .= "&search_desc=".urlencode($search_ref);
     if ($search_label > 0) $param .= "&search_desc=".urlencode($search_label);
     if ($search_desc > 0) $param .= "&search_desc=".urlencode($search_desc);
+	if ($search_vat > 0) $param .= '&search_vat='.urlencode($search_vat);
     if ($search_current_account > 0) $param .= "&search_current_account=".urlencode($search_current_account);
     if ($search_current_account_valid && $search_current_account_valid != '-1') $param .= "&search_current_account_valid=".urlencode($search_current_account_valid);
     if ($accounting_product_mode) $param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
@@ -411,6 +417,8 @@ if ($result)
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" size="5" name="search_vat" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
+
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	// On sell
 	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
@@ -437,7 +445,8 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
     if (!empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-    // On sell / On purchase
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "p.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+	// On sell / On purchase
     if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
         print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
         $fieldtosortaccount = "p.accountancy_code_sell";
@@ -553,10 +562,15 @@ if ($result)
 		{
 		    // TODO ADJUST DESCRIPTION SIZE
     		// print '<td class="left">' . $obj->description . '</td>';
-    		// TODO: we shoul set a user defined value to adjust user square / wide screen size
-    		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
-    		print '<td>'.nl2br(dol_trunc($obj->description, $trunclengh)).'</td>';
+    		// TODO: we should set a user defined value to adjust user square / wide screen size
+    		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+    		print '<td>'.nl2br(dol_trunc($obj->description, $trunclength)).'</td>';
 		}
+
+		// VAT
+		print '<td class="right">';
+		print vatrate($obj->tva_tx);
+		print '</td>';
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT')
 			print '<td class="center">'.$product_static->getLibStatut(3, 0).'</td>';
