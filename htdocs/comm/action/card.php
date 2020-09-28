@@ -1697,7 +1697,7 @@ if ($id > 0)
 							print $langs->trans("Done");
 							print ' </span>';
 						}
-						print '<br />';
+						print '<br>';
 					}
 				}
 			}
@@ -2009,7 +2009,7 @@ if ($id > 0)
         				print $langs->trans("Done");
         				print ' </span>';
         			}
-        			print '<br />';
+        			print '<br>';
         		}
         	}
 
