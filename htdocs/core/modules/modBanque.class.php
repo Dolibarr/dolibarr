@@ -211,19 +211,31 @@ class modBanque extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			'v.rowid'=>'VariousPaymentId', 'v.label'=>'VariousPaymentLabel', 'v.datev'=>'DateValue', 'v.datep'=>'DateOperation',
 			'v.num_payment'=>'ChequeOrTransferNumber', 'v.amount'=>'Amount', 'v.sens'=>'Sens',
-			't.fk_typepayment'=>"List:c_paiement:libelle:label", 'v.accountancy_code'=>'AccountAccounting', 'v.subledger_account'=>'SubledgerAccount',
-			'p.title'=>'Project', 'v.note'=>'Note', 'v.datec'=>'DateCreation'
+			'cp.id'=>"PaymentMode",
+			'v.accountancy_code'=>'AccountAccounting', 'v.subledger_account'=>'SubledgerAccount',
+			'v.note'=>'Note', 'v.datec'=>'DateCreation',
+			'p.ref'=>'ProjectRef', 'p.title'=>'ProjectLabel'
 		);
-		$this->export_TypeFields_array[$r] = array('v.rowid'=>'Text', 'v.label'=>'Text', 'v.datep'=>'Date', 'v.datev'=>'Date', 'v.num_payment'=>'Text', 'v.amount'=>'Numeric', 'v.sens'=>'Boolean', 'v.fk_typepayment'=>'Text', "v.accountancy_code"=>"Text", "v.subledger_account"=>"Text", "p.title"=>"Text", "v.note"=>"Text", 'v.datec'=>"Date");
+		$this->export_TypeFields_array[$r] = array(
+			'v.rowid'=>'Text', 'v.label'=>'Text', 'v.datep'=>'Date', 'v.datev'=>'Date',
+			'v.num_payment'=>'Text', 'v.amount'=>'Numeric', 'v.sens'=>'Numeric',
+			'cp.id'=>'List:c_paiement:code:id:code',
+			"v.accountancy_code"=>"Text", "v.subledger_account"=>"Text",
+			"v.note"=>"Text", 'v.datec'=>"Date",
+			"p.ref"=>"Text", "p.title"=>"Text"
+		);
 		$this->export_entities_array[$r] = array(
 			'v.rowid'=>'payment', 'v.label'=>'payment', 'v.datev'=>'payment', 'v.datep'=>'payment',
 			'v.num_payment'=>'payment', 'v.amount'=>'payment', 'v.sens'=>'payment',
-			'v.fk_typepayment'=>'payment', 'v.accountancy_code'=>'payment', 'v.subledger_account'=>"payment", "p.title"=>"project",
-			'v.note'=>"payment", 'v.datec'=>"payment"
+			'cp.id'=>'payment',
+			'v.accountancy_code'=>'payment', 'v.subledger_account'=>"payment",
+			'v.note'=>"payment", 'v.datec'=>"payment",
+			"p.ref"=>"project", "p.title"=>"project"
 		);
 		$this->export_sql_start[$r] = 'SELECT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet as p ON v.fk_projet = p.rowid";
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_paiement as cp ON v.fk_typepayment = cp.id";
 		$this->export_sql_end[$r] .= ' WHERE v.entity IN ('.getEntity('payment_various').')';
 		$this->export_sql_order[$r] = ' ORDER BY v.datep';
 	}

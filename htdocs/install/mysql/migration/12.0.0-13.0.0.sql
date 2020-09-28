@@ -28,7 +28,7 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
--- Missing in v12
+-- Missing in v12 or lower
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 

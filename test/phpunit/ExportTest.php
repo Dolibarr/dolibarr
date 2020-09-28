@@ -141,6 +141,9 @@ class ExportTest extends PHPUnit\Framework\TestCase
 
         $model='csv';
 
+        $conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
+        print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+
         // Creation of class to export using model ExportXXX
         $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
         $file = "export_".$model.".modules.php";
@@ -161,7 +164,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         print __METHOD__." valtotest=".$valtotest."\n";
         $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with , and ; inside"');
+        $this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
 
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
@@ -182,7 +185,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
 
         // Same tests with strict mode
-        $conf->global->USE_STRICT_CSV_RULES=1;
+        $conf->global->USE_STRICT_CSV_RULES = 1;
 
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
@@ -245,7 +248,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         // Build export file
         print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+		$expectedresult = 1;
         $this->assertEquals($expectedresult, $result, 'Error in CSV export');
 
         $model='tsv';
@@ -360,7 +363,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	        // Build export file
         	$sql = "";
 			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-			$expectedresult=1;
+			$expectedresult = 1;
 	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
 	        $result=dol_is_file($exportfile);
 	        $this->assertTrue($result, 'File '.$exportfile.' not found');
