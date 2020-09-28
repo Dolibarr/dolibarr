@@ -251,7 +251,7 @@ function dol_json_decode($json, $assoc = false)
 	if ($out != '') {
 		try {
 			eval('$array = '.$out.';');
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			$array = array();
 		}
 	}
