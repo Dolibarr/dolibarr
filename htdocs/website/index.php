@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -941,7 +942,8 @@ if ($action == 'addcontainer')
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
-
+		$objectpage->fk_typeobject = GETPOST('WEBSITE_OBJECTCLASS');
+		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
 
@@ -981,12 +983,6 @@ if ($action == 'addcontainer')
 
 	if (!$error)
 	{
-		if (GETPOSTISSET('WEBSITE_OBJECTCLASS')){
-            $objectpage->fk_typeobject = GETPOST('WEBSITE_OBJECTCLASS');
-        }
-        if (GETPOSTISSET('WEBSITE_OBJECTID')){
-            $objectpage->fk_object = GETPOST('WEBSITE_OBJECTID');
-        }
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;
@@ -3592,7 +3588,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="titlefieldcreate">';
     print 'ObjectClass';
     print '</td><td>';
-    print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="/path/class/ObjectClass.class.php" >';
+    print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
     print '</td></tr>';
 
     print '<tr><td class="titlefieldcreate">';

@@ -39,7 +39,7 @@ CREATE TABLE llx_website_page
     author_alias  varchar(64),
     date_creation datetime,
 	tms           timestamp,
-    import_key    varchar(14),      -- import k
+    import_key    varchar(14),      -- import key
     fk_typeobject varchar(255),
-    fk_object varchar(255)
+    fk_object     varchar(255)
 ) ENGINE=innodb;
