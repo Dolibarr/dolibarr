@@ -160,7 +160,11 @@ class box_validated_projects extends ModeleBoxes
 						);
 					}
 					else {
-						dol_print_error($this->db);
+						$this->info_box_contents[$i][] = array(
+							'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
+							'text' => $langs->trans('NoThirdparty'),
+							'asis' => 1,
+						);
 					}
 
                     $this->info_box_contents[$i][] = array(

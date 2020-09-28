@@ -455,3 +455,4 @@ PaymentTermsSupplier=Conditions de paiement - fournisseur
 PaymentTypeBoth=Type de paiement - Client et fournisseur
 MulticurrencyUsed=Utiliser plusieurs devises
 MulticurrencyCurrency=Devise
+NoThirdparty = Aucun tiers
