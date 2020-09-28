@@ -333,7 +333,7 @@ if ($action == 'new')
 	if ($action == 'reject_check')
 	{
 		$formquestion = array(
-			array('type' => 'hidden', 'name' => 'bankid', 'value' => GETPOST('lineid')),
+			array('type' => 'hidden', 'name' => 'bankid', 'value' => GETPOST('lineid', 'int')),
 			array('type' => 'date', 'name' => 'rejectdate_', 'label' => $langs->trans("RejectCheckDate"), 'value' => dol_now())
 		);
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check', $formquestion, '', 1);
