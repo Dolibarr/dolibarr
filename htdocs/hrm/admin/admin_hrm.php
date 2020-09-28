@@ -58,9 +58,11 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans('Parameters'));
 
 $form = new Form($db);

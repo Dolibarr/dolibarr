@@ -43,7 +43,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'expensereportlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 
@@ -124,7 +124,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 if ($massaction == 'ventil') {
 	$msg = '';
-	//print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {
 		$msg = '<div>'.$langs->trans("SelectedLines").': '.count($mesCasesCochees).'</div>';
 		$msg .= '<div class="detail">';
@@ -139,7 +139,7 @@ if ($massaction == 'ventil') {
 
 			if ($monCompte <= 0)
 			{
-				$msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
+				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
@@ -147,14 +147,14 @@ if ($massaction == 'ventil') {
 				$sql .= " WHERE rowid = ".$monId;
 
 				$accountventilated = new AccountingAccount($db);
-				$accountventilated->fetch($monCompte, '');
+				$accountventilated->fetch($monCompte, '', 1);
 
 				dol_syslog('accountancy/expensereport/list.php:: sql='.$sql, LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><font color="green">'.$langs->trans("LineOfExpenseReport").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</font></div>';
+					$msg .= '<div><span style="color:green">'.$langs->trans("LineOfExpenseReport").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><font color="red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></font></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}

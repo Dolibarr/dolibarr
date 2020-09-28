@@ -539,6 +539,7 @@ class Export
 		if (empty($this->array_export_fields) || !is_array($this->array_export_fields))
 		{
 			$this->error = "ErrorBadParameter";
+			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 

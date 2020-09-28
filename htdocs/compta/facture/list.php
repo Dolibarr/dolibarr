@@ -837,8 +837,7 @@ if ($resql)
 		print '</div>';
 		print '<div class="nowrap">';
 		print $langs->trans('to').' ';*/
-		print $langs->trans("Before").' ';
-		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1);
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
 		print '</div>';
 		print '</td>';

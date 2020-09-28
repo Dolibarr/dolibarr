@@ -175,10 +175,10 @@ if ($action == 'switch')
 	$db->begin();
 
 	$objfrom = new ModeleBoxes($db);
-	$objfrom->fetch($_GET["switchfrom"]);
+	$objfrom->fetch(GETPOST("switchfrom", 'int'));
 
 	$objto = new ModeleBoxes($db);
-	$objto->fetch($_GET["switchto"]);
+	$objto->fetch(GETPOST('switchto', 'int'));
 
 	$resultupdatefrom = 0;
 	$resultupdateto = 0;
@@ -192,12 +192,12 @@ if ($action == 'switch')
 			 $newsecondnum = preg_replace('/[a-zA-Z]+/', '', $newsecond);
 			 $newsecond = sprintf("%s%02d", $newsecondchar ? $newsecondchar : 'A', $newsecondnum + 1);
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($newfirst)."' WHERE rowid=".$objfrom->rowid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($newfirst)."' WHERE rowid=".((int) $objfrom->rowid);
 		dol_syslog($sql);
 		$resultupdatefrom = $db->query($sql);
 		if (!$resultupdatefrom) { dol_print_error($db); }
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($newsecond)."' WHERE rowid=".$objto->rowid;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($newsecond)."' WHERE rowid=".((int) $objto->rowid);
 		dol_syslog($sql);
 		$resultupdateto = $db->query($sql);
 		if (!$resultupdateto) { dol_print_error($db); }

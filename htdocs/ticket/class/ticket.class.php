@@ -482,7 +482,7 @@ class Ticket extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (!$id && !$track_id && !$ref) {
+		if (!$id && !$track_id && !$ref && !$email_msgid) {
 			$this->error = 'ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;

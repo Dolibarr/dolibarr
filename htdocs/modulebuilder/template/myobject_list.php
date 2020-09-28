@@ -134,7 +134,8 @@ foreach ($object->fields as $key => $val)
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
 			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position']
+			'position'=>$val['position'],
+			'help'=>$val['help']
 		);
 	}
 }
@@ -149,7 +150,8 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
 				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
 				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]),
-				'langfile'=>$extrafields->attributes[$object->table_element]['langfile'][$key]
+				'langfile'=>$extrafields->attributes[$object->table_element]['langfile'][$key],
+				'help'=>$extrafields->attributes[$object->table_element]['help'][$key]
 			);
 		}
 	}

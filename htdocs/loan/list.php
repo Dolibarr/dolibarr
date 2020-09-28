@@ -55,7 +55,7 @@ $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'loanlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 
