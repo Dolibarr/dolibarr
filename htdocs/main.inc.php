@@ -118,7 +118,10 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-	if ($type == 1) $inj += preg_match('/"/i', $val); // We refused " in GET parameters value
+	if ($type == 1) {
+		$val = str_replace('enclosure="', 'enclosure=X', $val);		// We accept enclosure="
+		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
+	}
 	if ($type == 2) $inj += preg_match('/[;"]/', $val); // PHP_SELF is a file system path. It can contains spaces.
 	return $inj;
 }
