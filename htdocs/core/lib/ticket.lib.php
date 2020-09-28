@@ -431,6 +431,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 	//TODO Add limit in nb of results
 	$sql .= $db->order($sortfield_new, $sortorder);
+
 	dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
@@ -529,6 +530,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 		$out .= '<div class="filters-container" >';
 		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+
 		if ($objcon && get_class($objcon) == 'Contact' &&
 			(is_null($filterobj) || get_class($filterobj) == 'Societe'))
 		{
