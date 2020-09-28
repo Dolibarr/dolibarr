@@ -335,7 +335,8 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 		if (rate.val() == '')
 			return true;
 
-		if (! $.isNumeric(rate.val().replace(',','.')))
+		var ratejs = price2numjs(rate.val());
+		if (! $.isNumeric(ratejs))
 		{
 			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
