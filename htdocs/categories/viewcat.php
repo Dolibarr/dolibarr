@@ -877,12 +877,14 @@ if ($type == Categorie::TYPE_USER)
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
 
-		print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'user', 0, $newcardbutton, '', $limit);
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+		$num = count($users);
+
+		print_barre_liste($langs->trans("Users"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, '', 'user', 0, '', '', $limit);
 
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Users").' <span class="badge">'.count($users).'</span></td></tr>'."\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Users").' <span class="badge">'.$num.'</span></td></tr>'."\n";
 
 		if (count($users) > 0)
 		{
@@ -916,7 +918,7 @@ if ($type == Categorie::TYPE_USER)
 }
 
 
-// List of Project
+// List of warehouses
 if ($type == Categorie::TYPE_WAREHOUSE)
 {
 	$permission = $user->rights->stock->creer;
