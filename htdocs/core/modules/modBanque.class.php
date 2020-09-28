@@ -71,7 +71,7 @@ class modBanque extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array("modComptabilite", "modAccounting", "modPrelevement");
 		$this->conflictwith = array();
-		$this->langfiles = array("banks", "compta", "bills", "companies");
+		$this->langfiles = array("banks", "compta", "bills", "companies", "accounting");
 
 		// Constants
 		$this->const = array();
@@ -202,6 +202,30 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND p.fk_paiement = 7';
 		$this->export_sql_end[$r] .= ' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] = ' ORDER BY b.datev, b.num_releve';
+
+		// Various Payment
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'VariousPayment';
+		$this->export_permission[$r] = array(array("banque", "export"));
+		$this->export_fields_array[$r] = array(
+			'v.rowid'=>'VariousPaymentId', 'v.label'=>'VariousPaymentLabel', 'v.datev'=>'DateValue', 'v.datep'=>'DateOperation',
+			'v.num_payment'=>'ChequeOrTransferNumber', 'v.amount'=>'Amount', 'v.sens'=>'Sens',
+			't.fk_typepayment'=>"List:c_paiement:libelle:label", 'v.accountancy_code'=>'AccountAccounting', 'v.subledger_account'=>'SubledgerAccount',
+			'p.title'=>'Project', 'v.note'=>'Note', 'v.datec'=>'DateCreation'
+		);
+		$this->export_TypeFields_array[$r] = array('v.rowid'=>'Text', 'v.label'=>'Text', 'v.datep'=>'Date', 'v.datev'=>'Date', 'v.num_payment'=>'Text', 'v.amount'=>'Numeric', 'v.sens'=>'Boolean', 'v.fk_typepayment'=>'Text', "v.accountancy_code"=>"Text", "v.subledger_account"=>"Text", "p.title"=>"Text", "v.note"=>"Text", 'v.datec'=>"Date");
+		$this->export_entities_array[$r] = array(
+			'v.rowid'=>'payment', 'v.label'=>'payment', 'v.datev'=>'payment', 'v.datep'=>'payment',
+			'v.num_payment'=>'payment', 'v.amount'=>'payment', 'v.sens'=>'payment',
+			'v.fk_typepayment'=>'payment', 'v.accountancy_code'=>'payment', 'v.subledger_account'=>"payment", "p.title"=>"project",
+			'v.note'=>"payment", 'v.datec'=>"payment"
+		);
+		$this->export_sql_start[$r] = 'SELECT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet as p ON v.fk_projet = p.rowid";
+		$this->export_sql_end[$r] .= ' WHERE v.entity IN ('.getEntity('payment_various').')';
+		$this->export_sql_order[$r] = ' ORDER BY v.datep';
 	}
 
 
