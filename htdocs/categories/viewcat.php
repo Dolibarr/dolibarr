@@ -316,7 +316,7 @@ print '</tr>';
 $cats = $object->get_filles();
 if ($cats < 0)
 {
-	dol_print_error($db, $cats->error, $cats->errors);
+	dol_print_error($db, $object->error, $object->errors);
 } elseif (count($cats) < 1)
 {
 	print '<tr class="oddeven">';
@@ -431,7 +431,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 	$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($prods < 0)
 	{
-		dol_print_error($db, $prods->error, $prods->errors);
+		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		// Form to add record into a category
 		$showclassifyform = 1;
@@ -510,7 +510,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 	$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($socs < 0)
 	{
-		dol_print_error($db, $socs->error, $socs->errors);
+		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -567,7 +567,7 @@ if ($type == Categorie::TYPE_CUSTOMER)
 	$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($socs < 0)
 	{
-		dol_print_error($db, $socs->error, $socs->errors);
+		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -626,7 +626,7 @@ if ($type == Categorie::TYPE_MEMBER)
 	$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($prods < 0)
 	{
-		dol_print_error($db, $prods->error, $prods->errors);
+		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -685,7 +685,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($contacts < 0)
 	{
-		dol_print_error($db, $contacts->error, $contacts->errors);
+		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -747,7 +747,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
     $accounts = $object->getObjectsInCateg($type, 0, $limit, $offset);
     if ($accounts < 0)
     {
-        dol_print_error($db, $accounts->error, $accounts->errors);
+        dol_print_error($db, $object->error, $object->errors);
     } else {
     	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     	print '<input type="hidden" name="token" value="'.newToken().'">';
