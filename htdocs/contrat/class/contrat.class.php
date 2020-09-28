@@ -2257,7 +2257,7 @@ class Contrat extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["Contracts"] = $obj->nb;
+				$this->nb["contracts"] = $obj->nb;
 			}
             $this->db->free($resql);
 			return 1;
