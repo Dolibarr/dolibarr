@@ -1629,7 +1629,7 @@ if ($source == 'donation')
 
 if (!$found && !$mesg) $mesg = $langs->trans("ErrorBadParameters");
 
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
+if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
 
 print '</table>'."\n";
 print "\n";
@@ -1655,7 +1655,7 @@ if ($action != 'dopayment')
 		    {
 		        $langs->load("members");
 		        print '<br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
-		        print '<span class="opacitymedium">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</span><br>';
+		        print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';
 		    }
 
 			// Buttons for all payments registration methods

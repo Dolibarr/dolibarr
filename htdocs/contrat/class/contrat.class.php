@@ -1911,7 +1911,6 @@ class Contrat extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
 
 		if ($mode == 4 || $mode == 6 || $mode == 7)
@@ -2257,7 +2256,7 @@ class Contrat extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["Contracts"] = $obj->nb;
+				$this->nb["contracts"] = $obj->nb;
 			}
             $this->db->free($resql);
 			return 1;

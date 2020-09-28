@@ -6639,7 +6639,7 @@ abstract class CommonObject
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-					// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
+					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
 					{
@@ -6684,13 +6684,17 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix];
+							$value = $this->array_options["options_".$key.$keysuffix];	// Value may be clean or formated later
 							break;
 						case "create":
 						case "edit":
-							$check = 'restricthtml';
-							// TODO Use check = 'alphahtml' or 'int' for some types
-							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, $check); // GETPOST can get value from GET, POST or setup of default values.
+							// We get the value of property found with GETPOST so it takes into account:
+							// default values overwrite, restore back to list link, ... (but not 'default value in database' of field)
+							$check = 'alphanohtml';
+							if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text'))) {
+								$check = 'restricthtml';
+							}
+							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, $check, 3); // GETPOST can get value from GET, POST or setup of default values overwrite.
 							// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 							if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 							{
@@ -6755,18 +6759,18 @@ abstract class CommonObject
 							{
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
 						{
-							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
 						}
-						// HTML, select, integer and text add default value
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
+
+						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int')))
 						{
-							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'restricthtml', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
-							else $value = $this->array_options['options_'.$key];
+							if ($action == 'create') $value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 						}
 
 						$labeltoshow = $langs->trans($label);
@@ -6800,6 +6804,8 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value);
 								break;
 							case "create":
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								break;
 							case "edit":
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 								break;

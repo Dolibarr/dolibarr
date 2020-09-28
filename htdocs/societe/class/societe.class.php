@@ -777,7 +777,7 @@ class Societe extends CommonObject
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
 	 *
 	 *    @param	User	$user       Object of user that ask creation
-	 *    @return   int         		>= 0 if OK, < 0 if KO
+	 *    @return   int         		>=0 if OK, <0 if KO
 	 */
     public function create(User $user)
 	{
@@ -969,7 +969,10 @@ class Societe extends CommonObject
 				} elseif ($rescode == -4)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
+				} else {
+					$this->errors[] = 'ErrorUnknownOnCustomerCodeCheck';
 				}
+
 				$result = -3;
 			}
 		}
@@ -988,9 +991,11 @@ class Societe extends CommonObject
 				} elseif ($rescode == -3)
 				{
 					$this->errors[] = 'ErrorSupplierCodeAlreadyUsed';
-				} elseif ($rescode == -5)
+				} elseif ($rescode == -4)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
+				} else {
+					$this->errors[] = 'ErrorUnknownOnSupplierCodeCheck';
 				}
 				$result = -3;
 			}
@@ -2989,6 +2994,10 @@ class Societe extends CommonObject
 
 		   	dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
 		   	$result = $mod->verif($this->db, $this->code_client, $this, 0);
+		   	if ($result) {	// If error
+		   		$this->error = $mod->error;
+		   		$this->errors = $mod->errors;
+		   	}
 			return $result;
 		} else {
 			return 0;
@@ -3024,6 +3033,10 @@ class Societe extends CommonObject
 
 			dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
 			$result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
+			if ($result) {	// If error
+				$this->error = $mod->error;
+				$this->errors = $mod->errors;
+			}
 			return $result;
 		} else {
 			return 0;

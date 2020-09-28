@@ -32,14 +32,6 @@ if (!$user->admin)
 
 $error = 0;
 
-// List of statut
-static $tmpstatus2label = array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
-);
-$status2label = array('');
-foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
-
 
 /*
  * Actions

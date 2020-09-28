@@ -148,10 +148,9 @@ class Establishment extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->address = ($this->address > 0 ? $this->address : $this->address);
-		$this->zip = ($this->zip > 0 ? $this->zip : $this->zip);
-		$this->town = ($this->town > 0 ? $this->town : $this->town);
-		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
+		$this->address = trim($this->address);
+		$this->zip = trim($this->zip);
+		$this->town = trim($this->town);
 
 		if (empty($this->ref)) $this->ref = '(PROV)';
 
