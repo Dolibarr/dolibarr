@@ -72,15 +72,16 @@ class Products extends DolibarrApi
      * @param  int    $id                  ID of product
      * @param  int    $includestockdata    Load also information about stock (slower)
      * @param  bool   $includesubproducts  Load information about subproducts
+	 * @param  bool   $includeparentid     Load also ID of parent product (if product is a variant of a parent product)
      * @return array|mixed                 Data without useless information
      *
      * @throws RestException 401
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function get($id, $includestockdata = 0, $includesubproducts = false)
+    public function get($id, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
     {
-        return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts);
+        return $this->_fetch($id, '', '', '', $includestockdata, $includesubproducts, $includeparentid);
     }
 
     /**
@@ -91,6 +92,7 @@ class Products extends DolibarrApi
      * @param  string $ref                Ref of element
      * @param  int    $includestockdata   Load also information about stock (slower)
      * @param  bool   $includesubproducts Load information about subproducts
+	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
      *
      * @return array|mixed                 Data without useless information
      *
@@ -100,9 +102,9 @@ class Products extends DolibarrApi
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function getByRef($ref, $includestockdata = 0, $includesubproducts = false)
+    public function getByRef($ref, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
     {
-        return $this->_fetch('', $ref, '', '', $includestockdata, $includesubproducts);
+        return $this->_fetch('', $ref, '', '', $includestockdata, $includesubproducts, $includeparentid);
     }
 
     /**
@@ -113,6 +115,7 @@ class Products extends DolibarrApi
      * @param  string $ref_ext            Ref_ext of element
      * @param  int    $includestockdata   Load also information about stock (slower)
      * @param  bool   $includesubproducts Load information about subproducts
+	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
      *
      * @return array|mixed Data without useless information
      *
@@ -122,9 +125,9 @@ class Products extends DolibarrApi
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false)
+    public function getByRefExt($ref_ext, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
     {
-        return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesubproducts);
+        return $this->_fetch('', '', $ref_ext, '', $includestockdata, $includesubproducts, $includeparentid);
     }
 
     /**
@@ -135,6 +138,7 @@ class Products extends DolibarrApi
      * @param  string $barcode            Barcode of element
      * @param  int    $includestockdata   Load also information about stock (slower)
      * @param  bool   $includesubproducts Load information about subproducts
+	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
      *
      * @return array|mixed Data without useless information
      *
@@ -144,9 +148,9 @@ class Products extends DolibarrApi
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false)
+    public function getByBarcode($barcode, $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
     {
-        return $this->_fetch('', '', '', $barcode, $includestockdata, $includesubproducts);
+        return $this->_fetch('', '', '', $barcode, $includestockdata, $includesubproducts, $includeparentid);
     }
 
     /**
