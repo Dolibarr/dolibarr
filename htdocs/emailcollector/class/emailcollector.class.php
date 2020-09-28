@@ -1672,8 +1672,10 @@ class EmailCollector extends CommonObject
 							$description = dol_concatdesc($description, $messagetext);
 
 							$descriptionfull = $description;
-							$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-							$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							}
 
 							// Insert record of emails sent
 							$actioncomm->type_code   = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
@@ -1760,8 +1762,10 @@ class EmailCollector extends CommonObject
 							$description = dol_concatdesc($description, $messagetext);
 
 							$descriptionfull = $description;
-							$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-							$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							}
 
 							$id_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'rowid');
 							$percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
@@ -1874,8 +1878,10 @@ class EmailCollector extends CommonObject
 							$description = dol_concatdesc($description, $messagetext);
 
 							$descriptionfull = $description;
-							$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-							$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+								$descriptionfull = dol_concatdesc($descriptionfull, $header);
+							}
 
 							$tickettocreate->subject = $subject;
 							$tickettocreate->message = $description;
