@@ -602,7 +602,7 @@ if ($result)
 			// Accounting account buy intra (In EEC)
 			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
-			if (empty($defaultvalue)) $defaultvalue = $compta_prodbuy_intra;
+			if (empty($defaultvalue)) $defaultvalue = $compta_prodbuy;
 			$codesell = length_accountg($obj->accountancy_code_buy_intra);
 			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
 			if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
@@ -612,7 +612,7 @@ if ($result)
 			// Accounting account buy export (Out of EEC)
 			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
-			if (empty($defaultvalue)) $defaultvalue = $compta_prodbuy_export;
+			if (empty($defaultvalue)) $defaultvalue = $compta_prodbuy;
 			$codesell = length_accountg($obj->accountancy_code_buy_export);
 			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
 			if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
