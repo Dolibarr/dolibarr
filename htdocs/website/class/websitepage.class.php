@@ -102,6 +102,15 @@ class WebsitePage extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 
+	/**
+	 * @var string path type object
+	 */
+	public $fk_typeobject;
+	/**
+	 * @var string path name object
+	 */
+	public $fk_object;
+
 
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -131,6 +140,8 @@ class WebsitePage extends CommonObject
 		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
+		'fk_typeobject' => array('type' => 'varchar(255)','label' => 'ObjectType', 'enabled'=>1, 'visible'=>1, 'position'=>46, 'searchall'=>0, 'help'=>''),
+		'fk_object' => array('type' => 'varchar(255)','label' => 'ObjectId', 'enabled'=>1, 'visible'=>1, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -197,6 +208,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif";
+		$sql .= " t.fk_typeobject,";
+		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -244,6 +257,8 @@ class WebsitePage extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->fk_typeobject = $obj->fk_typeobject;
+				$this->fk_object = $obj->fk_object;
 			}
 			$this->db->free($resql);
 
@@ -298,6 +313,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif";
+		$sql .= " t.fk_typeobject,";
+		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -349,6 +366,8 @@ class WebsitePage extends CommonObject
 				$record->date_modification = $this->db->jdate($obj->date_modification);
 				$record->fk_user_creat = $obj->fk_user_creat;
 				$record->fk_user_modif = $obj->fk_user_modif;
+				$record->fk_typeobject = $obj->fk_typeobject;
+				$record->fk_object = $obj->fk_object;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
