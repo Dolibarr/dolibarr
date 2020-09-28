@@ -547,7 +547,7 @@ class Orders extends DolibarrApi
 	 * @param int    $rowid          Row key of the contact in the array contact_ids.
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
 	 *
-	 * @url	DELETE {id}/contact/{rowid}/{type}
+	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
 	 *
@@ -555,7 +555,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function deleteContact($id, $rowid, $type)
+	public function deleteContact($id, $contactid, $type)
 	{
 		if (!DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -573,7 +573,7 @@ class Orders extends DolibarrApi
 		 $contacts = $this->commande->liste_contact();
 
 		foreach ($contacts as $contact) {
-            if ($contact['id'] == $rowid && $contact['code'] == $type) {
+            if ($contact['id'] == $contactid && $contact['code'] == $type) {
 		        $result = $this->commande->delete_contact($contact['rowid']);
 
 		        if (!$result) {
