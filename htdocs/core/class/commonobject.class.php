@@ -5800,7 +5800,7 @@ abstract class CommonObject
 		} elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif ($type == 'text')
+		} elseif (preg_match('/^text/', $type))
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -5810,7 +5810,7 @@ abstract class CommonObject
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		} elseif ($type == 'html')
+		} elseif (preg_match('/^html/', $type))
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -6584,7 +6584,7 @@ abstract class CommonObject
 					return 'Error bad setup of extrafield';
 				}
 			} else $value = '';
-		} elseif ($type == 'text' || $type == 'html')
+		} elseif (preg_match('/^(text|html)/', $type))
 		{
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password')
