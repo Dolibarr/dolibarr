@@ -640,7 +640,7 @@ if (empty($reshook) && $action == 'update')
 				$object->setCategories($categories);
 
 				$object->loadReminders();
-				if (!empty($object->reminders))
+				if (!empty($object->reminders) && $object->datep > dol_now())
 				{
 					foreach ($object->reminders as $reminder)
 					{
@@ -650,7 +650,7 @@ if (empty($reshook) && $action == 'update')
 				}
 
 				//Create reminders
-				if ($addreminder == 'on'){
+				if ($addreminder == 'on' && $object->datep > dol_now()){
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
