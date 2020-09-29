@@ -302,8 +302,8 @@ if ($object->id > 0)
 				}
 				print '<td colspan="2">&nbsp;</td>';
 
-				// Module id
-				if ($user->admin) print '<td class="right">'.$objMod->numero.'</td>';
+				// Permission id
+				if ($user->admin) print '<td class="right"></td>';
 
 				print '</tr>';
 			}
@@ -323,7 +323,10 @@ if ($object->id > 0)
 					// Own permission by group
 					if ($caneditperms)
 					{
-						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">';
+						//print img_edit_remove($langs->trans("Remove"));
+						print img_picto($langs->trans("Remove"), 'switch_on');
+						print '</a></td>';
 					}
 					print '<td class="center nowrap">';
 					print img_picto($langs->trans("Active"), 'tick');
@@ -332,7 +335,10 @@ if ($object->id > 0)
 					// Do not own permission
 					if ($caneditperms)
 					{
-						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+						print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">';
+						//print img_edit_add($langs->trans("Add"));
+						print img_picto($langs->trans("Add"), 'switch_off');
+						print '</a></td>';
 					}
 					print '<td>&nbsp</td>';
 				}
@@ -340,7 +346,10 @@ if ($object->id > 0)
 				// Do not own permission
 				if ($caneditperms)
 				{
-					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">';
+					//print img_edit_add($langs->trans("Add"));
+					print img_picto($langs->trans("Add"), 'switch_off');
+					print '</a></td>';
 				}
 				print '<td>&nbsp</td>';
 			}
@@ -349,7 +358,7 @@ if ($object->id > 0)
 			print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
 
 			// Permission id
-			if ($user->admin) print '<td class="right">'.$obj->id.'</td>';
+			if ($user->admin) print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
 
 			print '</tr>'."\n";
 
