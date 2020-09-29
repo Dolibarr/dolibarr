@@ -89,18 +89,6 @@ if ($action == 'update')
 	exit;
 }
 
-if ($action == 'activate_pdfsecurity')
-{
-	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1", 'chaine', 0, '', $conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
-	exit;
-} elseif ($action == 'disable_pdfsecurity')
-{
-	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION", $conf->entity);
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
-	exit;
-}
-
 
 
 /*
