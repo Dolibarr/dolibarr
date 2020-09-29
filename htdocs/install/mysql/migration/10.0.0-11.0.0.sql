@@ -571,3 +571,13 @@ ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;
+
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN entity integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_actioncomm integer NOT NULL;
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_email_template integer;
+ALTER TABLE llx_actioncomm_reminder CHANGE offsetunit offsetunit VARCHAR(10);
+
+ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk_user, typeremind, offsetvalue, offsetunit, fk_actioncomm);
+
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
