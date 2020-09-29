@@ -130,7 +130,7 @@ foreach ($object->fields as $key => $val)
 		continue;
 	}
 
-	// don't allow search in private notes for external users when doing "search in all"
+	// Don't allow search in private notes for external users when doing "search in all"
 	if (!empty($user->socid) && $key == "note_private") {
 		continue;
 	}
@@ -138,7 +138,7 @@ foreach ($object->fields as $key => $val)
 	$fieldstosearchall['p.'.$key] = $val['label'];
 }
 
-// Add none object fields for "search in all"
+// Add none object fields to "search in all"
 $fieldstosearchall['s.nom'] = "ThirdPartyName";
 
 // Definition of fields for list
@@ -150,7 +150,7 @@ foreach ($object->fields as $key => $val)
 		continue;
 	}
 
-	// visibility based on global settings
+	// Visibility based on global settings
 	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'fk_opp_status') continue;
 	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'opp_percent') continue;
 	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'opp_amount') continue;
@@ -164,6 +164,11 @@ foreach ($object->fields as $key => $val)
 		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
 		'position'=>$val['position']);
 }
+
+// Add none object fields to fields for list
+$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
+$arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
 
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
