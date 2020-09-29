@@ -185,6 +185,13 @@ class BlockedLog
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
 		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
 		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
+
+		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
+			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
+			foreach ($tmparrayofmoresupportedevents as $val) {
+				$this->trackedevents[$val] = 'log'.$val;
+			}
+		}
 	}
 
 	/**
