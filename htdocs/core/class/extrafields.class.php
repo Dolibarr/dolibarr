@@ -2097,9 +2097,6 @@ class ExtraFields
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key = price2num($value_arr);
-				} elseif (in_array($key_type, array('text'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
-					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix, 'alpha');
 				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
