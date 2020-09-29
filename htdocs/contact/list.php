@@ -181,7 +181,7 @@ foreach ($object->fields as $key => $val) {
 	// Visibility based on global settings
 	if ($key == 'rowid' && !empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) continue;
 	if ($key == 'no_email' && empty($conf->mailing->enabled)) continue;
-	
+
 	$arrayfields['p.'.$key] = array(
 		'label'=>$val['label'],
 		'checked'=>(($val['visible'] < 0) ? 0 : 1),
