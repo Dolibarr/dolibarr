@@ -925,6 +925,18 @@ class ActionComm extends CommonObject
 			}
 		}
 
+		if (!$error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE fk_actioncomm = ".$this->id;
+
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
+		}
+
 		// Removed extrafields
 		if (!$error) {
 			  $result = $this->deleteExtraFields();
@@ -1958,9 +1970,10 @@ class ActionComm extends CommonObject
 	 *
 	 *  @param	string	$type		Type of reminder 'browser' or 'email'
 	 *  @param	int		$fk_user	Id of user
+	 *  @param	bool	$onlypast	true = get only past reminder, false = get all reminders linked to this
 	 *  @return int         		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function loadReminders($type = '', $fk_user = 0)
+	public function loadReminders($type = '', $fk_user = 0, $onlypast = true)
 	{
 		global $conf, $langs, $user;
 
@@ -1971,7 +1984,10 @@ class ActionComm extends CommonObject
 		//Select all action comm reminders for event
 		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE fk_actioncomm = ".$this->id." AND dateremind <= '".$this->db->idate(dol_now())."'";
+		$sql .= " WHERE fk_actioncomm = ".$this->id;
+		if ($onlypast) {
+			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		}
 		if ($type) {
 			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
 		}

@@ -728,27 +728,12 @@ function CashReport(rowid)
 // Popup to select the terminal to use
 function TerminalsDialog()
 {
-    jQuery("#dialog-info").dialog({
-	    resizable: false,
-	    height: <?php echo 180 + round($conf->global->TAKEPOS_NUM_TERMINALS / 3 * 20); ?>,
-	    width: <?php echo ($conf->dol_optimize_smallscreen ? 316 : 400); ?>,
-	    modal: true,
-	    buttons: {
-			'<?php echo dol_escape_js($langs->trans("Terminal")) ?> 1': function() {
-				location.href='index.php?setterminal=1';
-			}
-			<?php
-			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
-			{
-				print ",
-				'".dol_escape_js($langs->trans("Terminal"))." ".$i."': function() {
-					location.href='index.php?setterminal=".$i."';
-				}
-				";
-			}
-			?>
-	    }
-	});
+    var modal = document.getElementById("ModalTerminal");
+	var span = document.getElementsByClassName("close")[0];
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+	modal.style.display = "block";
 }
 
 function DirectPayment(){
@@ -802,7 +787,6 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-print '<div class="hidden dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 $keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : '';
 ?>
 <div class="container">
@@ -852,6 +836,28 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<?php
 }
 ?>
+
+<!-- Modal terminal box -->
+<div id="ModalTerminal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+		<span class="close">&times;</span>
+		<h3><?php print $langs->trans("TerminalSelect");?></h3>
+	</div>
+	<div class="modal-body">
+		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal");?> 1</button>
+		<?php
+		for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
+		{
+			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
+		}
+		?>
+	</div>
+</div>
+
+</div>
+
+
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 

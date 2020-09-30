@@ -32,6 +32,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
@@ -246,16 +247,7 @@ foreach ($cats as $cat) {
     $arrayselected[] = $cat->id;
 }
 
-$tabs = array(
-    array(
-        DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$rowid,
-        $langs->trans('BankTransaction')
-    ),
-    array(
-        DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid,
-        $langs->trans('Info')
-    )
-);
+$head = bankline_prepare_head($rowid);
 
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
@@ -296,7 +288,7 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'accountline', 0);
+        dol_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

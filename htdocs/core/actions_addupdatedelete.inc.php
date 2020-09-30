@@ -141,8 +141,13 @@ if ($action == 'update' && !empty($permissiontoadd))
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;
 
 		// Set value to update
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
-			$value = GETPOST($key, 'restricthtml');
+		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
+			$tmparray = explode(':', $object->fields[$key]['type']);
+			if (!empty($tmparray[1])) {
+				$value = GETPOST($key, $tmparray[1]);
+			} else {
+				$value = GETPOST($key, 'restricthtml');
+			}
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {

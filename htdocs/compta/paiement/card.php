@@ -306,7 +306,7 @@ dol_fiche_end();
  * List of invoices
  */
 
-$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.entity, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql .= ' WHERE pf.fk_facture = f.rowid';
 $sql .= ' AND f.fk_soc = s.rowid';

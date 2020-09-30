@@ -1544,6 +1544,7 @@ class CMailFile
 		$i = 0;
 		foreach ($arrayaddress as $val)
 		{
+			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs))
 			{
 				$name  = trim($regs[1]);
