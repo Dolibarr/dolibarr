@@ -560,7 +560,7 @@ if ($object->id > 0)
         {
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 		}
         print '</div></td></tr>';
         print "</table>";

@@ -92,10 +92,10 @@ if ($conf->use_javascript_ajax)
 } else {
 	if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} elseif (!empty($conf->global->USER_MAIL_REQUIRED))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';

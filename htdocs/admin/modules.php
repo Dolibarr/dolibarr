@@ -797,7 +797,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 					}
 				}
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
 				if ($warningmessage) $codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');

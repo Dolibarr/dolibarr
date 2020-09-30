@@ -2734,10 +2734,10 @@ if (!GETPOST('hide_websitemenu'))
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
-						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline&token='.newToken().'">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 					else {
-						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline&token='.newToken().'">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
 
@@ -2746,10 +2746,10 @@ if (!GETPOST('hide_websitemenu'))
 				print $langs->trans("ShowSubcontainers");
 				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 				{
-					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 				}
 				else {
-					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 				}
 				/*}*/
 				print '</div>';
@@ -2766,7 +2766,7 @@ if (!GETPOST('hide_websitemenu'))
 				else {
 					//$disabled='';
 					//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-					print '<a href="'.$_SERVER["PHP_SEFL"].'?action=setashome&website='.$website->ref.'&pageid='.$pageid.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"><span></a>';
+					print '<a href="'.$_SERVER["PHP_SEFL"].'?action=setashome&token='.newToken().'&website='.$website->ref.'&pageid='.$pageid.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"><span></a>';
 				}
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 				print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';

@@ -155,9 +155,9 @@ if ($conf->use_javascript_ajax)
 } else {
 	if (empty($conf->global->USER_MAIL_REQUIRED))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';
@@ -269,13 +269,13 @@ foreach ($dirmodels as $reldir)
 	                            if (in_array($name, $def))
 	                            {
 	                            	print '<td class="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&value='.$name.'">';
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&amp;token='.newToken().'&amp;value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
 	                            } else {
 	                                print '<td class="center">'."\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -285,7 +285,7 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
 	                            } else {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
 

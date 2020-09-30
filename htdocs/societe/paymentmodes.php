@@ -1067,7 +1067,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td class="center">';
 							if (empty($companypaymentmodetemp->default_rib))
 							{
-								print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=setlocalassourcedefault">';
+								print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=setlocalassourcedefault&token='.newToken().'">';
 								print img_picto($langs->trans("Default"), 'off');
 								print '</a>';
 							} else {
@@ -1225,7 +1225,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
 					(!empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id))
 				{
-					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault&token='.newToken().'">';
 					print img_picto($langs->trans("Default"), 'off');
 					print '</a>';
 				} else {
@@ -1420,7 +1420,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Default
 			print '<td class="center" width="70">';
 			if (!$rib->default_rib) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'off');
 				print '</a>';
 			} else {

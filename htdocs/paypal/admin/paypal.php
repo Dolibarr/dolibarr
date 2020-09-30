@@ -148,10 +148,10 @@ print '<td class="titlefield">';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
 if (empty($conf->global->PAYPAL_API_SANDBOX))
 {
-    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&token='.newToken().'&value=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&token='.newToken().'&value=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</td></tr>';
