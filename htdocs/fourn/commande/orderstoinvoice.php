@@ -188,7 +188,7 @@ if (($action == 'create' || $action == 'add') && !$error) {
 			if (isset($_POST['poprojects'])) {
 				$orderprojects = GETPOST('poprojects', '', 2);
 				foreach ($orderprojects as $poproject) {
-					if(! empty($poproject)) {
+					if (! empty($poproject)) {
 						$poprojects[] = $poproject;
 					}
 				}
@@ -296,7 +296,7 @@ if (($action == 'create' || $action == 'add') && !$error) {
 		// End of object creation, we show it
 		if ($id > 0 && ! $error) {
 			// Skip updating PO status to paid
-			foreach($orders_id as $fk_supplier_order) {
+			foreach ($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
 				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) {
 					if ($supplier_order->classifyBilled($user) < 0) {
@@ -312,7 +312,7 @@ if (($action == 'create' || $action == 'add') && !$error) {
 				}
 			}
 
-			if(!$error) {
+			if (!$error) {
 				$db->commit();
 				header('Location: ' . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $id);
 				exit();
@@ -366,7 +366,7 @@ if ($action == 'create' && !$error) {
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
 
 	// Ref supplier
-	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input required name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier','alpha', 2) : '') . '" type="text"></td>';
+	print '<tr><td class="fieldrequired">' . $langs->trans('RefSupplier') . '</td><td><input required name="ref_supplier" value="' . dol_escape_htmltag(isset($_POST['ref_supplier']) ? GETPOST('ref_supplier', 'alpha', 2) : '') . '" type="text"></td>';
 	print '</tr>';
 
 	// Third party
@@ -401,7 +401,7 @@ if ($action == 'create' && !$error) {
 	$objectsrc = new CommandeFournisseur($db);
 	$listoforders = [];
 	$projectarr = [];
-	foreach ( $selected as $sel ) {
+	foreach ($selected as $sel) {
 		$result = $objectsrc->fetch($sel);
 		if ($result > 0) {
 			$listoforders[] = $objectsrc->ref;
