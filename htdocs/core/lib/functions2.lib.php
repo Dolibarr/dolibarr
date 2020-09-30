@@ -383,19 +383,20 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture))
+	if (!empty($object->user_cloture) || !empty($object->user_closing))
 	{
+  if (isset($object->user_cloture) && !empty($object->user_cloture)) $object->user_closing = $object->user_cloture;
 		if ($usetable) print '<tr><td class="titlefield">';
 		print $langs->trans("ClosedBy");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		if (is_object($object->user_cloture))
+		if (is_object($object->user_closing))
 		{
-			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_closing->id) print $object->user_closing->getNomUrl(1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_cloture);
+			$userstatic->fetch($object->user_closing);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
@@ -404,14 +405,15 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Date close
-	if (!empty($object->date_cloture))
+	if (!empty($object->date_cloture) || !empty($object->date_closing))
 	{
+  if (isset($object->date_cloture) && !empty($object->date_cloture)) $object->date_closing = $object->date_cloture;
 		if ($usetable) print '<tr><td class="titlefield">';
 		print $langs->trans("DateClosing");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_cloture, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_closing, 'dayhour');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
