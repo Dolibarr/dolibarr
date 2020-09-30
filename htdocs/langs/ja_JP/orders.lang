@@ -186,3 +186,4 @@ StatusSupplierOrderApproved=承認された
 StatusSupplierOrderRefused=拒否
 StatusSupplierOrderReceivedPartially=部分的に受け
 StatusSupplierOrderReceivedAll=All products received
+PurchaseOrderToInvoice=請求書への注文書

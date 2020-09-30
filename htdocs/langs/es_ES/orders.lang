@@ -186,3 +186,4 @@ StatusSupplierOrderApproved=Aprobado
 StatusSupplierOrderRefused=Rechazado
 StatusSupplierOrderReceivedPartially=Recibido parcialmente
 StatusSupplierOrderReceivedAll=Todos los productos recibidos
+PurchaseOrderToInvoice=Orden de compra a facturar
