@@ -212,9 +212,9 @@ if ($step == 3 && $datatoimport)
 	{
 		$langs->load("other");
 
-		$param = '&datatoimport='.$datatoimport.'&format='.$format;
-		if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-		if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+		$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
+		if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+		if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 
 		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$ret = dol_delete_file($file);
@@ -321,8 +321,8 @@ if ($step == 1 || !$datatoimport)
 	$_SESSION["dol_array_match_file_to_database"] = '';
 
 	$param = '';
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -380,9 +380,9 @@ if ($step == 1 || !$datatoimport)
 // STEP 2: Page to select input format file
 if ($step == 2 && $datatoimport)
 {
-	$param = '&datatoimport='.$datatoimport;
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&datatoimport='.urlencode($datatoimport);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -460,9 +460,9 @@ if ($step == 2 && $datatoimport)
 // STEP 3: Page to select file
 if ($step == 3 && $datatoimport)
 {
-	$param = '&datatoimport='.$datatoimport.'&format='.$format;
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -753,9 +753,9 @@ if ($step == 4 && $datatoimport)
 
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
 
-	$param = '&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -1213,10 +1213,10 @@ if ($step == 5 && $datatoimport)
 
 	$nboflines = $obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
-	$param = '&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
+	$param = '&leftmenu=import&format='.urlencode($format).'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines).'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param; // $param2 = $param without excludefirstline and endatlinenb
-	if ($excludefirstline)		$param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb)			$param .= '&endatlinenb='.$endatlinenb;
+	if ($excludefirstline)		$param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb)			$param .= '&endatlinenb='.urlencode($endatlinenb);
 	if (!empty($updatekeys))	$param .= '&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
 
 	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
@@ -1642,9 +1642,9 @@ if ($step == 6 && $datatoimport)
 
 	$nboflines = (!empty($_GET["nboflines"]) ? $_GET["nboflines"] : dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
-	$param = '&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
