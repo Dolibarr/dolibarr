@@ -550,7 +550,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("Ref") . '</td>';
-		print '<td>' . $langs->trans("product") . '</td>';
+		print '<td>' . $langs->trans("Product") . '</td>';
         print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
         print '<td class="center">'.$langs->trans("PriceBase").'</td>';
         print '<td class="right">'.$langs->trans("VAT").'</td>';
