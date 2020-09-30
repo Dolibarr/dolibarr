@@ -101,22 +101,6 @@ if ($conf->societe->enabled) {
 /*
  * Actions
  */
-
-$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
-
-if (GETPOST('change_chart', 'alpha'))
-{
-    $chartofaccounts = GETPOST('chartofaccounts', 'int');
-
-    if (!empty($chartofaccounts)) {
-        if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    } else {
-        $error++;
-    }
-}
-
 if ($action == 'update') {
 	$error = 0;
 
