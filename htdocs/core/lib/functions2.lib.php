@@ -385,7 +385,7 @@ function dol_print_object_info($object, $usetable = 0)
 	// User close
 	if (!empty($object->user_cloture) || !empty($object->user_closing))
 	{
-  if (isset($object->user_cloture) && !empty($object->user_cloture)) $object->user_closing = $object->user_cloture;
+		if (isset($object->user_cloture) && !empty($object->user_cloture)) $object->user_closing = $object->user_cloture;
 		if ($usetable) print '<tr><td class="titlefield">';
 		print $langs->trans("ClosedBy");
 		if ($usetable) print '</td><td>';
@@ -407,7 +407,7 @@ function dol_print_object_info($object, $usetable = 0)
 	// Date close
 	if (!empty($object->date_cloture) || !empty($object->date_closing))
 	{
-  if (isset($object->date_cloture) && !empty($object->date_cloture)) $object->date_closing = $object->date_cloture;
+		if (isset($object->date_cloture) && !empty($object->date_cloture)) $object->date_closing = $object->date_cloture;
 		if ($usetable) print '<tr><td class="titlefield">';
 		print $langs->trans("DateClosing");
 		if ($usetable) print '</td><td>';
