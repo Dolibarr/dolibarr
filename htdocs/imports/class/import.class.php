@@ -278,7 +278,7 @@ class Import
 	{
 		$sql = 'SELECT em.rowid, em.field, em.label, em.type';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
-		$sql .= ' WHERE em.rowid = '.$id;
+		$sql .= ' WHERE em.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

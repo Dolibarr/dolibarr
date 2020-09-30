@@ -736,7 +736,7 @@ class Export
     {
 		$sql = 'SELECT em.rowid, em.label, em.type, em.field, em.filter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
-		$sql .= ' WHERE em.rowid = '.$id;
+		$sql .= ' WHERE em.rowid = '.((int) $id);
 
 		dol_syslog("Export::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

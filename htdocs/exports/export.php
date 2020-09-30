@@ -302,9 +302,9 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes')
 
 if ($action == 'deleteprof')
 {
-	if ($_GET["id"])
+	if (GETPOST("id", 'int'))
 	{
-		$objexport->fetch($_GET["id"]);
+		$objexport->fetch(GETPOST('id', 'int'));
 		$result = $objexport->delete($user);
 	}
 }
@@ -1054,7 +1054,7 @@ if ($step == 4 && $datatoexport)
 
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td class="right">';
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '<input type="submit" class="button reposition" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
 
         // List of existing export profils
@@ -1074,7 +1074,7 @@ if ($step == 4 && $datatoexport)
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td class="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
