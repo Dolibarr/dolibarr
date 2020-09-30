@@ -158,7 +158,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
+		$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : '';
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -808,7 +808,7 @@ if (empty($action) || $action == 'view') {
 			$accountoshow = length_accounta($k);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				print '<span class="warning">'.$langs->trans("ThirdPartyUnknownSubledgerIgnored").'</span>';
 			} else print $accountoshow;
 			print '</td>';
 			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("SubledgerAccount")."</td>";

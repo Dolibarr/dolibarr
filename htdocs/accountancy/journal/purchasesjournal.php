@@ -152,7 +152,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
-		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+		$compta_soc = (!empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : '';
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -870,7 +870,7 @@ if (empty($action) || $action == 'view') {
 			$accountoshow = length_accounta($k);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				print '<span class="warning">'.$langs->trans("ThirdPartyUnknownSubledgerIgnored").'</span>';
 			} else print $accountoshow;
 			print '</td>';
 			print "<td>".$companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("SubledgerAccount")."</td>";
