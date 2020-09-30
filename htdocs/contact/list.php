@@ -166,8 +166,7 @@ foreach ($object->fields as $key => $val)
 
 // Add none object fields for "search in all"
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))	{
-	$fieldstosearchall['s.nom'] = $fieldstosearchall['p.fk_soc'];
-	unset($fieldstosearchall['p.fk_soc']);
+	$fieldstosearchall['s.nom'] = "ThirdParty";
 }
 
 // Definition of fields for list
@@ -178,10 +177,6 @@ foreach ($object->fields as $key => $val) {
 		continue;
 	}
 
-	// Visibility based on global settings
-	if ($key == 'rowid' && !empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) continue;
-	if ($key == 'no_email' && empty($conf->mailing->enabled)) continue;
-	
 	$arrayfields['p.'.$key] = array(
 		'label'=>$val['label'],
 		'checked'=>(($val['visible'] < 0) ? 0 : 1),
@@ -192,16 +187,8 @@ foreach ($object->fields as $key => $val) {
 // Add none object fields to fields for list
 $arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>22, 'checked'=>0);
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))	{
-	$arrayfields['s.nom'] = $arrayfields['p.fk_soc'];
-	unset($arrayfields['p.fk_soc']);
+	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
 }
-if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
-	$arrayfields['p.fk_prospectcontactlevel'] = array('label'=>"ProspectLevelShort", 'checked'=>1, 'position'=>210);
-	$arrayfields['p.fk_stcommcontact'] = array('label'=>"StatusProsp", 'checked'=>1, 'position'=>215);
-}
-
-// Special overrides for object files
-$arrayfields['p.rowid']['checked'] = ($conf->global->MAIN_SHOW_TECHNICAL_ID ? 1 : 0);
 
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
@@ -214,6 +201,7 @@ if (!empty($conf->socialnetworks->enabled)) {
 		}
 	}
 }
+
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
@@ -409,10 +397,10 @@ if (strlen($search_phone))          $sql .= natural_search(array('p.phone', 'p.p
 if (strlen($search_cti))            $sql .= natural_search(array('p.phone', 'p.phone_perso', 'p.phone_mobile'), $search_cti);
 if (strlen($search_firstlast_only)) $sql .= natural_search(array('p.lastname', 'p.firstname'), $search_firstlast_only);
 
-if ($search_id > 0)                 $sql .= natural_search("p.rowid", $search_id, 1);
+if ($search_id > 0)                 $sql .= natural_search('p.rowid', $search_id, 1);
 if ($search_lastname)               $sql .= natural_search('p.lastname', $search_lastname);
 if ($search_firstname)              $sql .= natural_search('p.firstname', $search_firstname);
-if ($search_societe)                $sql .= natural_search((empty($conf->global->SOCIETE_DISABLE_CONTACTS) ? 's.nom' : 'p.fk_soc'), $search_societe);
+if ($search_societe)                $sql .= natural_search(empty($conf->global->SOCIETE_DISABLE_CONTACTS) ? 's.nom' : 'p.fk_soc', $search_societe);
 if ($search_country)                $sql .= " AND p.fk_pays IN (".$search_country.')';
 if (strlen($search_poste))          $sql .= natural_search('p.poste', $search_poste);
 if (strlen($search_phone_perso))    $sql .= natural_search('p.phone_perso', $search_phone_perso);

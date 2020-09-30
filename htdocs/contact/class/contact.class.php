@@ -90,20 +90,20 @@ class Contact extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>0, 'position'=>15),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>20),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>25, 'searchall'=>1),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30, 'index'=>1),
-		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>25, 'searchall'=>1),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>3, 'position'=>35),
 		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>3, 'position'=>40),
 		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'showoncombobox'=>1, 'searchall'=>1),
 		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
-		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>3, 'position'=>55),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>1, 'position'=>65),
-		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>0, 'position'=>75),
-		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
+		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
 		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
 		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>1, 'position'=>95, 'searchall'=>1),
@@ -114,14 +114,14 @@ class Contact extends CommonObject
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>0, 'position'=>185),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>0, 'position'=>190),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>195, 'searchall'=>1),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'searchall'=>1),
-		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>0, 'position'=>205),
-		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>0, 'position'=>210),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>185),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'position'=>190),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>3, 'position'=>205),
+		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>3, 'position'=>210),
 		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>1000),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
 	);
 
 	public $civility_id; // In fact we store civility_code
@@ -249,15 +249,21 @@ class Contact extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
-
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->mailing->enabled)) $this->fields['no_email']['enabled'] = 0;
-		if (!empty($conf->global->SOCIETE_DISABLE_CONTACTS)) $this->fields['thirdparty']['enabled'] = 0;
-		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
-			$this->field['fk_stcomm']['enabled'] = 0;
-			$this->field['fk_prospectlevel']['enabled'] = 0;
-		}
 		$this->statut = 1; // By default, status is enabled
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID))		$this->fields['rowid']['visible'] = 0;
+		if (empty($conf->mailing->enabled))						$this->fields['no_email']['enabled'] = 0;
+
+		// typical ['s.nom'] is used for third-parties
+		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+			$this->fields['fk_soc']['enabled'] = 0;
+			$this->fields['fk_soc']['searchall'] = 0;
+		}
+
+		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+			$this->field['fk_stcommcontact']['enabled'] = 0;
+			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+		}
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val)
