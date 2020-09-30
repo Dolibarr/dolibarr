@@ -124,8 +124,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach ($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	if (empty($val['searchall'])) {
 		continue;
 	}
@@ -143,20 +142,11 @@ $fieldstosearchall['s.nom'] = "ThirdPartyName";
 
 // Definition of fields for list
 $arrayfields = array();
-foreach ($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (empty($val['visible'])) {
 		continue;
 	}
-
-	// Visibility based on global settings
-	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'fk_opp_status') continue;
-	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'opp_percent') continue;
-	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'opp_amount') continue;
-	if(empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $key == 'usage_opportunity') continue;
-	if(!empty($conf->global->PROJECT_HIDE_TASKS) && $key == 'usage_bill_time') continue;
-	if(!empty($conf->global->PROJECT_HIDE_TASKS) && $key == 'usage_task') continue;
 
 	$arrayfields['p.'.$key] = array(
 		'label'=>$val['label'],

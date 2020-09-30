@@ -179,34 +179,34 @@ class Project extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>0, 'position'=>15),
+		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>3, 'position'=>15),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>1, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>25),
 		'dateo' =>array('type'=>'date', 'label'=>'DateStart', 'enabled'=>1, 'visible'=>1, 'position'=>30),
 		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
 		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>40, 'searchall'=>1),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>45),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>45),
 		'title' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>60),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'Fk user creat', 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>60),
 		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>1, 'visible'=>1, 'position'=>75),
 		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>1, 'visible'=>1, 'position'=>80),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>85, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>90, 'searchall'=>1),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
+		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>3, 'position'=>95),
 		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>1, 'position'=>100),
-		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>0, 'position'=>105),
-		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>3, 'position'=>105),
+		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>3, 'position'=>110),
 		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>1, 'position'=>115),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>120),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>0, 'position'=>125),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>3, 'position'=>120),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>3, 'position'=>125),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>1, 'position'=>135),
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>1, 'position'=>140),
-		'usage_organize_event' =>array('type'=>'integer', 'label'=>'Usage organize event', 'enabled'=>1, 'visible'=>0, 'position'=>145),
+		'usage_organize_event' =>array('type'=>'integer', 'label'=>'Usage organize event', 'enabled'=>1, 'visible'=>3, 'position'=>145),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -236,6 +236,22 @@ class Project extends CommonObject
 
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 		$this->statuts_long = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+		
+		global $conf;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			$this->fields['fk_opp_status']['enabled'] = 0;
+			$this->fields['opp_percent']['enabled'] = 0;
+			$this->fields['opp_amount']['enabled'] = 0;
+			$this->fields['usage_opportunity']['enabled'] = 0;
+		}
+
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			$this->fields['usage_bill_time']['visible'] = 0;
+			$this->fields['usage_task']['visible'] = 0;
+		}
 	}
 
 	/**
