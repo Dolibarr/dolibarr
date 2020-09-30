@@ -236,7 +236,7 @@ class Project extends CommonObject
 
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 		$this->statuts_long = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
-		
+
 		global $conf;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
