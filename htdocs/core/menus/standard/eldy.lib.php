@@ -966,6 +966,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 				// Billed is another field. We should add instead a dedicated filter on list. if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&billed=1", $langs->trans("Billed"), 2, $user->rights->fournisseur->commande->lire);
 
+				if (!empty($conf->global->ENABLE_PURCHASE_ORDER_TO_INVOICE)) {
+					$newmenu->add("/fourn/commande/orderstoinvoice.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("PurchaseOrderToInvoice"), 1, $user->rights->fournisseur->commande->lire);
+				}
 
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
 			}

@@ -186,3 +186,4 @@ StatusSupplierOrderApproved=Утверждено
 StatusSupplierOrderRefused=Отклонено
 StatusSupplierOrderReceivedPartially=Частично получил
 StatusSupplierOrderReceivedAll=All products received
+PurchaseOrderToInvoice=Заказ на покупку в счет-фактуру
