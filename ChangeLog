@@ -13,16 +13,17 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Properties ->contactid has been renamed into ->contact_id
-* Property $paiementid in API api_supplier_invoices has been renamed into into $payment_mode_id (english)
+* Property $paiementid in API 'api_supplier_invoices.php' has been renamed into into $payment_mode_id (english)
 * The deprecated subsitution key __SIGNATURE__ has been removed. Replace with __USER_SIGNATURE__ if you used the old syntax in
   your email templates. 
 * The hidden option HOLIDAY_MORE_PUBLIC_HOLIDAYS has been removed. Use instead the dictionary table if you need to define custom
   days of holiday.
-* Property num_paiement has been renamed num_payment everywhere for better code consistency.
-* If you build a class that implement CommonObject to use the incoterm properties or method (->fk_incoterm, ->label_incoterm, ->location_incoterm),
-  you must now also include declaration of the Trait CommonIncoterm in your class. All incoterm functions were moved into this Trait. 
-* The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alphanohtml');
-
+* Property 'num_paiement' has been renamed 'num_payment' everywhere for better code consistency.
+* If you build a class that implement CommonObject to use the incoterm properties or methods (->fk_incoterm, ->label_incoterm, ->location_incoterm),
+  you must now also include declaration of the Trait 'CommonIncoterm' in your class. All incoterm functions were moved into this Trait. 
+* The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alphanohtml') so no html will be allowed. Use GETPOST(..., 'restricthtml') to accept HTML.
+* If you have links in your code with '&action=delete' as a parameter, you must also add '&token='.newToken() as another parameter to avoid CSRF protection errors.
+ 
 
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
 FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename
