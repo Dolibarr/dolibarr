@@ -615,7 +615,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			$cmd->fetch_optionals();
 
 			$objecttmp->socid = $cmd->socid;
-			$objecttmp->type = Facture::TYPE_STANDARD;
+			$objecttmp->type = $objecttmp::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
 			$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
 			$objecttmp->fk_project = $cmd->fk_project;
@@ -742,7 +742,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 							'HT',
 							0,
 							$product_type,
-							$ii,
+							$lines[$i]->rang,
 							$lines[$i]->special_code,
 							$objecttmp->origin,
 							$lines[$i]->rowid,

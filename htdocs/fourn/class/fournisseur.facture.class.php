@@ -1601,9 +1601,10 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param		double	$pu_ht_devise		Amount in currency
 	 *  @param		string	$ref_supplier		Supplier ref
 	 *  @param      string  $special_code       Special code
+	 *  @param		int		$fk_parent_line		Parent line id
 	 *	@return    	int             			>0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_ht_devise = 0, $ref_supplier = '', $special_code = '')
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_ht_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -1777,7 +1778,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->info_bits = $info_bits;
 
 			$this->line->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
-			$this->line->fk_parent_line = $this->fk_parent_line;
+			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->origin = $this->origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
