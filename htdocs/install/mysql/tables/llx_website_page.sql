@@ -40,6 +40,6 @@ CREATE TABLE llx_website_page
     date_creation datetime,
 	tms           timestamp,
     import_key    varchar(14),      -- import key
-    fk_typeobject varchar(255),
+    object_type varchar(255),
     fk_object     varchar(255)
 ) ENGINE=innodb;

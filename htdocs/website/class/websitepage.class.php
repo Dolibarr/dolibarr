@@ -108,7 +108,7 @@ class WebsitePage extends CommonObject
    	/**
      * @var string path of external object
      */
-    public $fk_typeobject;
+    public $object_type;
 
     /**
      * @var string id of external object
@@ -171,7 +171,7 @@ class WebsitePage extends CommonObject
 		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
-		'fk_typeobject' => array('type' => 'varchar(255)','label' => 'ObjectType', 'enabled'=>1, 'visible'=>1, 'position'=>46, 'searchall'=>0, 'help'=>''),
+		'object_type' => array('type' => 'varchar(255)','label' => 'ObjectType', 'enabled'=>1, 'visible'=>1, 'position'=>46, 'searchall'=>0, 'help'=>''),
 	    'fk_object' => array('type' => 'varchar(255)','label' => 'ObjectId', 'enabled'=>1, 'visible'=>1, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -273,7 +273,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.author_alias,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key,";
-		$sql .= " t.fk_typeobject,";
+		$sql .= " t.object_type,";
         $sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
@@ -333,7 +333,7 @@ class WebsitePage extends CommonObject
 				$this->author_alias = $obj->author_alias;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->import_key = $obj->import_key;
-				$this->fk_typeobject = $obj->fk_typeobject;
+				$this->object_type = $obj->object_type;
                 $this->fk_object = $obj->fk_object;
 			}
 			$this->db->free($resql);
@@ -391,7 +391,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.author_alias,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key,";
-		$sql .= " t.fk_typeobject,";
+		$sql .= " t.object_type,";
         $sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
@@ -461,7 +461,7 @@ class WebsitePage extends CommonObject
 				$record->author_alias = $obj->author_alias;
 				$record->fk_user_modif = $obj->fk_user_modif;
 				$record->import_key = $obj->import_key;
-				$record->fk_typeobject = $obj->fk_typeobject;
+				$record->object_type = $obj->object_type;
 				$record->fk_object = $obj->fk_object;
 				//var_dump($record->id);
 				$records[$record->id] = $record;

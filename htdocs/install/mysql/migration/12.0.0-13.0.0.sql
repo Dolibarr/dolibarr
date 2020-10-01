@@ -331,5 +331,5 @@ ALTER TABLE llx_bank ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_menu MODIFY COLUMN enabled text;
 
-ALTER TABLE llx_website_page ADD COLUMN fk_typeobject varchar(255);
+ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
