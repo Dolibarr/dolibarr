@@ -1709,8 +1709,8 @@ if ($id > 0)
 		// Reminders
 		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
 		{
-			$filtreuserid = $user->id;
-			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
+			$filteruserid = $user->id;
+			if ($user->rights->agenda->allactions->read) $filteruserid = 0;
 			$object->loadReminders('', $filteruserid, false);
 
 			print '<hr>';
@@ -1721,10 +1721,7 @@ if ($id > 0)
 				$firstreminderId = array_shift($keys);
 
 				$actionCommReminder = $object->reminders[$firstreminderId];
-
-			}
-			else
-			{
+			} else {
 				$checked = '';
 				$actionCommReminder = new ActionCommReminder($db);
 				$actionCommReminder->offsetvalue = 10;

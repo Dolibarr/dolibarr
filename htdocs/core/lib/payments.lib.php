@@ -59,12 +59,11 @@ function payment_prepare_head(Paiement $object)
  * Returns an array with the tabs for the "Bannkline" section
  * It loads tabs from modules looking for the entity payment
  *
- * @param Bankline $object Current payment object
- * @return array Tabs for the Bankline section
+ * @param 	int		$id		ID of bank line
+ * @return 	array 			Tabs for the Bankline section
  */
 function bankline_prepare_head($id)
 {
-
     global $langs, $conf;
 
     $h = 0;

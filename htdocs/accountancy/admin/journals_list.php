@@ -22,7 +22,7 @@
  * \brief		Setup page to configure journals
  */
 
-if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN','1');		// Force use of CSRF protection with tokens even for GET
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN','1');		// Force use of CSRF protection with tokens even for GET
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
