@@ -51,7 +51,7 @@ $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
 $id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 if ($user->socid) $socid = $user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
@@ -131,7 +131,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$object->id_origin = $id;
 		$object->title			= GETPOST('titre', 'alpha');
-		$object->description	= GETPOST('description', 'alpha');
+		$object->description	= GETPOST('description', 'restricthtml');
 		$object->socid			= GETPOST('socid', 'alpha');
 		$object->fk_project		= GETPOST('projectid', 'int');
 		$object->fk_contract	= GETPOST('contractid', 'int');
@@ -224,7 +224,7 @@ if ($action == 'add') {
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInterventional"), 'ch-fichinter.html#s-fac-fichinter-rec');
+llxHeader('', $langs->trans("RepeatableIntervention"), 'ch-fichinter.html#s-fac-fichinter-rec');
 
 $form = new Form($db);
 $companystatic = new Societe($db);
@@ -245,14 +245,14 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  * Create mode
  */
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'fichinter');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
 
 	$object = new Fichinter($db); // Source invoice
 	//$object = new Managementfichinter($db);   // Source invoice
 
 	if ($object->fetch($id, $ref) > 0) {
 		print '<form action="card-rec.php" method="post">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
 
@@ -424,12 +424,11 @@ if ($action == 'create') {
 		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 		print "</form>\n";
-	}
-	else {
+	} else {
 		dol_print_error('', "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
 	dol_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -484,7 +483,7 @@ if ($action == 'create') {
 					if ($action == 'classify') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
                         $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
@@ -585,7 +584,7 @@ if ($action == 'create') {
 			if ($action == 'editfrequency') {
 				print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setfrequency">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				print '<tr><td>';
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
@@ -596,8 +595,7 @@ if ($action == 'create') {
 			} else {
 				if ($object->frequency > 0)
 					print $langs->trans('FrequencyPer_'.$object->unit_frequency, $object->frequency);
-				else
-					print $langs->trans("NotARecurringInterventionalTemplate");
+				else print $langs->trans("NotARecurringInterventionalTemplate");
 			}
 			print '</td></tr>';
 
@@ -619,15 +617,12 @@ if ($action == 'create') {
 			print '<tr><td>';
 			if ($user->rights->ficheinter->creer && ($action == 'nb_gen_max' || $object->frequency > 0)) {
 				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
-			} else
-				print $langs->trans("MaxPeriodNumber");
+			} else print $langs->trans("MaxPeriodNumber");
 
 			print '</td><td>';
 			if ($action == 'nb_gen_max' || $object->frequency > 0) {
 				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->rights->facture->creer);
-			}
-			else
-				print '';
+			} else print '';
 
 			print '</td>';
 			print '</tr>';
@@ -693,8 +688,7 @@ if ($action == 'create') {
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
 					$type = $object->lines[$i]->product_type;
-				else
-					$object->lines[$i]->fk_product_type;
+				else $object->lines[$i]->fk_product_type;
 				// Try to enhance type detection using date_start and date_end for free lines when type
 				// was not saved.
 				if (!empty($objp->date_start)) $type = 1;
@@ -731,8 +725,7 @@ if ($action == 'create') {
 				print $langs->trans('Delete').'</a></div>';
 			}
 			print '</div>';
-		} else
-			print $langs->trans("ErrorRecordNotFound");
+		} else print $langs->trans("ErrorRecordNotFound");
 	} else {
 		/*
 		 *  List mode
@@ -764,20 +757,10 @@ if ($action == 'create') {
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
-            print_barre_liste(
-                $langs->trans("RepeatableInterventional"),
-                $page,
-                $_SERVER['PHP_SELF'],
-                "&socid=$socid",
-                $sortfield,
-                $sortorder,
-                '',
-                $num,
-                '',
-                'commercial'
-            );
 
-			print $langs->trans("ToCreateAPredefinedInterventional").'<br><br>';
+			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder, '', $num, '', 'intervention');
+
+			print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedIntervention").'</span><br><br>';
 
 			$i = 0;
 			print '<table class="noborder centpercent">';
@@ -870,10 +853,8 @@ if ($action == 'create') {
 								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
 								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'">';
 								print $langs->trans("CreateFichInter").'</a>';
-							} else
-								print $langs->trans("DateIsNotEnough");
-						} else
-							print "&nbsp;";
+							} else print $langs->trans("DateIsNotEnough");
+						} else print "&nbsp;";
 
 						print "</td>";
 

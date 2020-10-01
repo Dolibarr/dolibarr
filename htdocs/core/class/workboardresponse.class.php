@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/class/WorkboardResponse.class.php
+ *	\file       htdocs/core/class/workboardresponse.class.php
  *	\brief      Class that represents response of load_board functions
  */
 

@@ -35,12 +35,12 @@ $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
 $id						= GETPOST('id', 'int');
-$action					= GETPOST('action', 'alpha');
+$action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
-$description			= GETPOST('description');
-$confirm				= GETPOST('confirm');
-$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
+$description			= GETPOST('description', 'restricthtml');
+$confirm				= GETPOST('confirm', 'aZ09');
+$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -99,9 +99,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 				$action = 'create';
-			}
-			else
-			{
+			} else {
 				$object->ref                    = $ref;
 				$object->description            = $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
@@ -118,17 +116,13 @@ if (empty($reshook))
 					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
 					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else
-				{
+				} else {
 					// Creation KO
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'create';
 				}
 			}
-		}
-		else
-		{
+		} else {
 			Header("Location: list.php");
 			exit;
 		}
@@ -165,15 +159,11 @@ if (empty($reshook))
 				{
 					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else
-				{
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
@@ -197,14 +187,10 @@ if (empty($reshook))
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
 				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -225,11 +211,9 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 {
 	if ($action == 'create')
 	{
-		print load_fiche_titre($title, '', 'generic');
+		print load_fiche_titre($title, '', 'object_resource');
 		dol_fiche_head('');
-	}
-	else
-	{
+	} else {
 		$head = resource_prepare_head($object);
 		dol_fiche_head($head, 'resource', $title, -1, 'resource');
 	}
@@ -241,7 +225,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		// Create/Edit object
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.($action == "create" ? "add" : "update").'">';
 
 		print '<table class="border centpercent">';
@@ -291,9 +275,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		print '</div>';
 
 		print '</form>';
-	}
-	else
-	{
+	} else {
 		$formconfirm = '';
 
 		// Confirm deleting resource line
@@ -306,7 +288,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 	    print $formconfirm;
 
 
-	    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php'.(!empty($socid) ? '?id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	    $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
 	    $morehtmlref = '<div class="refidno">';
@@ -393,8 +375,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		}
 	}
 	print '</div>';
-}
-else {
+} else {
 	dol_print_error();
 }
 

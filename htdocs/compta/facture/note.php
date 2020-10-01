@@ -29,34 +29,34 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills'));
 
-$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
-$ref=GETPOST('ref', 'alpha');
-$socid=GETPOST('socid', 'int');
-$action=GETPOST('action', 'alpha');
+$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
-$socid=0;
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'facture', $id, '');
+$socid = 0;
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'facture', $id, '');
 
 $object = new Facture($db);
 $object->fetch($id);
 
-$permissionnote=$user->rights->facture->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 
 
@@ -107,7 +107,7 @@ if ($id > 0 || !empty($ref))
     			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
     			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
     			$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-    			$morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
     			$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
     			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
     			$morehtmlref .= '</form>';

@@ -23,7 +23,7 @@
  *  \ingroup    stripe
  *  \brief      Description and activation file for module Stripe
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -60,7 +60,7 @@ class modStripe extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
-        $this->picto='stripe';
+        $this->picto = 'stripe';
 
         // Data directories to create when module is enabled.
         $this->dirs = array();
@@ -69,29 +69,29 @@ class modStripe extends DolibarrModules
         $this->config_page_url = array("stripe.php@stripe");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-        $this->depends = array();		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-        $this->phpmin = array(5,4);					// Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(5,0);	// Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+        $this->depends = array(); // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array(); // List of modules id to disable if this one is disabled
+        $this->phpmin = array(5, 4); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(5, 0); // Minimum version of Dolibarr required by module
         $this->langfiles = array("stripe");
 
         // Constants
-        $this->const = array();			// List of particular constants to add when module is enabled
+        $this->const = array(); // List of particular constants to add when module is enabled
 
         // New pages on tabs
         $this->tabs = array();
 
         // List of boxes
         $this->boxes = array();
-        $r=0;
+        $r = 0;
 
         // Permissions
-        $this->rights = array();		// Permission array used by this module
-        $r=0;
+        $this->rights = array(); // Permission array used by this module
+        $r = 0;
 
         // Main menu entries
-        $r=0;
+        $r = 0;
         /* $this->menu[$r]=array(
             'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 	        'mainmenu'=>'billing',
@@ -166,6 +166,6 @@ class modStripe extends DolibarrModules
 		);
 
         // Exports
-        $r=1;
+        $r = 1;
     }
 }

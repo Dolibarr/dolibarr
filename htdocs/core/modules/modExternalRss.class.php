@@ -24,7 +24,7 @@
  *	\brief      Fichier de description et activation du module externalrss
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -52,7 +52,7 @@ class modExternalRss extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='rss';
+		$this->picto = 'rss';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/externalrss/temp");
@@ -63,7 +63,7 @@ class modExternalRss extends DolibarrModules
 		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->phpmin = array(4,2,0);
+		$this->phpmin = array(4, 2, 0);
 		$this->phpmax = array();
 
 		// Constants
@@ -93,11 +93,11 @@ class modExternalRss extends DolibarrModules
 		$sql = array();
 
 		// Recherche configuration de boites
-		$this->boxes=array();
-		$sql="select name, value from ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
-		$sql.= " AND entity = ".$conf->entity;
-		$result=$this->db->query($sql);
+		$this->boxes = array();
+		$sql = "select name, value from ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
+		$sql .= " AND entity = ".$conf->entity;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			while ($obj = $this->db->fetch_object($result))

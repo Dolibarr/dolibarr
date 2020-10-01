@@ -16,12 +16,13 @@ StripeDoPayment=Paga amb Stripe
 YouWillBeRedirectedOnStripe=Se us redirigirà a la pàgina de Stripe assegurada per introduir la informació de la vostra targeta de crèdit
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pagament %s
-ToOfferALinkForOnlinePaymentOnOrder=URL per oferir una interfície d'usuari de pagament en línia %s per a un ordre de venda
-ToOfferALinkForOnlinePaymentOnInvoice=URL que ofereix una interfície de cobrament en línia %s basada en l'import d'una factura a client
-ToOfferALinkForOnlinePaymentOnContractLine=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofereix una interfície de pagament en línia %s per una quota de soci
-YouCanAddTagOnUrl=També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
+ToOfferALinkForOnlinePaymentOnOrder=URL per oferir una pàgina de pagament en línia %s per a una ordre de venda
+ToOfferALinkForOnlinePaymentOnInvoice=URL per oferir una pàgina de pagament en línia %s per a una factura de client
+ToOfferALinkForOnlinePaymentOnContractLine=URL per oferir una pàgina de pagament en línia %s per a una línia de contracte
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL per oferir una pàgina de pagament en línia %s de qualsevol quantitat sense cap objecte associat
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per oferir una pàgina de pagament en línia %s per a una subscripció per membres
+ToOfferALinkForOnlinePaymentOnDonation=URL per oferir una pàgina de pagament en línia %s per al pagament d’una donació
+YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b>&tag= <i>valor</i> </b> a qualsevol d'aquestes URLs (obligatori només per al pagament no vinculat a cap objecte) per afegir la vostra pròpia etiqueta de comentari de pagament. <br> Per a la URL de pagaments no vinculta a cap objecte existent, també podeu afegir el paràmetre <strong>&noidempotency=1</strong> de manera que el mateix enllaç amb una mateixa etiqueta es pot utilitzar diverses vegades (alguns modes de pagament poden limitar els intents de pagament a 1 per a cada enllaç si no s'utilitza aquest paràmetre)
 SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b>%s</b> per fer que el pagament es creï automàticament quan es valide mitjançant Stripe.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
@@ -31,6 +32,7 @@ VendorName=Nom del venedor
 CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
 NewStripePaymentReceived=S'ha rebut un nou pagament de Stripe
 NewStripePaymentFailed=S'ha intentat el pagament de Stripe però, ha fallat
+FailedToChargeCard=No s'ha pogut fer el càrrec a la targeta
 STRIPE_TEST_SECRET_KEY=Clau secreta de test
 STRIPE_TEST_PUBLISHABLE_KEY=Clau de test publicable
 STRIPE_TEST_WEBHOOK_KEY=Clau de prova de Webhook
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Enllaç a la configuració de Stripe WebHook per truc
 ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode en directe)
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
 ClickHereToTryAgain=<a href="%s">Feu clic aquí per tornar-ho a provar ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les fortes regles d'autenticació de clients, la creació d'una targeta s'ha de fer des del panell de Stripe. Podeu fer clic aquí per activar el registre de clients de Stripe: %s

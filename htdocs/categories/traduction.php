@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
- *	\brief      Page de traduction des produits
+ *	\brief      Page of translation of products
  */
 
 require '../main.inc.php';
@@ -36,18 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
-$ref    = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$label  = GETPOST('label', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $type   = GETPOST('type', 'aZ09');
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
-
-// Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-
-if ($id == "")
+if ($id == '' && $label == '')
 {
 	dol_print_error('', 'Missing parameter id');
 	exit();
@@ -57,7 +51,16 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
+$result = $object->fetch($id, $label, $type);
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
+$object->fetch_optionals();
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
 
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*
  * Actions
@@ -82,7 +85,7 @@ $cancel != $langs->trans("Cancel") &&
 	// check parameters
     $forcelangprod = GETPOST('forcelangprod', 'alpha');
     $libelle = GETPOST('libelle', 'alpha');
-    $desc = GETPOST('desc');
+    $desc = GETPOST('desc', 'restricthtml');
 
     if (empty($forcelangprod)) {
         $error++;
@@ -159,28 +162,18 @@ $cancel != $langs->trans("Cancel") &&
     }
 }
 
-$result = $object->fetch($id, $ref);
-
 
 /*
  * View
  */
 
-llxHeader("", "", $langs->trans("Translation"));
-
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       $title = $langs->trans("ProductsCategoryShort");
-elseif ($type == Categorie::TYPE_SUPPLIER)  $title = $langs->trans("SuppliersCategoryShort");
-elseif ($type == Categorie::TYPE_CUSTOMER)  $title = $langs->trans("CustomersCategoryShort");
-elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCategoryShort");
-elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
-elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
-elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
-else                                        $title = $langs->trans("Category");
+llxHeader("", "", $langs->trans("Translation"));
+
+$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
 
@@ -194,27 +187,26 @@ if (!empty($object->multilangs))
     }
 }
 
-dol_fiche_head($head, 'translation', $title, -1, 'category');
+dol_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-
+$object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
-foreach ($ways as $way)
-{
+foreach ($ways as $way) {
     $morehtmlref .= $way."<br>\n";
 }
 $morehtmlref .= '</div>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 print '<br>';
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Description
 print '<tr><td class="titlefield notopnoleft">';
@@ -263,7 +255,7 @@ if ($action == 'edit')
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
@@ -299,8 +291,7 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add')
+} elseif ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
 
@@ -335,7 +326,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 	print '<br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
@@ -345,9 +336,9 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
     print $formadmin->select_language(GETPOST('forcelangprod', 'alpha'), 'forcelangprod', 0, $object->multilangs);
 	print '</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
-	print '<td><input name="libelle" size="40" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
+	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

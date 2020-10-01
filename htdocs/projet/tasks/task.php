@@ -37,22 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST("ref", 'alpha', 1);          // task ref
-$taskref=GETPOST("taskref", 'alpha');    // task ref
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$withproject=GETPOST('withproject', 'int');
-$project_ref=GETPOST('project_ref', 'alpha');
-$planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('planned_workloadmin', 'int')!='') ? (GETPOST('planned_workloadhour', 'int')>0?GETPOST('planned_workloadhour', 'int')*3600:0) + (GETPOST('planned_workloadmin', 'int')>0?GETPOST('planned_workloadmin', 'int')*60:0) : '');
+$id = GETPOST('id', 'int');
+$ref = GETPOST("ref", 'alpha', 1); // task ref
+$taskref = GETPOST("taskref", 'alpha'); // task ref
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$withproject = GETPOST('withproject', 'int');
+$project_ref = GETPOST('project_ref', 'alpha');
+$planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
 
 // Security check
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (! $user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+$hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -113,9 +113,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
 			    setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-	else
-	{
+	} else {
 		$action = 'edit';
 	}
 }
@@ -131,9 +129,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 		{
 			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 			exit;
-		}
-		else
-		{
+		} else {
 		    setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
@@ -149,9 +145,7 @@ if (!empty($project_ref) && !empty($withproject))
 		if (count($tasksarray) > 0)
 		{
 			$id = $tasksarray[0]->id;
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}
@@ -171,7 +165,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 	}
-	$result = $object->generateDocument($object->modelpdf, $outputlangs);
+	$result = $object->generateDocument($object->model_pdf, $outputlangs);
 	if ($result <= 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -381,7 +375,7 @@ if ($id > 0 || !empty($ref))
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -462,9 +456,7 @@ if ($id > 0 || !empty($ref))
 			print '</div>';
 
 			print '</form>';
-		}
-		else
-		{
+		} else {
 			/*
 			 * Fiche tache en mode visu
 			 */
@@ -482,8 +474,7 @@ if ($id > 0 || !empty($ref))
 			{
 			    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
-			}
-			else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+			} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 			$morehtmlref = '';
 
@@ -509,7 +500,7 @@ if ($id > 0 || !empty($ref))
 			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
@@ -550,7 +541,7 @@ if ($id > 0 || !empty($ref))
 			print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Progress declared
 			print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
@@ -567,8 +558,7 @@ if ($id > 0 || !empty($ref))
 				$tmparray = $object->getSummaryOfTimeSpent();
 				if ($tmparray['total_duration'] > 0 && !empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
-			}
-			else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
+			} else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
 			print '</td></tr>';
 
 			// Other attributes
@@ -605,9 +595,7 @@ if ($id > 0 || !empty($ref))
 				if ($user->rights->projet->creer)
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 				}
 
@@ -617,14 +605,10 @@ if ($id > 0 || !empty($ref))
 				    if (!$object->hasChildren() && !$object->hasTimeSpent())
 				    {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
-				    }
-				    else
-				    {
+				    } else {
 				        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 				}
 
@@ -643,7 +627,7 @@ if ($id > 0 || !empty($ref))
 			$genallowed = ($user->rights->projet->lire);
 			$delallowed = ($user->rights->projet->creer);
 
-			print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+			print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

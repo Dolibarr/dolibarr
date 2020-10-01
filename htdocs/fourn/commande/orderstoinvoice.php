@@ -49,7 +49,7 @@ if (!$user->rights->fournisseur->facture->creer)
 
 $id = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST("facid")); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $sref = GETPOST('sref');
 $sref_client = GETPOST('sref_client');
@@ -58,7 +58,7 @@ $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 if (!$sortfield)
 	$sortfield = 'c.rowid';
@@ -83,9 +83,7 @@ if ($action == 'create')
 	if (!GETPOST('createbill'))
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 		if (!is_array($selected))
 		{
 			//$error++;
@@ -165,8 +163,8 @@ if (($action == 'create' || $action == 'add') && !$error) {
 			$object->label = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
-			$object->note_public = GETPOST('note_public', 'none');
-			$object->note_private = GETPOST('note_private', 'none');
+			$object->note_public = GETPOST('note_public', 'restricthtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$projectid = GETPOST('projectid', 'int');
@@ -323,12 +321,10 @@ if ($action == 'create' && !$error) {
     }
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
-	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
-	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
@@ -449,12 +445,10 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	// Show orders we can bill
 	if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
 	{
-		$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")"; // Must match filter in htdocs/fourn/card.php
-	}
-	else
-	{
+		$sql .= " AND c.fk_statut IN (".$db->sanitize($db->escape(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY)).")"; // Must match filter in htdocs/fourn/card.php
+	} else {
 		// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
-		$sql .= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+		$sql .= " AND c.fk_statut IN (".$db->sanitize($db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS)).")";
 	}
 
 	$sql .= " AND c.billed = 0";
@@ -511,7 +505,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$periodely = $html->selectDate($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0).' - '.$html->selectDate($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0);
 
 		print '<form name="orders2invoice" method="GET" action="orderstoinvoice.php">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 
 

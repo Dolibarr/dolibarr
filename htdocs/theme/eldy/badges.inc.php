@@ -1,9 +1,7 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
-/* <style type="text/css" > */
-/*
- Badge style is based on boostrap framework
- */
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet');
+?>
+/* Badge style is based on boostrap framework */
 
 .badge {
     display: inline-block;
@@ -23,8 +21,20 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 .badge-status {
-    font-size: 1em;
+    font-size: 0.95em;
     padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
+}
+.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
+    font-size: 1.1em;
+    padding: .4em .4em;
+}
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
+	    font-size: 0.95em;
+	    padding: .3em .2em;
+	}
 }
 
 .badge-pill, .tabs .badge {
@@ -95,7 +105,7 @@ a.badge-success:focus, a.badge-success:hover {
 /* DANGER */
 .badge-danger {
     color: #fff !important;
-    background-color:  <?php print $badgeDanger; ?>;
+    background-color: <?php print $badgeDanger; ?>;
 }
 a.badge-danger.focus, a.badge-danger:focus {
     outline: 0;
@@ -108,7 +118,7 @@ a.badge-danger:focus, a.badge-danger:hover {
 
 /* WARNING */
 .badge-warning {
-    color: #212529 !important;
+    color: #fff !important;
     background-color: <?php print $badgeWarning; ?>;
 }
 a.badge-warning.focus, a.badge-warning:focus {
@@ -121,13 +131,13 @@ a.badge-warning:focus, a.badge-warning:hover {
 }
 
 /* WARNING colorblind */
-body[class^="colorblind-"] .badge-warning {
+body[class*="colorblind-"] .badge-warning {
 	  background-color: <?php print $colorblind_deuteranopes_badgeWarning; ?>;
   }
-body[class^="colorblind-"] a.badge-warning.focus,body[class^="colorblind-"] a.badge-warning:focus {
+body[class*="colorblind-"] a.badge-warning.focus,body[class^="colorblind-"] a.badge-warning:focus {
 	box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($colorblind_deuteranopes_badgeWarning, 0.5); ?>;
 }
-body[class^="colorblind-"] a.badge-warning:focus, a.badge-warning:hover {
+body[class*="colorblind-"] a.badge-warning:focus, a.badge-warning:hover {
 	background-color: <?php print colorDarker($colorblind_deuteranopes_badgeWarning, 10); ?>;
 }
 
@@ -174,17 +184,19 @@ a.badge-dark:focus, a.badge-dark:hover {
 }
 
 
-/*
- * STATUS BADGES
- */
+/* STATUS BADGES */
 <?php
-for ($i = 0; $i <= 9; $i++){
+for ($i = 0; $i <= 9; $i++) {
 	/* Default Status */
 	_createStatusBadgeCss($i, '', "STATUS".$i);
 
 	// create status for accessibility
 	_createStatusBadgeCss($i, 'colorblind_deuteranopes_', "COLORBLIND STATUS".$i, 'body[class*="colorblind-"] ');
 }
+
+_createStatusBadgeCss('1b', '', "STATUS1b");
+_createStatusBadgeCss('4b', '', "STATUS4b");
+
 
 /**
  * Create status badge
@@ -200,45 +212,48 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 	global ${$statusVarNamePrefix.'badgeStatus'.$statusName}, ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
 
-	if(!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
-		print "\n/* " . strtoupper($commentLabel) . " */\n";
-		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix . 'badgeStatus' . $statusName};
+	if (!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
+		print "\n/* ".strtoupper($commentLabel)." */\n";
 
-		$TBadgeBorderOnly = array(0, 3, 5, 7);
-		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix . 'badgeStatus' . $statusName}) ? '#212529' : '#ffffff';
+		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
-		if (!empty(${$statusVarNamePrefix . 'badgeStatus_textColor' . $statusName})) {
-			$thisBadgeTextColor = ${$statusVarNamePrefix . 'badgeStatus_textColor' . $statusName};
+		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7');
+		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix.'badgeStatus'.$statusName}) ? '#212529' : '#ffffff';
+
+		if (!empty(${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName})) {
+			$thisBadgeTextColor = ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
 		}
 
-		if (in_array($statusName, $TBadgeBorderOnly)) {
+		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
 			$thisBadgeTextColor = '#212529';
 			$thisBadgeBackgroundColor = "#fff";
 		}
 
-		if (in_array($statusName, array(0, 5, 9))) $thisBadgeTextColor = '#999999';
-		if (in_array($statusName, array(6))) $thisBadgeTextColor = '#777777';
+		if (in_array((string) $statusName, array('0', '5', '9'))) $thisBadgeTextColor = '#999999';
+		if (in_array((string) $statusName, array('6'))) $thisBadgeTextColor = '#777777';
 
-		print $cssPrefix . ".badge-status" . $statusName . " {\n";
-		print "        color: " . $thisBadgeTextColor . " !important;\n";
-
-		if (in_array($statusName, $TBadgeBorderOnly)) {
-			print "        border-color: " . $thisBadgeBorderColor . ";\n";
+		print $cssPrefix.".badge-status".$statusName." {\n";
+		print "        color: ".$thisBadgeTextColor." !important;\n";
+		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
+			print "        border-color: ".$thisBadgeBorderColor.";\n";
 		}
-
-		print "        background-color: " . $thisBadgeBackgroundColor . ";\n";
+		print "        background-color: ".$thisBadgeBackgroundColor.";\n";
 		print "}\n";
 
-		print $cssPrefix . ".badge-status" . $statusName . ".focus, " . $cssPrefix . ".badge-status" . $statusName . ":focus {\n";
+		print $cssPrefix.".font-status".$statusName." {\n";
+		print "        color: ".$thisBadgeBackgroundColor." !important;\n";
+		print "}\n";
+
+		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
-		print "    box-shadow: 0 0 0 0.2rem " . colorHexToRgb($thisBadgeBackgroundColor, 0.5) . ";\n";
+		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5).";\n";
 		print "}\n";
 
-		print $cssPrefix . ".badge-status" . $statusName . ":focus, " . $cssPrefix . ".badge-status" . $statusName . ":hover {\n";
-		print "    color: " . $thisBadgeTextColor . " !important;\n";
+		print $cssPrefix.".badge-status".$statusName.":focus, ".$cssPrefix.".badge-status".$statusName.":hover {\n";
+		print "    color: ".$thisBadgeTextColor." !important;\n";
 		//print "    background-color: " . colorDarker($thisBadgeBackgroundColor, 10) . ";\n";
-		if (in_array($statusName, $TBadgeBorderOnly)) {
-			print "        border-color: " . colorDarker($thisBadgeBorderColor, 10) . ";\n";
+		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
+			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10).";\n";
 		}
 		print "}\n";
 	}

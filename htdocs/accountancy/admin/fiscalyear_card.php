@@ -71,9 +71,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-
-elseif ($action == 'add') {
+} elseif ($action == 'add') {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -158,7 +156,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
 	dol_fiche_head();
@@ -207,7 +205,7 @@ if ($action == 'create')
 			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
@@ -274,23 +272,23 @@ if ($action == 'create')
 
 			// Label
 			print '<tr><td class="tdtop">';
-			print $form->editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print $form->editfieldkey("Label", 'label', $object->label, $object, 1, 'alpha:32');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print $form->editfieldval("Label", 'label', $object->label, $object, 1, 'alpha:32');
 			print "</td></tr>";
 
 			// Date start
 			print '<tr><td>';
-			print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>';
-			print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
 			print '</td></tr>';
 
 			// Statut

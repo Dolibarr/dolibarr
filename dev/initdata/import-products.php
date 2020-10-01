@@ -30,7 +30,7 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -163,9 +163,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     {
         print " - Error in create result code = ".$ret." - ".$produit->errorsToString();
         $errorrecord++;
-    }
-	else
-	{
+    } else {
 	    print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
 	}
 
@@ -180,9 +178,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - updatePrice OK";
     	}
 	}
@@ -200,9 +196,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in setMultiLangs result code = ".$ret." - ".$produit->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - setMultiLangs OK";
     	}
 	}
@@ -227,9 +221,7 @@ if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

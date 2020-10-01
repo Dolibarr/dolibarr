@@ -32,7 +32,7 @@ if (!$user->admin)
     accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 
@@ -65,7 +65,7 @@ print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = dav_admin_prepare_head();
 
@@ -74,7 +74,7 @@ dol_fiche_head($head, 'webdav', '', -1, 'action');
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
@@ -87,19 +87,19 @@ if ($action == 'edit')
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
-		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		if ($key == 'DAV_RESTICT_ON_IP') {
+			$label = $langs->trans("RESTRICT_ON_IP");
+			$label .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
 		    print $langs->trans("AlwaysActive");
-		}
-		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print $form->selectyesno($key, $conf->global->$key, 1);
-		}
-		else
-		{
+		} else {
 			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'">';
 		}
 		print '</td></tr>';
@@ -113,9 +113,7 @@ if ($action == 'edit')
 
 	print '</form>';
 	print '<br>';
-}
-else
-{
+} else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -124,19 +122,19 @@ else
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
-		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		if ($key == 'DAV_RESTICT_ON_IP') {
+			$label = $langs->trans("RESTRICT_ON_IP");
+			$label .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
 		    print $langs->trans("AlwaysActive");
-		}
-		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print yn($conf->global->$key);
-		}
-		else
-		{
+		} else {
 			print $conf->global->$key;
 		}
 		print '</td></tr>';

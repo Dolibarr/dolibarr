@@ -4,6 +4,7 @@ Establishments=Inrichtingen
 Establishment=Inrichting
 NewEstablishment=Nieuwe inrichting
 DeleteEstablishment=Verwijderen inrichting
+ConfirmDeleteEstablishment=Weet U zeker dat U deze inrichting wilt verwijderen ?
 OpenEtablishment=Open inrichting
 CloseEtablishment=Sluit inrichting
 DictionaryDepartment=HRM - afdelingen lijst

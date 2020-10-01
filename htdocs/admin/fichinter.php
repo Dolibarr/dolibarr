@@ -39,7 +39,7 @@ $langs->loadLangs(array('admin', 'errors', 'interventions', 'other'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -63,14 +63,10 @@ if ($action == 'updateMask')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'specimen') // For fiche inter
+} elseif ($action == 'specimen') // For fiche inter
 {
 	$modele = GETPOST('module', 'alpha');
 
@@ -101,15 +97,11 @@ elseif ($action == 'specimen') // For fiche inter
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
 			return;
-		}
-		else
-		{
+		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -119,9 +111,7 @@ elseif ($action == 'specimen') // For fiche inter
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -146,19 +136,15 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-
-elseif ($action == 'setmod')
+} elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FICHEINTER_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-
-elseif ($action == 'set_FICHINTER_FREE_TEXT')
+} elseif ($action == 'set_FICHINTER_FREE_TEXT')
 {
-	$freetext = GETPOST('FICHINTER_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('FICHINTER_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	if (!$res > 0) $error++;
@@ -166,14 +152,10 @@ elseif ($action == 'set_FICHINTER_FREE_TEXT')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
+} elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('FICHINTER_DRAFT_WATERMARK', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
@@ -183,14 +165,10 @@ elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
+} elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
 {
 	$val = GETPOST('FICHINTER_PRINT_PRODUCTS', 'alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
@@ -200,9 +178,7 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
@@ -320,13 +296,11 @@ foreach ($dirmodels as $reldir)
                         else print $tmp;
                         print '</td>'."\n";
 
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($conf->global->FICHEINTER_ADDON == $classname)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
@@ -348,7 +322,7 @@ foreach ($dirmodels as $reldir)
                                 $htmltooltip .= $langs->trans($module->error).'<br>';
                             }
                         }
-						print '<td align="center">';
+						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
@@ -375,7 +349,7 @@ $type = 'ficheinter';
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)
@@ -388,9 +362,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -409,7 +381,8 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/fichinter/doc/");
+	$realpath = $reldir."core/modules/fichinter/doc";
+	$dir = dol_buildpath($realpath);
 
 	if (is_dir($dir))
 	{
@@ -456,9 +429,7 @@ foreach ($dirmodels as $reldir)
 		    					print img_picto($langs->trans("Enabled"), 'switch_on');
 		    					print '</a>';
 		    					print "</td>";
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print "<td align=\"center\">\n";
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		    					print "</td>";
@@ -469,9 +440,7 @@ foreach ($dirmodels as $reldir)
 		    				if ($conf->global->FICHEINTER_ADDON_PDF == "$name")
 		    				{
 		    					print img_picto($langs->trans("Default"), 'on');
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		    				}
 		    				print '</td>';
@@ -480,24 +449,24 @@ foreach ($dirmodels as $reldir)
 		    				$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 		    				$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 		    				$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+		    				$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
 		    				$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 		    				$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 		    				$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				print $form->textwithpicto('', $htmltooltip, -1, 0);
 		    				print '</td>';
 
 		    				// Preview
-		    				print '<td align="center">';
+		    				print '<td class="center">';
 		    				if ($module->type == 'pdf')
 		    				{
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'intervention').'</a>';
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 		    				}
 		    				print '</td>';
@@ -533,7 +502,7 @@ foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInterventions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
@@ -541,9 +510,7 @@ $variablename = 'FICHINTER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
@@ -555,7 +522,7 @@ print '</form>';
 
 //Use draft Watermark
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
@@ -567,7 +534,7 @@ print "</td></tr>\n";
 print '</form>';
 // print products on fichinter
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">';
 print '<tr class="oddeven"><td>';
 print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
@@ -581,13 +548,13 @@ print "</td></tr>\n";
 print '</form>';
 // Use services duration
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_USE_SERVICE_DURATION">';
 print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("UseServicesDurationOnFichinter");
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.($conf->global->FICHINTER_USE_SERVICE_DURATION ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
@@ -597,13 +564,13 @@ print '</tr>';
 print '</form>';
 // Use duration
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_WITHOUT_DURATION">';
 print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("UseDurationOnFichinter");
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.($conf->global->FICHINTER_WITHOUT_DURATION ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
@@ -613,13 +580,13 @@ print '</tr>';
 print '</form>';
 // use date without hour
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_DATE_WITHOUT_HOUR">';
 print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("UseDateWithoutHourOnFichinter");
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.($conf->global->FICHINTER_DATE_WITHOUT_HOUR ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';

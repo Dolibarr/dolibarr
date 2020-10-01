@@ -47,7 +47,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom = 'Saphir';
 

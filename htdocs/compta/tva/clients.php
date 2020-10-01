@@ -43,11 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+
+$now = dol_now();
+$current_date = dol_getdate($now);
+if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
+
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year))
 {
-    $year_current = strftime("%Y", dol_now());
+	$year_current = $current_date['year'];
     $year_start = $year_current;
 } else {
     $year_current = $year;
@@ -55,23 +60,34 @@ if (empty($year))
 }
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
-// Quarter
+// Set default period if not defined
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-    $q = GETPOST("q");
+	$q = GETPOST("q", "int");
     if (empty($q))
     {
-        if (GETPOST("month", 'int')) { $date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), false); $date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), false); }
-        else
-        {
-            $date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-            if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
+        if (GETPOST("month", 'int')) { $date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), false); $date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), false); } else {
+            if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
+            	$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
+            	$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
+            } elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
+            	if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
+            		if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
+            			$year_start--;
+            		}
+            	} else {
+            		if (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) < 6) {	// If perdio started from less than 6 years, we show past year
+            			$year_start--;
+            		}
+            	}
+            	$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
+            	$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
+            } elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
+            	$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');
+            	$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
+            }
         }
-    }
-    else
-    {
+    } else {
         if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
         if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
         if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -108,6 +124,7 @@ $product_static = new Product($db);
 $payment_static = new Paiement($db);
 $paymentfourn_static = new PaiementFourn($db);
 $paymentexpensereport_static = new PaymentExpenseReport($db);
+$user_static = new User($db);
 
 $morequerystring = '';
 $listofparams = array('date_startmonth', 'date_startyear', 'date_startday', 'date_endmonth', 'date_endyear', 'date_endday');
@@ -124,7 +141,7 @@ if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
 llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
 
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
 $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
@@ -135,7 +152,7 @@ $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start;
@@ -166,18 +183,18 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-$description .= $fsearch;
+$description .= ($description ? '<br>' : '').$fsearch;
 if (!empty($conf->global->TAX_REPORT_EXTRA_REPORT))
 {
-    $description .= '<br>'
-        . '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> '
-            . $langs->trans('SimpleReport')
-            . '</input>'
-                . '<br>'
-                    . '<input type="radio" name="extra_report" value="1" '.($special_report ? 'checked="checked"' : '').'> '
-                        . $langs->trans('AddExtraReport')
-                        . '</input>'
-                            . '<br>';
+    $description .= '<br>';
+    $description .= '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> ';
+    $description .= $langs->trans('SimpleReport');
+    $description .= '</input>';
+    $description .= '<br>';
+    $description .= '<input type="radio" name="extra_report" value="1" '.($special_report ? 'checked="checked"' : '').'> ';
+    $description .= $langs->trans('AddExtraReport');
+    $description .= '</input>';
+    $description .= '<br>';
 }
 
 $elementcust = $langs->trans("CustomersInvoices");
@@ -200,7 +217,7 @@ $vatsup = $langs->trans("VATPaid");
 
 
 // VAT Received
-
+print '<div class="div-table-responsive">';
 print "<table class=\"noborder\" width=\"100%\">";
 
 $y = $year_current;
@@ -299,9 +316,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
                     'vat'				=>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
                     'link'				=>$expensereport->getNomUrl(1)
                 );
-            }
-            else
-            {
+            } else {
                 $invoice_supplier->id = $x_paye[$my_paye_thirdpartyid]['facid'][$id];
                 $invoice_supplier->ref = $x_paye[$my_paye_thirdpartyid]['facnum'][$id];
                 $invoice_supplier->type = $x_paye[$my_paye_thirdpartyid]['type'][$id];
@@ -671,9 +686,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
                             || ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
                         {
                             print $langs->trans("NA");
-                        }
-                        else
-                        {
+                        } else {
                             if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
                                 $ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
                             }
@@ -731,14 +744,12 @@ if (!is_array($x_coll) || !is_array($x_paye))
         print '</tr>';
     }
 
-    print '</table>';
-
     // Total to pay
-    print '<br><br>';
-    print '<table class="noborder centpercent">';
+    print '<tr><td colspan="'.($span+2).'"></td></tr>';
+
     $diff = $x_coll_sum - $x_paye_sum;
     print '<tr class="liste_total">';
-    print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+    print '<td class="liste_total" colspan="'.($span+1).'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
     print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
     print "</tr>\n";
 
@@ -746,7 +757,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 }
 
 print '</table>';
-
+print '</div>';
 
 llxFooter();
 

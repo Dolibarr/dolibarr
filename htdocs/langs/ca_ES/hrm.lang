@@ -9,8 +9,9 @@ ConfirmDeleteEstablishment=Vols eliminar aquest establiment?
 OpenEtablishment=Obre l'establiment
 CloseEtablishment=Tanca l'establiment
 # Dictionary
+DictionaryPublicHolidays=HRM - Festius
 DictionaryDepartment=HRM - Llistat de departament
-DictionaryFunction=HRM - Llistat de funcions
+DictionaryFunction=HRM: llocs de treball
 # Module
 Employees=Empleats
 Employee=Empleat

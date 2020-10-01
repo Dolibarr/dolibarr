@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=التجارية
-CommercialArea=منطقة تجارية
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=العميل
 Customers=العملاء
 Prospect=احتمال
@@ -59,7 +59,7 @@ ActionAC_FAC=ارسال الفواتير
 ActionAC_REL=ارسال الفواتير (للتذكير)
 ActionAC_CLO=إغلاق
 ActionAC_EMAILING=إرسال البريد الإلكتروني الجماعي
-ActionAC_COM=لكي ترسل عن طريق البريد
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=إرسال الشحن عن طريق البريد
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

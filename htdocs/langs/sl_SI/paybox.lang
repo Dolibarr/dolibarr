@@ -11,17 +11,8 @@ YourEMail=E-pošta za potrditev plačila
 Creditor=Upnik
 PaymentCode=Koda plačila
 PayBoxDoPayment=Pay with Paybox
-ToPay=Izvrši plačilo
 YouWillBeRedirectedOnPayBox=Preusmerjeni boste na varno Paybox stran za vnos podatkov o vaši kreditni kartici
 Continue=Naslednji
-ToOfferALinkForOnlinePayment=URL za %s plačila
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=URL naslov s ponudbo %s vmesnika za online plačila računov
-ToOfferALinkForOnlinePaymentOnContractLine=URL naslov s ponudbo %s vmesnika za online plačila po pogodbi
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL naslov s ponudbo %s vmesnika za online plačila poljubnih zneskov
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL naslov s ponudbo %s vmesnika za online plačila članarin
-ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment, user interface for payment of donation
-YouCanAddTagOnUrl=Vsakemu od teh URL naslovov lahko tudi dodate url parameter <b>&tag=<i>vrednost</i></b> (zahtevano samo pri poljubnih plačilih) s komentarjem vašega plačila.
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Ta stran potrjuje, da je bilo vaše plačilo sprejeto. Hvala.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.

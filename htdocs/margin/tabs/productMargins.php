@@ -30,7 +30,7 @@ $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -42,13 +42,12 @@ if (empty($user->rights->margins->liretous)) accessforbidden();
 
 $object = new Product($db);
 
-$mesg = '';
-
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
@@ -137,8 +136,8 @@ if ($id > 0 || !empty($ref))
             if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
             $sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
             $sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty) as qty,"; // not always positive in case of Credit note
-            $sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty * d.buy_price_ht) as buying_price,"; // not always positive in case of Credit note
-            $sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge"; // not always positive in case of Credit note
+            $sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // not always positive in case of Credit note
+            $sql .= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // not always positive in case of Credit note
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql .= ", ".MAIN_DB_PREFIX."facture as f";
             $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -188,7 +187,6 @@ if ($id > 0 || !empty($ref))
                 $cumul_achat = 0;
                 $cumul_vente = 0;
                 $cumul_qty = 0;
-                $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
                 if ($num > 0) {
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
@@ -207,14 +205,14 @@ if ($id > 0 || !empty($ref))
                         print "<td>".$objp->code_client."</td>\n";
 						print "<td class=\"center\">";
 						print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-						print "<td class=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
-						print "<td class=\"right\">".price($objp->buying_price, null, null, null, null, $rounding)."</td>\n";
-						print "<td class=\"right\">".price($objp->qty, null, null, null, null, $rounding)."</td>\n";
-						print "<td class=\"right\">".price($objp->marge, null, null, null, null, $rounding)."</td>\n";
+						print "<td class=\"right\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
+						print "<td class=\"right\">".price(price2num($objp->buying_price, 'MT'))."</td>\n";
+						print "<td class=\"right\">".price(price2num($objp->qty, 'MT'))."</td>\n";
+						print "<td class=\"right\">".price(price2num($objp->marge, 'MT'))."</td>\n";
 						if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-							print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+							print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 						if (!empty($conf->global->DISPLAY_MARK_RATES))
-							print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+							print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
                         print "</tr>\n";
                         $i++;
@@ -231,22 +229,20 @@ if ($id > 0 || !empty($ref))
                 {
                     $marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
-                }
-                else
-                {
+                } else {
                     $marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
                 }
                 print '<tr class="liste_total">';
                 print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
-                print '<td class="right">'.price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-                print '<td class="right">'.price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-                print '<td class="right">'.price($cumul_qty, null, null, null, null, $rounding)."</td>\n";
-                print '<td class="right">'.price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+                print '<td class="right">'.price(price2num($cumul_vente, 'MT'))."</td>\n";
+                print '<td class="right">'.price(price2num($cumul_achat, 'MT'))."</td>\n";
+                print '<td class="right">'.price(price2num($cumul_qty, 'MT'))."</td>\n";
+                print '<td class="right">'.price(price2num($totalMargin, 'MT'))."</td>\n";
                 if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-                    print '<td class="right">'.(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+                	print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
                 if (!empty($conf->global->DISPLAY_MARK_RATES))
-                    print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+                	print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
                 print '<td class="right">&nbsp;</td>';
                 print "</tr>\n";
                 print "</table>";
@@ -264,9 +260,9 @@ if ($id > 0 || !empty($ref))
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price($totalMargin, null, null, null, null, $rounding).'");
-        $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%").'");
-        $("#markRate").html("'.(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%").'");
+        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT')).'");
+        $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
+        $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
     });
     </script>
 ';

@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,9 +26,11 @@ CREATE TABLE llx_mrp_mo(
 	note_public text, 
 	note_private text, 
 	date_creation datetime NOT NULL, 
+	date_valid datetime NULL,
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
+	fk_user_modif integer,
+	fk_user_valid integer,
 	import_key varchar(14),
 	model_pdf varchar(255),
 	status integer NOT NULL, 

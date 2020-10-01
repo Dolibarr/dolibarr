@@ -44,7 +44,7 @@ class Loan extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'money-bill-alt';
 
 	/**
 	 * @var int ID
@@ -105,6 +105,11 @@ class Loan extends CommonObject
 	public $fk_project;
 
 
+	const STATUS_UNPAID = 0;
+	const STATUS_PAID = 1;
+    const STATUS_STARTED = 2;
+
+
 	/**
 	 * Constructor
 	 *
@@ -156,15 +161,11 @@ class Loan extends CommonObject
 
 				$this->db->free($resql);
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->free($resql);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -254,9 +255,7 @@ class Loan extends CommonObject
 			//dol_syslog("Loans::create this->id=".$this->id);
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -325,9 +324,7 @@ class Loan extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -371,9 +368,7 @@ class Loan extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -391,7 +386,51 @@ class Loan extends CommonObject
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = 1";
+		$sql .= " paid = ".$this::STATUS_PAID;
+		$sql .= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Tag loan as payement started
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function set_started($user)
+	{
+        // phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
+		$sql .= " paid = ".$this::STATUS_STARTED;
+		$sql .= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Tag loan as payement as unpaid
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function set_unpaid($user)
+	{
+        // phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
+		$sql .= " paid = ".$this::STATUS_UNPAID;
 		$sql .= " WHERE rowid = ".$this->id;
 		$return = $this->db->query($sql);
 		if ($return) {
@@ -425,70 +464,83 @@ class Loan extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
+
+		// Load translation files required by the page
 		$langs->loadLangs(array("customers", "bills"));
 
-		if ($mode == 0 || $mode == 1)
+		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			if ($status == 0) return $langs->trans("Unpaid");
-			elseif ($status == 1) return $langs->trans("Paid");
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			elseif ($status == 0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-			elseif ($status == 1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-			elseif ($status == 0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			elseif ($status == 1) return img_picto($langs->trans("Paid"), 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-			elseif ($status == 0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-			elseif ($status == 1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			elseif ($status == 0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			elseif ($status == 1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-			elseif ($status == 0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-			elseif ($status == 1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+			global $langs;
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
+            $this->labelStatus[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
+			if ($status == 0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
+            $this->labelStatusShort[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
+			if ($status == 0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 		}
 
-		else return "Error, mode/status not found";
+		$statusType = 'status1';
+		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) $statusType = 'status3';
+		if ($status == 1) $statusType = 'status6';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 
 	/**
 	 *  Return clicable name (with eventually the picto)
 	 *
-	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param	int		$maxlen			Label max length
-	 *  @return	string					Chaine with URL
+	 *  @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param	int		$maxlen						Label max length
+     *  @param  string  $option        				On what the link point to ('nolink', ...)
+     *  @param  int     $notooltip                  1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string								Chaine with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result = '';
 
-		$tooltip = '<u>'.$langs->trans("ShowLoan").'</u>';
-		if (!empty($this->ref))
-			$tooltip .= '<br><strong>'.$langs->trans('Ref').':</strong> '.$this->ref;
-		if (!empty($this->label))
-			$tooltip .= '<br><strong>'.$langs->trans('Label').':</strong> '.$this->label;
+		$label = '<u>'.$langs->trans("ShowLoan").'</u>';
+		if (!empty($this->ref)) {
+			$label .= '<br><strong>'.$langs->trans('Ref').':</strong> '.$this->ref;
+		}
+		if (!empty($this->label)) {
+			$label .= '<br><strong>'.$langs->trans('Label').':</strong> '.$this->label;
+		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
+		$url = DOL_URL_ROOT.'/loan/card.php?id='.$this->id;
+
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		}
+
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
@@ -539,7 +591,7 @@ class Loan extends CommonObject
 		$table = 'payment_loan';
 		$field = 'fk_loan';
 
-		$sql = 'SELECT sum(amount) as amount';
+		$sql = 'SELECT sum(amount_capital) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql .= ' WHERE '.$field.' = '.$this->id;
 
@@ -554,9 +606,7 @@ class Loan extends CommonObject
 
 			$this->db->free($resql);
 			return $amount;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -601,15 +651,11 @@ class Loan extends CommonObject
 
 				$this->db->free($result);
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->free($result);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

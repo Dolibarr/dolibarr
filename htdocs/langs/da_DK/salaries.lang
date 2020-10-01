@@ -12,10 +12,10 @@ ShowSalaryPayment=Vis lønbetaling
 THM=Gennemsnitlig timepris
 TJM=Gennemsnitlig dagspris
 CurrentSalary=Nuværende løn
-THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently for information only and is not used for any calculation
+THMDescription=Denne værdi kan bruges til at beregne omkostningerne til den tid, der er forbrugt på et projekt, der er indtastet af brugere, hvis modulprojektet bruges
+TJMDescription=Denne værdi er i øjeblikket kun til information og bruges ikke til nogen beregning
 LastSalaries=Seneste %s lønbetalinger
 AllSalaries=Alle lønudbetalinger
 SalariesStatistics=Lønstatistik
 # Export
-SalariesAndPayments=Salaries and payments
+SalariesAndPayments=Løn og betalinger

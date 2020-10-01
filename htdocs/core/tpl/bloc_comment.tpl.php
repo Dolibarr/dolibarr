@@ -111,9 +111,7 @@ if (!empty($object->comments))
         {
             $doleditor = new DolEditor('comment_description', $comment->description, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
             print $doleditor->Create(1);
-        }
-        else
-        {
+        } else {
             print $comment->description;
         }
 		print '</div>'; // End comment-description
@@ -124,16 +122,14 @@ if (!empty($object->comments))
             print '<input name="cancel" type="submit" class="button" value="'.$langs->trans("Cancel").'">';
 
             print '</form>';
-        }
-        else
-        {
+        } else {
             if ($fk_user == $user->id || $user->admin == 1)
             {
                 print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
                 print img_picto('', 'edit.png');
                 print '</a>';
             }
-            if(($first && $fk_user == $user->id) || $user->admin == 1) {
+            if (($first && $fk_user == $user->id) || $user->admin == 1) {
                 print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
                 print img_picto('', 'delete.png');
                 print '</a>';

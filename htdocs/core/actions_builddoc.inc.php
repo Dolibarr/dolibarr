@@ -37,9 +37,7 @@ if ($action == 'builddoc' && $permissiontoadd)
     if (is_numeric(GETPOST('model', 'alpha')))
     {
         $error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
-    }
-    else
-    {
+    } else {
    		// Reload to get all modified line records and be ready for hooks
         $ret = $object->fetch($id);
         $ret = $object->fetch_thirdparty();
@@ -84,14 +82,12 @@ if ($action == 'builddoc' && $permissiontoadd)
         if (empty($hideref)) $hideref = 0;
         if (empty($moreparams)) $moreparams = null;
 
-        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+        $result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
         if ($result <= 0)
         {
             setEventMessages($object->error, $object->errors, 'errors');
             $action = '';
-        }
-        else
-        {
+        } else {
         	if (empty($donotredirect))	// This is set when include is done by bulk action "Bill Orders"
         	{
 	            setEventMessages($langs->trans("FileGenerated"), null);
@@ -134,8 +130,7 @@ if ($action == 'remove_file' && $permissiontoadd)
 
 	    header('Location: '.$urltoredirect);
 	    exit;
-	}
-	else {
+	} else {
 		setEventMessages('BugFoundVarUploaddirnotDefined', null, 'errors');
 	}
 }

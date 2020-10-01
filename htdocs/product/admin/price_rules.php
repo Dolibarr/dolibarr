@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 $langs->loadLangs(array('admin', 'products'));
 
 // Security check
-if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
 	accessforbidden();
 
 /**
@@ -98,7 +98,7 @@ if ($_POST) {
  */
 
 $sql = "SELECT rowid, level, fk_level, var_percent, var_min_percent";
-$sql.= " FROM ".MAIN_DB_PREFIX."product_pricerules";
+$sql .= " FROM ".MAIN_DB_PREFIX."product_pricerules";
 $query = $db->query($sql);
 
 $rules = array();
@@ -120,7 +120,7 @@ if (empty($conf->product->enabled)) {
 
 llxHeader('', $langs->trans('MultipriceRules'));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 
@@ -168,8 +168,8 @@ $genPriceOptions = function ($level) use ($price_options) {
 				<td class="fieldrequired" style="text-align: center"><?php
 					echo $langs->trans('SellingPrice').' '.$i;
 					// Label of price
-					$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
-				if (! empty($conf->global->$keyforlabel)) {
+					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+				if (!empty($conf->global->$keyforlabel)) {
 					print ' - '.$langs->trans($conf->global->$keyforlabel);
 				}
 				?>

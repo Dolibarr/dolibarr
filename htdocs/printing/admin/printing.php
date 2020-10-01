@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha', 0, null, null, 1); // The value may be __google__docs so we force disable of replace
 $varname = GETPOST('varname', 'alpha');
@@ -73,9 +73,7 @@ if ($action == 'setconst' && $user->admin)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -93,9 +91,7 @@ if ($action == 'setvalue' && $user->admin)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -119,7 +115,7 @@ $head = printingAdminPrepareHead($mode);
 if ($mode == 'setup' && $user->admin)
 {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setconst">';
 
     dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
@@ -161,9 +157,7 @@ if ($mode == 'setup' && $user->admin)
                     if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS')
                     {
                         print $langs->trans("IsTokenGenerated");
-                    }
-                    else
-                    {
+                    } else {
                         print $langs->trans($key['varname']);
                     }
                     print '</td>';
@@ -197,11 +191,9 @@ if ($mode == 'setup' && $user->admin)
                 $tokenobj = null;
                 // Dolibarr storage
                 $storage = new DoliStorage($db, $conf);
-                try
-                {
+                try {
                     $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME_GOOGLE);
-                }
-                catch (Exception $e)
+                } catch (Exception $e)
                 {
                     // Return an error if token not found
                 }
@@ -267,15 +259,11 @@ if ($mode == 'config' && $user->admin)
         if (!empty($conf->use_javascript_ajax))
         {
             print ajax_constantonoff($printer->active);
-        }
-        else
-        {
+        } else {
             if (empty($conf->global->{$printer->conf}))
             {
                 print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-            }
-            else
-            {
+            } else {
                 print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
             }
         }
@@ -309,8 +297,7 @@ if ($mode == 'test' && $user->admin)
             } else {
                 setEventMessages($printer->error, $printer->errors, 'errors');
             }
-        }
-        else {
+        } else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
     } else {

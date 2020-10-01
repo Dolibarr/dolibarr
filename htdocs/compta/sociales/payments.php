@@ -48,7 +48,7 @@ if (!$year && $mode != 'sconly') { $year = date("Y", time()); }
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -81,7 +81,7 @@ if ($sortorder) $param .= '&sortorder='.$sortorder;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -92,9 +92,7 @@ if ($mode != 'sconly')
 {
     $center = ($year ? '<a href="list.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="list.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
-}
-else
-{
+} else {
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
 }
 
@@ -170,7 +168,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			// Ref payment
 			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
 			// Date payment
-			print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
 	        // Type payment
     	    print '<td>';
     	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
@@ -208,9 +206,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	print '</table>';
@@ -272,7 +268,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				$tva_static->ref = $obj->rowid;
 		        print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
-		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
+		        print '<td class="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
 		        print '<td class="right">'.price($obj->amount)."</td>";
 		        print "</tr>\n";
 
@@ -287,9 +283,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		    print "</table>";
 		    $db->free($result);
-		}
-		else
-		{
+		} else {
 		    dol_print_error($db);
 		}
 	}
@@ -300,19 +294,15 @@ if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1")
 {
 	$j = 1;
 	$numlt = 3;
-}
-elseif ($mysoc->localtax1_assuj == "1")
+} elseif ($mysoc->localtax1_assuj == "1")
 {
 	$j = 1;
 	$numlt = 2;
-}
-elseif ($mysoc->localtax2_assuj == "1")
+} elseif ($mysoc->localtax2_assuj == "1")
 {
 	$j = 2;
 	$numlt = 3;
-}
-else
-{
+} else {
 	$j = 0;
 	$numlt = 0;
 }
@@ -373,7 +363,7 @@ while ($j < $numlt)
 				$tva_static->ref = $obj->rowid;
 				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
-				print '<td align="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
+				print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
 				print '<td class="right">'.price($obj->amount)."</td>";
 				print "</tr>\n";
 
@@ -388,9 +378,7 @@ while ($j < $numlt)
 
 			print "</table>";
 			$db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -455,7 +443,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
                 $sal_static->ref = $obj->rowid;
                 print '<td class="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
-                print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
                 print '<td class="right">'.price($obj->amount)."</td>";
                 print "</tr>\n";
 
@@ -472,9 +460,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
             $db->free($result);
 
             print "<br>";
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
     }

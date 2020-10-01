@@ -44,7 +44,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom = 'Universal';
 

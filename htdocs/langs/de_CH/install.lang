@@ -9,4 +9,5 @@ ChoosedMigrateScript=Migrationsskript auswählen
 ChooseYourSetupMode=Wählen Sie Ihre Installationsart und klicken Sie anschliessend auf "Start"...
 UpgradeDesc=Verwenden Sie diesen Modus zum Ersetzen Ihrer bisherigen Dateien durch eine neuere Version. Dieser Vorgang beinhaltet eine Aktualisierung Ihrer Datenbank und -daten.
 InstallChoiceSuggested=<b>Vom Installationsassistenten vorgeschlagene Wahl.</b>
+MigrationSuccessfullUpdate=Aktualisierung erfolgreich
 MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich

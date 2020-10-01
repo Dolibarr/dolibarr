@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006  Laurent Destailleur <eldy@users.sourceforge.net>
 -- Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
--- Copyright (C) 2016       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+-- Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,14 +27,15 @@ create table llx_accounting_account
   tms                       timestamp,
   fk_pcg_version            varchar(32)  NOT NULL,			  -- Chart system
   pcg_type                  varchar(20)  NOT NULL,			  -- First part of Key for predefined groups
-  pcg_subtype               varchar(20)  NOT NULL,            -- Second part of Key for predefined groups 
   account_number            varchar(32)  NOT NULL,
   account_parent            integer DEFAULT 0,                -- Hierarchic parent.
   label                     varchar(255) NOT NULL,
+  labelshort				varchar(255) DEFAULT NULL,
   fk_accounting_category    integer      DEFAULT 0,			  -- ID of personalized group for report
   fk_user_author            integer      DEFAULT NULL,
   fk_user_modif             integer      DEFAULT NULL,
   active                    tinyint      DEFAULT 1  NOT NULL,
+  reconcilable				tinyint      DEFAULT 0  NOT NULL,
   import_key                varchar(14),
   extraparams               varchar(255)                      -- for other parameters with json format
 )ENGINE=innodb;

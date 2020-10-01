@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -29,39 +29,40 @@
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * $canchangeproduct (0 by default, 1 to allow to change the product if it is a predefined product)
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande'))) $usemargins=1;
+$usemargins = 0;
+if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;
 
-global $forceall, $senderissupplier, $inputalsopricewithtax;
-if (empty($dateSelector)) $dateSelector=0;
-if (empty($forceall)) $forceall=0;
-if (empty($senderissupplier)) $senderissupplier=0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
-
+global $forceall, $senderissupplier, $inputalsopricewithtax, $canchangeproduct;
+if (empty($dateSelector)) $dateSelector = 0;
+if (empty($forceall)) $forceall = 0;
+if (empty($senderissupplier)) $senderissupplier = 0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
+if (empty($canchangeproduct)) $canchangeproduct = 0;
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Col total ht + col edit + col delete
-if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element, array('propal','supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
+$colspan = 3; // Col total ht + col edit + col delete
+if (!empty($inputalsopricewithtax)) $colspan++; // We add 1 if col total ttc
+if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) $colspan++; // With this, there is a column move button
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan += 2;
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
-$coldisplay=0;
+$coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
-<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
+<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -71,27 +72,33 @@ $coldisplay++;
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-	<input type="hidden" id="product_id" name="productid" value="<?php echo (!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
 		<?php
-		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+		if (empty($canchangeproduct)) {
+			if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+			?>
+			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
+			<?php
+			if ($line->product_type == 1) echo img_object($langs->trans('ShowService'), 'service');
+			else print img_object($langs->trans('ShowProduct'), 'product');
+			echo ' '.$line->ref;
+			?>
+			</a>
+			<?php
+			echo ' - '.nl2br($line->product_label);
+			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
+		} else {
+			if ($senderissupplier) {
+				print $form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+			} else {
+				print $form->select_produits(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
+			}
+		}
 		?>
-		<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
-		<?php
-		if ($line->product_type == 1) echo img_object($langs->trans('ShowService'), 'service');
-		else print img_object($langs->trans('ShowProduct'), 'product');
-		echo ' '.$line->ref;
-		?>
-		</a>
-		<?php
-		echo ' - '.nl2br($line->product_label);
-		?>
-
 		<br><br>
-
 	<?php }	?>
 
 	<?php
@@ -105,7 +112,7 @@ $coldisplay++;
 	// Do not allow editing during a situation cycle
 	if ($line->fk_prev_id == null)
 	{
-		// editeur wysiwyg
+		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
 		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
@@ -194,8 +201,8 @@ $coldisplay++;
 	<td class="nowrap right">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
-		if ($line->fk_prev_id != null ) print ' readonly';
+		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.$line->remise_percent.'"';
+		if ($line->fk_prev_id != null) print ' readonly';
 		print '>%';
 	} else { ?>
 		&nbsp;
@@ -216,7 +223,7 @@ $coldisplay++;
         	?>
         <td class="margininfos right">
 			<!-- For predef product -->
-			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
+			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
@@ -231,18 +238,15 @@ $coldisplay++;
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
-				else
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+				else echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
-			}
-			elseif (!empty($conf->global->DISPLAY_MARK_RATES))
+			} elseif (!empty($conf->global->DISPLAY_MARK_RATES))
 			{
 				$mark_rate = (isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
-				else
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+				else echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -251,8 +255,8 @@ $coldisplay++;
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+		<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 
@@ -260,22 +264,22 @@ $coldisplay++;
 //Line extrafield
 if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', 1);
 }
 ?>
 
-<?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
+<?php if (!empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
-	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo $coldisplay-(empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
-	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
-	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start?0:1, "updateline", 1, 0);
+	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
-	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end?0:1, "updateline", 1, 0);
-	print '<script type="text/javascript">';
+	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
+	print '<script>';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
@@ -300,7 +304,7 @@ if (!empty($extrafields))
 ?>
 
 
-<script type="text/javascript">
+<script>
 
 jQuery(document).ready(function()
 {

@@ -25,7 +25,7 @@
  *  \file       htdocs/core/modules/modVariants.class.php
  *  \ingroup    produit
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -40,7 +40,7 @@ class modVariants extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 
@@ -66,7 +66,7 @@ class modVariants extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='product';
+		$this->picto = 'product';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array();
@@ -79,12 +79,12 @@ class modVariants extends DolibarrModules
 		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('modProduct');	// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('modProduct'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("products");
 
 		// Constants
@@ -96,18 +96,18 @@ class modVariants extends DolibarrModules
 		);
 
 		// Dictionaries
-		if (! isset($conf->mymodule->enabled))
+		if (!isset($conf->mymodule->enabled))
 		{
-			$conf->mymodule=new stdClass();
-			$conf->mymodule->enabled=0;
+			$conf->mymodule = new stdClass();
+			$conf->mymodule->enabled = 0;
 		}
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-		$this->boxes = array();			// List of boxes
+		$this->boxes = array(); // List of boxes
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 	}
 }

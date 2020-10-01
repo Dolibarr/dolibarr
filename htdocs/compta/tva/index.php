@@ -35,12 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+$now = dol_now();
+$current_date = dol_getdate($now);
+if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
+
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year))
 {
-	$year_current = strftime("%Y", dol_now());
-	if ($conf->global->SOCIETE_FISCAL_MONTH_START > date('m')) $year_current--;
+	$year_current = $current_date['year'];
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -48,20 +51,34 @@ if (empty($year))
 }
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+// Set default period if not defined
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-		else
-		{
-			$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-			$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
+				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
+				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
+			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
+				if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
+					if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
+						$year_start--;
+					}
+				} else {
+					if (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) < 6) {	// If perdio started from less than 6 years, we show past year
+						$year_start--;
+					}
+				}
+				$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
+				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
+			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
+				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');
+				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
+			}
 		}
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -153,9 +170,7 @@ function pt($db, $sql, $date)
             	$amountpaid = 0;
             	$previousmode = '';
             	$previousmonth = '';
-            }
-            else
-            {
+            } else {
             	$previousmode = $obj->mode;
             	$previousmonth = $obj->dm;
             }
@@ -184,8 +199,7 @@ function pt($db, $sql, $date)
         print "</table>";
 
         $db->free($result);
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -200,18 +214,18 @@ $company_static = new Societe($db);
 $tva = new Tva($db);
 
 $fsearch = '<!-- hidden fields for form -->';
-$fsearch .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 
 $description = $fsearch;
 
 // Show report header
-$name = $langs->trans("ReportByMonth");
+$name = $langs->trans("VATReportByMonth");
 $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 
 $description .= $langs->trans("VATSummary").'<br>';
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description .= $langs->trans("RulesVATDueProducts");
@@ -232,7 +246,7 @@ llxHeader('', $name);
 
 //$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
 //$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
-//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'invoicing');
+//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'bill');
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
@@ -348,9 +362,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
 				'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
 				//'link'				=>$expensereport->getNomUrl(1)
 				);
-			}
-			else
-			{
+			} else {
 				//$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 				//$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 				//$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];

@@ -34,12 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy", "trips"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil');
-$id = GETPOST('id');
+$codeventil = GETPOST('codeventil', 'int');
+$id = GETPOST('id', 'int');
 
 // Security check
 if ($user->socid > 0)
@@ -63,9 +63,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write)
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			if ($backtopage)
 			{
@@ -117,11 +115,11 @@ if (!empty($id)) {
 			$objp = $db->fetch_object($result);
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="ventil">';
 			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
-			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_setup');
+			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_accountancy');
 
 			dol_fiche_head();
 

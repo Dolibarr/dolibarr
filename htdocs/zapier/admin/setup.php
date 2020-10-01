@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin", "zapier@zapier"));
 if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array(
@@ -75,7 +75,7 @@ echo $langs->trans("ZapierSetupPage").'<br><br>';
 
 if ($action == 'edit') {
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
 
     print '<table class="noborder centpercent">';
@@ -110,8 +110,7 @@ if ($action == 'edit') {
         print '<div class="tabsAction">';
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
         print '</div>';
-    } else
-    {
+    } else {
         print '<br>'.$langs->trans("NothingToSetup");
     }
 }

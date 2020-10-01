@@ -9,8 +9,9 @@ ConfirmDeleteEstablishment=Weet u zeker dat u deze vestiging wilt verwijderen?
 OpenEtablishment=Open bedrijf
 CloseEtablishment=Sluit bedrijf
 # Dictionary
+DictionaryPublicHolidays=HRM - Feestdagen
 DictionaryDepartment=HRM - Afdelingslijst
-DictionaryFunction=HRM - Functielijst
+DictionaryFunction=HRM - Functies
 # Module
 Employees=Werknemers
 Employee=Werknemer

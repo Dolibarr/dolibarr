@@ -2,7 +2,10 @@
 RefSending=Versand Nr.
 SendingCard=Auslieferungen
 KeepToShip=Zum Versand behalten
+WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
 StatsOnShipmentsOnlyValidated=Versandstatistik (nur Freigegebene). Das Datum ist das der Freigabe (geplantes Lieferdatum ist nicht immer bekannt).
+ClassifyReception=Lieferung klassifizieren
+ProductQtyInShipmentAlreadySent=Bereits verschickte Artikel dieser Bestellung
 DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
 SumOfProductVolumes=Summe der Produktevolumen
 SumOfProductWeights=Summe der Produktegewichte

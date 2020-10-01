@@ -31,7 +31,7 @@ create table llx_commande_fournisseur_dispatch
   fk_entrepot    integer,
   fk_user        integer,
   comment		 varchar(255),		  -- comment on movement
-  batch          varchar(30) DEFAULT NULL,
+  batch          varchar(128) DEFAULT NULL,
   eatby          date DEFAULT NULL,
   sellby         date DEFAULT NULL,
   status         integer,

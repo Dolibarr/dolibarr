@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -90,9 +90,9 @@ if ($confirm == 'yes') {
 	if ($action == 'confirm_delete') {
 		$db->begin();
 
-		$res = $objectval->deleteByFkAttribute($object->id);
+		$res = $objectval->deleteByFkAttribute($object->id, $user);
 
-		if ($res < 1 || ($object->delete() < 1)) {
+		if ($res < 1 || ($object->delete($user) < 1)) {
 			$db->rollback();
 			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -102,11 +102,10 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	}
-	elseif ($action == 'confirm_deletevalue')
+	} elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
-			if ($objectval->delete() < 1) {
+			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -133,7 +132,7 @@ llxHeader('', $title);
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
@@ -148,9 +147,9 @@ if ($action != 'edit') {
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 }
-print '<table class="border" style="width: 100%">';
+print '<table class="border centpercent tableforfield">';
 print '<tr>';
-print '<td class="titlefield fieldrequired">'.$langs->trans('Ref').'</td>';
+print '<td class="titlefield'.($action == 'edit' ? ' fieldrequired' : '').'">'.$langs->trans('Ref').'</td>';
 print '<td>';
 if ($action == 'edit') {
 	print '<input type="text" name="ref" value="'.$object->ref.'">';
@@ -160,7 +159,7 @@ if ($action == 'edit') {
 print '</td>';
 print '</tr>';
 print '<tr>';
-print '<td class="fieldrequired">'.$langs->trans('Label').'</td>';
+print '<td'.($action == 'edit' ? ' class="fieldrequired"' : '').'>'.$langs->trans('Label').'</td>';
 print '<td>';
 if ($action == 'edit') {
 	print '<input type="text" name="label" value="'.$object->label.'">';
@@ -232,7 +231,7 @@ if ($action == 'edit') {
 
 	if ($action == 'edit_value') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
@@ -263,7 +262,7 @@ if ($action == 'edit') {
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
 				<td class="right">
-					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
+					<a class="editfielda marginrightonly" href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
 			<?php

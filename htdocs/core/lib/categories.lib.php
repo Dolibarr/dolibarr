@@ -29,18 +29,18 @@
  * @param	string	$type		Type of category
  * @return  array				Array of tabs to show
  */
-function categories_prepare_head($object, $type)
+function categories_prepare_head(Categorie $object, $type)
 {
 	global $langs, $conf, $user;
 
 	// Load translation files required by the page
-    $langs->loadLangs(array('categories', 'products'));
+	$langs->loadLangs(array('categories', 'products'));
 
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&amp;type='.$type;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Category");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -49,21 +49,26 @@ function categories_prepare_head($object, $type)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	if (! empty($conf->global->MAIN_MULTILANGS))
+	if (!empty($conf->global->MAIN_MULTILANGS))
 	{
-    	$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
-    	$head[$h][1] = $langs->trans("Translation");
-    	$head[$h][2] = 'translation';
-    	$h++;
+		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
+		$head[$h][1] = $langs->trans("Translation");
+		$head[$h][2] = 'translation';
+		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type);
+	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type, 'remove');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type);
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type, 'remove');
 
 	return $head;
 }

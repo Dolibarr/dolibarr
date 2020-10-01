@@ -22,23 +22,23 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","compta"));
+$langs->loadLangs(array("admin", "compta"));
 
 // Security check
 if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear->write)
+if (!$user->rights->accounting->fiscalyear->write)
 	accessforbidden();
 
 $id = GETPOST('id', 'int');
 
 // View
-$title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Info");
+$title = $langs->trans("Fiscalyear")." - ".$langs->trans("Info");
 $helpurl = "";
 llxHeader("", $title, $helpurl);
 

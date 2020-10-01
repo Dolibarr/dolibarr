@@ -304,7 +304,7 @@ expose_php = On
 max_execution_time = 30       ; Maximum execution time of each script, in seconds
 max_input_time = 60	          ; Maximum amount of time each script may spend parsing request data
 ;max_input_nesting_level = 64 ; Maximum input variable nesting level
-memory_limit = 64M            ; Maximum amount of memory a script may consume (128MB)
+memory_limit = 256M            ; Maximum amount of memory a script may consume (128MB)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -644,53 +644,36 @@ default_socket_timeout = 60
 
 ; If an extension does not load, run  "deplister.exe php_xxx.dll" to get list of dependency dll missing.
 
-extension=php_bz2.dll
-extension=php_curl.dll
-;extension=php_dba.dll
-;extension=php_dbase.dll
-;extension=php_exif.dll
-;extension=php_fdf.dll
-extension=php_gd2.dll
-;extension=php_gettext.dll
-;extension=php_gmp.dll
-;extension=php_ifx.dll
-;extension=php_imap.dll
-;extension=php_interbase.dll
-extension=php_intl.dll
-extension=php_ldap.dll
-extension=php_mbstring.dll
-;extension=php_mcrypt.dll
-;extension=php_mhash.dll
-;extension=php_mime_magic.dll
-;extension=php_ming.dll
-;extension=php_msql.dll
-;extension=php_mssql.dll
-extension=php_mysql.dll
-extension=php_mysqli.dll
-;extension=php_oci8.dll
-extension=php_openssl.dll
-;extension=php_pdo.dll              ; for php 5.2.11
-;extension=php_pdo_firebird.dll
-;extension=php_pdo_mssql.dll
-extension=php_pdo_mysql.dll
-;extension=php_pdo_oci.dll
-;extension=php_pdo_oci8.dll
-;extension=php_pdo_odbc.dll
-;extension=php_pdo_pgsql.dll
-extension=php_pdo_sqlite.dll
-;extension=php_pgsql.dll
-;extension=php_pspell.dll
-;extension=php_shmop.dll
-;extension=php_snmp.dll
-extension=php_soap.dll
-extension=php_sockets.dll
-;extension=php_sqlite.dll
-;extension=php_sybase_ct.dll
-;extension=php_tidy.dll
-;extension=php_xmlrpc.dll
-;extension=php_xsl.dll
-;extension=php_zip.dll
-;extension=php_xdebug-2.0.5-5.2.dll
+extension=bz2
+extension=curl
+;extension=dba
+;extension=com_dotnet
+;extension=enchant
+;extension=fileinfo
+;extension=ftp
+extension=gd2
+;extension=gettext
+;extension=gmp
+extension=intl
+extension=imap
+;extension=interbase
+extension=ldap
+extension=mbstring
+extension=exif      ; Must be after mbstring as it depends on it
+extension=mysqli
+;extension=odbc
+extension=openssl
+;extension=pdo_firebird
+extension=pdo_mysql
+;extension=pdo_oci
+;extension=pdo_odbc
+;extension=pdo_pgsql
+;extension=pdo_sqlite
+;extension=pgsql
+;extension=phpdbg_webhelper
+;extension=shmop
+extension=soap
+extension=sockets
 
 
 ;;;;;;;;;;;;;;;;;;;

@@ -2,6 +2,7 @@
 Assets =Bienes
 AccountancyCodeDepreciationAsset =Código contable (cuenta de activo por depreciación)
 AccountancyCodeDepreciationExpense =Código contable (cuenta de gastos de depreciación)
+AssetsTypeSetup=Configurar tipo de activo
 AssetsLines=Bienes
 DeleteType=Borrar
 ConfirmDeleteAssetType=¿Estás seguro de que quieres eliminar este tipo de activo?
@@ -11,6 +12,7 @@ ModuleAssetsDesc =Descripción de los activos
 AssetsSetup =Configuración de activos
 Settings =Ajustes
 AssetsSetupPage =Página de configuración de activos
+ExtraFieldsAssetsType =Atributos complementarios (tipo de activo)
 AssetsTypeId=ID de tipo de activo
 AssetsTypeLabel=Etiqueta de tipo de activo
 MenuAssets =Bienes

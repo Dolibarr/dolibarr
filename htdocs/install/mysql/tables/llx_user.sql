@@ -57,32 +57,27 @@ create table llx_user
   personal_email    varchar(255),
 
   socialnetworks    text DEFAULT NULL,       -- json with socialnetworks
-  jabberid			varchar(255),
-  skype				varchar(255),
-  twitter			varchar(255),                        		--
-  facebook			varchar(255),                        		--
-  linkedin                  varchar(255),                         	--
-  instagram                varchar(255),                        		--
-  snapchat                 varchar(255),                        		--
-  googleplus               varchar(255),                        		--
-  youtube                  varchar(255),                        		--
-  whatsapp                 varchar(255),                        		--
 
   signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
+  
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
+  
   fk_soc			integer,
   fk_socpeople      integer,
   fk_member         integer,
   fk_user           integer,					-- Hierarchic parent
   fk_user_expense_validator           integer,
   fk_user_holiday_validator           integer,
+  
   note_public		text,
   note              text DEFAULT NULL,
   model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
+  datestartvalidity datetime,
+  dateendvalidity   datetime,
   iplastlogin       varchar(250),
   ippreviouslogin   varchar(250),
   egroupware_id     integer,
@@ -90,7 +85,7 @@ create table llx_user
   openid            varchar(255),
   statut            tinyint DEFAULT 1,
   photo             varchar(255),				-- filename or url of photo
-  lang              varchar(6),
+  lang              varchar(6),					-- default language for communication. Note that language selected by user as interface language is savec into llx_user_param.
   color				varchar(6),
   barcode			varchar(255) DEFAULT NULL,
   fk_barcode_type	integer      DEFAULT 0,

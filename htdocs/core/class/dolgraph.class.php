@@ -30,10 +30,10 @@
  *    $dolgraph->SetTitle($langs->transnoentities('MyTitle').'<br>'.$langs->transnoentities('MyTitlePercent').'%');
  *    $dolgraph->SetMaxValue(50);
  *    $dolgraph->SetData($data);
- *    $dolgraph->setShowLegend(1);
+ *    $dolgraph->setShowLegend(2);
  *    $dolgraph->setShowPercent(1);
  *    $dolgraph->SetType(array('pie'));
- *    $dolgraph->setWidth('100%');
+ *    $dolgraph->setHeight('200');
  *    $dolgraph->draw('idofgraph');
  *    print $dolgraph->show($total?0:1);
  */
@@ -92,30 +92,12 @@ class DolGraph
 	/**
 	 * Constructor
 	 *
-	 * @param	string	$library		'jflot' (default) or 'artichow' (no more supported)
+	 * @param	string	$library		'auto' (default)
 	 */
-	public function __construct($library = 'jflot')
+	public function __construct($library = 'auto')
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor;
-
-		// To use old feature
-		if ($library == 'artichow')
-		{
-			$this->_library = 'artichow';
-
-			// Test if module GD present
-			$modules_list = get_loaded_extensions();
-			$isgdinstalled = 0;
-			foreach ($modules_list as $module)
-			{
-				if ($module == 'gd') $isgdinstalled = 1;
-			}
-			if (!$isgdinstalled)
-			{
-				$this->error = "Error: PHP GD module is not available. It is required to build graphics.";
-			}
-		}
 
 		$this->bordercolor = array(235, 235, 224);
 		$this->datacolor = array(array(120, 130, 150), array(160, 160, 180), array(190, 190, 220));
@@ -130,22 +112,13 @@ class DolGraph
 			if (isset($theme_bgcolor))     $this->bgcolor     = $theme_bgcolor;
 		}
 		//print 'bgcolor: '.join(',',$this->bgcolor).'<br>';
+
+		$this->_library = $library;
+		if ($this->_library == 'auto') {
+			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'jflot' : $conf->global->MAIN_JS_GRAPH);
+		}
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Set Y precision
-	 *
-	 * @param 	float	$which_prec		Precision
-	 * @return 	boolean
-	 * @deprecated
-	 */
-	public function SetPrecisionY($which_prec)
-	{
-        // phpcs:enable
-		return true;
-	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -287,7 +260,8 @@ class DolGraph
 	/**
 	 * Set type
 	 *
-	 * @param 	array	$type		Array with type for each serie. Example: array('pie'), array('lines',...,'bars')
+	 * @param 	array	$type		Array with type for each serie. Example: array('type1', 'type2', ...) where type can be:
+	 * 								'pie', 'piesemicircle', 'polar', 'lines', 'linesnopoint', 'bars', ...
 	 * @return	void
 	 */
 	public function SetType($type)
@@ -448,7 +422,7 @@ class DolGraph
 	/**
 	 * Show legend or not
 	 *
-	 * @param	int		$showlegend		1=Show legend (default), 0=Hide legend
+	 * @param	int		$showlegend		1=Show legend (default), 0=Hide legend, 2=Show legend on right
 	 * @return	void
 	 */
     public function setShowLegend($showlegend)
@@ -498,14 +472,10 @@ class DolGraph
 			{
 				//print 'ee'.join(',',$theme_bgcoloronglet);
 				$this->bgcolor = $theme_bgcoloronglet;
-			}
-			else
-			{
+			} else {
 				$this->bgcolor = $theme_bgcolor;
 			}
-		}
-		else
-		{
+		} else {
 			$this->bgcolor = $bg_color;
 		}
 	}
@@ -528,14 +498,10 @@ class DolGraph
 			{
 				//print 'ee'.join(',',$theme_bgcoloronglet);
 				$this->bgcolorgrid = $theme_bgcoloronglet;
-			}
-			else
-			{
+			} else {
 				$this->bgcolorgrid = $theme_bgcolor;
 			}
-		}
-		else
-		{
+		} else {
 			$this->bgcolorgrid = $bg_colorgrid;
 		}
 	}
@@ -561,6 +527,8 @@ class DolGraph
     public function GetMaxValueInData()
 	{
         // phpcs:enable
+		if (!is_array($this->data)) return 0;
+
 		$k = 0;
 		$vals = array();
 
@@ -588,6 +556,8 @@ class DolGraph
     public function GetMinValueInData()
 	{
         // phpcs:enable
+		if (!is_array($this->data)) return 0;
+
 		$k = 0;
 		$vals = array();
 
@@ -686,188 +656,6 @@ class DolGraph
 		call_user_func_array(array($this, $call), array($file, $fileurl));
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Build a graph onto disk using Artichow library and return img string to it
-	 *
-	 * @param	string	$file    	Image file name to use if we save onto disk
-	 * @param	string	$fileurl	Url path to show image if saved onto disk
-	 * @return	void
-	 */
-	private function draw_artichow($file, $fileurl)
-	{
-        // phpcs:enable
-		global $artichow_defaultfont;
-
-		dol_syslog(get_class($this)."::draw_artichow this->type=".join(',', $this->type));
-
-		if (!defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP', 3);
-		if (!defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND', 2);
-		if (!defined('LEGEND_LINE'))       define('LEGEND_LINE', 1);
-
-		// Create graph
-		$classname = '';
-		if (!isset($this->type[0]) || $this->type[0] == 'bars')  $classname = 'BarPlot'; // Only one type (first one) is supported by artichow
-		elseif ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint') $classname = 'LinePlot';
-		else $classname = 'TypeUnknown';
-		include_once ARTICHOW_PATH.$classname.'.class.php';
-
-		// Definition de couleurs
-		$bgcolor = new Color($this->bgcolor[0], $this->bgcolor[1], $this->bgcolor[2]);
-		$bgcolorgrid = new Color($this->bgcolorgrid[0], $this->bgcolorgrid[1], $this->bgcolorgrid[2]);
-		$colortrans = new Color(0, 0, 0, 100);
-		$colorsemitrans = new Color(255, 255, 255, 60);
-		$colorgradient = new LinearGradient(new Color(235, 235, 235), new Color(255, 255, 255), 0);
-		$colorwhite = new Color(255, 255, 255);
-
-		// Graph
-		$graph = new Graph($this->width, $this->height);
-		$graph->border->hide();
-		$graph->setAntiAliasing(true);
-		if (isset($this->title))
-		{
-			$graph->title->set($this->title);
-			//print $artichow_defaultfont;exit;
-			$graph->title->setFont(new $artichow_defaultfont(10));
-		}
-
-		if (is_array($this->bgcolor)) $graph->setBackgroundColor($bgcolor);
-		else $graph->setBackgroundGradient($colorgradient);
-
-		$group = new PlotGroup;
-		//$group->setSpace(5, 5, 0, 0);
-
-		$paddleft = 50;
-		$paddright = 10;
-		$strl = dol_strlen(max(abs($this->MaxValue), abs($this->MinValue)));
-		if ($strl > 6) $paddleft += ($strl * 4);
-		$group->setPadding($paddleft, $paddright); // Width on left and right for Y axis values
-		$group->legend->setSpace(0);
-		$group->legend->setPadding(2, 2, 2, 2);
-		$group->legend->setPosition(null, 0.1);
-		$group->legend->setBackgroundColor($colorsemitrans);
-
-		if (is_array($this->bgcolorgrid)) $group->grid->setBackgroundColor($bgcolorgrid);
-		else $group->grid->setBackgroundColor($colortrans);
-
-		if ($this->hideXGrid)	$group->grid->hideVertical(true);
-		if ($this->hideYGrid)	$group->grid->hideHorizontal(true);
-
-		// On boucle sur chaque lot de donnees
-		$legends = array();
-		$i = 0;
-		$nblot = count($this->data[0]) - 1;
-
-		while ($i < $nblot)
-		{
-			$x = 0;
-			$values = array();
-			foreach ($this->data as $key => $valarray)
-			{
-				$legends[$x] = $valarray[0];
-				$values[$x]  = $valarray[$i + 1];
-				$x++;
-			}
-
-			// We fix unknown values to null
-			$newvalues = array();
-			foreach ($values as $val)
-			{
-				$newvalues[] = (is_numeric($val) ? $val : null);
-			}
-
-
-			if ($this->type[0] == 'bars')
-			{
-				//print "Lot de donnees $i<br>";
-				//print_r($values);
-				//print '<br>';
-
-				$color = new Color($this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2], 20);
-				$colorbis = new Color(min($this->datacolor[$i][0] + 50, 255), min($this->datacolor[$i][1] + 50, 255), min($this->datacolor[$i][2] + 50, 255), 50);
-
-				$colorgrey = new Color(100, 100, 100);
-				$colorborder = new Color($this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2]);
-
-				if ($this->mode == 'side')  $plot = new BarPlot($newvalues, $i + 1, $nblot);
-				if ($this->mode == 'depth') $plot = new BarPlot($newvalues, 1, 1, ($nblot - $i - 1) * 5);
-
-				$plot->barBorder->setColor($colorgrey);
-				//$plot->setBarColor($color);
-				$plot->setBarGradient(new LinearGradient($colorbis, $color, 90));
-
-				if ($this->mode == 'side')  $plot->setBarPadding(0.1, 0.1);
-				if ($this->mode == 'depth') $plot->setBarPadding(0.1, 0.4);
-				if ($this->mode == 'side')  $plot->setBarSpace(5);
-				if ($this->mode == 'depth') $plot->setBarSpace(2);
-
-				$plot->barShadow->setSize($this->SetShading);
-				$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
-				$plot->barShadow->setColor(new Color(160, 160, 160, 50));
-				$plot->barShadow->smooth(true);
-				//$plot->setSize(1, 0.96);
-				//$plot->setCenter(0.5, 0.52);
-
-				// Le mode automatique est plus efficace
-				$plot->SetYMax($this->MaxValue);
-				$plot->SetYMin($this->MinValue);
-			}
-
-			if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')
-			{
-				$color = new Color($this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2], 20);
-				$colorbis = new Color(min($this->datacolor[$i][0] + 20, 255), min($this->datacolor[$i][1] + 20, 255), min($this->datacolor[$i][2] + 20, 255), 60);
-				$colorter = new Color(min($this->datacolor[$i][0] + 50, 255), min($this->datacolor[$i][1] + 50, 255), min($this->datacolor[$i][2] + 50, 255), 90);
-
-				$plot = new LinePlot($newvalues);
-				//$plot->setSize(1, 0.96);
-				//$plot->setCenter(0.5, 0.52);
-
-				$plot->setColor($color);
-				$plot->setThickness(1);
-
-				// Set line background gradient
-				$plot->setFillGradient(new LinearGradient($colorter, $colorbis, 90));
-
-				$plot->xAxis->setLabelText($legends);
-
-				// Le mode automatique est plus efficace
-				$plot->SetYMax($this->MaxValue);
-				$plot->SetYMin($this->MinValue);
-				//$plot->setYAxis(0);
-				//$plot->hideLine(true);
-			}
-
-			//$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
-
-			$group->legend->setTextFont(new $artichow_defaultfont(10)); // This is to force Artichow to use awFileFontDriver to
-			// solve a bug in Artichow with UTF8
-			if (count($this->Legend))
-			{
-				if ($this->type[0] == 'bars')  										$group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
-				if ($this->type[0] == 'lines' || $this->type[0] == 'linesnopoint')	$group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
-			}
-			$group->add($plot);
-
-			$i++;
-		}
-
-		$group->axis->bottom->setLabelText($legends);
-		$group->axis->bottom->label->setFont(new $artichow_defaultfont(7));
-
-		//print $group->axis->bottom->getLabelNumber();
-		if ($this->labelInterval > 0) $group->axis->bottom->setLabelInterval($this->labelInterval);
-
-		$graph->add($group);
-
-		// Generate file
-		$graph->draw($file);
-
-		$this->stringtoshow = '<!-- Build using '.$this->_library.' --><img src="'.$fileurl.'" title="'.dol_escape_htmltag($this->title ? $this->title : $this->YLabel).'" alt="'.dol_escape_htmltag($this->title ? $this->title : $this->YLabel).'">';
-	}
-
-
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Build a graph using JFlot library. Input when calling this method should be:
@@ -875,7 +663,7 @@ class DolGraph
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
-	 *  $this->type  = array('bars',...'lines'); or array('pie')
+	 *  $this->type  = array('bars',...'lines','linesnopoint'); or array('pie') or array('polar')
 	 *  $this->mode = 'depth' ???
 	 *  $this->bgcolorgrid
 	 *  $this->datacolor
@@ -888,7 +676,7 @@ class DolGraph
 	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
 
@@ -898,87 +686,93 @@ class DolGraph
 			return;
 		}
 
-		$legends=array();
-		$nblot=count($this->data[0])-1;    // -1 to remove legend
+		$legends = array();
+		$nblot = 0;
+		if (is_array($this->data) && is_array($this->data[0])) {
+			$nblot = count($this->data[0]) - 1; // -1 to remove legend
+		}
 		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
-		$firstlot=0;
+		$firstlot = 0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
-		$i=$firstlot;
-		$serie=array();
+		$i = $firstlot;
+		$serie = array();
 		while ($i < $nblot)	// Loop on each serie
 		{
-			$values=array();	// Array with horizontal y values (specific values of a serie) for each abscisse x
-			$serie[$i]="var d".$i." = [];\n";
+			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x
+			$serie[$i] = "var d".$i." = [];\n";
 
 			// Fill array $values
-			$x=0;
-			foreach($this->data as $valarray)	// Loop on each x
+			$x = 0;
+			foreach ($this->data as $valarray)	// Loop on each x
 			{
 				$legends[$x] = $valarray[0];
-				$values[$x]  = (is_numeric($valarray[$i+1]) ? $valarray[$i+1] : null);
+				$values[$x]  = (is_numeric($valarray[$i + 1]) ? $valarray[$i + 1] : null);
 				$x++;
 			}
 
-			// TODO Avoid push by adding generated long array...
-			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
+			if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar')))
 			{
-				foreach($values as $x => $y) {
-					if (isset($y)) $serie[$i].='d'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
+				foreach ($values as $x => $y) {
+					if (isset($y)) $serie[$i] .= 'd'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
 				}
-			}
-			else
-			{
-				foreach($values as $x => $y) {
-					if (isset($y)) $serie[$i].='d'.$i.'.push(['.$x.', '.$y.']);'."\n";
+			} else {
+				foreach ($values as $x => $y) {
+					if (isset($y)) $serie[$i] .= 'd'.$i.'.push(['.$x.', '.$y.']);'."\n";
 				}
 			}
 
 			unset($values);
 			$i++;
 		}
-		$tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-','.'))));
+		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
 
-		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
-		if (! empty($this->title)) $this->stringtoshow.='<div class="center dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
-		if (! empty($this->shownographyet))
+		$this->stringtoshow = '<!-- Build using jflot -->'."\n";
+		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle'.(empty($this->cssprefix) ? '' : ' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		if (!empty($this->shownographyet))
 		{
-		    $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
-		    $this->stringtoshow.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+		    $this->stringtoshow .= '<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
+		    $this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
 		    return;
 		}
-		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).' center"></div>'."\n";
 
-		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
-		$this->stringtoshow.='$(function () {'."\n";
-		$i=$firstlot;
+		// Start the div that will contains all the graph
+		$dolxaxisvertical = '';
+		if (count($this->data) > 20) $dolxaxisvertical = 'dol-xaxis-vertical';
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"></div>'."\n";
+
+		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
+		$this->stringtoshow .= '$(function () {'."\n";
+		$i = $firstlot;
 		if ($nblot < 0)
 		{
-			$this->stringtoshow.='<!-- No series of data -->';
-		}
-		else
-		{
+			$this->stringtoshow .= '<!-- No series of data -->'."\n";
+		} else {
 			while ($i < $nblot)
 			{
-				$this->stringtoshow.=$serie[$i];
+				$this->stringtoshow .= '<!-- Serie '.$i.' -->'."\n";
+				$this->stringtoshow .= $serie[$i]."\n";
 				$i++;
 			}
 		}
-		$this->stringtoshow.="\n";
+		$this->stringtoshow .= "\n";
 
 		// Special case for Graph of type 'pie'
-		if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'pie')
+		if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar')))
 		{
-			$datacolor=array();
-			foreach($this->datacolor as $val) $datacolor[]="#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]);
+			$datacolor = array();
+			foreach ($this->datacolor as $val) {
+				if (is_array($val)) $datacolor[] = "#".sprintf("%02x%02x%02x", $val[0], $val[1], $val[2]); // If datacolor is array(R, G, B)
+				else $datacolor[] = "#".str_replace(array('#', '-'), '', $val); // If $val is '124' or '#124'
+			}
 
-			$urltemp='';	// TODO Add support for url link into labels
-			$showlegend=$this->showlegend;
-			$showpointvalue=$this->showpointvalue;
-			$showpercent=$this->showpercent;
+			$urltemp = ''; // TODO Add support for url link into labels
+			$showlegend = $this->showlegend;
+			$showpointvalue = $this->showpointvalue;
+			$showpercent = $this->showpercent;
 
-			$this->stringtoshow.= '
+			$this->stringtoshow .= '
 			function plotWithOptions_'.$tag.'() {
 			$.plot($("#placeholder_'.$tag.'"), d0,
 			{
@@ -1029,8 +823,7 @@ class DolGraph
 		}'."\n";
 		}
 		// Other cases, graph of type 'bars', 'lines'
-		else
-		{
+		else {
 			// Add code to support tooltips
 		    // TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow .= '
@@ -1088,7 +881,14 @@ class DolGraph
 				if ($i > $firstlot) $this->stringtoshow .= ', '."\n";
 				$color = sprintf("%02x%02x%02x", $this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2]);
 				$this->stringtoshow .= '{ ';
-				if (!isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.($i == $firstlot ? 'center' : 'left').'", barWidth: 0.5 }, ';
+				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') {
+                    if ($nblot == 3) {
+                        if ($i == $firstlot) $align = 'right';
+                        elseif ($i == $firstlot + 1) $align = 'center';
+                        else $align = 'left';
+                        $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.$align.'", barWidth: 0.45 }, ';
+                    } else $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+                }
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow .= 'color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
@@ -1125,12 +925,376 @@ class DolGraph
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Build a graph using Chart library. Input when calling this method should be:
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
+	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
+	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
+	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
+	 *  $this->type  = array('bars',...'lines', 'linesnopoint'); or array('pie') or array('polar') or array('piesemicircle');
+	 *  $this->mode = 'depth' ???
+	 *  $this->bgcolorgrid
+	 *  $this->datacolor
+	 *  $this->shownodatagraph
+	 *
+	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
+	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
+	 * @return	void
+	 */
+	private function draw_chart($file, $fileurl)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		dol_syslog(get_class($this)."::draw_chart this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
+
+		if (empty($this->width) && empty($this->height))
+		{
+			print 'Error width or height not set';
+			return;
+		}
+
+		$showlegend = $this->showlegend;
+
+		$legends = array();
+		$nblot = 0;
+		if (is_array($this->data)) {
+			foreach ($this->data as $valarray)      // Loop on each x
+			{
+				$nblot = max($nblot, count($valarray) - 1); // -1 to remove legend
+			}
+		}
+		//var_dump($nblot);
+		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
+		$firstlot = 0;
+		// Works with line but not with bars
+		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
+
+		$serie = array(); $arrayofgroupslegend = array();
+		//var_dump($this->data);
+
+		$i = $firstlot;
+		while ($i < $nblot)	// Loop on each serie
+		{
+			$values = array(); // Array with horizontal y values (specific values of a serie) for each abscisse x (with x=0,1,2,...)
+			$serie[$i] = "";
+
+			// Fill array $values
+			$x = 0;
+			foreach ($this->data as $valarray)	// Loop on each x
+			{
+				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
+				$array_of_ykeys = array_keys($valarray);
+				$alabelexists = 1;
+				$tmpykey = explode('_', ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
+				if (!empty($tmpykey[2]) || $tmpykey[2] == '0') {		// This is a 'Group by' array
+					$tmpvalue = (array_key_exists('y_'.$tmpykey[1].'_'.$tmpykey[2], $valarray) ? $valarray['y_'.$tmpykey[1].'_'.$tmpykey[2]] : $valarray[$i + 1]);
+					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
+					$arrayofgroupslegend[$i] = array(
+						'stacknum'=> $tmpykey[1],
+						'legend' => $this->Legend[$tmpykey[1]],
+						'legendwithgroup' => $this->Legend[$tmpykey[1]].' - '.$tmpykey[2]
+					);
+				} else {
+					$tmpvalue = (array_key_exists('y_'.$i, $valarray) ? $valarray['y_'.$i] : $valarray[$i + 1]);
+					//var_dump($i.'_'.$x.'_'.$tmpvalue);
+					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
+				}
+				$x++;
+			}
+			//var_dump($values);
+			$j = 0;
+			foreach ($values as $x => $y) {
+				if (isset($y)) {
+					$serie[$i] .= ($j > 0 ? ", " : "").$y;
+				} else {
+					$serie[$i] .= ($j > 0 ? ", " : "").'null';
+				}
+				$j++;
+			}
+
+			$values = null; // Free mem
+			$i++;
+		}
+		//var_dump($serie);
+		//var_dump($arrayofgroupslegend);
+
+		$tag = dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-', '.'))));
+
+		$this->stringtoshow = '<!-- Build using chart -->'."\n";
+		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle'.(empty($this->cssprefix) ? '' : ' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		if (!empty($this->shownographyet))
+		{
+			$this->stringtoshow .= '<div style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').'; height:'.$this->height.'px;" class="nographyet"></div>';
+			$this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
+			return;
+		}
+
+		// Start the div that will contains all the graph
+		$dolxaxisvertical = '';
+		if (count($this->data) > 20) $dolxaxisvertical = 'dol-xaxis-vertical';
+		// No height for the pie grah
+		$cssfordiv = 'dolgraphchart';
+		if (isset($this->type[$firstlot])) $cssfordiv .= ' dolgraphchar'.$this->type[$firstlot];
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
+
+		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
+		$i = $firstlot;
+		if ($nblot < 0)
+		{
+			$this->stringtoshow .= '<!-- No series of data -->';
+		} else {
+			while ($i < $nblot)
+			{
+				//$this->stringtoshow .= '<!-- Series '.$i.' -->'."\n";
+				//$this->stringtoshow .= $serie[$i]."\n";
+				$i++;
+			}
+		}
+		$this->stringtoshow .= "\n";
+
+		// Special case for Graph of type 'pie', 'piesemicircle', or 'polar'
+		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle'))))
+		{
+			$type = $this->type[$firstlot]; // pie or polar
+			$this->stringtoshow .= 'var options = {'."\n";
+			$legendMaxLines = 0; // Does not work
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			} else {
+				$this->stringtoshow .= 'legend: { position: \''.($showlegend == 2 ? 'right' : 'top').'\'';
+				if (!empty($legendMaxLines)) {
+					$this->stringtoshow .= ', maxLines: '.$legendMaxLines.'';
+				}
+				$this->stringtoshow .= ' }, '."\n";
+			}
+
+			if ($this->type[$firstlot] == 'piesemicircle') {
+				$this->stringtoshow .= 'circumference: Math.PI,'."\n";
+				$this->stringtoshow .= 'rotation: -Math.PI,'."\n";
+			}
+			$this->stringtoshow .= 'elements: { arc: {'."\n";
+			// Color of earch arc
+			$this->stringtoshow .= 'backgroundColor: [';
+			$i = 0; $foundnegativecolor = 0;
+			foreach ($legends as $val)	// Loop on each serie
+			{
+				if ($i > 0) $this->stringtoshow .= ', '."\n";
+				if (is_array($this->datacolor[$i])) $color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')'; // If datacolor is array(R, G, B)
+				else {
+					$tmp = str_replace('#', '', $this->datacolor[$i]);
+					if (strpos($tmp, '-') !== false) {
+						$foundnegativecolor++;
+						$color = '#FFFFFF'; // If $val is '-123'
+					} else $color = "#".$tmp; // If $val is '123' or '#123'
+				}
+				$this->stringtoshow .= "'".$color."'";
+				$i++;
+			}
+			$this->stringtoshow .= '], '."\n";
+			// Border color
+			if ($foundnegativecolor) {
+				$this->stringtoshow .= 'borderColor: [';
+				$i = 0;
+				foreach ($legends as $val)	// Loop on each serie
+				{
+					if ($i > 0) $this->stringtoshow .= ', '."\n";
+					if (is_array($this->datacolor[$i])) $color = 'null'; // If datacolor is array(R, G, B)
+					else {
+						$tmp = str_replace('#', '', $this->datacolor[$i]);
+						if (strpos($tmp, '-') !== false) $color = '#'.str_replace('-', '', $tmp); // If $val is '-123'
+						else $color = 'null'; // If $val is '123' or '#123'
+					}
+					$this->stringtoshow .= ($color == 'null' ? "'rgba(0,0,0,0.2)'" : "'".$color."'");
+					$i++;
+				}
+				$this->stringtoshow .= ']';
+			}
+			$this->stringtoshow .= '} } };'."\n";
+
+			$this->stringtoshow .= '
+				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
+				var chart = new Chart(ctx, {
+			    // The type of chart we want to create
+    			type: \''.(in_array($type, array('pie', 'piesemicircle')) ? 'doughnut' : 'polarArea').'\',
+				// Configuration options go here
+    			options: options,
+				data: {
+					labels: [';
+
+			$i = 0;
+			foreach ($legends as $val)	// Loop on each serie
+			{
+				if ($i > 0) $this->stringtoshow .= ', ';
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
+				$i++;
+			}
+
+			$this->stringtoshow .= '],
+					datasets: [';
+			$i = 0;
+			$i = 0;
+			while ($i < $nblot)	// Loop on each serie
+			{
+				$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].')';
+				//$color = (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor));
+
+				if ($i > 0) $this->stringtoshow .= ', '."\n";
+				$this->stringtoshow .= '{'."\n";
+				//$this->stringtoshow .= 'borderColor: \''.$color.'\', ';
+				//$this->stringtoshow .= 'backgroundColor: \''.$color.'\', ';
+				$this->stringtoshow .= '  data: ['.$serie[$i].']';
+				$this->stringtoshow .= '}'."\n";
+				$i++;
+			}
+			$this->stringtoshow .= ']'."\n";
+			$this->stringtoshow .= '}'."\n";
+			$this->stringtoshow .= '});'."\n";
+		}
+		// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
+		else {
+			$type = 'bar';
+			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
+			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
+
+			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			}
+			$this->stringtoshow .= 'scales: { xAxes: [{ ';
+			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
+			$this->stringtoshow .= 'distribution: \'linear\'';
+			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
+				$this->stringtoshow .= ', stacked: true';
+			}
+			$this->stringtoshow .= ' }]';
+			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
+				$this->stringtoshow .= ', yAxes: [{ stacked: true }]';
+			}
+			$this->stringtoshow .= ' }';
+			$this->stringtoshow .= '};';
+
+			$this->stringtoshow .= '
+				var ctx = document.getElementById("canvas_'.$tag.'").getContext("2d");
+				var chart = new Chart(ctx, {
+			    // The type of chart we want to create
+    			type: \''.$type.'\',
+				// Configuration options go here
+    			options: options,
+				data: {
+					labels: [';
+
+			$i = 0;
+			foreach ($legends as $val)	// Loop on each serie
+			{
+				if ($i > 0) $this->stringtoshow .= ', ';
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
+				$i++;
+			}
+
+			//var_dump($arrayofgroupslegend);
+
+			$this->stringtoshow .= '],
+					datasets: [';
+
+			global $theme_datacolor;
+			//var_dump($arrayofgroupslegend);
+			$i = 0; $iinstack = 0;
+			$oldstacknum = -1;
+			while ($i < $nblot)	// Loop on each serie
+			{
+				$usecolorvariantforgroupby = 0;
+				// We used a 'group by' and we have too many colors so we generated color variants per
+				if (is_array($arrayofgroupslegend[$i]) && count($arrayofgroupslegend[$i]) > 0) {	// If we used a group by.
+					$nbofcolorneeds = count($arrayofgroupslegend);
+					$nbofcolorsavailable = count($theme_datacolor);
+					if ($nbofcolorneeds > $nbofcolorsavailable) {
+						$usecolorvariantforgroupby = 1;
+					}
+
+					$textoflegend = $arrayofgroupslegend[$i]['legendwithgroup'];
+				} else {
+					$textoflegend = $this->Legend[$i];
+				}
+				if ($usecolorvariantforgroupby) {
+					$newcolor = $this->datacolor[$arrayofgroupslegend[$i]['stacknum']];
+					// If we change the stack
+					if ($oldstacknum == -1 || $arrayofgroupslegend[$i]['stacknum'] != $oldstacknum) {
+						$iinstack = 0;
+					}
+
+					//var_dump($iinstack);
+					if ($iinstack) {
+						// Change color with offset of $$iinstack
+						//var_dump($newcolor);
+						if ($iinstack % 2) {	// We increase agressiveness of reference color for color 2, 4, 6, ...
+							$ratio = min(95, 10 + 10 * $iinstack); // step of 20
+							$brightnessratio = min(90, 5 + 5 * $iinstack); // step of 10
+						} else {				// We decrease agressiveness of reference color for color 3, 5, 7, ..
+							$ratio = max(-100, - 15 * $iinstack + 10); // step of -20
+							$brightnessratio = min(90, 10 * $iinstack); // step of 20
+						}
+						//var_dump('Color '.($iinstack+1).' : '.$ratio.' '.$brightnessratio);
+
+						$newcolor = array_values(colorHexToRgb(colorAgressiveness(colorArrayToHex($newcolor), $ratio, $brightnessratio), false, true));
+					}
+					$oldstacknum = $arrayofgroupslegend[$i]['stacknum'];
+
+					$color = 'rgb('.$newcolor[0].', '.$newcolor[1].', '.$newcolor[2].', 0.9)';
+					$bordercolor = 'rgb('.$newcolor[0].', '.$newcolor[1].', '.$newcolor[2].')';
+				} else {																			// We do not use a 'group by'
+					$color = 'rgb('.$this->datacolor[$i][0].', '.$this->datacolor[$i][1].', '.$this->datacolor[$i][2].', 0.9)';
+					$bordercolor = $color;
+					//$color = (!empty($data['seriescolor']) ? json_encode($data['seriescolor']) : json_encode($datacolor));
+				}
+
+				if ($i > 0) $this->stringtoshow .= ', ';
+				$this->stringtoshow .= "\n";
+				$this->stringtoshow .= '{';
+				$this->stringtoshow .= 'dolibarrinfo: \'y_'.$i.'\', ';
+				$this->stringtoshow .= 'label: \''.dol_escape_js(dol_string_nohtmltag($textoflegend)).'\', ';
+				$this->stringtoshow .= 'pointStyle: \''.($this->type[$i] == 'linesnopoint' ? 'line' : 'circle').'\', ';
+				$this->stringtoshow .= 'fill: '.($type == 'bar' ? 'true' : 'false').', ';
+				if ($type == 'bar') { $this->stringtoshow .= 'borderWidth: \'1\', '; }
+				$this->stringtoshow .= 'borderColor: \''.$bordercolor.'\', ';
+				$this->stringtoshow .= 'backgroundColor: \''.$color.'\', ';
+				if ($arrayofgroupslegend[$i]) $this->stringtoshow .= 'stack: \''.$arrayofgroupslegend[$i]['stacknum'].'\', ';
+				$this->stringtoshow .= 'data: ['.$serie[$i].']';
+				$this->stringtoshow .= '}'."\n";
+
+				$i++;
+				$iinstack++;
+			}
+			$this->stringtoshow .= ']'."\n";
+			$this->stringtoshow .= '}'."\n";
+			$this->stringtoshow .= '});'."\n";
+		}
+
+		$this->stringtoshow .= '</script>'."\n";
+	}
+
+
+	/**
+	 * Output HTML string to total value
+	 *
+	 * @return	string							HTML string to total value
+	 */
+    public function total()
+	{
+		$value = 0;
+		foreach ($this->data as $valarray)	// Loop on each x
+			{
+			$value += $valarray[1];
+		}
+		return $value;
+	}
 
 	/**
 	 * Output HTML string to show graph
 	 *
-	 * @param	int			$shownographyet 	Show graph to say there is not enough data
-	 * @return	string							HTML string to show graph
+	 * @param	int|string		$shownographyet    Show graph to say there is not enough data or the message in $shownographyet if it is a string.
+	 * @return	string							   HTML string to show graph
 	 */
     public function show($shownographyet = 0)
 	{
@@ -1139,7 +1303,13 @@ class DolGraph
 		if ($shownographyet)
 		{
 			$s = '<div class="nographyet" style="width:'.(preg_match('/%/', $this->width) ? $this->width : $this->width.'px').'; height:'.(preg_match('/%/', $this->height) ? $this->height : $this->height.'px').';"></div>';
-			$s .= '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+			$s .= '<div class="nographyettext margintoponly">';
+			if (is_numeric($shownographyet)) {
+                $s .= $langs->trans("NotEnoughDataYet").'...';
+			} else {
+			    $s .= $shownographyet.'...';
+			}
+			$s .= '</div>';
 			return $s;
 		}
 

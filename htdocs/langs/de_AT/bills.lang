@@ -21,7 +21,6 @@ ValidateInvoice=Validate Rechnung
 DisabledBecausePayments=Nicht möglich, da gibt es einige Zahlungen
 CantRemovePaymentWithOneInvoicePaid=Kann die Zahlung nicht entfernen, da es zumindest auf der Rechnung bezahlt klassifiziert
 PayedByThisPayment=Bezahlt durch diese Zahlung
-PDFCrabeDescription=Rechnung Modell Crabe. Eine vollständige Rechnung Modell (Support Mehrwertsteuer Option, Rabatte, Zahlungen Bedingungen, Logos, etc. ..)
 TerreNumRefModelDesc1=Zurück NUMERO mit Format %syymm-nnnn für Standardrechnungen und syymm%-nnnn für Gutschriften, wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
 TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Debitorenrechnung
 TypeContact_facture_external_BILLING=Debitorenrechnung Kontakt

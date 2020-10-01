@@ -4,7 +4,7 @@
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
  * Copyright (C) 2018   Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2019   Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018-2020   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 
 /**
@@ -53,35 +54,34 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number {@min 0}
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
-     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
      *
      * @url     GET dictionary/ordering_methods
      *
      * @return array [List of ordering methods]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
         $sql = "SELECT rowid, code, libelle as label, module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -121,8 +121,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of payment types]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -168,6 +167,107 @@ class Setup extends DolibarrApi
         }
 
         return $list;
+    }
+
+    /**
+     * Get the list of states/provinces.
+     *
+     * The names of the states will be translated to the given language if
+     * the $lang parameter is provided. The value of $lang must be a language
+     * code supported by Dolibarr, for example 'en_US' or 'fr_FR'.
+     * The returned list is sorted by state ID.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $filter     To filter the countries by name
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array                List of countries
+     *
+     * @url     GET dictionary/states
+     *
+     * @throws RestException
+     */
+    public function getListOfStates($sortfield = "code_departement", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $sqlfilters = '')
+    {
+        $list = array();
+
+        // Note: The filter is not applied in the SQL request because it must
+        // be applied to the translated names, not to the names in database.
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_departements as t";
+        $sql .= " WHERE 1 = 1";
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+        $sql .= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $obj = $this->db->fetch_object($result);
+                $state = new Cstate($this->db);
+                if ($state->fetch($obj->rowid) > 0) {
+                    if (empty($filter) || stripos($state->label, $filter) !== false) {
+                        $list[] = $this->_cleanObjectDatas($state);
+                    }
+                }
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of states');
+        }
+
+        return $list;
+    }
+
+    /**
+     * Get state by ID.
+     *
+     * @param int       $id        ID of state
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/states/{id}
+     *
+     * @throws RestException
+     */
+    public function getStateByID($id)
+    {
+        return $this->_fetchCstate($id, '');
+    }
+
+    /**
+     * Get state by Code.
+     *
+     * @param string    $code      Code of state
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/states/byCode/{code}
+     *
+     * @throws RestException
+     */
+    public function getStateByCode($code)
+    {
+        return $this->_fetchCstate('', $code);
     }
 
     /**
@@ -232,7 +332,7 @@ class Setup extends DolibarrApi
                 if ($country->fetch($obj->rowid) > 0) {
                     // Translate the name of the country if needed
                     // and then apply the filter if there is one.
-                    $this->translateLabel($country, $lang);
+                    $this->translateLabel($country, $lang, 'Country');
 
                     if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
@@ -298,6 +398,29 @@ class Setup extends DolibarrApi
     }
 
     /**
+    * Get state.
+    *
+    * @param int       $id        ID of state
+    * @param string    $code      Code of state
+    * @return array 			   Array of cleaned object properties
+    *
+    * @throws RestException
+    */
+    private function _fetchCstate($id, $code = '')
+    {
+        $state = new Cstate($this->db);
+
+        $result = $state->fetch($id, $code);
+        if ($result < 0) {
+            throw new RestException(503, 'Error when retrieving state : '.$state->error);
+        } elseif ($result == 0) {
+            throw new RestException(404, 'State not found');
+        }
+
+        return $this->_cleanObjectDatas($state);
+    }
+
+    /**
     * Get country.
     *
     * @param int       $id        ID of country
@@ -320,7 +443,7 @@ class Setup extends DolibarrApi
             throw new RestException(404, 'country not found');
         }
 
-        $this->translateLabel($country, $lang);
+        $this->translateLabel($country, $lang, 'Country');
 
         return $this->_cleanObjectDatas($country);
     }
@@ -339,8 +462,7 @@ class Setup extends DolibarrApi
      *
      * @return array [List of availability]
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -406,14 +528,15 @@ class Setup extends DolibarrApi
     }
 
     /**
-     * Translate the name of the country to the given language.
+     * Translate the name of the object to the given language.
      *
-     * @param Ccountry $country   Country
-     * @param string   $lang      Code of the language the name of the
-     *                            country must be translated to
+     * @param object   $object    Object with label to translate
+     * @param string   $lang      Code of the language the name of the object must be translated to
+     * @param string   $prefix 	  Prefix for translation key
+     *
      * @return void
      */
-    private function translateLabel($country, $lang)
+    private function translateLabel($object, $lang, $prefix = 'Country')
     {
         if (!empty($lang)) {
             // Load the translations if this is a new language.
@@ -423,11 +546,12 @@ class Setup extends DolibarrApi
                 $this->translations->setDefaultLang($lang);
                 $this->translations->load('dict');
             }
-            if ($country->code) {
-                $key = 'Country'.$country->code;
+            if ($object->code) {
+                $key = $prefix.$object->code;
+
                 $translation = $this->translations->trans($key);
                 if ($translation != $key) {
-                    $country->label = html_entity_decode($translation);
+                    $object->label = html_entity_decode($translation);
                 }
             }
         }
@@ -453,21 +577,21 @@ class Setup extends DolibarrApi
     {
         $list = array();
         $sql = "SELECT t.rowid, t.code, t.libelle, t.description, t.tracking";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+        $sql .= " WHERE t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -556,6 +680,70 @@ class Setup extends DolibarrApi
 
         return $list;
     }
+
+
+    /**
+     * Get the list of Expense Report types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $module     To filter on module
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array				List of expense report types
+     *
+     * @url     GET dictionary/expensereport_types
+     *
+     * @throws RestException
+     */
+    public function getListOfExpenseReportsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
+    {
+    	$list = array();
+
+    	$sql = "SELECT id, code, label, accountancy_code, active, module, position";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t";
+    	$sql .= " WHERE t.active = ".$active;
+    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+    	// Add sql filters
+    	if ($sqlfilters)
+    	{
+    		if (!DolibarrApi::_checkFilters($sqlfilters))
+    		{
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+
+
+    	$sql .= $this->db->order($sortfield, $sortorder);
+
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+
+    		$sql .= $this->db->plimit($limit, $offset);
+    	}
+
+    	$result = $this->db->query($sql);
+
+    	if ($result) {
+    		$num = $this->db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		for ($i = 0; $i < $min; $i++) {
+    			$list[] = $this->db->fetch_object($result);
+    		}
+    	} else {
+    		throw new RestException(503, 'Error when retrieving list of expense report types : '.$this->db->lasterror());
+    	}
+
+    	return $list;
+    }
+
 
     /**
      * Get the list of contacts types.
@@ -815,9 +1003,7 @@ class Setup extends DolibarrApi
         			$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
         		}
         	}
-        }
-        else
-        {
+        } else {
             throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
         }
 
@@ -908,8 +1094,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of payment terms
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -969,8 +1154,7 @@ class Setup extends DolibarrApi
      *
      * @return array List of shipping methods
      *
-     * @throws 400 RestException
-     * @throws 200 OK
+     * @throws RestException 400
      */
     public function getShippingModes($limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
@@ -1104,22 +1288,22 @@ class Setup extends DolibarrApi
 		$list = array();
         //TODO link with multicurrency module
         $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
-        $sql.= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
-        $sql.= " AND t.active = ".$active;
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
+        $sql .= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
+        $sql .= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
 
-        $sql.= $this->db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 
         if ($limit) {
             if ($page < 0) {
@@ -1286,9 +1470,9 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-        $sql .= " WHERE t.active = ".$active;
-    	if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+        $sql .= " WHERE t.active = ".(int) $active;
+    	// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
+    	// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
     	// Add sql filters
     	if ($sqlfilters)
     	{
@@ -1342,6 +1526,39 @@ class Setup extends DolibarrApi
         return $this->_cleanObjectDatas($mysoc);
     }
 
+
+    /**
+     * Get value of a setup variables
+     *
+     * Note that conf variables that stores security key or password hashes can't be loaded with API.
+     *
+     * @param	string			$constantname	Name of conf variable to get
+     * @return  array|mixed 				Data without useless information
+     *
+     * @url     GET conf/{constantname}
+     *
+     * @throws RestException 403 Forbidden
+     * @throws RestException 404 Error Bad or unknown value for constantname
+     */
+    public function getConf($constantname)
+    {
+    	global $conf;
+
+    	if (!DolibarrApiAccess::$user->admin
+    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
+    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    	}
+
+    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
+    		throw new RestException(404, 'Error Bad or unknown value for constantname');
+    	}
+    	if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $constantname)) {
+    		throw new RestException(403, 'Forbidden');
+    	}
+
+    	return $conf->global->$constantname;
+    }
+
     /**
      * Do a test of integrity for files and setup.
      *
@@ -1350,7 +1567,9 @@ class Setup extends DolibarrApi
      *
      * @url     GET checkintegrity
      *
-     * @throws RestException
+     * @throws RestException 404 Signature file not found
+     * @throws RestException 500 Technical error
+     * @throws RestException 503 Forbidden
      */
     public function getCheckIntegrity($target)
     {
@@ -1359,7 +1578,7 @@ class Setup extends DolibarrApi
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
-    		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
     	}
 
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1388,14 +1607,10 @@ class Setup extends DolibarrApi
     		if (dol_is_file($xmlfile))
     		{
     			$xml = simplexml_load_file($xmlfile);
-    		}
-    		else
-    		{
+    		} else {
     			throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
     		}
-    	}
-    	else
-    	{
+    	} else {
     		$xmlarray = getURLContent($xmlremote);
 
     		// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
@@ -1404,9 +1619,7 @@ class Setup extends DolibarrApi
     			$xmlfile = $xmlarray['content'];
     			//print "xmlfilestart".$xmlfile."endxmlfile";
     			$xml = simplexml_load_string($xmlfile);
-    		}
-    		else
-    		{
+    		} else {
     			$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
     			throw new RestException(500, $errormsg);
     		}
@@ -1430,8 +1643,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Constant").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedValue").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("Value").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedValue").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("Value").'</td>';
     			$out .= '</tr>'."\n";
 
     			$i = 0;
@@ -1451,8 +1664,8 @@ class Setup extends DolibarrApi
     				$out .= '<tr class="oddeven">';
     				$out .= '<td>'.$i.'</td>'."\n";
     				$out .= '<td>'.$constname.'</td>'."\n";
-    				$out .= '<td align="center">'.$constvalue.'</td>'."\n";
-    				$out .= '<td align="center">'.$valueforchecksum.'</td>'."\n";
+    				$out .= '<td class="center">'.$constvalue.'</td>'."\n";
+    				$out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
     				$out .= "</tr>\n";
     			}
 
@@ -1473,7 +1686,7 @@ class Setup extends DolibarrApi
     			$includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
     			// Defined qualified files (must be same than into generate_filelist_xml.php)
-    			$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+    			$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
     			$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
     			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
@@ -1498,7 +1711,7 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
     			$out .= '</tr>'."\n";
     			$tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
     			if (is_array($tmpfilelist) && count($tmpfilelist))
@@ -1510,12 +1723,10 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
     					$out .= "</tr>\n";
     				}
-    			}
-    			else
-    			{
+    			} else {
     				$out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
     			$out .= '</table>';
@@ -1532,8 +1743,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
     			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
     			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
     			$out .= '</tr>'."\n";
@@ -1547,8 +1758,8 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['md5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -1563,9 +1774,7 @@ class Setup extends DolibarrApi
     				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
     				$out .= '<td class="right"></td>'."\n";
     				$out .= "</tr>\n";
-    			}
-    			else
-    			{
+    			} else {
     				$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
     			$out .= '</table>';
@@ -1582,8 +1791,8 @@ class Setup extends DolibarrApi
     			$out .= '<tr class="liste_titre">';
     			$out .= '<td>#</td>';
     			$out .= '<td>'.$langs->trans("Filename").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("ExpectedChecksum").'</td>';
-    			$out .= '<td align="center">'.$langs->trans("CurrentChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("ExpectedChecksum").'</td>';
+    			$out .= '<td class="center">'.$langs->trans("CurrentChecksum").'</td>';
     			$out .= '<td class="right">'.$langs->trans("Size").'</td>';
     			$out .= '<td class="right">'.$langs->trans("DateModification").'</td>';
     			$out .= '</tr>'."\n";
@@ -1597,8 +1806,8 @@ class Setup extends DolibarrApi
     					$out .= '<tr class="oddeven">';
     					$out .= '<td>'.$i.'</td>'."\n";
     					$out .= '<td>'.$file['filename'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['expectedmd5'].'</td>'."\n";
-    					$out .= '<td align="center">'.$file['md5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+    					$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
     					$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
     					$totalsize += $size;
     					$out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -1613,9 +1822,7 @@ class Setup extends DolibarrApi
     				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
     				$out .= '<td class="right"></td>'."\n";
     				$out .= "</tr>\n";
-    			}
-    			else
-    			{
+    			} else {
     				$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
     			$out .= '</table>';
@@ -1626,14 +1833,10 @@ class Setup extends DolibarrApi
     			if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
     			{
     				//setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-    			}
-    			else
-    			{
+    			} else {
     				//setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
     			}
-    		}
-    		else
-    		{
+    		} else {
     			throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
     		}
 
@@ -1655,24 +1858,19 @@ class Setup extends DolibarrApi
     				$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
     				//$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
     				$outcurrentchecksum = $checksumget;
-    			}
-    			else
-    			{
+    			} else {
     				$resultcode = 'ok';
     				$resultcomment = 'Success';
     				//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     				$outcurrentchecksum = $checksumget;
     			}
-    		}
-    		else
-    		{
+    		} else {
     			$resultcode = 'error';
     			$resultcomment = 'Error';
     			//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     			$outcurrentchecksum = $checksumget;
     		}
-    	}
-    	else {
+    	} else {
     		throw new RestException(404, 'No signature file known');
     	}
 

@@ -18,8 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -33,8 +32,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
 $total = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
+foreach ($linkedObjectBlock as $key => $objectlink) {
     echo '<tr class="oddeven">';
     echo '<td>'.$langs->trans("Subscription").'</td>';
     echo '<td>'.$objectlink->getNomUrl(1).'</td>';

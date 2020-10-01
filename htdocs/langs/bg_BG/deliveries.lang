@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
-DeliveryRef=Реф. доставка
+DeliveryRef=Доставка №
 DeliveryCard=Карта на разписка
 DeliveryOrder=Разписка за доставка
 DeliveryDate=Дата на доставка
@@ -10,7 +10,7 @@ SetDeliveryDate=Задаване на дата за доставка
 ValidateDeliveryReceipt=Валидиране на разписка за доставка
 ValidateDeliveryReceiptConfirm=Сигурни ли сте, че искате да валидирате тази разписка за доставка?
 DeleteDeliveryReceipt=Изтриване на разписка за доставка
-DeleteDeliveryReceiptConfirm=Сигурни ли сте, че искате да изтриете тази разписка <b>%s</b>?
+DeleteDeliveryReceiptConfirm=Сигурни ли сте, че искате да изтриете тази разписка за доставка с № <b>%s</b>?
 DeliveryMethod=Начин на доставка
 TrackingNumber=Проследяващ номер
 DeliveryNotValidated=Доставката не е валидирана

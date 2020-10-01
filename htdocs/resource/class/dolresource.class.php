@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file      	resource/class/resource.class.php
+ *  \file      	htdocs/resource/class/dolresource.class.php
  *  \ingroup    resource
  *  \brief      Class file for resource object
  */
@@ -136,7 +136,7 @@ class Dolresource extends CommonObject
     		$action = 'create';
 
     		// Actions on extra fields
-   			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+   			if (!$error)
    			{
    				$result = $this->insertExtraFields();
    				if ($result < 0)
@@ -146,17 +146,12 @@ class Dolresource extends CommonObject
     		}
     	}
 
-    	if (!$error)
+    	if (!$error && !$notrigger)
     	{
-    		if (!$notrigger)
-    		{
-    			//// Call triggers
-    			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-    			$interface = new Interfaces($this->db);
-    			$result = $interface->run_triggers('RESOURCE_CREATE', $this, $user, $langs, $conf);
-    			if ($result < 0) { $error++; $this->errors = $interface->errors; }
-    			//// End call triggers
-    		}
+    		// Call trigger
+    		$result = $this->call_trigger('RESOURCE_CREATE', $user);
+    		if ($result < 0) $error++;
+    		// End call triggers
     	}
 
     	// Commit or rollback
@@ -169,9 +164,7 @@ class Dolresource extends CommonObject
     		}
     		$this->db->rollback();
     		return -1 * $error;
-    	}
-    	else
-    	{
+    	} else {
     		$this->db->commit();
     		return $this->id;
     	}
@@ -228,9 +221,7 @@ class Dolresource extends CommonObject
     		$this->db->free($resql);
 
     		return $this->id;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
     		return -1;
@@ -314,7 +305,7 @@ class Dolresource extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -334,9 +325,7 @@ class Dolresource extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -393,9 +382,7 @@ class Dolresource extends CommonObject
     		$this->db->free($resql);
 
     		return $this->id;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		return -1;
     	}
@@ -432,9 +419,7 @@ class Dolresource extends CommonObject
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
@@ -480,9 +465,7 @@ class Dolresource extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -527,11 +510,9 @@ class Dolresource extends CommonObject
     		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			elseif (strpos($key, 'ef.') !== false) {
+    			} elseif (strpos($key, 'ef.') !== false) {
     				$sql .= $value;
-    			}
-    			else {
+    			} else {
     				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
@@ -572,9 +553,7 @@ class Dolresource extends CommonObject
     			$this->db->free($resql);
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -613,9 +592,8 @@ class Dolresource extends CommonObject
    			foreach ($filter as $key => $value) {
    				if (strpos($key, 'date')) {
    					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-   				}
-   				else {
-   					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+   				} else {
+   					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
    		}
@@ -650,9 +628,7 @@ class Dolresource extends CommonObject
    				$this->db->free($resql);
    			}
    			return $num;
-   		}
-   		else
-   		{
+   		} else {
    			$this->error = $this->db->lasterror();
    			return -1;
    		}
@@ -695,9 +671,8 @@ class Dolresource extends CommonObject
     		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			else {
-    				$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    			} else {
+    				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -729,9 +704,7 @@ class Dolresource extends CommonObject
     			$this->db->free($resql);
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -821,9 +794,7 @@ class Dolresource extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -876,10 +847,12 @@ class Dolresource extends CommonObject
 	    return $resources;
     }
 
-    /*
+    /**
      *  Return an int number of resources linked to the element
      *
-     *  @return     int
+     *  @param		string	$element		Element type
+     *  @param		int		$element_id		Element id
+     *  @return     int						Nb of resources loaded
      */
     public function fetchElementResources($element, $element_id)
     {
@@ -927,9 +900,7 @@ class Dolresource extends CommonObject
     			$i++;
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		dol_print_error($this->db);
     		return -1;
     	}
@@ -938,28 +909,56 @@ class Dolresource extends CommonObject
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
-     *	@param      string	$get_params    	Parametres added to url
-     *	@param		int  	$notooltip		1=Disable tooltip
-     *	@return     string          		String with URL
+     *	@param      int		$withpicto					Add picto into link
+     *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param      string	$get_params    				Parametres added to url
+     *	@param		int  	$notooltip					1=Disable tooltip
+     *  @param  	string  $morecss                    Add more css on link
+     *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return     string          					String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
-        global $langs;
+        global $conf, $langs;
 
         $result = '';
-        $label = $langs->trans("ShowResource").': '.$this->ref;
-
-        $linkstart = '';
-        $linkend = '';
-        if ($option == '')
-        {
-            $linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $picto = 'resource';
-            $label = $langs->trans("ShowResource").': '.$this->ref;
-            $linkend = '</a>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        /*if (isset($this->status)) {
+        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        }*/
+        if (isset($this->type_label)) {
+        	$label .= '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
         }
+
+        $url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+        }
+
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+        	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label = $langs->trans("ShowMyObject");
+        		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+
+        $linkstart = '<a href="'.$url.$get_params.'"';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
+        /*$linkstart = '<a href="'.dol_buildpath('/resource/card.php', 1).'?id='.$this->id.$get_params.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend = '</a>';*/
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);

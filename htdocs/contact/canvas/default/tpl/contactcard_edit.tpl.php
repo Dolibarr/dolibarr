@@ -16,7 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -47,7 +47,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 <input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">
 <input type="hidden" name="old_firstname" value="<?php echo $this->control->tpl['firstname']; ?>">
-<?php if (! empty($this->control->tpl['company_id'])) { ?>
+<?php if (!empty($this->control->tpl['company_id'])) { ?>
 <input type="hidden" name="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
 <?php } ?>
 
@@ -136,7 +136,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <?php
-if (! empty($this->control->tpl['contact_element'])) {
+if (!empty($this->control->tpl['contact_element'])) {
 	foreach ($this->control->tpl['contact_element'] as $element) {
 		print '<tr>';
 		print '<td>'.$element['linked_element_label'].'</td>';

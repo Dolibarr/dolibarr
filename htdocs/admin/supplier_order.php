@@ -43,7 +43,7 @@ accessforbidden();
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $scandir = GETPOST('scan_dir', 'alpha');
 
 $specimenthirdparty = new Societe($db);
@@ -53,6 +53,8 @@ $specimenthirdparty->initAsSpecimen();
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -66,14 +68,10 @@ if ($action == 'updateMask')
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-
-elseif ($action == 'specimen')  // For orders
+} elseif ($action == 'specimen')  // For orders
 {
     $modele = GETPOST('module', 'alpha');
 
@@ -86,7 +84,7 @@ elseif ($action == 'specimen')  // For orders
     $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
     foreach ($dirmodels as $reldir)
     {
-    	$file = dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php", 0);
+    	$file = dol_buildpath($reldir."core/modules/supplier_order/doc/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
     		$filefound = 1;
@@ -105,15 +103,11 @@ elseif ($action == 'specimen')  // For orders
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
     		return;
-    	}
-    	else
-    	{
+    	} else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
-    }
-    else
-    {
+    } else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -123,9 +117,7 @@ elseif ($action == 'specimen')  // For orders
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -150,25 +142,19 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-
-elseif ($action == 'setmod')
+} elseif ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
     dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
-}
-
-elseif ($action == 'addcat')
+} elseif ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
-    $fourn->CreateCategory($user, $_POST["cat"]);
-}
-
-elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
+    $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
+} elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
-    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'none'); // No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
 	$doubleapproval = price2num($doubleapproval);
 
@@ -194,9 +180,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 
     	// Insert
     	$newmodule->insert_permissions(1);
-    }
-    else
-    {
+    } else {
     	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
 
@@ -215,9 +199,7 @@ elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
     if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -293,18 +275,15 @@ foreach ($dirmodels as $reldir)
                         $tmp = $module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
                             $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
-                        }
-                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+                        } elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
-                        }
-                        else
-                        {
+                        } else {
                             print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
@@ -327,7 +306,7 @@ foreach ($dirmodels as $reldir)
                             }
                         }
 
-                        print '<td align="center">';
+                        print '<td class="center">';
                         print $form->textwithpicto('', $htmltooltip, 1, 0);
                         print '</td>';
 
@@ -368,9 +347,7 @@ if ($resql)
         array_push($def, $array[0]);
         $i++;
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -388,7 +365,8 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
+	$realpath = $reldir."core/modules/supplier_order/doc";
+	$dir = dol_buildpath($realpath);
 
     if (is_dir($dir))
     {
@@ -411,7 +389,7 @@ foreach ($dirmodels as $reldir)
 	                print (empty($module->name) ? $name : $module->name);
 	                print "</td>\n";
                     print "<td>\n";
-                    require_once $dir.$file;
+                    require_once $dir.'/'.$file;
                     $module = new $classname($db, $specimenthirdparty);
                     if (method_exists($module, 'info')) print $module->info($langs);
                     else print $module->description;
@@ -420,34 +398,28 @@ foreach ($dirmodels as $reldir)
                     // Active
                     if (in_array($name, $def))
                     {
-                        print '<td align="center">'."\n";
+                        print '<td class="center">'."\n";
                         if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
                         {
                             print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">';
                             print img_picto($langs->trans("Enabled"), 'switch_on');
                             print '</a>';
-                        }
-                        else
-                        {
+                        } else {
                             print img_picto($langs->trans("Enabled"), 'switch_on');
                         }
                         print "</td>";
-                    }
-                    else
-                    {
-                        print '<td align="center">'."\n";
+                    } else {
+                        print '<td class="center">'."\n";
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         print "</td>";
                     }
 
                     // Default
-                    print '<td align="center">';
+                    print '<td class="center">';
                     if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
                     {
                         print img_picto($langs->trans("Default"), 'on');
-                    }
-                    else
-                    {
+                    } else {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
                     }
                     print '</td>';
@@ -456,14 +428,16 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
                     $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
                     $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
                     $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                     $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
                     $htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
                     $htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-                    print '<td align="center">';
+                    print '<td class="center">';
                     print $form->textwithpicto('', $htmltooltip, 1, 0);
                     print '</td>';
-                    print '<td align="center">';
+                    print '<td class="center">';
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
                     print '</td>';
 
@@ -483,7 +457,7 @@ print '</table><br>';
  */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
@@ -548,9 +522,7 @@ $variablename = 'SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
@@ -567,9 +539,7 @@ print '<td class="center">';
 if ($conf->reception->enabled)
 {
 	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
-}
-else
-{
+} else {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 	} else {

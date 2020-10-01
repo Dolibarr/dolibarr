@@ -8,3 +8,4 @@ LinkRemoved=%s esteka ezabatua izan da
 ErrorFailedToDeleteLink= Ezin izan da '<b>%s</b>' esteka ezabatu
 ErrorFailedToUpdateLink= Ezin izan da '<b>%s</b>' esteka berritu
 URLToLink=URL to link
+OverwriteIfExists=Overwrite file if exists

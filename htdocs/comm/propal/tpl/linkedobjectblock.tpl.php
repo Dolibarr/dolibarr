@@ -24,7 +24,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf)) {
+if (empty($conf) || !is_object($conf)) {
     print "Error, template page can't be called as URL";
     exit;
 }
@@ -42,14 +42,14 @@ $langs->load("propal");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
-$total=0;
-$ilink=0;
-foreach($linkedObjectBlock as $key => $objectlink)
+$total = 0;
+$ilink = 0;
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass='oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
+    $trclass = 'oddeven';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
     print '<tr class="'.$trclass.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
     print '<td class="linkedcol-element" >'.$langs->trans("Proposal");
     if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)
@@ -73,7 +73,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 }
 if (count($linkedObjectBlock) > 1)
 {
-    print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':'').'">';
+    print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
     print '<td>'.$langs->trans("Total").'</td>';
     print '<td></td>';
     print '<td class="center"></td>';

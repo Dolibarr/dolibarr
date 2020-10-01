@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - ticket
+TicketTypeShortBUGSOFT=Malfuncionamiento del software
 Closed=Cerrada
 TicketSettings=Configuraciónes
+TicketMessageMailIntroText=Hola, <br> Se envió una nueva respuesta en un ticket con el que se comunicó. Aquí está el mensaje: <br>
