@@ -1697,7 +1697,7 @@ if ($action == 'create')
 				// Delete
 				if (($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
 			}

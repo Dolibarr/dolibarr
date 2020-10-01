@@ -624,6 +624,16 @@ if ($resql)
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
+	if (GETPOST('autoselectall', 'int')) {
+		$selectedfields .= '<script>';
+		$selectedfields .= '   $(document).ready(function() {';
+		$selectedfields .= '        console.log("Autoclick on checkforselects");';
+		$selectedfields .= '   		$("#checkforselects").click();';
+		$selectedfields .= '        $("#massaction").val("createbills").change();';
+		$selectedfields .= '   });';
+		$selectedfields .= '</script>';
+	}
+
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -1092,7 +1102,7 @@ if ($resql)
 				{
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0))
 					{
-						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
+						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
 						print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
 					}
 				}
@@ -1289,7 +1299,7 @@ if ($resql)
 		}
 
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected = 0;

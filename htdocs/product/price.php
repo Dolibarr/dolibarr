@@ -913,7 +913,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							if (($user->rights->produit->creer || $user->rights->service->creer)) {
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 								print img_edit().'</a>';
-								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;token='.newToken().'&amp;rowid='.$prices["rowid"].'">';
 								print img_delete().'</a>';
 							} else {
 								print '&nbsp;';
@@ -1064,7 +1064,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					{
 						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 						print img_edit().'</a>';
-						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;token='.newToken().'&amp;rowid='.$prices["rowid"].'">';
 						print img_delete().'</a>';
 					} else {
 						print '&nbsp;';
@@ -1591,7 +1591,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     				print '<td class="right">';
     				if ($candelete)
     				{
-    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
+    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
     					print img_delete();
     					print '</a>';
     				} else print '&nbsp;'; // Can not delete last price (it's current price)
@@ -2148,7 +2148,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';

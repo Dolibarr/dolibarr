@@ -123,34 +123,43 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'p.ref'=>"Ref",
-	'p.title'=>"Label",
-	's.nom'=>"ThirdPartyName",
-	"p.note_public"=>"NotePublic"
-);
-if (empty($user->socid)) $fieldstosearchall["p.note_private"] = "NotePrivate";
+$fieldstosearchall = array();
+foreach ($object->fields as $key => $val) {
+	if (empty($val['searchall'])) {
+		continue;
+	}
 
-$arrayfields = array(
-	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1, 'position'=>10),
-	'p.title'=>array('label'=>$langs->trans("Label"), 'checked'=>1, 'position'=>11),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1), 'position'=>20),
-	'commercial'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'css'=>'tdoverflowmax100', 'position'=>21),
-	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
-	'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
-	'p.public'=>array('label'=>$langs->trans("Visibility"), 'checked'=>1, 'position'=>102),
-	'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>103),
-	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>104),
-	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>105),
-    'opp_weighted_amount'=>array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>106),
-    'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-	'p.usage_opportunity'=>array('label'=>$langs->trans("UsageOpportunity"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>115),
-	'p.usage_task'=>array('label'=>$langs->trans("UsageTasks"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>116),
-	'p.usage_bill_time'=>array('label'=>$langs->trans("UsageBillTimeShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>117),
-	'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
-	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-);
+	// Don't allow search in private notes for external users when doing "search in all"
+	if (!empty($user->socid) && $key == "note_private") {
+		continue;
+	}
+
+	$fieldstosearchall['p.'.$key] = $val['label'];
+}
+
+// Add none object fields to "search in all"
+$fieldstosearchall['s.nom'] = "ThirdPartyName";
+
+// Definition of fields for list
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (empty($val['visible'])) {
+		continue;
+	}
+
+	$arrayfields['p.'.$key] = array(
+		'label'=>$val['label'],
+		'checked'=>(($val['visible'] < 0) ? 0 : 1),
+		'enabled'=>($val['enabled'] && ($val['visible'] != 3)),
+		'position'=>$val['position']);
+}
+
+// Add none object fields to fields for list
+$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
+$arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
@@ -160,7 +169,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
-$object->fields = dol_sort_array($object->fields, 'position');
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 

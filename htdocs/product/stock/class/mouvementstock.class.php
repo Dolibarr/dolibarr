@@ -1002,6 +1002,10 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 				$origin = new Mo($this->db);
 				break;
+			case 'user':
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$origin = new User($this->db);
+				break;
 
 			default:
 				if ($origintype)

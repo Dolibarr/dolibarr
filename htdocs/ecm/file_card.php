@@ -420,7 +420,7 @@ if ($action != 'edit')
     /*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

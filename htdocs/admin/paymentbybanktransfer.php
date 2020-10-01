@@ -465,7 +465,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&token='.newToken().'&notif='.$obj->rowid.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	        $i++;
 	    }

@@ -752,7 +752,7 @@ if ($object->id > 0)
 			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
 
 			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&did='.$obj->rowid.'&type='.$type.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.$type.'">';
 			print img_delete();
 			print '</a></td>';
 

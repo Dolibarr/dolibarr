@@ -345,7 +345,7 @@ if ($rowid && $action != 'edit') {
 
     if ($user->rights->adherent->cotisation->creer) {
 		if (!$bankline->rappro) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
 		}
@@ -353,7 +353,7 @@ if ($rowid && $action != 'edit') {
 
     // Delete
     if ($user->rights->adherent->cotisation->creer) {
-        print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";
+        print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
     }
 
     print '</div>';

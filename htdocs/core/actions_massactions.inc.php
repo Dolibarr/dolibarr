@@ -3,7 +3,7 @@
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,7 +615,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			$cmd->fetch_optionals();
 
 			$objecttmp->socid = $cmd->socid;
-			$objecttmp->type = Facture::TYPE_STANDARD;
+			$objecttmp->type = $objecttmp::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
 			$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
 			$objecttmp->fk_project = $cmd->fk_project;
@@ -742,7 +742,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 							'HT',
 							0,
 							$product_type,
-							$ii,
+							$lines[$i]->rang,
 							$lines[$i]->special_code,
 							$objecttmp->origin,
 							$lines[$i]->rowid,

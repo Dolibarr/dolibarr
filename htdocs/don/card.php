@@ -817,7 +817,7 @@ if (!empty($id) && $action != 'edit')
 	{
 		if ($object->statut == -1 || $object->statut == 0)
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 		}

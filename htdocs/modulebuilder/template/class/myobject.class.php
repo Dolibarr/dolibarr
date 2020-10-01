@@ -116,6 +116,7 @@ class MyObject extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'notnull'=>0, 'position'=>600),
 		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		'model_pdf' 	=> array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'notnull'=>-1, 'position'=>1010),
 		'status'        => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled')),
@@ -170,6 +171,11 @@ class MyObject extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var string public $last_main_doc
+	 */
+	public $last_main_doc;
 
 	/**
 	 * @var string import_key

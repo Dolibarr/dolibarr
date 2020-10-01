@@ -507,7 +507,7 @@ if ($rowid > 0)
 		// Delete
 		if ($user->rights->asset->write)
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";

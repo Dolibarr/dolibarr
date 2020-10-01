@@ -429,7 +429,7 @@ foreach ($boxactivated as $key => $box)
 	print ($hasprevious ? '<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
 	print '</td>';
 	print '<td class="center">';
-	print '<a href="boxes.php?rowid='.$box->rowid.'&amp;action=delete">'.img_delete().'</a>';
+	print '<a href="boxes.php?rowid='.$box->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 	print '</td>';
 
 	print '</tr>'."\n";
