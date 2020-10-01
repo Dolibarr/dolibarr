@@ -647,7 +647,7 @@ class Form
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
-				$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'select valignmiddle alignstart" name="'.$name.'"'.($disabled ? ' disabled="disabled"' : '').'>';
+		$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'select valignmiddle alignstart" id="'.$name.'" name="'.$name.'"'.($disabled ? ' disabled="disabled"' : '').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
@@ -7552,8 +7552,8 @@ class Form
 		global $conf, $langs;
 
 		$out = '';
-		$id = uniqid();
-				if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
+
+		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
@@ -7568,13 +7568,11 @@ class Form
                     }'."\n";
 				if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "'.$massactionname.'", "'.$cssclass.'"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out .= '         });
-
-                $(".' . $cssclass.'").change(function() {
-				$(this).closest("tr").toggleClass("highlight", this.checked);
-			});
-
- 	});
-    </script>';
+        	        $(".' . $cssclass.'").change(function() {
+					$(this).closest("tr").toggleClass("highlight", this.checked);
+				});
+		 	});
+    	</script>';
 
 		return $out;
 	}
