@@ -90,14 +90,11 @@ class Stripe extends CommonObject
 		global $conf;
 
 		$sql = "SELECT tokenstring";
-		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND service = '".$mode."'";
+		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token WHERE";
+		if (empty($fk_soc)) $sql .= " entity = ".$conf->entity. " AND";
+		$sql .= " service = '".$mode."'";
 		if ($fk_soc > 0) {
 			$sql .= " AND fk_soc = ".$fk_soc;
-		}
-		else {
-			$sql .= " AND fk_soc IS NULL";
 		}
 		$sql .= " AND fk_user IS NULL AND fk_adherent IS NULL";
 
