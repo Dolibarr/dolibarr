@@ -1331,7 +1331,6 @@ else
 		}
 		else // For external software
 		{
-
 			if (!empty($accountancy_code_sell)) { $object->accountancy_code_sell = $accountancy_code_sell; }
 			if (!empty($accountancy_code_sell_intra)) { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
 			if (!empty($accountancy_code_sell_export)) { $object->accountancy_code_sell_export = $accountancy_code_sell_export; }
