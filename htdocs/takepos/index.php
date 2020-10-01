@@ -432,7 +432,7 @@ function ChangeThirdparty(idcustomer) {
 
 function deleteline() {
 	console.log("Delete line");
-	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch();
@@ -499,7 +499,7 @@ function New() {
 
 		if (r == true) {
 			// Reload section with invoice lines
-			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
+			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
 			ClearSearch();

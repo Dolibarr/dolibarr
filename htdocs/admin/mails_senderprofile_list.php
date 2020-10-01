@@ -587,7 +587,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if ($sortorder) $url .= '&page='.urlencode($sortorder);
 	print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&rowid='.$obj->rowid.'">'.img_edit().'</a>';
 	//print ' &nbsp; ';
-	print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete">'.img_delete().'</a>  &nbsp; ';
+	print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>  &nbsp; ';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected = 0;

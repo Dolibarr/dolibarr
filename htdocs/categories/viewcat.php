@@ -266,7 +266,7 @@ if ($user->rights->categorie->creer)
 
 if ($user->rights->categorie->supprimer)
 {
-	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$object->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
+	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;token='.newToken().'&amp;id=".$object->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
 }
 
 print "</div>";

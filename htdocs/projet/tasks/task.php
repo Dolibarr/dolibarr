@@ -604,7 +604,7 @@ if ($id > 0 || !empty($ref))
 				{
 				    if (!$object->hasChildren() && !$object->hasTimeSpent())
 				    {
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
 				    } else {
 				        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }

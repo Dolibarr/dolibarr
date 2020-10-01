@@ -845,7 +845,7 @@ class Export
 				}
 				// suppression de l'export
 				print '<td class="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&id='.$obj->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
 				print "</tr>";
