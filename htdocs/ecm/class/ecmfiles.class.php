@@ -403,9 +403,9 @@ class EcmFiles extends CommonObject
 				$this->src_object_id = $obj->src_object_id;
 			}
 
-			// Retrieve all extrafields for invoice
+			// Retrieve all extrafields for ecm_files
 			// fetch optionals attributes and labels
-			// $this->fetch_optionals();
+			$this->fetch_optionals();
 
 			// $this->fetch_lines();
 
