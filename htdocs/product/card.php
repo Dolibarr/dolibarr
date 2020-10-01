@@ -78,6 +78,14 @@ $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
+
+$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
+$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
+$accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
+$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
+$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
+
 if (!empty($user->socid)) $socid = $user->socid;
 
 $object = new Product($db);
@@ -1323,6 +1331,14 @@ else
 		}
 		else // For external software
 		{
+
+			if (!empty($accountancy_code_sell)) { $object->accountancy_code_sell = $accountancy_code_sell; }
+			if (!empty($accountancy_code_sell_intra)) { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
+			if (!empty($accountancy_code_sell_export)) { $object->accountancy_code_sell_export = $accountancy_code_sell_export; }
+			if (!empty($accountancy_code_buy)) { $object->accountancy_code_buy = $accountancy_code_buy; }
+			if (!empty($accountancy_code_buy_intra)) { $object->accountancy_code_buy_intra = $accountancy_code_buy_intra; }
+			if (!empty($accountancy_code_buy_export)) { $object->accountancy_code_buy_export = $accountancy_code_buy_export; }
+
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
