@@ -57,15 +57,7 @@ $sref = GETPOST('sref');
 $sref_client = GETPOST('sref_client');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $socid = GETPOST('socid', 'int');
-if (isset($_GET['orders_to_invoice'])) {
-	$selected_orders = GETPOST('orders_to_invoice');
-	$selected = [];
-	foreach ($selected_orders as $order) {
-		$order = explode(':', $order);
-		$selected[] = $order[0];
-		$socid = $order[1];
-	}
-}
+$selected = GETPOST('orders_to_invoice', 'array');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $search_status = GETPOST('search_status');
