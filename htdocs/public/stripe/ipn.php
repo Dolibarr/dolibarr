@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2018-2020      Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2018       	Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled
 {
 	$sql = "SELECT entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
-	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
+	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($event->account)."%'";
 
 	dol_syslog(get_class($db)."::fetch", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -134,8 +134,6 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled
 		$key = 1;
 	}
 	$ret = $mc->switchEntity($key);
-	if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-	if (!$res) die("Include of main fails");
 }
 
 // list of  action

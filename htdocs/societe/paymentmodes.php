@@ -1329,7 +1329,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	}
 
   	// List of Stripe payment modes
-	if (!empty($conf->stripe->enabled) && !empty($conf->stripeconnect->enabled) && $object->fournisseur && !empty($stripesupplieracc))
+	if (!empty($conf->stripe->enabled) && !empty($conf->stripeconnect->enabled) && !empty($stripesupplieracc))
 	{
         print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
         $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
