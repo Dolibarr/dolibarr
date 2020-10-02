@@ -125,6 +125,7 @@ class FormAdmin
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
+			$out .= '<script>$(document).ready(function () { $("select#'.$htmlname.'").val($("select#'.$htmlname.'").children("[selected]").val()).trigger("change"); });</script>';
 		}
 
 		return $out;
