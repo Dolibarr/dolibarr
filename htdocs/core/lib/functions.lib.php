@@ -545,12 +545,18 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Check rule
-	if ($check == 'array') {
+	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09'
 		if (!is_array($out) || empty($out)) {
 			$out = array();
 		} else {
+			$tmparray = explode(':', $check);
+			if (!empty($tmparray[1])) {
+				$tmpcheck = $tmparray[1];
+			} else {
+				$tmpcheck = 'alphanohtml';
+			}
 			foreach ($out as $outkey => $outval) {
-				$out[$outkey] = checkVal($outval, 'alphanohtml', $filter, $options);
+				$out[$outkey] = checkVal($outval, $tmpcheck, $filter, $options);
 			}
 		}
 	}

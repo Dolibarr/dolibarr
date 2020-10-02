@@ -601,10 +601,10 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    print '<td align="center"><a class="reposition" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 
                     // Delete link
-                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete">'.img_delete().'</a></td>';
+                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
                     else print '<td class="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
                     print "</tr>\n";

@@ -166,8 +166,8 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 				echo '<input id="" class="button" name="save" value="'.$langs->trans('Save').'" type="submit" />';
 				echo '<input class="button" value="'.$langs->trans('Cancel').'" onclick="javascript:history.go(-1)" type="button" />';
 			} else {
-				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
-				if (!empty($range->ik->id)) echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$range->ik->id.'">'.img_delete().'</a>';
+				echo '<a class="editfielda marginrightonly paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
+				if (!empty($range->ik->id)) echo '<a class="paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$range->ik->id.'">'.img_delete().'</a>';
 				// TODO add delete link
 			}
 		}

@@ -1671,14 +1671,14 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link
                     if ($iserasable)
                     {
                         print '<td class="center">';
-                        if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+                        if ($user->admin) print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
                         //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
                     } else print '<td>&nbsp;</td>';

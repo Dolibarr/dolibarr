@@ -2847,8 +2847,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
 			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
 			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
-			$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
-			//var_dump($original_file);
+
+			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
+				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$original_file;
+			} else {
+				$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
+			}
 		}
 
 		// For modules who wants to manage different levels of permissions for documents

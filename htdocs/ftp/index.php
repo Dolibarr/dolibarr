@@ -598,19 +598,19 @@ if (!function_exists('ftp_connect'))
 				print '<td class="right nowrap" width="64">';
 				if ($is_directory)
 				{
-					if ($file != '..') print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_section&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
+					if ($file != '..') print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_section&token='.newToken().'&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
 					else print '&nbsp;';
 				} elseif ($is_link)
 				{
 					$newfile = $file;
 					$newfile = preg_replace('/ ->.*/', '', $newfile);
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($newfile).'">'.img_delete().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($newfile).'">'.img_delete().'</a>';
 				} else {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('', 'file').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=download&token='.newToken().'&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_picto('', 'file').'</a>';
 					print ' &nbsp; ';
 					print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 					print ' &nbsp; ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&numero_ftp='.$numero_ftp.'&section='.urlencode($section).'&file='.urlencode($file).'">'.img_delete().'</a>';
 					print '<input type="hidden" name="const['.$i.'][section]" value="'.$section.'">';
 					print '<input type="hidden" name="const['.$i.'][file]" value="'.$file.'">';
 				}

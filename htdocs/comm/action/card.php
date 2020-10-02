@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
+$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda", "mails"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -393,31 +393,36 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-                //Create eminder
+                //Create reminders
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
-                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
+                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
 
                     $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
-                    $actionCommReminder->fk_user = $user;
                     $actionCommReminder->offsetunit = $offsetunit;
                     $actionCommReminder->offsetvalue = $offsetvalue;
                     $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
                     $actionCommReminder->fk_actioncomm = $object->id;
                     if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
-                    $res = $actionCommReminder->create($user);
+                    // the notification must be created for every user assigned to the event
+					foreach ($object->userassigned as $userassigned)
+					{
+						$actionCommReminder->fk_user = $userassigned['id'];
+						$res = $actionCommReminder->create($user);
 
-                    if ($res <= 0){
-                        // If error
-                        $error++;
-                        $langs->load("errors");
-                        $error = $langs->trans('ErrorReminderActionCommCreation').' '.$actionCommReminder->error;
-                        setEventMessages($error, $actionCommReminder->errors, 'errors');
-                        $action = 'create'; $donotclearsession = 1;
-                    }
+						if ($res <= 0){
+							// If error
+							$db->rollback();
+							$langs->load("errors");
+							$error = $langs->trans('ErrorReminderActionCommCreation');
+							setEventMessages($error, null, 'errors');
+							$action = 'create'; $donotclearsession = 1;
+							break;
+						}
+					}
                 }
 
                 if ($error) {
@@ -634,9 +639,51 @@ if (empty($reshook) && $action == 'update')
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
+				$object->loadReminders();
+				if (!empty($object->reminders) && $object->datep > dol_now())
+				{
+					foreach ($object->reminders as $reminder)
+					{
+						$reminder->delete($user);
+					}
+					$object->reminders = array();
+				}
+
+				//Create reminders
+				if ($addreminder == 'on' && $object->datep > dol_now()){
+					$actionCommReminder = new ActionCommReminder($db);
+
+					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+
+					$actionCommReminder->dateremind = $dateremind;
+					$actionCommReminder->typeremind = $remindertype;
+					$actionCommReminder->offsetunit = $offsetunit;
+					$actionCommReminder->offsetvalue = $offsetvalue;
+					$actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+					$actionCommReminder->fk_actioncomm = $object->id;
+					if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+
+					// the notification must be created for every user assigned to the event
+					foreach ($object->userassigned as $userassigned)
+					{
+						$actionCommReminder->fk_user = $userassigned['id'];
+						$res = $actionCommReminder->create($user);
+
+						if ($res <= 0){
+							// If error
+							$langs->load("errors");
+							$error = $langs->trans('ErrorReminderActionCommCreation');
+							setEventMessages($error, null, 'errors');
+							$action = 'create'; $donotclearsession = 1;
+							break;
+						}
+					}
+				}
+
 				unset($_SESSION['assignedtouser']);
 
-				$db->commit();
+				if (!$error) $db->commit();
+				else $db->rollback();
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
@@ -1236,7 +1283,7 @@ if ($action == 'create')
                             }
 	            		 });
 
-	            		$("#selectremindertype").click(function(){
+	            		$("#selectremindertype").change(function(){
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
@@ -1662,43 +1709,81 @@ if ($id > 0)
 		// Reminders
 		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
 		{
-			$filtreuserid = $user->id;
-			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
-			$object->loadReminders('', $filteruserid);
+			$filteruserid = $user->id;
+			if ($user->rights->agenda->allactions->read) $filteruserid = 0;
+			$object->loadReminders('', $filteruserid, false);
 
 			print '<hr>';
 
-			print '<table class="border tableforfield centpercent">';
-
-			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
-
 			if (count($object->reminders) > 0) {
-				if (count($object->reminders) > 0) {
-					$tmpuserstatic = new User($db);
+				$checked = 'checked';
+				$keys = array_keys($object->reminders);
+				$firstreminderId = array_shift($keys);
 
-					foreach ($object->reminders as $actioncommreminderid => $actioncommreminder) {
-						print $TRemindTypes[$actioncommreminder->typeremind];
-						if ($actioncommreminder->fk_user > 0) {
-							$tmpuserstatic->fetch($actioncommreminder->fk_user);
-							print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
-						}
-						print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
-						if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
-							print ' - <span class="opacitymedium">';
-							print $langs->trans("NotSent");
-							print ' </span>';
-						} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
-							print ' - <span class="opacitymedium">';
-							print $langs->trans("Done");
-							print ' </span>';
-						}
-					}
-				}
+				$actionCommReminder = $object->reminders[$firstreminderId];
+			} else {
+				$checked = '';
+				$actionCommReminder = new ActionCommReminder($db);
+				$actionCommReminder->offsetvalue = 10;
+				$actionCommReminder->offsetunit = 'i';
+				$actionCommReminder->typeremind = 'email';
 			}
 
+			print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder" '.$checked.'></td></tr>';
+
+			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
+
+			print '<table class="border centpercent">';
+
+			//Reminder
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
+			print '<input type="number" name="offsetvalue" value="'.$actionCommReminder->offsetvalue.'" size="5">';
+			print '</td></tr>';
+
+			//Time Type
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit);
+			print '</td></tr>';
+
+			//Reminder Type
+			$TRemindTypes = array();
+			if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
+			if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind);
+			print '</td></tr>';
+
+			$hide = '';
+			if ($actionCommReminder->typeremind == 'browser') $hide = 'style="display:none;"';
+
+			//Mail Model
+			print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
 			print '</td></tr>';
 
 			print '</table>';
+
+			print "\n".'<script type="text/javascript">';
+			print '$(document).ready(function () {
+	            		$("#addreminder").click(function(){
+	            		    if (this.checked) {
+	            		      $(".reminderparameters").show();
+                            } else {
+                            $(".reminderparameters").hide();
+                            }
+	            		 });
+
+	            		$("#selectremindertype").change(function(){
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    };
+	            		});
+
+                   })';
+			print '</script>'."\n";
 		}
 
 		dol_fiche_end();
@@ -1980,7 +2065,7 @@ if ($id > 0)
         {
         	$filtreuserid = $user->id;
         	if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
-        	$object->loadReminders('', $filteruserid);
+        	$object->loadReminders('', $filteruserid, false);
 
         	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminders").'</td><td>';
 
@@ -1991,7 +2076,7 @@ if ($id > 0)
         			print $TRemindTypes[$actioncommreminder->typeremind];
         			if ($actioncommreminder->fk_user > 0) {
         				$tmpuserstatic->fetch($actioncommreminder->fk_user);
-        				print ' ('.$tmpuser->getNomUrl(0, '', 0, 0, 16).')';
+        				print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
         			}
         			print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
         			if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
@@ -2003,6 +2088,7 @@ if ($id > 0)
         				print $langs->trans("Done");
         				print ' </span>';
         			}
+        			print '<br>';
         		}
         	}
 
@@ -2050,7 +2136,7 @@ if ($id > 0)
 			if ($user->rights->agenda->allactions->delete ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete))
 			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}

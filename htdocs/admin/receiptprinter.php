@@ -340,11 +340,11 @@ if ($mode == 'config' && $user->admin) {
                 print img_picto($langs->trans("Edit"), 'edit');
                 print '</a>';
                 // delete icon
-                print '<a class="marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=deleteprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print '<a class="marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=deleteprinter&amp;token='.newToken().'&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
                 print img_picto($langs->trans("Delete"), 'delete');
                 print '</a>';
                 // test icon
-                print '<a class="marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print '<a class="marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;token='.newToken().'&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinter"), 'printer');
                 print '</a></td>';
                 print '</tr>';

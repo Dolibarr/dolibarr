@@ -1258,7 +1258,7 @@ while ($i < min($num, $limit))
 		{
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm' . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm&token='.newToken() . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
 		}
 		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;

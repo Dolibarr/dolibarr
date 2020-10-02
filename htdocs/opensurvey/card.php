@@ -371,7 +371,7 @@ if ($action != 'edit' && $user->rights->opensurvey->write) {
 	}
 
 	//Delete button
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondage.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.$numsondage.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 }
 
 print '</div>';

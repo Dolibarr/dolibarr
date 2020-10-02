@@ -125,12 +125,12 @@ if (!empty($object->comments))
         } else {
             if ($fk_user == $user->id || $user->admin == 1)
             {
-                print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
+                print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
                 print img_picto('', 'edit.png');
                 print '</a>';
             }
             if (($first && $fk_user == $user->id) || $user->admin == 1) {
-                print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
+                print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&token='.newToken().'&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
                 print img_picto('', 'delete.png');
                 print '</a>';
             }

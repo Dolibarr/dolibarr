@@ -112,11 +112,11 @@ print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
 if ($production_mode)
 {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=0">';
+    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
     print '</a></td>';
 } else {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=1">';
+    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
     print '</a></td>';
 }

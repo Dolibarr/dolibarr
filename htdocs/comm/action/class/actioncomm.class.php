@@ -495,7 +495,7 @@ class ActionComm extends CommonObject
 		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
 		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
-		$sql .= ($this->ref_ext ? ("'".$this->db->idate($this->ref_ext)."'") : "null").", ";
+		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
@@ -917,6 +917,18 @@ class ActionComm extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
 			$sql .= " WHERE fk_actioncomm=".$this->id;
+
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		if (!$error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE fk_actioncomm = ".$this->id;
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1958,9 +1970,10 @@ class ActionComm extends CommonObject
 	 *
 	 *  @param	string	$type		Type of reminder 'browser' or 'email'
 	 *  @param	int		$fk_user	Id of user
+	 *  @param	bool	$onlypast	true = get only past reminder, false = get all reminders linked to this
 	 *  @return int         		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function loadReminders($type = '', $fk_user = 0)
+	public function loadReminders($type = '', $fk_user = 0, $onlypast = true)
 	{
 		global $conf, $langs, $user;
 
@@ -1971,7 +1984,10 @@ class ActionComm extends CommonObject
 		//Select all action comm reminders for event
 		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE fk_actioncomm = ".$this->id." AND dateremind <= '".$this->db->idate(dol_now())."'";
+		$sql .= " WHERE fk_actioncomm = ".$this->id;
+		if ($onlypast) {
+			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		}
 		if ($type) {
 			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
 		}

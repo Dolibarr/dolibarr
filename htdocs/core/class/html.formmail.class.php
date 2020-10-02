@@ -653,7 +653,7 @@ class FormMail extends Form
 						$out .= ' &lt;'.$this->tomail.'&gt;';
 						if ($this->withtofree)
 						{
-							$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "").'" />';
+							$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
 						}
 					} else {
 						// Note withto may be a text like 'AllRecipientSelected'
@@ -663,7 +663,7 @@ class FormMail extends Form
 					// The free input of email
 					if (!empty($this->withtofree))
 					{
-						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (isset($_REQUEST["sendto"]) ? $_REQUEST["sendto"] : $this->withto) : "")).'" />';
+						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
 					}
 					// The select combo
 					if (!empty($this->withto) && is_array($this->withto))
@@ -675,7 +675,9 @@ class FormMail extends Form
 						{
 							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
-						$withtoselected = GETPOST("receiver", 'restricthtml'); // Array of selected value
+
+						$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
+
 						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 						{
 							$withtoselected = array_keys($tmparray);
@@ -699,7 +701,7 @@ class FormMail extends Form
 				{
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtoselected = GETPOST("receiveruser", 'restricthtml'); // Array of selected value
+				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 				{
 					$withtoselected = array_keys($tmparray);
@@ -743,7 +745,7 @@ class FormMail extends Form
 						{
 							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 						}
-						$withtoccselected = GETPOST("receivercc"); // Array of selected value
+						$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
 						$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
 					}
 				}
@@ -763,7 +765,7 @@ class FormMail extends Form
 				{
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtoselected = GETPOST("receiverccuser", 'restricthtml'); // Array of selected value
+				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend')
 				{
 					$withtoselected = array_keys($tmparray);
@@ -1060,7 +1062,7 @@ class FormMail extends Form
 		if (!empty($this->withtocccreadonly)) {
 			$out .= (!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : "";
 		} else {
-			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOST("sendtoccc", "alpha") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
+			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
 			if (!empty($this->withtoccc) && is_array($this->withtoccc)) {
 				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
@@ -1068,7 +1070,7 @@ class FormMail extends Form
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
-				$withtocccselected = GETPOST("receiverccc"); // Array of selected value
+				$withtocccselected = GETPOST("receiverccc", 'array'); // Array of selected value
 				$out .= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null, null, "90%");
 			}
 		}

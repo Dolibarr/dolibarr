@@ -371,6 +371,7 @@ MulticurrencyPaymentAmount=Payment amount, original currency
 MulticurrencyAmountHT=Amount (excl. tax), original currency
 MulticurrencyAmountTTC=Amount (inc. of tax), original currency
 MulticurrencyAmountVAT=Amount tax, original currency
+MulticurrencySubPrice=Amount sub price multi currency
 AmountLT1=Amount tax 2
 AmountLT2=Amount tax 3
 AmountLT1ES=Amount RE

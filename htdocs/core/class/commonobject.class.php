@@ -5800,7 +5800,7 @@ abstract class CommonObject
 		} elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif ($type == 'text')
+		} elseif (preg_match('/^text/', $type))
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -5810,7 +5810,7 @@ abstract class CommonObject
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		} elseif ($type == 'html')
+		} elseif (preg_match('/^html/', $type))
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -6584,7 +6584,7 @@ abstract class CommonObject
 					return 'Error bad setup of extrafield';
 				}
 			} else $value = '';
-		} elseif ($type == 'text' || $type == 'html')
+		} elseif (preg_match('/^(text|html)/', $type))
 		{
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password')
@@ -7152,7 +7152,7 @@ abstract class CommonObject
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
 								// Link to delete
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;token='.newToken().'&amp;file='.urlencode($pdir.$viewfilename).'">';
 								$return .= img_delete().'</a>';
 							}
 						}
@@ -7178,7 +7178,7 @@ abstract class CommonObject
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
 								// Link to delete
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;token='.newToken().'&amp;file='.urlencode($pdir.$viewfilename).'">';
 								$return .= img_delete().'</a>';
 							}
 						}

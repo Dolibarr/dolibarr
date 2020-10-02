@@ -22,6 +22,8 @@
  * \brief		Setup page to configure journals
  */
 
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -636,19 +638,19 @@ if ($id)
 
 					// Active
 					print '<td class="nowrap center">';
-					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
 					if ($iserasable)
 					{
 						print '<td class="center">';
-						if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+						if ($user->admin) print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 						print '</td>';
 					} else print '<td>&nbsp;</td>';

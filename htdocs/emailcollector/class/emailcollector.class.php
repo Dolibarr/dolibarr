@@ -1006,6 +1006,8 @@ class EmailCollector extends CommonObject
 			if ($rule['type'] == 'smaller') $search .= ($search ? ' ' : '').'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
 			if ($rule['type'] == 'larger')  $search .= ($search ? ' ' : '').'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 
+			if ($rule['type'] == 'withtrackingidinmsgid') { $searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/'; }
+			if ($rule['type'] == 'withouttrackingidinmsgid') { $searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/'; }
 			if ($rule['type'] == 'withtrackingid') { $searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/'; }
 			if ($rule['type'] == 'withouttrackingid') { $searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/'; }
 

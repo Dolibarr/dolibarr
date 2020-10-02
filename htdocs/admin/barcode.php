@@ -396,11 +396,11 @@ if ($conf->product->enabled)
 
 	    			if ($conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file")
 	    			{
-	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;value='.$file.'">';
+	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 	    				print img_picto($langs->trans("Activated"), 'switch_on');
 	    				print '</a></td>';
 	    			} else {
-	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;value='.$file.'">';
+	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducto&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 	    				print img_picto($langs->trans("Disabled"), 'switch_off');
 	    				print '</a></td>';
 	    			}
