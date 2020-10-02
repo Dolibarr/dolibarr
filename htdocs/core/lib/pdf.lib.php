@@ -1315,7 +1315,11 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 					{
 						$libelleproduitservice = $desc."\n".$libelleproduitservice;
 					} else {
-						$libelleproduitservice .= $desc;
+						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF)) {
+							$libelleproduitservice = $desc;
+						} else {
+							$libelleproduitservice .= $desc;
+						}
 					}
 				}
 			} else {
