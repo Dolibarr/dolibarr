@@ -1689,8 +1689,11 @@ function phpinfo_array()
 {
 	ob_start();
 	phpinfo();
+	$phpinfostring = ob_get_contents();
+	ob_end_clean();
+
 	$info_arr = array();
-	$info_lines = explode("\n", strip_tags(ob_get_clean(), "<tr><td><h2>")); // end of ob_start()
+	$info_lines = explode("\n", strip_tags($phpinfostring, "<tr><td><h2>"));
 	$cat = "General";
 	foreach ($info_lines as $line)
 	{
