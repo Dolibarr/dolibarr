@@ -1733,16 +1733,7 @@ class Form
 					$disableline = '';
 					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) $disableline = ($enableonlytext ? $enableonlytext : '1');
 
-					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected)))
-					{
-						$out .= '<option value="'.$obj->rowid.'"';
-						if ($disableline) $out .= ' disabled';
-						$out .= ' selected>';
-					} else {
-						$out .= '<option value="'.$obj->rowid.'"';
-						if ($disableline) $out .= ' disabled';
-						$out .= '>';
-					}
+					$labeltoshow = '';
 
 					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
 					$fullNameMode = 0;
@@ -1750,7 +1741,7 @@ class Form
 					{
 						$fullNameMode = 1; //Firstname+lastname
 					}
-					$out .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
 					// Complete name with more info
 					$moreinfo = '';
@@ -1764,7 +1755,7 @@ class Form
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						}
-						if ($obj->statut == 0)
+						if ($obj->statut == 0 && $showstatus == 1)
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
@@ -1783,8 +1774,20 @@ class Form
 					{
 						$moreinfo .= ' - '.$disableline; // This is text from $enableonlytext parameter
 					}
-					$out .= $moreinfo;
+					$labeltoshow .= $moreinfo;
+
+					$out .= '<option value="'.$obj->rowid.'"';
+					if ($disableline) $out .= ' disabled';
+					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
+						$out .= ' selected';
+					}
+					if ($showstatus >= 0 && $obj->statut == 0) {
+						$out .= ' data-html="'.dol_escape_htmltag('<strike class="opacitymediumxxx">'.$labeltoshow.'</strike>').'"';
+					}
+					$out .= '>';
+					$out .= $labeltoshow;
 					$out .= '</option>';
+
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength).$moreinfo;
 
 					$i++;
