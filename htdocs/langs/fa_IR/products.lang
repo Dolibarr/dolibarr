@@ -22,6 +22,8 @@ ProductVatMassChangeDesc=این ابزار نرخ مالیات بر ارزش ا�
 MassBarcodeInit=تعریف دستجمعی بارکد
 MassBarcodeInitDesc=این صفحه می‌تواند برای تعریف بارکد اشیائی که برای آن‌ها بارکد تعریف نشده استفاده شود. قبل از استفاده، مطمئن شوید واحد بارکد به خوبی نصب و برپاسازی شده است.
 ProductAccountancyBuyCode=کد حساب‌داری (خرید)
+ProductAccountancyBuyIntraCode=Accounting code (purchase intra-community)
+ProductAccountancyBuyExportCode=Accounting code (purchase import)
 ProductAccountancySellCode=کد  حساب‌داری (فروش)
 ProductAccountancySellIntraCode=کد حساب‌داری (فروش داخل جامعه‌ای-اروپا)
 ProductAccountancySellExportCode=کد حساب‌داری (فروش صادرات)
@@ -41,7 +43,7 @@ ServicesOnSaleOnly=خدمات فقط برای فروش
 ServicesOnPurchaseOnly=خدمات فقط برای خرید
 ServicesNotOnSell=خدمات نه برای خرید و نه برای فروش
 ServicesOnSellAndOnBuy=خدمات هم برای خرید و هم برای فروش
-LastModifiedProductsAndServices=آخرین %s محصولات/خدمات تغییریافته
+LastModifiedProductsAndServices=Latest %s modified products/services
 LastRecordedProducts=آخرین %s محصول ثبت شده
 LastRecordedServices=آخرین %s خدمات ثبت شده
 CardProduct0=محصول
@@ -102,8 +104,10 @@ SetDefaultBarcodeType=تنظیم نوع بارکد
 BarcodeValue=مقدار بارکد
 NoteNotVisibleOnBill=یادداشت (در صورت‌حساب‌ها، پیشنهادها و غیره نمایش داده نمی‌شود)
 ServiceLimitedDuration=در صورتی که محصول، خدماتی با مدت‌زمان محدود است:
+FillWithLastServiceDates=Fill with last service line dates
 MultiPricesAbility=چند قسمت قیمتی در هر محصول/خدمات (هر مشتری در یک قسمت قیمتی است)
 MultiPricesNumPrices=تعداد قیمت‌ها
+DefaultPriceType=Base of prices per default (with versus without tax) when adding new sale prices
 AssociatedProductsAbility=فعال‌کردن محصولات مجازی (بسته‌ها)
 AssociatedProducts=محصولات مجازی
 AssociatedProductsNumber=تعداد محصولاتی که این محصول مجازی را درست می‌کنند
@@ -165,7 +169,9 @@ SuppliersPrices=قیمت‌های فروشنده
 SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
 CustomCode=گمرک / کالا / کدبندی هماهنگ کالا
 CountryOrigin=کشور مبدا
-Nature=Nature of produt (material/finished)
+Nature=Nature of product (material/finished)
+NatureOfProductShort=Nature of product
+NatureOfProductDesc=Raw material or finished product
 ShortLabel=برچسب کوتاه
 Unit=واحد
 p=واحد
@@ -356,6 +362,9 @@ SelectCombination=انتخاب یک ترکیب
 ProductCombinationGenerator=تولیدکننده انواع
 Features=قابلیت‌ها
 PriceImpact=تاثیر قیم
+ImpactOnPriceLevel=Impact on price level %s
+ApplyToAllPriceImpactLevel= Apply to all levels
+ApplyToAllPriceImpactLevelHelp=By clicking here you set the same price impact on all levels
 WeightImpact=تاثیر وزن
 NewProductAttribute=ویژگی های جدید
 NewProductAttributeValue=نوع جدید ویژگی

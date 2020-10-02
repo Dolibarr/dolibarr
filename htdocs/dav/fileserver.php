@@ -82,7 +82,7 @@ $tmpDir = $conf->dav->multidir_output[$entity]; // We need root dir, not a dir t
 
 
 // Authentication callback function
-$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function($username, $password) {
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
 	global $user;
 	global $conf;
 	global $dolibarr_main_authentication, $dolibarr_auto_user;

@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
@@ -74,8 +75,7 @@ if ($module == 'ecm')
 
 	$relativepath = $ecmdir->getRelativePath();
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-}
-else	// For example $module == 'medias'
+} else // For example $module == 'medias'
 {
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
@@ -110,9 +110,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			$result = $ecmdir->changeNbOfFiles('+');
-		}
-		else
-		{
+		} else {
    			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
@@ -120,15 +118,12 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
 			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
 				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			}
-			else	// Known error
+			} else // Known error
 			{
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
-	}
-	else
-	{
+	} else {
 		// Failed transfer (exceeding the limit file?)
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
@@ -167,20 +162,15 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 			$langs->load('errors');
 			setEventMessages($langs->trans($ecmdir->error, $ecmdir->label), null, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		if ($deletedirrecursive)
 		{
 			$resbool = dol_delete_dir_recursive($upload_dir, 0, 1);
-		}
-		else
-		{
+		} else {
 			$resbool = dol_delete_dir($upload_dir, 1);
 		}
 		if ($resbool) $result = 1;
-		else
-		{
+		else {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFailToDeleteDir", $upload_dir), null, 'errors');
 			$result = 0;
@@ -203,9 +193,7 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 		$oldlabel = $ecmdir->label;
 		$olddir = $ecmdir->getRelativePath(0);
 		$olddir = $conf->ecm->dir_output.'/'.$olddir;
-	}
-	else
-	{
+	} else {
 		$olddir = GETPOST('section', 'alpha');
 		$olddir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 	}
@@ -217,6 +205,16 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
 		$ecmdir->description = GETPOST("description");
+		$ret = $extrafields->setOptionalsFromPost(null, $ecmdir);
+		if ($ret < 0) $error++;
+		if (!$error) {
+			// Actions on extra fields
+			$result = $ecmdir->insertExtraFields();
+			if ($result < 0) {
+				setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+				$error++;
+			}
+		}
 		$result = $ecmdir->update($user);
 		if ($result > 0)
 		{
@@ -242,20 +240,14 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 				// Set new value after renaming
 				$relativepath = $ecmdir->getRelativePath();
 				$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
 
 		$result = @rename($olddir, $newdir);
@@ -285,6 +277,10 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 $form = new Form($db);
 
 $object = new EcmDirectory($db); // Need to create a new one instance
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 
 if ($module == 'ecm')
 {
@@ -334,15 +330,12 @@ if ($module == 'ecm')
 		if ($i == 0 && $action == 'edit')
 		{
 			$s = '<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
-		}
-		else $s = $tmpecmdir->getNomUrl(1).$s;
+		} else $s = $tmpecmdir->getNomUrl(1).$s;
 		if ($tmpecmdir->fk_parent)
 		{
 			$s = ' -> '.$s;
 			$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
-		}
-		else
-		{
+		} else {
 			$tmpecmdir = 0;
 		}
 		$i++;
@@ -365,8 +358,7 @@ if ($module == 'medias')
 				$s .= '<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$subdir.'">';
 				$s .= '<input type="hidden" name="oldrelparentdir" value="'.dirname($section).'">';
 				$s .= '<input type="hidden" name="oldreldir" value="'.basename($section).'">';
-			}
-			else $s .= $subdir;
+			} else $s .= $subdir;
 		}
 		if ($i < (count($subdirs) - 1))
 		{
@@ -397,8 +389,7 @@ if ($module == 'ecm')
 		print '<textarea class="flat quatrevingtpercent" name="description">';
 		print $ecmdir->description;
 		print '</textarea>';
-	}
-	else print dol_nl2br($ecmdir->description);
+	} else print dol_nl2br($ecmdir->description);
 	print '</td></tr>';
 
 	print '<tr><td class="titlefield">'.$langs->trans("ECMCreationUser").'</td><td>';
@@ -411,9 +402,7 @@ print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>'
 if ($module == 'ecm')
 {
 	print dol_print_date($ecmdir->date_c, 'dayhour');
-}
-else
-{
+} else {
 	//var_dump($upload_dir);
 	print dol_print_date(dol_filemtime($upload_dir), 'dayhour');
 }
@@ -422,9 +411,7 @@ print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 if ($module == 'ecm')
 {
 	print '/ecm/'.$relativepath;
-}
-else
-{
+} else {
 	print '/'.$module.'/'.$relativepath;
 }
 print '</td></tr>';
@@ -443,6 +430,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
 print '</td></tr>';
+print $object->showOptionals($extrafields, ($action == 'edit' ? 'edit' : 'view'));
 print '</table>';
 
 if ($action == 'edit')
@@ -477,9 +465,7 @@ if ($action != 'edit' && $action != 'delete')
 	if ($permtoadd)
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
@@ -487,10 +473,8 @@ if ($action != 'edit' && $action != 'delete')
 	//{
 	if ($permtoadd)
 	{
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
+	} else {
 		print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 	/*}

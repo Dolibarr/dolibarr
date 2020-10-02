@@ -74,11 +74,10 @@ if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 	if (!is_object($form)) $form = new Form($db);
 	$selected = -1;
 	$searchform .= '<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
-}
-else
-{
+} else {
 	$usedbyinclude = 1; // Used into next include
 	$showtitlebefore = GETPOST('showtitlebefore', 'int');
+	$arrayresult = array();
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
 	$i = 0;
@@ -95,7 +94,8 @@ else
 			$accesskey = $val['label'][0];
 			$accesskeyalreadyassigned[$accesskey] = $accesskey;
 		}
-		$searchform .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('', $val['img'], '', 0, 1), $showtitlebefore, ($i > 0 ? 0 : 1));
+
+		$searchform .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, $val['img'], $showtitlebefore, ($i > 0 ? 0 : 1));
 
 		$i++;
 	}
@@ -107,8 +107,7 @@ $reshook = $hookmanager->executeHooks('printSearchForm', $parameters); // Note t
 if (empty($reshook))
 {
 	$searchform .= $hookmanager->resPrint;
-}
-else $searchform = $hookmanager->resPrint;
+} else $searchform = $hookmanager->resPrint;
 
 
 print "\n";

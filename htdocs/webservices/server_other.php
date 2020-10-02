@@ -137,7 +137,12 @@ $server->register(
 
 
 
-// Full methods code
+/**
+ * Full methods code
+ *
+ * @param	string		$authentication		Authentication string
+ * @return	array							Array of data
+ */
 function getVersions($authentication)
 {
 	global $db, $conf, $langs;
@@ -299,8 +304,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 					'document'=>$objectret
 				);
 			}
-			else
-			{
+			else {
 				dol_syslog("File doesn't exist ".$original_file);
 				$errorcode = 'NOT_FOUND';
 				$errorlabel = '';

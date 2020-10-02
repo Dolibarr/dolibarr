@@ -101,7 +101,7 @@ $form = new Form($db);
 
 $morehead = '';
 if (!empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
-else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
+else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
@@ -152,18 +152,14 @@ if ($result)
 			print '<td>';
 			print $form->showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
-		}
-		else
-		{
+		} else {
 			print "<td>&nbsp;</td>\n";
 		}
 		print "</tr>";
 		$i++;
 	}
 	print "</table>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

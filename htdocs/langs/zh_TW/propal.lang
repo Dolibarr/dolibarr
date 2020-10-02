@@ -84,3 +84,4 @@ DefaultModelPropalClosed=當關閉企業提案/建議書時使用的預設範本
 ProposalCustomerSignature=書面驗收，公司印章，日期和簽名
 ProposalsStatisticsSuppliers=供應商提案/建議書統計
 CaseFollowedBy=案件追蹤者
+SignedOnly=Signed only

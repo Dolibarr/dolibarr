@@ -109,8 +109,7 @@ if ($reshook < 0) {
 		print '<div class="error">'.$hookmanager->error.'</div>';
 	}
 	llxFooterVierge();
-}
-elseif (empty($reshook)) {
+} elseif (empty($reshook)) {
 	// Check exportkey
 	if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_GET["exportkey"]) {
 		$user->getrights();
@@ -188,9 +187,7 @@ if ($format == 'ical' || $format == 'vcal')
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
-	}
-	else
-	{
+	} else {
 		print 'Error '.$agenda->error;
 
 		exit;
@@ -226,9 +223,7 @@ if ($format == 'rss')
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
-	}
-	else
-	{
+	} else {
 		print 'Error '.$agenda->error;
 
 		exit;

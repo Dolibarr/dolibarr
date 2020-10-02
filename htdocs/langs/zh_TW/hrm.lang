@@ -11,7 +11,7 @@ CloseEtablishment=關閉營業所
 # Dictionary
 DictionaryPublicHolidays=HRM-公共假期
 DictionaryDepartment=HRM-部門清單
-DictionaryFunction=HRM-功能清單
+DictionaryFunction=人力資源管理-職位
 # Module
 Employees=員工
 Employee=員工

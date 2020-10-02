@@ -45,7 +45,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
 	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= ", ps.reel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$conf_fkentrepot."'";
+	if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '".$db->escape($conf_fkentrepot)."'";
 	$sql .= " WHERE p.entity IN (".getEntity('product').")";
 	$sql .= " AND p.tosell = 1";
 	$sql .= " AND p.fk_product_type = 0";
@@ -55,9 +55,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 		$sql .= " AND (p.ref LIKE '".$db->escape($search)."%' OR p.label LIKE '".$db->escape($search)."%'";
 		if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '".$db->escape($search)."%'";
 		$sql .= ")";
-	}
-	else
-	{
+	} else {
 		$sql .= " AND (p.ref LIKE '%".$db->escape($search)."%' OR p.label LIKE '%".$db->escape($search)."%'";
 		if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '%".$db->escape($search)."%'";
 		$sql .= ")";
@@ -98,9 +96,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			$resultat .= '</ul>';
 
 			print $resultat;
-		}
-		else
-		{
+		} else {
 			$langs->load("cashdesk");
 
 			print '<ul class="dhtml_bloc">';

@@ -229,9 +229,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 					{
 						$enddate = dol_time_plus_duree($startdate, 1, "d");
 					}
-				}
-				else
-				{
+				} else {
 					if (empty($enddate))
 					{
 						$enddate = $startdate + $duration;
@@ -251,7 +249,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				}
 
 				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
-				fwrite($calfileh, "STATUS:CONFIRMED"."\n");
+				fwrite($calfileh, "STATUS:CONFIRMED\n");
 
 				if (!empty($transparency))
 				{
@@ -295,7 +293,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
 				fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
 				fwrite($calfileh, "DESCRIPTION:".$encoding.$description."\n");
-				fwrite($calfileh, "STATUS:CONFIRMED"."\n");
+				fwrite($calfileh, "STATUS:CONFIRMED\n");
 				fwrite($calfileh, "CATEGORIES:".$category."\n");
 				fwrite($calfileh, "LOCATION:".$location."\n");
 				fwrite($calfileh, "TRANSP:OPAQUE\n");
@@ -315,9 +313,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		{
 			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
-	}
-	else
-	{
+	} else {
 		dol_syslog("xcal.lib.php::build_calfile Failed to open file ".$outputfile." for writing");
 		return -2;
 	}
@@ -334,9 +330,10 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
+ *  @param		string	$langcode			Language code to show in header
  *  @return     int                         < 0 if ko, Nb of events in file if ok
  */
-function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '')
+function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
 {
 	global $user, $conf, $langs;
 	global $dolibarr_main_url_root;
@@ -362,7 +359,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, '<rss version="2.0">');
 		fwrite($fichier, "\n");
 
-		fwrite($fichier, "<channel>\n<title>".$title."</title>\n");
+		fwrite($fichier, "<channel>\n");
+		fwrite($fichier, "<title>".$title."</title>\n");
+		if ($langcode) fwrite($fichier, "<language>".$langcode."</language>\n");
 
 		/*
         fwrite($fichier, "<description><![CDATA[".$desc.".]]></description>"."\n".
@@ -381,7 +380,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
 		}
 
-		fwrite($fichier, "<link><![CDATA[".$url."]]></link>"."\n");
+		fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 
 		foreach ($events_array as $key => $event)
 		{
@@ -480,9 +479,9 @@ function format_cal($format, $string)
 	if ($format === "ical")
 	{
 		// Replace new lines chars by "\n"
-		$newstring = preg_replace("/"."\r\n"."/i", "\\n", $newstring);
-		$newstring = preg_replace("/"."\n\r"."/i", "\\n", $newstring);
-		$newstring = preg_replace("/"."\n"."/i", "\\n", $newstring);
+		$newstring = preg_replace("/\r\n/i", "\\n", $newstring);
+		$newstring = preg_replace("/\n\r/i", "\\n", $newstring);
+		$newstring = preg_replace("/\n/i", "\\n", $newstring);
 
 		// Must not exceed 75 char. Cut with "\r\n"+Space
 		$newstring = calEncode($newstring);
@@ -525,9 +524,7 @@ function calEncode($line)
 		}
 
 		$out .= $newpara;
-	}
-	else
-	{
+	} else {
 		$strlength = dol_strlen($line);
 
 		for ($j = 0; $j < $strlength; $j++)
@@ -586,7 +583,7 @@ function quotedPrintEncode($str, $forcal = 0)
 			if ((strlen($newpara) + strlen($char)) >= 76)
 			{
 				// New line with carray-return (CR) and line-feed (LF)
-				$out .= $newpara."="."\r\n";
+				$out .= $newpara."=\r\n";
 
 				// extra space for cal
 				if ($forcal)

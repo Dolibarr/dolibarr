@@ -136,6 +136,7 @@ if ($object->id)
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
@@ -178,7 +179,6 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-
     print '<table class="border tableforfield centpercent">';
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
@@ -193,9 +193,7 @@ if ($object->id)
     $permtoedit = $user->rights->contrat->creer;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

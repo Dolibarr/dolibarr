@@ -67,12 +67,12 @@ if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
     }
 }
 
-print '<span class="opacitymedium">';
-print $langs->trans("SetupDescription1");
+print '<span class="opacitymedium hideonsmartphone">';
+print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
-print '</span>';
 print "<br><br>";
+print '</span>';
 
 print '<br>';
 

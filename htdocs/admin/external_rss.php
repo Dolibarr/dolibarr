@@ -60,9 +60,7 @@ if ($result)
         preg_match('/([0-9]+)$/i', $obj->name, $reg);
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -82,8 +80,8 @@ if ($action == 'add' || GETPOST("modify"))
 		{
 			// Supprime boite box_external_rss de definition des boites
             /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
-			$sql.= " SET name = '".$boxlabel."'";
-	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
+			$sql.= " SET name = '".$db->escape($boxlabel)."'";
+	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape($_POST["norss"])." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)
@@ -92,9 +90,7 @@ if ($action == 'add' || GETPOST("modify"))
 				exit;
 	        }
             */
-		}
-		else
-		{
+		} else {
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
 			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
@@ -113,9 +109,7 @@ if ($action == 'add' || GETPOST("modify"))
             $db->commit();
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -161,9 +155,7 @@ if ($_POST["delete"])
 			}
 
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			dol_print_error($db, "sql=".$sql);
 			exit;
@@ -178,9 +170,7 @@ if ($_POST["delete"])
             $db->commit();
             header("Location: external_rss.php");
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -240,9 +230,9 @@ dol_syslog("select rss boxes", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$boxlist	= InfoBox::listBoxes($db, 'activated', -1, null);
-	$num		= $db->num_rows($resql);
-	$i			= 0;
+	$boxlist = InfoBox::listBoxes($db, 'activated', -1, null);
+	$num = $db->num_rows($resql);
+	$i = 0;
 
 	while ($i < $num)
 	{
@@ -271,19 +261,19 @@ if ($resql)
 		print '<input type="submit" class="button buttongen" name="delete" value="'.$langs->trans("Delete").'">';
 		print '<input type="hidden" name="norss" value="'.$idrss.'">';
 		print '</td>';
-		print "</tr>"."\n";
+		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
 		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_".$idrss."\" value=\"".dol_escape_htmltag($conf->global->$keyrsstitle)."\"></td>";
-		print "</tr>"."\n";
+		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
 		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_".$idrss."\" value=\"".dol_escape_htmltag($conf->global->$keyrssurl)."\"></td>";
-		print "</tr>"."\n";
+		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
@@ -292,16 +282,14 @@ if ($resql)
 	    if ($result > 0 && empty($rss->error))
 	    {
 			print '<font class="ok">'.$langs->trans("Online").'</div>';
-		}
-		else
-		{
+		} else {
 			print '<font class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
 			if ($rssparser->error) print ' - '.$langs->trans($rssparser->error);
 			print '</div>';
 		}
 		print "</td>";
-		print "</tr>"."\n";
+		print '</tr>'."\n";
 
 		// Logo
 	    if ($result > 0 && empty($rss->error))
@@ -315,7 +303,7 @@ if ($resql)
 			if ($imageurl) print '<img height="32" src="'.$imageurl.'">';
 			else print $langs->trans("None");
 			print '</td>';
-			print "</tr>"."\n";
+			print '</tr>'."\n";
 		}
 
 		// Active
@@ -323,17 +311,15 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetEnabled').'</td>';
 		print '<td>'.yn($active).'</td>';
-		print "</tr>"."\n";
+		print '</tr>'."\n";
 
 		print '</table>'."\n";
 
-		print "</form>"."\n";
+		print "</form>\n";
 
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -350,9 +336,9 @@ $db->close();
  */
 function _isInBoxList($idrss, array $boxlist)
 {
-	foreach($boxlist as $box)
+	foreach ($boxlist as $box)
 	{
-		if($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false)
+		if ($box->boxcode === "lastrssinfos" && strpos($box->note, $idrss) !== false)
 		{
 			return true;
 		}

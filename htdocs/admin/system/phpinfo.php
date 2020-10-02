@@ -85,13 +85,10 @@ $arrayphpminversionwarning = array(5, 6, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
-}
-elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
+} elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
 }
 
@@ -102,9 +99,7 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["main
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
 }
 
@@ -114,25 +109,34 @@ print '<tr><td>Sessions support</td><td>';
 if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
 }
 
 print '</td></tr>';
+
 print '<tr><td>UTF-8 support</td><td>';
 
 if (!function_exists("utf8_encode"))
 {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
-}
-else
-{
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
+} else {
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
 }
 
 print '</td></tr>';
+
+print '<tr><td>MBString support</td><td>';
+
+if (!function_exists("mb_check_encoding"))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "mbstring");
+} else {
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "mbstring");
+}
+
+print '</td></tr>';
+
 print '</table>';
 
 print '<br>';
@@ -143,7 +147,7 @@ $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="200">'.$langs->trans("Extension").'</td>';
-print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
+//print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
 print '<td align="center">'.$langs->trans("Loaded").'</td>';
 print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
 print '<td>'.$langs->trans("Result").'</td>';
@@ -154,7 +158,7 @@ $name      = "GD";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $activatedExtensions);
+//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -165,7 +169,7 @@ $name      = "Curl";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $activatedExtensions);
+//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -178,7 +182,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 	print "<tr>";
 	print "<td>".$name."</td>";
-	print getTableColumn($name, $activatedExtensions);
+	//print getTableColumn($name, $activatedExtensions);
 	print getTableColumn($name, $loadedExtensions);
 	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -191,7 +195,7 @@ $name      = "xDebug";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $activatedExtensions);
+//print getTableColumn($name, $activatedExtensions);
 print getTableColumn($name, $loadedExtensions);
 print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -208,7 +212,6 @@ foreach ($phparray as $key => $value)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
-	//print '<td width="220px">'.$langs->trans("Parameter").'</td>';
 	print '<td width="220px">'.$key.'</td>';
 	print '<td colspan="2">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
@@ -229,9 +232,7 @@ foreach ($phparray as $key => $value)
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$i = 0;
@@ -340,16 +341,18 @@ function getConfigFilePath()
  */
 function getTableColumn($name, array $list)
 {
+	global $langs;
+
 	$name = strtolower($name);
 	$html = "<td align='center'>";
 
 	if (in_array($name, $list))
 	{
-		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
-	}
-	else
-	{
-		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
+		if ($name == 'xdebug') $html .= '<img src="../../theme/eldy/img/warning.png" title="'.$langs->trans("ModuleActivated", "xdebug").'">';
+		else $html .= '<img src="../../theme/eldy/img/tick.png" title="Ok">';
+	} else {
+		if ($name == 'xdebug') $html .= yn(0);
+		else $html .= '<img src="../../theme/eldy/img/warning.png" title="Warning">';
 	}
 
 	$html .= "</td>";
@@ -382,9 +385,7 @@ function getTableColumnFunction(array $functions)
 	if ($result)
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
-	}
-	else
-	{
+	} else {
 		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
 	}
 
@@ -408,7 +409,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	global $langs;
 
 	$result = true;
-	$result = $result && in_array(strtolower($name), $activated);
+	//$result = $result && in_array(strtolower($name), $activated);
 	$result = $result && in_array(strtolower($name), $loaded);
 
 	foreach ($functions as $function)

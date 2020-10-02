@@ -11,7 +11,7 @@ CloseEtablishment=Luk etablissement
 # Dictionary
 DictionaryPublicHolidays=HRM - helligdage
 DictionaryDepartment=HRM - Afdelingsliste
-DictionaryFunction=HRM - Funktionsliste
+DictionaryFunction=HRM - Job stillinger
 # Module
 Employees=Medarbejdere
 Employee=Employee

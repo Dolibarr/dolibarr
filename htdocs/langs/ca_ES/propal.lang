@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Model per defecte en tancar un pressupost (no facturat)
 ProposalCustomerSignature=Acceptació per escrit, segell de l'empresa, data i signatura
 ProposalsStatisticsSuppliers=Estadístiques de propostes de proveïdors
 CaseFollowedBy=Cas seguit per
+SignedOnly=Només signat

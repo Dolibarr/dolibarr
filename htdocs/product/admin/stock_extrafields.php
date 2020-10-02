@@ -39,7 +39,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'entrepot'; //Must be the $table_element of the class that manage extrafield
 
@@ -68,7 +68,7 @@ print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Warehouses"), -1, 'stock');
+dol_fiche_head($head, 'attributes', $langs->trans("StockSetup"), -1, 'stock');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

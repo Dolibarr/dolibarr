@@ -36,8 +36,8 @@ htdocs/includes/jakub-onderka/
 htdocs/includes/phpdocumentor/
 htdocs/includes/phpspec/
 htdocs/includes/phpunit/
+htdocs/includes/php-parallel-lint/
 htdocs/includes/sebastian/
 htdocs/includes/squizlabs/
-htdocs/includes/symfony/
 htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association

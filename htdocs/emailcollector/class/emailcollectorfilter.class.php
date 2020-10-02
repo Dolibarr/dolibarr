@@ -165,11 +165,11 @@ class EmailCollectorFilter extends CommonObject
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid')) && empty($this->rulevalue))
+		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingidinmsgid', 'withouttrackingidinmsgid', 'withtrackingid', 'withouttrackingid', 'isanswer', 'isnotanswer')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
-			return -1;
+			return -2;
 		}
 
 		return $this->createCommon($user, $notrigger);
@@ -344,8 +344,7 @@ class EmailCollectorFilter extends CommonObject
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -400,32 +399,26 @@ class EmailCollectorFilter extends CommonObject
 		if ($mode == 0)
 		{
 			return $this->labelStatus[$status];
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			return $this->labelStatus[$status];
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
 			elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
 			elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
 			elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 6)
+		} elseif ($mode == 6)
 		{
 			if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
 			elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
@@ -478,9 +471,7 @@ class EmailCollectorFilter extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

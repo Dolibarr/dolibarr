@@ -107,7 +107,7 @@ class printing_printipp extends PrintingDriver
         if (!empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
 
         // select printer uri for module order, propal,...
-        $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$module."' AND driver = 'printipp' AND userid = ".$user->id;
+        $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$this->db->escape($module)."' AND driver = 'printipp' AND userid = ".$user->id;
         $result = $this->db->query($sql);
         if ($result) {
             $obj = $this->db->fetch_object($result);
@@ -115,16 +115,12 @@ class printing_printipp extends PrintingDriver
             {
             	dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
                 $ipp->setPrinterURI($obj->printer_id);
-            }
-            else
-            {
+            } else {
                 if (!empty($conf->global->PRINTIPP_URI_DEFAULT))
                 {
                     dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
                     $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
-                }
-                else
-                {
+                } else {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
@@ -194,7 +190,7 @@ class printing_printipp extends PrintingDriver
             if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
                 $html .= img_picto($langs->trans("Default"), 'on');
             } else {
-                $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;token='.newToken().'&amp;mode=test&amp;varname=PRINTIPP_URI_DEFAULT&amp;driver=printipp&amp;value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             }
             $html .= '</td>';
             $html .= '</tr>'."\n";

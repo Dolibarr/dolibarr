@@ -48,23 +48,18 @@ if (isset($_GET['connect']))
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
+	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
         $servicestatus = 1;
 	}
-}
-else {
+} else {
 	if (isset($_GET['test']))
 	{
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
+	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
 		$servicestatus = 1;
@@ -129,8 +124,8 @@ try {
     ));
 }
 
-/*
- * generate payment response
+/**
+ * Generate payment response
  *
  * @param \Stripe\PaymentIntent $intent PaymentIntent
  * @return void

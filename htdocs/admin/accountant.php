@@ -62,7 +62,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_WEB", GETPOST("web", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE", GETPOST("code", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note", 'none'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
 	if ($action != 'updateedit' && !$error)
 	{
@@ -128,7 +128,7 @@ print '<input name="town" class="minwidth100" id="town" value="'.($conf->global-
 
 // Country
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-//if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
+print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 print $form->select_country($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'country_id');
 if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";
@@ -164,7 +164,7 @@ print '<input name="code" id="code" class="minwidth100" value="'.($conf->global-
 
 // Note
 print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note', 'none') ? GETPOST('note', 'none') : $conf->global->MAIN_INFO_ACCOUNTANT_NOTE).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $conf->global->MAIN_INFO_ACCOUNTANT_NOTE).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';

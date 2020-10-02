@@ -75,7 +75,11 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -84,7 +88,11 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;

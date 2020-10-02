@@ -8,7 +8,7 @@
     font-style: normal;
     font-variant: normal;
     text-rendering: auto;
-    line-height: 26px;
+    line-height: 23px;
 	font-size: <?php echo $topMenuFontSize; ?>;
     -webkit-font-smoothing: antialiased;
     text-align:center;
@@ -124,7 +124,7 @@ div.mainmenu.tools::before {
 }
 
 div.mainmenu.website::before {
-    content: "\f542";
+    content: "\f57d";
 }
 
 div.mainmenu.generic1::before {
@@ -145,12 +145,12 @@ div.mainmenu.generic4::before {
 
 /* Define color of some picto */
 
-.fa-phone, .fa-fax {
-	opacity: 0.5;
+.fa-phone, .fa-mobile-alt, .fa-fax {
+	opacity: 0.7;
 	color: #440;
 }
-.fa-at, .fa-external-link-alt {
-	opacity: 0.5;
+.fa-at, .fa-external-link-alt, .fa-share-alt {
+	opacity: 0.7;
 	color: #304;
 }
 .fa-trash {

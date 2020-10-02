@@ -144,7 +144,7 @@ if ($object->id)
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Description
 	print '<tr><td class="titlefield notopnoleft">';
@@ -179,9 +179,7 @@ if ($object->id)
 		{
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
@@ -231,9 +229,7 @@ if ($object->id)
     			if ($obj['photo_vignette'])
     			{
     				$filename = $obj['photo_vignette'];
-    			}
-    			else
-    			{
+    			} else {
     				$filename = $obj['photo'];
     			}
 
@@ -258,7 +254,7 @@ if ($object->id)
     			}
     			if ($user->rights->categorie->creer)
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
     				print img_delete().'</a>';
     			}
     			if ($nbbyrow) print '</td>';
@@ -280,9 +276,7 @@ if ($object->id)
 			print '<div class="opacitymedium">'.$langs->trans("NoPhotoYet")."</div>";
 		}
 	}
-}
-else
-{
+} else {
     print $langs->trans("ErrorUnknown");
 }
 

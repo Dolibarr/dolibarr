@@ -130,9 +130,7 @@ if ($filteremail)
 	if ($search_all) $sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "m.rowid";
-}
-else
-{
+} else {
 	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE m.entity = ".$conf->entity;
@@ -188,7 +186,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
 
@@ -274,9 +272,7 @@ if ($resql)
 		if ($filteremail)
 		{
 			print $email::libStatutDest($obj->sendstatut, 2);
-		}
-		else
-		{
+		} else {
 			print $email->LibStatut($obj->statut, 5);
 		}
 		print '</td>';
@@ -297,9 +293,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

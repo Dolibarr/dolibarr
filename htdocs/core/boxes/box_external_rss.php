@@ -101,15 +101,15 @@ class box_external_rss extends ModeleBoxes
         if ($result < 0 || !empty($rssparser->error))
         {
             // Show warning
-            $title .= " ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown"))));
+        	$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ? dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
+        	if ($rssparser->error) $errormessage .= " - ".$rssparser->error;
+        	$title .= " ".img_error($errormessage);
             $this->info_box_head = array('text' => $title, 'limit' => 0);
-        }
-        else
-        {
+        } else {
             $this->info_box_head = array(
                 'text' => $title,
                 'sublink' => $link,
-                'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate() ?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")),
+                'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate() ? dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")),
                 'subpicto'=>'globe',
                 'target'=>'_blank',
             );

@@ -50,7 +50,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->trans($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'commande_fournisseur_dispatch'; //Must be the $table_element of the class that manage extrafield
 

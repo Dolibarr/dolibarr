@@ -79,21 +79,19 @@ class FormSocialContrib
             $sql .= " WHERE c.active = 1";
             $sql .= " AND c.fk_pays = ".$mysoc->country_id;
             $sql .= " ORDER BY c.libelle ASC";
-        }
-        else
-        {
+        } else {
             $sql = "SELECT c.id, c.libelle as type";
             $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql .= " WHERE c.active = 1 AND c.fk_pays = co.rowid";
-            $sql .= " AND co.code = '".$mysoc->country_code."'";
+            $sql .= " AND co.code = '".$this->db->escape($mysoc->country_code)."'";
             $sql .= " ORDER BY c.libelle ASC";
         }
 
         dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
-        $resql = $db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $db->num_rows($resql);
+        	$num = $this->db->num_rows($resql);
             if ($num)
             {
             	print '<select class="'.($morecss ? $morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -102,7 +100,7 @@ class FormSocialContrib
                 if ($useempty) print '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object($resql);
+                	$obj = $this->db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
                     if ($obj->id == $selected) print ' selected';
                     print '>'.dol_trunc($obj->type, $maxlen);
@@ -111,15 +109,11 @@ class FormSocialContrib
                 print '</select>';
                 if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
                 if (!empty($conf->use_javascript_ajax)) print ajax_combobox($htmlname);
-            }
-            else
-            {
+            } else {
                 print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
             }
-        }
-        else
-        {
-            dol_print_error($db, $db->lasterror());
+        } else {
+        	dol_print_error($this->db);
         }
     }
 }

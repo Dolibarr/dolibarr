@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Αρχείο ρομπότ (robots.txt)
 WEBSITE_HTACCESS=Ιστοσελίδα .htaccess
 WEBSITE_MANIFEST_JSON=Αρχείο manifest.json ιστότοπου
 WEBSITE_README=Αρχείο README.md
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
 EnterHereLicenseInformation=Εισάγετε εδώ μεταδεδομένα ή πληροφορίες άδειας χρήσης για να συμπληρώσετε ένα αρχείο README.md. εάν διανέμετε τον ιστότοπό σας ως πρότυπο, το αρχείο θα συμπεριληφθεί στο πακέτο πειρασμών.
 HtmlHeaderPage=Κεφαλίδα HTML (ειδικά για αυτή τη σελίδα)
 PageNameAliasHelp=Όνομα ή ψευδώνυμο της σελίδας. <br> Αυτό το ψευδώνυμο χρησιμοποιείται επίσης για τη δημιουργία μιας διεύθυνσης SEO όταν ο ιστότοπος έτρεξε από ένα Virtual host ενός διακομιστή Web (όπως Apacke, Nginx, ...). Χρησιμοποιήστε το κουμπί &quot; <strong>%s</strong> &quot; για να επεξεργαστείτε αυτό το ψευδώνυμο.
@@ -42,7 +43,8 @@ ViewPageInNewTab=Προβολή σελίδας σε νέα καρτέλα
 SetAsHomePage=Ορισμός σαν αρχική σελίδα
 RealURL=Πραγματική διεύθυνση URL
 ViewWebsiteInProduction=Προβάλετε τον ιστότοπο χρησιμοποιώντας τις διευθύνσεις URL για το σπίτι
-SetHereVirtualHost=<u>Χρήση με Apache / NGinx / ...</u> <br> Αν μπορείτε να δημιουργήσετε στον διακομιστή ιστού (Apache, Nginx, ...) ένα ειδικό εικονικό κεντρικό υπολογιστή με ενεργοποιημένη την PHP και έναν κατάλογο Root σε <br> <strong>%s</strong> <br> στη συνέχεια, ορίστε το όνομα του εικονικού κεντρικού υπολογιστή που έχετε δημιουργήσει στις ιδιότητες του ιστότοπου, οπότε η προεπισκόπηση μπορεί να γίνει επίσης χρησιμοποιώντας αυτήν την αποκλειστική πρόσβαση στο διακομιστή web αντί για τον εσωτερικό διακομιστή Dolibarr.
+SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
+ExampleToUseInApacheVirtualHostConfig=Παράδειγμα χρήσης στη ρύθμιση εικονικού κεντρικού υπολογιστή Apache:
 YouCanAlsoTestWithPHPS=<u>Χρήση με ενσωματωμένο διακομιστή PHP</u> <br> Στο περιβάλλον ανάπτυξης, μπορεί να προτιμάτε να δοκιμάσετε τον ιστότοπο με τον ενσωματωμένο διακομιστή ιστού PHP (απαιτείται PHP 5.5) εκτελώντας <br> <strong>php -S 0.0.0.0:8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Εκτελέστε τον ιστότοπό σας με έναν άλλο πάροχο φιλοξενίας Dolibarr</u> <br> Αν δεν διαθέτετε διακομιστή ιστού όπως το Apache ή το NGinx που διατίθεται στο Διαδίκτυο, μπορείτε να εξάγετε και να εισάγετε την ιστοσελίδα σας σε μια άλλη παρουσία Dolibarr που παρέχεται από έναν άλλο πάροχο φιλοξενίας Dolibarr που παρέχει πλήρη ενσωμάτωση στην ενότητα Website. Μπορείτε να βρείτε μια λίστα με ορισμένους παρόχους φιλοξενίας Dolibarr στη <a href="https://saas.dolibarr.org" target="_blank">διεύθυνση https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Ελέγξτε επίσης ότι ο εικονικός κεντρικός υπολογιστής έχει άδεια <strong>%s</strong> σε αρχεία σε <br> <strong>%s</strong>
@@ -56,7 +58,10 @@ NoPageYet=Δεν υπάρχουν ακόμη σελίδες
 YouCanCreatePageOrImportTemplate=Μπορείτε να δημιουργήσετε μια νέα σελίδα ή να εισαγάγετε ένα πλήρες πρότυπο ιστότοπου
 SyntaxHelp=Βοήθεια για συγκεκριμένες συμβουλές σύνταξης
 YouCanEditHtmlSourceckeditor=Μπορείτε να επεξεργαστείτε τον πηγαίο κώδικα HTML χρησιμοποιώντας το κουμπί &quot;Source&quot; στο πρόγραμμα επεξεργασίας.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Μπορείτε να ενσωματώσετε PHP κώδικα μέσα στην πηγή χρησιμοποιώντας tag <strong>&lt;?php ?&gt;</strong>. Οι ακόλουθες γενικές μεταβλητές είναι διαθέσιμες: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> Επίσης, μπορείτε να ενσωματώσετε τα περιεχόμενα μίας άλλης σελίδας με την παρακάτω σύνταξη:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> Μπορείτε να κάνετε ανακατεύθυνση σε άλλη σελίδα/περιεχόμενο με την ακόλουθη σύνταξη (παρατήρηση: μην εξάγετε περιχόμενο πριν την ανακατεύθυνση):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> Για να προσθέσετε σύνδεσμο προς άλλη σελίδα, χρησιμοποιήστε τη σύνταξη:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Για να συμπεριλάβετε ενα  <strong>σύνδεσμο κατεβάσματος</strong> αρχείου αποθηκευμένου στα <strong>documents</strong> φάκελο, χρησιμοποιήστε <strong>document.php</strong> wrapper:<br>Παράδειγμα, για αρχείο στα documents/ecm (χρειάζεται να είναι καταγεγραμμένο), σύνταξη είναι:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Για κοινό αρχείο με κοινό σύνδεσμο (ανοιχτή πρόσβαση με κοινό κλειδί αρχείου), η σύνταξη είναι:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Για να ενσωματώσετε μια <strong>image</strong> αποθηκευμένη στο  <strong>documents</strong> φάκελο, χρησιμοποιήστε το<strong>viewimage.php</strong> wrapper:<br>Παράδειγμα, για μια εικόνα στο documents/medias (ανοιχτός φάκελος για κοινή χρήση), η σύνταξη είναι :<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>Περισσότερα παραδείγματα HTML ή δυναμικό κώδικα διαθεσιμότητα στο <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Σελίδα κλωνοποίησης / κοντέινερ
 CloneSite=Κλωνήστε τον ιστότοπο
 SiteAdded=Προστέθηκε ιστότοπος
@@ -76,7 +81,7 @@ BlogPost=Ανάρτηση
 WebsiteAccount=Λογαριασμός ιστοτόπου
 WebsiteAccounts=Λογαριασμοί ιστοτόπων
 AddWebsiteAccount=Δημιουργία λογαριασμού ιστότοπου
-BackToListOfThirdParty=Επιστροφή στη λίστα για τρίτο μέρος
+BackToListForThirdParty=Επιστροφή στη λίστα για το τρίτο μέρος
 DisableSiteFirst=Απενεργοποιήστε πρώτα τον ιστότοπο
 MyContainerTitle=Ο τίτλος ιστότοπού μου
 AnotherContainer=Αυτός είναι ο τρόπος με τον οποίο μπορείτε να συμπεριλάβετε περιεχόμενο μιας άλλης σελίδας / κοντέινερ (ενδεχομένως να έχετε ένα σφάλμα αν ενεργοποιήσετε τον δυναμικό κώδικα επειδή ο ενσωματωμένος υποελεγχος δεν υπάρχει)
@@ -84,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Λυπούμαστε, αυτός ο ιστότο�
 WEBSITE_USE_WEBSITE_ACCOUNTS=Ενεργοποιήστε τον πίνακα λογαριασμού web site
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Ενεργοποιήστε τον πίνακα για να αποθηκεύσετε λογαριασμούς ιστότοπων (login / pass) για κάθε ιστότοπο / τρίτο μέρος
 YouMustDefineTheHomePage=Πρέπει πρώτα να ορίσετε την προεπιλεγμένη Αρχική σελίδα
-OnlyEditionOfSourceForGrabbedContentFuture=Προειδοποίηση: Η δημιουργία μιας ιστοσελίδας με την εισαγωγή μιας εξωτερικής ιστοσελίδας προορίζεται αποκλειστικά για έμπειρους χρήστες. Ανάλογα με την πολυπλοκότητα της σελίδας πηγής, το αποτέλεσμα της εισαγωγής μπορεί να διαφέρει από το πρωτότυπο. Επίσης, αν η αρχική σελίδα χρησιμοποιεί κοινά στυλ CSS ή αντιφατικό javascript, μπορεί να σπάσει το βλέμμα ή τα χαρακτηριστικά του επεξεργαστή ιστότοπου κατά την εργασία σε αυτή τη σελίδα. Αυτή η μέθοδος είναι ένας πιο γρήγορος τρόπος για να δημιουργήσετε μια σελίδα, αλλά συνιστάται η δημιουργία της νέας σελίδας από την αρχή ή ενός προτεινόμενου προτύπου σελίδας. <br> Σημειώστε επίσης ότι οι τροποποιήσεις της πηγής HTML θα είναι δυνατές όταν το περιεχόμενο της σελίδας έχει αρχικοποιηθεί, αρπάζοντάς το από μια εξωτερική σελίδα (ο εκδότης &quot;Online&quot; ΔΕΝ θα είναι διαθέσιμος)
+OnlyEditionOfSourceForGrabbedContentFuture=Προειδοποίηση: Η δημιουργία ιστοσελίδας με εισαγωγή εξωτερικής ιστοσελίδας προορίζεται για έμπειρους χρήστες. Ανάλογα με την πολυπλοκότητα της σελίδας προέλευσης, το αποτέλεσμα της εισαγωγής ενδέχεται να διαφέρει από το πρωτότυπο. Επίσης, εάν η σελίδα προέλευσης χρησιμοποιεί κοινά στυλ CSS ή javascript σε διένεξη, ενδέχεται να σπάσει την εμφάνιση ή τις δυνατότητες του προγράμματος επεξεργασίας ιστότοπου όταν εργάζεστε σε αυτήν τη σελίδα. Αυτή η μέθοδος είναι ένας πιο γρήγορος τρόπος για να δημιουργήσετε μια σελίδα, αλλά συνιστάται να δημιουργήσετε τη νέα σας σελίδα από το μηδέν ή από ένα προτεινόμενο πρότυπο σελίδας. <br> Σημειώστε επίσης ότι ο ενσωματωμένος επεξεργαστής ενδέχεται να μην λειτουργεί σωστά όταν χρησιμοποιείται σε μια αρπαγή εξωτερική σελίδα.
 OnlyEditionOfSourceForGrabbedContent=Μόνο έκδοση πηγής HTML είναι δυνατή όταν το περιεχόμενο έχει ληφθεί από έναν εξωτερικό ιστότοπο
 GrabImagesInto=Πιάσε επίσης τις εικόνες που βρέθηκαν στο css και τη σελίδα.
 ImagesShouldBeSavedInto=Οι εικόνες πρέπει να αποθηκεύονται στον κατάλογο
@@ -119,8 +124,14 @@ ShowSubContainersOnOff=Η κατάσταση εκτέλεσης &#39;δυναμ�
 GlobalCSSorJS=Παγκόσμιο αρχείο CSS / JS / Header της ιστοσελίδας
 BackToHomePage=Επιστροφή στην αρχική σελίδα...
 TranslationLinks=Μεταφραστικές συνδέσεις
-YouTryToAccessToAFileThatIsNotAWebsitePage=Προσπαθείτε να έχετε πρόσβαση σε μια σελίδα που δεν είναι σελίδα ιστότοπου
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Για καλές πρακτικές SEO, χρησιμοποιήστε ένα κείμενο μεταξύ 5 και 70 χαρακτήρων
-MainLanguage=Main language
-OtherLanguages=Other languages
-UseManifest=Provide a manifest.json file
+MainLanguage=Κύρια γλώσσα
+OtherLanguages=Άλλες γλώσσες
+UseManifest=Καταχωρίστε ένα αρχείο manifest.json
+PublicAuthorAlias=Δημόσιο συντάκτης ψευδώνυμο
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Οι διαθέσιμες γλώσσες ορίζονται σε ιδιότητες ιστότοπου
+ReplacementDoneInXPages=Η αντικατάσταση έγινε σε σελίδες ή κοντέινερ %s
+RSSFeed=RSS Feed
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated

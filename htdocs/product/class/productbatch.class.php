@@ -119,9 +119,7 @@ class Productbatch extends CommonObject
 		{
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -178,9 +176,7 @@ class Productbatch extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -232,9 +228,7 @@ class Productbatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -274,9 +268,7 @@ class Productbatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -330,9 +322,7 @@ class Productbatch extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -424,9 +414,7 @@ class Productbatch extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -494,9 +482,7 @@ class Productbatch extends CommonObject
             $db->free($resql);
 
             return $ret;
-        }
-        else
-        {
+        } else {
             $error = "Error ".$db->lasterror();
             return -1;
         }

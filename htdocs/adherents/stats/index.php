@@ -35,8 +35,7 @@ $userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
 $socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
     $action = '';
     $socid = $user->socid;
 }
@@ -79,12 +78,10 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscripti
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
     $px1->SetData($data);
     $i = $startyear;
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[] = $i;
         $i++;
     }
@@ -112,12 +109,10 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=memberstats&file=subscr
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
     $px2->SetData($data);
     $i = $startyear;
-    while ($i <= $endyear)
-    {
+    while ($i <= $endyear) {
         $legend[] = $i;
         $i++;
     }
@@ -175,17 +170,15 @@ print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
     $year = $val['year'];
-    while ($oldyear > $year + 1)
-    {	// If we have empty year
+    while ($oldyear > $year + 1) {	// If we have empty year
         $oldyear--;
         print '<tr class="oddeven" height="24">';
         print '<td class="center">';
-        print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
+        //print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
-        print '</a>';
+        //print '</a>';
         print '</td>';
         print '<td class="right">0</td>';
         print '<td class="right">0</td>';
@@ -214,8 +207,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     print $px2->show();

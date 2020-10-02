@@ -147,11 +147,11 @@ if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeA
 if ($object->thirdparty->fournisseur)
 {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire) $elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) $elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order']=  $langs->transnoentitiesnoconv('SuppliersOrders');
 
-    // There no contact type for supplier proposals
-    // if ($conf->fournisseur->enabled && $user->rights->supplier_proposal->lire) $elementTypeArray['supplier_proposal']=$langs->transnoentitiesnoconv('SupplierProposals');
+	// There no contact type for supplier proposals
+	// if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->supplier_proposal->lire) $elementTypeArray['supplier_proposal']=$langs->transnoentitiesnoconv('SupplierProposals');
 }
 
 print '</table>';
@@ -178,8 +178,7 @@ if ($type_element == 'fichinter')
 	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
-}
-elseif ($type_element == 'invoice')
+} elseif ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic = new Facture($db);
@@ -193,8 +192,7 @@ elseif ($type_element == 'invoice')
 	$dateprint = 'f.datef';
 	$doc_number = 'f.ref';
 	$thirdTypeSelect = 'customer';
-}
-elseif ($type_element == 'propal')
+} elseif ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic = new Propal($db);
@@ -208,8 +206,7 @@ elseif ($type_element == 'propal')
 	$datePrint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
-}
-elseif ($type_element == 'order')
+} elseif ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic = new Commande($db);
@@ -223,8 +220,7 @@ elseif ($type_element == 'order')
 	$dateprint = 'c.date_commande';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
-}
-elseif ($type_element == 'supplier_invoice')
+} elseif ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic = new FactureFournisseur($db);
@@ -266,8 +262,7 @@ elseif ($type_element == 'supplier_order')
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'supplier';
-}
-elseif ($type_element == 'contract')
+} elseif ($type_element == 'contract')
 { 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic = new Contrat($db);
@@ -423,9 +418,7 @@ if ($sql_select)
 		if ($type_element == 'contract')
 		{
 			print $documentstaticline->getLibStatut(2);
-		}
-		else
-		{
+		} else {
 			print $documentstatic->getLibStatut(2);
 		}
 		print '</td>';
@@ -467,9 +460,7 @@ if ($sql_select)
 				}
 
 				$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
-			}
-			else
-			{
+			} else {
 				$label = $objp->product_label;
 			}
 
@@ -501,29 +492,23 @@ if ($sql_select)
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
 				{
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
 					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
-				}
-				else
-				{
+				} else {
 					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			if ($objp->fk_product > 0) {
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 

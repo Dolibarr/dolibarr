@@ -39,7 +39,7 @@ if (!empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categori
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -212,8 +212,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 
@@ -248,12 +247,7 @@ if ($user->rights->banque->supprimer) $arrayofmassactions['predelete'] = '<span 
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->banque->configurer)
-{
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create');
-}
-
+$newcardbutton = dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create', '', $user->rights->banque->configurer);
 
 // Lines of title fields
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -487,9 +481,7 @@ foreach ($accounts as $key=>$type)
     		$accountingaccount = new AccountingAccount($db);
     		$accountingaccount->fetch('', $objecttmp->account_number, 1);
     		print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
-    	}
-    	else
-    	{
+    	} else {
     		print $objecttmp->account_number;
     	}
     	print '</td>';
@@ -505,9 +497,7 @@ foreach ($accounts as $key=>$type)
     		$accountingjournal = new AccountingJournal($db);
     		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
     		print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-    	}
-    	else
-    	{
+    	} else {
     		print '';
     	}
     	print '</td>';
@@ -556,9 +546,15 @@ foreach ($accounts as $key=>$type)
     }
 
     // Extra fields
+	if (is_array($objecttmp->array_options)) {
+		$obj = new stdClass();
+		foreach ($objecttmp->array_options as $k => $v) {
+			$obj->$k = $v;
+		}
+	}
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters = array('arrayfields'=>$arrayfields);
+    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
     $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp); // Note that $action and $objecttmpect may have been modified by hook
     print $hookmanager->resPrint;
 	// Date creation

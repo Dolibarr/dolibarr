@@ -15,7 +15,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-print '<script type="text/javascript" language="javascript">
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
+
+print '<script>
 	$(document).ready(function() {
 
 		// Click Function
@@ -135,7 +139,7 @@ print '</td></tr>'."\n";
 
 // Customer Country
 print '<tr><td>'.$langs->trans("Country");
-if (count($array_query['cust_country']) > 0) {
+if (!empty($array_query['cust_country'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>'."\n";
@@ -145,7 +149,7 @@ print '</td></tr>'."\n";
 
 // State Customer
 print '<tr><td>'.$langs->trans('Status').' '.$langs->trans('ThirdParty');
-if (count($array_query['cust_status']) > 0) {
+if (!empty($array_query['cust_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -173,7 +177,7 @@ print '</td></tr>'."\n";
 // Prospect/Customer
 $selected = $array_query['cust_typecust'];
 print '<tr><td>'.$langs->trans('ProspectCustomer').' '.$langs->trans('ThirdParty');
-if (count($array_query['cust_typecust']) > 0) {
+if (!empty($array_query['cust_typecust'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -189,7 +193,7 @@ print '</td></tr>'."\n";
 
 // Prospection status
 print '<tr><td>'.$langs->trans('ProspectLevel');
-if (count($array_query['cust_prospect_status']) > 0) {
+if (!empty($array_query['cust_prospect_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -199,7 +203,7 @@ print '</td></tr>'."\n";
 
 // Prospection comm status
 print '<tr><td>'.$langs->trans('StatusProsp');
-if (count($array_query['cust_comm_status']) > 0) {
+if (!empty($array_query['cust_comm_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -209,7 +213,7 @@ print '</td></tr>'."\n";
 
 // Customer Type
 print '<tr><td>'.$langs->trans("ThirdPartyType");
-if (count($array_query['cust_typeent']) > 0) {
+if (!empty($array_query['cust_typeent'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>'."\n";
@@ -219,7 +223,7 @@ print '</td></tr>'."\n";
 
 // Staff number
 print '<td>'.$langs->trans("Staff");
-if (count($array_query['cust_effectif_id']) > 0) {
+if (!empty($array_query['cust_effectif_id'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -229,7 +233,7 @@ print '</td></tr>'."\n";
 
 // Sales manager
 print '<tr><td>'.$langs->trans("SalesRepresentatives");
-if (count($array_query['cust_saleman']) > 0) {
+if (!empty($array_query['cust_saleman'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>'."\n";
@@ -240,7 +244,7 @@ print '</td></tr>'."\n";
 // Customer Default Langauge
 if (!empty($conf->global->MAIN_MULTILANGS)) {
 	print '<tr><td>'.$langs->trans("DefaultLang");
-	if (count($array_query['cust_language']) > 0) {
+	if (!empty($array_query['cust_language'])) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	}
 	print '</td><td>'."\n";
@@ -252,11 +256,12 @@ if (!empty($conf->global->MAIN_MULTILANGS)) {
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("CustomersCategoryShort");
-	if (count($array_query['cust_categ']) > 0) {
+	if (!empty($array_query['cust_categ'])) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	}
 	print '</td><td>'."\n";
-	print $formadvtargetemaling->multiselectCustomerCategories('cust_categ', $array_query['cust_categ']);
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+	print $form->multiselectarray('cust_categ', $cate_arbo, GETPOST('cust_categ', 'array'), null, null, null, null, "90%");
 	print '</td><td>'."\n";
 	print '</td></tr>'."\n";
 }
@@ -346,7 +351,7 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 
 // State Contact
 print '<tr><td>'.$langs->trans('Status').' '.$langs->trans('Contact');
-if (count($array_query['contact_status']) > 0) {
+if (!empty($array_query['contact_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -364,7 +369,7 @@ print '</td></tr>'."\n";
 
 // Civility
 print '<tr><td width="15%">'.$langs->trans("UserTitle");
-if (count($array_query['contact_civility']) > 0) {
+if (!empty($array_query['contact_civility'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
@@ -389,7 +394,7 @@ print '</td></tr>'."\n";
 
 // Contact Country
 print '<tr><td>'.$langs->trans('Contact').' '.$langs->trans("Country");
-if (count($array_query['contact_country']) > 0) {
+if (!empty($array_query['contact_country'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>'."\n";
@@ -448,78 +453,84 @@ print '</td></tr>'."\n";
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("ContactCategoriesShort");
-	if (count($array_query['contact_categ']) > 0) {
+	if (!empty($array_query['contact_categ'])) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 	}
 	print '</td><td>'."\n";
-	print $formadvtargetemaling->multiselectContactCategories('contact_categ', $array_query['contact_categ']);
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
+	print $form->multiselectarray('contact_categ', $cate_arbo, GETPOST('contact_categ', 'array'), null, null, null, null, "90%");
 	print '</td><td>'."\n";
 	print '</td></tr>'."\n";
 }
 
 // Standard Extrafield feature
 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-	$elementype = Contact::$table_element;
+	$contactstatic = new Contact($db);
+	$elementype = $contactstatic->table_element;
 	// fetch optionals attributes and labels
 	dol_include_once('/core/class/extrafields.class.php');
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label($elementype);
-    foreach ($extrafields->attributes[$elementtype]['type'] as $key=>&$value) {
-        if ($value == 'radio')$value = 'select';
-    }
-
-    foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
-		print '<tr><td>'.$extrafields->attributes[$elementtype]['label'][$key];
-		if ($array_query['options_'.$key.'_cnct'] != '' || (is_array($array_query['options_'.$key.'_cnct']) && count($array_query['options_'.$key.'_cnct']) > 0)) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+	if (!empty($extrafields->attributes[$elementtype]['type'])) {
+		foreach ($extrafields->attributes[$elementtype]['type'] as $key => &$value) {
+			if ($value == 'radio')
+				$value = 'select';
 		}
-		print '</td><td>';
-		if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') || ($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
-			print '<input type="text" name="options_'.$key.'_cnct"/></td><td>'."\n";
-			print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-		} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') || ($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
-			print $langs->trans("AdvTgtMinVal").'<input type="text" name="options_'.$key.'_min_cnct"/>';
-			print $langs->trans("AdvTgtMaxVal").'<input type="text" name="options_'.$key.'_max_cnct"/>';
-			print '</td><td>'."\n";
-			print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
-		} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-			print '<table class="nobordernopadding"><tr>';
-			print '<td>'.$langs->trans("AdvTgtStartDt").'</td><td>';
-			print $form->selectDate('', 'options_'.$key.'_st_dt'.'_cnct');
-			print '</td><td>'.$langs->trans("AdvTgtEndDt").'</td><td>';
-			print $form->selectDate('', 'options_'.$key.'_end_dt'.'_cnct');
-			print '</td></tr></table>';
-			print '</td><td>'."\n";
-			print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
-		} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'boolean')) {
-            print $form->selectarray(
-                'options_'.$key.'_cnct',
-                array(
-					'' => '',
-					'1' => $langs->trans('Yes'),
-					'0' => $langs->trans('No')
-                ),
-                $array_query['options_'.$key.'_cnct']
-            );
-			print '</td><td>'."\n";
-		} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'select')) {
-			print $formadvtargetemaling->advMultiselectarray('options_'.$key.'_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_'.$key.'_cnct']);
-			print '</td><td>'."\n";
-		} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'sellist')) {
-			print $formadvtargetemaling->advMultiselectarraySelllist('options_'.$key.'_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_'.$key.'_cnct']);
-			print '</td><td>'."\n";
-		} else {
-			print '<table class="nobordernopadding"><tr>';
-			print '<td></td><td>';
-			if (is_array($array_query['options_'.$key.'_cnct'])) {
-				print $extrafields->showInputField($key, implode(',', $array_query['options_'.$key.'_cnct']), '', '_cnct');
-			} else {
-				print $extrafields->showInputField($key, $array_query['options_'.$key.'_cnct'], '', '_cnct');
+	}
+	if (!empty($extrafields->attributes[$elementtype]['label'])) {
+		foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
+			print '<tr><td>' . $extrafields->attributes[$elementtype]['label'][$key];
+			if ($array_query['options_' . $key . '_cnct'] != '' || (is_array($array_query['options_' . $key . '_cnct']) && count($array_query['options_' . $key . '_cnct']) > 0)) {
+				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
-			print '</td></tr></table>';
-			print '</td><td>'."\n";
+			print '</td><td>';
+			if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') || ($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
+				print '<input type="text" name="options_' . $key . '_cnct"/></td><td>' . "\n";
+				print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
+			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') || ($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
+				print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options_' . $key . '_min_cnct"/>';
+				print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options_' . $key . '_max_cnct"/>';
+				print '</td><td>' . "\n";
+				print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
+			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
+				print '<table class="nobordernopadding"><tr>';
+				print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
+				print $form->selectDate('', 'options_' . $key . '_st_dt_cnct');
+				print '</td><td>' . $langs->trans("AdvTgtEndDt") . '</td><td>';
+				print $form->selectDate('', 'options_' . $key . '_end_dt_cnct');
+				print '</td></tr></table>';
+				print '</td><td>' . "\n";
+				print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
+			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'boolean')) {
+				print $form->selectarray(
+					'options_' . $key . '_cnct',
+					array(
+						''  => '',
+						'1' => $langs->trans('Yes'),
+						'0' => $langs->trans('No')
+					),
+					$array_query['options_' . $key . '_cnct']
+				);
+				print '</td><td>' . "\n";
+			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'select')) {
+				print $formadvtargetemaling->advMultiselectarray('options_' . $key . '_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_' . $key . '_cnct']);
+				print '</td><td>' . "\n";
+			} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'sellist')) {
+				print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_' . $key . '_cnct']);
+				print '</td><td>' . "\n";
+			} else {
+				print '<table class="nobordernopadding"><tr>';
+				print '<td></td><td>';
+				if (is_array($array_query['options_' . $key . '_cnct'])) {
+					print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key . '_cnct']), '', '_cnct');
+				} else {
+					print $extrafields->showInputField($key, $array_query['options_' . $key . '_cnct'], '', '_cnct');
+				}
+				print '</td></tr></table>';
+				print '</td><td>' . "\n";
+			}
+			print '</td></tr>' . "\n";
 		}
-		print '</td></tr>'."\n";
 	}
 }
 print '<tr>'."\n";

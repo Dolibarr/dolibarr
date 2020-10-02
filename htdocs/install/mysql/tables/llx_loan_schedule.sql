@@ -32,6 +32,7 @@ create table llx_loan_schedule
   note_private      text,
   note_public       text,
   fk_bank			integer NOT NULL,
+  fk_payment_loan     integer,
   fk_user_creat		integer,          -- creation user
   fk_user_modif		integer           -- last modification user
 )ENGINE=innodb;

@@ -26,7 +26,7 @@ class TraceableDB extends DoliDB
 	 */
 	protected $startMemory;
 	/**
-	 * @var Database type
+	 * @var string type
 	 */
 	public $type;
 	/**
@@ -46,7 +46,7 @@ class TraceableDB extends DoliDB
 	public function __construct($db)
 	{
 		$this->db      = $db;
-		$this->type    = $db->type;
+		$this->type    = $this->db->type;
 		$this->queries = array();
 	}
 

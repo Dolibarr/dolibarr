@@ -67,6 +67,8 @@ class PaiementFourn extends Paiement
 	 */
 	public $type_code;
 
+
+
 	/**
 	 *	Constructor
 	 *
@@ -89,12 +91,12 @@ class PaiementFourn extends Paiement
 	{
 		$error = 0;
 
-		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql .= ' p.num_paiement as num_payment, p.note, b.fk_account';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
 			$sql .= ' AND p.rowid = '.$id;
@@ -111,33 +113,31 @@ class PaiementFourn extends Paiement
 			if ($num > 0)
 			{
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->ref;
 				$this->entity         = $obj->entity;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->num_paiement   = $obj->num_payment;
 				$this->num_payment    = $obj->num_payment;
 				$this->bank_account   = $obj->fk_account;
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
-				$this->montant        = $obj->amount;
+				$this->montant        = $obj->amount;		// deprecated
 				$this->amount         = $obj->amount;
+				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note           = $obj->note;
 				$this->note_private   = $obj->note;
 				$this->type_code      = $obj->paiement_code;
 				$this->type_label = $obj->paiement_type;
 				$this->statut         = $obj->statut;
+
 				$error = 1;
-			}
-			else
-			{
+			} else {
 				$error = -2; // TODO Use 0 instead
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$error = -1;
 		}
@@ -169,16 +169,14 @@ class PaiementFourn extends Paiement
 		{
 			$amounts = &$this->amounts;
 			$amounts_to_update = &$this->multicurrency_amounts;
-		}
-		else
-		{
+		} else {
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
 
 		foreach ($amounts as $key => $value)
 		{
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
+			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value? $value : 0, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
@@ -200,9 +198,7 @@ class PaiementFourn extends Paiement
 			{
 				$total = $totalamount;
 				$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
-			}
-			else
-			{
+			} else {
 				$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 				$mtotal = $totalamount;
 			}
@@ -210,7 +206,7 @@ class PaiementFourn extends Paiement
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql .= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql .= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
+			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".$user->id.", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -245,8 +241,7 @@ class PaiementFourn extends Paiement
 								if ($remaintopay == 0)
 								{
 									$result = $invoice->set_paid($user, '', '');
-								}
-								else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+								} else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}
 
 							// Regenerate documents of invoices
@@ -260,21 +255,17 @@ class PaiementFourn extends Paiement
 									$outputlangs->setDefaultLang($newlang);
 								}
 								$ret = $invoice->fetch($facid); // Reload to get new records
-								$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+								$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 								if ($result < 0) {
 									setEventMessages($invoice->error, $invoice->errors, 'errors');
 									$error++;
 								}
 							}
-						}
-						else
-						{
+						} else {
 							$this->error = $this->db->lasterror();
 							$error++;
 						}
-					}
-					else
-					{
+					} else {
 						dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 					}
 				}
@@ -286,15 +277,11 @@ class PaiementFourn extends Paiement
 					if ($result < 0) $error++;
 					// End call triggers
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "ErrorTotalIsNull";
 			dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 			$error++;
@@ -308,9 +295,7 @@ class PaiementFourn extends Paiement
 			$this->db->commit();
 			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -344,9 +329,7 @@ class PaiementFourn extends Paiement
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -2;
 		}
@@ -412,9 +395,7 @@ class PaiementFourn extends Paiement
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error;
 			$this->db->rollback();
 			return -5;
@@ -458,9 +439,7 @@ class PaiementFourn extends Paiement
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -494,9 +473,7 @@ class PaiementFourn extends Paiement
 			}
 
 			return $billsarray;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error);
 			return -1;
@@ -583,13 +560,14 @@ class PaiementFourn extends Paiement
 		$result = '';
 
 		$text = $this->ref; // Sometimes ref contains label
+		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $text, $reg)) {
 			// Label generique car entre parentheses. On l'affiche en le traduisant
 			if ($reg[1] == 'paiement') $reg[1] = 'Payment';
 			$text = $langs->trans($reg[1]);
 		}
 
-		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+		$label = '<u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
 		if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 
@@ -702,9 +680,7 @@ class PaiementFourn extends Paiement
 			}
 
 			return $numref;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Supplier"));
 			return "";
@@ -734,9 +710,7 @@ class PaiementFourn extends Paiement
 			if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
 			{
 				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
-			}
-			else
-			{
+			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
 		}
@@ -744,9 +718,7 @@ class PaiementFourn extends Paiement
 		if (empty($modele))
 		{
 			return 0;
-		}
-		else
-		{
+		} else {
 			$modelpath = "core/modules/supplier_payment/doc/";
 
 			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);

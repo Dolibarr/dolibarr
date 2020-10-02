@@ -41,7 +41,7 @@ if (!empty($conf->projet->enabled)) {
 $langs->loadLangs(array('bills', 'other', 'companies'));
 
 $id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 
@@ -253,9 +253,7 @@ if ($object->id > 0)
 	$permtoedit = $user->rights->fournisseur->facture->creer;
 	$param = '&facid='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
     print $langs->trans('ErrorUnknown');
 }
 

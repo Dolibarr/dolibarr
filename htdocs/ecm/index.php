@@ -57,7 +57,7 @@ if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "fullname";
 
 $ecmdir = new EcmDirectory($db);
-if ($section)
+if ($section > 0)
 {
 	$result = $ecmdir->fetch($section);
 	if (!$result > 0)
@@ -83,7 +83,7 @@ $error = 0;
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit", 'none') && !empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
     $relativepath = '';
@@ -101,8 +101,7 @@ if (GETPOST("sendit", 'none') && !empty($conf->global->MAIN_UPLOAD_DOC))
 			$error++;
 			if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
 				setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-			}
-			else {
+			} else {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 			}
 		}
@@ -125,19 +124,17 @@ if ($action == 'confirm_deletefile')
 	if (GETPOST('confirm') == 'yes')
 	{
 		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
-		//var_dump(GETPOST('urlfile'));exit;
 
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile', 'alpha');
-
 		$ret = dol_delete_file($file); // This include also the delete from file index in database.
 		if ($ret)
 		{
-			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
+			$urlfiletoshow = GETPOST('urlfile', 'alpha');
+			$urlfiletoshow = preg_replace('/\.noexe$/', '', $urlfiletoshow);
+			setEventMessages($langs->trans("FileWasRemoved", $urlfiletoshow), null, 'mesgs');
 			$result = $ecmdir->changeNbOfFiles('-');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
 		}
 
@@ -158,9 +155,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -169,7 +164,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes')
 {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
@@ -246,15 +241,11 @@ if ($action == 'refreshmanual')
                     //print "Yes with id ".$parentdirisindatabase."<br>\n";
                     $fk_parent = $parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
-                }
-                else
-				{
+                } else {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
-            }
-            else
-            {
+            } else {
                 dol_syslog("Parent is root");
                 $fk_parent = 0; // Parent is root
             }
@@ -280,13 +271,10 @@ if ($action == 'refreshmanual')
                     $sqltree[] = $newdirsql; // We complete fulltree for following loops
                     //var_dump($sqltree);
                     $adirwascreated = 1;
-                }
-                else
-                {
+                } else {
                     dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
-            }
-            else {
+            } else {
                 $txt = "Parent of ".$dirdesc['fullname']." not found";
                 dol_syslog($txt);
                 //print $txt."<br>\n";

@@ -1,0 +1,17 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: "Exakat analysis"
+
+on:
+  schedule:
+  - cron: "0 20 * * *"
+
+jobs:
+  exakat:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Exakat
+      uses: docker://exakat/exakat-ga
+      with:
+        ignore_rules: 'Performances/PrePostIncrement,Functions/WrongNumberOfArguments,Variables/UndefinedVariable,Classes/DontUnsetProperties,Classes/NonPpp,Classes/StaticMethodsCalledFromObject,Classes/UseClassOperator,Functions/UsesDefaultArguments,Php/NoClassInGlobal,Php/ShouldUseCoalesce,Structures/MergeIfThen,Structures/ElseIfElseif,Structures/RepeatedPrint,Structures/UselessParenthesis' 
+        ignore_dirs: '/htdocs/includes,/htdocs/build,/htdocs/dev,/htdocs/doc,/htdocs/scripts,/htdocs/test'        

@@ -91,7 +91,7 @@ class BOM extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
@@ -251,7 +251,7 @@ class BOM extends CommonObject
 	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
 
 	    // Get lines so they will be clone
-	    //foreach($object->lines as $line)
+	    //foreach ($object->lines as $line)
 	    //	$line->fetch_optionals();
 
 	    // Reset some properties
@@ -333,8 +333,10 @@ class BOM extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
+
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		$this->calculateCosts();
+
 		return $result;
 	}
 
@@ -381,14 +383,11 @@ class BOM extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -513,16 +512,12 @@ class BOM extends CommonObject
 	        if ($numref != "")
 	        {
 	            return $numref;
-	        }
-	        else
-	        {
+	        } else {
 	            $this->error = $obj->error;
 	            //dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 	            return "";
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
 	        return "";
 	    }
@@ -567,9 +562,7 @@ class BOM extends CommonObject
 	    {
 	        $this->fetch_product();
 	        $num = $this->getNextNumRef($this->product);
-	    }
-	    else
-	    {
+	    } else {
 	        $num = $this->ref;
 	    }
 	    $this->newref = dol_sanitizeFileName($num);
@@ -650,9 +643,7 @@ class BOM extends CommonObject
 	    {
 	        $this->db->commit();
 	        return 1;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->db->rollback();
 	        return -1;
 	    }
@@ -754,7 +745,7 @@ class BOM extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("BillOfMaterials").'</u>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("BillOfMaterials").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {
@@ -788,8 +779,7 @@ class BOM extends CommonObject
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -895,9 +885,7 @@ class BOM extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -919,9 +907,7 @@ class BOM extends CommonObject
 	        $this->error = $this->error;
 	        $this->errors = $this->errors;
 	        return $result;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
@@ -943,12 +929,13 @@ class BOM extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("mrp");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->BOM_ADDON_PDF)) {
 				$modele = $conf->global->BOM_ADDON_PDF;
 			}
@@ -979,7 +966,6 @@ class BOM extends CommonObject
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
@@ -1005,6 +991,7 @@ class BOM extends CommonObject
 
 	/**
 	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 *
 	 * @return void
 	 */
 	public function calculateCosts()
@@ -1013,17 +1000,32 @@ class BOM extends CommonObject
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
 
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$productFournisseur = new ProductFournisseur($this->db);
+
 		foreach ($this->lines as &$line) {
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($line->fk_product);
+			$result= $tmpproduct->fetch($line->fk_product);
+			if ($result < 0) {
+				$this->error=$tmpproduct->error;
+				return -1;
+			}
+			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+			if (empty($line->unit_cost)) {
+				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)
+				{
+					$line->unit_cost = $productFournisseur->fourn_unitprice;
+				}
+			}
 
-			$line->unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp; // TODO : add option to work with cost_price or pmp
 			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
 			$this->total_cost += $line->total_cost;
 		}
 
 		$this->total_cost = price2num($this->total_cost, 'MT');
-		$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		if ($this->qty) {
+			$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		}
 	}
 }
 
@@ -1211,14 +1213,11 @@ class BOMLine extends CommonObjectLine
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -1332,8 +1331,7 @@ class BOMLine extends CommonObjectLine
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1426,9 +1424,7 @@ class BOMLine extends CommonObjectLine
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

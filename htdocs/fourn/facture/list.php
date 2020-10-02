@@ -49,7 +49,7 @@ if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -94,7 +94,7 @@ $search_status = GETPOST('search_status', 'int');
 $search_paymentmode = GETPOST('search_paymentmode', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -166,11 +166,11 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
 	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
-	'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
-	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1"),
-	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1"),
-	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+	'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1, 'position'=>105),
+	'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0, 'position'=>110),
+	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1", 'position'=>95),
+	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1", 'position'=>100),
+	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0, 'position'=>115),
 	'u.login'=>array('label'=>"Author", 'checked'=>1),
 	'dynamount_payed'=>array('label'=>$langs->trans("Payed"), 'checked'=>0),
 	'rtp'=>array('label'=>$langs->trans("Rest"), 'checked'=>0),
@@ -318,6 +318,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 if (!$search_all) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 if ($search_all || $search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det as pd ON f.rowid=pd.fk_facture_fourn';
 if ($search_product_category > 0) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -326,7 +327,6 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -407,16 +407,15 @@ if (!$search_all)
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title";
+	$sql .= " p.rowid, p.ref, p.title,";
+	$sql .= " u.login";
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 		}
 	}
-}
-else
-{
+} else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
@@ -509,11 +508,9 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->fournisseur->facture->creer)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fourn/facture/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->facture->creer);
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -525,7 +522,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_invoice', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendBillRef";
 	$modelmail = "invoice_supplier_send";
@@ -955,6 +952,9 @@ if ($resql)
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
 			$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
+			$facturestatic->paye = $obj->paye;
+			$facturestatic->statut = $obj->fk_statut;
+			$facturestatic->type = $obj->type;
 
 
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
@@ -1226,7 +1226,7 @@ if ($resql)
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -1298,9 +1298,7 @@ if ($resql)
     $title = '';
 
     print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

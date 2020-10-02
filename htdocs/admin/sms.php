@@ -52,7 +52,7 @@ if ($action == 'update' && !$cancel)
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", GETPOST("MAIN_DISABLE_ALL_SMS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphahtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", GETPOST("MAIN_MAIL_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
@@ -122,9 +122,7 @@ if ($action == 'send' && !$_POST['cancel'])
 		{
 			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
 			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ResultKo"), null, 'errors');
 			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
@@ -205,9 +203,7 @@ if ($action == 'edit')
 
 	print '</form>';
 	print '<br>';
-}
-else
-{
+} else {
 	if (!count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<table class="noborder centpercent">';
@@ -264,9 +260,7 @@ else
 	if (count($listofmethods) && !empty($conf->global->MAIN_SMS_SENDMODE))
 	{
 	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-	}
-	else
-	{
+	} else {
         print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
@@ -306,12 +300,12 @@ else
 		$formsms = new FormSms($db);
         $formsms->fromtype = 'user';
         $formsms->fromid = $user->id;
-        $formsms->fromsms = (isset($_POST['fromsms']) ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+        $formsms->fromsms = (GETPOSTISSET('fromsms') ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;
-		$formsms->withto = (isset($_POST['sendto']) ? $_POST['sendto'] : $user->user_mobile ? $user->user_mobile : 1);
-		$formsms->withbody = (isset($_POST['message']) ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
+		$formsms->withto = (GETPOSTISSET('sendto') ? $_POST['sendto'] : ($user->user_mobile ? $user->user_mobile : 1));
+		$formsms->withbody = (GETPOSTISSET('message') ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly = 0;
 		$formsms->withcancel = 1;
 		// Tableau des substitutions

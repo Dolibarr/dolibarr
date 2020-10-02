@@ -30,11 +30,11 @@ $langs->loadLangs(array('admin', 'hrm'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters HRM_*
 $list = array(
-		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
+//		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
 /*
@@ -58,9 +58,11 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans('Parameters'));
 
 $form = new Form($db);
@@ -82,7 +84,7 @@ dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans('Journaux').'</td>';
+print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {

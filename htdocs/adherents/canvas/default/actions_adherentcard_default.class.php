@@ -90,8 +90,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
         $this->tpl['error'] = $this->error;
         $this->tpl['errors'] = $this->errors;
 
-		if ($action == 'view')
-		{
+		if ($action == 'view') {
             // Card header
             $head = member_prepare_head($this->object);
             $title = $this->getTitle($action);
@@ -105,18 +104,14 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
             $this->tpl['actionstodo'] = show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
             $this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
-		}
-		else
-		{
+        } else {
 			// Confirm delete contact
-        	if ($action == 'delete' && $user->rights->adherent->supprimer)
-        	{
+        	if ($action == 'delete' && $user->rights->adherent->supprimer) {
         		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteAdherent"), "confirm_delete", '', 0, 1);
         	}
 		}
 
-		if ($action == 'list')
-		{
+		if ($action == 'list') {
 	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 	}

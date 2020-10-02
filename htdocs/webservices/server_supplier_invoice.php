@@ -303,14 +303,12 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 
 			    ));
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -441,8 +439,7 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 
 			);
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}

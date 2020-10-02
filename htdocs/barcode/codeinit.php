@@ -71,8 +71,7 @@ if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
-					}
-					catch (Exception $e)
+					} catch (Exception $e)
 					{
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
@@ -109,15 +108,11 @@ if ($action == 'initbarcodeproducts')
 			if ($resql)
 			{
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
-			}
-			else
-			{
+			} else {
 				$error++;
 				dol_print_error($db);
 			}
-		}
-		else
-		{
+		} else {
 			$sql = "SELECT rowid, ref, fk_product_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
@@ -150,9 +145,7 @@ if ($action == 'initbarcodeproducts')
 
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				dol_print_error($db);
 			}
@@ -167,9 +160,7 @@ if ($action == 'initbarcodeproducts')
 		{
 			//$db->rollback();
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 	}
@@ -193,7 +184,7 @@ llxHeader('', $langs->trans("MassBarcodeInit"));
 print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
 
-print $langs->trans("MassBarcodeInitDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("MassBarcodeInitDesc").'</span><br>';
 print '<br>';
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
@@ -211,7 +202,7 @@ if ($conf->societe->enabled)
 {
 	$nbno = $nbtotal = 0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'title_companies');
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');
 
 	print '<br>'."\n";
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
@@ -220,8 +211,7 @@ if ($conf->societe->enabled)
 	{
 		$obj = $db->fetch_object($resql);
 		$nbno = $obj->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
 	$resql = $db->query($sql);
@@ -229,8 +219,7 @@ if ($conf->societe->enabled)
 	{
 		$obj = $db->fetch_object($resql);
 		$nbtotal = $obj->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ThirdParties")).'<br>'."\n";
 
@@ -274,8 +263,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 			$i++;
 		}
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
 	$resql = $db->query($sql);
@@ -283,8 +271,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		$obj = $db->fetch_object($resql);
 		$nbtotal = $obj->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ProductsOrServices")).'<br>'."\n";
 
@@ -294,9 +281,7 @@ if ($conf->product->enabled || $conf->product->service)
 		$objproduct = new Product($db);
 		print '<b>'.(isset($modBarCodeProduct->name) ? $modBarCodeProduct->name : $modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled = 0;
-	}
-	else
-	{
+	} else {
 		$disabled = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
 		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
@@ -315,6 +300,12 @@ if ($conf->product->enabled || $conf->product->service)
 	print '<input class="button" type="submit" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
 	print '<br><br><br><br>';
 }
+
+
+print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'generic');
+print '<br>'."\n";
+print $langs->trans("ClickHereToGoTo").' : <a href="'.DOL_URL_ROOT.'/barcode/printsheet.php">'.$langs->trans("BarCodePrintsheet").'</a>';
+
 
 
 print '</form>';

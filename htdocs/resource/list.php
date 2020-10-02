@@ -39,7 +39,7 @@ $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
 $sortorder      = GETPOST('sortorder', 'alpha');
-$sortfield      = GETPOST('sortfield', 'alpha');
+$sortfield      = GETPOST('sortfield', 'aZ09comma');
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'resourcelist';
@@ -269,11 +269,11 @@ if ($ret)
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td class="center">';
-        print '<a class="editfielda" href="./card.php?action=edit&id='.$resource->id.'">';
+        print '<a class="editfielda" href="./card.php?action=edit&token='.newToken().'&id='.$resource->id.'">';
         print img_edit();
         print '</a>';
         print '&nbsp;';
-        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
+        print '<a href="./card.php?action=delete&token='.newToken().'&id='.$resource->id.'">';
         print img_delete('', 'class="marginleftonly"');
         print '</a>';
         print '</td>';
@@ -281,9 +281,7 @@ if ($ret)
 
         print '</tr>';
     }
-}
-else
-{
+} else {
     $colspan = 1;
     foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
     print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';

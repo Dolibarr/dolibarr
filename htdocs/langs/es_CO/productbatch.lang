@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - productbatch
+ManageLotSerial=Use número de lote/serie
+ProductStatusOnBatch=Si (lote/serie requerido)
+ProductStatusNotOnBatch=No (lote/serie no usado)
+atleast1batchfield=Fecha de consumo o fecha de venta o número de lote/serie
+batch_number=Número de lote/serie
+EatByDate=Fecha de consumo
+SellByDate=Fecha de venta
+DetailBatchNumber=Detalles lote/serie
+printBatch=Lote/serie: %s
+printEatby=Consumido-por: %s
+printSellby=Vendido-por: %s
+printQty=Cantidad: 1%d
+AddDispatchBatchLine=Añadir una línea para la duración del despacho
+WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/Serie está activado, la reducción automática de existencias se ve obligada a 'Reducir las existencias reales en la validación de envío' y el modo de aumento automático es forzado a 'Incrementar las existencias reales en el envío manual entre almacenes' y no puede ser editado. Otras opciones se pueden definir a su gusto.
+ProductDoesNotUseBatchSerial=Este producto no utiliza número de lote/serie:
+ProductLotSetup=Configuración de modulo lote/serie
+ShowCurrentStockOfLot=Mostrar valores actuales por pareja producto/lote
+ShowLogOfMovementIfLot=Mostrar registro de movimientos por pareja producto/lote
+StockDetailPerBatch=Valores detallados por lote

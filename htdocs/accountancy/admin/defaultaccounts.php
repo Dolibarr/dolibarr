@@ -75,7 +75,7 @@ if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
-$list_account[] = '---Other---';
+$list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
@@ -94,26 +94,13 @@ if ($conf->loan->enabled) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
+if ($conf->societe->enabled) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
+}
 
 /*
  * Actions
  */
-
-$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
-
-if (GETPOST('change_chart', 'alpha'))
-{
-    $chartofaccounts = GETPOST('chartofaccounts', 'int');
-
-    if (!empty($chartofaccounts)) {
-        if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    } else {
-        $error++;
-    }
-}
-
 if ($action == 'update') {
 	$error = 0;
 
@@ -193,8 +180,7 @@ foreach ($list_account as $key) {
 	$reg = array();
 	if (preg_match('/---(.*)---/', $key, $reg)) {
 		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
-	}
-	else {
+	} else {
 		print '<tr class="oddeven value">';
 		// Param
 		$label = $langs->trans($key);

@@ -27,7 +27,7 @@ DangerZone=Zona peligrosa
 BuildPackage=Crear paquete
 BuildPackageDesc=Puede generar un paquete zip de su módulo para que esté listo para distribuirlo en cualquier Dolibarr. También puede distribuirlo o venderlo en un una tienda como <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Generar documentación
-ModuleIsNotActive=Este módulo no ha sido activado todavía. Vaya a %s para activarlo o pulse aquí:
+ModuleIsNotActive=Este módulo aún no está activado. Vaya a %s para activarlo o haga clic aquí
 ModuleIsLive=Este módulo ha sido activado. Cualquier cambio en él puede romper una característica activa actual.
 DescriptionLong=Descripción larga
 EditorName=Nombre del editor
@@ -83,9 +83,9 @@ ListOfDictionariesEntries=Listado de entradas de diccionarios
 ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=¿El campo es visible? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y en formularios de creación/actualización/visualización, 2=Visible únicamente en la lista, 3=Visible únicamente en formularios de creación/actualización/visualización (no en la lista),4=Visible en la lista y en formularios únicamente de actualización/visualización (no en creación),5=Visible en la lista y en formularios únicamente de visualización (ni en creación ni en actualización). Usar un valor negativo significa que por defecto no se muestra el campo en la lista pero puede ser seleccionado para su visualización) Puede ser una expresión, por ejemplo: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
-DisplayOnPdf=Display on PDF
+VisibleDesc=¿Es visible el campo? (Ejemplos: 0 = Nunca visible, 1 = Visible en la lista y crear / actualizar / ver formularios, 2 = Visible solo en la lista, 3 = Visible solo en el formulario crear / actualizar / ver (no en la lista), 4 = Visible en la lista y solo actualizar / ver formulario (no crear), 5 = Visible solo en el formulario de vista final de la lista (no crear, no actualizar)<br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).<br><br>Puede ser una expresión, por ejemplo:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br/> Actualmente, conocidos modelos compatibles PDF son: eratosthene (pedidos), espadon (notas de envios), sponge (facturas), cyan (presupuesto), cornas (pedido a proveedor) <br/> <br/> <strong> Para documento: </strong> <br/> 0 = No se ven las <br/> 1 = mostrar <br/> 2 = mostrar sólo si no está vacío <br/> <br/> <strong> Para las líneas de documentos: </strong> <br/> 0 = no mostradas <br/> 1 =  se muestran en una columna <br/> 3 = se muestra en la columna de descripción de línea después de la descripción <br/> 4 = se muestra en la columna de descripción después de la descripción solo si no está vacía
+DisplayOnPdf=Mostrar en PDF
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
 SearchAllDesc=¿El campo se usa para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desea proporcionar con su módulo que aún no está definido por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -139,3 +139,4 @@ ForeignKey=Foreign key
 TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que agregamos un botón + después del combo para crear el registro, 'filtro' puede ser 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' por ejemplo)
 AsciiToHtmlConverter=Conversor de ASCII a HTML
 AsciiToPdfConverter=Conversor de ASCII a PDF
+TableNotEmptyDropCanceled=La tabla no está vacía. La eliminación ha sido cancelada.

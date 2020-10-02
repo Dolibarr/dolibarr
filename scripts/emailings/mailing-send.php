@@ -42,8 +42,7 @@ if (!isset($argv[1]) || !$argv[1]) {
 $id = $argv[1];
 if (isset($argv[2]) || !empty($argv[2]))
 	$login = $argv[2];
-else
-	$login = '';
+else $login = '';
 
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
@@ -206,23 +205,19 @@ if ($resql) {
 
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
-								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
 
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
-								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'order'.$obj->source_id, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'order'.$obj->source_id, 2);
 
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
-								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
 
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else
-								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
 						}
 
 						complete_substitutions_array($substitutionarray, $langs);

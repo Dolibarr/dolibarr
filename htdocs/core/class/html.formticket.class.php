@@ -175,7 +175,7 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// Si origin du ticket
+		// If ticket created from another object
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
@@ -200,17 +200,17 @@ class FormTicket
 
 		// Type
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', '2', 0, 0, 0, 'minwidth150');
+		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 0, 0, 0, 'minwidth200');
+		print '</td></tr>';
+
+		// Group
+		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
+		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', 2, 0, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity
 		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', '2');
-		print '</td></tr>';
-
-		// Group
-		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketGroup").'</span></label></td><td>';
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
+		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 0);
 		print '</td></tr>';
 
 		// Subject
@@ -225,13 +225,13 @@ class FormTicket
 				if ($this->withthreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
 				}
-				print '<input class="text minwidth300" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
 				print '</td></tr>';
 			}
 		}
 
 		// MESSAGE
-		$msg = GETPOSTISSET('message') ? GETPOST('message', 'none') : '';
+		$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
 		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
 
 		// If public form, display more information
@@ -247,7 +247,60 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		// FK_USER_CREATE
+
+		// Attached files
+		if (!empty($this->withfile)) {
+			// Define list of attached files
+			$listofpaths = array();
+			$listofnames = array();
+			$listofmimes = array();
+			if (!empty($_SESSION["listofpaths"])) {
+				$listofpaths = explode(';', $_SESSION["listofpaths"]);
+			}
+
+			if (!empty($_SESSION["listofnames"])) {
+				$listofnames = explode(';', $_SESSION["listofnames"]);
+			}
+
+			if (!empty($_SESSION["listofmimes"])) {
+				$listofmimes = explode(';', $_SESSION["listofmimes"]);
+			}
+
+			$out = '<tr>';
+			$out .= '<td>'.$langs->trans("MailFile").'</td>';
+			$out .= '<td>';
+			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
+			$out .= '<script type="text/javascript" language="javascript">';
+			$out .= 'jQuery(document).ready(function () {';
+			$out .= '    jQuery(".removedfile").click(function() {';
+			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
+			$out .= '    });';
+			$out .= '})';
+			$out .= '</script>'."\n";
+			if (count($listofpaths)) {
+				foreach ($listofpaths as $key => $val) {
+					$out .= '<div id="attachfile_'.$key.'">';
+					$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
+					if (!$this->withfilereadonly) {
+						$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+					}
+					$out .= '<br></div>';
+				}
+			} else {
+				$out .= $langs->trans("NoAttachedFiles").'<br>';
+			}
+			if ($this->withfile == 2) { // Can add other files
+				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
+				$out .= ' ';
+				$out .= '<input type="submit" class="button" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
+			}
+			$out .= "</td></tr>\n";
+
+			print $out;
+		}
+
+		// User of creation
 		if ($this->withusercreate > 0 && $this->fk_user_create) {
 			print '<tr><td class="titlefield">'.$langs->trans("CreatedBy").'</td><td>';
 			$langs->load("users");
@@ -270,6 +323,7 @@ class FormTicket
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 				$events = array();
 				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
@@ -330,13 +384,14 @@ class FormTicket
 				print '<tr><td>'.$langs->trans("Contact").'</td><td>';
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
+				print img_picto('', 'contact', 'class="paddingright"');
 				$nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
 				print '</td></tr>';
 			} else {
 				print '<tr><td class="titlefield"><input type="hidden" name="socid" value="'.$user->socid.'"/></td>';
-				print '<td><input type="hidden" name="contactid" value="'.$user->contactid.'"/></td>';
+				print '<td><input type="hidden" name="contactid" value="'.$user->contact_id.'"/></td>';
 				print '<td><input type="hidden" name="type" value="Z"/></td></tr>';
 			}
 
@@ -355,58 +410,6 @@ class FormTicket
 			print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 			print $formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 			print '</td></tr>';
-		}
-
-		// Attached files
-		if (!empty($this->withfile)) {
-			// Define list of attached files
-			$listofpaths = array();
-			$listofnames = array();
-			$listofmimes = array();
-			if (!empty($_SESSION["listofpaths"])) {
-				$listofpaths = explode(';', $_SESSION["listofpaths"]);
-			}
-
-			if (!empty($_SESSION["listofnames"])) {
-				$listofnames = explode(';', $_SESSION["listofnames"]);
-			}
-
-			if (!empty($_SESSION["listofmimes"])) {
-				$listofmimes = explode(';', $_SESSION["listofmimes"]);
-			}
-
-			$out = '<tr>';
-			$out .= '<td>'.$langs->trans("MailFile").'</td>';
-			$out .= '<td>';
-			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
-			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
-			$out .= 'jQuery(document).ready(function () {';
-			$out .= '    jQuery(".removedfile").click(function() {';
-			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
-			$out .= '    });';
-			$out .= '})';
-			$out .= '</script>'."\n";
-			if (count($listofpaths)) {
-				foreach ($listofpaths as $key => $val) {
-					$out .= '<div id="attachfile_'.$key.'">';
-					$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
-					if (!$this->withfilereadonly) {
-						$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
-					}
-					$out .= '<br></div>';
-				}
-			} else {
-				$out .= $langs->trans("NoAttachedFiles").'<br>';
-			}
-			if ($this->withfile == 2) { // Can add other files
-				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
-				$out .= ' ';
-				$out .= '<input type="submit" class="button" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
-			}
-			$out .= "</td></tr>\n";
-
-			print $out;
 		}
 
 		// Other attributes
@@ -882,12 +885,12 @@ class FormTicket
 			$modelmail_array[$line->id] = $line->label;
 		}
 
-		print '<table class="border"  width="'.$width.'">';
+		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid)
 		{
-			print '<tr><td width="30%"></td><td colspan="2">';
+			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : '');
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
@@ -901,29 +904,27 @@ class FormTicket
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				print ' &nbsp; ';
-				print '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
-				print ' &nbsp; ';
+				print '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
 
 			// Private message (not visible by customer/external user)
 			if (!$user->socid) {
-				print '<tr><td width="30%"></td><td>';
+				print '<tr><td></td><td>';
 				$checkbox_selected = (GETPOST('private_message', 'alpha') == "1" ? ' checked' : '');
 				print '<input type="checkbox" name="private_message" value="1" id="private_message" '.$checkbox_selected.'/> ';
 				print '<label for="private_message">'.$langs->trans('MarkMessageAsPrivate').'</label>';
-				print '</td><td class="center">';
-				print $form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
+				print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
 				print '</td></tr>';
 			}
 
+			// Subject
 			print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
-			$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-			print '<td colspan="2"><input type="text" class="text" size="80" name="subject" value="['.$label_title.' - '.$langs->trans("Ticket").' #'.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td colspan="2">';
+			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
 			$ticketstat = new Ticket($this->db);
 			$res = $ticketstat->fetch('', '', $this->track_id);
 			if ($res) {
@@ -971,7 +972,9 @@ class FormTicket
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
 			$mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
-			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailIntro").'</label>';
+			print '<tr class="email_line"><td><label for="mail_intro">';
+			print $form->textwithpicto($langs->trans("TicketMessageMailIntro"), $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
+			print '</label>';
 
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -980,22 +983,20 @@ class FormTicket
 			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
 			$doleditor->Create();
-			print '</td><td class="center">';
-			print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
 			print '</td></tr>';
 		}
 
 		// MESSAGE
 		$defaultmessage = "";
-		if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage->content) {
+		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
 			$defaultmessage = $arraydefaultmessage->content;
 		}
 		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
 		// Deal with format differences between message and signature (text / HTML)
-		if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {
-			$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
-		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
+		if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+			$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
+		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
 		if (isset($_POST["message"]) && !$_POST['modelselected']) {
@@ -1007,17 +1008,16 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
+		if ($user->rights->ticket->write && !$user->socid) {
+			print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
+		}
+		print '</label></td><td>';
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
 		$doleditor->Create();
-		print '</td><td class="center">';
-		if ($user->rights->ticket->write && !$user->socid) {
-			print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
-		}
-
 		print '</td></tr>';
 
 		// Signature
@@ -1025,13 +1025,11 @@ class FormTicket
 		if ($user->rights->ticket->write && !$user->socid) {
 			$mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailSignature").'</label>';
-
+			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 			$doleditor->Create();
-			print '</td><td class="center">';
-			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td></tr>';
 		}
 
@@ -1039,7 +1037,7 @@ class FormTicket
 		if (!empty($this->withfile)) {
 			$out = '<tr>';
 			$out .= '<td width="180">'.$langs->trans("MailFile").'</td>';
-			$out .= '<td colspan="2">';
+			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 			$out .= '<script type="text/javascript" language="javascript">';

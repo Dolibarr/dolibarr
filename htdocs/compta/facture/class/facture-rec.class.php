@@ -155,7 +155,7 @@ class FactureRec extends CommonInvoice
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'modelpdf' =>array('type'=>'varchar(255)', 'label'=>'Modelpdf', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'last_gen' =>array('type'=>'varchar(7)', 'label'=>'Last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+		'date_last_gen' =>array('type'=>'varchar(7)', 'label'=>'Last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'unit_frequency' =>array('type'=>'varchar(2)', 'label'=>'Unit frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'date_when' =>array('type'=>'datetime', 'label'=>'Date when', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'date_last_gen' =>array('type'=>'datetime', 'label'=>'Date last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
@@ -199,9 +199,10 @@ class FactureRec extends CommonInvoice
 	 *
 	 * 	@param		User	$user		User object
 	 * 	@param		int		$facid		Id of source invoice
+	 *  @param		int		$notrigger	No trigger
 	 *	@return		int					<0 if KO, id of invoice created if OK
 	 */
-	public function create($user, $facid)
+	public function create($user, $facid, $notrigger = 0)
 	{
 		global $conf;
 
@@ -220,7 +221,6 @@ class FactureRec extends CommonInvoice
 			$this->frequency = 0;
 			$this->date_when = null;
 		}
-
 
 		$this->frequency = abs($this->frequency);
 		$this->nb_gen_done = 0;
@@ -277,8 +277,8 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 			$sql .= ", ".(!empty($this->modelpdf) ? ("'".$this->db->escape($this->modelpdf)."'") : "NULL");
 			$sql .= ", '".$this->db->escape($user->id)."'";
-			$sql .= ", ".(!empty($facsrc->fk_project) ? "'".$facsrc->fk_project."'" : "null");
-			$sql .= ", ".(!empty($facsrc->fk_account) ? "'".$facsrc->fk_account."'" : "null");
+			$sql .= ", ".(!empty($facsrc->fk_project) ? "'".$this->db->escape($facsrc->fk_project)."'" : "null");
+			$sql .= ", ".(!empty($facsrc->fk_account) ? "'".$this->db->escape($facsrc->fk_account)."'" : "null");
 			$sql .= ", ".($facsrc->cond_reglement_id > 0 ? $this->db->escape($facsrc->cond_reglement_id) : "null");
 			$sql .= ", ".($facsrc->mode_reglement_id > 0 ? $this->db->escape($facsrc->mode_reglement_id) : "null");
 			$sql .= ", ".$this->usenewprice;
@@ -336,13 +336,12 @@ class FactureRec extends CommonInvoice
 					if ($result_insert < 0)
 					{
 						$error++;
-					}
-					else {
+					} else {
 					    $objectline = new FactureLigneRec($this->db);
 					    if ($objectline->fetch($result_insert))
 					    {
 					        // Extrafields
-					        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($facsrc->lines[$i], 'fetch_optionals')) {
+					        if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
 					            $facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
 					            $objectline->array_options = $facsrc->lines[$i]->array_options;
 					        }
@@ -377,8 +376,7 @@ class FactureRec extends CommonInvoice
 					                $error++;
 					            }
 					        }
-					    }
-					    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+					    } else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 					    {
 					        $origin_id = $tmp_origin_id;
 	    					$ret = $this->add_object_linked($origin, $origin_id);
@@ -391,25 +389,39 @@ class FactureRec extends CommonInvoice
 					}
 				}
 
+				if (!$error) {
+					$result = $this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+
+				if (!$error && !$notrigger)
+				{
+					// Call trigger
+					$result = $this->call_trigger('BILLREC_CREATE', $user);
+					if ($result < 0)
+					{
+						$this->db->rollback();
+						return -2;
+					}
+					// End call triggers
+				}
+
 				if ($error)
 				{
 					$this->db->rollback();
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 					return $this->id;
 				}
-			}
-			else
-			{
+			} else {
 			    $this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -438,7 +450,7 @@ class FactureRec extends CommonInvoice
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
-	        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	        if (!$error)
 	        {
 	            $result = $this->insertExtraFields();
 	            if ($result < 0)
@@ -460,9 +472,7 @@ class FactureRec extends CommonInvoice
 	        }
 	        $this->db->commit();
 	        return 1;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->error = $this->db->lasterror();
 	        $this->db->rollback();
 	        return -2;
@@ -584,16 +594,12 @@ class FactureRec extends CommonInvoice
 					return -3;
 				}
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -722,9 +728,7 @@ class FactureRec extends CommonInvoice
 
 			$this->db->free($result);
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -3;
 		}
@@ -748,9 +752,13 @@ class FactureRec extends CommonInvoice
         $error = 0;
 		$this->db->begin();
 
+		$main = MAIN_DB_PREFIX.'facturedet_rec';
+        $ef = $main."_extrafields";
+        $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+        dol_syslog($sqlef);
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
 		dol_syslog($sql);
-		if ($this->db->query($sql))
+		if ($this->db->query($sqlef) && $this->db->query($sql))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
 			dol_syslog($sql);
@@ -759,15 +767,14 @@ class FactureRec extends CommonInvoice
 				// Delete linked object
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error = -3;
-			}
-			else
-			{
+				// Delete extrafields
+                $res = $this->deleteExtraFields();
+                if ($res < 0) $error = -4;
+			} else {
 				$this->error = $this->db->lasterror();
 				$error = -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$error = -2;
 		}
@@ -776,9 +783,7 @@ class FactureRec extends CommonInvoice
 		{
 		    $this->db->commit();
 		    return 1;
-		}
-		else
-		{
+		} else {
 	        $this->db->rollback();
 	        return $error;
 		}
@@ -853,9 +858,7 @@ class FactureRec extends CommonInvoice
 			if ($price_base_type == 'HT')
 			{
 				$pu = $pu_ht;
-			}
-			else
-			{
+			} else {
 				$pu = $pu_ttc;
 			}
 
@@ -918,7 +921,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", fk_unit";
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ") VALUES (";
-			$sql .= "'".$facid."'";
+			$sql .= " ".((int) $facid);
 			$sql .= ", ".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 			$sql .= ", '".$this->db->escape($desc)."'";
 			$sql .= ", ".price2num($pu_ht);
@@ -929,7 +932,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", '".$this->db->escape($localtaxes_type[0])."'";
 			$sql .= ", ".price2num($txlocaltax2);
 			$sql .= ", '".$this->db->escape($localtaxes_type[2])."'";
-			$sql .= ", ".(!empty($fk_product) ? "'".$fk_product."'" : "null");
+			$sql .= ", ".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".price2num($remise_percent);
 			$sql .= ", ".price2num($pu_ht);
@@ -962,9 +965,7 @@ class FactureRec extends CommonInvoice
 				$this->id = $facid;
 				$this->update_price();
 				return $lineId;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
@@ -1038,9 +1039,7 @@ class FactureRec extends CommonInvoice
 	        if ($price_base_type == 'HT')
 	        {
 	            $pu = $pu_ht;
-	        }
-	        else
-	        {
+	        } else {
 	            $pu = $pu_ttc;
 	        }
 
@@ -1084,7 +1083,7 @@ class FactureRec extends CommonInvoice
 	        }
 
 	        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
-	        $sql .= "fk_facture = '".$facid."'";
+	        $sql .= "fk_facture = ".((int) $facid);
 	        $sql .= ", label=".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 	        $sql .= ", description='".$this->db->escape($desc)."'";
 	        $sql .= ", price=".price2num($pu_ht);
@@ -1095,7 +1094,7 @@ class FactureRec extends CommonInvoice
 		    $sql .= ", localtax1_type='".$this->db->escape($localtaxes_type[0])."'";
 		    $sql .= ", localtax2_tx=".$txlocaltax2;
 		    $sql .= ", localtax2_type='".$this->db->escape($localtaxes_type[2])."'";
-	        $sql .= ", fk_product=".(!empty($fk_product) ? "'".$fk_product."'" : "null");
+		    $sql .= ", fk_product=".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
 	        $sql .= ", product_type=".$product_type;
 	        $sql .= ", remise_percent='".price2num($remise_percent)."'";
 	        $sql .= ", subprice='".price2num($pu_ht)."'";
@@ -1124,9 +1123,7 @@ class FactureRec extends CommonInvoice
 	            $this->id = $facid;
 	            $this->update_price();
 	            return 1;
-	        }
-	        else
-	        {
+	        } else {
 	            $this->error = $this->db->lasterror();
 	            return -1;
 	        }
@@ -1197,13 +1194,13 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
-		$sql .= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
+		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($today)."')";
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
 		if ($restrictioninvoiceid > 0)
 			$sql .= ' AND rowid = '.$restrictioninvoiceid;
-		$sql .= $db->order('entity', 'ASC');
+		$sql .= $this->db->order('entity', 'ASC');
 		//print $sql;exit;
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
@@ -1211,29 +1208,28 @@ class FactureRec extends CommonInvoice
 		);
 		$reshook = $hookmanager->executeHooks('beforeCreationOfRecurringInvoices', $parameters, $sql); // note that $sql might be modified by hooks
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$i = 0;
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
 			if ($num)
 				$this->output .= $langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
-			else
-				$this->output .= $langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
+			else $this->output .= $langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
 
 			$saventity = $conf->entity;
 
 			while ($i < $num)     // Loop on each template invoice. If $num = 0, test is false at first pass.
 			{
-				$line = $db->fetch_object($resql);
+				$line = $this->db->fetch_object($resql);
 
-				$db->begin();
+				$this->db->begin();
 
 				$invoiceidgenerated = 0;
 
 				$facture = null;
-				$facturerec = new FactureRec($db);
+				$facturerec = new FactureRec($this->db);
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0)
@@ -1243,7 +1239,7 @@ class FactureRec extends CommonInvoice
 
 					dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
-					$facture = new Facture($db);
+					$facture = new Facture($this->db);
 					$facture->fac_rec = $facturerec->id; // We will create $facture from this recurring invoice
 					$facture->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
@@ -1281,9 +1277,7 @@ class FactureRec extends CommonInvoice
 							$error++;
 						}
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$this->error = "Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity."\n";
 					$this->errors[] = "Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity;
@@ -1292,14 +1286,12 @@ class FactureRec extends CommonInvoice
 
 				if (!$error && $invoiceidgenerated >= 0)
 				{
-					$db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
 					$this->output .= $langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
-				}
-				else
-				{
-					$db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+				} else {
+					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$parameters = array(
@@ -1316,8 +1308,7 @@ class FactureRec extends CommonInvoice
 			}
 
 			$conf->entity = $saventity; // Restore entity context
-		}
-		else dol_print_error($db);
+		} else dol_print_error($this->db);
 
 		$this->output = trim($this->output);
 
@@ -1342,7 +1333,7 @@ class FactureRec extends CommonInvoice
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowInvoice").'</u>';
+		$label = '<u>'.$langs->trans("RepeatableInvoice").'</u>';
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
@@ -1423,69 +1414,54 @@ class FactureRec extends CommonInvoice
 			{
 				if ($status == self::STATUS_SUSPENDED) {
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$labelStatus = $langs->trans('Active');
 				}
-			}
-			else
-			{
+			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$labelStatus = $langs->trans("Draft");
 				}
 			}
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			$prefix = 'Short';
 			if ($recur)
 			{
 				if ($status == self::STATUS_SUSPENDED) {
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$labelStatus = $langs->trans('Active');
 				}
-			}
-			else
-			{
+			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$labelStatus = $langs->trans("Draft");
 				}
 			}
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($recur)
 			{
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status4';
 					$labelStatus = $langs->trans('Active');
 				}
-			}
-			else
-			{
+			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status0';
 					$labelStatus = $langs->trans('Draft');
 				}
 			}
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($recur)
 			{
@@ -1493,25 +1469,20 @@ class FactureRec extends CommonInvoice
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status4';
 					$labelStatus = $langs->trans('Active');
 				}
-			}
-			else
-			{
+			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status0';
 					$labelStatus = $langs->trans('Draft');
 				}
 			}
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			$prefix = '';
 			if ($recur)
@@ -1519,25 +1490,20 @@ class FactureRec extends CommonInvoice
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status4';
 					$labelStatus = $langs->trans('Active');
 				}
-			}
-			else
-			{
+			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status0';
 					$labelStatus = $langs->trans('Draft');
 				}
 			}
-		}
-		elseif ($mode == 5 || $mode == 6)
+		} elseif ($mode == 5 || $mode == 6)
 		{
 			$prefix = '';
 			if ($mode == 5) $prefix = 'Short';
@@ -1546,19 +1512,15 @@ class FactureRec extends CommonInvoice
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status4';
 					$labelStatus = $langs->trans('Active');
 				}
-			}
-			else
-			{
+			} else {
 				if ($status == self::STATUS_SUSPENDED) {
 					$statusType = 'status6';
 					$labelStatus = $langs->trans('Disabled');
-				}
-				else {
+				} else {
 					$statusType = 'status0';
 					$labelStatus = $langs->trans('Draft');
 				}
@@ -1593,6 +1555,8 @@ class FactureRec extends CommonInvoice
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1647,16 +1611,14 @@ class FactureRec extends CommonInvoice
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
 					$line->total_tva = -19.6;
-				}
-				elseif ($xnbp == 2)    // UP is negative (free line)
+				} elseif ($xnbp == 2)    // UP is negative (free line)
 				{
 					$line->subprice = -100;
 					$line->total_ht = -100;
 					$line->total_ttc = -119.6;
 					$line->total_tva = -19.6;
 					$line->remise_percent = 0;
-				}
-				elseif ($xnbp == 3)    // Discount is 50% (product line)
+				} elseif ($xnbp == 3)    // Discount is 50% (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
@@ -1664,8 +1626,7 @@ class FactureRec extends CommonInvoice
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
 					$line->remise_percent = 50;
-				}
-				else    // (product line)
+				} else // (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
@@ -1754,9 +1715,7 @@ class FactureRec extends CommonInvoice
             $this->frequency = $frequency;
             if (!empty($unit)) $this->unit_frequency = $unit;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -1787,9 +1746,7 @@ class FactureRec extends CommonInvoice
             $this->date_when = $date;
             if ($increment_nb_gen_done > 0) $this->nb_gen_done++;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -1820,9 +1777,7 @@ class FactureRec extends CommonInvoice
         {
             $this->nb_gen_max = $nb;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -1851,9 +1806,7 @@ class FactureRec extends CommonInvoice
         {
             $this->auto_validate = $validate;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -1882,9 +1835,7 @@ class FactureRec extends CommonInvoice
         {
             $this->generate_pdf = $validate;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -1913,9 +1864,7 @@ class FactureRec extends CommonInvoice
         {
             $this->modelpdf = $model;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -1965,6 +1914,14 @@ class FactureLigneRec extends CommonInvoiceLine
 	            // End call triggers
 	        }
 	    }
+
+		if (!$error)
+        {
+            $result = $this->deleteExtraFields();
+            if ($result < 0) {
+                $error++;
+            }
+        }
 
 	    if (!$error)
 	    {
@@ -2052,9 +2009,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
     		$this->db->free($result);
     		return 1;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -3;
     	}
@@ -2112,7 +2067,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$resql = $this->db->query($sql);
         if ($resql)
         {
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		if (!$error)
     		{
     			$result = $this->insertExtraFields();
     			if ($result < 0)
@@ -2134,9 +2089,7 @@ class FactureLigneRec extends CommonInvoiceLine
     		}
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             $this->db->rollback();
             return -2;

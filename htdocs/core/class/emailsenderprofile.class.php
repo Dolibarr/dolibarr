@@ -95,13 +95,12 @@ class EmailSenderProfile extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>-1, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>1),
 		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1),
-		//'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'private' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>50, 'default'=>'0', 'notnull'=>1),
 		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>3, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
 		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>1, 'enabled'=>1, 'position'=>405, 'notnull'=>-1, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
-		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'default'=>1, 'position'=>1000, 'notnull'=>-1, 'index'=>1, 'arrayofkeyval'=>array(0=>'Disabled', 1=>'Enabled')),
+		'active' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'default'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0=>'Disabled', 1=>'Enabled')),
 	);
 
 	/**
@@ -331,7 +330,7 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut($this->active, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -346,36 +345,16 @@ class EmailSenderProfile extends CommonObject
 	{
 		global $langs;
 
-		if ($mode == 0 || $mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
+		if ($status == 1) {
+			$label = $labelshort = $langs->trans('Enabled');
+		} else {
+			$label = $labelshort = $langs->trans('Disabled');
 		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
+
+		$statusType = 'status'.$status;
+		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
+
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
     /**
@@ -424,9 +403,7 @@ class EmailSenderProfile extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

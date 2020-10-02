@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017-2018  Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,9 +69,9 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -172,9 +172,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$this->posxup = 118;
 			$this->posxqty = 135;
 			$this->posxunit = 151;
-		}
-		else
-		{
+		} else {
 			$this->posxtva = 110;
 			$this->posxup = 126;
 			$this->posxqty = 145;
@@ -239,9 +237,7 @@ class pdf_einstein extends ModelePDFCommandes
 			{
 				$dir = $conf->commande->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
-			}
-			else
-			{
+			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -372,6 +368,12 @@ class pdf_einstein extends ModelePDFCommandes
 						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote)) {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
 				if ($notetoshow)
 				{
 					$tab_top -= 2;
@@ -434,18 +436,14 @@ class pdf_einstein extends ModelePDFCommandes
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter + 1);
 							}
-						}
-						else
-						{
+						} else {
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 						}
-					}
-					else	// No pagebreak
+					} else // No pagebreak
 					{
 						$pdf->commitTransaction();
 					}
@@ -560,9 +558,7 @@ class pdf_einstein extends ModelePDFCommandes
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-						}
-						else
-						{
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -576,9 +572,7 @@ class pdf_einstein extends ModelePDFCommandes
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-						}
-						else
-						{
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -593,8 +587,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Show square
 				if ($pagenb == 1)
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-				else
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+				else $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
@@ -636,15 +629,11 @@ class pdf_einstein extends ModelePDFCommandes
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "COMMANDE_OUTPUTDIR");
 			return 0;
 		}
@@ -755,8 +744,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
             $posy = $pdf->GetY() + 1;
-		}
-        elseif ($object->availability_code || $object->availability)    // Show availability conditions
+		} elseif ($object->availability_code || $object->availability)    // Show availability conditions
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -908,9 +896,7 @@ class pdf_einstein extends ModelePDFCommandes
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL) && $tvaisnull)
 			{
 				// Nothing to do
-			}
-			else
-			{
+			} else {
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
@@ -1267,25 +1253,20 @@ class pdf_einstein extends ModelePDFCommandes
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				}
-				else {
+				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
 				{
 				    $height = pdf_getHeightForLogo($logo);
 				    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				}
-				else
-				{
+				} else {
 					$pdf->SetTextColor(200, 0, 0);
 					$pdf->SetFont('', 'B', $default_font_size - 2);
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 				}
-			}
-			else
-			{
+			} else {
 				$text = $this->emetteur->name;
 				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}

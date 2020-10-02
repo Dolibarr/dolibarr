@@ -48,7 +48,7 @@ $langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'b
 
 $socid = GETPOST('socid', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -62,7 +62,7 @@ $search_societe = GETPOST('search_societe', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
@@ -314,7 +314,7 @@ if ($search_multicurrency_montant_vat != '') $sql .= natural_search('sp.multicur
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('sp.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql .= ' AND s.rowid = '.$socid;
-if ($search_status >= 0 && $search_status != '') $sql .= ' AND sp.fk_statut IN ('.$db->escape($search_status).')';
+if ($search_status >= 0 && $search_status != '') $sql .= ' AND sp.fk_statut IN ('.$db->sanitize($db->escape($search_status)).')';
 $sql .= dolSqlDateFilter("sp.date_livraison", $day, $month, $year);
 $sql .= dolSqlDateFilter("sp.date_valid", $dayvalid, $monthvalid, $yearvalid);
 if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
@@ -358,9 +358,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierProposals').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierProposals');
 	}
 
@@ -416,11 +414,9 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->supplier_proposal->creer)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create');
-    }
+	$url = DOL_URL_ROOT.'/supplier_proposal/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url, '', $user->rights->supplier_proposal->creer);
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -431,7 +427,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_proposal', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendSupplierProposalRef";
 	$modelmail = "supplier_proposal_send";
@@ -534,7 +530,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_valid']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -545,7 +541,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -878,7 +874,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -950,9 +946,7 @@ if ($resql)
 	$delallowed = $user->rights->supplier_proposal->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

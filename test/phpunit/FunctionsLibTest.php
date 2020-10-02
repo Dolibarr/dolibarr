@@ -77,7 +77,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -88,7 +92,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -1301,6 +1309,34 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     	$chaine='This is a not ISO string '.chr(0);
     	$result = dol_string_is_good_iso($chaine);
     	$this->assertEquals($result, 0);
+
+    	return true;
+    }
+
+
+    /**
+     * testGetUserRemoteIP
+     *
+     * @return boolean
+     */
+    public function testGetUserRemoteIP()
+    {
+    	global $conf, $langs;
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '1.2.3.4');
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4<corrupted>';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '5.6.7.8');
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='[1:2:3:4]';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '[1:2:3:4]');
 
     	return true;
     }

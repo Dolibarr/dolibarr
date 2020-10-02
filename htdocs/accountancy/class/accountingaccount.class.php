@@ -448,9 +448,10 @@ class AccountingAccount extends CommonObject
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @param	int     $withcompletelabel		    0=Short label (field short label), 1=Complete label (field label)
+	 * @param	string	$option						'bookkeeping', 'bookkeepinglistbyaccount', 'accountcard'
 	 * @return  string	String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0)
+    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $option = '')
 	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -459,7 +460,16 @@ class AccountingAccount extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$this->id;
+		if (empty($option) || $option == 'bookkeeping') {
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$labelurl = $langs->trans("ShowAccountingAccountInBookKeeping");
+		} elseif ($option == 'bookkeepinglistbyaccount') {
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$labelurl = $langs->trans("ShowAccountingAccountInBookKeepingByAccount");
+		} elseif ($option == 'accountcard') {
+			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
+			$labelurl = $langs->trans("ShowAccountingAccount");
+		}
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -476,7 +486,7 @@ class AccountingAccount extends CommonObject
 			$labeltoshow = $this->labelshort;
 		}
 
-		$label = '<u>'.$langs->trans("ShowAccountingAccount").'</u>';
+		$label = '<u>'.$labelurl.'</u>';
 		if (!empty($this->account_number))
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 		if (!empty($labeltoshow))
@@ -488,7 +498,7 @@ class AccountingAccount extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowAccoutingAccount");
+				$label = $labelurl;
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -553,24 +563,19 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Account deactivated
+	 * Deactivate an account (for status active or status reconcilable)
 	 *
 	 * @param  int  $id         Id
-     * @param  int  $mode       0=field active, 1=field active_customer_list, 2=field_active_supplier_list
+     * @param  int  $mode       0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    public function account_desactivate($id, $mode = 0)
+    public function accountDeactivate($id, $mode = 0)
     {
-        // phpcs:enable
 		$result = $this->checkUsage();
 
-        if ($mode == 0)
-        {
-            $fieldtouse = 'active';
-        }
-        elseif ($mode == 1)
+		$fieldtouse = 'active';
+        if ($mode == 1)
         {
 			$fieldtouse = 'reconcilable';
         }
@@ -582,7 +587,7 @@ class AccountingAccount extends CommonObject
 			$sql .= "SET ".$fieldtouse." = '0'";
 			$sql .= " WHERE rowid = ".$this->db->escape($id);
 
-			dol_syslog(get_class($this)."::account_desactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
@@ -614,8 +619,7 @@ class AccountingAccount extends CommonObject
         if ($mode == 0)
         {
             $fieldtouse = 'active';
-        }
-        elseif ($mode == 1)
+        } elseif ($mode == 1)
         {
             $fieldtouse = 'reconcilable';
         }
@@ -666,28 +670,23 @@ class AccountingAccount extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');

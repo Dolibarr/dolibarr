@@ -31,7 +31,7 @@ if ($object->element == 'propal')
 ?>
 
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
-<script type="text/javascript">
+<script>
 
 $(document).ready(function(){
 	$('.objectlinked_importbtn').click(function (e) {
@@ -53,7 +53,7 @@ $(document).ready(function(){
 	        });
 
 
-	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl ; ?>"  method="post" ></form>')
+	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl; ?>"  method="post" ></form>')
 	        .load( page + " #tablelines", function() {
 
 	        	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute

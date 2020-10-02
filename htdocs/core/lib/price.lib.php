@@ -40,8 +40,8 @@
  * 		@param 	float	$pu                         Unit price (HT or TTC selon price_base_type)
  *		@param 	float	$remise_percent_ligne       Discount for line
  *		@param 	float	$txtva                      0=do not apply VAT tax, VAT rate=apply (this is VAT rate only without text code, we don't need text code because we alreaydy have all tax info into $localtaxes_array)
- *		@param  float	$uselocaltax1_rate          0=do not use this localtax, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
- *		@param  float	$uselocaltax2_rate          0=do not use this localtax, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
+ *		@param  float	$uselocaltax1_rate          0=do not use localtax1, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
+ *		@param  float	$uselocaltax2_rate          0=do not use localtax2, >0=apply and get value from localtaxes_array (or database if empty), -1=autodetect according to seller if we must apply, get value from localtaxes_array (or database if empty). Try to always use -1.
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			HT=Unit price parameter is HT, TTC=Unit price parameter is TTC
  *		@param	int		$info_bits					Miscellaneous informations on line
@@ -131,8 +131,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$localtax1_rate = $localtaxes_array[1];
 		$localtax2_type = $localtaxes_array[2];
 		$localtax2_rate = $localtaxes_array[3];
-	}
-	else	// deprecated method. values and type for localtaxes must be provided by caller and loaded with getLocalTaxesFromRate using the full vat rate (including text code)
+	} else // deprecated method. values and type for localtaxes must be provided by caller and loaded with getLocalTaxesFromRate using the full vat rate (including text code)
 	{
 	    dol_syslog("Price.lib::calcul_price_total search vat information using old deprecated method", LOG_WARNING);
 
@@ -152,15 +151,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 				$localtax2_type = $obj->localtax2_type;
 				//var_dump($localtax1_rate.' '.$localtax2_rate.' '.$localtax1_type.' '.$localtax2_type);exit;
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 	}
 
 	// pu calculation from pu_devise if pu empty
 	if (empty($pu) && !empty($pu_devise)) {
 		if (!empty($multicurrency_tx)) $pu = $pu_devise / $multicurrency_tx;
-		else
-		{
+		else {
 			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (multicurrency_tx empty when pu_devise not) ', LOG_ERR);
 			return array();
 		}
@@ -169,8 +166,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// pu_devise calculation from pu
 	if (empty($pu_devise) && !empty($multicurrency_tx)) {
 		if (is_numeric($pu) && is_numeric($multicurrency_tx)) $pu_devise = $pu * $multicurrency_tx;
-		else
-		{
+		else {
 			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (pu or multicurrency_tx are not numeric)', LOG_ERR);
 			return array();
 		}
@@ -192,9 +188,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     	$tot_sans_remise_wt = price2num($tot_sans_remise * (1 + ($txtva / 100)), 'MU');
     	$tot_avec_remise_wt = price2num($tot_avec_remise * (1 + ($txtva / 100)), 'MU');
     	$pu_wt = price2num($pu * (1 + ($txtva / 100)), 'MU');
-    }
-    else
-    {
+    } else {
     	$tot_sans_remise_wt = $tot_sans_remise;
     	$tot_avec_remise_wt = $tot_avec_remise;
     	$pu_wt = $pu;
@@ -268,9 +262,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[5] = price2num($pu * (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)) + $localtaxes[2], 'MU'); // Selon TVA NPR ou non
 		$result5bis = price2num($pu * (1 + ($txtva / 100)) + $localtaxes[2], 'MU'); // Si TVA consideree normale (non NPR)
 		$result[4] = price2num($result5bis - ($result[3] + $localtaxes[2]), 'MU');
-	}
-	else
-	{
+	} else {
 		// We work to define prices using the price with tax
 		$result[8] = price2num($tot_sans_remise + $localtaxes[0], 'MT');
 		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1) ? 0 : $txtva) / 100)), 'MT'); // Selon TVA NPR ou non
@@ -351,17 +343,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		{
 			$result[0] = round($result[0] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[1] = round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[2] = price2num($result[0] + $result[1], 'MT');
 			$result[9] = round($result[9] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[10] = round($result[10] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-		}
-		else
-		{
+			$result[2] = price2num($result[0] + $result[1] + $result[9] + $result[10], 'MT');
+		} else {
 			$result[1] = round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[2] = round($result[2] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[0] = price2num($result[2] - $result[1], 'MT');
 			$result[9] = round($result[9] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
 			$result[10] = round($result[10] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result[0] = price2num($result[2] - $result[1] - $result[9] - $result[10], 'MT');
 		}
 	}
 
@@ -405,9 +395,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[24] = $newresult[8];
 		$result[25] = $newresult[9];
 		$result[26] = $newresult[10];
-	}
-	else
-	{
+	} else {
 		$result[16] = $result[0];
 		$result[17] = $result[1];
 		$result[18] = $result[2];

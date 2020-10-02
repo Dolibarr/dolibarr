@@ -88,10 +88,10 @@ function asset_prepare_head(Asset $object)
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
-	//	'entity:+tabname:Title:@assets:/assets/mypage.php?id=__ID__'
+	//	'entity:+tabname:Title:@assets:/asset/mypage.php?id=__ID__'
 	//); // to add new tab
 	//$this->tabs = array(
-	//	'entity:-tabname:Title:@assets:/assets/mypage.php?id=__ID__'
+	//	'entity:-tabname:Title:@assets:/asset/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets');
 

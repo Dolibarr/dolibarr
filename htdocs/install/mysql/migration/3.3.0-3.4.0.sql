@@ -102,6 +102,10 @@ ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_shipping_method;
 ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_expedition_methode;
 ALTER TABLE llx_expedition CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
 
+-- This table and constraint should not exists as it appears in more recent version, but we may have it if we load an old dump 
+-- on a newly created database and we want to be sure upgrade of rowid into autoincrement done later will works. 
+ALTER TABLE llx_reception DROP FOREIGN KEY fk_reception_fk_shipping_method;
+
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(255) NOT NULL DEFAULT '' AFTER description;
 
 --ALTER TABLE llx_c_shipment_mode DROP COLUMN CASCADE;

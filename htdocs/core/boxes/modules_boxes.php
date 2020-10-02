@@ -143,10 +143,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 		global $conf;
 
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
-		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
+		$sql = "SELECT b.rowid as id, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql .= " WHERE b.entity = ".$conf->entity;
-		$sql .= " AND b.rowid = ".$rowid;
+		$sql .= " AND b.rowid = ".((int) $rowid);
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
 
 		$resql = $this->db->query($sql);
@@ -155,45 +155,19 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
-				$this->rowid = $obj->rowid;
+				$this->id = $obj->id;
+				$this->rowid = $obj->id;	// For backward compatibility
 				$this->box_id = $obj->box_id;
 				$this->position = $obj->position;
 				$this->box_order = $obj->box_order;
 				$this->fk_user = $obj->fk_user;
 				return 1;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
-	}
-
-
-	/**
-	 * Standard method to get content of a box
-	 *
-	 * @param   array   $head       Array with properties of box title
-	 * @param   array   $contents   Array with properties of box lines
-	 *
-	 * @return  string
-	 */
-	public function outputBox($head = null, $contents = null)
-	{
-		global $langs, $user, $conf;
-
-		// Trick to get result into a var from a function that makes print instead of return
-		// TODO Replace ob_start with param nooutput=1 into showBox
-		ob_start();
-		$result = $this->showBox($head, $contents);
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		return $output;
 	}
 
 	/**
@@ -426,6 +400,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			{
 				while (($file = readdir($handle)) !== false)
 				{
+					$reg = array();
 					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg))
 					{
 						if (preg_match('/\.back$/', $file)) continue;
@@ -438,13 +413,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 						{
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget", $modName, "").'</div>';
-						}
-						else
-						{
+						} else {
 							try {
 								include_once $newdir.'/'.$file;
-							}
-							catch (Exception $e)
+							} catch (Exception $e)
 							{
 								print $e->getMessage();
 							}

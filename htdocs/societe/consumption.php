@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid = $user->socid;
@@ -147,6 +149,7 @@ if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeA
 
 if ($object->fournisseur)
 {
+	$langs->load("supplier_proposal");
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
@@ -352,14 +355,14 @@ if ($sql_select)
 
 	$num = $db->num_rows($resql);
 
-	$param = "&socid=".$socid."&type_element=".$type_element;
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sprod_fulldescr) $param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 	if ($sref) $param .= "&sref=".urlencode($sref);
-	if ($month) $param .= "&month=".$month;
-	if ($year) $param .= "&year=".$year;
-	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($month) $param .= "&month=".urlencode($month);
+	if ($year) $param .= "&year=".urlencode($year);
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
@@ -427,9 +430,7 @@ if ($sql_select)
 		if ($type_element == 'contract')
 		{
 			print $documentstaticline->getLibStatut(2);
-		}
-		else
-		{
+		} else {
 			print $documentstatic->getLibStatut(2);
 		}
 		print '</td>';
@@ -471,9 +472,7 @@ if ($sql_select)
 				}
 
 				$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
-			}
-			else
-			{
+			} else {
 				$label = $objp->product_label;
 			}
 
@@ -507,29 +506,23 @@ if ($sql_select)
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
 				{
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
 					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
-				}
-				else
-				{
+				} else {
 					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			if ($objp->fk_product > 0) {
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
@@ -607,8 +600,7 @@ if ($sql_select)
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	$db->free($resql);
-}
-elseif (empty($type_element) || $type_element == -1)
+} elseif (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
@@ -625,8 +617,7 @@ elseif (empty($type_element) || $type_element == -1)
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
 
 	print "</table>";
-}
-else {
+} else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
     print '<table class="liste centpercent">'."\n";

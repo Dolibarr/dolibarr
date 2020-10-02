@@ -105,8 +105,7 @@ print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
         <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
         <?php
-    }
-    elseif (in_array($type, array('pgsql')))
+    } elseif (in_array($type, array('pgsql')))
     {
         ?>
     <div class="formelementrow">
@@ -114,9 +113,7 @@ print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
         <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore or psql)</label>
     </div>
         <?php
-    }
-    else
-    {
+    } else {
         print 'No method available with database '.$label;
     }
     ?>
@@ -161,8 +158,7 @@ if (in_array($type, array('mysql', 'mysqli')))
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
     print '</div>';
     print '</fieldset>';
-}
-elseif (in_array($type, array('pgsql')))
+} elseif (in_array($type, array('pgsql')))
 {
     print '<fieldset id="postgresql_options">';
     print '<legend>Restore PostgreSQL</legend>';

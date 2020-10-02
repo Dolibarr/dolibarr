@@ -89,15 +89,13 @@ if ($resql)
 	print "</table>";
 	print "<br>\n";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
 
 // Draft orders
-if (!empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))
 {
 	$langs->load("orders");
 
@@ -154,7 +152,7 @@ if (!empty($conf->fournisseur->enabled))
 }
 
 // Draft invoices
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
@@ -210,9 +208,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 			print "<br>\n";
 		}
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -264,9 +260,7 @@ if ($resql)
 	print "</table>\n";
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

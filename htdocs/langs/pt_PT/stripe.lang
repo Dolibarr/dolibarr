@@ -32,6 +32,7 @@ VendorName=Nome do fornecedor
 CSSUrlForPaymentForm=CSS url folha de estilo para forma de pagamento
 NewStripePaymentReceived=Novo pagamento Stripe recebido
 NewStripePaymentFailed=Nova tentativa de pagamento Stripo, mas falhou
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Chave de teste secreta
 STRIPE_TEST_PUBLISHABLE_KEY=Chave de teste publicável
 STRIPE_TEST_WEBHOOK_KEY=Chave de teste Webhook
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

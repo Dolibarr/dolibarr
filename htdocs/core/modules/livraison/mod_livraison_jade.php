@@ -96,7 +96,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 		// Check invoice num
 		$fayymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."livraison";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -129,8 +129,8 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."livraison";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -142,9 +142,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 

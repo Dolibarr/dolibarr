@@ -29,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "date";
@@ -56,9 +56,7 @@ if ($action == 'delete')
 		$ret = dol_delete_file($file, 1);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
-	else
-	{
+	} else {
 		$file = $conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -149,7 +147,7 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr '.$bc[false].'><td style="padding-left: 8px">';
+print '<tr class="oddeven"><td style="padding-left: 8px">';
 print '<table class="centpercent">';
 print '<tr>';
 print '<td class="tdtop">';
@@ -187,9 +185,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
     {
         $fullpathofmysqldump = $db->getPathOfDump();
-    }
-    else
-    {
+    } else {
         $fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
     }
     print '<br>';
@@ -200,7 +196,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<div class="formelementrow">';
     print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
     print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-
     print '</div>';
 
     if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
@@ -242,7 +237,8 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<input type="checkbox" name="sql_structure" value="structure" id="checkbox_sql_structure" checked />';
     print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
     print '</legend>';
-    print '<input type="checkbox" name="drop"'.(((!isset($_GET["drop"]) && !isset($_POST["drop"])) || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
+
+    print '<input type="checkbox" name="drop"'.((! GETPOSTISSET("drop") || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';
@@ -303,7 +299,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
     print '<br>';
     print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
-    print '<input type="checkbox" name="nobin_drop"'.((!isset($_GET["nobin_drop"]) && !isset($_POST["nobin_drop"])) || GETPOST('nobin_drop')) ? ' checked' : ''.' id="checkbox_dump_drop" />';
+    print '<input type="checkbox" name="nobin_drop"'.((! GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';
@@ -339,9 +335,7 @@ if (in_array($type, array('pgsql'))) {
     print '<div class="formelementrow">'.$langs->trans("FullPathToPostgreSQLdumpCommand");
     if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
         $fullpathofpgdump = $db->getPathOfDump();
-    }
-    else
-    {
+    } else {
         $fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
     }
     print '<br>';
@@ -434,9 +428,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     	'id' => 'radio_compression_none',
     	'label' => $langs->trans("None")
     );
-}
-else
-{
+} else {
 	$compression['none'] = array(
 		'function' => '',
 		'id' => 'radio_compression_none',
@@ -464,9 +456,7 @@ foreach ($compression as $key => $val)
 		if ($key == 'gz') $checked = ' checked';
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-	}
-	else
-	{
+	} else {
 		// Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
@@ -584,8 +574,7 @@ foreach ($filecompression as $key => $val)
     	if ($key == 'gz') $checked = ' checked';
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-    }
-    else	// Disabled export format
+    } else // Disabled export format
     {
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';

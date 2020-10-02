@@ -40,7 +40,7 @@ $langs->load("companies");
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -48,9 +48,7 @@ if (GETPOST('actioncode', 'array'))
 {
     $actioncode = GETPOST('actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
     $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');

@@ -40,7 +40,7 @@ function categories_prepare_head(Categorie $object, $type)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&amp;type='.$type;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Category");
 	$head[$h][2] = 'card';
 	$h++;
 

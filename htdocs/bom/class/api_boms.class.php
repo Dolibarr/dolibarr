@@ -24,11 +24,11 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 /**
  * \file    bom/class/api_boms.class.php
  * \ingroup bom
- * \brief   File for API management of bom.
+ * \brief   File for API management of BOM.
  */
 
 /**
- * API class for bom
+ * API class for BOM
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -99,7 +99,7 @@ class Boms extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
-        $tmpobject = new BOM($db);
+        $tmpobject = new BOM($this->db);
 
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
@@ -120,7 +120,7 @@ class Boms extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity('bom').')';
+        if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
         if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
         if ($restrictonsocid && $socid) $sql .= " AND t.fk_soc = ".$socid;
         if ($restrictonsocid && $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -139,7 +139,7 @@ class Boms extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0)
             {
@@ -147,25 +147,24 @@ class Boms extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $db->fetch_object($result);
-                $bom_static = new BOM($db);
+            	$obj = $this->db->fetch_object($result);
+            	$bom_static = new BOM($this->db);
                 if ($bom_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($bom_static);
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve bom list');
         }
         if (!count($obj_ret)) {
@@ -228,9 +227,7 @@ class Boms extends DolibarrApi
         if ($this->bom->update($id, DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->bom->error);
         }
     }

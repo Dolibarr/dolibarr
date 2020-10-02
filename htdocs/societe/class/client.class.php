@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ class Client extends Societe
         // phpcs:enable
         global $user;
 
-        $this->nb = array("customers" => 0, "prospects" => 0);
+        $this->nb = array("prospects" => 0, "customers" => 0);
         $clause = "WHERE";
 
         $sql = "SELECT count(s.rowid) as nb, s.client";
@@ -83,9 +84,7 @@ class Client extends Societe
             }
             $this->db->free($resql);
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->lasterror();
             return -1;
@@ -102,14 +101,14 @@ class Client extends Societe
     {
     	global $langs;
 
-   		$sql = "SELECT id, code, libelle as label FROM ".MAIN_DB_PREFIX."c_stcomm";
+   		$sql="SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcomm";
    		if ($active >= 0) $sql .= " WHERE active = ".$active;
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);
 		$i = 0;
 		while ($i < $num) {
 			$obj = $this->db->fetch_object($resql);
-			$this->cacheprospectstatus[$obj->id] = array('id'=>$obj->id, 'code'=>$obj->code, 'label'=> ($langs->trans("ST_".strtoupper($obj->code)) == "ST_".strtoupper($obj->code)) ? $obj->label : $langs->trans("ST_".strtoupper($obj->code)));
+			$this->cacheprospectstatus[$obj->id] = array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>($langs->trans("ST_".strtoupper($obj->code))=="ST_".strtoupper($obj->code))?$obj->label:$langs->trans("ST_".strtoupper($obj->code)), 'picto'=>$obj->picto);
 			$i++;
 		}
 		return 1;

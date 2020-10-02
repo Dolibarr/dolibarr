@@ -29,7 +29,7 @@ $langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy'));
 
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $formadmin = new FormAdmin($db);
 
@@ -101,7 +101,7 @@ print "<script type='text/javascript'>
 </script>";
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?l='.$l.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table>';
 if ($conf->global->MAIN_MULTILANGS) {

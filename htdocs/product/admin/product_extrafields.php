@@ -40,7 +40,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'product'; //Must be the $element of the class that manage extrafield
 
@@ -65,8 +65,7 @@ if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$textobject = $langs->trans('Services');
-}
-elseif (empty($conf->service->enabled))
+} elseif (empty($conf->service->enabled))
 {
 	$title = $langs->trans('ProductSetup');
 	$textobject = $langs->trans('Products');

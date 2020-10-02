@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/commande/info.php
  *      \ingroup    commande
- *		\brief      Page des informations d'une commande
+ *		\brief      Sale Order info page
  */
 
 require '../main.inc.php';
@@ -34,7 +34,7 @@ if (!empty($conf->projet->enabled)) {
 if (!$user->rights->commande->lire)	accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings'));
+$langs->loadLangs(array('orders', 'sendings', 'bills'));
 
 $socid = 0;
 $comid = GETPOST("id", 'int');

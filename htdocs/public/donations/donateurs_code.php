@@ -86,11 +86,9 @@ if ($resql)
 			print '<tr class="oddeven">';
 			if ($objp->public)
 			{
-				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".$objp->societe."</td>\n";
-			}
-			else
-			{
-				print "<td>Anonyme Anonyme</td>\n";
+				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".dol_escape_htmltag($objp->societe)."</td>\n";
+			} else {
+				print "<td>".$langs->trans("Anonymous")."</td>\n";
 			}
 			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
 			print '<td class="right">'.number_format($objp->amount, 2, '.', ' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
@@ -98,14 +96,10 @@ if ($resql)
 			$i++;
 		}
 		print "</table>";
+	} else {
+		print $langs->trans("Donation");
 	}
-	else
-	{
-		print "Aucun don publique";
-	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

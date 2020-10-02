@@ -38,7 +38,7 @@ $langs->loadLangs(array('bills', 'products', 'stocks'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $key = GETPOST('key');
@@ -64,14 +64,15 @@ if ($id > 0 || !empty($ref))
  * Actions
  */
 
-if ($cancel) $action ='';
+if ($cancel) $action = '';
 
-// Action association d'un sousproduit
+// Add subproduct to product
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	$error=0;
+	$error = 0;
 	$maxprod = GETPOST("max_prod", 'int');
-	for ($i=0; $i < $maxprod; $i++)
+
+	for ($i = 0; $i < $maxprod; $i++)
 	{
 		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
 		if ($qty > 0)
@@ -80,28 +81,20 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 			{
 				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
 				$action = 'edit';
-			}
-			else
-			{
+			} else {
 				$error++;
 				$action = 're-edit';
 				if ($object->error == "isFatherOfThis") {
 					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
-				}
-				else
-				{
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		}
-		else
-		{
+		} else {
 			if ($object->del_sousproduit($id, GETPOST("prod_id_".$i, 'int')) > 0)
 			{
 				$action = 'edit';
-			}
-			else
-			{
+			} else {
 				$error++;
 				$action = 're-edit';
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -109,13 +102,12 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
-}
-elseif($action==='save_composed_product')
+} elseif ($action === 'save_composed_product')
 {
 	$TProduct = GETPOST('TProduct', 'array');
 	if (!empty($TProduct))
@@ -234,9 +226,7 @@ if ($id > 0 || !empty($ref))
     			if ($object->price_base_type == 'TTC')
     			{
     				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-    			}
-    			else
-    			{
+    			} else {
     				print price($object->price).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
     			}
     			print '</td></tr>';
@@ -246,9 +236,7 @@ if ($id > 0 || !empty($ref))
     			if ($object->price_base_type == 'TTC')
     			{
     				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-    			}
-    			else
-    			{
+    			} else {
     				print price($object->price_min).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
     			}
     			print '</td></tr>';
@@ -298,9 +286,7 @@ if ($id > 0 || !empty($ref))
 				print '<td>'.$value['qty'].'</td>';
 				print '</tr>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven">';
 			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
@@ -377,9 +363,7 @@ if ($id > 0 || !empty($ref))
 					if (!empty($conf->global->PRODUIT_MULTIPRICES))
 					{
 						$pricesell = 'Variable';
-					}
-					else
-					{
+					} else {
 						$totallinesell = price2num($value['nb'] * ($pricesell), 'MT');
 						$totalsell += $totallinesell;
 					}
@@ -397,16 +381,13 @@ if ($id > 0 || !empty($ref))
 					{
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
-					}
-					else {
+					} else {
 						print '<td>'.$nb_of_subproduct.'</td>';
 						print '<td>'.($value['incdec'] == 1 ? 'x' : '').'</td>';
 					}
 
 					print '</tr>'."\n";
-				}
-				else
-				{
+				} else {
 					$hide = '';
 					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 
@@ -468,9 +449,7 @@ if ($id > 0 || !empty($ref))
 			}
 			print '</td>';
 			print '</tr>'."\n";
-		}
-		else
-		{
+		} else {
 			$colspan = 8;
 			if (!empty($conf->stock->enabled)) $colspan++;
 
@@ -540,38 +519,38 @@ if ($id > 0 || !empty($ref))
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);
-				$i=0;
+				$i = 0;
 
-				if($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
+				if ($num == 0) print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
 
 				$MAX = 100;
 
 				while ($i < min($num, $MAX))
 				{
 					$objp = $db->fetch_object($resql);
-					if($objp->rowid != $id)
+					if ($objp->rowid != $id)
 					{
 						// check if a product is not already a parent product of this one
-						$prod_arbo=new Product($db);
-						$prod_arbo->id=$objp->rowid;
+						$prod_arbo = new Product($db);
+						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
 						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT)
 						{
-							$is_pere=0;
+							$is_pere = 0;
 							$prod_arbo->get_sousproduits_arbo();
 							// associations sousproduits
 							$prods_arbo = $prod_arbo->get_arbo_each_prod();
 							if (count($prods_arbo) > 0)
 							{
-								foreach($prods_arbo as $key => $value)
+								foreach ($prods_arbo as $key => $value)
 								{
-									if ($value[1]==$id)
+									if ($value[1] == $id)
 									{
-										$is_pere=1;
+										$is_pere = 1;
 									}
 								}
 							}
-							if ($is_pere==1)
+							if ($is_pere == 1)
 							{
 								$i++;
 								continue;
@@ -599,9 +578,7 @@ if ($id > 0 || !empty($ref))
 							//$addchecked = ' checked';
 							$qty = $object->is_sousproduit_qty;
 							$incdec = $object->is_sousproduit_incdec;
-						}
-						else
-						{
+						} else {
 							//$addchecked = '';
 							$qty = 0;
 							$incdec = 0;
@@ -615,8 +592,7 @@ if ($id > 0 || !empty($ref))
 						// Inc Dec
 						print '<td class="center">';
 						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec ? 'checked' : '').'>';
-						else
-						{
+						else {
 							// TODO Hide field and show it when setting a qty
 							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
 							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
@@ -635,9 +611,7 @@ if ($id > 0 || !empty($ref))
 					print '<td></td>';
 					print '</tr>';
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 			print '</table>';

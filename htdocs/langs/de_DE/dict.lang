@@ -298,9 +298,9 @@ CurrencyThousandthSingTND=Tausendstel
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Rundschreiben
-DemandReasonTypeSRC_CAMP_EMAIL=E-Mail Kampagne
+DemandReasonTypeSRC_CAMP_EMAIL=E-Mail-Kampagne
 DemandReasonTypeSRC_CAMP_PHO=Telefonaktion
-DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
+DemandReasonTypeSRC_CAMP_FAX=Fax-Kampagne
 DemandReasonTypeSRC_COMM=Kaufmännischer Ansprechpartner
 DemandReasonTypeSRC_SHOP=Shop-Kontakt
 DemandReasonTypeSRC_WOM=Mund-zu-Mund-Propaganda

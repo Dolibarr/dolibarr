@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -470,19 +470,19 @@ class DataPolicyCron
             {
                 $sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
-                $resql = $db->query($sql);
+                $resql = $this->db->query($sql);
 
-                if ($resql && $db->num_rows($resql) > 0)
+                if ($resql && $this->db->num_rows($resql) > 0)
                 {
-                    $num = $db->num_rows($resql);
+                    $num = $this->db->num_rows($resql);
                     $i = 0;
 
                     require_once $params['file'];
-                    $object = new $params['class']($db);
+                    $object = new $params['class']($this->db);
 
                     while ($i < $num && !$error)
                     {
-                        $obj = $db->fetch_object($resql);
+                        $obj = $this->db->fetch_object($resql);
 
                         $object->fetch($obj->rowid);
                         $object->id = $obj->rowid;
@@ -505,9 +505,7 @@ class DataPolicyCron
 	                                	$error++;
 	                                }
 	                            }
-                            }
-                            else
-                            {
+                            } else {
                             	$errormsg = $object->error;
                             	$error++;
                             }
@@ -538,9 +536,7 @@ class DataPolicyCron
         if (!$error)
         {
         	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
-        }
-        else
-        {
+        } else {
         	$this->error = $errormsg;
         }
 

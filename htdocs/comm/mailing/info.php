@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
 
 // Load translation files required by the page
 $langs->load("mails");

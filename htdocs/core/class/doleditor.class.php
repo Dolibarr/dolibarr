@@ -88,7 +88,12 @@ class DolEditor
     	// Define some properties
         if (in_array($this->tool, array('textarea', 'ckeditor', 'ace')))
         {
-    	    $this->content = $content;
+        	if ($this->tool == 'ckeditor' && ! dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
+        		$this->content = dol_nl2br($content);
+        	}
+        	else {
+    	    	$this->content = $content;
+        	}
     	    $this->htmlname 			= $htmlname;
     	    $this->toolbarname = $shorttoolbarname;
     	    $this->toolbarstartexpanded = $toolbarstartexpanded;
@@ -125,11 +130,6 @@ class DolEditor
     	$found = 0;
 		$out = '';
 
-        if ($this->tool == 'fckeditor') // not used anymore
-        {
-			$found = 1;
-            $this->editor->Create();
-        }
         if (in_array($this->tool, array('textarea', 'ckeditor')))
         {
             $found = 1;

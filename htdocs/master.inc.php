@@ -49,7 +49,7 @@ $conf->db->host							= $dolibarr_main_db_host;
 $conf->db->port							= $dolibarr_main_db_port;
 $conf->db->name							= $dolibarr_main_db_name;
 $conf->db->user							= $dolibarr_main_db_user;
-$conf->db->pass							= $dolibarr_main_db_pass;
+$conf->db->pass							= empty($dolibarr_main_db_pass)?'':$dolibarr_main_db_pass;
 $conf->db->type							= $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
 $conf->db->character_set = $dolibarr_main_db_character_set;
@@ -60,14 +60,14 @@ if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type = constant('TEST_DB_FORCE_TYP
 
 // Set properties specific to conf file
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
-$conf->file->mailing_limit_sendbyweb	= $dolibarr_mailing_limit_sendbyweb;
-$conf->file->mailing_limit_sendbycli	= $dolibarr_mailing_limit_sendbycli;
+$conf->file->mailing_limit_sendbyweb = $dolibarr_mailing_limit_sendbyweb;
+$conf->file->mailing_limit_sendbycli = $dolibarr_mailing_limit_sendbycli;
 $conf->file->main_authentication = empty($dolibarr_main_authentication) ? '' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
-$conf->file->strict_mode 				= empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
+$conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
 $conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define array of document root directories ('/home/htdocs')
-$conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT); // Define array of url root path ('' or '/dolibarr')
+$conf->file->dol_url_root = array('main' => (string) DOL_URL_ROOT); // Define array of url root path ('' or '/dolibarr')
 if (!empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt can contains several directories
@@ -132,9 +132,7 @@ if (!defined('NOREQUIREDB'))
 				$langs->setDefaultLang('auto');
 				$langs->load("website");
 				print $langs->trans("SorryWebsiteIsCurrentlyOffLine");
-			}
-			else
-			{
+			} else {
 				print "SorryWebsiteIsCurrentlyOffLine";
 			}
 			print '</div>';
@@ -162,20 +160,17 @@ if (!defined('NOREQUIREUSER')) {
  */
 
 // By default conf->entity is 1, but we change this if we ask another value.
-if (session_id() && !empty($_SESSION["dol_entity"]))			// Entity inside an opened session
-{
+if (session_id() && !empty($_SESSION["dol_entity"])) {
+	// Entity inside an opened session
 	$conf->entity = $_SESSION["dol_entity"];
-}
-elseif (!empty($_ENV["dol_entity"]))							// Entity inside a CLI script
-{
+} elseif (!empty($_ENV["dol_entity"])) {
+	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-}
-elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int'))	// Just after a login page
-{
+} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
+	// Just after a login page
 	$conf->entity = GETPOST("entity", 'int');
-}
-elseif (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
-{
+} elseif (defined('DOLENTITY') && is_numeric(DOLENTITY)) {
+	// For public page with MultiCompany module
 	$conf->entity = DOLENTITY;
 }
 
@@ -225,9 +220,7 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/user/logout.php';
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
-		}
-		else
-		{
+		} else {
 			print 'Sorry, your application is offline. Only administrator user "'.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'" is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/';
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";

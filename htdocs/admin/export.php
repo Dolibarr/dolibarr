@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'exports', 'other'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -90,12 +90,12 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
-echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
+print ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"EXPORT_CSV_SEPARATOR_TO_USE\" value=\"".(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
+print '<td width="60" align="center"><input class="flat width50" maxlength="3" type="text" name="EXPORT_CSV_SEPARATOR_TO_USE" value="'.(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE).'"></td>';
 print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 

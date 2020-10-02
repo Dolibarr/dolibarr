@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Configuración del módulo de banda
+StripeDesc=Ofrezca a los clientes una página de pago en línea de Stripe para pagos con tarjetas de crédito / cebit a través de <a href="http://www.stripe.com" target="_blank">Stripe</a> . Esto se puede usar para permitir que sus clientes realicen pagos ad-hoc o para pagos relacionados con un objeto Dolibarr en particular (factura, pedido, ...)
+STRIPE_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después de un intento de pago (éxito o falla)
+StripeDoPayment=Pagar con la raya
+YouWillBeRedirectedOnStripe=Se te redirigirá a la página de Banda segura para ingresar la información de tu tarjeta de crédito
+ToOfferALinkForOnlinePayment=URL para el pago %s
+ToOfferALinkForOnlinePaymentOnOrder=URL para ofrecer una %s pagina de pago en línea para una Orden de Ventas
+ToOfferALinkForOnlinePaymentOnInvoice=URL para ofrecer una %s pagina de pago en linea para una Factura de Cliente
+ToOfferALinkForOnlinePaymentOnContractLine=URL para ofrecer una %s pagina de pago en línea para una línea de contrato
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una %s página de pago en línea de cualquier cantidad sin objeto existente
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer una %s página de pago en línea para una suscripción de miembro
+ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer una %s página de pago en línea para el pago de una donación
+YouCanAddTagOnUrl=También puede agregar el parámetro url <b>&tag=<i>value</i></b> a cualquiera de esos URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago.<br>Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong>&noidempotency=1</strong> por lo que el mismo enlace con la misma etiqueta se puede usar varias veces (algunos modos de pago pueden limitar el pago a 1 por cada enlace diferente sin este parámetro)
+SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con url <b>%s</b> para que el pago se cree automáticamente cuando se valida con Stripe.
+STRIPE_CGI_URL_V2=Módulo de CGI de Url of Stripe para el pago
+NewStripePaymentFailed=Se intentó el nuevo pago de Stripe pero falló
+STRIPE_TEST_SECRET_KEY=Clave de prueba secreta
+STRIPE_TEST_PUBLISHABLE_KEY=Clave de prueba publicable
+STRIPE_LIVE_SECRET_KEY=Clave secreta en vivo
+STRIPE_LIVE_PUBLISHABLE_KEY=Clave en vivo publicable
+StripeLiveEnabled=Stripe live enabled (de lo contrario, prueba / modo de espacio aislado)
+StripeImportPayment=Importar pagos en franja
+ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para la prueba: %s =&gt; válido, %s =&gt; error CVC, %s =&gt; caducado, %s =&gt; cargo falla
+StripeGateways=Pasarelas de banda
+BankAccountForBankTransfer=Cuenta bancaria para pagos de fondos
+StripeAccount=Cuenta de banda
+StripeChargeList=Lista de cargas de la raya
+StripeTransactionList=Lista de transacciones de banda
+StripeCustomerId=Identificación de cliente de Stripe
+StripePaymentModes=Modos de pago de banda
+StripeID=Identificación de la raya
+ConfirmDeleteCard=¿Seguro que quieres eliminar esta tarjeta de crédito o débito?
+ShowInStripe=Mostrar en raya
+StripeUserAccountForActions=Cuenta de usuario para usar para la notificación por correo electrónico de algunos eventos de Stripe (pagos de Stripe)
+StripePayoutList=Lista de pagos de la raya
+ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a la IPN (modo en vivo)

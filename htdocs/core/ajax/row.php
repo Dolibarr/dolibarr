@@ -47,8 +47,8 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if ((!empty($_POST['roworder'])) && (!empty($_POST['table_element_line']))
-	&& (!empty($_POST['fk_element'])) && (!empty($_POST['element_id'])))
+if (GETPOST('roworder', 'alpha') && GETPOST('table_element_line', 'alpha', 2)
+	&& GETPOST('fk_element', 'alpha', 2) && GETPOST('element_id', 'int', 2))
 {
 	$roworder = GETPOST('roworder', 'alpha', 2);
 	$table_element_line = GETPOST('table_element_line', 'alpha', 2);

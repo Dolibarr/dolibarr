@@ -8,6 +8,7 @@
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
 
 $date_startmonth = GETPOST('date_startmonth', 'int');
 $date_startday = GETPOST('date_startday', 'int');
@@ -98,8 +99,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
             $month_end = $month_start - 1;
             if ($month_end < 1) $month_end = 12;
             else $year_end++;
-        }
-        else $month_end = $month_start;
+        } else $month_end = $month_start;
         $date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
     }
     if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
@@ -150,11 +150,10 @@ if ($modecompta == "CREANCES-DETTES")
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
     $description = $langs->trans("RulesResultDue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
     $builddate = dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -165,8 +164,7 @@ elseif ($modecompta == "RECETTES-DEPENSES")
     $description = $langs->trans("RulesResultInOut");
     $builddate = dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
@@ -211,9 +209,7 @@ print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING')
 {
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'amount', '', $param, 'class="right"', $sortfield, $sortorder);
-}
-else
-{
+} else {
 	if ($modecompta == 'CREANCES-DETTES')
 	{
 		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -227,17 +223,15 @@ print "</tr>\n";
 if ($modecompta == 'BOOKKEEPING')
 {
 	$predefinedgroupwhere = "(";
-	//$predefinedgroupwhere.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
 	$predefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
 	$predefinedgroupwhere .= " OR ";
-	//$predefinedgroupwhere.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
 	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
 	$predefinedgroupwhere .= ")";
 
 	$charofaccountstring = $conf->global->CHARTOFACCOUNTS;
 	$charofaccountstring = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
-	$sql = "SELECT f.thirdparty_code as name, -1 as socid, aa.pcg_type, aa.pcg_subtype, sum(f.credit - f.debit) as amount";
+	$sql = "SELECT f.thirdparty_code as name, -1 as socid, aa.pcg_type, SUM(f.credit - f.debit) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
 	$sql .= ", ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE f.numero_compte = aa.account_number";
@@ -271,7 +265,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 				print '<tr class="oddeven">';
 				print '<td>&nbsp;</td>';
-				print '<td>'.$objp->pcg_type.($objp->pcg_subtype != 'XXXXXX' ? ' - '.$objp->pcg_subtype : '').($objp->name ? ' ('.$objp->name.')' : '')."</td>\n";
+				print '<td>'.$objp->pcg_type.($objp->name ? ' ('.$objp->name.')' : '')."</td>\n";
 				print '<td class="right">'.price($objp->amount)."</td>\n";
 				print "</tr>\n";
 
@@ -282,7 +276,7 @@ if ($modecompta == 'BOOKKEEPING')
 				// This make 14 calls for each detail of account (NP, N and month m)
 				if ($showaccountdetail != 'no')
 				{
-					$tmppredefinedgroupwhere = "pcg_type = '".$db->escape($objp->pcg_type)."' AND pcg_subtype = '".$db->escape($objp->pcg_subtype)."'";
+					$tmppredefinedgroupwhere = "pcg_type = '".$db->escape($objp->pcg_type)."'";
 					$tmppredefinedgroupwhere .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 					//$tmppredefinedgroupwhere.= " AND thirdparty_code = '".$db->escape($objp->name)."'";
 
@@ -313,16 +307,11 @@ if ($modecompta == 'BOOKKEEPING')
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr><td colspan="4" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 		}
-	}
-	else dol_print_error($db);
-}
-else
-{
+	} else dol_print_error($db);
+} else {
 	/*
 	 * Factures clients
 	 */
@@ -337,12 +326,10 @@ else
 	    $sql .= " AND f.fk_statut IN (1,2)";
 	    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 	    	$sql .= " AND f.type IN (0,1,2,5)";
-		else
-			$sql .= " AND f.type IN (0,1,2,3,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 	    if (!empty($date_start) && !empty($date_end))
 	    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-	}
-	elseif ($modecompta == 'RECETTES-DEPENSES')
+	} elseif ($modecompta == 'RECETTES-DEPENSES')
 	{
 		/*
 	     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -464,12 +451,10 @@ else
 	    $sql .= " AND f.fk_statut IN (1,2)";
 	    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 	    	$sql .= " AND f.type IN (0,1,2)";
-		else
-			$sql .= " AND f.type IN (0,1,2,3)";
+		else $sql .= " AND f.type IN (0,1,2,3)";
 	    if (!empty($date_start) && !empty($date_end))
 	    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-	}
-	elseif ($modecompta == 'RECETTES-DEPENSES')
+	} elseif ($modecompta == 'RECETTES-DEPENSES')
 	{
 	    $sql = "SELECT s.nom as name, s.rowid as socid, sum(pf.amount) as amount_ttc";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
@@ -518,9 +503,7 @@ else
 	            print "</tr>\n";
 	            $i++;
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        print '<tr class="oddeven"><td>&nbsp;</td>';
 	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
@@ -553,8 +536,7 @@ else
 	    $sql .= " AND c.deductible = 0";
 	    if (!empty($date_start) && !empty($date_end))
 	    	$sql .= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
-	}
-	elseif ($modecompta == 'RECETTES-DEPENSES')
+	} elseif ($modecompta == 'RECETTES-DEPENSES')
 	{
 	    $sql = "SELECT c.id, c.libelle as label, sum(p.amount) as amount";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -598,8 +580,7 @@ else
 	            print '</tr>';
 	            $i++;
 	        }
-	    }
-	    else {
+	    } else {
 	        print '<tr class="oddeven"><td>&nbsp;</td>';
 	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
@@ -630,8 +611,7 @@ else
 	    if (!empty($date_start) && !empty($date_end))
 	    	$sql .= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	    $sql .= " AND cs.entity = ".$conf->entity;
-	}
-	elseif ($modecompta == 'RECETTES-DEPENSES')
+	} elseif ($modecompta == 'RECETTES-DEPENSES')
 	{
 	    $sql = "SELECT c.id, c.libelle as label, sum(p.amount) as amount";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -675,8 +655,7 @@ else
 	            print '</tr>';
 	            $i++;
 	        }
-	    }
-	    else {
+	    } else {
 	        print '<tr class="oddeven"><td>&nbsp;</td>';
 	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
@@ -768,16 +747,12 @@ else
 		            print '</tr>';
 		            $i++;
 		        }
-		    }
-		    else
-		    {
+		    } else {
 		        print '<tr class="oddeven"><td>&nbsp;</td>';
 		        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 		        print '</tr>';
 		    }
-		}
-		else
-		{
+		} else {
 		    dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
@@ -854,16 +829,12 @@ else
 					print '<td class="right">'.price(-$obj->amount_ttc).'</td>';
 					print '</tr>';
 				}
-			}
-			else
-			{
+			} else {
 				print '<tr class="oddeven"><td>&nbsp;</td>';
 				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
@@ -888,9 +859,7 @@ else
 		    	$sql .= " FROM ".MAIN_DB_PREFIX."don as p";
 		    	$sql .= " WHERE p.entity IN (".getEntity('donation').")";
 		    	$sql .= " AND fk_statut in (1,2)";
-			}
-			else
-			{
+			} else {
 			    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
 			    $sql .= " FROM ".MAIN_DB_PREFIX."don as p";
 			    $sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
@@ -936,16 +905,12 @@ else
 					print '</tr>';
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				print '<tr class="oddeven"><td>&nbsp;</td>';
 				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 		print '<tr class="liste_total">';
@@ -955,6 +920,113 @@ else
 		print '</tr>';
 	}
 
+    /*
+     * Various Payments
+     */
+
+    if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->banque->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
+    {
+        $subtotal_ht = 0;
+        $subtotal_ttc = 0;
+
+        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VariousPayment").'</td></tr>';
+
+        // Debit
+        $sql = "SELECT SUM(p.amount) AS amount FROM ".MAIN_DB_PREFIX."payment_various as p";
+        $sql .= ' WHERE 1 = 1';
+        if (!empty($date_start) && !empty($date_end))
+            $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+        $sql .= ' GROUP BY p.sens';
+        $sql .= ' ORDER BY p.sens';
+
+        dol_syslog('get various payments', LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            // Debit
+            $obj = $db->fetch_object($result);
+            if (isset($obj->amount))
+            {
+                $subtotal_ht += -$obj->amount;
+                $subtotal_ttc += -$obj->amount;
+            }
+            print '<tr class="oddeven"><td>&nbsp;</td>';
+            print "<td>".$langs->trans("Debit")."</td>\n";
+            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+            print '<td class="right">'.price(-$obj->amount)."</td>\n";
+            print "</tr>\n";
+
+            // Credit
+            $obj = $db->fetch_object($result);
+            if (isset($obj->amount))
+            {
+                $subtotal_ht += $obj->amount;
+                $subtotal_ttc += $obj->amount;
+            }
+            print '<tr class="oddeven"><td>&nbsp;</td>';
+            print "<td>".$langs->trans("Credit")."</td>\n";
+            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price($obj->amount).'</td>';
+            print '<td class="right">'.price($obj->amount)."</td>\n";
+            print "</tr>\n";
+
+            // Total
+            $total_ht += $subtotal_ht;
+            $total_ttc += $subtotal_ttc;
+            print '<tr class="liste_total">';
+            if ($modecompta == 'CREANCES-DETTES')
+                print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
+            print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
+            print '</tr>';
+        } else dol_print_error($db);
+    }
+
+    /*
+     * Payement Loan
+     */
+
+    if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES"))
+    {
+        $subtotal_ht = 0;
+        $subtotal_ttc = 0;
+
+        print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("PaymentLoan").'</td></tr>';
+
+        $sql = 'SELECT l.rowid as id, l.label AS label, SUM(p.amount_capital + p.amount_insurance + p.amount_interest) as amount FROM '.MAIN_DB_PREFIX.'payment_loan as p';
+        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'loan AS l ON l.rowid = p.fk_loan';
+        $sql .= ' WHERE 1 = 1';
+        if (!empty($date_start) && !empty($date_end))
+            $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+        $sql .= ' GROUP BY p.fk_loan';
+        $sql .= ' ORDER BY p.fk_loan';
+
+        dol_syslog('get loan payments', LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+            $loan_static = new Loan($db);
+            while ($obj = $db->fetch_object($result))
+            {
+                $loan_static->id = $obj->id;
+                $loan_static->ref = $obj->id;
+                $loan_static->label = $obj->label;
+                print '<tr class="oddeven"><td>&nbsp;</td>';
+                print "<td>".$loan_static->getNomUrl(1).' - '.$obj->label."</td>\n";
+                if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
+                print '<td class="right">'.price(-$obj->amount)."</td>\n";
+                print "</tr>\n";
+                $subtotal_ht -= $obj->amount;
+                $subtotal_ttc -= $obj->amount;
+            }
+            $total_ht += $subtotal_ht;
+            $total_ttc += $subtotal_ttc;
+            print '<tr class="liste_total">';
+            if ($modecompta == 'CREANCES-DETTES')
+                print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
+            print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
+            print '</tr>';
+        } else dol_print_error($db);
+    }
 
 	/*
 	 * VAT
@@ -975,8 +1047,7 @@ else
 		    $sql .= " WHERE f.fk_statut IN (1,2)";
 		    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 		    	$sql .= " AND f.type IN (0,1,2,5)";
-			else
-				$sql .= " AND f.type IN (0,1,2,3,5)";
+			else $sql .= " AND f.type IN (0,1,2,3,5)";
 		    if (!empty($date_start) && !empty($date_end))
 		    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		    $sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -1023,8 +1094,7 @@ else
 		    $sql .= " WHERE f.fk_statut IN (1,2)";
 		    if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 		    	$sql .= " AND f.type IN (0,1,2)";
-			else
-				$sql .= " AND f.type IN (0,1,2,3)";
+			else $sql .= " AND f.type IN (0,1,2,3)";
 		    if (!empty($date_start) && !empty($date_end))
 		    	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		    $sql .= " AND f.entity = ".$conf->entity;
@@ -1064,9 +1134,7 @@ else
 		    print '<td class="right">&nbsp;</td>'."\n";
 		    print '<td class="right">'.price($amount)."</td>\n";
 		    print "</tr>\n";
-		}
-		else
-		{
+		} else {
 		    // VAT really already paid
 		    $amount = 0;
 		    $sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
@@ -1145,9 +1213,7 @@ else
 		            }
 		        }
 		        $db->free($result);
-		    }
-		    else
-		    {
+		    } else {
 		        dol_print_error($db);
 		    }
 		    print '<tr class="oddeven"><td>&nbsp;</td>';

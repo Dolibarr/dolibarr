@@ -24,7 +24,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $value = GETPOST('value', 'alpha');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -83,7 +83,7 @@ llxHeader('', $title);
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 

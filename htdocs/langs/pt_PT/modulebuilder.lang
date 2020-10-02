@@ -27,7 +27,7 @@ DangerZone=Zona de perigo
 BuildPackage=Pacote de construção
 BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
 BuildDocumentation=Criar documentação
-ModuleIsNotActive=Este módulo não está ativado ainda. Vá até %s para fazê-lo funcionar ou clique aqui:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=This module has been activated. Any change may break a current live feature.
 DescriptionLong=Descrição longa
 EditorName=Nome do editor
@@ -83,8 +83,8 @@ ListOfDictionariesEntries=List of dictionaries entries
 ListOfPermissionsDefined=Lista de permissões definidas
 SeeExamples=Veja exemplos aqui
 EnabledDesc=Condição para ter este campo ativo (Exemplos: 1 ou $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>For document :</strong><br/>0 = not displayed <br/>1 = display<br/>2 = display only if not empty<br/><br/><strong>For document lines :</strong><br/>0 = not displayed <br/>1 = displayed in a column<br/>3 = display in line description column after the description<br/>4 = display in description column after the description only if not empty
 DisplayOnPdf=Display on PDF
 IsAMeasureDesc=O valor do campo pode ser acumulado para obter um total na lista? (Exemplos: 1 ou 0)
 SearchAllDesc=O campo é usado para fazer uma pesquisa a partir da ferramenta de pesquisa rápida? (Exemplos: 1 ou 0)
@@ -139,3 +139,4 @@ ForeignKey=Foreign key
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
 AsciiToHtmlConverter=Ascii to HTML converter
 AsciiToPdfConverter=Ascii to PDF converter
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

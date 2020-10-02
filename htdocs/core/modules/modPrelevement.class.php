@@ -20,21 +20,20 @@
 
 /**
  *	\defgroup   	prelevement     Module prelevement
- *	\brief      	Module de gestion des prelevements bancaires
+ *	\brief      	Module to manage Direct debit orders
  *	\file       	htdocs/core/modules/modPrelevement.class.php
  *	\ingroup    	prelevement
- *	\brief      	Fichier de description et activation du module Prelevement
+ *	\brief      	File to describe and enable the module Prelevement
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module Prelevement
+ *	Class to describe and enable module of payment by Direct Debit
  */
 class modPrelevement extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -51,7 +50,7 @@ class modPrelevement extends DolibarrModules
 		$this->module_position = '52';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des Prelevements";
+		$this->description = "Management of Direct Debit orders";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -123,15 +122,6 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
-
-        /*
-        $this->rights[2][0] = 154;
-        $this->rights[2][1] = 'Setup withdraw account';
-        $this->rights[2][2] = 'w';
-        $this->rights[2][3] = 0;
-        $this->rights[2][4] = 'bons';
-        $this->rights[2][5] = 'configurer';
-        */
 
         // Menus
         //-------

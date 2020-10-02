@@ -154,9 +154,7 @@ class mailing_fraise extends MailingTargets
                 $s .= '</option>';
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
 
@@ -193,9 +191,7 @@ class mailing_fraise extends MailingTargets
         		$s .= '</option>';
         		$i++;
         	}
-        }
-        else
-        {
+        } else {
         	dol_print_error($this->db);
         }
 
@@ -270,9 +266,9 @@ class mailing_fraise extends MailingTargets
         if ($dateendsubscriptionbefore > 0) $sql .= " AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql .= " AND a.fk_adherent_type = ta.rowid";
         // Filter on type
-        if ($_POST['filter_type']) $sql .= " AND ta.rowid='".$_POST['filter_type']."'";
+        if (GETPOSTISET('filter_type')) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type'))."'";
         // Filter on category
-        if ($_POST['filter_category']) $sql .= " AND c.rowid='".$_POST['filter_category']."'";
+        if (GETPOSTISSET('filter_category')) $sql .= " AND c.rowid='".$this->db->escape(GETPOST('filter_category'))."'";
         $sql .= " ORDER BY a.email";
         //print $sql;
 
@@ -313,9 +309,7 @@ class mailing_fraise extends MailingTargets
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_syslog($this->db->error());
             $this->error = $this->db->error();
             return -1;

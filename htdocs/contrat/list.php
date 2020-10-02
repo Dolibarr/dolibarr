@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014-2019 Juanjo Menent        <jmenent@2byte.es>
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -50,13 +50,13 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state", 'alpha'));
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('contrat');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // List of fields to search into when doing a "search in all"
@@ -369,11 +369,9 @@ if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete'] = '<span
 if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->contrat->creer)
-{
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contrat/card.php?action=create');
-}
+$url = DOL_URL_ROOT.'/contrat/card.php?action=create';
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton = dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -384,7 +382,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendContractRef";
 $modelmail = "contract";
@@ -612,9 +610,11 @@ while ($i < min($num, $limit))
 	}
 
 	print '<tr class="oddeven">';
+
+	// Ref
 	if (!empty($arrayfields['c.ref']['checked']))
 	{
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		print $contracttmp->getNomUrl(1);
 		if ($obj->nb_late) print img_warning($langs->trans("Late"));
 		if (!empty($obj->note_private) || !empty($obj->note_public)) {
@@ -631,6 +631,7 @@ while ($i < min($num, $limit))
 
 		print '</td>';
 	}
+
 	if (!empty($arrayfields['c.ref_customer']['checked']))
 	{
 	    print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
@@ -705,8 +706,7 @@ while ($i < min($num, $limit))
 			if ($nbofsalesrepresentative > 3) {
 				// We print only number
 				print $nbofsalesrepresentative;
-			}
-			elseif ($nbofsalesrepresentative > 0)
+			} elseif ($nbofsalesrepresentative > 0)
 			{
 				$userstatic = new User($db);
 				$j = 0;
@@ -728,9 +728,7 @@ while ($i < min($num, $limit))
 				}
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
-		}
-		else
-		{
+		} else {
 			print '&nbsp';
 		}
 		print '</td>';
@@ -743,7 +741,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

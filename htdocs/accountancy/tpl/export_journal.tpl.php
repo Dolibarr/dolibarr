@@ -58,9 +58,7 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
-}
-else
-{
+} else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 

@@ -30,7 +30,7 @@ $langs->loadLangs(array("companies", "bills", "products", "margins"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -229,9 +229,7 @@ if ($id > 0 || !empty($ref))
                 {
                     $marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
-                }
-                else
-                {
+                } else {
                     $marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
                 }

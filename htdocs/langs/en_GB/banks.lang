@@ -1,7 +1,15 @@
 # Dolibarr language file - Source file is en_US - banks
 CheckTransmitter=Drawer
+ValidateCheckReceipt=Validate this cheque receipt?
+ConfirmValidateCheckReceipt=Are you sure you want to validate this cheque receipt? No change will be possible once this is done.
+DeleteCheckReceipt=Delete this cheque receipt?
+ConfirmDeleteCheckReceipt=Are you sure you want to delete this cheque receipt?
 BankChecks=Bank cheques
+BankChecksToReceipt=Cheques awaiting deposit
+BankChecksToReceiptShort=Cheques awaiting deposit
 ShowCheckReceipt=Show cheque deposit receipt
+NumberOfCheques=No. of cheques
+SelectChequeTransactionAndGenerate=Select/filter cheques to include in the cheque deposit receipt, then click "Create".
 InputReceiptNumber=Identify the bank statement to reconcile. Use a sortable numeric value: YYYYMM or YYYYMMDD
 EventualyAddCategory=Specify a category in which to classify the records, if required
 ThenCheckLinesAndConciliate=Select the lines shown on the bank statement and click
@@ -11,5 +19,7 @@ LabelRIB=Bank account Label
 NoBANRecord=No bank account record
 DeleteARib=Delete bank account record
 RejectCheck=Cheque returned
+ConfirmRejectCheck=Are you sure you want to mark this cheque as rejected?
 RejectCheckDate=Date the cheque was returned
 CheckRejected=Cheque returned
+CheckRejectedAndInvoicesReopened=Cheque returned and invoices reopened

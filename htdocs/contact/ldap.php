@@ -67,9 +67,7 @@ if ($action == 'dolibarr2ldap')
 	{
 		setEventMessages($langs->trans("ContactSynchronized"), null, 'mesgs');
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
 		$db->rollback();
 	}
@@ -106,9 +104,7 @@ if ($object->socid > 0)
 	$thirdparty->fetch($object->socid);
 
 	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$thirdparty->getNomUrl(1).'</td></tr>';
-}
-else
-{
+} else {
 	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 	print $langs->trans("ContactNotLinkedToCompany");
 	print '</td></tr>';
@@ -183,22 +179,16 @@ if ($result > 0)
 		if (!is_array($records))
 		{
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
+		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();
 	$ldap->close();
-}
-else
-{
+} else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

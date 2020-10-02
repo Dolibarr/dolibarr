@@ -32,6 +32,7 @@ VendorName=Navn på leverandøren
 CSSUrlForPaymentForm=URL til CSS-stilark for betalingsskjema
 NewStripePaymentReceived=Ny Stripe betaling mottatt
 NewStripePaymentFailed=Ny Stripe betaling prøvd men mislyktes
+FailedToChargeCard=Kunne ikke lade kortet
 STRIPE_TEST_SECRET_KEY=Hemmelig testnøkkel
 STRIPE_TEST_PUBLISHABLE_KEY=Publiserbar testnøkkel
 STRIPE_TEST_WEBHOOK_KEY=Webhook testnøkkel
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN
 ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN (live-modus)
 PaymentWillBeRecordedForNextPeriod=Betalingen blir registrert for neste periode.
 ClickHereToTryAgain=<a href="%s">Klikk her for å prøve igjen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=På grunn av sterke regler for autentisering av kunder, må opprettelse av et kort gjøres fra Stripe backoffice. Du kan klikke her for å slå på Stripe kundeoppføring: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

@@ -100,23 +100,17 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			if (empty($backtopage)) $backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
 			header("Location: ".$backtopage);
 			exit;
-		}
-		else
-		{
+		} else {
 			if ($object->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
 				setEventMessages($langs->transnoentities("WarningBookmarkAlreadyExists"), null, 'warnings');
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 			$action = $invertedaction;
 		}
-	}
-	else
-	{
+	} else {
 		$action = $invertedaction;
 	}
 }
@@ -135,7 +129,7 @@ $head = array();
 $h = 1;
 
 $head[$h][0] = $_SERVER["PHP_SELF"].($object->id ? 'id='.$object->id : '');
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("Bookmark");
 $head[$h][2] = 'card';
 $h++;
 
@@ -151,6 +145,7 @@ if ($action == 'create')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
@@ -256,7 +251,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 		print '</span>';
 	}
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
+	if ($action == 'edit') print '<input class="flat minwidth500" name="url" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
 	else print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
 	print '</td></tr>';
 
@@ -265,9 +260,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	{
 		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, isset($_POST["target"]) ? $_POST["target"] : $object->target);
-	}
-	else
-	{
+	} else {
 		if ($object->target == 0) print $langs->trans("ReplaceWindow");
 		if ($object->target == 1) print $langs->trans("OpenANewWindow");
 	}
@@ -277,17 +270,13 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	if ($action == 'edit' && $user->admin)
 	{
 		print img_picto('', 'user').' '.$form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	}
-	else
-	{
+	} else {
 		if ($object->fk_user > 0)
 		{
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
 			print $fuser->getNomUrl(1);
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Public");
 		}
 	}
@@ -322,13 +311,13 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	// Edit
 	if ($user->rights->bookmark->creer && $action != 'edit')
 	{
-		print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?id=".$object->id."&amp;action=edit\">".$langs->trans("Edit")."</a>\n";
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
 	if ($user->rights->bookmark->supprimer && $action != 'edit')
 	{
-		print "  <a class=\"butActionDelete\" href=\"list.php?bid=".$object->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
+		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';

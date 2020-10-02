@@ -172,9 +172,7 @@ abstract class ModeleThirdPartyCode
 				$liste[$row[0]] = $row[1];
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 		return $liste;

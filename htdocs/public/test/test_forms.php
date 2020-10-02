@@ -19,6 +19,7 @@ This page is a sample of page using Dolibarr HTML widget methods. It is designed
 - css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
 - jmobile (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
 - no javascript / usage for bind people (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
+- use with a text browser (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?textbrowser=1'; ?>">textbrowser=1</a> to force detection of a text browser)<br>
 </h2>
 <br>
 
