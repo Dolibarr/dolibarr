@@ -1162,7 +1162,7 @@ class FormOther
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
                     // Show box
                     $box->loadBox($box_max_lines);
-                    $boxlista .= $box->outputBox();
+                    $boxlista .= $box->showBox(null, null, 1);
                 }
             }
 
@@ -1171,7 +1171,7 @@ class FormOther
             	$emptybox->box_id = 'A';
             	$emptybox->info_box_head = array();
             	$emptybox->info_box_contents = array();
-            	$boxlista .= $emptybox->outputBox(array(), array());
+            	$boxlista .= $emptybox->showBox(array(), array(), 1);
             }
             $boxlista .= "<!-- End box left container -->\n";
 
@@ -1189,7 +1189,7 @@ class FormOther
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
                     // Show box
                     $box->loadBox($box_max_lines);
-                    $boxlistb .= $box->outputBox();
+                    $boxlistb .= $box->showBox(null, null, 1);
                 }
             }
 
@@ -1198,7 +1198,7 @@ class FormOther
             	$emptybox->box_id = 'B';
             	$emptybox->info_box_head = array();
             	$emptybox->info_box_contents = array();
-            	$boxlistb .= $emptybox->outputBox(array(), array());
+            	$boxlistb .= $emptybox->showBox(array(), array(), 1);
             }
 
             $boxlistb .= "<!-- End box right container -->\n";
