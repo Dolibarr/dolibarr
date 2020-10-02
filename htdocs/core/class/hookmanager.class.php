@@ -171,6 +171,7 @@ class HookManager
 				'formattachOptions',
 				'formBuilddocLineOptions',
 				'formatNotificationMessage',
+			    'formConfirm',
 				'getAccessForbiddenMessage',
 				'getDirList',
 				'getFormMail',
