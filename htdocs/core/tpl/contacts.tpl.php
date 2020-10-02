@@ -298,9 +298,9 @@ foreach ($list as $entry)
 	if ($permission)
 	{
 		$href = $_SERVER["PHP_SELF"];
-		$href .= "?id=".$object->id;
-		$href .= "&action=deletecontact";
-		$href .= "&lineid=".$entry->id;
+		$href .= '?id='.$object->id;
+		$href .= '&action=deletecontact&token='.newToken();
+		$href .= '&lineid='.$entry->id;
 
 		print "<td class='center'>";
 		print "<a href='$href'>";

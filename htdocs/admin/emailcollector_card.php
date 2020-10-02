@@ -540,7 +540,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
 		print '<td class="right">';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'&token='.urlencode(newToken()).'">'.img_delete().'</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&token='.urlencode(newToken()).'&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -632,7 +632,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Delete
 		print '<td class="right nowraponall">';
 		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'&token='.urlencode(newToken()).'">'.img_delete().'</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;

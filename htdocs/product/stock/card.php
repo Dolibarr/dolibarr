@@ -485,13 +485,19 @@ if ($action == 'create')
 			{
 				if (empty($action))
 				{
-					if ($user->rights->stock->creer)
-						print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
-					else print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
+					if ($user->rights->stock->creer) {
+						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+					}
+					else {
+						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
+					}
 
-					if ($user->rights->stock->supprimer)
-						print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
-					else print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
+					if ($user->rights->stock->supprimer) {
+						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					}
+					else {
+						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
+					}
 				}
 			}
 

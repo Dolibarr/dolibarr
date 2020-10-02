@@ -55,6 +55,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlist';
 
+$search_datecloture_start = GETPOST('search_datecloture_start', 'int');
+if (empty($search_datecloture_start)) $search_datecloture_start = dol_mktime(0, 0, 0, GETPOST('search_datecloture_startmonth', 'int'), GETPOST('search_datecloture_startday', 'int'), GETPOST('search_datecloture_startyear', 'int'));
+$search_datecloture_end = GETPOST('search_datecloture_end', 'int');
+if (empty($search_datecloture_end)) $search_datecloture_end = dol_mktime(23, 59, 59, GETPOST('search_datecloture_endmonth', 'int'), GETPOST('search_datecloture_endday', 'int'), GETPOST('search_datecloture_endyear', 'int'));
 $search_dateorder_start = dol_mktime(0, 0, 0, GETPOST('search_dateorder_startmonth', 'int'), GETPOST('search_dateorder_startday', 'int'), GETPOST('search_dateorder_startyear', 'int'));
 $search_dateorder_end = dol_mktime(23, 59, 59, GETPOST('search_dateorder_endmonth', 'int'), GETPOST('search_dateorder_endday', 'int'), GETPOST('search_dateorder_endyear', 'int'));
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
@@ -158,6 +162,8 @@ $arrayfields = array(
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
     'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
+	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
+	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
@@ -228,6 +234,8 @@ if (empty($reshook))
 		$toselect = '';
 		$search_array_options = array();
 		$search_categ_cus = 0;
+		$search_datecloture_start = '';
+		$search_datecloture_end = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 	 || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -270,7 +278,7 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
-$sql .= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
+$sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " u.login";
@@ -334,6 +342,8 @@ if ($search_status <> '')
 	}
 }
 
+if ($search_datecloture_start)               $sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
+if ($search_datecloture_end)                 $sql .= " AND c.date_cloture <= '".$db->idate($search_datecloture_end)."'";
 if ($search_dateorder_start)                 $sql .= " AND c.date_commande >= '".$db->idate($search_dateorder_start)."'";
 if ($search_dateorder_end)                   $sql .= " AND c.date_commande <= '".$db->idate($search_dateorder_end)."'";
 if ($search_datedelivery_start)              $sql .= " AND c.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
@@ -437,6 +447,8 @@ if ($resql)
 	if ($sall)						$param .= '&sall='.urlencode($sall);
 	if ($socid > 0)					$param .= '&socid='.urlencode($socid);
 	if ($search_status != '')		$param .= '&search_status='.urlencode($search_status);
+	if ($search_datecloture_start)  $param .= '&search_datecloture_start='.urlencode($search_datecloture_start);
+	if ($search_datecloture_end)    $param .= '&search_datecloture_end='.urlencode($search_datecloture_end);
 	if ($search_dateorder_start)    $param .= '&search_dateorder_start='.urlencode($search_dateorder_start);
 	if ($search_dateorder_end)      $param .= '&search_dateorder_end='.urlencode($search_dateorder_end);
 	if ($search_datedelivery_start) $param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
@@ -622,6 +634,16 @@ if ($resql)
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
+	if (GETPOST('autoselectall', 'int')) {
+		$selectedfields .= '<script>';
+		$selectedfields .= '   $(document).ready(function() {';
+		$selectedfields .= '        console.log("Autoclick on checkforselects");';
+		$selectedfields .= '   		$("#checkforselects").click();';
+		$selectedfields .= '        $("#massaction").val("createbills").change();';
+		$selectedfields .= '   });';
+		$selectedfields .= '</script>';
+	}
+
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -789,6 +811,24 @@ if ($resql)
 	// Date cloture
 	if (!empty($arrayfields['c.date_cloture']['checked']))
 	{
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_datecloture_start ? $search_datecloture_start : -1, 'search_datecloture_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_datecloture_end ? $search_datecloture_end : -1, 'search_datecloture_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+	}
+	// Note public
+	if (!empty($arrayfields['c.note_public']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	// Note private
+	if (!empty($arrayfields['c.note_private']['checked']))
+	{
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
@@ -855,6 +895,8 @@ if ($resql)
 	if (!empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	if (!empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	if (!empty($arrayfields['c.date_cloture']['checked']))       print_liste_field_titre($arrayfields['c.date_cloture']['label'], $_SERVER["PHP_SELF"], "c.date_cloture", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (!empty($arrayfields['c.note_public']['checked'])) print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['c.note_private']['checked'])) print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
@@ -1076,7 +1118,7 @@ if ($resql)
 				{
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0))
 					{
-						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
+						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
 						print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
 					}
 				}
@@ -1243,6 +1285,22 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+		// Note public
+		if (!empty($arrayfields['c.note_public']['checked']))
+		{
+			print '<td align="center" class="nowrap">';
+			print dol_escape_htmltag($obj->note_public);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Note private
+		if (!empty($arrayfields['c.note_private']['checked']))
+		{
+			print '<td align="center" class="nowrap">';
+			print dol_escape_htmltag($obj->note_private);
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Status
 		if (!empty($arrayfields['c.fk_statut']['checked']))
 		{
@@ -1257,7 +1315,7 @@ if ($resql)
 		}
 
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected = 0;

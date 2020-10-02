@@ -1709,8 +1709,8 @@ if ($id > 0)
 		// Reminders
 		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
 		{
-			$filtreuserid = $user->id;
-			if ($user->rights->agenda->allactions->read) $filtreuserid = 0;
+			$filteruserid = $user->id;
+			if ($user->rights->agenda->allactions->read) $filteruserid = 0;
 			$object->loadReminders('', $filteruserid, false);
 
 			print '<hr>';
@@ -1721,10 +1721,7 @@ if ($id > 0)
 				$firstreminderId = array_shift($keys);
 
 				$actionCommReminder = $object->reminders[$firstreminderId];
-
-			}
-			else
-			{
+			} else {
 				$checked = '';
 				$actionCommReminder = new ActionCommReminder($db);
 				$actionCommReminder->offsetvalue = 10;
@@ -2139,7 +2136,7 @@ if ($id > 0)
 			if ($user->rights->agenda->allactions->delete ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete))
 			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}

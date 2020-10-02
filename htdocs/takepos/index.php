@@ -424,7 +424,7 @@ function ClickProduct(position) {
 function ChangeThirdparty(idcustomer) {
 	 console.log("ChangeThirdparty");
 		// Call page list.php to change customer
-		$("#poslines").load("../societe/list.php?action=change&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		$("#poslines").load("../societe/list.php?action=change&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
 	ClearSearch();
@@ -432,7 +432,7 @@ function ChangeThirdparty(idcustomer) {
 
 function deleteline() {
 	console.log("Delete line");
-	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch();
@@ -440,7 +440,7 @@ function deleteline() {
 
 function Customer() {
 	console.log("Open box to select the thirdparty place="+place);
-	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
+	$.colorbox({href:"../societe/list.php?type=t&contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer"); ?>"});
 }
 
 function History()
@@ -499,7 +499,7 @@ function New() {
 
 		if (r == true) {
 			// Reload section with invoice lines
-			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
+			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
 			ClearSearch();

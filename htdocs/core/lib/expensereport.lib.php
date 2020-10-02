@@ -94,7 +94,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ExpenseReport");
+	$head[$h][1] = $langs->trans("ExpenseReportPayment");
 	$head[$h][2] = 'payment';
 	$h++;
 

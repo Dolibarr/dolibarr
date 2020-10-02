@@ -768,6 +768,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			}
 		}
 
+		$stockwarehouse=0;
 		if ($usevirtualstock)
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
@@ -793,8 +794,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		$desiredstock = $objp->desiredstock;
 		$alertstock = $objp->seuil_stock_alerte;
-		$desiredstockwarehouse = ($objp->desiredstockpse ? $objp->desiredstockpse : '');
-		$alertstockwarehouse = ($objp->seuil_stock_alertepse ? $objp->seuil_stock_alertepse : '');
+		$desiredstockwarehouse = ($objp->desiredstockpse ? $objp->desiredstockpse : 0);
+		$alertstockwarehouse = ($objp->seuil_stock_alertepse ? $objp->seuil_stock_alertepse : 0);
 
 		$warning = '';
 		if ($alertstock && ($stock < $alertstock))

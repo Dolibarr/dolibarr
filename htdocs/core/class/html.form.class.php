@@ -647,7 +647,7 @@ class Form
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
-				$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'select valignmiddle alignstart" name="'.$name.'"'.($disabled ? ' disabled="disabled"' : '').'>';
+		$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'select valignmiddle alignstart" id="'.$name.'" name="'.$name.'"'.($disabled ? ' disabled="disabled"' : '').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
@@ -1733,16 +1733,7 @@ class Form
 					$disableline = '';
 					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) $disableline = ($enableonlytext ? $enableonlytext : '1');
 
-					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected)))
-					{
-						$out .= '<option value="'.$obj->rowid.'"';
-						if ($disableline) $out .= ' disabled';
-						$out .= ' selected>';
-					} else {
-						$out .= '<option value="'.$obj->rowid.'"';
-						if ($disableline) $out .= ' disabled';
-						$out .= '>';
-					}
+					$labeltoshow = '';
 
 					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
 					$fullNameMode = 0;
@@ -1750,7 +1741,7 @@ class Form
 					{
 						$fullNameMode = 1; //Firstname+lastname
 					}
-					$out .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
 					// Complete name with more info
 					$moreinfo = '';
@@ -1764,7 +1755,7 @@ class Form
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						}
-						if ($obj->statut == 0)
+						if ($obj->statut == 0 && $showstatus == 1)
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
@@ -1783,8 +1774,20 @@ class Form
 					{
 						$moreinfo .= ' - '.$disableline; // This is text from $enableonlytext parameter
 					}
-					$out .= $moreinfo;
+					$labeltoshow .= $moreinfo;
+
+					$out .= '<option value="'.$obj->rowid.'"';
+					if ($disableline) $out .= ' disabled';
+					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
+						$out .= ' selected';
+					}
+					if ($showstatus >= 0 && $obj->statut == 0) {
+						$out .= ' data-html="'.dol_escape_htmltag('<strike class="opacitymediumxxx">'.$labeltoshow.'</strike>').'"';
+					}
+					$out .= '>';
+					$out .= $labeltoshow;
 					$out .= '</option>';
+
 					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength).$moreinfo;
 
 					$i++;
@@ -4047,7 +4050,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm -->';
+		$more = '<!-- formconfirm for page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -4232,7 +4235,6 @@ class Form
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
-                         	//alert(urljump);
             				if (pageyes.length > 0) { location.href = urljump; }
                             $(this).dialog("close");
                         },
@@ -7552,8 +7554,8 @@ class Form
 		global $conf, $langs;
 
 		$out = '';
-		$id = uniqid();
-				if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
+
+		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="'.$cssclass.'s" name="'.$cssclass.'s" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
@@ -7568,13 +7570,11 @@ class Form
                     }'."\n";
 				if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "'.$massactionname.'", "'.$cssclass.'"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out .= '         });
-
-                $(".' . $cssclass.'").change(function() {
-				$(this).closest("tr").toggleClass("highlight", this.checked);
-			});
-
- 	});
-    </script>';
+        	        $(".' . $cssclass.'").change(function() {
+					$(this).closest("tr").toggleClass("highlight", this.checked);
+				});
+		 	});
+    	</script>';
 
 		return $out;
 	}

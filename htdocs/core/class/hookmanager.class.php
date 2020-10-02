@@ -137,7 +137,7 @@ class HookManager
      *  @param		array	$parameters		Array of parameters
      *  @param		Object	$object			Object to use hooks on
      *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     *  @return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     *  @return		mixed					For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
      *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
      *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
      *                                      $this->error or this->errors are also defined by class called by this function if error.
@@ -149,7 +149,8 @@ class HookManager
         $parameters['context'] = join(':', $this->contextarray);
         //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
-        // Define type of hook ('output' or 'addreplace'). Type 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
+        // Define type of hook ('output' or 'addreplace').
+        // TODO Remove hooks with type 'output'. All hooks must be converted into 'addreplace' hooks.
         $hooktype = 'output';
         if (in_array(
 			$method,
@@ -171,6 +172,7 @@ class HookManager
 				'formattachOptions',
 				'formBuilddocLineOptions',
 				'formatNotificationMessage',
+			    'formConfirm',
 				'getAccessForbiddenMessage',
 				'getDirList',
 				'getFormMail',
@@ -214,11 +216,6 @@ class HookManager
                 'completeTabsHead'
 				)
 			)) $hooktype = 'addreplace';
-
-        if ($method == 'insertExtraFields') {
-            $hooktype = 'returnvalue'; // @deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
-            dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
-        }
 
         // Init return properties
         $this->resPrint = ''; $this->resArray = array(); $this->resNbOfHooks = 0;

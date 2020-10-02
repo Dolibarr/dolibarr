@@ -1567,7 +1567,7 @@ if ($action == 'create')
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
@@ -2108,7 +2108,7 @@ if ($action == 'create')
 				// - Droit de supprimer
 				if (($user->rights->contrat->creer && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer)
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
 				}

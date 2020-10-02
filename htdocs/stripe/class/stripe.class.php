@@ -83,16 +83,19 @@ class Stripe extends CommonObject
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
 	 * @param	int		$fk_soc		Id of thirdparty
+	 * @param	int		$entity		Id of entity (-1 = current environment)
 	 * @return 	string				Stripe account 'acc_....' or '' if no OAuth token found
 	 */
-	public function getStripeAccount($mode = 'StripeTest', $fk_soc = 0)
+	public function getStripeAccount($mode = 'StripeTest', $fk_soc = 0, $entity = -1)
 	{
 		global $conf;
 
+		if ($entity < 0) $entity = $conf->entity;
+
 		$sql = "SELECT tokenstring";
 		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND service = '".$this->db->escape($mode)."'";
+		$sql .= " WHERE service = '".$this->db->escape($mode)."'";
+		$sql .= " AND entity = ".((int) $entity);
 		if ($fk_soc > 0) {
 			$sql .= " AND fk_soc = ".$fk_soc;
 		} else {

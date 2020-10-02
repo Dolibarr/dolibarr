@@ -34,7 +34,7 @@ if (!empty($conf->projet->enabled)) {
 if (!$user->rights->commande->lire)	accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings'));
+$langs->loadLangs(array('orders', 'sendings', 'bills'));
 
 $socid = 0;
 $comid = GETPOST("id", 'int');

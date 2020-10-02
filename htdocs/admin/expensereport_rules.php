@@ -305,8 +305,8 @@ foreach ($rules as $rule)
 	echo '<td class="center">';
 	if ($object->id != $rule->id)
 	{
-		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
-		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$rule->id.'">'.img_delete().'</a>';
+		echo '<a class="editfielda paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
+		echo '<a class="paddingright paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$rule->id.'">'.img_delete().'</a>';
 	} else {
 		echo '<input type="submit" class="button" value="'.$langs->trans('Update').'" />&nbsp;';
 		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button">'.$langs->trans('Cancel').'</a>';

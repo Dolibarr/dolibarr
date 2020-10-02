@@ -117,6 +117,7 @@ $hookmanager->initHooks(array('usercard', 'globalcard'));
 /**
  * Actions
  */
+
 $parameters = array('id' => $id, 'socid' => $socid, 'group' => $group, 'caneditgroup' => $caneditgroup);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1898,7 +1899,7 @@ if ($action == 'create' || $action == 'adduserldap')
 				{
 					if ($user->admin || !$object->admin) // If user edited is admin, delete is possible on for an admin
 					{
-						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
 					}

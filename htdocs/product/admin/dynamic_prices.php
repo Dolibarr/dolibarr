@@ -178,8 +178,8 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 	        print '<td>'.$entry->code.'</td>';
 	        print '<td>'.$entry->description.'</td>';
 	        print '<td>'.price($entry->value).'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
-	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&selection='.$entry->id.'">'.img_delete().'</a></td>';
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	    }
     } else {
@@ -270,7 +270,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 	        print '<td>'.$entry->update_interval.'</td>';
 	        print '<td>'.$entry->getLastUpdated().'</td>';
 	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
-	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&selection='.$entry->id.'">'.img_delete().'</a></td>';
+	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	    }
     } else {
@@ -284,7 +284,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
     {
         //Action Buttons
         print '<div class="tabsAction">';
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_updater">'.$langs->trans("AddUpdater").'</a>';
+        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_updater&token='.newToken().'">'.$langs->trans("AddUpdater").'</a>';
         print '</div>';
     }
 }

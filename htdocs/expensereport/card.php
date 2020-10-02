@@ -225,7 +225,7 @@ if (empty($reshook))
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 
-		$object->fk_statut = 1;
+		$object->status = 1;
 		$object->fk_c_paiement = GETPOST('fk_c_paiement', 'int');
 		$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -275,7 +275,7 @@ if (empty($reshook))
 		$object->date_debut = $date_start;
 		$object->date_fin = $date_end;
 
-		if ($object->fk_statut < 3)
+		if ($object->status < 3)
 		{
 			$object->fk_user_validator = GETPOST('fk_user_validator', 'int');
 		}
@@ -288,7 +288,7 @@ if (empty($reshook))
 		$result = $object->update($user);
 		if ($result > 0)
 		{
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1505,7 +1505,7 @@ if ($action == 'create')
 
 			$head = expensereport_prepare_head($object);
 
-			if ($action == 'edit' && ($object->fk_statut < 3 || $object->fk_statut == 99))
+			if ($action == 'edit' && ($object->status < 3 || $object->status == 99))
 			{
 				print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1513,7 +1513,7 @@ if ($action == 'create')
 
 				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
-				if ($object->fk_statut == 99)
+				if ($object->status == 99)
 				{
 					print '<input type="hidden" name="action" value="updateFromRefuse">';
 				} else {
@@ -1563,7 +1563,7 @@ if ($action == 'create')
 					print '</tr>';
 				}
 
-				if ($object->fk_statut < 3)
+				if ($object->status < 3)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>'; // Approbator
@@ -1583,7 +1583,7 @@ if ($action == 'create')
 					print '</td></tr>';
 				}
 
-				if ($object->fk_statut == 6)
+				if ($object->status == 6)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
@@ -1618,7 +1618,7 @@ if ($action == 'create')
 					if (!empty($user->rights->expensereport->readall)) $criteriaforfilter = '';
 					$formquestion = array(
 						'text' => '',
-						array('type' => 'other', 'name' => 'fk_user_author', 'label' => $langs->trans("SelectTargetUser"), 'value' => $form->select_dolusers((GETPOST('fk_user_author', 'int') > 0 ? GETPOST('fk_user_author', 'int') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter))
+						array('type' => 'other', 'name' => 'fk_user_author', 'label' => $langs->trans("SelectTargetUser"), 'value' => $form->select_dolusers((GETPOST('fk_user_author', 'int') > 0 ? GETPOST('fk_user_author', 'int') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter, '', '0', 0, 0, '', 0, '', 'maxwidth150'))
 					);
 					// Paiement incomplet. On demande si motif = escompte ou autre
 					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
@@ -1763,7 +1763,7 @@ if ($action == 'create')
 				print '</tr>';
 
 				// User to inform for approval
-				if ($object->fk_statut <= ExpenseReport::STATUS_VALIDATED)	// informed
+				if ($object->status <= ExpenseReport::STATUS_VALIDATED)	// informed
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>'; // approver
@@ -1780,7 +1780,7 @@ if ($action == 'create')
 						}
 					}
 					print '</td></tr>';
-				} elseif ($object->fk_statut == ExpenseReport::STATUS_CANCELED)
+				} elseif ($object->status == ExpenseReport::STATUS_CANCELED)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("CANCEL_USER").'</span></td>';
@@ -1819,7 +1819,7 @@ if ($action == 'create')
 					print '</tr>';
 				}
 
-				if ($object->fk_statut == 99 || !empty($object->detail_refuse))
+				if ($object->status == 99 || !empty($object->detail_refuse))
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("REFUSEUR").'</td>';
@@ -1837,7 +1837,7 @@ if ($action == 'create')
 					print '</tr>';
 				}
 
-				if ($object->fk_statut == $object::STATUS_CLOSED)
+				if ($object->status == $object::STATUS_CLOSED)
 				{
 					/* TODO this fields are not yet filled
 					print '<tr>';
@@ -1872,11 +1872,11 @@ if ($action == 'create')
 				print '<td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
 				print '<td class="nowrap amountcard">'.price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
 				$rowspan = 5;
-				if ($object->fk_statut <= ExpenseReport::STATUS_VALIDATED) $rowspan++;
-				elseif ($object->fk_statut == ExpenseReport::STATUS_CANCELED) $rowspan += 2;
+				if ($object->status <= ExpenseReport::STATUS_VALIDATED) $rowspan++;
+				elseif ($object->status == ExpenseReport::STATUS_CANCELED) $rowspan += 2;
 				else $rowspan += 2;
-				if ($object->fk_statut == ExpenseReport::STATUS_REFUSED || !empty($object->detail_refuse)) $rowspan += 2;
-				if ($object->fk_statut == ExpenseReport::STATUS_CLOSED) $rowspan += 2;
+				if ($object->status == ExpenseReport::STATUS_REFUSED || !empty($object->detail_refuse)) $rowspan += 2;
+				if ($object->status == ExpenseReport::STATUS_CLOSED) $rowspan += 2;
 				print "</td>";
 				print '</tr>';
 
@@ -2010,7 +2010,7 @@ if ($action == 'create')
 				print '<div style="clear: both;"></div>';
 
 				$actiontouse = 'updateline';
-				if (($object->fk_statut == 0 || $object->fk_statut == 99) && $action != 'editline') $actiontouse = 'addline';
+				if (($object->status == 0 || $object->status == 99) && $action != 'editline') $actiontouse = 'addline';
 
 				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="post" >';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2046,7 +2046,7 @@ if ($action == 'create')
 					print '<td>';
 					print '</td>';
 					// Ajout des boutons de modification/suppression
-					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
+					if (($object->status < 2 || $object->status == 99) && $user->rights->expensereport->creer)
 					{
 						print '<td class="right"></td>';
 					}
@@ -2195,14 +2195,14 @@ if ($action == 'create')
 							print '</td>';
 
 							// Ajout des boutons de modification/suppression
-							if (($object->fk_statut < ExpenseReport::STATUS_VALIDATED || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
+							if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
 							{
 								print '<td class="nowrap right">';
 
-								print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'">';
+								print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
 								print img_edit();
 								print '</a> &nbsp; ';
-								print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
+								print '<a class="paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;token='.newToken().'&amp;rowid='.$line->rowid.'">';
 								print img_delete();
 								print '</a>';
 
@@ -2349,7 +2349,7 @@ if ($action == 'create')
 				}
 
 				// Add a new line
-				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+				if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED)
 					&& $action != 'editline'
 					&& $user->rights->expensereport->creer)
 				{
@@ -2549,7 +2549,7 @@ if ($action != 'create' && $action != 'edit')
 
 	// Send
 	if (empty($user->socid)) {
-		if ($object->fk_statut > ExpenseReport::STATUS_DRAFT) {
+		if ($object->status > ExpenseReport::STATUS_DRAFT) {
 			//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 			//} else
@@ -2562,7 +2562,7 @@ if ($action != 'create' && $action != 'edit')
 	*	ET fk_user_author == user courant
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
-	if ($user->rights->expensereport->creer && $object->fk_statut == ExpenseReport::STATUS_DRAFT)
+	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_DRAFT)
 	{
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance))
 		{
@@ -2582,7 +2582,7 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET fk_user_author == user courant
 	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	 */
-	if ($user->rights->expensereport->creer && $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_REFUSED)
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
@@ -2596,12 +2596,12 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+	if ($user->rights->expensereport->to_paid && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// setdraft
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 
@@ -2610,16 +2610,16 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET fk_user_validator == user courant
 	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
 	 */
-	if ($object->fk_statut == ExpenseReport::STATUS_VALIDATED)
+	if ($object->status == ExpenseReport::STATUS_VALIDATED)
 	{
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
 			// set draft
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 
-	if ($user->rights->expensereport->approve && $object->fk_statut == ExpenseReport::STATUS_VALIDATED)
+	if ($user->rights->expensereport->approve && $object->status == ExpenseReport::STATUS_VALIDATED)
 	{
 		//if($object->fk_user_validator==$user->id)
 		//{
@@ -2640,13 +2640,13 @@ if ($action != 'create' && $action != 'edit')
 	// If status is Approved
 	// ---------------------
 
-	if ($user->rights->expensereport->approve && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+	if ($user->rights->expensereport->approve && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 	}
 
 	// If bank module is used
-	if ($user->rights->expensereport->to_paid && !empty($conf->banque->enabled) && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+	if ($user->rights->expensereport->to_paid && !empty($conf->banque->enabled) && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		// Pay
 		if ($remaintopay == 0)
@@ -2658,48 +2658,48 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		//if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
 		if ($object->paid == 0)
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 	}
 
-	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->fk_statut == ExpenseReport::STATUS_APPROVED)
+	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->status == ExpenseReport::STATUS_APPROVED)
 	{
 		// Cancel
-   		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
+   		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 
 	// TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
-	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->fk_statut == ExpenseReport::STATUS_CLOSED)
+	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->status == ExpenseReport::STATUS_CLOSED)
 	{
 		// Cancel
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->paid && $object->fk_statut == ExpenseReport::STATUS_CLOSED)
+	if ($user->rights->expensereport->to_paid && $object->paid && $object->status == ExpenseReport::STATUS_CLOSED)
 	{
 		// Set unpaid
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=set_unpaid&id='.$object->id.'">'.$langs->trans('ClassifyUnPaid').'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=set_unpaid&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ClassifyUnPaid').'</a></div>';
 	}
 
 	// Clone
 	if ($user->rights->expensereport->creer) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
-	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->fk_statut < ExpenseReport::STATUS_APPROVED)
+	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED)
 	{
 		// Delete
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
-	} elseif ($user->rights->expensereport->supprimer && $object->fk_statut != ExpenseReport::STATUS_CLOSED)
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+	} elseif ($user->rights->expensereport->supprimer && $object->status != ExpenseReport::STATUS_CLOSED)
 	{
 		// Delete
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
 
 	$parameters = array();

@@ -261,7 +261,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -388,13 +388,13 @@ foreach ($dirmodels as $reldir)
 	                            if (in_array($name, $def))
 	                            {
 	                            	print '<td class="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
 	                            } else {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -404,7 +404,7 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
 	                            } else {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -516,9 +516,9 @@ if ($conf->banque->enabled)
     } else {
         if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL))
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
         } else {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
         }
     }
     print '</td></tr>';

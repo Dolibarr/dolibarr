@@ -190,12 +190,12 @@ $enabledisablehtml .= $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
     // Button off, click to enable
-    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=1'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
 } else {
     // Button on, click to disable
-    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
     $enabledisablehtml .= '</a>';
 }
@@ -378,9 +378,9 @@ if ($result)
 		print '<td class="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
 		{
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
     		print ' &nbsp; ';
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 		} else {
 		    print '<input type="hidden" name="page" value="'.$page.'">';
 		    print '<input type="hidden" name="rowid" value="'.$id.'">';

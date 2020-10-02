@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
@@ -810,7 +810,7 @@ class Fichinter extends CommonObject
 		$result .= $linkend;
 
 		global $action;
-		$hookmanager->initHooks(array('intervnetiondao'));
+		$hookmanager->initHooks(array('interventiondao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;

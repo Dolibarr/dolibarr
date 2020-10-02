@@ -85,3 +85,7 @@ ProposalCustomerSignature=Bei Beauftragung: Name in Klarschrift, Ort, Datum, Unt
 ProposalsStatisticsSuppliers=Statistik Lieferantenanfragen
 CaseFollowedBy=Fall gefolgt von
 SignedOnly=nur signiert
+IdProposal=Angebots-ID
+IdProduct=Produkt ID
+PrParentLine=Übergeordnete Zeile des Vorschlags
+LineBuyPriceHT=Kaufpreis Betrag abzüglich Steuern für Linie

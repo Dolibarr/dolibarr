@@ -120,6 +120,7 @@ $pagenext = $page + 1;
 
 if ($type == 'c') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'customerlist'; if ($search_type == '') $search_type = '1,3'; }
 if ($type == 'p') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'prospectlist'; if ($search_type == '') $search_type = '2,3'; }
+if ($type == 't') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'customerlist'; if ($search_type == '') $search_type = '1,2,3'; }
 if ($type == 'f') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'supplierlist'; if ($search_type == '') $search_type = '4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -617,7 +618,7 @@ if ($contextpage != 'poslist')
 	if (!empty($socid)) $url .= '&socid='.$socid;
 	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
 } elseif ($user->rights->societe->creer) {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=c&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
 	$label = 'MenuNewCustomer';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
@@ -1258,7 +1259,7 @@ while ($i < min($num, $limit))
 		{
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm' . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm&token='.newToken() . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
 		}
 		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;

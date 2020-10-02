@@ -1265,7 +1265,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 				// Delete ticket
 				if ($user->rights->ticket->delete && !$user->socid) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?track_id='.$object->track_id.'&action=delete">'.$langs->trans('Delete').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?track_id='.$object->track_id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 				}
 			}
 			print '</div>'."\n";

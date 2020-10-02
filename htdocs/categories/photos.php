@@ -254,7 +254,7 @@ if ($object->id)
     			}
     			if ($user->rights->categorie->creer)
     			{
-    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
     				print img_delete().'</a>';
     			}
     			if ($nbbyrow) print '</td>';

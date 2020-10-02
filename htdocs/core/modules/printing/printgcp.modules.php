@@ -140,7 +140,7 @@ class printing_printgcp extends PrintingDriver
                     'info'=>$access,
                     'type'=>'info',
                     'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
-                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
+                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
                 );
                 if ($token_ok) {
                     $expiredat = '';
@@ -166,7 +166,7 @@ class printing_printgcp extends PrintingDriver
                 /*
                 if ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)) {
                     $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
-                    $this->conf[] = array('varname'=>'DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
+                    $this->conf[] = array('varname'=>'DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
                 } else {
                     $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
                 }*/
@@ -216,7 +216,7 @@ class printing_printgcp extends PrintingDriver
             if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id'])
             {
                 $html .= img_picto($langs->trans("Default"), 'on');
-            } else $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+            } else $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;token='.newToken().'&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             $html .= '</td>';
             $html .= '</tr>'."\n";
         }

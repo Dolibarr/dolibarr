@@ -43,6 +43,9 @@ $langs->loadLangs(array("products", "companies", "bills"));
 $action = GETPOST('action', 'aZ09');
 $search_prod = GETPOST('search_prod', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$search_label = GETPOST('search_label', 'alpha');
+$search_price = GETPOST('search_price');
+$search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
@@ -70,7 +73,7 @@ if (empty($reshook))
 {
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
     {
-        $search_prod = '';
+        $search_prod = $search_label = $search_price = $search_price_ttc = '';
     }
 
     if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
@@ -257,6 +260,18 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	if (!empty($search_prod)) {
 		$filter ['prod.ref'] = $search_prod;
+	}
+
+	if (! empty($search_label)) {
+		$filter ['prod.label'] = $search_label;
+	}
+
+	if (! empty($search_price)) {
+		$filter ['t.price'] = $search_price;
+	}
+
+	if (! empty($search_price_ttc)) {
+		$filter ['t.price_ttc'] = $search_price_ttc;
 	}
 
 	if ($action == 'add_customer_price') {
@@ -517,7 +532,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
             setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
         }
 
-        $option = '&search_prod='.$search_prod.'&id='.$object->id;
+        $option = '&search_prod=' . $search_prod . '&id=' . $object->id . '&label=' . $search_label .'&price=' . $search_price . '&price_ttc=' . $search_price_ttc;
 
 	    print '<!-- view specific price for each product -->'."\n";
 
@@ -530,7 +545,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<table class="noborder centpercent">';
 
         print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Product").'</td>';
+        print '<td>' . $langs->trans("Ref") . '</td>';
+		print '<td>' . $langs->trans("Product") . '</td>';
         print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
         print '<td class="center">'.$langs->trans("PriceBase").'</td>';
         print '<td class="right">'.$langs->trans("VAT").'</td>';
@@ -546,7 +562,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         {
             print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
-            print '<td class="liste_titre" colspan="8">&nbsp;</td>';
+            print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="' . $search_label . '" size="20"></td>';
+            print '<td class="liste_titre" colspan="3">&nbsp;</td>';
+            print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price" value="' . $search_price . '" size="10"></td>';
+            print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price_ttc" value="' . $search_price_ttc . '" size="10"></td>';
+            print '<td class="liste_titre" colspan="3">&nbsp;</td>';
             // Print the search button
             print '<td class="liste_titre maxwidthsearch">';
             $searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -565,6 +585,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 $staticprod->fetch($line->fk_product);
 
                 print "<td>".$staticprod->getNomUrl(1)."</td>";
+                print "<td>" . $staticprod->label ."</td>";
                 print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
                 print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -593,7 +614,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                     print img_edit('default', 0, 'style="vertical-align: middle;"');
                     print '</a>';
                     print ' ';
-                    print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+                    print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
                     print img_delete('default', 'style="vertical-align: middle;"');
                     print '</a>';
                     print '</td>';

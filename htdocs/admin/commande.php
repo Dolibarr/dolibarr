@@ -307,7 +307,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -441,7 +441,7 @@ foreach ($dirmodels as $reldir)
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -451,7 +451,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -670,10 +670,10 @@ print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
 print '<td>&nbsp</td>';
 print '<td class="center">';
 if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&value=0">';
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&amp;token='.newToken().'&amp;value=0">';
     print img_picto($langs->trans("Activated"),'switch_on');
 } else {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&value=1">';
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&amp;token='.newToken().'&amp;value=1">';
     print img_picto($langs->trans("Disabled"),'switch_off');
 }
 print '</a></td>';
@@ -695,11 +695,11 @@ if ($conf->banque->enabled)
     {
         if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
         else
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
     }
     print '</td></tr>';
@@ -725,11 +725,11 @@ if ($conf->stock->enabled)
     {
         if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
         else
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
     }
     print '</td></tr>';

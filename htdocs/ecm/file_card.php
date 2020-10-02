@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
@@ -94,6 +95,10 @@ $filepathtodocument = $relativetodocument.$file->label;
 
 // Try to load object from index
 $object = new ECMFiles($db);
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $result = $object->fetch(0, '', $filepathtodocument);
 if ($result < 0)
 {
@@ -148,7 +153,6 @@ if ($action == 'update')
 
     // Now we update index of file
     $db->begin();
-
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
     {
@@ -181,6 +185,16 @@ if ($action == 'update')
 
 		if ($object->id > 0)
 		{
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) $error++;
+			if (!$error) {
+				// Actions on extra fields
+				$result = $object->insertExtraFields();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+			}
 			// Call update to set the share key
 			$result = $object->update($user);
 			if ($result < 0)
@@ -365,8 +379,9 @@ if (!empty($object->share))
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
 }
-print '</td></tr>';
-
+print '</td>';
+print '</tr>';
+print $object->showOptionals($extrafields, ($action == 'edit'?'edit':'view'));
 print '</table>';
 print '</div>';
 
@@ -405,7 +420,7 @@ if ($action != 'edit')
     /*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

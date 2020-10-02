@@ -262,9 +262,9 @@ if ($mode == 'config' && $user->admin)
         } else {
             if (empty($conf->global->{$printer->conf}))
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             } else {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
             }
         }
         print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';

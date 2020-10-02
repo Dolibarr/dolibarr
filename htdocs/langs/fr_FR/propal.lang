@@ -98,3 +98,7 @@ ConfirmMassValidationQuestion = Voulez-vous confirmer la validation des devis br
 ConfirmMassSignatureQuestion = Voulez-vous confirmer la signature des devis ouvert selectionnés ?
 PropNoProductOrService = devis ne contient pas de produits ni de services
 PropsNoProductOrService = devis ne contiennent pas de produits ni de services
+IdProposal=ID de proposition
+IdProduct=ID produit
+PrParentLine=Ligne parent de proposition
+LineBuyPriceHT=Prix ​​d'achat Montant net de taxe pour la ligne

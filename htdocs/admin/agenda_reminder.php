@@ -189,10 +189,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 	print '<td class="right">'."\n";
 
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 		print '</td></tr>'."\n";
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 		print '</td></tr>'."\n";
 	}
 }
@@ -206,10 +206,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2)
     print '<td class="right">'."\n";
 
     if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
         print '</td></tr>'."\n";
     } else {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
         print '</td></tr>'."\n";
 
         print '<tr class="oddeven">'."\n";
@@ -218,9 +218,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2)
         print '<td class="right">'."\n";
 
         if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
         } else {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
         }
 
         print '</td></tr>'."\n";

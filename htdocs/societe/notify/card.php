@@ -339,7 +339,7 @@ if ($result > 0)
             if ($obj->type == 'email') print $langs->trans("Email");
             if ($obj->type == 'sms') print $langs->trans("SMS");
             print '</td>';
-            print '<td class="right"><a href="card.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+            print '<td class="right"><a href="card.php?socid='.$socid.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
             print '</tr>';
             $i++;
         }

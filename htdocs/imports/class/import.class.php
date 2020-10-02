@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +102,8 @@ class Import
 				// Defined if module is enabled
 				$enabled = true;
 				$part = strtolower(preg_replace('/^mod/i', '', $modulename));
+				// Adds condition for propal module
+				if ($part === 'propale') $part = 'propal';
 				if (empty($conf->$part->enabled)) $enabled = false;
 
 				if (empty($enabled)) continue;
@@ -278,7 +281,7 @@ class Import
 	{
 		$sql = 'SELECT em.rowid, em.field, em.label, em.type';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
-		$sql .= ' WHERE em.rowid = '.$id;
+		$sql .= ' WHERE em.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

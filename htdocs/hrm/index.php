@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 $hookmanager = new HookManager($db);
@@ -52,6 +53,7 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 
 $holiday = new Holiday($db);
 $holidaystatic = new Holiday($db);
+$staticrecruitmentcandidature = new RecruitmentCandidature($db);
 
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
@@ -173,7 +175,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 // Latest leave requests
 if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
 {
-    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
+    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
+    $sql .= " x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
     $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
     $sql .= " WHERE u.rowid = x.fk_user";
     $sql .= " AND x.entity = ".$conf->entity;
@@ -203,8 +206,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
         print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
         print '<th>'.$langs->trans("from").'</th>';
         print '<th>'.$langs->trans("to").'</th>';
-        print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-        print '<th width="16">&nbsp;</th>';
+        print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
         print '</tr>';
         if ($num)
         {
@@ -214,6 +216,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 $holidaystatic->id = $obj->rowid;
                 $holidaystatic->ref = $obj->ref;
+                $holidaystatic->statut = $obj->status;
 
                 $userstatic->id = $obj->uid;
                 $userstatic->lastname = $obj->lastname;
@@ -221,7 +224,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->login = $obj->login;
                 $userstatic->photo = $obj->photo;
                 $userstatic->email = $obj->email;
-                $userstatic->statut = $obj->statut;
+                $userstatic->statut = $obj->user_status;
 
                 print '<tr class="oddeven">';
                 print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
@@ -231,10 +234,10 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
                 $endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-                print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' '.$langs->trans($listhalfday[$starthalfday]);
-                print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+                print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
                 print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-                print '<td>'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
+                print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
                 print '</tr>';
 
                 $i++;
@@ -252,7 +255,8 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
 // Latest expense report
 if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
+	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
@@ -275,8 +279,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
-		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-		print '<th width="16">&nbsp;</th>';
+		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -290,13 +293,14 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 
 				$expensereportstatic->id = $obj->rowid;
 				$expensereportstatic->ref = $obj->ref;
+				$expensereportstatic->statut = $obj->status;
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
                 $userstatic->email = $obj->email;
 				$userstatic->login = $obj->login;
-				$userstatic->statut = $obj->statut;
+				$userstatic->statut = $obj->user_status;
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
@@ -304,7 +308,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td>'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowrap" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -314,9 +318,74 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 		}
 		print '</table>';
 		print '</div>';
+		print '<br>';
 	} else dol_print_error($db);
 }
 
+
+// Last modified job position
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
+{
+	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid)	$sql .= " AND s.fk_soc = $socid";
+	$sql .= " ORDER BY rc.tms DESC";
+	$sql .= $db->plimit($max, 0);
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="2">';
+		print $langs->trans("BoxTitleLatestModifiedCandidatures", $max);
+		print '</th>';
+		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		print '</tr>';
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+				$staticrecruitmentcandidature->id = $objp->rowid;
+				$staticrecruitmentcandidature->ref = $objp->ref;
+				$staticrecruitmentcandidature->email = $objp->email;
+				$staticrecruitmentcandidature->status = $objp->status;
+				$staticrecruitmentcandidature->date_creation = $objp->date_creation;
+				$staticrecruitmentcandidature->firstname = $objp->firstname;
+				$staticrecruitmentcandidature->lastname = $objp->lastname;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
+				print '<td class="right nowrap">';
+				print "</td>";
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '<td class="right nowrap" width="16">';
+				print $staticrecruitmentcandidature->getLibStatut(3);
+				print "</td>";
+				print '</tr>';
+				$i++;
+			}
+
+			$db->free($resql);
+		} else {
+			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		}
+		print "</table>";
+		print "</div>";
+		print "<br>";
+	} else {
+		dol_print_error($db);
+	}
+}
 
 print '</div></div></div>';
 

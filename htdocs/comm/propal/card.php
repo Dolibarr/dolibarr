@@ -13,6 +13,7 @@
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020	    Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2361,13 +2362,15 @@ if ($action == 'create')
 	// Form to add new line
 	if ($object->statut == Propal::STATUS_DRAFT && $usercancreate && $action != 'selectlines')
 	{
-		if ($action != 'editline')
-		{
+		if ($action != 'editline') {
 			// Add products/services form
 			$object->formAddObjectLine(1, $mysoc, $soc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		} else {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 	}
 
@@ -2491,12 +2494,12 @@ if ($action == 'create')
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Delete
 				if ($usercandelete) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'"';
 					print '>'.$langs->trans('Delete').'</a>';
 				}
 			}

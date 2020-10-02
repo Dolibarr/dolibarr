@@ -34,7 +34,7 @@
  *  \brief      File of class to manage suppliers invoices
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -765,7 +765,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
 		$sql .= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql .= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
-		$sql .= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
+		$sql .= ', fk_code_ventilation, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
 		$sql .= ' WHERE fk_facture_fourn='.$this->id;
@@ -824,6 +824,10 @@ class FactureFournisseur extends CommonInvoice
 					$line->special_code		= $obj->special_code;
 					$line->rang = $obj->rang;
 					$line->fk_unit          = $obj->fk_unit;
+
+					// Accountancy
+					$line->code_ventilation = $obj->fk_code_ventilation;
+					$line->fk_accounting_account	= $obj->fk_code_ventilation;
 
 					// Multicurrency
 					$line->fk_multicurrency = $obj->fk_multicurrency;
@@ -1597,9 +1601,10 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param		double	$pu_ht_devise		Amount in currency
 	 *  @param		string	$ref_supplier		Supplier ref
 	 *  @param      string  $special_code       Special code
+	 *  @param		int		$fk_parent_line		Parent line id
 	 *	@return    	int             			>0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_ht_devise = 0, $ref_supplier = '', $special_code = '')
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_ht_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -1773,7 +1778,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->info_bits = $info_bits;
 
 			$this->line->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
-			$this->line->fk_parent_line = $this->fk_parent_line;
+			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->origin = $this->origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
