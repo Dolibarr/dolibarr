@@ -252,7 +252,6 @@ class Productcustomerprice extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
@@ -270,7 +269,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key";
-
+		
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t";
 		$sql .= " WHERE t.rowid = ".$id;
 
@@ -330,7 +329,6 @@ class Productcustomerprice extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
@@ -363,8 +361,7 @@ class Productcustomerprice extends CommonObject
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
-				{
+				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
 					$sql .= ' AND '.$key.' = \''.$this->db->escape($value).'\'';
 				} elseif ($key == 'soc.nom') {
 					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
@@ -373,7 +370,7 @@ class Productcustomerprice extends CommonObject
 				} elseif ($key == 't.price' || $key == 't.price_ttc') {
 					$sql .= ' AND ' . $key . ' LIKE \'%' . price2num($value) . '%\'';
 				} else {
-					$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				}
 			}
 		}
