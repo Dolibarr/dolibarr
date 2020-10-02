@@ -4047,7 +4047,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm -->';
+		$more = '<!-- formconfirm for page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -4232,7 +4232,6 @@ class Form
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
-                         	//alert(urljump);
             				if (pageyes.length > 0) { location.href = urljump; }
                             $(this).dialog("close");
                         },

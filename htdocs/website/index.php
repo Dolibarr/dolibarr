@@ -2433,7 +2433,7 @@ if (!GETPOST('hide_websitemenu'))
 			print '</span>';
 		}
 	} else {
-		print '<input type="hidden" name="website" id="website" value='.$websitekey.'">';
+		print '<input type="hidden" name="website" id="website" value="'.$websitekey.'">';
 	}
 
 
