@@ -595,7 +595,7 @@ if ($object->id > 0)
 		// Show orders we can bill
 		if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
 		{
-			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/orderstoinvoice.php
+			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/commande/list.php
 		} else {
 			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
 			$sql2 .= " AND c.fk_statut IN (".$db->sanitize($db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS)).")";
@@ -795,8 +795,7 @@ if ($object->id > 0)
 		{
 			if (!empty($orders2invoice) && $orders2invoice > 0)
 			{
-				if ($object->status == 1)
-				{
+				if ($object->status == 1) {
 					// Company is open
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisSupplier").'</a></div>';
 				} else {
