@@ -879,7 +879,7 @@ class Commande extends CommonOrder
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
 
-		if (empty($this->warehouse_id) || $this->warehouse_id  = -1){
+		if (empty($this->warehouse_id)){
 			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $this->warehouse_id  = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && $user->fk_warehouse > -1) $this->warehouse_id  = $user->fk_warehouse;
 		}
