@@ -2369,8 +2369,7 @@ if ($action == 'create')
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		}else
-		{
+		}else {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
