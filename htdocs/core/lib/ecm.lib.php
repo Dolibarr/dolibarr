@@ -138,3 +138,38 @@ function ecm_prepare_head_fm($object)
 
 	return $head;
 }
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array               head array with tabs
+ */
+function ecm_admin_prepare_head()
+{
+    global $langs, $conf;
+    $langs->load("ecm");
+
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/ecm.php";
+    $head[$h][1] = $langs->trans("Setup");
+    $head[$h][2] = 'ecm';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/ecm_files_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
+    $head[$h][2] = 'attributes_ecm_files';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
+    $head[$h][2] = 'attributes_ecm_directories';
+    $h++;
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm_admin');
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm_admin', 'remove');
+
+    return $head;
+}

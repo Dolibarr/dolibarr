@@ -25,7 +25,7 @@
 /**
  *  Class to manage ECM directories
  */
-class EcmDirectory // extends CommonObject
+class EcmDirectory extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -35,7 +35,7 @@ class EcmDirectory // extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	//public $table_element='ecm_directories';
+	public $table_element='ecm_directories';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -344,6 +344,10 @@ class EcmDirectory // extends CommonObject
 				$this->date_c = $this->db->jdate($obj->date_c);
 				$this->date_m = $this->db->jdate($obj->date_m);
 			}
+
+			// Retrieve all extrafields for ecm_files
+			// fetch optionals attributes and labels
+			$this->fetch_optionals();
 
 			$this->db->free($resql);
 

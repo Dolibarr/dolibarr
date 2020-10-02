@@ -23,6 +23,7 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
@@ -69,6 +70,10 @@ llxHeader('', $langs->trans("ECMSetup"), $help_url);
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ECMSetup"), $linkback, 'title_setup');
 print '<br>';
+
+$head = ecm_admin_prepare_head();
+
+dol_fiche_head($head, 'ecm', $langs->trans("ECM"), -1, 'ecm');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
