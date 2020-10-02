@@ -522,11 +522,9 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListTable', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
 $sql .= ' WHERE cf.fk_soc = s.rowid';
 $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
