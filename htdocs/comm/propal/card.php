@@ -13,6 +13,7 @@
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020	    Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2368,6 +2369,10 @@ if ($action == 'create')
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		}else
+		{
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 	}
 
