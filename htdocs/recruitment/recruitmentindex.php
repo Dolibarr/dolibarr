@@ -338,6 +338,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
@@ -361,7 +362,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 				print '<td class="right nowrap">';
 				print "</td>";
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
-				print '<td class="right nowrap">';
+				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentjobposition->getLibStatut(3);
 				print "</td>";
 				print '</tr>';
@@ -372,7 +373,9 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div>";
+		print "<br>";
 	} else {
 		dol_print_error($db);
 	}
@@ -397,6 +400,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
@@ -422,7 +426,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 				print '<td class="right nowrap">';
 				print "</td>";
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
-				print '<td class="right nowrap">';
+				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";
 				print '</tr>';
@@ -433,7 +437,9 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div>";
+		print "<br>";
 	} else {
 		dol_print_error($db);
 	}

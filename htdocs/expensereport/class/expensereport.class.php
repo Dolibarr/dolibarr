@@ -64,6 +64,13 @@ class ExpenseReport extends CommonObject
 	 * @var int		Status
 	 */
 	public $status;
+
+	/**
+	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+	 *
+	 * @var int		Status
+	 * @deprecated
+	 */
 	public $fk_statut;
 
 	public $fk_c_paiement;
@@ -398,7 +405,7 @@ class ExpenseReport extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->status = 0;
-		$this->fk_statut = 0;
+		$this->fk_statut = 0;	// deprecated
 
 		// Clear fields
 		$this->fk_user_author     = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
@@ -406,6 +413,15 @@ class ExpenseReport extends CommonObject
 		$this->date_create = '';
 		$this->date_creation      = '';
 		$this->date_validation    = '';
+
+		// Remove link on lines to a joined file
+		if (is_array($this->lines) && count($this->lines) > 0)
+		{
+			foreach ($this->lines as $key => $line)
+			{
+				$this->lines[$key]->fk_ecm_files = 0;
+			}
+		}
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
@@ -578,7 +594,7 @@ class ExpenseReport extends CommonObject
 				$this->fk_c_paiement            = $obj->fk_c_paiement;
 				$this->paid                     = $obj->paid;
 
-				if ($this->fk_statut == self::STATUS_APPROVED || $this->fk_statut == self::STATUS_CLOSED)
+				if ($this->status == self::STATUS_APPROVED || $this->status == self::STATUS_CLOSED)
 				{
 					$user_valid = new User($this->db);
 					if ($this->fk_user_valid > 0) $user_valid->fetch($this->fk_user_valid);
@@ -668,9 +684,9 @@ class ExpenseReport extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Returns the label of a statut
+	 *  Returns the label of a status
 	 *
-	 *  @param      int     $status     id statut
+	 *  @param      int     $status     ID status
 	 *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return     string              Label
 	 */
@@ -857,7 +873,7 @@ class ExpenseReport extends CommonObject
 				{
 					$objp = $this->db->fetch_object($result);
 
-					$sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut";
+					$sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut as status";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 					$sql2 .= " WHERE d.rowid = ".((int) $objp->fk_expensereport);
 
@@ -866,7 +882,7 @@ class ExpenseReport extends CommonObject
 
 					$objp->fk_user_author = $obj->fk_user_author;
 					$objp->ref = $obj->ref;
-					$objp->fk_c_expensereport_status = $obj->fk_statut;
+					$objp->fk_c_expensereport_status = $obj->status;
 					$objp->rowid = $obj->rowid;
 
 					$total_HT = $total_HT + $objp->total_ht;
@@ -1107,7 +1123,7 @@ class ExpenseReport extends CommonObject
 		$now = dol_now();
 
 		// Protection
-		if ($this->statut == self::STATUS_VALIDATED)
+		if ($this->status == self::STATUS_VALIDATED)
 		{
 			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
 			return 0;
@@ -1195,7 +1211,7 @@ class ExpenseReport extends CommonObject
 			if (!$error)
 			{
 				$this->ref = $num;
-				$this->statut = self::STATUS_VALIDATED;
+				$this->status = self::STATUS_VALIDATED;
 			}
 
 			if (empty($error))
@@ -1237,7 +1253,7 @@ class ExpenseReport extends CommonObject
 
 		$this->date_debut = $this->db->jdate($objp->date_debut);
 
-		if ($this->fk_statut != self::STATUS_VALIDATED)
+		if ($this->status != self::STATUS_VALIDATED)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
@@ -1271,7 +1287,7 @@ class ExpenseReport extends CommonObject
 
 		// date approval
 		$this->date_approve = $now;
-		if ($this->fk_statut != self::STATUS_APPROVED)
+		if ($this->status != self::STATUS_APPROVED)
 		{
 			$this->db->begin();
 
@@ -1327,7 +1343,7 @@ class ExpenseReport extends CommonObject
 		$error = 0;
 
 		// date de refus
-		if ($this->fk_statut != self::STATUS_REFUSED)
+		if ($this->status != self::STATUS_REFUSED)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".$fuser->id.",";
@@ -1337,7 +1353,8 @@ class ExpenseReport extends CommonObject
 			$sql .= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql))
 			{
-				$this->fk_statut = 99;
+				$this->fk_statut = 99;	// deprecated
+				$this->status = 99;
 				$this->fk_user_refuse = $fuser->id;
 				$this->detail_refuse = $details;
 				$this->date_refuse = $now;
@@ -1441,7 +1458,7 @@ class ExpenseReport extends CommonObject
 		// phpcs:enable
 		$error = 0;
 		$this->date_cancel = $this->db->idate(dol_now());
-		if ($this->fk_statut != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_CANCELED)
 		{
 			$this->db->begin();
 
@@ -1565,6 +1582,9 @@ class ExpenseReport extends CommonObject
 			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_ttc))
 			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+		if (isset($this->status)) {
+				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 		if ($moretitle) $label .= ' - '.$moretitle;
 
 		//if ($option != 'nolink')
@@ -1683,7 +1703,7 @@ class ExpenseReport extends CommonObject
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
-		if ($this->fk_statut == self::STATUS_DRAFT)
+		if ($this->status == self::STATUS_DRAFT)
 		{
 			if (empty($qty)) $qty = 0;
 			if (empty($fk_c_type_fees) || $fk_c_type_fees < 0) $fk_c_type_fees = 0;
@@ -1925,7 +1945,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $user, $mysoc;
 
-		if ($this->fk_statut == 0 || $this->fk_statut == 99)
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED)
 		{
 			$this->db->begin();
 
@@ -2268,8 +2288,8 @@ class ExpenseReport extends CommonObject
 
 		$sql = "SELECT ex.rowid, ex.date_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
-		if ($option == 'toapprove') $sql .= " WHERE ex.fk_statut = 2";
-		else $sql .= " WHERE ex.fk_statut = 5";
+		if ($option == 'toapprove') $sql .= " WHERE ex.fk_statut = ".self::STATUS_VALIDATED;
+		else $sql .= " WHERE ex.fk_statut = ".self::STATUS_APPROVED;
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (empty($user->rights->expensereport->readall))
 		{
@@ -2289,12 +2309,12 @@ class ExpenseReport extends CommonObject
 				$response->warning_delay = $conf->expensereport->approve->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ExpenseReportsToApprove");
 				$response->labelShort = $langs->trans("ToApprove");
-				$response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
+				$response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut='.self::STATUS_VALIDATED;
 			} else {
 				$response->warning_delay = $conf->expensereport->payment->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ExpenseReportsToPay");
 				$response->labelShort = $langs->trans("StatusToPay");
-				$response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
+				$response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut='.self::STATUS_APPROVED;
 			}
 			$response->img = img_object('', "trip");
 
