@@ -269,7 +269,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key";
-		
+
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t";
 		$sql .= " WHERE t.rowid = ".$id;
 
