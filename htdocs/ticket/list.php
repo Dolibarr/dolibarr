@@ -638,7 +638,7 @@ foreach ($object->fields as $key => $val)
 			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
-			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+			print '<td class="liste_titre center'.($cssforfield ? ' '.$cssforfield : '').'">';
 			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign') {
@@ -692,7 +692,7 @@ print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val)
 {
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
-	if ($key == 'fk_statut') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	if ($key == 'fk_statut' || $key == 'severity_code') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield .= ($cssforfield ? ' ' : '').'right';
@@ -748,7 +748,7 @@ while ($i < min($num, $limit))
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		if (in_array($key, array('ref', 'fk_project'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
-		if ($key == 'fk_statut') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		if ($key == 'fk_statut' || $key == 'severity_code') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		if (!empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td';
