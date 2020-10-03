@@ -869,7 +869,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-content">
 		<div class="modal-header">
 			<span class="close" href="#" onclick="document.getElementById('ModalCurrency').style.display = 'none';">&times;</span>
-			<h3><?php print $langs->trans("Seleccione moneda");?></h3>
+			<h3><?php print $langs->trans("SetMultiCurrencyCode");?></h3>
 		</div>
 		<div class="modal-body">
 			<?php
