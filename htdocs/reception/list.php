@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills'));
+$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills', 'orders'));
 
 $socid = GETPOST('socid', 'int');
 $massaction = GETPOST('massaction', 'alpha');
@@ -53,7 +53,7 @@ $search_ref_supplier = GETPOST('search_ref_supplier');
 $search_company = GETPOST("search_company");
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_billed = GETPOST("search_billed", 'int');
@@ -61,9 +61,9 @@ $sall = GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortfield) $sortfield = "e.ref";
 if (!$sortorder) $sortorder = "DESC";
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -172,7 +172,7 @@ if (empty($reshook))
     		$rcp = new Reception($db);
 			 // On ne facture que les réceptions validées
     		if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != 1) {
-				$errors[] = $langs->trans('StatusMustBeValidate', $rcp->ref);
+				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusSupplierOrderValidatedShort"));
 				$error++;
 				continue;
 			}
@@ -184,16 +184,15 @@ if (empty($reshook))
 				if (!empty($object->rowid))$object->fetchObjectLinked();
 				$rcp->fetchObjectLinked();
 
-				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
+				if (count($rcp->linkedObjectsIds['reception']) > 0)
 				{
-					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value)
+					foreach ($rcp->linkedObjectsIds['reception'] as $key => $value)
 					{
-						if (empty($object->linkedObjectsIds['order_supplier']) || !in_array($value, $object->linkedObjectsIds['order_supplier']))//Dont try to link if already linked
-							$object->add_object_linked('order_supplier', $value); // add supplier order linked object
+						if (empty($object->linkedObjectsIds['reception']) || !in_array($value, $object->linkedObjectsIds['reception']))//Dont try to link if already linked
+							$object->add_object_linked('reception', $value); // add supplier order linked object
 					}
 				}
-			}
-    		else {
+			} else {
     			$object->socid = $rcp->socid;
     			$object->type = FactureFournisseur::TYPE_STANDARD;
     			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
@@ -216,11 +215,11 @@ if (empty($reshook))
     			$object->origin_id = $id_reception;
 
 				$rcp->fetchObjectLinked();
-				if (count($rcp->linkedObjectsIds['order_supplier']) > 0)
+				if (count($rcp->linkedObjectsIds['reception']) > 0)
 				{
-					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value)
+					foreach ($rcp->linkedObjectsIds['reception'] as $key => $value)
 					{
-						$object->linked_objects['order_supplier'] = $value;
+						$object->linked_objects['reception'] = $value;
 					}
 				}
 
@@ -278,16 +277,12 @@ if (empty($reshook))
 	    					{
 	    						$result = $object->insert_discount($discountid);
 	    						//$result=$discount->link_to_invoice($lineid,$id);
-	    					}
-	    					else
-	    					{
+	    					} else {
 	    						setEventMessages($discount->error, $discount->errors, 'errors');
 	    						$error++;
 	    						break;
 	    					}
-	    				}
-	    				else
-	    				{
+	    				} else {
 	    					// Positive line
 	    					$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 	    					// Date start
@@ -334,9 +329,7 @@ if (empty($reshook))
 	    					if ($result > 0)
 	    					{
 	    						$lineid = $result;
-	    					}
-	    					else
-	    					{
+	    					} else {
 	    						$lineid = 0;
 	    						$error++;
 	    						break;
@@ -390,9 +383,7 @@ if (empty($reshook))
     	{
     		$db->commit();
     		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
-    	}
-    	else
-    	{
+    	} else {
     		$db->rollback();
     		$action = 'create';
     		$_GET["origin"] = $_POST["origin"];
@@ -547,11 +538,10 @@ if ($resql)
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, '', '', $limit, 0, 0, 1);
 
 
 	if ($massaction == 'createbills')
@@ -585,9 +575,7 @@ if ($resql)
 		{
 		    print $form->selectyesno('validate_invoices', 0, 1, 1);
 		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
-		}
-		else
-		{
+		} else {
             print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		print '</td>';
@@ -885,7 +873,7 @@ if ($resql)
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -937,9 +925,7 @@ if ($resql)
 	print "</div>";
 	print '</form>';
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -40,7 +40,7 @@ class ModeleImports
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
     /**
 	 * @var int id of driver
@@ -52,7 +52,7 @@ class ModeleImports
      */
     public $label;
 
-	public $extension;    // Extension of files imported by driver
+	public $extension; // Extension of files imported by driver
 
 	/**
      * Dolibarr version of driver
@@ -60,20 +60,20 @@ class ModeleImports
      */
 	public $version = 'dolibarr';
 
-	public $label_lib;    // Label of external lib used by driver
+	public $label_lib; // Label of external lib used by driver
 
-	public $version_lib;  // Version of external lib used by driver
+	public $version_lib; // Version of external lib used by driver
 
 	// Array of all drivers
-	public $driverlabel=array();
+	public $driverlabel = array();
 
-	public $driverdesc=array();
+	public $driverdesc = array();
 
-	public $driverversion=array();
+	public $driverversion = array();
 
-	public $liblabel=array();
+	public $liblabel = array();
 
-	public $libversion=array();
+	public $libversion = array();
 
 
 	/**
@@ -168,18 +168,18 @@ class ModeleImports
         // phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
-		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
-		$handle=opendir($dir);
+		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
+		$handle = opendir($dir);
 
 		// Recherche des fichiers drivers imports disponibles
-		$i=0;
+		$i = 0;
         if (is_resource($handle))
         {
-    		while (($file = readdir($handle))!==false)
+    		while (($file = readdir($handle)) !== false)
     		{
     			if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg))
     			{
-    				$moduleid=$reg[1];
+    				$moduleid = $reg[1];
 
     				// Loading Class
     				$file = $dir."/import_".$moduleid.".modules.php";
@@ -189,14 +189,14 @@ class ModeleImports
     				$module = new $classname($db, '');
 
     				// Picto
-    				$this->picto[$module->id]=$module->picto;
+    				$this->picto[$module->id] = $module->picto;
     				// Driver properties
-    				$this->driverlabel[$module->id]=$module->getDriverLabel('');
-    				$this->driverdesc[$module->id]=$module->getDriverDesc('');
-    				$this->driverversion[$module->id]=$module->getDriverVersion('');
+    				$this->driverlabel[$module->id] = $module->getDriverLabel('');
+    				$this->driverdesc[$module->id] = $module->getDriverDesc('');
+    				$this->driverversion[$module->id] = $module->getDriverVersion('');
     				// If use an external lib
-    				$this->liblabel[$module->id]=$module->getLibLabel('');
-    				$this->libversion[$module->id]=$module->getLibVersion('');
+    				$this->liblabel[$module->id] = $module->getLibLabel('');
+    				$this->libversion[$module->id] = $module->getLibVersion('');
 
     				$i++;
     			}

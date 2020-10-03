@@ -26,7 +26,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -36,13 +36,13 @@ if (empty($object) || ! is_object($object))
 
 <!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
-$id=$object->id;
-$fk_element=empty($object->fk_element)?$fk_element:$object->fk_element;
-$table_element_line=(empty($table_element_line)?$object->table_element_line:$table_element_line);
-$nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):(empty($nboflines)?0:$nboflines)));
-$forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
-$tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
-$filepath=(empty($filepath)?'':$filepath);
+$id = $object->id;
+$fk_element = empty($object->fk_element) ? $fk_element : $object->fk_element;
+$table_element_line = (empty($table_element_line) ? $object->table_element_line : $table_element_line);
+$nboflines = (isset($object->lines) ?count($object->lines) : (isset($tasksarray) ?count($tasksarray) : (empty($nboflines) ? 0 : $nboflines)));
+$forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
+$tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
+$filepath = (empty($filepath) ? '' : $filepath);
 
 if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1) { ?>
 <script>

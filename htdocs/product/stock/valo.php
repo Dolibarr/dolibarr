@@ -149,9 +149,7 @@ if ($result)
         $url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
         print '<br><img src="'.$url.'">';
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

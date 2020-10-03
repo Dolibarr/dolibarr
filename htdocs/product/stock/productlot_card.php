@@ -122,7 +122,7 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
         if ($ret < 0) $error++;
 
         if (!$error)
@@ -180,12 +180,10 @@ if (empty($reshook))
 			{
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else  setEventMessages($object->error, null, 'errors');
+			else setEventMessages($object->error, null, 'errors');
 				$action = 'create';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'create';
 		}
 	}
@@ -217,17 +215,13 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				$action = 'view';
-			}
-			else
-			{
+			} else {
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 				else setEventMessages($object->error, null, 'errors');
 				$action = 'edit';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'edit';
 		}
 	}
@@ -242,9 +236,7 @@ if (empty($reshook))
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			header("Location: ".dol_buildpath('/stock/list.php', 1));
 			exit;
-		}
-		else
-		{
+		} else {
 			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 			else setEventMessages($object->error, null, 'errors');
 		}
@@ -331,25 +323,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
     $producttmp = new Product($db);
     $producttmp->fetch($object->fk_product);
-    print $producttmp->getNomUrl(1, 'stock');
+    print $producttmp->getNomUrl(1, 'stock'). " - " . $producttmp->label;
     print '</td></tr>';
 
     // Eat by
-    print '<tr><td>';
-    print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td><td>';
-    print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td>';
-    print '</tr>';
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+	}
 
     // Sell by
-    print '<tr><td>';
-    print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td><td>';
-    print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
-    print '</td>';
-    print '</tr>';
-
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+	}
     // Other attributes
     $cols = 2;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -376,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if ($user->rights->stock->supprimer)
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
 		}
 		*/
 	}

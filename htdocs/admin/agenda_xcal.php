@@ -54,9 +54,7 @@ if ($actionsave)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
         setEventMessages($langs->trans("SaveFailed"), null, 'errors');
     }
@@ -178,6 +176,7 @@ $message .= $langs->trans("AgendaUrlOptionsNotAdmin", $user->login, $user->login
 $message .= $langs->trans("AgendaUrlOptions4", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsProject", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsNotAutoEvent", 'systemauto', 'systemauto').'<br>';
+$message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 
 print info_admin($message);
 

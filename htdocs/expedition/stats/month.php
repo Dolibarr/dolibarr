@@ -36,8 +36,8 @@ $year = GETPOST('year', 'int');
 
 llxHeader();
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
@@ -53,7 +53,7 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expediti
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg) {
+if (!$mesg) {
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
  * Copyright (C) 2016	   Charlie Benke	   <charlie@patas-monkey.com>
- * Copyright (C) 2018      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 
 	/**
@@ -100,7 +100,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ADDON_PDF_ODT_PATH">';
@@ -117,8 +117,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) { unset($listofdir[$key]); continue; }
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -160,7 +159,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
    			}
    			$texte .= '</div>';
 		}
-
+        // Add input to upload a new template file.
+        $texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+        $texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+        $texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+        $texte .= '</div>';
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
@@ -245,9 +248,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				    $format = $conf->global->MAIN_DOC_USE_TIMING;
 				    if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
-				}
-				else
-				{
+				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -273,8 +274,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	    					'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($e->getMessage(), LOG_INFO);
@@ -309,8 +309,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 }
                 if ((is_array($contact_arrray) && count($contact_arrray) > 0))
                 {
-                	try
-                	{
+                	try {
                 		$listlines = $odfHandler->setSegment('companycontacts');
 
                 		foreach ($contact_arrray as $array_key => $contact_id)
@@ -319,15 +318,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 			$tmparray = $this->get_substitutionarray_contact($contactstatic, $outputlangs, 'contact');
                 			foreach ($tmparray as $key => $val)
                 			{
-                				try
-                				{
+                				try {
                 					$listlines->setVars($key, $val, true, 'UTF-8');
-                				}
-                				catch (OdfException $e)
+                				} catch (OdfException $e)
                 				{
 									dol_syslog($e->getMessage(), LOG_INFO);
-                				}
-                				catch (SegmentException $e)
+                				} catch (SegmentException $e)
                 				{
 									dol_syslog($e->getMessage(), LOG_INFO);
                 				}
@@ -335,8 +331,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 			$listlines->merge();
                 		}
                 		$odfHandler->mergeSegment($listlines);
-                	}
-                	catch (OdfException $e)
+                	} catch (OdfException $e)
                 	{
                 		$this->error = $e->getMessage();
                 		dol_syslog($this->error, LOG_WARNING);
@@ -365,13 +360,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
 						// setVars failed, probably because key not found
                         dol_syslog($e->getMessage(), LOG_INFO);
@@ -384,8 +377,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				{
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
                         dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -404,8 +396,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                         dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
-				}
-				else {
+				} else {
 				    try {
                         $odfHandler->creator = $user->getFullName($outputlangs);
                         $odfHandler->title = $object->builddoc_filename;
@@ -434,9 +425,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

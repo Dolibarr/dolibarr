@@ -17,25 +17,33 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
+if (!is_object($form)) $form = new Form($db);
+
+$qtytoconsumeforline = $this->tpl['qty'] / $this->tpl['efficiency'];
+/*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
+	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
+}*/
+$qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <?php
-print '<tr class="oddeven'.(empty($this->tpl['strike'])?'':' strikefordisabled').'">';
+print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
-print '<td class="right">'.$this->tpl['qty'].'</td>';
+print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 print '<td class="center">'.($this->tpl['qty_frozen'] ? yn($this->tpl['qty_frozen']) : '').'</td>';
 print '<td class="center">'.($this->tpl['disable_stock_change'] ? yn($this->tpl['disable_stock_change']) : '').'</td>';
 //print '<td class="right">'.$this->tpl['efficiency'].'</td>';
 
-$selected=1;
-if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected=0;
+$selected = 1;
+if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected = 0;
 print '<td class="center">';
 //print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
 print '</td>';

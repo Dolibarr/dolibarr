@@ -24,4 +24,4 @@ CREATE TABLE llx_oauth_token (
     fk_user integer,
     fk_adherent integer,
     entity integer DEFAULT 1
-)ENGINE=InnoDB;
+)ENGINE=innodb;

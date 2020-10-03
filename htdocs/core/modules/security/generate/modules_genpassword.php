@@ -33,7 +33,7 @@ abstract class ModeleGenPassword
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
     /**
      * 		Return if a module can be used or not

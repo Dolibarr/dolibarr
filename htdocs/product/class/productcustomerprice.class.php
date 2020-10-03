@@ -217,18 +217,6 @@ class Productcustomerprice extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_customer_price");
-
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
-			}
 		}
 
 		if (!$error) {
@@ -264,7 +252,6 @@ class Productcustomerprice extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
@@ -342,7 +329,6 @@ class Productcustomerprice extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
@@ -375,15 +361,16 @@ class Productcustomerprice extends CommonObject
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
-				{
-					$sql .= ' AND '.$key.' = \''.$value.'\'';
+				if (strpos($key, 'date')) {				// To allow $filter['YEAR(s.dated)']=>$year
+					$sql .= ' AND '.$key.' = \''.$this->db->escape($value).'\'';
 				} elseif ($key == 'soc.nom') {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
-				} elseif ($key == 'prod.ref') {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
+					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				} elseif ($key == 't.price' || $key == 't.price_ttc') {
+					$sql .= ' AND ' . $key . ' LIKE \'%' . price2num($value) . '%\'';
 				} else {
-					$sql .= ' AND '.$key.' = '.$value;
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				}
 			}
 		}
@@ -708,15 +695,12 @@ class Productcustomerprice extends CommonObject
 			$this->errors [] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call triggers
-				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-				$interface = new Interfaces($this->db);
-				$result = $interface->run_triggers('PRODUCT_CUSTOMER_PRICE_UPDATE', $this, $user, $langs, $conf);
-				if ($result < 0) { $error++; $this->errors = $interface->errors; }
-				// End call triggers
-			}
+		if (!$error && !$notrigger)
+		{
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_UPDATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -751,7 +735,7 @@ class Productcustomerprice extends CommonObject
     {
 		global $conf;
 
-		if (! empty($conf->global->PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES)) {
+		if (!empty($conf->global->PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES)) {
 			return 0;
 		}
 
@@ -848,20 +832,6 @@ class Productcustomerprice extends CommonObject
 		$error = 0;
 
 		$this->db->begin();
-
-		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
-			}
-		}
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_customer_price";

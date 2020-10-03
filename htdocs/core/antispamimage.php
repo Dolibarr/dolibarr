@@ -23,12 +23,12 @@
 
 define('NOLOGIN', 1);
 
-if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER', 1);
-if (! defined('NOREQUIREDB'))     define('NOREQUIREDB', 1);
-if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', 1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOREQUIREUSER'))   define('NOREQUIREUSER', 1);
+if (!defined('NOREQUIREDB'))     define('NOREQUIREDB', 1);
+if (!defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', 1);
+if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 
 require_once '../main.inc.php';
 
@@ -37,25 +37,25 @@ require_once '../main.inc.php';
  * View
  */
 
-$length=5;
+$length = 5;
 $letters = 'aAbBCDeEFgGhHJKLmMnNpPqQRsStTuVwWXYZz2345679';
 $number = strlen($letters);
 $string = '';
-for($i = 0; $i < $length; $i++)
+for ($i = 0; $i < $length; $i++)
 {
-    $string .= $letters{mt_rand(0, $number - 1)};
+	$string .= $letters[mt_rand(0, $number - 1)];
 }
 //print $string;
 
 
-$sessionkey='dol_antispam_value';
-$_SESSION[$sessionkey]=$string;
+$sessionkey = 'dol_antispam_value';
+$_SESSION[$sessionkey] = $string;
 
 $img = imagecreate(80, 32);
 if (empty($img))
 {
-    dol_print_error('', "Problem with GD creation");
-    exit;
+	dol_print_error('', "Problem with GD creation");
+	exit;
 }
 
 // Define mime type

@@ -23,7 +23,7 @@
  *  \ingroup    blockedlog
  *  \brief      Description and activation file for module ModuleBuilder
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *	Class to describe a ModuleBuilder module
@@ -37,7 +37,7 @@ class modModuleBuilder extends DolibarrModules
      */
     public function __construct($db)
     {
-    	global $langs,$conf;
+    	global $langs, $conf;
 
         $this->db = $db;
         $this->numero = 3300;
@@ -54,7 +54,7 @@ class modModuleBuilder extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='technic';
+        $this->picto = 'bug';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
@@ -65,10 +65,10 @@ class modModuleBuilder extends DolibarrModules
 
         // Dependencies
         //-------------
-	    $this->hidden = false;	// A condition to disable module
-	    $this->depends = array();		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-	    $this->conflictwith = array();	// List of modules id this module is in conflict with
+	    $this->hidden = false; // A condition to disable module
+	    $this->depends = array(); // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array(); // List of modules id to disable if this one is disabled
+	    $this->conflictwith = array(); // List of modules id this module is in conflict with
         $this->langfiles = array();
 
         // Constants
@@ -85,10 +85,10 @@ class modModuleBuilder extends DolibarrModules
 
         // Permissions
         //------------
-        $this->rights = array();		// Permission array used by this module
+        $this->rights = array(); // Permission array used by this module
         $this->rights_class = 'modulebuilder';
 
-        $r=0;
+        $r = 0;
 
         $r++;
         $this->rights[$r][0] = 3301;
@@ -102,7 +102,7 @@ class modModuleBuilder extends DolibarrModules
         //------------------
         $this->menu = array();
 
-        $this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
+        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
             'type'=>'left',
             'titre'=>'ModuleBuilder',
             'mainmenu'=>'home',

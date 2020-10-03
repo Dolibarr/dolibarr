@@ -57,7 +57,7 @@ class PaymentSocialContribution extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount
+	 * @see $amount
 	 */
 	public $total;
 
@@ -69,7 +69,16 @@ class PaymentSocialContribution extends CommonObject
      */
 	public $fk_typepaiement;
 
+	/**
+	 * @var string
+	 * @deprecated
+	 */
 	public $num_paiement;
+
+	/**
+	 * @var string
+	 */
+	public $num_payment;
 
 	/**
      * @var int ID
@@ -125,8 +134,8 @@ class PaymentSocialContribution extends CommonObject
 		if (isset($this->fk_charge)) $this->fk_charge = (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount = trim($this->amount);
 		if (isset($this->fk_typepaiement)) $this->fk_typepaiement = (int) $this->fk_typepaiement;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement);
-		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
 		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
@@ -153,7 +162,7 @@ class PaymentSocialContribution extends CommonObject
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -184,14 +193,11 @@ class PaymentSocialContribution extends CommonObject
 							if ($remaintopay == 0)
 							{
 								$result = $contrib->set_paid($user);
-							}
-							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -205,9 +211,7 @@ class PaymentSocialContribution extends CommonObject
             $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -224,27 +228,27 @@ class PaymentSocialContribution extends CommonObject
 	{
 		global $langs;
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_charge,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount,";
-		$sql.= " t.fk_typepaiement,";
-		$sql.= " t.num_paiement,";
-		$sql.= " t.note,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_label,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql .= " t.rowid,";
+		$sql .= " t.fk_charge,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.datep,";
+		$sql .= " t.amount,";
+		$sql .= " t.fk_typepaiement,";
+		$sql .= " t.num_paiement as num_payment,";
+		$sql .= " t.note,";
+		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " pt.code as type_code, pt.libelle as type_label,";
+		$sql .= ' b.fk_account';
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= " WHERE t.rowid = ".$id;
 		// TODO link on entity of tax;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -260,8 +264,8 @@ class PaymentSocialContribution extends CommonObject
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepaiement = $obj->fk_typepaiement;
-				$this->num_paiement = $obj->num_paiement;
-				$this->note = $obj->note;
+				$this->num_payment = $obj->num_payment;
+				$this->note_private = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -275,9 +279,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -301,8 +303,8 @@ class PaymentSocialContribution extends CommonObject
 		if (isset($this->fk_charge)) $this->fk_charge = (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount = trim($this->amount);
 		if (isset($this->fk_typepaiement)) $this->fk_typepaiement = (int) $this->fk_typepaiement;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement);
-		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
 		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
@@ -321,7 +323,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? $this->fk_typepaiement : "null").",";
-		$sql .= " num_paiement=".(isset($this->num_paiement) ? "'".$this->db->escape($this->num_paiement)."'" : "null").",";
+		$sql .= " num_paiement=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
@@ -336,22 +338,6 @@ class PaymentSocialContribution extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
-
 		// Commit or rollback
 		if ($error)
 		{
@@ -362,9 +348,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -408,22 +392,6 @@ class PaymentSocialContribution extends CommonObject
 			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
-
 		// Commit or rollback
 		if ($error)
 		{
@@ -434,9 +402,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -485,9 +451,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -511,8 +475,9 @@ class PaymentSocialContribution extends CommonObject
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepaiement = '';
-		$this->num_paiement = '';
-		$this->note = '';
+		$this->num_payment = '';
+		$this->note_private = '';
+		$this->note_public = '';
 		$this->fk_bank = '';
 		$this->fk_user_creat = '';
 		$this->fk_user_modif = '';
@@ -535,6 +500,9 @@ class PaymentSocialContribution extends CommonObject
     {
         global $conf;
 
+		// Clean data
+        $this->num_payment = trim($this->num_payment);
+
         $error = 0;
 
         if (!empty($conf->banque->enabled))
@@ -553,7 +521,7 @@ class PaymentSocialContribution extends CommonObject
                 $this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $total,
-                $this->num_paiement,
+                $this->num_payment,
                 '',
                 $user,
                 $emetteur_nom,
@@ -585,31 +553,27 @@ class PaymentSocialContribution extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                $linkaddedforthirdparty=array();
+                $linkaddedforthirdparty = array();
                 foreach ($this->amounts as $key => $value)
                 {
                     if ($mode == 'payment_sc')
                     {
                         $socialcontrib = new ChargeSociales($this->db);
                         $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_label)?' ('.$socialcontrib->lib.')':''), 'sc');
+                        $result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
-            }
-            else
-            {
-                $this->error=$acc->error;
+            } else {
+                $this->error = $acc->error;
                 $error++;
             }
         }
 
-        if (! $error)
+        if (!$error)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -632,9 +596,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -718,7 +680,7 @@ class PaymentSocialContribution extends CommonObject
 		$result = '';
 
 		if (empty($this->ref)) $this->ref = $this->lib;
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = $langs->trans("Payment").': '.$this->ref;
 
         if (!empty($this->id)) {
             $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

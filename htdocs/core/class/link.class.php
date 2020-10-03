@@ -98,7 +98,7 @@ class Link extends CommonObject
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."links (entity, datea, url, label, objecttype, objectid)";
-        $sql .= " VALUES ('".$conf->entity."', '".$this->db->idate($this->datea)."'";
+        $sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
         $sql .= ", '".$this->db->escape($this->url)."'";
         $sql .= ", '".$this->db->escape($this->label)."'";
         $sql .= ", '".$this->db->escape($this->objecttype)."'";
@@ -123,23 +123,17 @@ class Link extends CommonObject
                 dol_syslog(get_class($this)."::Create success id=".$this->id);
                 $this->db->commit();
                 return $this->id;
-            }
-            else
-            {
+            } else {
                 dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -3;
             }
-        }
-        else
-        {
+        } else {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 $this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result = -1;
-            }
-            else
-            {
+            } else {
                 $this->error = $this->db->lasterror();
                 $result = -2;
             }
@@ -181,7 +175,7 @@ class Link extends CommonObject
         $this->db->begin();
 
         $sql  = "UPDATE ".MAIN_DB_PREFIX."links SET ";
-        $sql .= "entity = '".$conf->entity."'";
+        $sql .= "entity = ".$conf->entity;
         $sql .= ", datea = '".$this->db->idate(dol_now())."'";
         $sql .= ", url = '".$this->db->escape($this->url)."'";
         $sql .= ", label = '".$this->db->escape($this->label)."'";
@@ -211,17 +205,13 @@ class Link extends CommonObject
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else
-        {
+        } else {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 // Doublon
                 $this->error = $langs->trans("ErrorDuplicateField");
                 $result = -1;
-            }
-            else
-            {
+            } else {
                 $this->error = $langs->trans("Error sql = ".$sql);
                 $result = -2;
             }
@@ -245,7 +235,7 @@ class Link extends CommonObject
         global $conf;
 
         $sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
-        $sql .= " WHERE objecttype = '".$objecttype."' AND objectid = ".$objectid;
+        $sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".$objectid;
         if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
         if ($sortfield) {
             if (empty($sortorder)) {
@@ -296,7 +286,7 @@ class Link extends CommonObject
         global $conf;
 
         $sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
-        $sql .= " WHERE objecttype = '".$objecttype."' AND objectid = ".$objectid;
+        $sql .= " WHERE objecttype = '".$db->escape($objecttype)."' AND objectid = ".$objectid;
         if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
 
         $resql = $db->query($sql);
@@ -342,9 +332,7 @@ class Link extends CommonObject
                 $this->objecttype = $obj->objecttype;
                 $this->objectid = $obj->objectid;
                 return 1;
-            }
-            else
-			{
+            } else {
                 return 0;
             }
         } else {

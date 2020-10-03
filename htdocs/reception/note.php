@@ -44,7 +44,7 @@ $langs->load('propal');
 
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = '';
@@ -98,7 +98,7 @@ $form = new Form($db);
 if ($id > 0 || !empty($ref))
 {
 	$head = reception_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
+	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'dollyrevert');
 
 
 	// Reception card

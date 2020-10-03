@@ -23,6 +23,9 @@ AddLoan=新增貸款
 FinancialCommitment=財務承諾
 InterestAmount=利益
 CapitalRemain=剩餘資本
+TermPaidAllreadyPaid = 這表示已付款
+CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
+CantModifyInterestIfScheduleIsUsed = 如果您使用時間表，則無法修改利息
 # Admin
 ConfigLoan=貸款模組設定
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=預設會計帳戶資金

@@ -42,7 +42,7 @@ $langs->load("printing");
 
 llxHeader("", $langs->trans("Printing"));
 
-print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="' . $_SERVER["PHP_SELF"] . '">' . $langs->trans("Refresh") . '</a>', 0, 0, 'title_setup.png');
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup.png');
 
 print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 
@@ -50,19 +50,19 @@ print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 $object = new PrintingDriver($db);
 $result = $object->listDrivers($db, 10);
 foreach ($result as $driver) {
-    require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
-    $classname = 'printing_'.$driver;
-    $langs->load($driver);
-    $printer = new $classname($db);
-    if ($conf->global->{$printer->active}) {
-        //$printer->listJobs('commande');
-        $result = $printer->listJobs();
-        print $printer->resprint;
+	require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+	$classname = 'printing_'.$driver;
+	$langs->load($driver);
+	$printer = new $classname($db);
+	if ($conf->global->{$printer->active}) {
+		//$printer->listJobs('commande');
+		$result = $printer->listJobs();
+		print $printer->resprint;
 
-        if ($result > 0) {
-            setEventMessages($printer->error, $printer->errors, 'errors');
-        }
-    }
+		if ($result > 0) {
+			setEventMessages($printer->error, $printer->errors, 'errors');
+		}
+	}
 }
 
 // End of page

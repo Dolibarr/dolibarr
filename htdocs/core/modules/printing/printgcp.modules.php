@@ -140,7 +140,7 @@ class printing_printgcp extends PrintingDriver
                     'info'=>$access,
                     'type'=>'info',
                     'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
-                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
+                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
                 );
                 if ($token_ok) {
                     $expiredat = '';
@@ -152,13 +152,10 @@ class printing_printgcp extends PrintingDriver
                     if ($endoflife == $token::EOL_NEVER_EXPIRES)
                     {
                         $expiredat = $langs->trans("Never");
-                    }
-                    elseif ($endoflife == $token::EOL_UNKNOWN)
+                    } elseif ($endoflife == $token::EOL_UNKNOWN)
                     {
                         $expiredat = $langs->trans("Unknown");
-                    }
-                    else
-                    {
+                    } else {
                         $expiredat = dol_print_date($endoflife, "dayhour");
                     }
 
@@ -169,7 +166,7 @@ class printing_printgcp extends PrintingDriver
                 /*
                 if ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)) {
                     $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
-                    $this->conf[] = array('varname'=>'DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
+                    $this->conf[] = array('varname'=>'DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
                 } else {
                     $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
                 }*/
@@ -219,9 +216,7 @@ class printing_printgcp extends PrintingDriver
             if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id'])
             {
                 $html .= img_picto($langs->trans("Default"), 'on');
-            }
-            else
-                $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+            } else $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;token='.newToken().'&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             $html .= '</td>';
             $html .= '</tr>'."\n";
         }
@@ -317,7 +312,7 @@ class printing_printgcp extends PrintingDriver
         $fileprint .= '/'.$file;
         $mimetype = dol_mimetype($fileprint);
         // select printer uri for module order, propal,...
-        $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
+        $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".$user->id;
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -325,15 +320,11 @@ class printing_printgcp extends PrintingDriver
             if ($obj)
             {
                 $printer_id = $obj->printer_id;
-            }
-            else
-            {
+            } else {
                 if (!empty($conf->global->PRINTING_GCP_DEFAULT))
                 {
                     $printer_id = $conf->global->PRINTING_GCP_DEFAULT;
-                }
-                else
-                {
+                } else {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
@@ -506,9 +497,7 @@ class printing_printgcp extends PrintingDriver
                 $html .= '<td>&nbsp;</td>';
                 $html .= '</tr>';
             }
-        }
-        else
-        {
+        } else {
                 $html .= '<tr class="oddeven">';
                 $html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';

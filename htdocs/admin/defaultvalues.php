@@ -37,7 +37,7 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'error
 if (!$user->admin) accessforbidden();
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
@@ -45,7 +45,7 @@ $mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'createform'; // 'cre
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -61,7 +61,7 @@ $defaulturl = preg_replace('/^\//', '', $defaulturl);
 
 $urlpage = GETPOST('urlpage', 'alphanohtml');
 $key = GETPOST('key', 'alphanohtml');
-$value = GETPOST('value', 'none');
+$value = GETPOST('value', 'restricthtml');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));
@@ -150,9 +150,7 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			$defaulturl = '';
 			$defaultkey = '';
 			$defaultvalue = '';
-		}
-		else
-		{
+		} else {
 	        $db->rollback();
 		    setEventMessages($db->lasterror(), null, 'errors');
 			$action = '';
@@ -169,9 +167,7 @@ if ($action == 'delete')
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -185,7 +181,7 @@ if ($action == 'delete')
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$wikihelp = 'EN:Setup|FR:Paramétrage|ES:Configuración';
+$wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param = '&mode='.$mode;
@@ -194,14 +190,12 @@ $enabledisablehtml .= $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
     // Button off, click to enable
-    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=1'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
-}
-else
-{
+} else {
     // Button on, click to disable
-    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
     $enabledisablehtml .= '</a>';
 }
@@ -260,9 +254,7 @@ $texthelp = $langs->trans("TheKeyIsTheNameOfHtmlField");
 if ($mode != 'sortorder')
 {
     $textkey = $form->textwithpicto($langs->trans("Field"), $texthelp);
-}
-else
-{
+} else {
     $texthelp = 'field or alias.field';
     $textkey = $form->textwithpicto($langs->trans("Field"), $texthelp);
 }
@@ -280,9 +272,7 @@ if ($mode != 'focus' && $mode != 'mandatory')
             $texthelp .= $key.' -> '.$val.'<br>';
         }
         $textvalue = $form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, 'subsitutiontooltip');
-    }
-    else
-    {
+    } else {
         $texthelp = 'ASC or DESC';
         $textvalue = $form->textwithpicto($langs->trans("SortOrder"), $texthelp);
     }
@@ -321,9 +311,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity)
 	print '<td>';
 	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">'; // We see environment, but to change it we must switch on other entity
 	print '</td>';
-}
-else
-{
+} else {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
@@ -390,12 +378,10 @@ if ($result)
 		print '<td class="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
 		{
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
     		print ' &nbsp; ';
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
-		}
-		else
-		{
+    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+		} else {
 		    print '<input type="hidden" name="page" value="'.$page.'">';
 		    print '<input type="hidden" name="rowid" value="'.$id.'">';
 		    print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : 'none').'"></div>';
@@ -408,9 +394,7 @@ if ($result)
 		print "\n";
 		$i++;
 	}
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

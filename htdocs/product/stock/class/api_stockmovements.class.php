@@ -99,56 +99,55 @@ class StockMovements extends DolibarrApi
 
         $obj_ret = array();
 
-        if(! DolibarrApiAccess::$user->rights->stock->lire) {
+        if (!DolibarrApiAccess::$user->rights->stock->lire) {
             throw new RestException(401);
         }
 
         $sql = "SELECT t.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as t";
         //$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
-        $sql.= ' WHERE 1 = 1';
+        $sql .= ' WHERE 1 = 1';
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        $sql .= $this->db->order($sortfield, $sortorder);
+        if ($limit) {
             if ($page < 0)
             {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
-            $i=0;
-            $num = $db->num_rows($result);
+            $i = 0;
+            $num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $stockmovement_static = new MouvementStock($db);
-                if($stockmovement_static->fetch($obj->rowid)) {
+            	$obj = $this->db->fetch_object($result);
+            	$stockmovement_static = new MouvementStock($this->db);
+                if ($stockmovement_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
                 }
                 $i++;
             }
+        } else {
+        	throw new RestException(503, 'Error when retrieve stock movement list : '.$this->db->lasterror());
         }
-        else {
-            throw new RestException(503, 'Error when retrieve stock movement list : '.$db->lasterror());
-        }
-        if( ! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No stock movement found');
         }
         return $obj_ret;
@@ -177,7 +176,7 @@ class StockMovements extends DolibarrApi
      */
     public function post($product_id, $warehouse_id, $qty, $lot = '', $movementcode = '', $movementlabel = '', $price = '', $dlc = '', $dluo = '')
     {
-        if(! DolibarrApiAccess::$user->rights->stock->creer) {
+        if (!DolibarrApiAccess::$user->rights->stock->creer) {
             throw new RestException(401);
         }
 
@@ -187,7 +186,7 @@ class StockMovements extends DolibarrApi
 
         // Type increase or decrease
         $type = 2;
-        if ($qty >= 0){
+        if ($qty >= 0) {
             $type = 3;
         }
 
@@ -195,7 +194,7 @@ class StockMovements extends DolibarrApi
         $eatBy = empty($dluo) ? '' : dol_stringtotime($dluo);
         $sellBy = empty($dlc) ? '' : dol_stringtotime($dlc);
 
-        if($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
+        if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, $price, $movementlabel, $movementcode, '', $eatBy, $sellBy, $lot) <= 0) {
         	$errormessage = $this->stockmovement->error;
         	if (empty($errormessage)) $errormessage = join(',', $this->stockmovement->errors);
         	throw new RestException(503, 'Error when create stock movement : '.$errormessage);
@@ -304,7 +303,7 @@ class StockMovements extends DolibarrApi
         unset($object->note_public);
         unset($object->shipping_method_id);
         unset($object->fk_account);
-        unset($object->modelpdf);
+        unset($object->model_pdf);
         unset($object->fk_delivery_address);
         unset($object->cond_reglement);
         unset($object->cond_reglement_id);

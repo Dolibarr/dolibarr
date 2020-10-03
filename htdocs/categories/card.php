@@ -88,39 +88,35 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		{
 			header("Location: ".$urlfrom);
 			exit;
-		}
-		elseif ($idProdOrigin)
+		} elseif ($backtopage)
+		{
+			header("Location: ".$backtopage);
+			exit;
+		} elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
-		}
-		elseif ($idCompanyOrigin)
+		} elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
-		}
-		elseif ($idSupplierOrigin)
+		} elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
-		}
-		elseif ($idMemberOrigin)
+		} elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
-		}
-		elseif ($idContactOrigin)
+		} elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
-		}
-		elseif ($idProjectOrigin)
+		} elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 			exit;
 		}
@@ -155,9 +151,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		{
 			$action = 'confirmed';
 			$_POST["addcat"] = '';
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -173,38 +167,31 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 		{
 			header("Location: ".$urlfrom);
 			exit;
-		}
-		elseif ($backtopage)
+		} elseif ($backtopage)
 		{
 			header("Location: ".$backtopage);
 			exit;
-		}
-		elseif ($idProdOrigin)
+		} elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		}
-		elseif ($idCompanyOrigin)
+		} elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		}
-		elseif ($idSupplierOrigin)
+		} elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		}
-		elseif ($idMemberOrigin)
+		} elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		}
-		elseif ($idContactOrigin)
+		} elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		}
-		elseif ($idProjectOrigin)
+		} elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
@@ -252,13 +239,13 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="minwidth100" name="label" value="'.$label.'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="minwidth100" name="label" value="'.dol_escape_htmltag($label).'">';
 		print'</td></tr>';
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
+		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 

@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Plik robota (robots.txt)
 WEBSITE_HTACCESS=Plik .htaccess witryny
 WEBSITE_MANIFEST_JSON=Plik manifest.json witryny
 WEBSITE_README=Plik README.md
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
 EnterHereLicenseInformation=Tu wprowadź metadane lub informacje licencyjne, które wypełnią plik README.md. Przy rozprowadzaniu Twej witryny jako szablonu, plik ten zostanie dołączony do pakietu tego szablonu.
 HtmlHeaderPage=Nagłówek HTML (tylko dla tej strony)
 PageNameAliasHelp=Nazwa lub alias strony. <br> Ten alias służy również do tworzenia adresu URL wspierającego SEO, gdy witrynę obsługuje web serwer (taki jak Apacke, Nginx, ...). Użyj przycisku „<strong>%s</strong>”, aby edytować ten alias.
@@ -42,7 +43,8 @@ ViewPageInNewTab=Zobacz stronę w nowej zakładce
 SetAsHomePage=Ustaw jako stronę domową
 RealURL=Prawdziwy adres URL
 ViewWebsiteInProduction=Zobacz stronę używając linków ze strony głównej
-SetHereVirtualHost=<u>Gdy Twój rzeczywisty web serwer to Apache/NGinx/...</u><br>Jeśli na Twym rzeczywistym web serwerze masz uprawnienia do tworzenia wirtualnego web serwera (Virtual Host), to utwórz go i odpowiednio skonfiguruj - np. włącz obsługę PHP, wskaż katalog Root na<br><strong>%s</strong><br>, ustaw kontrolę dostępu. Następnie, jego URL podaj w Dolibarr jako wartość właściwości Virtualhost witryny, przez co podgląd witryny będzie możliwy również poprzez ten dedykowany web serwerze, a nie tylko przez wewnętrzny web serwer w Dolibarr.
+SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
+ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u> Używaj z wbudowanym serwerem PHP </u> <br>Gdy w środowisku rozwojowym preferujesz testowanie web strony z web serwerem wbudowanym w PHP (wymagane PHP 5.5 lub nowsze), to uruchamiaj<br> <strong> php -S 0.0.0.0:8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Uruchom swoją witrynę u innego dostawcy wystąpień Dolibarr</u><br>Jeśli nie masz dostępnego w internecie web serwera, takiego jak Apache lub NGinx, to możesz eksportować i importować swoją witrynę do innego wystąpienia Dolibarr u kogoś oferującego wystąpienia Dolibarr mające moduł Website w pełni zintegrowany z web serwerem. Listę niektórych dostawców wystąpień Dolibarr znajdziesz w <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Sprawdź także, czy host wirtualny ma uprawnienia <strong>%s</strong> do plików <br> <strong>%s</strong>
@@ -56,7 +58,10 @@ NoPageYet=Brak stron
 YouCanCreatePageOrImportTemplate=Możesz utworzyć nową stronę albo załadować pełny szablon witryny
 SyntaxHelp=Pomoc na temat określonych wskazówek dotyczących składni
 YouCanEditHtmlSourceckeditor=Możesz edytować kod źródłowy HTML używając przycisku „Źródło” w edytorze.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Możesz dołączyć kod PHP do tego źródła używając znaczników <strong>&lt;?php ?&gt;</strong>. Dostępne są następujące zmienne globalne: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> Możesz także dołączyć zawartość innej web strony/pojemnika o następującej składni:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> Można zrobić przekierowanie do innej web strony/pojemnika z następującą składnią (Uwaga: nie wyprowadzaj jakiejkolwiek zawartości przed przekierowaniem):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> Aby dodać link do innej web strony użyj składni:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Aby umieścić <strong>odsyłacz do pobrania</strong> pliku przechowywanego w katalogu <strong>documents</strong>, użyj funkcji opakowującej <strong>document.php</strong> :<br>Na przykład, dla pliku w documents/ecm składnia to:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Dla pliku w documents/medias (katalog otwarty na dostęp publiczny) składnia to:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> By dołączyć <strong>obraz</strong> przechowywany w katalogu <strong>documents</strong> użyj funkcji opakowującej <strong>viewimage.php</strong>:<br>Na przykład, dla obrazu w documents/medias (katalog otwarty na dostęp publiczny) składnia to:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>Więcej przykładów HTML lub kodu dynamicznego dostępnych jest w<a href="%s" target="_blank">dokumentacji typu wiki</a><br>.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Powiel stronę/pojemnik
 CloneSite=Duplikuj stronę
 SiteAdded=Dodano witrynę
@@ -76,7 +81,7 @@ BlogPost=Post na blogu
 WebsiteAccount=Konto witryny
 WebsiteAccounts=Konta witryny
 AddWebsiteAccount=Utwórz konto witryny
-BackToListOfThirdParty=Wróć do listy Stron Trzecich
+BackToListForThirdParty=Back to list for the third-party
 DisableSiteFirst=Najpierw wyłącz witrynę
 MyContainerTitle=Tytuł mojej witryny
 AnotherContainer=W ten sposób można dołączyć zawartość innej web strony/pojemnika (może pojawić się błąd, gdy włączysz obsługę kodu dynamicznego a wbudowany podrzędny pojemnik nie istnieje)
@@ -84,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Przepraszamy, ta witryna jest obecnie niedostępn
 WEBSITE_USE_WEBSITE_ACCOUNTS=Włącz tabelę kont witryny
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Włącz tabelę kont witryny (login/hasło) dla każdej witryny/strony trzeciej
 YouMustDefineTheHomePage=Najpierw musisz zdefiniować domyślną stronę główną
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that edits of HTML source will be possible when page content has been initialized by grabbing it from an external page ("Online" editor will NOT be available)
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correclty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Po zaciągnięciu zawartości z zewnętrznej web witryny możliwa jest jedynie edycja kodu źródłowego HTML
 GrabImagesInto=Przechwyć także obrazy znalezione w CSS i na stronie.
 ImagesShouldBeSavedInto=Obrazy powinny być zapisane w katalogu
@@ -119,8 +124,14 @@ ShowSubContainersOnOff=Tryb wykonywania „zawartości dynamicznej” jest %s
 GlobalCSSorJS=Globalny plik CSS/JS/Header witryny
 BackToHomePage=Powrót do strony głównej...
 TranslationLinks=Linki do tłumaczeń
-YouTryToAccessToAFileThatIsNotAWebsitePage=Próbujesz uzyskać dostęp do strony, która nie jest stroną witryny
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Aby uzyskać dobre praktyki SEO, użyj tekstu od 5 do 70 znaków
 MainLanguage=Main language
 OtherLanguages=Other languages
 UseManifest=Provide a manifest.json file
+PublicAuthorAlias=Public author alias
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
+ReplacementDoneInXPages=Replacement done in %s pages or containers
+RSSFeed=RSS Feed
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated

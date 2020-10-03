@@ -27,7 +27,7 @@ DangerZone=Zone de danger
 BuildPackage=Construire le package
 BuildPackageDesc=Vous pouvez générer un package zip de votre application afin d'être prêt à le distribuer sur n’importe quel Dolibarr. Vous pouvez également le distribuer ou le vendre sur une place de marché, comme <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Générer la documentation
-ModuleIsNotActive=Le module n'est pas encore activé. Aller à %s pour l'activer ou cliquer ici :
+ModuleIsNotActive=Le module n'est pas encore activé. Aller à %s pour l'activer ou cliquer ici
 ModuleIsLive=Ce module a été activé. Tout changement dessus pourrait casser une fonctionnalité actuellement en ligne.
 DescriptionLong=Description longue
 EditorName=Nom de l'éditeur
@@ -83,9 +83,9 @@ ListOfDictionariesEntries=Liste des entrées de dictionnaires
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification). Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage). Il peut s'agir d'une expression, par exemple :  <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> ($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
-DisplayOnPdf=Display on PDF
+VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les listes et formulaire de mise à jour et affichage uniquement (pas en création), 5=Visible sur les listes et formulaire en lecture (pas en création ni modification).<br><br>Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage).<br><br>Il peut s'agir d'une expression, par exemple :<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Affichez ce champ sur les documents PDF compatibles, vous pouvez gérer la position avec le champ "Position". <br/> Actuellement, les modèles compatibles PDF connus sont: Eratostene (ordre), Espadon (navire), une éponge (factures), cyan (Propal / citation), Cornas (commande fournisseur) <br/> <br/> <strong> Pour le document: </strong> <br/> 0 = non affiché <br/> 1 = affiché <br/> 2 = affiché uniquement si non vide <br/> <br/> <strong> Pour les lignes de document: </strong> <br/> 0 = non affiché <br/> 1 = affiché dans une colonne <br/> 3 = affiché dans la colonne de description de ligne après la description <br/> 4 = affiché dans la colonne de description après le description uniquement si non vide
+DisplayOnPdf=Afficher sur PDF
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
@@ -94,7 +94,7 @@ MenusDefDesc=Définissez ici les menus fournis par votre module
 DictionariesDefDesc=Définissez ici les dictionnaires fournis par le module
 PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module
 MenusDefDescTooltip=Les menus fournis par votre module / application sont définis dans le tableau <strong>$this->menus</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et les modules réactivés), les menus sont également visibles dans l'éditeur de menus mis à la disposition des utilisateurs administrateurs sur %s.
-DictionariesDefDescTooltip=Les dictionnaires fournis par votre module/application sont définis dans le tableau <strong>$this->dictionnaires</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et réactivés par le module), les dictionnaires sont également visibles dans la zone de configuration par les utilisateurs administrateurs sur %s.
+DictionariesDefDescTooltip=Les dictionnaires fournis par votre module/application sont définis dans le tableau <strong>$this->dictionaries</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et module réactivé), les dictionnaires sont également visibles dans la zone de configuration par les utilisateurs administrateurs sur %s.
 PermissionsDefDescTooltip=Les autorisations fournies par votre module / application sont définies dans le tableau <strong>$this->rights</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définies (et le module réactivé), les autorisations sont visibles dans la configuration par défaut des autorisations %s.
 HooksDefDesc=Définissez dans la propriété <b> module_parts ['hooks'] </b>, dans le descripteur de module, le contexte des hooks à gérer (la liste des contextes peut être trouvée par une recherche sur '<b> initHooks (</b>' dans le code du noyau). <br> Editez le fichier hook pour ajouter le code de vos fonctions hookées (les fonctions hookables peuvent être trouvées par une recherche sur '<b> executeHooks </b>' dans le code core).
 TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez exécuter pour chaque événement métier exécuté.
@@ -139,3 +139,4 @@ ForeignKey=Clé étrangère
 TypeOfFieldsHelp=Type de champs: <br> varchar (99), double (24,8), réel, texte, html, datetime, timestamp, integer, integer:NomClasse:cheminrelatif/vers/classfile.class.php [:1[:filtre]] ('1' signifie nous ajoutons un bouton + après le combo pour créer l'enregistrement, 'filter' peut être 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' par exemple)
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
+TableNotEmptyDropCanceled=La table n’est pas vide. La suppression a été annulée.

@@ -35,4 +35,4 @@ CREATE TABLE llx_inventory
   date_validation datetime DEFAULT NULL,
   import_key               varchar(14)       	-- import key
 ) 
-ENGINE=InnoDB;
+ENGINE=innodb;

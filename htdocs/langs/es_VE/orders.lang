@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - orders
 StatusOrderDeliveredShort=Emitido
 PDFEinsteinDescription=A complete order model
-PDFEratostheneDescription=A complete order model
-PDFProformaDescription=A complete Proforma invoice template
 StatusSupplierOrderDraftShort=A validar
 StatusSupplierOrderValidatedShort=Validada
 StatusSupplierOrderDelivered=Emitido

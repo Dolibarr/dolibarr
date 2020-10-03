@@ -53,6 +53,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inv
 
 $socid = GETPOST('socid', 'int');
 
+$socid = GETPOST('socid', 'int');
+
 // Security check
 $id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
@@ -83,7 +85,7 @@ $search_status = GETPOST('search_status', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (!$sortorder) $sortorder = 'DESC';
@@ -102,11 +104,11 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('invoicereccard', 'globalcard'));
+$hookmanager->initHooks(array('invoicereclist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('facture_rec');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -151,6 +153,11 @@ if ($socid > 0) {
 }
 
 
+if ($socid > 0) {
+        $tmpthirdparty = new Societe($db);
+        $res = $tmpthirdparty->fetch($socid);
+        if ($res > 0) $search_societe = $tmpthirdparty->name;
+}
 
 /*
  * Actions
@@ -328,13 +335,12 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
 	$title = $langs->trans("RepeatableInvoices");
 
-	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
 	print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
 
@@ -536,21 +542,21 @@ if ($resql)
 			}
 			if (!empty($arrayfields['f.total']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total';
 			    $totalarray['val']['f.total'] += $objp->total;
 			}
 			if (!empty($arrayfields['f.tva']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total_vat).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total_vat).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.tva';
 			    $totalarray['val']['f.tva'] += $objp->total_vat;
 			}
 			if (!empty($arrayfields['f.total_ttc']['checked']))
 			{
-			    print '<td class="right">'.price($objp->total_ttc).'</td>'."\n";
+			    print '<td class="nowrap right">'.price($objp->total_ttc).'</td>'."\n";
 			    if (!$i) $totalarray['nbfield']++;
 			    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 			    $totalarray['val']['f.total_ttc'] += $objp->total_ttc;
@@ -610,9 +616,7 @@ if ($resql)
 				if (!$invoicerectmp->isMaxNbGenReached())
 				{
 					if (!$objp->suspended && $objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
-				}
-				else
-				{
+				} else {
 					print img_info($langs->trans("MaxNumberOfGenerationReached"));
 				}
 				print '</div>';
@@ -655,19 +659,14 @@ if ($resql)
 				if ($invoicerectmp->isMaxNbGenReached())
 				{
 					print $langs->trans("MaxNumberOfGenerationReached");
-				}
-				elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
+				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 					print $langs->trans("CreateBill").'</a>';
-				}
-				else
-				{
+				} else {
 					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 				}
-			}
-			else
-			{
+			} else {
 				print "&nbsp;";
 			}
 			if (!$i) $totalarray['nbfield']++;
@@ -677,9 +676,7 @@ if ($resql)
 
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		$colspan = 1;
 		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
@@ -694,9 +691,7 @@ if ($resql)
 	print "</form>";
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

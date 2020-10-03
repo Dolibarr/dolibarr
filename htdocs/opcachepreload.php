@@ -25,7 +25,7 @@
 // Preload some PHP files.
 // WARNING: They won't be reloaded until you restart the Web/PHP server, event if you modify the files.
 
-$files = array(); 	/* An array of files you want to preload */
+$files = array(); /* An array of files you want to preload */
 
 foreach ($files as $file) {
 	opcache_compile_file($file);

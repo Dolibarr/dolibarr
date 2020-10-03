@@ -34,8 +34,8 @@ $err = 0;
 // If the config file exists and is filled, we're not on first install so we skip the language selection page
 if (file_exists($conffile) && isset($dolibarr_main_url_root))
 {
-    header("Location: check.php?testget=ok");
-    exit;
+	header("Location: check.php?testget=ok");
+	exit;
 }
 
 $langs->load("admin");
@@ -45,9 +45,9 @@ $langs->load("admin");
  * View
  */
 
-$formadmin=new FormAdmin('');	// Note: $db does not exist yet but we don't need it, so we put ''.
+$formadmin = new FormAdmin(''); // Note: $db does not exist yet but we don't need it, so we put ''.
 
-pHeader("", "check");   // Next step = check
+pHeader("", "check"); // Next step = check
 
 
 // Ask installation language

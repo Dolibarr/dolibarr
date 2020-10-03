@@ -103,10 +103,10 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         }
         $logtriggeraction = false;
         $sql = '';
-        if ($action!='') {
+        if ($action != '') {
             $actions = explode('_', $action);
             $sql = 'SELECT rowid, url FROM '.MAIN_DB_PREFIX.'zapier_hook';
-            $sql .= ' WHERE module="'.$db->escape(strtolower($actions[0])).'" AND action="'.$db->escape(strtolower($actions[1])).'"';
+            $sql .= ' WHERE module="'.$this->db->escape(strtolower($actions[0])).'" AND action="'.$this->db->escape(strtolower($actions[1])).'"';
             //setEventMessages($sql, null);
         }
 
@@ -130,9 +130,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
                 //$logtriggeraction = true;
                 break;
             case 'ACTION_CREATE':
-                $resql = $db->query($sql);
+            	$resql = $this->db->query($sql);
                 // TODO voir comment regrouper les webhooks en un post
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $cleaned = cleanAgendaEventsDatas($cleaned);
                     $json = json_encode($cleaned);
@@ -147,14 +147,14 @@ class InterfaceZapierTriggers extends DolibarrTriggers
                 break;
 
             // Groups
-            //case 'GROUP_CREATE':
-            //case 'GROUP_MODIFY':
-            //case 'GROUP_DELETE':
+            //case 'USERGROUP_CREATE':
+            //case 'USERGROUP_MODIFY':
+            //case 'USERGROUP_DELETE':
 
             // Companies
             case 'COMPANY_CREATE':
-                $resql = $db->query($sql);
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	$resql = $this->db->query($sql);
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $json = json_encode($cleaned);
                     // call the zapierPostWebhook() function
@@ -163,8 +163,8 @@ class InterfaceZapierTriggers extends DolibarrTriggers
                 $logtriggeraction = true;
                 break;
             case 'COMPANY_MODIFY':
-                $resql = $db->query($sql);
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	$resql = $this->db->query($sql);
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $json = json_encode($cleaned);
                     // call the zapierPostWebhook() function
@@ -200,8 +200,8 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
             // Customer orders
             case 'ORDER_CREATE':
-                $resql = $db->query($sql);
-                while ($resql && $obj = $db->fetch_array($resql)) {
+            	$resql = $this->db->query($sql);
+            	while ($resql && $obj = $this->db->fetch_array($resql)) {
                     $cleaned = cleanObjectDatas(dol_clone($object));
                     $json = json_encode($cleaned);
                     // call the zapierPostWebhook() function
@@ -364,7 +364,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             // case 'SHIPPING_DELETE':
         }
         if ($logtriggeraction) {
-            dol_syslog("Trigger '" . $this->name . "' for action '.$action.' launched by " . __FILE__ . " id=" . $object->id);
+            dol_syslog("Trigger '".$this->name."' for action '.$action.' launched by ".__FILE__." id=".$object->id);
         }
         return 0;
     }
@@ -419,9 +419,9 @@ function cleanObjectDatas($toclean)
     unset($toclean->ref_next);
     unset($toclean->ref_int);
 
-    unset($toclean->projet);     // Should be fk_project
-    unset($toclean->project);    // Should be fk_project
-    unset($toclean->author);     // Should be fk_user_author
+    unset($toclean->projet); // Should be fk_project
+    unset($toclean->project); // Should be fk_project
+    unset($toclean->author); // Should be fk_user_author
     unset($toclean->timespent_old_duration);
     unset($toclean->timespent_id);
     unset($toclean->timespent_duration);
@@ -457,9 +457,9 @@ function cleanObjectDatas($toclean)
     unset($toclean->oldcopy);
 
     // If object has lines, remove $db property
-    if (isset($toclean->lines) && count($toclean->lines) > 0)  {
+    if (isset($toclean->lines) && count($toclean->lines) > 0) {
         $nboflines = count($toclean->lines);
-        for ($i=0; $i < $nboflines; $i++) {
+        for ($i = 0; $i < $nboflines; $i++) {
             cleanObjectDatas($toclean->lines[$i]);
         }
     }

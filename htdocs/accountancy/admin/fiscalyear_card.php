@@ -71,9 +71,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-
-elseif ($action == 'add') {
+} elseif ($action == 'add') {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -274,23 +272,23 @@ if ($action == 'create')
 
 			// Label
 			print '<tr><td class="tdtop">';
-			print $form->editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print $form->editfieldkey("Label", 'label', $object->label, $object, 1, 'alpha:32');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print $form->editfieldval("Label", 'label', $object->label, $object, 1, 'alpha:32');
 			print "</td></tr>";
 
 			// Date start
 			print '<tr><td>';
-			print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, 1, 'datepicker');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>';
-			print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, 1, 'datepicker');
 			print '</td></tr>';
 
 			// Statut
@@ -307,9 +305,9 @@ if ($action == 'create')
     			 */
     			print '<div class="tabsAction">';
 
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
-    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&token='.newToken().'&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 
     			print '</div>';
 			}

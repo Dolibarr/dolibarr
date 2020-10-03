@@ -27,7 +27,7 @@ DangerZone=Gevarenzone
 BuildPackage=Bouw pakket
 BuildPackageDesc=U kunt een zip-pakket van uw applicatie genereren, zodat u klaar bent om het op elke Dolibarr te distribueren. U kunt het ook distribueren of verkopen op een marktplaats zoals <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Opmaken documentatie
-ModuleIsNotActive=Deze module is nog niet geactiveerd. Ga naar %s om het live te maken of klik hier:
+ModuleIsNotActive=Deze module is nog niet geactiveerd. Ga naar %s om het te activeren of klik hier
 ModuleIsLive=Deze module is geactiveerd. Elke wijziging kan een huidige live-functie onderbreken.
 DescriptionLong=Lange omschrijving
 EditorName=Naam van de redacteur
@@ -83,9 +83,9 @@ ListOfDictionariesEntries=Lijst met woordenboekingangen
 ListOfPermissionsDefined=Lijst met gedefinieerde machtigingen
 SeeExamples=Zie hier voorbeelden
 EnabledDesc=Voorwaarde om dit veld actief te hebben (voorbeelden: 1 of $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
-VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = Nooit zichtbaar, 1 = Zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = Alleen zichtbaar op lijst, 3 = Zichtbaar op alleen formulier maken / bijwerken / bekijken (niet lijst), 4 = Zichtbaar op lijst en update / weergave alleen formulier (niet aanmaken), 5 = Alleen zichtbaar op lijst eindweergave formulier (niet maken, niet bijwerken) Het gebruik van een negatief waarde betekent dat veld niet standaard wordt weergegeven in de lijst, maar kan worden geselecteerd voor weergave). Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> holiday-> define_holiday? 1: 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
-DisplayOnPdf=Display on PDF
+VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = nooit zichtbaar, 1 = zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = alleen zichtbaar op lijst, 3 = alleen zichtbaar op formulier maken / bijwerken / bekijken (geen lijst), 4 = zichtbaar op lijst en update / view form only (not create), 5 = Alleen zichtbaar op lijst eindweergave formulier (niet create, not update). <br> <br> Het gebruik van een negatieve waarde betekent dat het veld niet standaard wordt weergegeven op de lijst, maar kan worden geselecteerd voor weergave). <br> <br> Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rechten-> vakantie-> vakantie-> vakantie-> vakantie->)
+DisplayOnPdfDesc=Toon dit veld op compatibele PDF-documenten, u kunt de positie beheren met het veld "Positie". <br/> Momenteel bekend compatible PDF modellen zijn: Eratosthenes (order), espadon (schip), spons (facturen), cyaan (Propal / offerte), Cornas (leverancier volgorde) <br/> <br/> <strong> Voor document: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergave <br/> 2 = alleen weergegeven als niet leeg <br/> <br/> <strong> Voor documentregels: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergegeven in een kolom <br/> 3 = weergave in regel kolomomschrijving na de beschrijving <br/> 4 = weergave in de beschrijving positie daarachter beschrijving alleen indien niet leeg
+DisplayOnPdf=Weergeven in PDF
 IsAMeasureDesc=Kan de waarde van het veld worden gecumuleerd om een totaal in de lijst te krijgen? (Voorbeelden: 1 of 0)
 SearchAllDesc=Wordt het veld gebruikt om een zoekopdracht uit het snelzoekprogramma te doen? (Voorbeelden: 1 of 0)
 SpecDefDesc=Voer hier alle documentatie in die u met uw module wilt verstrekken die nog niet door andere tabbladen is gedefinieerd. U kunt .md of beter gebruiken, de rijke .asciidoc-syntaxis.
@@ -139,3 +139,4 @@ ForeignKey=Vreemde sleutel
 TypeOfFieldsHelp=Type velden: <br> varchar (99), dubbel (24,8), real, tekst, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betekent we voegen een + -knop toe na de combo om het record te maken, 'filter' kan 'status = 1 EN fk_user = __USER_ID EN entiteit IN (bijvoorbeeld __SHARED_ENTITIES__)' zijn)
 AsciiToHtmlConverter=Ascii naar HTML converter
 AsciiToPdfConverter=Ascii naar PDF converter
+TableNotEmptyDropCanceled=Tabel is niet leeg. Drop is geannuleerd.

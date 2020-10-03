@@ -40,23 +40,25 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "s.datep,s.rowid";
 if (!$sortorder) $sortorder = "DESC,DESC";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$filtre = $_GET["filtre"];
+$filtre = GETPOST("filtre", 'restricthtml');
 
-if (empty($_REQUEST['typeid']))
+if (!GETPOST('typeid', 'int'))
 {
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
@@ -65,10 +67,8 @@ if (empty($_REQUEST['typeid']))
 		$part = explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') $typeid = $part[1];
 	}
-}
-else
-{
-	$typeid = $_REQUEST['typeid'];
+} else {
+	$typeid = GETPOST('typeid', 'int');
 }
 
 
@@ -82,6 +82,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = "";
 	$search_user = "";
 	$search_label = "";
+	$search_date_start = '';
+	$search_date_end = '';
 	$search_amount = "";
 	$search_account = '';
     $typeid = "";
@@ -112,11 +114,13 @@ $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)	$sql .= " AND s.rowid=".$search_ref;
-if ($search_user)   $sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
-if ($search_label) 	$sql .= natural_search(array('s.label'), $search_label);
-if ($search_amount) $sql .= natural_search("s.amount", $search_amount, 1);
-if ($search_account > 0) $sql .= " AND b.fk_account=".$search_account;
+if ($search_ref)			$sql .= " AND s.rowid=".$search_ref;
+if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
+if ($search_label)			$sql .= natural_search(array('s.label'), $search_label);
+if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
+if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
+if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
+if ($search_account > 0)	$sql .= " AND b.fk_account=".$search_account;
 if ($filtre) {
     $filtre = str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
@@ -135,6 +139,7 @@ if ($result)
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -148,11 +153,9 @@ if ($result)
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 	if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
-	$newcardbutton = '';
-	if (!empty($user->rights->salaries->write))
-	{
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/salaries/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -161,16 +164,15 @@ if ($result)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
 
-    print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 	// Ref
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 	print '</td>';
 	// Employee
@@ -180,9 +182,16 @@ if ($result)
 	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$db->escape($search_label).'"></td>';
 	// Date
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
@@ -273,8 +282,7 @@ if ($result)
 				}
 	            $accountstatic->label = $obj->blabel;
 	        	print $accountstatic->getNomUrl(1);
-	        }
-	        else print '&nbsp;';
+	        } else print '&nbsp;';
 	        print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 	    }
@@ -302,9 +310,7 @@ if ($result)
 	print '</form>';
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

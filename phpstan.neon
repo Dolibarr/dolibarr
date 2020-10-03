@@ -25,7 +25,6 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/compta/localtax/class
 		- %currentWorkingDirectory%/htdocs/compta/paiement/class
 		- %currentWorkingDirectory%/htdocs/compta/prelevement/class
-		- %currentWorkingDirectory%/htdocs/compta/salaries/class
 		- %currentWorkingDirectory%/htdocs/compta/sociales/class
 		- %currentWorkingDirectory%/htdocs/compta/tva/class
 		- %currentWorkingDirectory%/htdocs/conf
@@ -76,6 +75,7 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/projet/class
 		- %currentWorkingDirectory%/htdocs/reception/class
 		- %currentWorkingDirectory%/htdocs/resource/class
+		- %currentWorkingDirectory%/htdocs/salaries/class
 		- %currentWorkingDirectory%/htdocs/societe/class
 		- %currentWorkingDirectory%/htdocs/stripe/class
 		- %currentWorkingDirectory%/htdocs/supplier_proposal/class

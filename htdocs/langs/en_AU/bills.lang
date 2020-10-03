@@ -11,4 +11,3 @@ MenuCheques=Cheques
 NewChequeDeposit=New Cheque deposit
 Cheques=Cheques
 NbCheque=Number of cheques
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)

@@ -34,29 +34,29 @@ class mod_contract_serpis extends ModelNumRefContracts
      */
 	public $version = 'dolibarr';
 
-	public $prefix='CT';
+	public $prefix = 'CT';
 
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Serpis';
+	public $nom = 'Serpis';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Serpis';
+	public $name = 'Serpis';
 
 	/**
 	 * @var int Automatic numbering
 	 */
-	public $code_auto=1;
+	public $code_auto = 1;
 
 
 	/**
@@ -93,7 +93,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -126,7 +126,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	{
 		global $db, $conf;
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -138,9 +138,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_contract_serpis::getNextValue", LOG_DEBUG);
 			return -1;
 		}

@@ -26,6 +26,8 @@ CREATE TABLE llx_website
 	description   varchar(255),
 	maincolor     varchar(16),
 	maincolorbis  varchar(16),
+	lang          varchar(8),
+	otherlang     varchar(255),
 	status		  integer DEFAULT 1,
 	fk_default_home integer,
 	use_manifest integer,
@@ -33,6 +35,7 @@ CREATE TABLE llx_website
     fk_user_creat integer,
     fk_user_modif integer,
     date_creation datetime,
+    position      integer DEFAULT 0,
 	tms           timestamp,
     import_key    varchar(14)      -- import key	
 ) ENGINE=innodb;

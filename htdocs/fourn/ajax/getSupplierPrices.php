@@ -22,20 +22,20 @@
  *	\brief      File to return an Ajax response to get list of possible prices for margin calculation
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
-$idprod=GETPOST('idprod', 'int');
+$idprod = GETPOST('idprod', 'int');
 
 $prices = array();
 
 // Load translation files required by the page
-$langs->loadLangs(array("stocks","margins"));
+$langs->loadLangs(array("stocks", "margins"));
 
 
 /*
@@ -48,14 +48,14 @@ top_httphead();
 
 if ($idprod > 0)
 {
-	$producttmp=new ProductFournisseur($db);
+	$producttmp = new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
 
 	$sorttouse = 's.nom, pfp.quantity, pfp.price';
 	if (GETPOST('bestpricefirst')) $sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
 
-	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse);    // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
-	if ( is_array($productSupplierArray))
+	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
+	if (is_array($productSupplierArray))
 	{
 		foreach ($productSupplierArray as $productSupplier)
 		{
@@ -66,35 +66,35 @@ if ($idprod > 0)
 
 			if ($productSupplier->fourn_qty == 1)
 			{
-				$title.= price($price, 0, $langs, 0, 0, -1, $conf->currency)."/";
+				$title .= price($price, 0, $langs, 0, 0, -1, $conf->currency)."/";
 			}
-			$title.= $productSupplier->fourn_qty.' '.($productSupplier->fourn_qty == 1 ? $langs->trans("Unit") : $langs->trans("Units"));
+			$title .= $productSupplier->fourn_qty.' '.($productSupplier->fourn_qty == 1 ? $langs->trans("Unit") : $langs->trans("Units"));
 
 			if ($productSupplier->fourn_qty > 1)
 			{
-				$title.=" - ";
-				$title.= price($unitprice, 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
+				$title .= " - ";
+				$title .= price($unitprice, 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
 				$price = $unitprice;
 			}
 
 			$label = price($price, 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
-			if ($productSupplier->fourn_ref) $label.=' ('.$productSupplier->fourn_ref.')';
+			if ($productSupplier->fourn_ref) $label .= ' ('.$productSupplier->fourn_ref.')';
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, 0, '', 0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, 0, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 
 	// After best supplier prices and before costprice
-	if(!empty($conf->stock->enabled))
+	if (!empty($conf->stock->enabled))
 	{
 		// Add price for pmp
-		$price=$producttmp->pmp;
-		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
+		$price = $producttmp->pmp;
+		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency)); // For price field, we must use price2num(), for label or title, price()
 	}
 
 	// Add price for costprice (at end)
-	$price=$producttmp->cost_price;
-	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
+	$price = $producttmp->cost_price;
+	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency)); // For price field, we must use price2num(), for label or title, price()
 }
 
 echo json_encode($prices);

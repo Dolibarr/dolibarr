@@ -33,13 +33,13 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	/**
 	 * @var string model name
 	 */
-	public $name='Panicum';
+	public $name = 'Panicum';
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $position = 10;
 
@@ -88,11 +88,11 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	public function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
-		$this->code='';
+		$this->code = '';
 
 		if (is_object($societe)) {
-			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "")?$societe->code_compta_fournisseur:'');
-			else $this->code = (($societe->code_compta != "")?$societe->code_compta:'');
+			if ($type == 'supplier') $this->code = (($societe->code_compta_fournisseur != "") ? $societe->code_compta_fournisseur : '');
+			else $this->code = (($societe->code_compta != "") ? $societe->code_compta : '');
 		}
 
 		return 0; // return ok

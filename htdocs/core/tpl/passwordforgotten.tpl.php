@@ -40,6 +40,7 @@ if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
+$php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('SendNewPassword');
 
@@ -57,7 +58,7 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize
 <body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
-<script type="text/javascript">
+<script>
 $(document).ready(function () {
 	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
@@ -119,8 +120,7 @@ if (!empty($morelogincontent)) {
 				echo $option;
 			}
 		}
-	}
-	else {
+	} else {
 		echo '<!-- Option by hook -->';
 		echo $morelogincontent;
 	}
@@ -205,7 +205,13 @@ if (!empty($morelogincontent)) {
 	</div>
 <?php } ?>
 
-<?php if (!empty($morelogincontent) && is_array($morelogincontent)) {
+
+<!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
+
+<?php
+if (!empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
+
+if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'js') {
@@ -213,12 +219,55 @@ if (!empty($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
-elseif (!empty($moreloginextracontent)) {
+} elseif (!empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }
+
+// Google Analytics
+// TODO Add a hook here
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
+{
+	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+	foreach ($tmptagarray as $tmptag) {
+		print "\n";
+		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
+		print "
+					<!-- Global site tag (gtag.js) - Google Analytics -->
+					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
+					<script>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', '".trim($tmptag)."');
+					</script>";
+		print "\n";
+	}
+}
+
+// TODO Replace this with a hook
+// Google Adsense (need Google module)
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+{
+	if (empty($conf->dol_use_jmobile))
+	{
+		?>
+	<div class="center"><br>
+		<script><!--
+			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
+			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
+			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
+			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+			//-->
+		</script>
+		<script	src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+	</div>
+		<?php
+	}
+}
 ?>
+
 
 </div>
 </div>	<!-- end of center -->

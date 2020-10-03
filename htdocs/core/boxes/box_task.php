@@ -84,7 +84,7 @@ class box_task extends ModeleBoxes
         $projectstatic = new Project($this->db);
 		$taskstatic = new Task($this->db);
 		$form = new Form($this->db);
-        $cookie_name = 'boxfilter_task';
+        $cookie_name = 'DOLUSERCOOKIE_boxfilter_task';
         $boxcontent = '';
         $socid = $user->socid;
 
@@ -93,15 +93,13 @@ class box_task extends ModeleBoxes
         $filterValue = 'all';
         if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
             $filterValue = GETPOST($cookie_name);
-        }
-        elseif (!empty($_COOKIE[$cookie_name])) {
-            $filterValue = $_COOKIE[$cookie_name];
+        } elseif (!empty($_COOKIE[$cookie_name])) {
+            $filterValue = preg_replace('/[^a-z_]/', '', $_COOKIE[$cookie_name]);	// Clean cookie from evil data
         }
 
         if ($filterValue == 'im_task_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
-        }
-        elseif ($filterValue == 'im_project_contact') {
+        } elseif ($filterValue == 'im_project_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedToProject");
         }
 
@@ -124,10 +122,10 @@ class box_task extends ModeleBoxes
             $boxcontent .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
             $selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
             $boxcontent .= $form->selectArray($cookie_name, $selectArray, $filterValue);
-            $boxcontent .= '<button type="submit" class="button">'.$langs->trans("Refresh").'</button>';
+            $boxcontent .= '<button type="submit" class="button buttongen">'.$langs->trans("Refresh").'</button>';
             $boxcontent .= '</form>'."\n";
             $boxcontent .= '</div>'."\n";
-            if (! empty($conf->use_javascript_ajax)) {
+            if (!empty($conf->use_javascript_ajax)) {
 	            $boxcontent .= '<script type="text/javascript" language="javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
@@ -156,11 +154,10 @@ class box_task extends ModeleBoxes
 			$sql .= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
 
             if ($filterValue === 'im_task_contact') {
-                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '".$user->id."' )";
+                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = ".((int) $user->id).")";
                 $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
-            }
-            elseif ($filterValue === 'im_project_contact') {
-                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '".$user->id."' )";
+            } elseif ($filterValue === 'im_project_contact') {
+                $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = ".((int) $user->id).")";
                 $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
             }
 
@@ -192,7 +189,7 @@ class box_task extends ModeleBoxes
                     $projectstatic->ref = $objp->project_ref;
                     $projectstatic->title = $objp->project_title;
 
-                    $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
+                    $label = $projectstatic->getNomUrl(1).' &nbsp; '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
                     $boxcontent = getTaskProgressView($taskstatic, $label, true, false, false);
 

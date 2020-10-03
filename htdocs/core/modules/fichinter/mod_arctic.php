@@ -46,7 +46,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom = 'arctic';
 

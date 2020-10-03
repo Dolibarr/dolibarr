@@ -72,7 +72,6 @@ GoToDolibarr=Ir a Dolibarr
 GoToSetupArea=Ir a Dolibarr (área de configuración)
 GoToUpgradePage=Ir a la página de actualización de nuevo
 WithNoSlashAtTheEnd=Sin la barra "/" al final
-DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 AdminLoginAlreadyExists=La cuenta de administrador de Dolibarr &#39; <b>%s</b> &#39; ya existe. Vuelve si quieres crear otro.
 FailedToCreateAdminLogin=Error al crear la cuenta de administrador de Dolibarr.
 WarningRemoveInstallDir=Advertencia, por razones de seguridad, una vez que se complete la instalación o la actualización, debe agregar un archivo llamado <b>install.lock</b> en el directorio de documentos de Dolibarr para evitar nuevamente el uso accidental / malicioso de las herramientas de instalación.
@@ -181,4 +180,3 @@ MigrationFieldsSocialNetworks=Migración de campos de usuarios en redes sociales
 ErrorFoundDuringMigration=Se informaron errores durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s">hacer clic aquí</a> , pero es posible que la aplicación o algunas características no funcionen correctamente hasta que se resuelvan los errores.
 YouTryInstallDisabledByDirLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (directorio renombrado con el sufijo .lock). <br>
 YouTryInstallDisabledByFileLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (debido a la existencia de un archivo de bloqueo <strong>install.lock</strong> en el directorio de documentos de dolibarr). <br>
-ClickOnLinkOrRemoveManualy=Haga clic en el siguiente enlace. Si siempre ve esta misma página, debe eliminar / cambiar el nombre del archivo install.lock en el directorio de documentos.

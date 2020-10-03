@@ -25,6 +25,8 @@
  *  \file       htdocs/api/admin/explorer.php
  */
 
+use Luracast\Restler\Routes;
+
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';

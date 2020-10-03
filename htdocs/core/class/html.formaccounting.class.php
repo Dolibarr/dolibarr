@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,9 +82,7 @@ class FormAccounting extends Form
 		{
 		    $options = $this->options_cache[$usecache];
 		    $selected = $selectid;
-		}
-		else
-		{
+		} else {
 			$sql = "SELECT rowid, code, label, nature, entity, active";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE active = 1";
@@ -170,23 +168,21 @@ class FormAccounting extends Form
 			$sql .= " AND c.category_type = 0";
             if (empty($allcountries)) $sql .= " AND c.fk_country = ".$mysoc->country_id;
             $sql .= " ORDER BY c.label ASC";
-        }
-        else
-        {
+        } else {
             $sql = "SELECT c.rowid, c.label as type, c.range_account";
             $sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			$sql .= " AND c.fk_country = co.rowid";
-            if (empty($allcountries)) $sql .= " AND co.code = '".$mysoc->country_code."'";
+            if (empty($allcountries)) $sql .= " AND co.code = '".$this->db->escape($mysoc->country_code)."'";
             $sql .= " ORDER BY c.label ASC";
         }
 
         dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-        $resql = $db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $db->num_rows($resql);
+        	$num = $this->db->num_rows($resql);
             if ($num)
             {
                 $out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -195,7 +191,7 @@ class FormAccounting extends Form
                 if ($useempty) $out .= '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object($resql);
+                	$obj = $this->db->fetch_object($resql);
                     $out .= '<option value="'.$obj->rowid.'"';
                     if ($obj->rowid == $selected) $out .= ' selected';
                     $out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
@@ -204,15 +200,11 @@ class FormAccounting extends Form
                 }
                 $out .= '</select>';
                 //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-            }
-            else
-            {
+            } else {
                 $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
             }
-        }
-        else
-        {
-            dol_print_error($db, $db->lasterror());
+        } else {
+        	dol_print_error($this->db);
         }
 
         $out .= ajax_combobox($htmlname, array());
@@ -287,12 +279,10 @@ class FormAccounting extends Form
 		{
 		    $options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		    $selected = $selectid;
-		}
-		else
-		{
+		} else {
     		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
-    		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
+    		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
     		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
     		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
     		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
@@ -309,11 +299,18 @@ class FormAccounting extends Form
     			return -1;
     		}
 
-    		$selected = $selectid;	// selectid can be -1, 0, 123
+    		$selected = $selectid; // selectid can be -1, 0, 123
     		while ($obj = $this->db->fetch_object($resql))
     		{
-    			$label = length_accountg($obj->account_number).' - '.$obj->label;
-    			$label = dol_trunc($label, $trunclength);
+				if (empty($obj->labelshort))
+				{
+					$labeltoshow = $obj->label;
+				} else {
+					$labeltoshow = $obj->labelshort;
+				}
+
+				$label = length_accountg($obj->account_number).' - '.$labeltoshow;
+				$label = dol_trunc($label, $trunclength);
 
     			$select_value_in = $obj->rowid;
     			$select_value_out = $obj->rowid;
@@ -435,11 +432,11 @@ class FormAccounting extends Form
 	/**
 	 * Return HTML combo list of years existing into book keepping
 	 *
-	 * @param string $selected Preselected value
-	 * @param string $htmlname Name of HTML select object
-	 * @param int $useempty Affiche valeur vide dans liste
-	 * @param string $output_format (html/opton (for option html only)/array (to return options arrays
-	 * @return string/array
+	 * @param string 	$selected 		Preselected value
+	 * @param string 	$htmlname 		Name of HTML select object
+	 * @param int 		$useempty 		Affiche valeur vide dans liste
+	 * @param string 	$output_format 	(html/opton (for option html only)/array (to return options arrays
+	 * @return string|array				HTML select component or array of select options
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
@@ -450,7 +447,7 @@ class FormAccounting extends Form
 
 		$sql = "SELECT DISTINCT date_format(doc_date, '%Y') as dtyear";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
-	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+	    $sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY date_format(doc_date, '%Y')";
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

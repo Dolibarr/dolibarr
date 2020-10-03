@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Karten Moduleeinstellungen
+StripeSetup=Kreditkarten Moduleinstellungen
 StripeDesc=Bietet Kunden die Möglichkeit, eine Online Zahlungsseite mit Kredit/Debit-Kartenzahlungen via <a href="http://www.stripe.com" target="_blank">Stripe</a> anzubieten. Damit können Kunden Sofort-Zahlungen oder auf Module bezogene Zahlungen in Dolibarr (Rechnung, Auftrag, ...)  vornehmen
 StripeOrCBDoPayment=Zahlen mit Kreditkarte oder Stripe
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:
@@ -32,6 +32,7 @@ VendorName=Name des Lieferanten
 CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
 NewStripePaymentReceived=Neue Stripezahlung erhalten
 NewStripePaymentFailed=Neue Stripezahlung versucht, aber fehlgeschlagen
+FailedToChargeCard=Karte konnte nicht aufgeladen werden
 STRIPE_TEST_SECRET_KEY=Geheimer Testschlüssel
 STRIPE_TEST_PUBLISHABLE_KEY=Öffentlicher Testschlüssel
 STRIPE_TEST_WEBHOOK_KEY=Webhook Testschlüssel
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von
 ToOfferALinkForLiveWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von IPN (Livemodus)
 PaymentWillBeRecordedForNextPeriod=Die Zahlung wird für den folgenden Zeitraum erfasst.
 ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund der strengen Kundenauthentifizierungsregeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Klicken Sie hier, um zum Stripe-Kundeneintrag zu wechseln: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um den Stripe-Kundendatensatz einzuschalten: %s

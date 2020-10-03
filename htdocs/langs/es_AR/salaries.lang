@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta contable utilizada para terceros contratados
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta contable definida en la ficha del usuario se usará solo para la contabilidad en el libro mayor. Esta se usará para el Libro Diario y como valor predeterminado de la contabilidad del Libro Mayor si no fue definida una cuenta contable del usuario.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pago de sueldos
+Salary=Sueldo
+Salaries=Sueldos
+NewSalaryPayment=Nuevo pago de sueldo
+AddSalaryPayment=Agregar pago de sueldo
+SalaryPayment=Pago de sueldo
+SalariesPayments=Pagos de sueldos
+ShowSalaryPayment=Mostrar pago de sueldo
+THM=Valor promedio por hora
+TJM=Valor promedio por día
+CurrentSalary=Sueldo actual
+THMDescription=Este valor podría ser usado para calcular el costo de tiempo insumido en un proyecto ingresado por los usuarios si se usa el Módulo de Proyectos
+TJMDescription=Este valor es sólo informativo y no será utilizado para cálculo alguno
+LastSalaries=Ultimos %s pagos de sueldos
+AllSalaries=Todos los pagos de sueldo
+SalariesStatistics=Estadísticas de sueldos
+SalariesAndPayments=Sueldos y pagos

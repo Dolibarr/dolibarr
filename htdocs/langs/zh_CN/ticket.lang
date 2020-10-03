@@ -72,7 +72,6 @@ Deleted=删除
 
 # Dict
 Type=类型
-Category=Analytic code
 Severity=严重
 
 # Email templates
@@ -128,12 +127,15 @@ TicketsAutoAssignTicket=自动分配创建故障单的用户
 TicketsAutoAssignTicketHelp=创建故障单时，可以自动将用户分配给故障单。
 TicketNumberingModules=票据编号模块
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=组
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=票据 - 首页
+TicketsIndex=Tickets area
 TicketList=票据清单
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=没有找到票据
@@ -158,7 +160,7 @@ CreatedBy=制作：
 NewTicket=新票据
 SubjectAnswerToTicket=票据应答
 TicketTypeRequest=请求类型
-TicketCategory=Analytic code
+TicketCategory=组
 SeeTicket=查看票据
 TicketMarkedAsRead=票据已标记为已读
 TicketReadOn=请继续阅读

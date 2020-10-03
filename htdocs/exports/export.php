@@ -130,7 +130,7 @@ $entitytolang = array(
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
 $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["export_filtered_fields"] : array();
 $datatoexport = GETPOST("datatoexport", "aZ09");
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $step = GETPOST("step", "int") ?GETPOST("step", "int") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
@@ -147,6 +147,7 @@ $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $sqlusedforexport = '';
 
+$head = array();
 $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 
 //$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
@@ -172,9 +173,7 @@ if ($action == 'selectfield')     // Selection of field at step 2
 		    //print_r($array_selected);
 		    $_SESSION["export_selected_fields"] = $array_selected;
 		}
-    }
-    else
-    {
+    } else {
         $warnings = array();
 
         $array_selected[$field] = count($array_selected) + 1; // We tag the key $field as "selected"
@@ -189,8 +188,7 @@ if ($action == 'selectfield')     // Selection of field at step 2
             $tmp = $fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
             if (is_array($tmp)) $listofdependencies = $tmp;
             else $listofdependencies = array($tmp);
-        }
-        elseif (!empty($field) && !empty($fieldsdependenciesarray[$field]))
+        } elseif (!empty($field) && !empty($fieldsdependenciesarray[$field]))
         {
             // We found a dependency on a dedicated field
             $tmp = $fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))
@@ -221,9 +219,7 @@ if ($action == 'unselectfield')
     {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
-    }
-    else
-    {
+    } else {
 	    unset($array_selected[$_GET["field"]]);
 	    // Renumber fields of array_selected (from 1 to nb_elements)
 	    asort($array_selected);
@@ -286,9 +282,7 @@ if ($action == 'builddoc')
 	{
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	    $sqlusedforexport = $objexport->sqlusedforexport;
     }
@@ -308,9 +302,9 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes')
 
 if ($action == 'deleteprof')
 {
-	if ($_GET["id"])
+	if (GETPOST("id", 'int'))
 	{
-		$objexport->fetch($_GET["id"]);
+		$objexport->fetch(GETPOST('id', 'int'));
 		$result = $objexport->delete($user);
 	}
 }
@@ -349,18 +343,13 @@ if ($action == 'add_export_model')
 		if ($result >= 0)
 		{
 			setEventMessages($langs->trans("ExportModelSaved", $objexport->model_name), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				setEventMessages($langs->trans("ErrorExportDuplicateProfil"), null, 'errors');
-			else
-				setEventMessages($objexport->error, $objexport->errors, 'errors');
+			else setEventMessages($objexport->error, $objexport->errors, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportModelName")), null, 'errors');
 	}
 }
@@ -379,7 +368,7 @@ if ($step == 2 && $action == 'select_model')
     {
 		$fieldsarray = preg_split("/,(?! [^(]*\))/", $objexport->hexa);
 		$i = 1;
-		foreach($fieldsarray as $val)
+		foreach ($fieldsarray as $val)
 		{
 			$array_selected[$val] = $i;
 			$i++;
@@ -410,12 +399,12 @@ if ($step == 4 && $action == 'submitFormField')
 			$newcode = (string) preg_replace('/\./', '_', $code);
 			//print 'xxx'.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
 			$filterqualified = 1;
-			if (!isset($_POST[$newcode]) || $_POST[$newcode] == '') $filterqualified = 0;
-			elseif (preg_match('/^List/', $type) && (is_numeric($_POST[$newcode]) && $_POST[$newcode] <= 0)) $filterqualified = 0;
+			if (!GETPOSTISSET($newcode) || GETPOST($newcode, 'restricthtml') == '') $filterqualified = 0;
+			elseif (preg_match('/^List/', $type) && (is_numeric(GETPOST($newcode, 'restricthtml')) && GETPOST($newcode, 'restricthtml') <= 0)) $filterqualified = 0;
 			if ($filterqualified)
 			{
 				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
-				$objexport->array_export_FilterValue[0][$code] = $_POST[$newcode];
+				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, 'restricthtml');
 			}
 		}
 		$array_filtervalue = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');
@@ -471,16 +460,12 @@ if ($step == 1 || !$datatoexport)
             if ($objexport->array_export_perms[$key])
             {
             	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
-            }
-            else
-            {
+            } else {
             	print $langs->trans("NotEnoughPermissions");
             }
            	print '</td></tr>';
         }
-    }
-    else
-    {
+    } else {
         print '<tr><td class="oddeven" colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
     }
     print '</table>';
@@ -545,8 +530,7 @@ if ($step == 2 && $datatoexport)
     print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
     if (empty($conf->global->EXPORTS_SHARE_MODELS)) {
     	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
-    }
-    else {
+    } else {
     	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1);
     }
     print ' ';
@@ -613,9 +597,7 @@ if ($step == 2 && $datatoexport)
         if (!empty($objexport->array_export_special[0][$code]))
         {
             $htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
-        }
-        else
-        {
+        } else {
             $htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
         }
    		if (!empty($objexport->array_export_examplevalues[0][$code]))
@@ -641,9 +623,7 @@ if ($step == 2 && $datatoexport)
             print $form->textwithpicto($text, $htmltext);
 			//print ' ('.$code.')';
             print '</td>';
-        }
-        else
-        {
+        } else {
         	// Fields not selected
             print '<td>';
 			//print $text.'-'.$htmltext."<br>";
@@ -671,14 +651,10 @@ if ($step == 2 && $datatoexport)
 		if ($usefilters && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
 		{
 			print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a class="butAction" href="export.php?step=4&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("SelectAtLeastOneField")).'">'.$langs->trans("NextStep").'</a>';
 	}
 
@@ -809,9 +785,7 @@ if ($step == 3 && $datatoexport)
         if (!empty($objexport->array_export_special[0][$code]))
 		{
 		    $htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
-		}
-		else
-		{
+		} else {
 		    $htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
 		}
 		if (!empty($objexport->array_export_examplevalues[0][$code]))
@@ -840,9 +814,7 @@ if ($step == 3 && $datatoexport)
 			{
 				$tmp = $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
 				print $form->textwithpicto($tmp, $szInfoFiltre);
-			}
-			else
-			{
+			} else {
 				print $objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
 			}
 		}
@@ -1004,9 +976,7 @@ if ($step == 4 && $datatoexport)
         if (!empty($objexport->array_export_special[0][$code]))
         {
             $htmltext .= '<b>'.$langs->trans("ComputedField")." -> ".$langs->trans("Method")." :</b> ".$objexport->array_export_special[0][$code]."<br>";
-        }
-        else
-        {
+        } else {
             $htmltext .= '<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./', '', $code)."<br>";
         }
         if (!empty($objexport->array_export_examplevalues[0][$code]))
@@ -1084,13 +1054,13 @@ if ($step == 4 && $datatoexport)
 
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td class="right">';
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '<input type="submit" class="button reposition" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
 
         // List of existing export profils
     	$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE type = '".$datatoexport."'";
+		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
 		if (empty($conf->global->EXPORTS_SHARE_MODELS))$sql .= " AND fk_user=".$user->id;
 		$sql .= " ORDER BY rowid";
 		$resql = $db->query($sql);
@@ -1104,15 +1074,14 @@ if ($step == 4 && $datatoexport)
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td class="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
 				$i++;
 			}
-		}
-		else {
-			dol_print_error($this->db);
+		} else {
+			dol_print_error($db);
 		}
 
         print '</table>';
@@ -1266,22 +1235,17 @@ if ($step == 5 && $datatoexport)
     print '</div>';
 
 
-    print '<table width="100%">';
-
     if ($sqlusedforexport && $user->admin)
     {
-    	print '<tr><td>';
-    	print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport);
-    	print '</td></tr>';
+    	print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, 1, '', 'TechnicalInformation');
     }
-	print '</table>';
 
 
     if (!is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
     // Show existing generated documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', '&nbsp;', '', '', '');
+    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 
 llxFooter();
@@ -1310,6 +1274,5 @@ function getablenamefromfield($code, $sqlmaxforexport)
 	if (preg_match($regexstring, $newsql, $reg))
 	{
 		return $reg[1]; // The tablename
-	}
-	else return '';
+	} else return '';
 }
