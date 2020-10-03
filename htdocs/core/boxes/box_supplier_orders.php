@@ -95,7 +95,7 @@ class box_supplier_orders extends ModeleBoxes
             $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE c.fk_soc = s.rowid";
-            $sql.= " AND c.entity = ".$conf->entity;
+            $sql.= " AND c.entity IN (".getEntity('supplier_order').")";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
