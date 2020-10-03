@@ -874,13 +874,13 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div class="modal-body">
 			<?php
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
-		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
-		}
+			$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				while ($obj = $db->fetch_object($resql))
+				print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
+			}
 
 			?>
 		</div>
