@@ -189,7 +189,6 @@ if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"
 	$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
 	echo '<tr><th class="right">';
 	if ($gift!=1) echo ''.$langs->trans("TotalTTC").' '.$_SESSION["takeposcustomercurrency"].'</th><td class="right">'.price($object->total_ttc*$multicurrency->rate->rate, 1, '', 1, - 1, - 1, $_SESSION["takeposcustomercurrency"])."\n";
-	//if ($gift!=1) echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"]."\n";
 	echo '</td></tr>';
 }
 
