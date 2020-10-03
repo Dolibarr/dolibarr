@@ -8927,6 +8927,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
  *
  *  @param	string	$fullpath_original_file_osencoded		Full path of file to return.
  *  @param	int		$method									-1 automatic, 0=readfile, 1=fread, 2=stream_copy_to_stream
+ *  @return void
  */
 function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 {
