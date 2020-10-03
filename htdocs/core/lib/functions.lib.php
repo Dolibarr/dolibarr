@@ -8919,3 +8919,45 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 
 	print '</tr>';
 }
+
+/**
+ *	Return a file on output using a lo memory.
+ *  It can return very large files with no need of memory.
+ *
+ *  @param	string	$fullpath_original_file_osencoded		Full path of file to return.
+ *  @param	int		$method									-1 automatic, 0=readfile, 1=fread, 2=stream_copy_to_stream
+ */
+function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
+{
+	global $conf;
+
+	if ($method == -1) {
+		$method = 0;
+		if (! empty($conf->global->MAIN_FORCE_READFILE_WITH_FREAD)) $method = 1;
+		if (! empty($conf->global->MAIN_FORCE_READFILE_WITH_STREAM_COPY)) $method = 2;
+	}
+
+	// Solution 0
+	if ($method == 0) {
+		// Be sure we don't have output buffering enabled to have readfile working correctly
+		while (ob_get_level()) ob_end_flush();
+
+		readfile($fullpath_original_file_osencoded);
+	}
+	// Solution 1
+	elseif ($method == 1) {
+		$handle = fopen($fullpath_original_file_osencoded, "rb");
+		while (!feof($handle)) {
+			print fread($handle, 8192);
+		}
+		fclose($handle);
+	}
+	// Solution 2
+	elseif ($method == 2) {
+		$handle1 = fopen($fullpath_original_file_osencoded, "rb");
+		$handle2 = fopen("php://output", "wb");
+		stream_copy_to_stream($handle1, $handle2);
+		fclose($handle1);
+		fclose($handle2);
+	}
+}
