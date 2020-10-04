@@ -18,6 +18,7 @@
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2387,7 +2388,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
 	$relativepath = $comref.'/'.$objectref.'.pdf';
-	$filedir = $conf->product->dir_output.'/'.$objectref;
+  if (!empty($conf->product->multidir_output[$object->entity])) {
+    $filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
+  } else {
+	  $filedir = $conf->product->dir_output.'/'.$objectref;
+  }
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
