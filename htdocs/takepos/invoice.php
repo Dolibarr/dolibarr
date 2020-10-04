@@ -1067,7 +1067,7 @@ if ($placeid > 0)
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
-				if (!empty($conf->stock->enabled))
+				if (!empty($conf->stock->enabled) && !empty($user->rights->stock->mouvement->lire))
 				{
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
