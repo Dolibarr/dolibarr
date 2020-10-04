@@ -458,7 +458,7 @@ class Facture extends CommonInvoice
 		$nextdatewhen = null;
 		$previousdaynextdatewhen = null;
 
-		// Create invoice from a template invoice
+		// Create invoice from a template recurring invoice
 		if ($this->fac_rec > 0)
 		{
 			$this->fk_fac_rec_source = $this->fac_rec;
