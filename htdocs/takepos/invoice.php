@@ -1090,7 +1090,16 @@ if ($placeid > 0)
 				}
 				else $htmlforlines .= $line->qty;
 				$htmlforlines .= '</td>';
-				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">'.price($line->total_ttc).'</td>';
+				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
+				$htmlforlines .= price($line->total_ttc);
+				if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+					//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+					$multicurrency = new MultiCurrency($db);
+					$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+					$htmlforlines .= ' ('.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')';
+				}
+				$htmlforlines .= '</td>';
 			}
 			$htmlforlines .= '</tr>'."\n";
 			$htmlforlines .= $htmlsupplements[$line->id];

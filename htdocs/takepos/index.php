@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
+$setcurrency = GETPOST('setcurrency', 'aZ09');
 
 if ($_SESSION["takeposterminal"] == "")
 {
@@ -55,6 +56,11 @@ if ($setterminal > 0)
 {
 	$_SESSION["takeposterminal"] = $setterminal;
 	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, false, true); // Permanent takeposterminal var in a cookie
+}
+
+if ($setcurrency!="")
+{
+	$_SESSION["takeposcustomercurrency"] = $setcurrency;
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
@@ -725,14 +731,10 @@ function CashReport(rowid)
     $.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
 }
 
-// Popup to select the terminal to use
-function TerminalsDialog()
+// TakePOS Popup
+function ModalBox(ModalID)
 {
-    var modal = document.getElementById("ModalTerminal");
-	var span = document.getElementsByClassName("close")[0];
-	span.onclick = function() {
-		modal.style.display = "none";
-	}
+    var modal = document.getElementById(ModalID);
 	modal.style.display = "block";
 }
 
@@ -767,7 +769,7 @@ $( document ).ready(function() {
 	//IF NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
 	{
-		print "TerminalsDialog();";
+		print "ModalBox('ModalTerminal');";
 	}
 	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
 	{
@@ -798,7 +800,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div class="topnav">
 			<div class="topnav-left">
 			<div class="inline-block valignmiddle">
-			<a class="topnav-terminalhour" onclick="TerminalsDialog();">
+			<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
 			<span class="fa fa-cash-register"></span>
 			<span class="hideonsmartphone">
 			<?php echo $langs->trans("Terminal"); ?>
@@ -808,7 +810,13 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			else echo $_SESSION["takeposterminal"];
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 			?>
-			</a></div>
+			</a>
+			<?php
+			if (!empty($conf->multicurrency->enabled)){
+				print '<a class="valignmiddle tdoverflowmax100 minwidth75" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>'.$langs->trans("Currency").'</a>';
+			}
+			?>
+			</div>
 			<!-- section for customer and open sales -->
 			<div class="inline-block valignmiddle" id="customerandsales">
 			</div>
@@ -841,7 +849,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 <div id="ModalTerminal" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
-		<span class="close">&times;</span>
+		<span class="close" href="#" onclick="document.getElementById('ModalTerminal').style.display = 'none';">&times;</span>
 		<h3><?php print $langs->trans("TerminalSelect");?></h3>
 	</div>
 	<div class="modal-body">
@@ -854,10 +862,30 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		?>
 	</div>
 </div>
-
 </div>
 
+<!-- Modal multicurrency box -->
+<div id="ModalCurrency" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<span class="close" href="#" onclick="document.getElementById('ModalCurrency').style.display = 'none';">&times;</span>
+			<h3><?php print $langs->trans("SetMultiCurrencyCode");?></h3>
+		</div>
+		<div class="modal-body">
+			<?php
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
+			$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				while ($obj = $db->fetch_object($resql))
+				print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
+			}
 
+			?>
+		</div>
+	</div>
+</div>
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 
