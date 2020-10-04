@@ -305,23 +305,25 @@ if (!empty($extrafields))
 <?php
 if (! empty($usemargins) && $user->rights->margins->creer)
 {
-?>
+	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
-		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+	<?php
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+		?>
 		$("input[name='np_marginRate']:first").blur(function(e) {
 			return checkFreeLine(e, "np_marginRate");
 		});
 		<?php
-		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+	}
+	if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+		?>
 		$("input[name='np_markRate']:first").blur(function(e) {
 			return checkFreeLine(e, "np_markRate");
 		});
 		<?php
-		}
-		?>
+	}
+	?>
 	});
 
 	/* TODO This does not work for number with thousand separator that is , */
@@ -369,7 +371,7 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 
 		return true;
 	}
-<?php
+	<?php
 }
 ?>
 
