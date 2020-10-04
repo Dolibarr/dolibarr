@@ -403,9 +403,9 @@ if ($action == "deleteline") {
 		$invoice->fetch($placeid);
 	}
 	if (count($invoice->lines) == 0) {
-  $invoice->delete($user);
-  header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
-  exit;
+		$invoice->delete($user);
+		header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+		exit;
 	}
 }
 
