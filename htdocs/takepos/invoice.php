@@ -402,7 +402,11 @@ if ($action == "deleteline") {
 		$invoice->deleteline($deletelineid);
 		$invoice->fetch($placeid);
 	}
-	if (count($invoice->lines) == 0) $invoice->delete($user);
+	if (count($invoice->lines) == 0) {
+  $invoice->delete($user);
+  header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+  exit;
+	}
 }
 
 if ($action == "delete") {
