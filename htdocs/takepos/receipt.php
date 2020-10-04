@@ -182,6 +182,16 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 	<th class="right"><?php if ($gift!=1) echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+	$multicurrency = new MultiCurrency($db);
+	$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+	echo '<tr><th class="right">';
+	if ($gift!=1) echo ''.$langs->trans("TotalTTC").' '.$_SESSION["takeposcustomercurrency"].'</th><td class="right">'.price($object->total_ttc*$multicurrency->rate->rate, 1, '', 1, - 1, - 1, $_SESSION["takeposcustomercurrency"])."\n";
+	echo '</td></tr>';
+}
+
 if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 	$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 	$sql .= " cp.code";

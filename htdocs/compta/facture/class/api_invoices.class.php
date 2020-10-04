@@ -477,8 +477,9 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param int    $id             Id of invoice to update
 	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
 	 *
-	 * @url	DELETE {id}/contact/{rowid}
+	 * @url	DELETE {id}/contact/{rowid}/{type}
 	 *
 	 * @return array
   	 *
@@ -486,7 +487,7 @@ class Invoices extends DolibarrApi
      * @throws RestException 404
      * @throws RestException 500
 	 */
-    public function deleteContact($id, $rowid)
+    public function deleteContact($id, $rowid, $type)
     {
         if (!DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
@@ -502,10 +503,17 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $result = $this->invoice->delete_contact($rowid);
-        if ($result < 0) {
-            throw new RestException(500, 'Error when deleted the contact');
-        }
+        $contacts = $this->invoice->liste_contact();
+
+		foreach ($contacts as $contact) {
+		    if ($contact['id'] == $rowid && $contact['code'] == $type) {
+		        $result = $this->invoice->delete_contact($contact['rowid']);
+
+		        if (!$result) {
+                    throw new RestException(500, 'Error when deleted the contact');
+                }
+		    }
+		}
 
         return $this->_cleanObjectDatas($this->invoice);
     }
@@ -1397,28 +1405,29 @@ class Invoices extends DolibarrApi
     /**
      * Add a payment to pay partially or completely one or several invoices.
      * Warning: Take care that all invoices are owned by the same customer.
-     * Example of value for parameter arrayofamounts: {"1": "99.99", "2": "10"}
+     * Example of value for parameter arrayofamounts: {"1": {"amount": "99.99", "multicurrency_amount": ""}, "2": {"amount": "", "multicurrency_amount": "10"}}
      *
      * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
      * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
-     * @param int     $paymentid          {@from body}  Payment mode Id {@min 1}
-     * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
-     * @param int     $accountid          {@from body}  Account Id {@min 1}
-     * @param string  $num_payment        {@from body}  Payment number (optional)
-     * @param string  $comment            {@from body}  Note private (optional)
-     * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
-     * @param string  $chqbank            {@from body}  Issuer bank name (optional)
+     * @param int     $paymentid           {@from body}  Payment mode Id {@min 1}
+     * @param string  $closepaidinvoices   {@from body}  Close paid invoices {@choice yes,no}
+     * @param int     $accountid           {@from body}  Account Id {@min 1}
+     * @param string  $num_payment         {@from body}  Payment number (optional)
+     * @param string  $comment             {@from body}  Note private (optional)
+     * @param string  $chqemetteur         {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
+     * @param string  $chqbank             {@from body}  Issuer bank name (optional)
+     * @param string  $ref_ext             {@from body}  External reference (optional)
+     * @param bool    $accepthigherpayment {@from body}  Accept higher payments that it remains to be paid (optional)
      *
      * @url     POST /paymentsdistributed
      *
      * @return int  Payment ID
-	 *
      * @throws RestException 400
      * @throws RestException 401
      * @throws RestException 403
      * @throws RestException 404
      */
-    public function addPaymentDistributed($arrayofamounts, $datepaye, $paymentid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPaymentDistributed($arrayofamounts, $datepaye, $paymentid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '', $ref_ext = '', $accepthigherpayment = false)
     {
         global $conf;
 
@@ -1451,7 +1460,7 @@ class Invoices extends DolibarrApi
         $multicurrency_amounts = array();
 
         // Loop on each invoice to pay
-        foreach ($arrayofamounts as $id => $amount)
+        foreach ($arrayofamounts as $id => $amountarray)
         {
         	$result = $this->invoice->fetch($id);
         	if (!$result) {
@@ -1459,33 +1468,52 @@ class Invoices extends DolibarrApi
         		throw new RestException(404, 'Invoice ID '.$id.' not found');
         	}
 
-        	// Calculate amount to pay
-        	$totalpaye = $this->invoice->getSommePaiement();
-        	$totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
-        	$totaldeposits = $this->invoice->getSumDepositsUsed();
-        	$resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-        	if ($amount != 'remain')
-        	{
-        		if ($amount > $resteapayer)
-        		{
-        			$this->db->rollback();
-        			throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$resteapayer.')');
-        		}
-        		$resteapayer = $amount;
+        	if (($amountarray["amount"] == "remain" || $amountarray["amount"] > 0) && ($amountarray["multicurrency_amount"] == "remain" || $amountarray["multicurrency_amount"] > 0)) {
+        	    $this->db->rollback();
+        	    throw new RestException(400, 'Payment in both currency '.$id.' ( amount: '.$amountarray["amount"].', multicurrency_amount: '.$amountarray["multicurrency_amount"].')');
         	}
-            // Clean parameters amount if payment is for a credit note
-            if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-                $resteapayer = price2num($resteapayer, 'MT');
-                $amounts[$id] = -$resteapayer;
+
+        	$is_multicurrency = 0;
+        	$total_ttc = $this->invoice->total_ttc;
+
+        	if ($amountarray["multicurrency_amount"] > 0 || $amountarray["multicurrency_amount"] == "remain") {
+        	    $is_multicurrency = 1;
+        	    $total_ttc = $this->invoice->multicurrency_total_ttc;
+        	}
+
+        	// Calculate amount to pay
+        	$totalpaye = $this->invoice->getSommePaiement($is_multicurrency);
+        	$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
+        	$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
+        	$remainstopay = $amount = price2num($total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+
+        	if (!$is_multicurrency && $amountarray["amount"] != 'remain')
+        	{
+        	    $amount = price2num($amountarray["amount"], 'MT');
+        	}
+
+        	if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain')
+        	{
+        	    $amount = price2num($amountarray["multicurrency_amount"], 'MT');
+        	}
+
+			if ($amount > $remainstopay && $accepthigherpayment == false) {
+				$this->db->rollback();
+        		throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
+			}
+
+        	if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
+        	    $amount = -$amount;
+        	}
+
+            if ($is_multicurrency) {
+                $amounts[$id] = null;
                 // Multicurrency
-                $newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-                $multicurrency_amounts[$id] = -$newvalue;
+                $multicurrency_amounts[$id] = $amount;
             } else {
-                $resteapayer = price2num($resteapayer, 'MT');
-                $amounts[$id] = $resteapayer;
+                $amounts[$id] = $amount;
                 // Multicurrency
-                $newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-                $multicurrency_amounts[$id] = $newvalue;
+                $multicurrency_amounts[$id] = null;
             }
         }
 
@@ -1498,7 +1526,7 @@ class Invoices extends DolibarrApi
         $paymentobj->paiementcode = dol_getIdFromCode($this->db, $paymentid, 'c_paiement', 'id', 'code', 1);
         $paymentobj->num_payment  = $num_payment;
         $paymentobj->note_private = $comment;
-
+        $paymentobj->ref_ext      = $ref_ext;
         $payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
         if ($payment_id < 0)
         {
