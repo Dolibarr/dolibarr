@@ -595,7 +595,7 @@ if ($action == "valid" || $action == "history")
 		if ($invoice->paye) $sectionwithinvoicelink .= '<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
 		else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
 	}
-	$sectionwithinvoicelink .= '</span>';
+	$sectionwithinvoicelink .= '</span><br>';
 	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		else $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
@@ -604,7 +604,7 @@ if ($action == "valid" || $action == "history")
 	} else {
 		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		if ($conf->global->TAKEPOS_GIFT_RECEIPT) {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button><br>';
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
 		}
 	}
 	if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
@@ -856,11 +856,14 @@ if (!empty($conf->use_javascript_ajax))
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.$mobilepage.' $_SESSION["basiclayout"]='.$_SESSION["basiclayout"].' conf->global->TAKEPOS_BAR_RESTAURANT='.$conf->global->TAKEPOS_BAR_RESTAURANT.' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
+if ($mobilepage == "invoice" || $mobilepage == "") {
+	print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
+}
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
 // In phone version only show when it is invoice page
 if ($mobilepage == "invoice" || $mobilepage == "") {
-	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
+	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
 }
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
