@@ -278,6 +278,10 @@ if ($action == 'history')
 	$invoice->fetch($placeid);
 }
 
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+	$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
+}
+
 if (($action == "addline" || $action == "freezone") && $placeid == 0)
 {
 	$invoice->socid = $conf->global->$constforcompanyid;
