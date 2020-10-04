@@ -865,6 +865,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
+if (!empty($conf->multicurrency->enabled)){
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -874,7 +875,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<div class="modal-body">
 			<?php
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
-			$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+			$sql .= " WHERE entity IN ('".getEntity('multicurrency')."')";
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -886,6 +887,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		</div>
 	</div>
 </div>
+}
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 
