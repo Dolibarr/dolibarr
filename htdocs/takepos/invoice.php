@@ -278,7 +278,7 @@ if ($action == 'history')
 	$invoice->fetch($placeid);
 }
 
-if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="") {
 	$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
 }
 
