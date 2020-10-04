@@ -544,7 +544,7 @@ class Orders extends DolibarrApi
 	 * Unlink a contact type of given order
 	 *
 	 * @param int    $id             Id of order to update
-	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 * @param int    $contactid      Id of contact
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}

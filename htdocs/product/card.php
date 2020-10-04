@@ -2388,11 +2388,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
 	$relativepath = $comref.'/'.$objectref.'.pdf';
-  if (!empty($conf->product->multidir_output[$object->entity])) {
-    $filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
-  } else {
-	  $filedir = $conf->product->dir_output.'/'.$objectref;
-  }
+	if (!empty($conf->product->multidir_output[$object->entity])) {
+    	$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
+	} else {
+		$filedir = $conf->product->dir_output.'/'.$objectref;
+	}
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;
