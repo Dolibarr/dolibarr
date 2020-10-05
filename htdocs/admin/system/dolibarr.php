@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -19,7 +19,7 @@
 
 /**
  *  \file       htdocs/admin/system/dolibarr.php
- *  \brief      Page to show Dolibarr informations
+ *  \brief      Page to show Dolibarr information
  */
 
 require '../../main.inc.php';
@@ -365,7 +365,7 @@ foreach ($configfileparameters as $key => $value)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') {
+			if (in_array($newkey, array('dolibarr_main_db_pass', 'dolibarr_main_auth_ldap_admin_pass'))) {
 				if (empty($dolibarr_main_prod)) {
 					print '<!-- '.${$newkey}.' -->';
 				}

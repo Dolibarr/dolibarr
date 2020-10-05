@@ -261,10 +261,11 @@ if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_forma
 	$readfile = !$imgres;
 }
 
+if (is_object($db)) $db->close();
+
+// Send file now
 if ($readfile) {
 	header('Content-Length: '.dol_filesize($fullpath_original_file));
 
-	readfile($fullpath_original_file_osencoded);
+	readfileLowMemory($fullpath_original_file_osencoded);
 }
-
-if (is_object($db)) $db->close();

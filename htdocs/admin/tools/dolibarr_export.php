@@ -147,7 +147,7 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr class="oddeven"><td style="padding-left: 8px">';
+print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
 print '<table class="centpercent">';
 print '<tr>';
 print '<td class="tdtop">';
@@ -160,10 +160,10 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '</div>';
     print '<br>';
     print '<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />';
-    print '<label for="radio_dump_mysql">MySQL Dump (php) '.img_warning($langs->trans('BackupPHPWarning')).'</label>';
+    print '<label for="radio_dump_mysql_nobin">MySQL Dump (php) '.img_warning($langs->trans('BackupPHPWarning')).'</label>';
     print '</div>';
 } elseif (in_array($type, array('pgsql'))) {
-    print '<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />';
+    print '<div class="formelementrow"><input type="radio" name="what" value="postgresql" id="radio_dump_postgresql" />';
     print '<label for="radio_dump_postgresql">PostgreSQL Dump (pg_dump)</label>';
     print '</div>';
 } else {

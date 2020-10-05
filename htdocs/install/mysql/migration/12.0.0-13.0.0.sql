@@ -30,6 +30,9 @@
 
 -- Missing in v12 or lower
 
+ALTER TABLE llx_payment_salary MODIFY COLUMN ref varchar(30) NULL;
+ALTER TABLE llx_payment_various MODIFY COLUMN ref varchar(30) NULL;
+
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);

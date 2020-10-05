@@ -52,7 +52,7 @@ class modEmailCollector extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '12';
+		$this->module_position = '23';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 

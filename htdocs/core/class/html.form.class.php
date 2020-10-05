@@ -1916,12 +1916,15 @@ class Form
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 *  @return		void
+	 *  @param		string		$nooutput				No print, return the output into a string
+	 *  @return		void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array(), $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
+		$out = '';
 
 		// check parameters
 		$price_level = (!empty($price_level) ? $price_level : 0);
@@ -1962,100 +1965,103 @@ class Form
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
 				$urloption .= '&socid='.$socid;
 			}
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
 			if (!empty($conf->variants->enabled)) {
-				?>
+				$out .= '
 				<script>
 
-					selected = <?php echo json_encode($selected_combinations) ?>;
+					selected = '.json_encode($selected_combinations).';
 					combvalues = {};
 
 					jQuery(document).ready(function () {
 
-						jQuery("input[name='prod_entry_mode']").change(function () {
-							if (jQuery(this).val() == 'free') {
-								jQuery('div#attributes_box').empty();
+						jQuery("input[name=\'prod_entry_mode\']").change(function () {
+							if (jQuery(this).val() == \'free\') {
+								jQuery(\'div#attributes_box\').empty();
 							}
 						});
 
-						jQuery("input#<?php echo $htmlname ?>").change(function () {
+						jQuery("input#'.$htmlname.'").change(function () {
 
 							if (!jQuery(this).val()) {
-								jQuery('div#attributes_box').empty();
+								jQuery(\'div#attributes_box\').empty();
 								return;
 							}
 
-							jQuery.getJSON("<?php echo dol_buildpath('/variants/ajax/getCombinations.php', 2) ?>", {
+							jQuery.getJSON("'.DOL_URL_ROOT.'/variants/ajax/getCombinations.php", {
 								id: jQuery(this).val()
 							}, function (data) {
-								jQuery('div#attributes_box').empty();
+								jQuery(\'div#attributes_box\').empty();
 
 								jQuery.each(data, function (key, val) {
 
 									combvalues[val.id] = val.values;
 
-									var span = jQuery(document.createElement('div')).css({
-										'display': 'table-row'
+									var span = jQuery(document.createElement(\'div\')).css({
+										\'display\': \'table-row\'
 									});
 
 									span.append(
-										jQuery(document.createElement('div')).text(val.label).css({
-											'font-weight': 'bold',
-											'display': 'table-cell',
-											'text-align': 'right'
+										jQuery(document.createElement(\'div\')).text(val.label).css({
+											\'font-weight\': \'bold\',
+											\'display\': \'table-cell\',
+											\'text-align\': \'right\'
 										})
 									);
 
-									var html = jQuery(document.createElement('select')).attr('name', 'combinations[' + val.id + ']').css({
-										'margin-left': '15px',
-										'white-space': 'pre'
+									var html = jQuery(document.createElement(\'select\')).attr(\'name\', \'combinations[\' + val.id + \']\').css({
+										\'margin-left\': \'15px\',
+										\'white-space\': \'pre\'
 									}).append(
-										jQuery(document.createElement('option')).val('')
+										jQuery(document.createElement(\'option\')).val(\'\')
 									);
 
 									jQuery.each(combvalues[val.id], function (key, val) {
-										var tag = jQuery(document.createElement('option')).val(val.id).html(val.value);
+										var tag = jQuery(document.createElement(\'option\')).val(val.id).html(val.value);
 
 										if (selected[val.fk_product_attribute] == val.id) {
-											tag.attr('selected', 'selected');
+											tag.attr(\'selected\', \'selected\');
 										}
 
 										html.append(tag);
 									});
 
 									span.append(html);
-									jQuery('div#attributes_box').append(span);
+									jQuery(\'div#attributes_box\').append(span);
 								});
 							})
 						});
 
-						<?php if ($selected): ?>
-						jQuery("input#<?php echo $htmlname ?>").change();
-						<?php endif ?>
+						'.($selected ? 'jQuery("input#'.$htmlname.'").change();' : '').'
 					});
 				</script>
-                <?php
+                ';
 			}
-			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
+
+			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel").' : ';
 			elseif ($hidelabel > 1) {
 				$placeholder = ' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
-					print img_picto($langs->trans("Search"), 'search');
+					$out .= img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			print '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out .= '<input type="text" class="minwidth100" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->PRODUCT_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
-				print img_picto($langs->trans("Search"), 'search');
+				$out .= img_picto($langs->trans("Search"), 'search');
 			}
 		} else {
-			print $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
+			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
+
+		if (empty($nooutput)) print $out;
+		else return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return list of products for a customer
+	 *	Return list of products for a customer.
+	 *  Called by select_produits.
 	 *
 	 *	@param      int		$selected           Preselected product
 	 *	@param      string	$htmlname           Name of select html
@@ -2262,7 +2268,7 @@ class Form
 		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
-		dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_produits_list search products", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -2308,7 +2314,7 @@ class Form
 					$sql .= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql .= " ORDER BY quantity ASC";
 
-					dol_syslog(get_class($this)."::select_produits_list search price by qty", LOG_DEBUG);
+					dol_syslog(get_class($this)."::select_produits_list search prices by qty", LOG_DEBUG);
 					$result2 = $this->db->query($sql);
 					if ($result2)
 					{

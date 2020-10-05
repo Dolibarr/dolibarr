@@ -1075,13 +1075,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 	}
 
-	if ($reshook < 0)	// At least one blocking error returned by one hook
-	{
+	if ($reshook < 0) {	// At least one blocking error returned by one hook
 		$errmsg = join(',', $hookmanager->errors);
 		if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks'; // Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
 		return $errmsg;
-	} elseif (empty($reshook))
-	{
+	} elseif (empty($reshook)) {
 		// The file functions must be in OS filesystem encoding.
 		$src_file_osencoded = dol_osencode($src_file);
 		$file_name_osencoded = dol_osencode($file_name);
@@ -1535,6 +1533,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 			$nbok = 0;
 			for ($i = 0; $i < $nbfile; $i++)
 			{
+				if (empty($TFile['name'][$i])) continue;		// For example, when submitting a form with no file name
+
 				// Define $destfull (path to file including filename) and $destfile (only filename)
 				$destfull = $upload_dir."/".$TFile['name'][$i];
 				$destfile = $TFile['name'][$i];

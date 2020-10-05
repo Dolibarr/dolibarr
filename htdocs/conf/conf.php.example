@@ -287,6 +287,18 @@ $dolibarr_cron_allow_cli='0';
 // Examples: '-1' (sending by cli is forbidden)
 // $dolibarr_mailing_limit_sendbycli='0';
 
+// MAIN_ANTIVIRUS_COMMAND (as a constant)
+// Force a value for the antivirus command line tool so setup for admin user interface has no effect.
+// Default value: ''
+// Example: '/usr/bin/clamdscan';
+// define('MAIN_ANTIVIRUS_COMMAND', '/usr/bin/clamdscan');
+
+// MAIN_ANTIVIRUS_PARAM (as a constant)
+// Force a value for the antivirus parameters on command line so setup for admin user interface has no effect.
+// Default value: ''
+// Example: '--fdpass';
+// define('MAIN_ANTIVIRUS_PARAM', '--fdpass');
+
 
 //##################
 // Other

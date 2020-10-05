@@ -60,10 +60,12 @@ if ($action=="send")
     $model_id = $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE;
     $arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
     $subject = $arraydefaultmessage->topic;
+
     ob_start(); // turn on output receipt
     include 'receipt.php';
     $receipt = ob_get_contents(); // get the contents of the output buffer
     ob_end_clean();
+
     $msg="<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
     $sendto=$email;
     $from=$mysoc->email;
