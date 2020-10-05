@@ -716,6 +716,7 @@ function Print(id, gift){
 
 function TakeposPrinting(id){
     var receipt;
+	console.log("TakeposPrinting" + id);
     $.get("receipt.php?facid="+id, function(data, status){
         receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
         $.ajax({
@@ -727,6 +728,7 @@ function TakeposPrinting(id){
 }
 
 function TakeposConnector(id){
+	console.log("TakeposConnector" + id);
 	$.get("ajax/ajax.php?action=printinvoiceticket&term=<?php echo $_SESSION["takeposterminal"];?>&id="+id, function(data, status){
         $.ajax({
 			type: "POST",
