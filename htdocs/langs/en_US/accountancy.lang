@@ -24,6 +24,7 @@ Journaux=Journals
 JournalFinancial=Financial journals
 BackToChartofaccounts=Return chart of accounts
 Chartofaccounts=Chart of accounts
+ChartOfSubaccounts=Chart of subaccounts
 CurrentDedicatedAccountingAccount=Current dedicated account
 AssignDedicatedAccountingAccount=New account to assign
 InvoiceLabel=Invoice label
