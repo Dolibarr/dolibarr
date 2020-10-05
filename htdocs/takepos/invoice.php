@@ -891,6 +891,13 @@ if ($_SESSION["basiclayout"] != 1)
 	// In phone version only show when it is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
 		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
+		if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+			//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+			include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+			$multicurrency = new MultiCurrency($db);
+			$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+			print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($invoice->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
+		}
 		print '</td>';
 	}
 	print '</td>';
@@ -1089,13 +1096,13 @@ if ($placeid > 0)
 				else $htmlforlines .= $line->qty;
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
-				$htmlforlines .= price($line->total_ttc);
+				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);
 				if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
 					//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 					$multicurrency = new MultiCurrency($db);
 					$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
-					$htmlforlines .= ' ('.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')';
+					$htmlforlines .= '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
 				}
 				$htmlforlines .= '</td>';
 			}
