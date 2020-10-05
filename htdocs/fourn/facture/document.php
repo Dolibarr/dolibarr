@@ -252,7 +252,27 @@ if ($object->id > 0)
 	$permission = $user->rights->fournisseur->facture->creer;
 	$permtoedit = $user->rights->fournisseur->facture->creer;
 	$param = '&facid='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+	foreach ($dirtpls as $module => $reldir)
+	{
+		if (!empty($module))
+		{
+			$tpl = dol_buildpath($reldir.'/document_actions_post_headers.tpl.php');
+		}
+		else
+		{
+			$tpl = DOL_DOCUMENT_ROOT.$reldir.'/document_actions_post_headers.tpl.php';
+		}
+
+		if (empty($conf->file->strict_mode)) {
+			$res = @include $tpl;
+		} else {
+			$res = include $tpl; // for debug
+		}
+		if ($res) break;
+	}
+	
 } else {
     print $langs->trans('ErrorUnknown');
 }
