@@ -82,14 +82,14 @@ $hookmanager->initHooks(array('paymentlist'));
 $extrafields = new ExtraFields($db);
 
 $arrayfields = array(
-	'p.rowid' => array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
-	'p.datep' => array('label'=>"Date", 'checked'=>1, 'position'=>20),
-	's.nom' => array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
-	'c.libelle' => array('label'=>"Type", 'checked'=>1, 'position'=>40),
-	'transaction' => array('label'=>"BankTransactionLine", 'checked'=>1, 'enabled'=>(!empty($conf->banque->enabled)), 'position'=>50),
-	'ba.label' => array('label'=>"Account", 'checked'=>1, 'enabled'=>(!empty($conf->banque->enabled)), 'position'=>60),
-	'p.amount' => array('label'=>"Amount", 'checked'=>1, 'position'=>70),
-	'p.statut' => array('label'=>"Status", 'enabled'=>1, 'checked'=>(!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)), 'position'=>80),
+	'p.rowid'=>array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
+	'p.datep'=>array('label'=>"Date", 'checked'=>1, 'position'=>20),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
+	'c.libelle'=>array('label'=>"Type", 'checked'=>1, 'position'=>40),
+	'transaction'=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->banque->enabled))),
+	'ba.label'=>array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(!empty($conf->banque->enabled))),
+	'p.amount'=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
+	'p.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
