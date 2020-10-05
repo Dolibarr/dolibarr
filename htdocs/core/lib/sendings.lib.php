@@ -56,7 +56,7 @@ function shipping_prepare_head($object)
 		    // Take first one element of array
 		    $tmp = reset($object->linkedObjectsIds['delivery']);
 
-			$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$tmp;
+			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$tmp;
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
 			$h++;
@@ -135,7 +135,7 @@ function delivery_prepare_head($object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("DeliveryCard");
 	$head[$h][2] = 'delivery';
 	$h++;
@@ -423,7 +423,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 						// Ref
 						print '<td>';
 						print $receiving->getNomUrl($db);
-						//print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
+						//print '<a href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
 						//print '<td class="center">';

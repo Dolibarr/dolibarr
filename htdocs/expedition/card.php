@@ -404,7 +404,7 @@ if (empty($reshook))
 		$result = $object->create_delivery($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/livraison/card.php?action=create_delivery&id='.$result);
+			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&id='.$result);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');

@@ -22,7 +22,7 @@
  */
 
 /**
- *  \file       htdocs/livraison/class/delivery.class.php
+ *  \file       htdocs/delivery/class/delivery.class.php
  *  \ingroup    delivery
  *  \brief      Delivery Order Management Class File
  */
@@ -725,7 +725,7 @@ class Delivery extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
 		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
 
-		$url = DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/delivery/card.php?id='.$this->id;
 
         //if ($option !== 'nolink')
         //{

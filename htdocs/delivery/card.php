@@ -22,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/livraison/card.php
+ *	\file       htdocs/delivery/card.php
  *	\ingroup    livraison
  *	\brief      Page to describe a delivery receipt
  */
@@ -458,7 +458,7 @@ if ($action == 'create')    // Create. Seems to no be used
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
 		        print '<td><td class="right">';
-		        if ($user->rights->expedition->livraison->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        if ($user->rights->expedition->livraison->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
 		        print '</td>';
