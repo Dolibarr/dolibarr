@@ -167,7 +167,7 @@ function task_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$head[$h][1] = $langs->trans("Project");
+	$head[$h][1] = $langs->trans("Task");
 	$head[$h][2] = 'task_task';
 	$h++;
 
@@ -2430,7 +2430,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $out .= '</b>';
 			$out .= '</a>';
 
-            $out .= '/';
+            $out .= ' / ';
 
 			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';

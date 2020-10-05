@@ -349,57 +349,57 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->setTopMargin($tab_top_newpage);
 				// Loop on each lines
 				$i = 0;
-                while ($i < $nblines) {
+				while ($i < $nblines) {
 					$pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-                    if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
-                        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-                    } else {
-                        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
-                    }
+					if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
+						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+					} else {
+						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					}
 
 					$pageposbefore = $pdf->getPage();
-                    $curY = $nexY;
-                    $pdf->startTransaction();
-                    $this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-                    $pageposafter = $pdf->getPage();
+					$curY = $nexY;
+					$pdf->startTransaction();
+					$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
+					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore) {
-                        // There is a pagebreak
+						// There is a pagebreak
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						if (empty($showpricebeforepagebreak)) {
-                            $pdf->AddPage('', '', true);
-                            if (!empty($tplidx)) {
-                                $pdf->useTemplate($tplidx);
-                            }
-                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-                                 $this->_pagehead($pdf, $object, 0, $outputlangs);
-                            }
-                            $pdf->setPage($pageposafter + 1);
-                            $showpricebeforepagebreak = 1;
-                            $nexY = $tab_top_newpage;
-                            $nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
-                            $pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
-                            $pdf->SetTextColor(0, 0, 0);
+							$pdf->AddPage('', '', true);
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								 $this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
+							$pdf->setPage($pageposafter + 1);
+							$showpricebeforepagebreak = 1;
+							$nexY = $tab_top_newpage;
+							$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
+							$pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
+							$pdf->SetTextColor(0, 0, 0);
 
-                            $pdf->setTopMargin($tab_top_newpage);
-                            continue;
-                        } else {
-                            $pdf->setPageOrientation('', 1, $heightforfooter);
-                            $showpricebeforepagebreak = 0;
-                        }
+							$pdf->setTopMargin($tab_top_newpage);
+							continue;
+						} else {
+							$pdf->setPageOrientation('', 1, $heightforfooter);
+							$showpricebeforepagebreak = 0;
+						}
 
 						$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {
-                            // There is no space left for total+free text
+							// There is no space left for total+free text
 							if ($i == ($nblines - 1)) {
-                                // No more lines, and no space left to show total, so we create a new page
+								// No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
 								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
@@ -1029,7 +1029,7 @@ class pdf_standard extends ModeleExpenseReport
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-		$sql .= " WHERE e.rowid = '".$object->id."'";
+		$sql .= " WHERE e.rowid = ".((int) $object->id);
 		$sql .= " AND p.fk_expensereport = e.rowid";
 		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 		$sql .= " ORDER BY dp";

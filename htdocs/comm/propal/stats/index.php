@@ -101,7 +101,7 @@ dol_mkdir($dir);
 
 
 $stats = new PropaleStats($db, $socid, ($userid > 0 ? $userid : 0), $mode, ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
-if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);

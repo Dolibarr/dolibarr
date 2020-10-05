@@ -33,9 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
 
-
-
-
 /**
  *		Class to manage agenda events (actions)
  */
@@ -229,6 +226,10 @@ class ActionComm extends CommonObject
 	 */
 	public $otherassigned = array();
 
+	/**
+	 * @var array	Array of reminders
+	 */
+	public $reminders = array();
 
 	/**
 	 * @var User Object user of owner
@@ -494,11 +495,11 @@ class ActionComm extends CommonObject
 		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
 		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
-		$sql .= ($this->ref_ext ? ("'".$this->db->idate($this->ref_ext)."'") : "null").", ";
+		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
-		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", ";	// deprecated, use ->socpeopleassigned
+		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
 		$sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
@@ -632,173 +633,173 @@ class ActionComm extends CommonObject
 		//$this->fetch_userassigned();
 		$this->fetchResources();
 
-        $this->id = 0;
+		$this->id = 0;
 
-        // Create clone
+		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
 		$result = $this->create($fuser);
-        if ($result < 0) $error++;
+		if ($result < 0) $error++;
 
-        if (!$error)
-        {
-            // Hook of thirdparty module
-            if (is_object($hookmanager))
-            {
-                $parameters = array('objFrom'=>$objFrom);
-                $action = '';
-                $reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0) $error++;
-            }
+		if (!$error)
+		{
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
+			{
+				$parameters = array('objFrom'=>$objFrom);
+				$action = '';
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
+			}
 
-            // Call trigger
-            $result = $this->call_trigger('ACTION_CLONE', $fuser);
-            if ($result < 0) { $error++; }
-            // End call triggers
-        }
+			// Call trigger
+			$result = $this->call_trigger('ACTION_CLONE', $fuser);
+			if ($result < 0) { $error++; }
+			// End call triggers
+		}
 
-        unset($this->context['createfromclone']);
+		unset($this->context['createfromclone']);
 
-        // End
-        if (!$error)
-        {
-            $this->db->commit();
-            return $this->id;
-        } else {
-            $this->db->rollback();
-            return -1;
-        }
-    }
+		// End
+		if (!$error)
+		{
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-    /**
-     *  Load object from database
-     *
-     *  @param  int		$id     		Id of action to get
-     *  @param  string	$ref    		Ref of action to get
-     *  @param  string	$ref_ext		Ref ext to get
+	/**
+	 *  Load object from database
+	 *
+	 *  @param  int		$id     		Id of action to get
+	 *  @param  string	$ref    		Ref of action to get
+	 *  @param  string	$ref_ext		Ref ext to get
 	 *  @param	string	$email_msgid	Email msgid
-     *  @return	int						<0 if KO, >0 if OK
-     */
-    public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
-    {
-        global $langs;
+	 *  @return	int						<0 if KO, >0 if OK
+	 */
+	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
+	{
+		global $langs;
 
-        $sql = "SELECT a.id,";
-        $sql .= " a.id as ref,";
-        $sql .= " a.entity,";
-        $sql .= " a.ref_ext,";
-        $sql .= " a.datep,";
-        $sql .= " a.datep2,";
-        $sql .= " a.durationp,"; // deprecated
-        $sql .= " a.datec,";
-        $sql .= " a.tms as datem,";
-        $sql .= " a.code, a.label, a.note,";
-        $sql .= " a.fk_soc,";
-        $sql .= " a.fk_project,";
-        $sql .= " a.fk_user_author, a.fk_user_mod,";
-        $sql .= " a.fk_user_action, a.fk_user_done,";
-        $sql .= " a.fk_contact, a.percent as percentage,";
-        $sql .= " a.fk_element as elementid, a.elementtype,";
-        $sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
-        $sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
-        $sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
-        $sql .= " s.nom as socname,";
-        $sql .= " u.firstname, u.lastname as lastname";
-        $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-        $sql .= " WHERE ";
-        if ($ref) $sql .= " a.id = ".((int) $ref); // No field ref, we use id
-        elseif ($ref_ext) $sql .= " a.ref_ext = '".$this->db->escape($ref_ext)."'";
-        elseif ($email_msgid) $sql .= " a.email_msgid = '".$this->db->escape($email_msgid)."'";
-        else $sql .= " a.id = ".((int) $id);
+		$sql = "SELECT a.id,";
+		$sql .= " a.id as ref,";
+		$sql .= " a.entity,";
+		$sql .= " a.ref_ext,";
+		$sql .= " a.datep,";
+		$sql .= " a.datep2,";
+		$sql .= " a.durationp,"; // deprecated
+		$sql .= " a.datec,";
+		$sql .= " a.tms as datem,";
+		$sql .= " a.code, a.label, a.note,";
+		$sql .= " a.fk_soc,";
+		$sql .= " a.fk_project,";
+		$sql .= " a.fk_user_author, a.fk_user_mod,";
+		$sql .= " a.fk_user_action, a.fk_user_done,";
+		$sql .= " a.fk_contact, a.percent as percentage,";
+		$sql .= " a.fk_element as elementid, a.elementtype,";
+		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
+		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
+		$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
+		$sql .= " s.nom as socname,";
+		$sql .= " u.firstname, u.lastname as lastname";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
+		$sql .= " WHERE ";
+		if ($ref) $sql .= " a.id = ".((int) $ref); // No field ref, we use id
+		elseif ($ref_ext) $sql .= " a.ref_ext = '".$this->db->escape($ref_ext)."'";
+		elseif ($email_msgid) $sql .= " a.email_msgid = '".$this->db->escape($email_msgid)."'";
+		else $sql .= " a.id = ".((int) $id);
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-        	$num = $this->db->num_rows($resql);
-            if ($num)
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id         = $obj->id;
+				$this->id         = $obj->id;
 				$this->entity = $obj->entity;
-                $this->ref        = $obj->ref;
-                $this->ref_ext    = $obj->ref_ext;
+				$this->ref        = $obj->ref;
+				$this->ref_ext    = $obj->ref_ext;
 
-                // Properties of parent table llx_c_actioncomm
-                $this->type_id    = $obj->type_id;
-                $this->type_code  = $obj->type_code;
-                $this->type_color = $obj->type_color;
-                $this->type_picto = $obj->type_picto;
-                $transcode = $langs->trans("Action".$obj->type_code);
-                $this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label);
-                $transcode = $langs->trans("Action".$obj->type_code.'Short');
-                $this->type_short = (($transcode != "Action".$obj->type_code.'Short') ? $transcode : '');
+				// Properties of parent table llx_c_actioncomm
+				$this->type_id    = $obj->type_id;
+				$this->type_code  = $obj->type_code;
+				$this->type_color = $obj->type_color;
+				$this->type_picto = $obj->type_picto;
+				$transcode = $langs->trans("Action".$obj->type_code);
+				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label);
+				$transcode = $langs->trans("Action".$obj->type_code.'Short');
+				$this->type_short = (($transcode != "Action".$obj->type_code.'Short') ? $transcode : '');
 
 				$this->code = $obj->code;
-                $this->label = $obj->label;
-                $this->datep = $this->db->jdate($obj->datep);
-                $this->datef = $this->db->jdate($obj->datep2);
+				$this->label = $obj->label;
+				$this->datep = $this->db->jdate($obj->datep);
+				$this->datef = $this->db->jdate($obj->datep2);
 
-                $this->datec = $this->db->jdate($obj->datec);
-                $this->datem = $this->db->jdate($obj->datem);
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datem = $this->db->jdate($obj->datem);
 
-                $this->note = $obj->note; // deprecated
-                $this->note_private = $obj->note;
-                $this->percentage = $obj->percentage;
+				$this->note = $obj->note; // deprecated
+				$this->note_private = $obj->note;
+				$this->percentage = $obj->percentage;
 
-                $this->authorid = $obj->fk_user_author;
-                $this->usermodid = $obj->fk_user_mod;
+				$this->authorid = $obj->fk_user_author;
+				$this->usermodid = $obj->fk_user_mod;
 
-                if (!is_object($this->author)) $this->author = new stdClass(); // To avoid warning
-                $this->author->id = $obj->fk_user_author; // deprecated
-                $this->author->firstname = $obj->firstname; // deprecated
-                $this->author->lastname = $obj->lastname; // deprecated
-                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // To avoid warning
-                $this->usermod->id = $obj->fk_user_mod; // deprecated
+				if (!is_object($this->author)) $this->author = new stdClass(); // To avoid warning
+				$this->author->id = $obj->fk_user_author; // deprecated
+				$this->author->firstname = $obj->firstname; // deprecated
+				$this->author->lastname = $obj->lastname; // deprecated
+				if (!is_object($this->usermod)) $this->usermod = new stdClass(); // To avoid warning
+				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
-                $this->userownerid = $obj->fk_user_action;
-                $this->userdoneid = $obj->fk_user_done;
-                $this->priority				= $obj->priority;
-                $this->fulldayevent			= $obj->fulldayevent;
-                $this->location				= $obj->location;
-                $this->transparency			= $obj->transparency;
+				$this->userownerid = $obj->fk_user_action;
+				$this->userdoneid = $obj->fk_user_done;
+				$this->priority				= $obj->priority;
+				$this->fulldayevent			= $obj->fulldayevent;
+				$this->location				= $obj->location;
+				$this->transparency			= $obj->transparency;
 
-                $this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
-                $this->contact_id = $obj->fk_contact; // To have fetch_contact method working
-                $this->fk_project = $obj->fk_project; // To have fetch_projet method working
+				$this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
+				$this->contact_id = $obj->fk_contact; // To have fetch_contact method working
+				$this->fk_project = $obj->fk_project; // To have fetch_projet method working
 
-                //$this->societe->id			= $obj->fk_soc;			// deprecated
-                //$this->contact->id			= $obj->fk_contact;		// deprecated
+				//$this->societe->id			= $obj->fk_soc;			// deprecated
+				//$this->contact->id			= $obj->fk_contact;		// deprecated
 
-                $this->fk_element = $obj->elementid;
-                $this->elementid = $obj->elementid;
-                $this->elementtype = $obj->elementtype;
+				$this->fk_element = $obj->elementid;
+				$this->elementid = $obj->elementid;
+				$this->elementtype = $obj->elementtype;
 
-                $this->fetchResources();
-            }
-            $this->db->free($resql);
-        } else {
-            $this->error = $this->db->lasterror();
-            return -1;
-        }
+				$this->fetchResources();
+			}
+			$this->db->free($resql);
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
 
-        return $num;
-    }
+		return $num;
+	}
 
-    /**
-     *    Initialize $this->userassigned & this->socpeopleassigned array with list of id of user and contact assigned to event
-     *
-     *    @return   int				<0 if KO, >0 if OK
-     */
-    public function fetchResources()
-    {
-    	$this->userassigned = array();
-    	$this->socpeopleassigned = array();
+	/**
+	 *    Initialize $this->userassigned & this->socpeopleassigned array with list of id of user and contact assigned to event
+	 *
+	 *    @return   int				<0 if KO, >0 if OK
+	 */
+	public function fetchResources()
+	{
+		$this->userassigned = array();
+		$this->socpeopleassigned = array();
 
-    	$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
+		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
 		$sql .= ' WHERE fk_actioncomm = '.$this->id;
 		$sql .= " AND element_type IN ('user', 'socpeople')";
@@ -924,6 +925,18 @@ class ActionComm extends CommonObject
 			}
 		}
 
+		if (!$error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE fk_actioncomm = ".$this->id;
+
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$this->error = $this->db->lasterror();
+				$error++;
+			}
+		}
+
 		// Removed extrafields
 		if (!$error) {
 			  $result = $this->deleteExtraFields();
@@ -1030,8 +1043,8 @@ class ActionComm extends CommonObject
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
 		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
 		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", fk_user_action=".($userownerid > 0 ? "'".$userownerid."'" : "null");
-		$sql .= ", fk_user_done=".($userdoneid > 0 ? "'".$userdoneid."'" : "null");
+		$sql .= ", fk_user_action = ".($userownerid > 0 ? "'".$this->db->escape($userownerid)."'" : "null");
+		$sql .= ", fk_user_done = ".($userdoneid > 0 ? "'".$this->db->escape($userdoneid)."'" : "null");
 		if (!empty($this->fk_element)) $sql .= ", fk_element=".($this->fk_element ? $this->db->escape($this->fk_element) : "null");
 		if (!empty($this->elementtype)) $sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
 		$sql .= " WHERE id=".$this->id;
@@ -1126,7 +1139,7 @@ class ActionComm extends CommonObject
 	 *  Load all objects with filters.
 	 *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
 	 *
-	 *  @param		DoliDb	$db				Database handler
+	 *  @param		DoliDb	$db				Not used
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
@@ -1159,7 +1172,7 @@ class ActionComm extends CommonObject
 				$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
 			}
 			else {
-				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
+				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) $sql .= $filter;
@@ -1390,7 +1403,7 @@ class ActionComm extends CommonObject
 			if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-		$tooltip = '<u>'.$langs->trans('Action').'</u>';
+		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
 		if (!empty($this->ref))
 			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($label))
@@ -1937,168 +1950,225 @@ class ActionComm extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
-    /**
-     *  Is the action delayed?
-     *
-     *  @return bool
-     */
-    public function hasDelay()
-    {
-        global $conf;
+	/**
+	 *  Is the action delayed?
+	 *
+	 *  @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
 
-        $now = dol_now();
+		$now = dol_now();
 
-        return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
-    }
+		return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
+	}
 
 
-    /**
-     *  Send reminders by emails
-     *  CAN BE A CRON TASK
-     *
-     *  @return int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-     */
-    public function sendEmailsReminder()
-    {
-    	global $conf, $langs, $user;
+	/**
+	 *  Load event reminder of events
+	 *
+	 *  @param	string	$type		Type of reminder 'browser' or 'email'
+	 *  @param	int		$fk_user	Id of user
+	 *  @param	bool	$onlypast	true = get only past reminder, false = get all reminders linked to this
+	 *  @return int         		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function loadReminders($type = '', $fk_user = 0, $onlypast = true)
+	{
+		global $conf, $langs, $user;
 
-    	$error = 0;
-    	$this->output = '';
+		$error = 0;
+
+		$this->reminders = array();
+
+		//Select all action comm reminders for event
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		$sql .= " WHERE fk_actioncomm = ".$this->id;
+		if ($onlypast) {
+			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		}
+		if ($type) {
+			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+		}
+		if ($fk_user > 0) {
+			$sql .= " AND fk_user = ".((int) $fk_user);
+		}
+		if (empty($conf->global->AGENDA_REMINDER_EMAIL)) $sql .= " AND typeremind != 'email'";
+		if (empty($conf->global->AGENDA_REMINDER_BROWSER)) $sql .= " AND typeremind != 'browser'";
+
+		$sql .= $this->db->order("dateremind", "ASC");
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$tmpactioncommreminder = new ActionCommReminder($this->db);
+				$tmpactioncommreminder->id = $obj->id;
+				$tmpactioncommreminder->typeremind = $obj->typeremind;
+				$tmpactioncommreminder->dateremind = $obj->dateremind;
+				$tmpactioncommreminder->offsetvalue = $obj->offsetvalue;
+				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
+				$tmpactioncommreminder->status = $obj->status;
+				$tmpactioncommreminder->fk_user = $obj->fk_user;
+
+				$this->reminders[$obj->id] = $tmpactioncommreminder;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
+
+		return count($this->reminders);
+	}
+
+
+	/**
+	 *  Send reminders by emails
+	 *  CAN BE A CRON TASK
+	 *
+	 *  @return int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendEmailsReminder()
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
 		$this->error = '';
 		$nbMailSend = 0;
 		$errorsMsg = array();
 
-    	if (empty($conf->agenda->enabled))	// Should not happen. If module disabled, cron job should not be visible.
+		if (empty($conf->agenda->enabled))	// Should not happen. If module disabled, cron job should not be visible.
 		{
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
 			return 0;
 		}
 		if (empty($conf->global->AGENDA_REMINDER_EMAIL))
-    	{
-    		$langs->load("agenda");
-    		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
-    		return 0;
-    	}
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
 
-    	$now = dol_now();
+		$now = dol_now();
 
-    	dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $this->db->begin();
+		$this->db->begin();
 
-        //Select all action comm reminder
-    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		//Select all action comm reminder
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE typeremind = 'email' AND status = 0";
 		$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		$sql .= $this->db->order("dateremind", "ASC");
-        $resql = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-        if ($resql) {
-            $formmail = new FormMail($this->db);
-            $actionCommReminder = new ActionCommReminder($this->db);
+		if ($resql) {
+			$formmail = new FormMail($this->db);
+			$actionCommReminder = new ActionCommReminder($this->db);
 
-			while ($obj = $this->db->fetch_object($resql)){
-                $res = $actionCommReminder->fetch($obj->id);
-                if ($res < 0) {
-                    $error++;
-                    $errorsMsg[] = "Failed to load invoice ActionComm Reminder";
-                }
+			while ($obj = $this->db->fetch_object($resql)) {
+				$res = $actionCommReminder->fetch($obj->id);
+				if ($res < 0) {
+					$error++;
+					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
+				}
 
-                if (!$error)
-                {
-                	//Select email template
-                	$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
+				if (!$error)
+				{
+					//Select email template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
-                	// Load event
-                	$res = $this->fetch($actionCommReminder->fk_actioncomm);
-                	if ($res > 0)
-                	{
-                		// PREPARE EMAIL
+					// Load event
+					$res = $this->fetch($actionCommReminder->fk_actioncomm);
+					if ($res > 0)
+					{
+						// PREPARE EMAIL
 
-                		// Make substitution in email content
-                		$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
 
-                		complete_substitutions_array($substitutionarray, $langs, $this);
+						complete_substitutions_array($substitutionarray, $langs, $this);
 
-                		// Content
-                		$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+						// Content
+						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-                		//Topic
-                		$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+						//Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
 
-                		// Recipient
-                		$recipient = new User($this->db);
-                		$res = $recipient->fetch($actionCommReminder->fk_user);
-                		if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
-                		else {
-                			$errorsMsg[] = "Failed to load recipient";
-                			$error++;
-                		}
+						// Recipient
+						$recipient = new User($this->db);
+						$res = $recipient->fetch($actionCommReminder->fk_user);
+						if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
+						else {
+							$errorsMsg[] = "Failed to load recipient";
+							$error++;
+						}
 
-                		// Sender
-                		$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-                		if (empty($from)) {
-                			$errorsMsg[] = "Failed to load recipient";
-                			$error++;
-                		}
+						// Sender
+						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						if (empty($from)) {
+							$errorsMsg[] = "Failed to load recipient";
+							$error++;
+						}
 
-                		// Errors Recipient
-                		$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+						// Errors Recipient
+						$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
 
-                		// Mail Creation
-                		$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+						// Mail Creation
+						$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
 
-                		// Sending Mail
-                		if ($cMailFile->sendfile())
-                		{
-                			$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-                			$res = $actionCommReminder->update($user);
-                			if ($res < 0)
-                			{
-                				$errorsMsg[] = "Failed to update status of ActionComm Reminder";
-                				$error++;
-                				break;	// This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-                			} else {
-                				$nbMailSend++;
-                			}
-                		} else {
-                			$errorsMsg[] = $cMailFile->error.' : '.$to;
-                			$error++;
-                		}
-                	} else {
-                		$error++;
-                	}
-                }
-            }
-        } else {
-            $error++;
-        }
+						// Sending Mail
+						if ($cMailFile->sendfile())
+						{
+							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+							$res = $actionCommReminder->update($user);
+							if ($res < 0)
+							{
+								$errorsMsg[] = "Failed to update status of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							} else {
+								$nbMailSend++;
+							}
+						} else {
+							$errorsMsg[] = $cMailFile->error.' : '.$to;
+							$error++;
+						}
+					} else {
+						$error++;
+					}
+				}
+			}
+		} else {
+			$error++;
+		}
 
-        if (!$error)
-        {
-            // Delete also very old past events (we do not keep more than 1 month record in past)
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		if (!$error)
+		{
+			// Delete also very old past events (we do not keep more than 1 month record in past)
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
-            $resql = $this->db->query($sql);
+			$resql = $this->db->query($sql);
 
-            if (!$resql) {
-                $errorsMsg[] = 'Failed to delete old reminders';
-                //$error++;		// If this fails, we must not rollback other SQL requests already done. Never mind.
-            }
-        }
+			if (!$resql) {
+				$errorsMsg[] = 'Failed to delete old reminders';
+				//$error++;		// If this fails, we must not rollback other SQL requests already done. Never mind.
+			}
+		}
 
-        if (!$error) {
-        	$this->output = 'Nb of emails sent : '.$nbMailSend;
-        	$this->db->commit();
-            return 0;
-        }
-        else {
-            $this->db->rollback();
-            $this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
-            return $error;
-        }
-    }
+		if (!$error) {
+			$this->output = 'Nb of emails sent : '.$nbMailSend;
+			$this->db->commit();
+			return 0;
+		}
+		else {
+			$this->db->rollback();
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+			return $error;
+		}
+	}
 
 	/**
 	 * Udpate the percent value of a event with the given id

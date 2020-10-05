@@ -427,11 +427,11 @@ class MultiCurrency extends CommonObject
 	{
 		global $db, $user;
 
-		$currency = new MultiCurrency($db);
+		$currency = new MultiCurrency($this->db);
 		$currency->code = $code;
 		$currency->name = $code;
 
-	 	$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_currencies WHERE code_iso = \''.$db->escape($code).'\'';
+		$sql = 'SELECT label FROM '.MAIN_DB_PREFIX."c_currencies WHERE code_iso = '".$this->db->escape($code)."'";
 
 	 	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -486,15 +486,15 @@ class MultiCurrency extends CommonObject
 	  * Get id of currency from code
 	  *
 	  * @param  DoliDB	$db		    object db
-	  * @param  string	$code	   code value search
+	  * @param  string	$code	    code value search
 	  *
 	  * @return int                 0 if not found, >0 if OK
 	  */
-	public static function getIdFromCode(&$db, $code)
+	public static function getIdFromCode($db, $code)
 	{
 	 	global $conf;
 
-	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
+	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."multicurrency WHERE code = '".$db->escape($code)."' AND entity = ".$conf->entity;
 
 	 	dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -512,7 +512,7 @@ class MultiCurrency extends CommonObject
 	  * @return 	array	[0] => id currency
 	  *					[1] => rate
 	  */
-	public static function getIdAndTxFromCode(&$db, $code, $date_document = '')
+	public static function getIdAndTxFromCode($db, $code, $date_document = '')
 	{
 		global $conf;
 

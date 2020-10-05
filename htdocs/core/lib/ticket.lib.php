@@ -206,54 +206,54 @@ function generate_random_id($car = 16)
  */
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
-    global $user, $conf, $langs, $mysoc;
+	global $user, $conf, $langs, $mysoc;
 
-    top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
-    print '<body id="mainbody" class="publicnewticketform">';
-    print '<div class="center">';
+	print '<body id="mainbody" class="publicnewticketform">';
+	print '<div class="center">';
 
-    // Define urllogo
-    if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
-        // Print logo
-        if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO))
-        {
-        	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+	// Define urllogo
+	if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
+		// Print logo
+		if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO))
+		{
+			$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
-        	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-        		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-        	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-        		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
-        	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-        		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-        	}
-        }
-    }
+			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
+			} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+				$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+			}
+		}
+	}
 
-    // Output html code for logo
-    if ($urllogo || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
-    {
-    	print '<div class="backgreypublicpayment">';
-    	print '<div class="logopublicpayment">';
-    	if ($urllogo) {
-	    	print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)).'">';
-	    	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	    	print '>';
-	    	print '</a>';
-    	}
-    	if (!empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
-    		print '<div class="clearboth"></div><strong>'.($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")).'</strong>';
-    	}
-    	print '</div>';
-    	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-    		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-    	}
-    	print '</div>';
-    }
+	// Output html code for logo
+	if ($urllogo || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
+	{
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		if ($urllogo) {
+			print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)).'">';
+			print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+			print '>';
+			print '</a>';
+		}
+		if (!empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
+			print '<div class="clearboth"></div><strong>'.($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")).'</strong>';
+		}
+		print '</div>';
+		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		}
+		print '</div>';
+	}
 
-    print '</div>';
+	print '</div>';
 
-    print '<div class="ticketlargemargin">';
+	print '<div class="ticketlargemargin">';
 }
 
 
@@ -431,6 +431,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 	//TODO Add limit in nb of results
 	$sql .= $db->order($sortfield_new, $sortorder);
+
 	dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
@@ -529,6 +530,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 		$out .= '<div class="filters-container" >';
 		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+
 		if ($objcon && get_class($objcon) == 'Contact' &&
 			(is_null($filterobj) || get_class($filterobj) == 'Societe'))
 		{

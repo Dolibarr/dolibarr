@@ -142,6 +142,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 
 							if (!$filter || preg_match('/'.$filter.'/i', $file))	// We do not search key $filter into all $path, only into $file part
 							{
+								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
 								$file_list[] = array(
@@ -1074,13 +1075,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 	}
 
-	if ($reshook < 0)	// At least one blocking error returned by one hook
-	{
+	if ($reshook < 0) {	// At least one blocking error returned by one hook
 		$errmsg = join(',', $hookmanager->errors);
 		if (empty($errmsg)) $errmsg = 'ErrorReturnedBySomeHooks'; // Should not occurs. Added if hook is bugged and does not set ->errors when there is error.
 		return $errmsg;
-	} elseif (empty($reshook))
-	{
+	} elseif (empty($reshook)) {
 		// The file functions must be in OS filesystem encoding.
 		$src_file_osencoded = dol_osencode($src_file);
 		$file_name_osencoded = dol_osencode($file_name);
@@ -1155,6 +1154,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		return false;
 	}
 
+	$reshook = 0;
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -1168,12 +1168,12 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		$reshook = $hookmanager->executeHooks('deleteFile', $parameters, $object);
 	}
 
-	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok, -1 = ko
+	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok and replace, -1 = ko
 	{
+		dol_syslog("reshook=".$reshook);
 		if ($reshook < 0) return false;
 		return true;
 	} else {
-		//print "x".$file." ".$disableglob;exit;
 		$file_osencoded = dol_osencode($file); // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && !empty($file_osencoded))
 		{
@@ -1220,7 +1220,9 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 						// If error because it does not exists, we should return true, and we should return false if this is a permission problem
 					}
 				}
-			} else dol_syslog("No files to delete found", LOG_DEBUG);
+			} else {
+				dol_syslog("No files to delete found", LOG_DEBUG);
+			}
 		} else {
 			$ok = false;
 			if ($nophperrors) $ok = @unlink($file_osencoded);
@@ -1531,6 +1533,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 			$nbok = 0;
 			for ($i = 0; $i < $nbfile; $i++)
 			{
+				if (empty($TFile['name'][$i])) continue;		// For example, when submitting a form with no file name
+
 				// Define $destfull (path to file including filename) and $destfile (only filename)
 				$destfull = $upload_dir."/".$TFile['name'][$i];
 				$destfile = $TFile['name'][$i];
@@ -2010,8 +2014,10 @@ function dol_uncompress($inputfile, $outputdir)
 		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 		$archive = new PclZip($inputfile);
-		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir);
-		//var_dump($result);
+
+		// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+
 		if (!is_array($result) && $result <= 0) return array('error'=>$archive->errorInfo(true));
 		else {
 			$ok = 1; $errmsg = '';
@@ -2032,14 +2038,26 @@ function dol_uncompress($inputfile, $outputdir)
 		}
 	}
 
-	if (class_exists('ZipArchive'))
+	if (class_exists('ZipArchive'))	// Must install php-zip to have it
 	{
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
 		if ($res === true)
 		{
-			$zip->extractTo($outputdir.'/');
+			//$zip->extractTo($outputdir.'/');
+			// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+			// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
+			// with -l is the range of dot to go back in path.
+			// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
+			for ($i = 0; $i < $zip->numFiles; $i++) {
+				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
+					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
+					continue;	// Discard the file
+				}
+				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
+			}
+
 			$zip->close();
 			return array();
 		} else {
@@ -2829,8 +2847,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
 			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
 			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
-			$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
-			//var_dump($original_file);
+
+			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
+				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$original_file;
+			} else {
+				$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
+			}
 		}
 
 		// For modules who wants to manage different levels of permissions for documents

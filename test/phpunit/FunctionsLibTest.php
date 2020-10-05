@@ -1312,4 +1312,32 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
     	return true;
     }
+
+
+    /**
+     * testGetUserRemoteIP
+     *
+     * @return boolean
+     */
+    public function testGetUserRemoteIP()
+    {
+    	global $conf, $langs;
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '1.2.3.4');
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4<corrupted>';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '5.6.7.8');
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='[1:2:3:4]';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '[1:2:3:4]');
+
+    	return true;
+    }
 }

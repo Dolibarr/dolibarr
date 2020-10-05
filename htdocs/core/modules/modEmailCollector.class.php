@@ -52,7 +52,7 @@ class modEmailCollector extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '12';
+		$this->module_position = '23';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -306,23 +306,26 @@ class modEmailCollector extends DolibarrModules
 			}
 		} else dol_print_error($this->db);
 
-		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Answers' and entity = ".$conf->entity;
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
-				$descriptionA1 = 'This collector will scan your mailbox "Sent" directory to find emails that was sent as an answer of a Ticket (Module Ticket must be enabled) directly from your email browser instead of from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr.';
+				$descriptionA1 = 'This collector will scan your mailbox "Sent" directory to find emails that was sent as an answer of another email directly from your email software and not from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr.';
 
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Answers', 'Example to collect answers to tickets', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
-				/*
-				 $sqlforexampleA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				 $sqlforexampleA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
-				 $sqlforexampleA3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
-				 $sqlforexampleA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'to', 'support@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
-				 $sqlforexampleA4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				 $sqlforexampleA4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requets' and entity = ".$conf->entity."), 'ticket', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
-				 */
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', 'Example to collect answers to emails done from email software', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+
+				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'isanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'withouttrackingidinmsgid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleActionA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity."), 'recordevent', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
 				$sql[] = $sqlforexampleA1;
+				$sql[] = $sqlforexampleFilterA1;
+				$sql[] = $sqlforexampleFilterA2;
+				$sql[] = $sqlforexampleActionA1;
 			}
 		}
 
@@ -330,7 +333,7 @@ class modEmailCollector extends DolibarrModules
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
-				$descriptionB1 = 'This collector will scan your mailbox to find all emails that are an answer of an email sent from your application. An event with the email response will be recorded at the good place (Module Agenda must be enabled). For example, if your send a commercial proposal, order or invoice by email and your customer answers your email, the system will automatically find the answer and add it into your ERP.';
+				$descriptionB1 = 'This collector will scan your mailbox to find all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if your send a commercial proposal, order, invoice or message for a ticket by email from the application, and your customer answers your email, the system will automatically find the answer and add it into your ERP.';
 
 				$sqlforexampleB1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
 				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', 'Example to collect any input email responses', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";

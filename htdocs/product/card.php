@@ -18,6 +18,7 @@
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -78,6 +80,14 @@ $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
+
+$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
+$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
+$accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
+$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
+$accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
+$accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
+
 if (!empty($user->socid)) $socid = $user->socid;
 
 $object = new Product($db);
@@ -233,6 +243,7 @@ if (empty($reshook))
 			$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
 			$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
 			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			$reg = array();
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
 			{
 				// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -240,9 +251,9 @@ if (empty($reshook))
 				// Get record from code
 				$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-				$sql .= " AND t.code ='".$vatratecode."'";
+				$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 				$resql = $db->query($sql);
 				if ($resql)
 				{
@@ -285,12 +296,13 @@ if (empty($reshook))
 			$object->barcode_type_coder     = $stdobject->barcode_type_coder;
 			$object->barcode_type_label     = $stdobject->barcode_type_label;
 
-			$object->description        	 = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
+			$object->description        	 = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
 			$object->url = GETPOST('url');
-			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
+			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 			$object->note               	 = $object->note_private; // deprecated
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
-			$object->country_id              = GETPOST('country_id', 'int');
+	        $object->country_id = GETPOST('country_id', 'int');
+	        $object->state_id = GETPOST('state_id', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -387,15 +399,16 @@ if (empty($reshook))
 
 				$object->ref                    = $ref;
 				$object->label                  = GETPOST('label', 'alphanohtml');
-				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
+				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
 				$object->url = GETPOST('url');
 				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 				{
-					$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
+					$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 					$object->note = $object->note_private;
 				}
 				$object->customcode             = GETPOST('customcode', 'alpha');
-				$object->country_id             = GETPOST('country_id', 'int');
+				$object->country_id = GETPOST('country_id', 'int');
+				$object->state_id = GETPOST('state_id', 'int');
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
@@ -866,6 +879,7 @@ llxHeader('', $title, $helpurl);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
+$formcompany = new FormCompany($db);
 if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 // Load object modBarCodeProduct
@@ -908,6 +922,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		//WYSIWYG Editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
+		print '<script type="text/javascript">';
+				print '$(document).ready(function () {
+                        $("#selectcountry_id").change(function() {
+                        	document.formprod.action.value="create";
+                        	document.formprod.submit();
+                        });
+                     });';
+				print '</script>'."\n";
+
 		// Load object modCodeProduct
 		$module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
 		if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
@@ -922,7 +945,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		dol_set_focus('input[name="ref"]');
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formprod">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="type" value="'.$type.'">'."\n";
@@ -941,6 +964,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 		$linkback = "";
 		print load_fiche_titre($title, $linkback, $picto);
+
+        // We set country_id, country_code and country for the selected country
+        $object->country_id = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : null;
+        if ($object->country_id > 0)
+        {
+            $tmparray = getCountry($object->country_id, 'all');
+            $object->country_code = $tmparray['code'];
+            $object->country = $tmparray['label'];
+        }
 
 		dol_fiche_head('');
 
@@ -1007,7 +1039,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
-		$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
 		$doleditor->Create();
 
 		print "</td></tr>";
@@ -1114,14 +1146,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Custom code
 		if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type))
 		{
-			print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td>';
-			if ($conf->browser->layout == 'phone') print '</tr><tr>';
+			print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td></tr>';
+
 			// Origin country
 			print '<td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
-			print $form->select_country(GETPOST('country_id', 'int'), 'country_id');
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			print '</td></tr>';
+            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+            print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			print '</td>';
+
+            // State
+            if (empty($conf->global->PRODUCT_DISABLE_STATE))
+            {
+            		if ($conf->browser->layout == 'phone') print '</tr><tr>';
+                if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+                } else {
+                    print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
+                }
+
+				print $formcompany->select_state($object->state_id, $object->country_code);
+                print '</tr>';
+            }
+                print '</tr>';
 		}
 
 		// Other attributes
@@ -1139,7 +1188,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'none'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
+			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_8, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
@@ -1276,6 +1325,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</td></tr>';
 		} else // For external software
 		{
+			if (!empty($accountancy_code_sell)) { $object->accountancy_code_sell = $accountancy_code_sell; }
+			if (!empty($accountancy_code_sell_intra)) { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
+			if (!empty($accountancy_code_sell_export)) { $object->accountancy_code_sell_export = $accountancy_code_sell_export; }
+			if (!empty($accountancy_code_buy)) { $object->accountancy_code_buy = $accountancy_code_buy; }
+			if (!empty($accountancy_code_buy_intra)) { $object->accountancy_code_buy_intra = $accountancy_code_buy_intra; }
+			if (!empty($accountancy_code_buy_export)) { $object->accountancy_code_buy_export = $accountancy_code_buy_export; }
+
 			// Accountancy_code_sell
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
@@ -1333,12 +1389,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
+			print '<script type="text/javascript">';
+				print '$(document).ready(function () {
+                        $("#selectcountry_id").change(function () {
+                        	document.formprod.action.value="edit";
+                        	document.formprod.submit();
+                        });
+		});';
+				print '</script>'."\n";
+
+			// We set country_id, country_code and country for the selected country
+			$object->country_id = GETPOST('country_id') ? GETPOST('country_id') : $object->country_id;
+			if ($object->country_id)
+			{
+				$tmparray = getCountry($object->country_id, 'all');
+				$object->country_code = $tmparray['code'];
+				$object->country = $tmparray['label'];
+			}
+
+
 			$type = $langs->trans('Product');
 			if ($object->isService()) $type = $langs->trans('Service');
 			//print load_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
 			// Main official, simple, and not duplicated code
-			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
+			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="formprod">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1348,6 +1423,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 			dol_fiche_head($head, 'card', $titre, 0, $picto);
+
 
 			print '<table class="border allwidth">';
 
@@ -1529,12 +1605,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Custom code
 			if (!$object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
 			{
-				print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.$object->customcode.'"></td>';
+				print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.$object->customcode.'"></td></tr>';
 				// Origin country
-				print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+				print '<td>'.$langs->trans("CountryOrigin").'</td>';
+				print '<td>';
+				print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 				print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-				print '</td></tr>';
+				print '</td>';
+				// State
+				if (empty($conf->global->PRODUCT_DISABLE_STATE))
+				{
+            		if ($conf->browser->layout == 'phone') print '</tr><tr>';
+					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+					{
+						print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					} else {
+						print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
+					}
+
+					print $formcompany->select_state($object->state_id, $object->country_code);
+					print '</td>';
+				}
+				print '</tr>';
 			}
 
 			// Other attributes
@@ -2031,7 +2124,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
 
 				// Origin country code
-				print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id, 0, $db).'</td>';
+				print '<tr><td>'.$langs->trans("Origin").'</td><td colspan="2">'.getCountry($object->country_id, 0, $db);
+				if (!empty($object->state_id)) print ' - '.getState($object->state_id, 0, $db);
+				print '</td>';
 			}
 
 			// Other attributes
@@ -2159,7 +2254,7 @@ if ($action != 'create' && $action != 'edit')
 				{
 					print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 				} else {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
@@ -2293,7 +2388,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
 	$relativepath = $comref.'/'.$objectref.'.pdf';
-	$filedir = $conf->product->dir_output.'/'.$objectref;
+	if (!empty($conf->product->multidir_output[$object->entity])) {
+    	$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
+	} else {
+		$filedir = $conf->product->dir_output.'/'.$objectref;
+	}
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;

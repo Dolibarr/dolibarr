@@ -1122,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
-		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->escape($status).")";
+		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1178,7 +1178,11 @@ class Holiday extends CommonObject
 
 		$result = '';
 
-		$label = $langs->trans("Show").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Holiday").'</u>';
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->statut)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 
@@ -1269,20 +1273,22 @@ class Holiday extends CommonObject
 		$nb = count($name) + 1;
 
 		// Select HTML
-		$statut = '<select name="'.$htmlname.'" class="flat">'."\n";
-		$statut .= '<option value="-1">&nbsp;</option>'."\n";
+		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat">'."\n";
+		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
 		for ($i = 1; $i < $nb; $i++) {
 			if ($i == $selected) {
-				$statut .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
+				$out .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
 			} else {
-				$statut .= '<option value="'.$i.'">'.$langs->trans($name[$i - 1]).'</option>'."\n";
+				$out .= '<option value="'.$i.'">'.$langs->trans($name[$i - 1]).'</option>'."\n";
 			}
 		}
 
-		$statut .= '</select>'."\n";
-		print $statut;
+		$out .= '</select>'."\n";
+		$out .= ajax_combobox($htmlname);
+
+		print $out;
 	}
 
 	/**
@@ -1296,8 +1302,8 @@ class Holiday extends CommonObject
     {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-		$sql .= " value = '".$value."'";
-		$sql .= " WHERE name = '".$name."'";
+		$sql .= " value = '".$this->db->escape($value)."'";
+		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
 		dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1492,7 +1498,7 @@ class Holiday extends CommonObject
 
 		$sql = "SELECT value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_config";
-		$sql .= " WHERE name = '".$name."'";
+		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
 		$result = $this->db->query($sql);
 
@@ -1516,7 +1522,7 @@ class Holiday extends CommonObject
 	 */
 	public function createCPusers($single = false, $userid = '')
 	{
-		// Si c'est l'ensemble des utilisateurs à ajouter
+		// do we have to add balance for all users ?
 		if (!$single)
 		{
 			dol_syslog(get_class($this).'::createCPusers');
@@ -1526,7 +1532,7 @@ class Holiday extends CommonObject
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
 				$sql .= " (fk_user, nb_holiday)";
-				$sql .= " VALUES ('".$users['rowid']."','0')";
+				$sql .= " VALUES (".((int) $users['rowid'])."', '0')";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) dol_print_error($this->db);
@@ -1534,7 +1540,7 @@ class Holiday extends CommonObject
 		} else {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
 			$sql .= " (fk_user, nb_holiday)";
-			$sql .= " VALUES ('".$userid."','0')";
+			$sql .= " VALUES (".((int) $userid)."', '0')";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) dol_print_error($this->db);
@@ -1551,7 +1557,7 @@ class Holiday extends CommonObject
     {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
-		$sql .= " WHERE fk_user = '".$user_id."'";
+		$sql .= " WHERE fk_user = ".((int) $user_id);
 
 		$this->db->query($sql);
 	}
@@ -1919,11 +1925,11 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$fk_user_action."',";
-		$sql .= " '".$fk_user_update."',";
+		$sql .= " '".$this->db->escape($fk_user_action)."',";
+		$sql .= " '".$this->db->escape($fk_user_update)."',";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$prev_solde."',";
-		$sql .= " '".$new_solde."',";
+		$sql .= " '".$this->db->escape($prev_solde)."',";
+		$sql .= " '".$this->db->escape($new_solde)."',";
 		$sql .= " ".$fk_type;
 		$sql .= ")";
 

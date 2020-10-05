@@ -46,7 +46,7 @@ $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

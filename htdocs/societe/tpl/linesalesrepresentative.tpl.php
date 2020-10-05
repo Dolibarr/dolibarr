@@ -49,7 +49,7 @@ if ($action == 'editsalesrepresentatives') {
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
 	$nbofsalesrepresentative = count($listsalesrepresentatives);
-	if ($nbofsalesrepresentative > 0) {
+	if ($nbofsalesrepresentative > 0 && is_array($listsalesrepresentatives)) {
 		$userstatic = new User($db);
 		foreach ($listsalesrepresentatives as $val) {
 			$userstatic->id = $val['id'];

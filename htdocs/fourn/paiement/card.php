@@ -54,7 +54,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->update_note(GETPOST('note', 'none'));
+	$result = $object->update_note(GETPOST('note', 'restricthtml'));
 	if ($result > 0)
 	{
 		$db->commit();
@@ -345,7 +345,7 @@ if ($result > 0)
 		{
 			if ($allow_delete)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}
@@ -367,7 +367,7 @@ if ($result > 0)
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 		$genallowed = $user->rights->fournisseur->facture->lire;
 		$delallowed = $user->rights->fournisseur->facture->creer;
-		$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
 		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 		$somethingshown = $formfile->numoffiles;

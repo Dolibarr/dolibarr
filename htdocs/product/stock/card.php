@@ -197,7 +197,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 		if (!$error) {
 			$result = $object->insertExtraFields();
@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formproduct->selectWarehouses('', 'fk_parent', '', 1);
+	print $formproduct->selectWarehouses('ifone', 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Description
@@ -432,7 +432,7 @@ if ($action == 'create')
 			if (!empty($user->rights->stock->mouvement->lire)) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-				$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
+				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -485,13 +485,19 @@ if ($action == 'create')
 			{
 				if (empty($action))
 				{
-					if ($user->rights->stock->creer)
-						print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
-					else print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
+					if ($user->rights->stock->creer) {
+						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+					}
+					else {
+						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
+					}
 
-					if ($user->rights->stock->supprimer)
-						print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
-					else print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
+					if ($user->rights->stock->supprimer) {
+						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					}
+					else {
+						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
+					}
 				}
 			}
 
@@ -555,7 +561,7 @@ if ($action == 'create')
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql .= " WHERE fk_product=".$objp->rowid;
-						$sql .= " AND lang='".$langs->getDefaultLang()."'";
+						$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 						$sql .= " LIMIT 1";
 
 						$result = $db->query($sql);

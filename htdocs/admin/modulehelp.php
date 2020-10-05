@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('errors', 'admin', 'modulebuilder'));
 
 $mode = GETPOST('mode', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 if (empty($mode)) $mode = 'desc';
 

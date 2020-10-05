@@ -168,7 +168,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($this->description) ? ("'".$this->db->escape($this->description)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
-			$sql .= ", '".$user->id."'";
+			$sql .= ", ".$user->id;
 			// si c'est la même société on conserve les liens vers le projet et le contrat
 			if ($this->socid == $fichintsrc->socid) {
 				$sql .= ", ".(!empty($fichintsrc->fk_project) ? $fichintsrc->fk_project : "null");
@@ -177,7 +177,7 @@ class FichinterRec extends Fichinter
 				$sql .= ", null, null";
 			}
 
-			$sql .= ", ".(!empty($fichintsrc->modelpdf) ? "'".$this->db->escape($fichintsrc->modelpdf)."'" : "''");
+			$sql .= ", ".(!empty($fichintsrc->model_pdf) ? "'".$this->db->escape($fichintsrc->model_pdf)."'" : "''");
 
 			// récurrence
 			$sql .= ", ".(!empty($this->frequency) ? $this->frequency : "null");
@@ -564,14 +564,14 @@ class FichinterRec extends Fichinter
 		if ($user->rights->fichinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
-			$sql .= ", last_gen='".$this->db->escape($courant)."'";
+			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 
 			$resql = $this->db->query($sql);
 
 			if ($resql) {
 				$this->frequency = $freq;
-				$this->last_gen = $courant;
+				$this->date_last_gen = $courant;
 				return 0;
 			} else {
 				dol_print_error($this->db);

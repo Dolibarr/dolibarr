@@ -43,8 +43,8 @@ $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -127,7 +127,7 @@ if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
-$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity,";
+$sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity, tosell, tobuy,";
 $sql .= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql .= " s.rowid as socid, s.nom as name";
 // Add fields to SELECT from hooks
@@ -296,6 +296,8 @@ if ($resql)
 		$productstatic->ref = $objp->ref;
 		$productstatic->type = $objp->fk_product_type;
 		$productstatic->entity = $objp->entity;
+		$productstatic->status = $objp->tosell;
+		$productstatic->status_buy = $objp->tobuy;
 		print $productstatic->getNomUrl(1, 'supplier');
 		print '</td>';
 

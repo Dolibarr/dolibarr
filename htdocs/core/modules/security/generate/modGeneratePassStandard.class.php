@@ -75,7 +75,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	public function getDescription()
 	{
 		global $langs;
-		return $langs->trans("PasswordGenerationStandard");
+		return $langs->trans("PasswordGenerationStandard", $this->length);
 	}
 
 	/**

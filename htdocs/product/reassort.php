@@ -40,7 +40,7 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'produit|service');
 
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -402,7 +402,7 @@ if ($resql)
 		{
 			print '<td class="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-			print $product->stock_theorique;
+			print price2num($product->stock_theorique, 'MS');
 			print '</td>';
 		}
         // Units

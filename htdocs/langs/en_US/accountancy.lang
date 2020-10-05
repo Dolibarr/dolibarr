@@ -18,7 +18,7 @@ DefaultForService=Default for service
 DefaultForProduct=Default for product
 CantSuggest=Can't suggest
 AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
-ConfigAccountingExpert=Configuration of the module accounting expert
+ConfigAccountingExpert=Configuration of the module accounting (double entry)
 Journalization=Journalization
 Journaux=Journals
 JournalFinancial=Financial journals
@@ -89,6 +89,8 @@ SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
+ShowAccountingAccountInBookKeeping=Show accounting account in ledger
+ShowAccountingAccountInBookKeepingByAccount=Show accounting account in ledger by account
 AccountAccountingSuggest=Accounting account suggested
 MenuDefaultAccounts=Default accounts
 MenuBankAccounts=Bank accounts
@@ -169,6 +171,8 @@ TransitionalAccount=Transitional bank transfer account
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
+
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)

@@ -37,7 +37,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('companies', 'other', 'bills'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');

@@ -83,8 +83,8 @@ $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -106,7 +106,7 @@ $search_month_end    = GETPOST('search_month_end', 'int');
 $search_year_end     = GETPOST('search_year_end', 'int');
 $search_employee     = GETPOST('search_employee', 'int');
 $search_valideur     = GETPOST('search_valideur', 'int');
-$search_statut       = GETPOST('search_statut', 'int');
+$search_status       = GETPOST('search_status', 'int');
 $search_type         = GETPOST('search_type', 'int');
 
 // Initialize technical objects
@@ -182,7 +182,7 @@ if (empty($reshook))
 		$search_year_end = "";
 		$search_employee = "";
 		$search_valideur = "";
-		$search_statut = "";
+		$search_status = "";
 		$search_type = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -253,7 +253,7 @@ $sql .= " cp.description,";
 $sql .= " cp.date_debut,";
 $sql .= " cp.date_fin,";
 $sql .= " cp.halfday,";
-$sql .= " cp.statut,";
+$sql .= " cp.statut as status,";
 $sql .= " cp.fk_validator,";
 $sql .= " cp.date_valid,";
 $sql .= " cp.fk_user_valid,";
@@ -268,7 +268,7 @@ $sql .= " uu.firstname as user_firstname,";
 $sql .= " uu.admin as user_admin,";
 $sql .= " uu.email as user_email,";
 $sql .= " uu.login as user_login,";
-$sql .= " uu.statut as user_statut,";
+$sql .= " uu.statut as user_status,";
 $sql .= " uu.photo as user_photo,";
 
 $sql .= " ua.lastname as validator_lastname,";
@@ -276,7 +276,7 @@ $sql .= " ua.firstname as validator_firstname,";
 $sql .= " ua.admin as validator_admin,";
 $sql .= " ua.email as validator_email,";
 $sql .= " ua.login as validator_login,";
-$sql .= " ua.statut as validator_statut,";
+$sql .= " ua.statut as validator_status,";
 $sql .= " ua.photo as validator_photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -311,11 +311,11 @@ if (!empty($search_valideur) && $search_valideur != -1) {
 }
 // Type
 if (!empty($search_type) && $search_type != -1) {
-	$sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($db->escape($search_type)).')';
 }
 // Status
-if (!empty($search_statut) && $search_statut != -1) {
-	$sql .= " AND cp.statut = '".$db->escape($search_statut)."'\n";
+if (!empty($search_status) && $search_status != -1) {
+	$sql .= " AND cp.statut = '".$db->escape($search_status)."'\n";
 }
 
 if (empty($user->rights->holiday->read_all)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
@@ -371,7 +371,7 @@ if ($resql)
 	if ($search_employee > 0) $param .= '&search_employee='.urlencode($search_employee);
 	if ($search_valideur > 0) $param .= '&search_valideur='.urlencode($search_valideur);
 	if ($search_type > 0)     $param .= '&search_type='.urlencode($search_type);
-	if ($search_statut > 0)   $param .= '&search_statut='.urlencode($search_statut);
+	if ($search_status > 0)   $param .= '&search_status='.urlencode($search_status);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -425,18 +425,14 @@ if ($resql)
 
 		if ($canedit)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 
 		print '</div>';
 	} else {
 		$title = $langs->trans("ListeCP");
 
-		$newcardbutton = '';
-		if ($user->rights->holiday->write)
-		{
-			$newcardbutton .= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request');
-	    }
+		$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
@@ -504,7 +500,7 @@ if ($resql)
 		}
 
 		print '<td class="liste_titre maxwidthonsmartphone left">';
-		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+		print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
 		print '</td>';
 	}
 
@@ -519,7 +515,7 @@ if ($resql)
 		    $valideurobjects = $validator->listUsersForGroup($excludefilter);
 		    $valideurarray = array();
 		    foreach ($valideurobjects as $val) $valideurarray[$val->id] = $val->id;
-		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
 		    print '</td>';
 		} else {
 		    print '<td class="liste_titre">&nbsp;</td>';
@@ -541,7 +537,7 @@ if ($resql)
 				//$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 				$arraytypeleaves[$val['rowid']] = $labeltoshow;
 			}
-			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1);
+			print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
 		print '</td>';
 	}
@@ -599,7 +595,7 @@ if ($resql)
 	if (!empty($arrayfields['cp.statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone maxwidth200 right">';
-		$object->selectStatutCP($search_statut, 'search_statut');
+		$object->selectStatutCP($search_status, 'search_status');
 		print '</td>';
 	}
 
@@ -616,7 +612,7 @@ if ($resql)
 	if (!empty($arrayfields['cp.fk_user']['checked']))              print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], "cp.fk_user", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['cp.fk_validator']['checked']))         print_liste_field_titre($arrayfields['cp.fk_validator']['label'], $_SERVER["PHP_SELF"], "cp.fk_validator", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['cp.fk_type']['checked']))              print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['duration']['checked']))                print_liste_field_titre($arrayfields['duration']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['duration']['checked']))                print_liste_field_titre($arrayfields['duration']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right maxwidth100');
 	if (!empty($arrayfields['cp.date_debut']['checked']))           print_liste_field_titre($arrayfields['cp.date_debut']['label'], $_SERVER["PHP_SELF"], "cp.date_debut", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['cp.date_fin']['checked']))             print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
@@ -656,6 +652,7 @@ if ($resql)
 			// Leave request
 			$holidaystatic->id = $obj->rowid;
 			$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
+			$holidaystatic->statut = $obj->status;
 
 			// User
 			$userstatic->id = $obj->fk_user;
@@ -664,7 +661,7 @@ if ($resql)
 			$userstatic->admin = $obj->user_admin;
 			$userstatic->email = $obj->user_email;
 			$userstatic->login = $obj->user_login;
-			$userstatic->statut = $obj->user_statut;
+			$userstatic->statut = $obj->user_status;
 			$userstatic->photo = $obj->user_photo;
 
 			// Validator
@@ -674,7 +671,7 @@ if ($resql)
 			$approbatorstatic->admin = $obj->validator_admin;
 			$approbatorstatic->email = $obj->validator_email;
 			$approbatorstatic->login = $obj->validator_login;
-			$approbatorstatic->statut = $obj->validator_statut;
+			$approbatorstatic->statut = $obj->validator_status;
 			$approbatorstatic->photo = $obj->validator_photo;
 
 			$date = $obj->date_create;
@@ -694,12 +691,12 @@ if ($resql)
 			}
 			if (!empty($arrayfields['cp.fk_user']['checked']))
 			{
-				print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['cp.fk_validator']['checked']))
 			{
-				print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$approbatorstatic->getNomUrl(-1).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['cp.fk_type']['checked']))
@@ -722,7 +719,7 @@ if ($resql)
 			{
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_debut), 'day');
-				print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+				print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -730,7 +727,7 @@ if ($resql)
 			{
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_fin), 'day');
-				print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+				print ' <span class="opacitymedium nowraponall">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -755,7 +752,7 @@ if ($resql)
 			}
 			if (!empty($arrayfields['cp.statut']['checked']))
 			{
-				print '<td class="right nowrap">'.$holidaystatic->LibStatut($obj->statut, 5).'</td>';
+				print '<td class="right nowrap">'.$holidaystatic->getLibStatut(5).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 

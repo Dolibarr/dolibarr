@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
@@ -392,24 +392,6 @@ abstract class CommonObject
 	 * @see fetchComments()
 	 */
 	public $comments = array();
-
-	/**
-	 * @var int
-	 * @see setIncoterms()
-	 */
-	public $fk_incoterms;
-
-	/**
-	 * @var string
-	 * @see SetIncoterms()
-	 */
-	public $label_incoterms;
-
-	/**
-	 * @var string
-	 * @see display_incoterms()
-	 */
-	public $location_incoterms;
 
 	/**
 	 * @var string The name
@@ -1046,8 +1028,8 @@ abstract class CommonObject
 		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql .= " statut = ".$statut;
-		if ($type_contact_id) $sql .= ", fk_c_type_contact = '".$type_contact_id."'";
-		if ($fk_socpeople) $sql .= ", fk_socpeople = '".$fk_socpeople."'";
+		if ($type_contact_id) $sql .= ", fk_c_type_contact = ".((int) $type_contact_id);
+		if ($fk_socpeople) $sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		$sql .= " where rowid = ".$rowid;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1407,9 +1389,9 @@ abstract class CommonObject
 		if ($source == 'internal') $sql .= " AND c.entity IN (".getEntity('user').")";
 		if ($source == 'external') $sql .= " AND c.entity IN (".getEntity('societe').")";
 		$sql .= " AND ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND tc.element = '".$element."'";
-		$sql .= " AND tc.source = '".$source."'";
-		if ($code) $sql .= " AND tc.code = '".$code."'";
+		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+		if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		$sql .= " AND tc.active = 1";
 		if ($status) $sql .= " AND ec.statut = ".$status;
 
@@ -3261,16 +3243,16 @@ abstract class CommonObject
 		{
 			if ($justsource)
 			{
-				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-				if ($withtargettype) $sql .= " AND targettype = '".$targettype."'";
+				$sql .= "fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."'";
+				if ($withtargettype) $sql .= " AND targettype = '".$this->db->escape($targettype)."'";
 			} elseif ($justtarget)
 			{
-				$sql .= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
-				if ($withsourcetype) $sql .= " AND sourcetype = '".$sourcetype."'";
+				$sql .= "fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."'";
+				if ($withsourcetype) $sql .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
 			}
 		} else {
-			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
-			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
+			$sql .= "(fk_source = ".$sourceid." AND sourcetype = '".$this->db->escape($sourcetype)."')";
+			$sql .= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$this->db->escape($targettype)."')";
 		}
 		$sql .= ' ORDER BY '.$orderby;
 
@@ -3882,97 +3864,6 @@ abstract class CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Return incoterms informations
-	 *    TODO Use a cache for label get
-	 *
-	 *    @return	string	incoterms info
-	 */
-	public function display_incoterms()
-	{
-		// phpcs:enable
-		$out = '';
-		$this->label_incoterms = '';
-		if (!empty($this->fk_incoterms))
-		{
-			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$res = $this->db->fetch_object($result);
-				$out .= $res->code;
-			}
-		}
-
-		$out .= (($res->code && $this->location_incoterms) ? ' - ' : '').$this->location_incoterms;
-
-		return $out;
-	}
-
-	/**
-	 *    Return incoterms informations for pdf display
-	 *
-	 *    @return	string		incoterms info
-	 */
-	public function getIncotermsForPDF()
-	{
-		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			if ($num > 0)
-			{
-				$res = $this->db->fetch_object($resql);
-				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
-			} else {
-				return '';
-			}
-		} else {
-			$this->errors[] = $this->db->lasterror();
-			return false;
-		}
-	}
-
-	/**
-	 *    Define incoterms values of current object
-	 *
-	 *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
-	 * 	  @param 	string  $location		 location of incoterm
-	 *    @return	int     		<0 if KO, >0 if OK
-	 */
-	public function setIncoterms($id_incoterm, $location)
-	{
-		if ($this->id && $this->table_element)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
-			$sql .= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$this->fk_incoterms = $id_incoterm;
-				$this->location_incoterms = $location;
-
-				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
-				$res = $this->db->query($sql);
-				if ($res)
-				{
-					$obj = $this->db->fetch_object($res);
-					$this->label_incoterms = $obj->libelle;
-				}
-				return 1;
-			} else {
-				$this->errors[] = $this->db->lasterror();
-				return -1;
-			}
-		} else return -1;
-	}
-
-
 	// --------------------
 	// TODO: All functions here must be redesigned and moved as they are not business functions but output functions
 	// --------------------
@@ -4567,245 +4458,245 @@ abstract class CommonObject
 
 		if (empty($reshook))
 		{
-		    dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+			dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
-		    // Increase limit for PDF build
-		    $err = error_reporting();
-		    error_reporting(0);
-		    @set_time_limit(120);
-		    error_reporting($err);
+			// Increase limit for PDF build
+			$err = error_reporting();
+			error_reporting(0);
+			@set_time_limit(120);
+			error_reporting($err);
 
-		    // If selected model is a filename template (then $modele="modelname" or "modelname:filename")
-		    $tmp = explode(':', $modele, 2);
-		    if (!empty($tmp[1]))
-		    {
-			    $modele = $tmp[0];
-			    $srctemplatepath = $tmp[1];
-		    }
+			// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
+			$tmp = explode(':', $modele, 2);
+			if (!empty($tmp[1]))
+			{
+				$modele = $tmp[0];
+				$srctemplatepath = $tmp[1];
+			}
 
-		    // Search template files
+			// Search template files
 			$file = '';
 			$classname = '';
 			$filefound = '';
-		    $dirmodels = array('/');
-		    if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-		    foreach ($dirmodels as $reldir)
-		    {
-			    foreach (array('doc', 'pdf') as $prefix)
-			    {
-				    if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php"; // Member module use prefix_module.class.php
-				    else $file = $prefix."_".$modele.".modules.php";
+			$dirmodels = array('/');
+			if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir)
+			{
+				foreach (array('doc', 'pdf') as $prefix)
+				{
+					if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php"; // Member module use prefix_module.class.php
+					else $file = $prefix."_".$modele.".modules.php";
 
-				    // On verifie l'emplacement du modele
-				    $file = dol_buildpath($reldir.$modelspath.$file, 0);
-				    if (file_exists($file))
-				    {
-					    $filefound = $file;
-					    $classname = $prefix.'_'.$modele;
-					    break;
-				    }
-			    }
-			    if ($filefound) break;
-		    }
+					// On verifie l'emplacement du modele
+					$file = dol_buildpath($reldir.$modelspath.$file, 0);
+					if (file_exists($file))
+					{
+						$filefound = $file;
+						$classname = $prefix.'_'.$modele;
+						break;
+					}
+				}
+				if ($filefound) break;
+			}
 
-		    // If generator was found
-		    if ($filefound)
-		    {
-			    global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+			// If generator was found
+			if ($filefound)
+			{
+				global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 
-			    require_once $file;
+				require_once $file;
 
-			    $obj = new $classname($this->db);
+				$obj = new $classname($this->db);
 
-			    // If generator is ODT, we must have srctemplatepath defined, if not we set it.
-			    if ($obj->type == 'odt' && empty($srctemplatepath))
-			    {
-				    $varfortemplatedir = $obj->scandir;
-				    if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir))
-				    {
-					    $dirtoscan = $conf->global->$varfortemplatedir;
+				// If generator is ODT, we must have srctemplatepath defined, if not we set it.
+				if ($obj->type == 'odt' && empty($srctemplatepath))
+				{
+					$varfortemplatedir = $obj->scandir;
+					if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir))
+					{
+						$dirtoscan = $conf->global->$varfortemplatedir;
 
-					    $listoffiles = array();
+						$listoffiles = array();
 
-					    // Now we add first model found in directories scanned
-					    $listofdir = explode(',', $dirtoscan);
-					    foreach ($listofdir as $key => $tmpdir)
-					    {
-						    $tmpdir = trim($tmpdir);
-						    $tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
-						    if (!$tmpdir) { unset($listofdir[$key]); continue; }
-						    if (is_dir($tmpdir))
-						    {
-							    $tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-							    if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
-						    }
-					    }
+						// Now we add first model found in directories scanned
+						$listofdir = explode(',', $dirtoscan);
+						foreach ($listofdir as $key => $tmpdir)
+						{
+							$tmpdir = trim($tmpdir);
+							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+							if (!$tmpdir) { unset($listofdir[$key]); continue; }
+							if (is_dir($tmpdir))
+							{
+								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+								if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
+							}
+						}
 
-					    if (count($listoffiles))
-					    {
-						    foreach ($listoffiles as $record)
-						    {
-							    $srctemplatepath = $record['fullname'];
-							    break;
-						    }
-					    }
-				    }
+						if (count($listoffiles))
+						{
+							foreach ($listoffiles as $record)
+							{
+								$srctemplatepath = $record['fullname'];
+								break;
+							}
+						}
+					}
 
-				    if (empty($srctemplatepath))
-				    {
-					    $this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
-					    return -1;
-				    }
-			    }
+					if (empty($srctemplatepath))
+					{
+						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
+						return -1;
+					}
+				}
 
-			    if ($obj->type == 'odt' && !empty($srctemplatepath))
-			    {
-				    if (!dol_is_file($srctemplatepath))
-				    {
-				    	dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
-					    $this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
-					    return -1;
-				    }
-			    }
+				if ($obj->type == 'odt' && !empty($srctemplatepath))
+				{
+					if (!dol_is_file($srctemplatepath))
+					{
+						dol_syslog("Failed to locate template file ".$srctemplatepath, LOG_WARNING);
+						$this->error = 'ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+						return -1;
+					}
+				}
 
-			    // We save charset_output to restore it because write_file can change it if needed for
-			    // output format that does not support UTF8.
-			    $sav_charset_output = $outputlangs->charset_output;
+				// We save charset_output to restore it because write_file can change it if needed for
+				// output format that does not support UTF8.
+				$sav_charset_output = $outputlangs->charset_output;
 
-			    if (in_array(get_class($this), array('Adherent')))
-			    {
-				    $arrayofrecords = array(); // The write_file of templates of adherent class need this var
-				    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
-			    } else {
-				     $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
-			    }
-			    // After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
+				if (in_array(get_class($this), array('Adherent')))
+				{
+					$arrayofrecords = array(); // The write_file of templates of adherent class need this var
+					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
+				} else {
+					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+				}
+				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
-			    if ($resultwritefile > 0)
-			    {
-				    $outputlangs->charset_output = $sav_charset_output;
+				if ($resultwritefile > 0)
+				{
+					$outputlangs->charset_output = $sav_charset_output;
 
-				    // We delete old preview
-				    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				    dol_delete_preview($this);
+					// We delete old preview
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					dol_delete_preview($this);
 
-				    // Index file in database
-				    if (!empty($obj->result['fullpath']))
-				    {
-					    $destfull = $obj->result['fullpath'];
-					    $upload_dir = dirname($destfull);
-					    $destfile = basename($destfull);
-					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
+					// Index file in database
+					if (!empty($obj->result['fullpath']))
+					{
+						$destfull = $obj->result['fullpath'];
+						$upload_dir = dirname($destfull);
+						$destfile = basename($destfull);
+						$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
 
-					    if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
-					    {
-						    $filename = basename($destfile);
-						    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-						    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+						if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+						{
+							$filename = basename($destfile);
+							$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+							$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
-						    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-						    $ecmfile = new EcmFiles($this->db);
-						    $result = $ecmfile->fetch(0, '', ($rel_dir ? $rel_dir.'/' : '').$filename);
+							include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+							$ecmfile = new EcmFiles($this->db);
+							$result = $ecmfile->fetch(0, '', ($rel_dir ? $rel_dir.'/' : '').$filename);
 
-						     // Set the public "share" key
-						    $setsharekey = false;
-						    if ($this->element == 'propal')
-						    {
-							    $useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL; // Replace this with 1 when feature to make online signature is ok
-							    if ($useonlinesignature) $setsharekey = true;
-							    if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey = true;
-						    }
-						    if ($this->element == 'commande' && !empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
-							    $setsharekey = true;
-						    }
-						    if ($this->element == 'facture' && !empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
-							    $setsharekey = true;
-						    }
-						    if ($this->element == 'bank_account' && !empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
-							    $setsharekey = true;
-						    }
+							 // Set the public "share" key
+							$setsharekey = false;
+							if ($this->element == 'propal')
+							{
+								$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL; // Replace this with 1 when feature to make online signature is ok
+								if ($useonlinesignature) $setsharekey = true;
+								if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey = true;
+							}
+							if ($this->element == 'commande' && !empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
+							if ($this->element == 'facture' && !empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
+							if ($this->element == 'bank_account' && !empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
 
-						    if ($setsharekey) {
-							    if (empty($ecmfile->share))	// Because object not found or share not set yet
-							    {
-								    require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-								    $ecmfile->share = getRandomPassword(true);
-							    }
-						    }
+							if ($setsharekey) {
+								if (empty($ecmfile->share))	// Because object not found or share not set yet
+								{
+									require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+									$ecmfile->share = getRandomPassword(true);
+								}
+							}
 
-						    if ($result > 0)
-						     {
-							    $ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
-							    $ecmfile->fullpath_orig = '';
-							    $ecmfile->gen_or_uploaded = 'generated';
-							    $ecmfile->description = ''; // indexed content
-							    $ecmfile->keyword = ''; // keyword content
-							    $result = $ecmfile->update($user);
-							    if ($result < 0) {
-								    setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-							    }
-						    } else {
-							    $ecmfile->entity = $conf->entity;
-							    $ecmfile->filepath = $rel_dir;
-							    $ecmfile->filename = $filename;
-							    $ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
-							    $ecmfile->fullpath_orig = '';
-							    $ecmfile->gen_or_uploaded = 'generated';
-							    $ecmfile->description = ''; // indexed content
-							    $ecmfile->keyword = ''; // keyword content
-							    $ecmfile->src_object_type = $this->table_element;
-							    $ecmfile->src_object_id   = $this->id;
+							if ($result > 0)
+							 {
+								$ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
+								$ecmfile->fullpath_orig = '';
+								$ecmfile->gen_or_uploaded = 'generated';
+								$ecmfile->description = ''; // indexed content
+								$ecmfile->keyword = ''; // keyword content
+								$result = $ecmfile->update($user);
+								if ($result < 0) {
+									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+								}
+							} else {
+								$ecmfile->entity = $conf->entity;
+								$ecmfile->filepath = $rel_dir;
+								$ecmfile->filename = $filename;
+								$ecmfile->label = md5_file(dol_osencode($destfull)); // hash of file content
+								$ecmfile->fullpath_orig = '';
+								$ecmfile->gen_or_uploaded = 'generated';
+								$ecmfile->description = ''; // indexed content
+								$ecmfile->keyword = ''; // keyword content
+								$ecmfile->src_object_type = $this->table_element;
+								$ecmfile->src_object_id   = $this->id;
 
-							    $result = $ecmfile->create($user);
-							    if ($result < 0) {
-								    setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-							    }
-						    }
+								$result = $ecmfile->create($user);
+								if ($result < 0) {
+									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+								}
+							}
 
-						    /*$this->result['fullname']=$destfull;
+							/*$this->result['fullname']=$destfull;
 						    $this->result['filepath']=$ecmfile->filepath;
 						    $this->result['filename']=$ecmfile->filename;*/
-						    //var_dump($obj->update_main_doc_field);exit;
+							//var_dump($obj->update_main_doc_field);exit;
 
-						    // Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
-						    $update_main_doc_field = 0;
-						    if (!empty($obj->update_main_doc_field)) $update_main_doc_field = 1;
-						    if ($update_main_doc_field && !empty($this->table_element))
-						    {
-							    $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
-							    $sql .= ' WHERE rowid = '.$this->id;
+							// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
+							$update_main_doc_field = 0;
+							if (!empty($obj->update_main_doc_field)) $update_main_doc_field = 1;
+							if ($update_main_doc_field && !empty($this->table_element))
+							{
+								$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+								$sql .= ' WHERE rowid = '.$this->id;
 
-							    $resql = $this->db->query($sql);
-							    if (!$resql) {
+								$resql = $this->db->query($sql);
+								if (!$resql) {
 									dol_print_error($this->db);
 								} else {
-							        $this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
-							    }
-						    }
-					    }
-				    } else {
-					    dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
-				    }
+									$this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+								}
+							}
+						}
+					} else {
+						dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+					}
 
-				    // Success in building document. We build meta file.
-				    dol_meta_create($this);
+					// Success in building document. We build meta file.
+					dol_meta_create($this);
 
-				    return 1;
-			    } else {
-				    $outputlangs->charset_output = $sav_charset_output;
-				    dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
-				    return -1;
-			    }
-		    } else {
-		    	if (!$filefound) {
-			    	$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-			    	dol_print_error('', $this->error);
-		    	} else {
-		    		$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-		    		dol_print_error('', $this->error);
-		    	}
-			    return -1;
-		    }
+					return 1;
+				} else {
+					$outputlangs->charset_output = $sav_charset_output;
+					dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
+					return -1;
+				}
+			} else {
+				if (!$filefound) {
+					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
+					dol_print_error('', $this->error);
+				} else {
+					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
+					dol_print_error('', $this->error);
+				}
+				return -1;
+			}
 		} else return $reshook;
 	}
 
@@ -4950,7 +4841,7 @@ abstract class CommonObject
 		// Request to get translation values for object
 		$sql = "SELECT rowid, property, lang , value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."object_lang";
-		$sql .= " WHERE type_object = '".$element."'";
+		$sql .= " WHERE type_object = '".$this->db->escape($element)."'";
 		$sql .= " AND fk_object = ".$this->id;
 
 		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
@@ -5850,11 +5741,9 @@ abstract class CommonObject
 		}
 
 		// Set value of $morecss. For this, we use in priority showsize from parameters, then $val['css'] then autodefine
-		if (empty($morecss) && !empty($val['css']))
-		{
+		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
-		} elseif (empty($morecss))
-		{
+		} elseif (empty($morecss)) {
 			if ($type == 'date')
 			{
 				$morecss = 'minwidth100imp';
@@ -5901,17 +5790,17 @@ abstract class CommonObject
 		{
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('real')))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', $type))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif ($type == 'text')
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+		} elseif (preg_match('/^text/', $type))
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -5921,7 +5810,7 @@ abstract class CommonObject
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		} elseif ($type == 'html')
+		} elseif (preg_match('/^html/', $type))
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -6695,7 +6584,7 @@ abstract class CommonObject
 					return 'Error bad setup of extrafield';
 				}
 			} else $value = '';
-		} elseif ($type == 'text' || $type == 'html')
+		} elseif (preg_match('/^(text|html)/', $type))
 		{
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password')
@@ -6706,7 +6595,7 @@ abstract class CommonObject
 			$value = implode('<br>', $value);
 		}
 
-		//print $type.'-'.$size;
+		//print $type.'-'.$size.'-'.$value;
 		$out = $value;
 
 		return $out;
@@ -6750,7 +6639,7 @@ abstract class CommonObject
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-					// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
+					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
 					{
@@ -6795,11 +6684,17 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix];
+							$value = $this->array_options["options_".$key.$keysuffix];	// Value may be clean or formated later
 							break;
 						case "create":
 						case "edit":
-							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
+							// We get the value of property found with GETPOST so it takes into account:
+							// default values overwrite, restore back to list link, ... (but not 'default value in database' of field)
+							$check = 'alphanohtml';
+							if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text'))) {
+								$check = 'restricthtml';
+							}
+							$getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, $check, 3); // GETPOST can get value from GET, POST or setup of default values overwrite.
 							// GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
 							if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
 							{
@@ -6864,18 +6759,18 @@ abstract class CommonObject
 							{
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
 						{
-							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
 						}
-						// HTML, select, integer and text add default value
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
+
+						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int')))
 						{
-							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
-							else $value = $this->array_options['options_'.$key];
+							if ($action == 'create') $value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 						}
 
 						$labeltoshow = $langs->trans($label);
@@ -6884,7 +6779,7 @@ abstract class CommonObject
 						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 						$out .= '<td class="';
 						//$out .= "titlefield";
-						//if (GETPOST('action', 'none') == 'create') $out.='create';
+						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
@@ -6909,6 +6804,8 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value);
 								break;
 							case "create":
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								break;
 							case "edit":
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 								break;
@@ -7255,7 +7152,7 @@ abstract class CommonObject
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
 								// Link to delete
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;token='.newToken().'&amp;file='.urlencode($pdir.$viewfilename).'">';
 								$return .= img_delete().'</a>';
 							}
 						}
@@ -7281,7 +7178,7 @@ abstract class CommonObject
 								$return .= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
 
 								// Link to delete
-								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;token='.newToken().'&amp;file='.urlencode($pdir.$viewfilename).'">';
 								$return .= img_delete().'</a>';
 							}
 						}
@@ -7987,46 +7884,46 @@ abstract class CommonObject
 
 		// Delete cascade first
 		if (is_array($this->childtablesoncascade) && !empty($this->childtablesoncascade)) {
-            foreach ($this->childtablesoncascade as $table)
-            {
-	            $deleteFromObject = explode(':', $table);
-	            if (count($deleteFromObject) >= 2) {
-		            $className = str_replace('@', '', $deleteFromObject[0]);
-		            $filePath = $deleteFromObject[1];
-		            $columnName = $deleteFromObject[2];
-		            if (dol_include_once($filePath)) {
-			            $childObject = new $className($this->db);
-			            if (method_exists($childObject, 'deleteByParentField')) {
-				            $result = $childObject->deleteByParentField($this->id, $columnName);
-				            if ($result < 0) {
+			foreach ($this->childtablesoncascade as $table)
+			{
+				$deleteFromObject = explode(':', $table);
+				if (count($deleteFromObject) >= 2) {
+					$className = str_replace('@', '', $deleteFromObject[0]);
+					$filePath = $deleteFromObject[1];
+					$columnName = $deleteFromObject[2];
+					if (dol_include_once($filePath)) {
+						$childObject = new $className($this->db);
+						if (method_exists($childObject, 'deleteByParentField')) {
+							$result = $childObject->deleteByParentField($this->id, $columnName);
+							if ($result < 0) {
 								$error++;
-					            $this->errors[] = $childObject->error;
-					            break;
-				            }
-			            } else {
+								$this->errors[] = $childObject->error;
+								break;
+							}
+						} else {
 							$error++;
 							$this->errors[] = "You defined a cascade delete on an object $childObject but there is no method deleteByParentField for it";
 							break;
 						}
-		            } else {
-			            $error++;
-						$this->errors[] = 'Cannot include child class file '.$filePath;
-			            break;
-		            }
-	            } else {
-	            	// Delete record in child table
-	            	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
-
-		            $resql = $this->db->query($sql);
-		            if (!$resql) {
+					} else {
 						$error++;
-			            $this->error = $this->db->lasterror();
-			            $this->errors[] = $this->error;
+						$this->errors[] = 'Cannot include child class file '.$filePath;
 						break;
-		            }
-	            }
-            }
-        }
+					}
+				} else {
+					// Delete record in child table
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++;
+						$this->error = $this->db->lasterror();
+						$this->errors[] = $this->error;
+						break;
+					}
+				}
+			}
+		}
 
 		if (!$error) {
 			if (!$notrigger) {
@@ -8402,7 +8299,7 @@ abstract class CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_product)";
 		$sql .= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_product = '".$fromId."'";
+		$sql .= " WHERE fk_product = ".((int) $fromId);
 
 		if (!$this->db->query($sql))
 		{
@@ -8413,5 +8310,50 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return 1;
+	}
+
+	/**
+	 * Delete related files of object in database
+	 *
+	 * @return bool
+	 */
+	public function deleteEcmFiles()
+	{
+		global $conf;
+
+		$this->db->begin();
+
+		switch ($this->element){
+			case 'propal':
+				$element = 'propale';
+				break;
+			case 'product':
+				$element = 'produit';
+				break;
+			case 'order_supplier':
+				$element ='fournisseur/commande';
+				break;
+			case 'invoice_supplier':
+				$element = 'fournisseur/facture/' . get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+				break;
+			case 'shipping':
+				$element = 'expedition/sending';
+				break;
+			default:
+				$element = $this->element;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
+		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return false;
+		}
+
+		$this->db->commit();
+		return true;
 	}
 }

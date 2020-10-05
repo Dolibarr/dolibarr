@@ -104,7 +104,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 
@@ -121,7 +121,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
 		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 			print img_picto($langs->trans("Activated"), 'switch_on');
 		} else {
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		}
 	} else {
 		print '<span class="opacitymedium">';
@@ -141,7 +141,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 print '</table>';
@@ -232,6 +232,14 @@ print $langs->trans("AutoPrintTickets");
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AUTO_PRINT_TICKETS, 1);
 print "</td></tr>\n";
+
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans('WeighingScale');
+	print '<td colspan="2">';
+	print ajax_constantonoff("TAKEPOS_WEIGHING_SCALE", array(), $conf->entity, 0, 0, 1, 0);
+	print "</td></tr>\n";
+}
 
 print '</table>';
 print '</div>';

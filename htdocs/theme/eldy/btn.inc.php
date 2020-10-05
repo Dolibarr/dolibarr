@@ -70,7 +70,6 @@ span.butAction, span.butActionDelete {
 
     margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
     padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
-    font-family: <?php print $fontlist ?>;
     display: inline-block;
     text-align: center;
     cursor: pointer;
@@ -277,6 +276,9 @@ div.pagination li:first-child a.btnTitle{
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.95em;
+	}
 	.btnTitle, a.btnTitle {
 	    display: inline-block;
 	    padding: 4px 4px 4px 4px;

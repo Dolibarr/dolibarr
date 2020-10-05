@@ -154,7 +154,7 @@ class User extends CommonObject
 	public $datelastlogin;
 	public $datepreviouslogin;
 	public $datestartvalidity;
-	public $dateedvalidity;
+	public $dateendvalidity;
 	public $photo;
 	public $lang;
 
@@ -1038,6 +1038,14 @@ class User extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
+		// Remove params
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user  = ".$this->id;
+		if (!$error && !$this->db->query($sql))
+		{
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
 		// If contact, remove link
 		if ($this->contact_id > 0)
 		{
@@ -1459,7 +1467,6 @@ class User extends CommonObject
 		$this->employee    	= $this->employee ? $this->employee : 0;
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
-		$this->birth        = trim($this->birth);
 		$this->pass         = trim($this->pass);
 		$this->api_key      = trim($this->api_key);
 		$this->address = $this->address ?trim($this->address) : trim($this->address);
@@ -1487,6 +1494,9 @@ class User extends CommonObject
 		$this->color = empty($this->color) ? '' : $this->color;
 		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
 		$this->dateemploymentend = empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
+		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+		$this->birth        = trim($this->birth);
 		$this->fk_warehouse = trim(empty($this->fk_warehouse) ? '' : $this->fk_warehouse);
 
 		// Check parameters
@@ -1499,7 +1509,7 @@ class User extends CommonObject
 		if (empty($this->login))
 		{
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorFieldRequired", $this->login);
+			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
 		}
 
@@ -1533,6 +1543,8 @@ class User extends CommonObject
 		$sql .= ", color = '".$this->db->escape($this->color)."'";
 		$sql .= ", dateemployment=".(strval($this->dateemployment) != '' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
 		$sql .= ", dateemploymentend=".(strval($this->dateemploymentend) != '' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
+		$sql .= ", datestartvalidity=".(strval($this->datestartvalidity) != '' ? "'".$this->db->idate($this->datestartvalidity)."'" : 'null');
+		$sql .= ", dateendvalidity=".(strval($this->dateendvalidity) != '' ? "'".$this->db->idate($this->dateendvalidity)."'" : 'null');
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
@@ -1550,7 +1562,6 @@ class User extends CommonObject
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse ? "'".$this->db->escape($this->fk_warehouse)."'" : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
-
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -2244,7 +2255,7 @@ class User extends CommonObject
 
 		// Info Login
 		$label .= '<div class="centpercent">';
-		$label .= '<u>'.$langs->trans("User").'</u><br>';
+		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("User").'</u><br>';
 		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
 		if (!empty($this->login)) $label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
 		if (!empty($this->job)) $label .= '<br><b>'.$langs->trans("Job").':</b> '.$this->job;
@@ -2392,9 +2403,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Return label of status of user (active, inactive)
+	 *  Return the label of the status of user (active, inactive)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -2404,7 +2415,7 @@ class User extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return label of a status of user (active, inactive)
+	 *  Return the label of a status of user (active, inactive)
 	 *
 	 *  @param  int     $status         Id status
 	 *  @param  int		$mode           0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
@@ -3133,7 +3144,7 @@ class User extends CommonObject
 
 		$sql = "SELECT rowid, email, user_mobile, civility, lastname, firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -3233,9 +3244,9 @@ class User extends CommonObject
 			}
 			return $num;
 		} else {
-            $this->errors[] = $this->db->lasterror();
-            return -1;
-        }
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
 	}
 
 	/**

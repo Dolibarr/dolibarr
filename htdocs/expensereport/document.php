@@ -39,8 +39,10 @@ $langs->loadLangs(array("other", "trips", "companies", "interventions"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$childids = $user->getAllChildIds(1);
 
 // Security check
 if ($user->socid) $socid = $user->socid;
@@ -49,8 +51,8 @@ $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -61,13 +63,28 @@ if (!$sortfield) $sortfield = "position_name";
 
 
 $object = new ExpenseReport($db);
-$object->fetch($id, $ref);
+if (!$object->fetch($id, $ref) > 0)
+{
+	dol_print_error($db);
+}
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'trip';
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+
+if ($object->id > 0)
+{
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->expensereport->readall)) $canread = 1;
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
+}
 
 
 /*

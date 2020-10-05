@@ -244,7 +244,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         }
 
         $sql = "SELECT ".$typethirdparty." FROM ".MAIN_DB_PREFIX."societe";
-        $sql .= " WHERE ".$typethirdparty." = '".$code."'";
+        $sql .= " WHERE ".$typethirdparty." = '".$db->escape($code)."'";
 
         $resql = $db->query($sql);
         if ($resql)

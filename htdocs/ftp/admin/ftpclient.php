@@ -33,7 +33,7 @@ if (!$user->admin) accessforbidden();
 $def = array();
 $lastftpentry = 0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $entry = GETPOST('numero_entry', 'alpha');
 
 

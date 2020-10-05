@@ -170,7 +170,7 @@ class UserBankAccount extends Account
         $sql .= " FROM ".MAIN_DB_PREFIX."user_rib";
         if ($id) $sql .= " WHERE rowid = ".$id;
         if ($ref) $sql .= " WHERE label = '".$this->db->escape($ref)."'";
-        if ($userid) $sql .= " WHERE fk_user = '".$userid."'";
+        if ($userid) $sql .= " WHERE fk_user = ".((int) $userid);
 
         $resql = $this->db->query($sql);
         if ($resql)

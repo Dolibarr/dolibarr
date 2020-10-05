@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -120,7 +120,7 @@ $listofmethods['default'] = $langs->trans('DefaultOutgoingEmailSetup');
 $listofmethods['mail'] = 'PHP mail function';
 //$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
+if (version_compare(phpversion(), '7.0', '>=')) $listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 
 if ($action == 'edit')

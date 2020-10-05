@@ -104,6 +104,17 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Sanitize a string for SQL forging
+	 *
+	 * @param   string $stringtosanitize 	String to escape
+	 * @return  string                      String escaped
+	 */
+	public function sanitize($stringtosanitize)
+	{
+		return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
+	}
+
+	/**
 	 * Start transaction
 	 *
 	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error

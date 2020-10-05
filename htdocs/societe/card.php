@@ -85,7 +85,6 @@ if (!($object->id > 0) && $action == 'view')
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($socid);
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
 if (!empty($canvas))
@@ -96,7 +95,7 @@ if (!empty($canvas))
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 
 $permissiontoread = $user->rights->societe->lire;
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -343,7 +342,7 @@ if (empty($reshook))
         // Fill array 'array_options' with data from update form
         $extrafields->fetch_name_optionals_label($object->table_element);
 
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
         if ($ret < 0) $error++;
 
         if (!$error)
@@ -1182,12 +1181,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
-	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.$object->name.'" autofocus="autofocus">';
+	    print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
 	    print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
 	    print '</td>';
 	    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
-		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
+	    	print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
 	    }
 	    print '</tr>';
 
@@ -1198,7 +1197,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         	{
         		// Firstname
 	            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
-		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.dol_escape_htmltag($object->firstname).'"></td>';
 	            print '</tr>';
 
 	            // Title
@@ -1210,7 +1209,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         // Alias names (commercial, trademark or alias names)
         print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	    print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'"></td></tr>';
+        print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
@@ -1275,7 +1274,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if (!empty($conf->barcode->enabled))
         {
         	print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
+	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
             print '</td></tr>';
         }
 
@@ -1285,7 +1284,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         print '</td>';
 	    print '<td colspan="3">';
 	    print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
-        print $object->address;
+	    print dol_escape_htmltag($object->address);
         print '</textarea>';
         print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
         print '</td></tr>';
@@ -1303,7 +1302,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         // Country
         print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
         print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-        print $form->select_country((GETPOST('country_id') != '' ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+        print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         print '</td></tr>';
 
@@ -1457,13 +1456,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         // Capital
         print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
-	    print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> ';
+	    print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
         print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 
         if (!empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-            print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+            print $formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
             print '</td>';
             print '</tr>';
         }
@@ -1858,7 +1857,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                     print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 } elseif ($object->codefournisseur_modifiable())
                 {
-                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+                	print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="15">';
                 } else {
                     print $object->code_fournisseur;
                     print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
@@ -1874,7 +1873,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             if (!empty($conf->barcode->enabled))
             {
                 print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
+	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
                 print '</td></tr>';
             }
 
@@ -1886,7 +1885,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             // Address
             print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 	        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-            print $object->address;
+	        print dol_escape_htmltag($object->address);
             print '</textarea>';
             print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
             print '</td></tr>';
@@ -2281,7 +2280,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if (!empty($conf->barcode->enabled))
         {
             print '<tr><td>';
-            print $langs->trans('Gencod').'</td><td>'.$object->barcode;
+            print $langs->trans('Gencod').'</td><td>'.dol_escape_htmltag($object->barcode);
             print '</td>';
             print '</tr>';
         }
@@ -2419,7 +2418,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if ($object->tva_intra)
         {
             $s = '';
-            $s .= $object->tva_intra;
+            $s .= dol_escape_htmltag($object->tva_intra);
             $s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
@@ -2658,7 +2657,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		            {
 		                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 		            } else {
-		                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
+		                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 		            }
 		        }
 			}
@@ -2687,7 +2686,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	            $genallowed = $user->rights->societe->lire;
 	            $delallowed = $user->rights->societe->creer;
 
-	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 	        }
 
 			// Subsidiaries list

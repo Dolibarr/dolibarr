@@ -133,66 +133,6 @@ class box_graph_product_distribution extends ModeleBoxes
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '160' : '320';
 		$HEIGHT = '192';
 
-		if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire))
-		{
-			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
-			if ($showinvoicenb)
-			{
-                $langs->load("bills");
-				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-
-				$showpointvalue = 1; $nocolor = 0;
-				$mode = 'customer';
-				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
-
-				if (empty($data1))
-				{
-					$showpointvalue = 0;
-					$nocolor = 1;
-					$data1 = array(array(0=>$langs->trans("None"), 1=>1));
-				}
-				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
-
-				$px1 = new DolGraph();
-				$mesg = $px1->isGraphKo();
-				if (!$mesg)
-				{
-					$i = 0; $legend = array();
-
-					foreach ($data1 as $key => $val)
-					{
-						$data1[$key][0] = dol_trunc($data1[$key][0], 32);
-						$legend[] = $data1[$key][0];
-						$i++;
-					}
-
-					$px1->SetData($data1);
-					unset($data1);
-
-					if ($nocolor) $px1->SetDataColor(array(array(220, 220, 220)));
-					$px1->SetLegend($legend);
-					$px1->setShowLegend(2);
-					$px1->setShowPointValue($showpointvalue);
-					$px1->setShowPercent(0);
-					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					//$px1->SetWidth($WIDTH);
-					$px1->SetHeight($HEIGHT);
-					//$px1->SetYLabel($langs->trans("NumberOfBills"));
-					$px1->SetShading(3);
-					$px1->SetHorizTickIncrement(1);
-					$px1->SetCssPrefix("cssboxes");
-					//$px1->mode='depth';
-					$px1->SetType(array('pie'));
-					$px1->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Invoices")));
-					$px1->combine = 0.05;
-
-					$px1->draw($filenamenb, $fileurlnb);
-				}
-			}
-		}
-
 		if (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire))
 		{
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
@@ -312,6 +252,67 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
+
+		if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire))
+		{
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			if ($showinvoicenb)
+			{
+				$langs->load("bills");
+				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+
+				$showpointvalue = 1; $nocolor = 0;
+				$mode = 'customer';
+				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
+				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
+
+				if (empty($data1))
+				{
+					$showpointvalue = 0;
+					$nocolor = 1;
+					$data1 = array(array(0=>$langs->trans("None"), 1=>1));
+				}
+				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';
+
+				$px1 = new DolGraph();
+				$mesg = $px1->isGraphKo();
+				if (!$mesg)
+				{
+					$i = 0; $legend = array();
+
+					foreach ($data1 as $key => $val)
+					{
+						$data1[$key][0] = dol_trunc($data1[$key][0], 32);
+						$legend[] = $data1[$key][0];
+						$i++;
+					}
+
+					$px1->SetData($data1);
+					unset($data1);
+
+					if ($nocolor) $px1->SetDataColor(array(array(220, 220, 220)));
+					$px1->SetLegend($legend);
+					$px1->setShowLegend(2);
+					$px1->setShowPointValue($showpointvalue);
+					$px1->setShowPercent(0);
+					$px1->SetMaxValue($px1->GetCeilMaxValue());
+					//$px1->SetWidth($WIDTH);
+					$px1->SetHeight($HEIGHT);
+					//$px1->SetYLabel($langs->trans("NumberOfBills"));
+					$px1->SetShading(3);
+					$px1->SetHorizTickIncrement(1);
+					$px1->SetCssPrefix("cssboxes");
+					//$px1->mode='depth';
+					$px1->SetType(array('pie'));
+					$px1->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Invoices")));
+					$px1->combine = 0.05;
+
+					$px1->draw($filenamenb, $fileurlnb);
+				}
+			}
+		}
+
 		if (empty($nbofgraph))
 		{
 		    $langs->load("errors");
@@ -339,11 +340,6 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow .= '<input type="hidden" name="page_y" value="">';
 			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
-			if (!empty($conf->facture->enabled) || !empty($user->rights->facture->lire))
-			{
-				$stringtoshow .= '<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb ? ' checked' : '').'> '.$langs->trans("ForCustomersInvoices");
-				$stringtoshow .= ' &nbsp; ';
-			}
 			if (!empty($conf->propal->enabled) || !empty($user->rights->propale->lire))
 			{
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb ? ' checked' : '').'> '.$langs->trans("ForProposals");
@@ -353,6 +349,11 @@ class box_graph_product_distribution extends ModeleBoxes
 			{
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb ? ' checked' : '').'> '.$langs->trans("ForCustomersOrders");
 			}
+			if (!empty($conf->facture->enabled) || !empty($user->rights->facture->lire))
+			{
+				$stringtoshow .= '<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb ? ' checked' : '').'> '.$langs->trans("ForCustomersInvoices");
+				$stringtoshow .= ' &nbsp; ';
+			}
 			$stringtoshow .= '<br>';
 			$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
 			$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto('', 'refresh.png', '', '', 1).'">';
@@ -361,29 +362,29 @@ class box_graph_product_distribution extends ModeleBoxes
 
 			if ($nbofgraph == 1)
 			{
-				if ($showinvoicenb) $stringtoshow .= $px1->show();
-				elseif ($showpropalnb) $stringtoshow .= $px2->show();
-				else $stringtoshow .= $px3->show();
+				if ($showpropalnb) $stringtoshow .= $px2->show();
+				elseif ($showordernb) $stringtoshow .= $px3->show();
+				else $stringtoshow .= $px1->show();
 			}
 			if ($nbofgraph == 2)
 			{
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				if ($showinvoicenb) $stringtoshow .= $px1->show();
-				elseif ($showpropalnb) $stringtoshow .= $px2->show();
+				if ($showpropalnb) $stringtoshow .= $px2->show();
+				elseif ($showordernb) $stringtoshow .= $px3->show();
 				$stringtoshow .= '</div><div class="fichehalfright">';
-				if ($showordernb) $stringtoshow .= $px3->show();
-				elseif ($showpropalnb) $stringtoshow .= $px2->show();
+				if ($showinvoicenb) $stringtoshow .= $px1->show();
+				elseif ($showordernb) $stringtoshow .= $px3->show();
 				$stringtoshow .= '</div></div></div>';
 			}
 			if ($nbofgraph == 3)
 			{
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				$stringtoshow .= $px1->show();
-				$stringtoshow .= '</div><div class="fichehalfright">';
 				$stringtoshow .= $px2->show();
+				$stringtoshow .= '</div><div class="fichehalfright">';
+				$stringtoshow .= $px3->show();
 				$stringtoshow .= '</div></div></div>';
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter">';
-				$stringtoshow .= $px3->show();
+				$stringtoshow .= $px1->show();
 				$stringtoshow .= '</div></div>';
 			}
 			$this->info_box_contents[0][0] = array(

@@ -92,7 +92,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
     				// Call function to check user/password
     				$function = 'check_user_password_'.$mode;
     				$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-    				if ($login)	// Login is successfull
+    				if ($login && $login != '--bad-login-validity--')	// Login is successfull
     				{
     					$test = false; // To stop once at first login success
     					$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
@@ -130,8 +130,8 @@ if (!function_exists('dol_loginfunction'))
      */
     function dol_loginfunction($langs, $conf, $mysoc)
 	{
-		global $dolibarr_main_demo, $db;
-		global $hookmanager;
+		global $dolibarr_main_demo, $dolibarr_main_force_https;
+		global $db, $hookmanager;
 
 		$langs->loadLangs(array("main", "other", "help", "admin"));
 
@@ -184,7 +184,7 @@ if (!function_exists('dol_loginfunction'))
 		// Set cookie for timeout management
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
-		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, false, true);
+		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
 
 		if (GETPOST('urlfrom', 'alpha')) $_SESSION["urlfrom"] = GETPOST('urlfrom', 'alpha');
 		else unset($_SESSION["urlfrom"]);

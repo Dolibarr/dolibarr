@@ -384,7 +384,7 @@ class Tva extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
         if ($year)
         {
-            $sql .= " AND f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
+        	$sql .= " AND f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
         }
 
         $result = $this->db->query($sql);
@@ -421,7 +421,7 @@ class Tva extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
         if ($year)
         {
-            $sql .= " WHERE f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
+        	$sql .= " WHERE f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
         }
 
         $result = $this->db->query($sql);
@@ -460,7 +460,7 @@ class Tva extends CommonObject
 
         if ($year)
         {
-            $sql .= " WHERE f.datev >= '".$year."-01-01' AND f.datev <= '".$year."-12-31' ";
+        	$sql .= " WHERE f.datev >= '".$this->db->escape($year)."-01-01' AND f.datev <= '".$this->db->escape($year)."-12-31' ";
         }
 
         $result = $this->db->query($sql);
@@ -499,6 +499,7 @@ class Tva extends CommonObject
         $this->amount = price2num(trim($this->amount));
         $this->label = trim($this->label);
 		$this->note = trim($this->note);
+		$this->num_payment = trim($this->num_payment);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
@@ -583,9 +584,9 @@ class Tva extends CommonObject
 					if ($result <= 0) dol_print_error($this->db);
 
 					if ($this->amount > 0) {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), '', '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), $this->num_payment, '', $user);
 					} else {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), '', '', $user);
+						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), $this->num_payment, '', $user);
 					}
 
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction

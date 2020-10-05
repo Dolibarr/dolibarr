@@ -33,7 +33,7 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -58,10 +58,10 @@ if ($action == 'setbarcodeproducton')
 if ($action == 'setcoder')
 {
 	$coder = GETPOST('coder', 'alpha');
-	$code_id = GETPOST('code_id', 'alpha');
+	$code_id = GETPOST('code_id', 'int');
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
-	$sqlp .= " SET coder = '".$coder."'";
-	$sqlp .= " WHERE rowid = ".$code_id;
+	$sqlp .= " SET coder = '".$db->escape($coder)."'";
+	$sqlp .= " WHERE rowid = ".((int) $code_id);
 	$sqlp .= " AND entity = ".$conf->entity;
 
 	$resql = $db->query($sqlp);
@@ -104,8 +104,8 @@ if ($action == 'setcoder')
 	            $code_id = $obj->rowid;
 
 	            $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
-	            $sqlp .= " SET coder = '".$coder."'";
-	            $sqlp .= " WHERE rowid = ".$code_id;
+	            $sqlp .= " SET coder = '".$db->escape($coder)."'";
+	            $sqlp .= " WHERE rowid = ".((int) $code_id);
 	            $sqlp .= " AND entity = ".$conf->entity;
 
 	            $upsql = $db->query($sqlp);
@@ -396,11 +396,11 @@ if ($conf->product->enabled)
 
 	    			if ($conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file")
 	    			{
-	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;value='.$file.'">';
+	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 	    				print img_picto($langs->trans("Activated"), 'switch_on');
 	    				print '</a></td>';
 	    			} else {
-	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;value='.$file.'">';
+	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducto&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 	    				print img_picto($langs->trans("Disabled"), 'switch_off');
 	    				print '</a></td>';
 	    			}

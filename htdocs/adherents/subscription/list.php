@@ -33,10 +33,9 @@ $langs->loadLangs(array("members", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'subscriptionlist'; // To manage different context of search
 
 $statut = (GETPOSTISSET("statut") ?GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -147,13 +146,15 @@ $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql .= " c.fk_bank as bank, c.note,";
 $sql .= " b.fk_account";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
+$sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
-$sql .= " WHERE d.rowid = c.fk_adherent";
-$sql .= " AND d.entity IN (".getEntity('adherent').")";
-if (isset($date_select) && $date_select != '') {
-    $sql .= " AND c.dateadh >= '".$date_select."-01-01 00:00:00'";
-    $sql .= " AND c.dateadh < '".($date_select + 1)."-01-01 00:00:00'";
+$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
+if (isset($date_select) && $date_select != '')
+{
+    $sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
+    $sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (c.rowid = ".$db->escape($search_ref).")";

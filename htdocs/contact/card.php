@@ -78,7 +78,7 @@ if (!empty($canvas))
 
 // Security check
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard', 'globalcard'));
@@ -177,10 +177,10 @@ if (empty($reshook))
 		if ($canvas) $object->canvas = $canvas;
 
 		$object->entity = (GETPOSTISSET('entity') ?GETPOST('entity', 'int') : $conf->entity);
-		$object->socid			= GETPOST("socid", 'int');
+		$object->socid = GETPOST("socid", 'int');
 		$object->lastname = GETPOST("lastname", 'alpha');
 		$object->firstname = GETPOST("firstname", 'alpha');
-		$object->civility_code	= GETPOST("civility_code", 'alpha');
+		$object->civility_code = GETPOST("civility_code", 'alpha');
 		$object->poste			= GETPOST("poste", 'alpha');
 		$object->address = GETPOST("address", 'alpha');
 		$object->zip = GETPOST("zipcode", 'alpha');
@@ -207,8 +207,8 @@ if (empty($reshook))
 		$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
 		$object->fax = GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
-		$object->note_public = GETPOST("note_public", 'none');
-		$object->note_private = GETPOST("note_private", 'none');
+		$object->note_public = GETPOST("note_public", 'restricthtml');
+		$object->note_private = GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
 		$object->statut			= 1; //Defult status to Actif
@@ -395,8 +395,8 @@ if (empty($reshook))
 			$object->phone_mobile = GETPOST("phone_mobile", 'alpha');
 			$object->fax = GETPOST("fax", 'alpha');
 			$object->priv = GETPOST("priv", 'int');
-			$object->note_public = GETPOST("note_public", 'none');
-			$object->note_private = GETPOST("note_private", 'none');
+			$object->note_public = GETPOST("note_public", 'restricthtml');
+			$object->note_private = GETPOST("note_private", 'restricthtml');
 			$object->roles = GETPOST("roles", 'array');
 
 			// Fill array 'array_options' with data from add form
@@ -851,7 +851,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<table class="border centpercent">';
 
 			// Date To Birth
-			print '<tr><td><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td>';
+			print '<tr><td><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td>';
 			$form = new Form($db);
 			if ($object->birthday)
 			{
@@ -1249,9 +1249,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 	}
 
-	if (!empty($id) && $action != 'edit' && $action != 'create')
-	{
-		$objsoc = new Societe($db);
+    // Select mail models is same action as presend
+    if (GETPOST('modelselected', 'alpha')) {
+        $action = 'presend';
+    }
+
+    if (!empty($id) && $action != 'edit' && $action != 'create')
+    {
+        $objsoc = new Societe($db);
 
 		// View mode
 
@@ -1355,7 +1360,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 		$object->fetch_thirdparty();
 
-		if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+		if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
 			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3)
 			{
 				print '<br>';
@@ -1368,11 +1373,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print $langs->trans('ProspectLevel');
 				print '<td>';
-				if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editlevel&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify'), 1) . '</a></td>';
+				if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'editlevel') {
-					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
+					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
 				} else {
 					print $object->getLibProspLevel();
 				}
@@ -1381,13 +1386,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 				// Status of prospection
 				$object->loadCacheOfProspStatus();
-				print '<tr><td>' . $langs->trans("StatusProsp") . '</td><td>' . $object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+				print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
 				print ' &nbsp; &nbsp; ';
 				print '<div class="floatright">';
 				foreach ($object->cacheprospectstatus as $key => $val) {
 					$titlealt = 'default';
 					if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-					if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&stcomm=' . $val['code'] . '&action=setstcomm">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+					if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 				}
 				print '</div></td></tr>';
 
@@ -1521,7 +1526,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Delete
 			if ($user->rights->societe->contact->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete'.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().''.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
 			}
 		}
 

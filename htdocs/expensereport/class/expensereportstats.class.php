@@ -136,7 +136,7 @@ class ExpenseReportStats extends Stats
 	{
 		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -156,7 +156,7 @@ class ExpenseReportStats extends Stats
 	{
 		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+		$sql .= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');

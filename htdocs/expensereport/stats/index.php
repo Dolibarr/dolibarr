@@ -75,7 +75,7 @@ print load_fiche_titre($title, '', 'trip');
 dol_mkdir($dir);
 
 $stats = new ExpenseReportStats($db, $socid, $userid);
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND e.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 // Build graphic number of object
 // $data = array(array('Lib',val1,val2,val3),...)

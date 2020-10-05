@@ -111,152 +111,152 @@ if (empty($reshook))
 			header("Location: ".$backtopage);
 			exit;
 		}
-	    $action = '';
+		$action = '';
 	}
 
-	// If create a request
-	if ($action == 'create')
+	// Add leave request
+	if ($action == 'add')
 	{
-	    // If no right to create a request
-	    if (!$cancreate)
-	    {
-	    	$error++;
-	    	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
-	    	$action = 'request';
-	    }
+		// If no right to create a request
+		if (!$cancreate)
+		{
+			$error++;
+			setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
+			$action = 'create';
+		}
 
-	    if (!$error)
-	    {
-	        $object = new Holiday($db);
+		if (!$error)
+		{
+			$object = new Holiday($db);
 
-	    	$db->begin();
+			$db->begin();
 
-		    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		    $date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		    $date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		    $date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
-		    $starthalfday = GETPOST('starthalfday');
-		    $endhalfday = GETPOST('endhalfday');
-		    $type = GETPOST('type');
-		    $halfday = 0;
-		    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday = 2;
-		    elseif ($starthalfday == 'afternoon') $halfday = -1;
-		    elseif ($endhalfday == 'morning') $halfday = 1;
+			$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
+			$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+			$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
+			$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+			$starthalfday = GETPOST('starthalfday');
+			$endhalfday = GETPOST('endhalfday');
+			$type = GETPOST('type');
+			$halfday = 0;
+			if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday = 2;
+			elseif ($starthalfday == 'afternoon') $halfday = -1;
+			elseif ($endhalfday == 'morning') $halfday = 1;
 
-		    $valideur = GETPOST('valideur', 'int');
-		    $description = trim(GETPOST('description', 'none'));
+			$valideur = GETPOST('valideur', 'int');
+			$description = trim(GETPOST('description', 'restricthtml'));
 
-	    	// If no type
-		    if ($type <= 0)
-		    {
-		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// If no type
+			if ($type <= 0)
+			{
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+				$error++;
+				$action = 'add';
+			}
 
-		    // If no start date
-		    if (empty($date_debut))
-		    {
-		        setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
-		    // If no end date
-		    if (empty($date_fin))
-		    {
-		        setEventMessages($langs->trans("NoDateFin"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
-		    // If start date after end date
-		    if ($date_debut > $date_fin)
-		    {
-		        setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// If no start date
+			if (empty($date_debut))
+			{
+				setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
+				$error++;
+				$action = 'add';
+			}
+			// If no end date
+			if (empty($date_fin))
+			{
+				setEventMessages($langs->trans("NoDateFin"), null, 'errors');
+				$error++;
+				$action = 'add';
+			}
+			// If start date after end date
+			if ($date_debut > $date_fin)
+			{
+				setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
+				$error++;
+				$action = 'add';
+			}
 
-		    // Check if there is already holiday for this period
-		    $verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
-		    if (!$verifCP)
-		    {
-		        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// Check if there is already holiday for this period
+			$verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
+			if (!$verifCP)
+			{
+				setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+				$error++;
+				$action = 'add';
+			}
 
-		    // If there is no Business Days within request
-		    $nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
-		    if ($nbopenedday < 0.5)
-		    {
-		        setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
-		        $error++;
-		        $action = 'create';
-		    }
+			// If there is no Business Days within request
+			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
+			if ($nbopenedday < 0.5)
+			{
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+				$error++;
+				$action = 'add';
+			}
 
-		    // If no validator designated
-		    if ($valideur < 1)
-		    {
-		        setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
-		        $error++;
-		    }
+			// If no validator designated
+			if ($valideur < 1)
+			{
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
+				$error++;
+			}
 
-		    $result = 0;
+			$result = 0;
 
-		    if (!$error)
-		    {
-	    	    $object->fk_user = $fuserid;
-	    	    $object->description = $description;
-	    	    $object->fk_validator = $valideur;
-	    		$object->fk_type = $type;
-	    		$object->date_debut = $date_debut;
-	    		$object->date_fin = $date_fin;
-	    		$object->halfday = $halfday;
+			if (!$error)
+			{
+				$object->fk_user = $fuserid;
+				$object->description = $description;
+				$object->fk_validator = $valideur;
+				$object->fk_type = $type;
+				$object->date_debut = $date_debut;
+				$object->date_fin = $date_fin;
+				$object->halfday = $halfday;
 
-	    		$result = $object->create($user);
-	    		if ($result <= 0)
-	    		{
-	    			setEventMessages($object->error, $object->errors, 'errors');
-	    			$error++;
-	    		}
-		    }
+				$result = $object->create($user);
+				if ($result <= 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+			}
 
-		    // If no SQL error we redirect to the request card
-		    if (!$error)
-		    {
+			// If no SQL error we redirect to the request card
+			if (!$error)
+			{
 				$db->commit();
 
-		    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		        exit;
-		    } else {
-		    	$db->rollback();
-		    }
-	    }
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			} else {
+				$db->rollback();
+			}
+		}
 	}
 
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve))
 	{
-	    $object->fetch($id);
+		$object->fetch($id);
 
-	    $object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object);
 
-	    $object->fk_validator = GETPOST('valideur', 'int');
+		$object->fk_validator = GETPOST('valideur', 'int');
 
-	    if ($object->fk_validator != $object->oldcopy->fk_validator)
-	    {
-	        $verif = $object->update($user);
+		if ($object->fk_validator != $object->oldcopy->fk_validator)
+		{
+			$verif = $object->update($user);
 
-	        if ($verif <= 0)
-	        {
-	            setEventMessages($object->error, $object->errors, 'warnings');
-	            $action = 'editvalidator';
-	        } else {
-	            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-	            exit;
-	        }
-	    }
+			if ($verif <= 0)
+			{
+				setEventMessages($object->error, $object->errors, 'warnings');
+				$action = 'editvalidator';
+			} else {
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			}
+		}
 
-	    $action = '';
+		$action = '';
 	}
 
 	if ($action == 'update' && !GETPOSTISSET('savevalidator'))
@@ -275,7 +275,8 @@ if (empty($reshook))
 		// If no right to modify a request
 		if (!$user->rights->holiday->write)
 		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=CantUpdate');
+			setEventMessages($langs->trans("CantUpdate"), null, 'errors');
+			header('Location: '.$_SERVER["PHP_SELF"].'?action=create');
 			exit;
 		}
 
@@ -288,7 +289,7 @@ if (empty($reshook))
 			if ($cancreate)
 			{
 				$valideur = GETPOST('valideur', 'int');
-				$description = trim(GETPOST('description', 'none'));
+				$description = trim(GETPOST('description', 'restricthtml'));
 
 				// If no start date
 				if (empty($_POST['date_debut_'])) {
@@ -486,7 +487,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -863,7 +864,7 @@ $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->t
 
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $action == 'create')
+if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 {
 	// Si l'utilisateur n'a pas le droit de faire une demande
 	if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
@@ -943,7 +944,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		// Formulaire de demande
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
-		print '<input type="hidden" name="action" value="create" />'."\n";
+		print '<input type="hidden" name="action" value="add" />'."\n";
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
@@ -1008,8 +1009,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		// Date start
 		print '<tr>';
 		print '<td class="fieldrequired">';
-		print $langs->trans("DateDebCP");
-		print ' ('.$langs->trans("FirstDayOfHoliday").')';
+		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
 		print '<td>';
 		// Si la demande ne vient pas de l'agenda
@@ -1027,8 +1027,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		// Date end
 		print '<tr>';
 		print '<td class="fieldrequired">';
-		print $langs->trans("DateFinCP");
-		print ' ('.$langs->trans("LastDayOfHoliday").')';
+		print $form->textwithpicto($langs->trans("DateFinCP"), $langs->trans("LastDayOfHoliday"));
 		print '</td>';
 		print '<td>';
 		// Si la demande ne vient pas de l'agenda
@@ -1067,7 +1066,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'none'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1197,7 +1196,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 				if (!$edit)
 				{
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+					print '</td>';
 					print '<td>'.dol_print_date($object->date_debut, 'day');
 					print ' &nbsp; &nbsp; ';
 					print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
@@ -1205,7 +1206,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+					print '</td>';
 					print '<td>';
 					print $form->selectDate($object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
@@ -1217,7 +1220,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 				if (!$edit)
 				{
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+					print '</td>';
 					print '<td>'.dol_print_date($object->date_fin, 'day');
 					print ' &nbsp; &nbsp; ';
 					print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
@@ -1225,7 +1230,9 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+					print '<td class="nowrap">';
+					print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+					print '</td>';
 					print '<td>';
 					print $form->selectDate($object->date_fin, 'date_fin_');
 					print ' &nbsp; &nbsp; ';
@@ -1236,7 +1243,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
 				// Nb of days
 				print '<tr>';
-				print '<td class="nowrap">';
+				print '<td>';
 				$htmlhelp = $langs->trans('NbUseDaysCPHelp');
 				$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
 				$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
@@ -1463,7 +1470,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 					}
 					if ($candelete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
 					}
 
 					print '</div>';
