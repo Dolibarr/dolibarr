@@ -1124,7 +1124,7 @@ if ($action == 'create')
 	// Confirm back to open
 	if ($action == 'reopen')
 	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Reopen'), $langs->trans('ConfirmReopenIntervention', $object->ref), 'confirm_reopen', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenIntervention', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirm deletion of line
@@ -1625,12 +1625,12 @@ if ($action == 'create')
 				}
 
 				// Reopen
-				if ($object->statut > Fichinter::STATUS_CLOSED)
+				if ($object->statut >= Fichinter::STATUS_CLOSED)
 				{
 					if ($user->rights->ficheinter->creer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans('Reopen').'</a></div>';
-					} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Reopen').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans('ReOpen').'</a></div>';
+					} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
 				// Send
