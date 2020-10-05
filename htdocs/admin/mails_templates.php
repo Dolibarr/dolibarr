@@ -458,6 +458,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 
 $fieldlist = explode(',', $tabfield[$id]);
 
+if ($action == 'view') {
 // Form to add a new line
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -574,7 +575,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 			$okforextended = true;
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
 				$okforextended = false;
-			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 120, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
+			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
 			print $doleditor->Create(1);
 		} else print '&nbsp;';
 	}
@@ -599,7 +600,7 @@ print '</table>';
 print '</div>';
 print '</form>';
 print '<br>';
-
+} // END IF not edit
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -644,7 +645,7 @@ if ($resql)
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($value == 'label') {
-			print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth100" value="'.dol_escape_htmltag($search_label).'"></td>';
+			print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth200" value="'.dol_escape_htmltag($search_label).'"></td>';
 		} elseif ($value == 'lang') {
 			print '<td class="liste_titre">';
 			print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth100');
@@ -780,7 +781,7 @@ if ($resql)
 							print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 							$okforextended = true;
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended = false;
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						print '</td>';
@@ -1032,7 +1033,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		else {
 			$size = ''; $class = ''; $classtd = '';
 			if ($fieldlist[$field] == 'code') $class = 'maxwidth100';
-			if ($fieldlist[$field] == 'label') $class = 'maxwidth100';
+			if ($fieldlist[$field] == 'label') $class = 'maxwidth200';
 			if ($fieldlist[$field] == 'private') { $class = 'maxwidth50'; $classtd = 'center'; }
 			if ($fieldlist[$field] == 'position') { $class = 'maxwidth50'; $classtd = 'center'; }
 			if ($fieldlist[$field] == 'libelle') $class = 'quatrevingtpercent';
