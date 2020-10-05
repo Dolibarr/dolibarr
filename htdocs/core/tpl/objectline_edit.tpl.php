@@ -322,7 +322,7 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
-		}
+	}
 	?>
 	});
 
