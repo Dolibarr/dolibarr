@@ -716,6 +716,7 @@ function Print(id, gift){
 
 function TakeposPrinting(id){
     var receipt;
+	console.log("TakeposPrinting" + id);
     $.get("receipt.php?facid="+id, function(data, status){
         receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
         $.ajax({
@@ -728,15 +729,12 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	var invoice='<?php
-	$data = json_encode($invoice);
-	$data = base64_encode($data);
-	echo $data;
-	?>';
-    $.ajax({
-        type: "POST",
-        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print.php',
-        data: 'invoice='+invoice
+	$.get("ajax/ajax.php?action=printinvoiceticket&term=<?php echo $_SESSION["takeposterminal"];?>&id="+id, function(data, status){
+        $.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			data: 'invoice='+data
+		});
     });
 }
 
