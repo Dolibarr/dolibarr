@@ -865,7 +865,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
-if (!empty($conf->multicurrency->enabled)){
+<?php if (!empty($conf->multicurrency->enabled)){ ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -887,7 +887,7 @@ if (!empty($conf->multicurrency->enabled)){
 		</div>
 	</div>
 </div>
-}
+<?php ? ?>
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 
