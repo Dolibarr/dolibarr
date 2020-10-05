@@ -997,7 +997,7 @@ class Invoices extends DolibarrApi
     public function markAsCreditAvailable($id)
     {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-		
+
         if (!DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
         }
