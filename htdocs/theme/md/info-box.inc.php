@@ -33,6 +33,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	margin: 2px;
 	border-radius: 3px;
 }
+.user-back {
+	background-color: #af4850 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 
 
 .bg-infobox-project{
