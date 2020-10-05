@@ -405,7 +405,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Informations on receipt
 				if (!empty($conf->livraison_bon->enabled))
 				{
-					include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 					$expedition->id = $objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
 					//var_dump($expedition->linkedObjects);

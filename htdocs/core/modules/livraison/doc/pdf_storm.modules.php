@@ -29,7 +29,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
-require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 

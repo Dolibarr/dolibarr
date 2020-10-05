@@ -28,7 +28,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
@@ -59,7 +59,7 @@ $id = GETPOST('id', 'int');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
-$object = new Livraison($db);
+$object = new Delivery($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -306,7 +306,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 
 			/*
-			 *   Livraison
+			 *   Delivery
 			 */
 
 			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled))

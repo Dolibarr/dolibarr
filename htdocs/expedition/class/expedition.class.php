@@ -878,8 +878,8 @@ class Expedition extends CommonObject
 			if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_CLOSED)
 			{
 				// Expedition validee
-				include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
-				$delivery = new Livraison($this->db);
+				include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+				$delivery = new Delivery($this->db);
 				$result = $delivery->create_from_sending($user, $this->id);
 				if ($result > 0)
 				{

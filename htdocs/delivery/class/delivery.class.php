@@ -22,7 +22,7 @@
  */
 
 /**
- *  \file       htdocs/livraison/class/livraison.class.php
+ *  \file       htdocs/livraison/class/delivery.class.php
  *  \ingroup    delivery
  *  \brief      Delivery Order Management Class File
  */
@@ -37,7 +37,7 @@ if (!empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/
 /**
  *  Class to manage receptions
  */
-class Livraison extends CommonObject
+class Delivery extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -114,7 +114,7 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("Livraison::create");
+		dol_syslog("Delivery::create");
 
 		if (empty($this->model_pdf)) $this->model_pdf = $conf->global->LIVRAISON_ADDON_PDF;
 
@@ -158,7 +158,7 @@ class Livraison extends CommonObject
         $sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ")";
 
-		dol_syslog("Livraison::create", LOG_DEBUG);
+		dol_syslog("Delivery::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -170,7 +170,7 @@ class Livraison extends CommonObject
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Livraison::create", LOG_DEBUG);
+			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -526,7 +526,7 @@ class Livraison extends CommonObject
 		$num = count($expedition->lines);
 		for ($i = 0; $i < $num; $i++)
 		{
-			$line = new LivraisonLigne($this->db);
+			$line = new DeliveryLigne($this->db);
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
 			$line->libelle           = $expedition->lines[$i]->libelle;
 			$line->description       = $expedition->lines[$i]->description;
@@ -570,7 +570,7 @@ class Livraison extends CommonObject
 
 		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 		{
-			$livraisonline = new LivraisonLigne($this->db);
+			$livraisonline = new DeliveryLigne($this->db);
 			$livraisonline->array_options = $array_options;
 			$livraisonline->id = $id;
 			$result = $livraisonline->insertExtraFields();
@@ -597,7 +597,7 @@ class Livraison extends CommonObject
     public function addline($origin_id, $qty)
 	{
 		$num = count($this->lines);
-		$line = new LivraisonLigne($this->db);
+		$line = new DeliveryLigne($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
@@ -773,7 +773,7 @@ class Livraison extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$line = new LivraisonLigne($this->db);
+				$line = new DeliveryLigne($this->db);
 
 				$obj = $this->db->fetch_object($resql);
 
@@ -911,7 +911,7 @@ class Livraison extends CommonObject
 		$this->note_private = 'Private note';
 
 		$i = 0;
-		$line = new LivraisonLigne($this->db);
+		$line = new DeliveryLigne($this->db);
 		$line->fk_product     = $prodids[0];
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
@@ -1083,7 +1083,7 @@ class Livraison extends CommonObject
 /**
  *  Management class of delivery note lines
  */
-class LivraisonLigne extends CommonObjectLine
+class DeliveryLigne extends CommonObjectLine
 {
     /**
      * @var DoliDB Database handler.

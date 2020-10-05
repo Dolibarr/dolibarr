@@ -26,13 +26,13 @@
 /**
  *      \file       htdocs/admin/livraison.php
  *      \ingroup    livraison
- *      \brief      Page d'administration/configuration du module Livraison
+ *      \brief      Page d'administration/configuration du module Delivery
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
@@ -87,7 +87,7 @@ if ($action == 'specimen')
 {
     $modele = GETPOST('module', 'alpha');
 
-    $sending = new Livraison($db);
+    $sending = new Delivery($db);
     $sending->initAsSpecimen();
 
     // Search template files
@@ -245,7 +245,7 @@ foreach ($dirmodels as $reldir)
                         }
                         print '</td>';
 
-                        $livraison = new Livraison($db);
+                        $livraison = new Delivery($db);
                         $livraison->initAsSpecimen();
 
                         // Info
