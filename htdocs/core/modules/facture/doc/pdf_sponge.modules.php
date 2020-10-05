@@ -369,7 +369,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Set certificate
 				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
-				// If use has no certificate, we try to take the company one
+				// If user has no certificate, we try to take the company one
 				if (!$cert) {
 					$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
 				}
