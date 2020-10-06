@@ -354,6 +354,7 @@ VATIntraManualCheck=You can also check manually on the European Commission websi
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
 NorProspectNorCustomer=Not prospect, nor customer
 JuridicalStatus=Legal Entity Type
+Workforce=Workforce
 Staff=Employees
 ProspectLevelShort=Potential
 ProspectLevel=Prospect potential
