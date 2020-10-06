@@ -215,15 +215,15 @@ if ($object->id > 0)
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
-	if ($societe->localtax1_assuj == "1") //Localtax1
+	if ($mysoc->localtax1_assuj == "1") //Localtax1
 	{
-		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	if ($societe->localtax2_assuj == "1") //Localtax2
+	if ($mysoc->localtax2_assuj == "1") //Localtax2
 	{
-		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
@@ -252,16 +252,14 @@ if ($object->id > 0)
 	$permission = $user->rights->fournisseur->facture->creer;
 	$permtoedit = $user->rights->fournisseur->facture->creer;
 	$param = '&facid='.$object->id;
-	
+
+	$defaulttpldir = '/core/tpl';
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 	foreach ($dirtpls as $module => $reldir)
 	{
-		if (!empty($module))
-		{
+		if (!empty($module)) {
 			$tpl = dol_buildpath($reldir.'/document_actions_post_headers.tpl.php');
-		}
-		else
-		{
+		} else {
 			$tpl = DOL_DOCUMENT_ROOT.$reldir.'/document_actions_post_headers.tpl.php';
 		}
 
@@ -272,7 +270,6 @@ if ($object->id > 0)
 		}
 		if ($res) break;
 	}
-	
 } else {
     print $langs->trans('ErrorUnknown');
 }

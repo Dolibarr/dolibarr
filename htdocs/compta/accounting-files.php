@@ -525,6 +525,9 @@ dol_fiche_head($head, 'AccountancyFiles');
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
+print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals")).'</span><br>';
+print '<br>';
+
 print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
 print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
 

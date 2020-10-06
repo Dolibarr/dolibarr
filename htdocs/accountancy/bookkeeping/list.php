@@ -529,7 +529,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
-$title_page = $langs->trans("Bookkeeping");
+$title_page = $langs->trans("Operations").' - '.$langs->trans("Journals");
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -613,17 +613,17 @@ if ($action == 'delbookkeepingyear') {
 }
 
 //$param='';	param started before
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.urlencode($optioncss).'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="sortfield" value="'.urlencode($sortfield).'">';
+print '<input type="hidden" name="sortorder" value="'.urlencode($sortorder).'">';
+print '<input type="hidden" name="page" value="'.urlencode($page).'">';
 
 if (count($filter)) $buttonLabel = $langs->trans("ExportFilteredList");
 else $buttonLabel = $langs->trans("ExportList");
@@ -638,7 +638,8 @@ $newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("I
 
 $newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
 
-// $newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss'=>'btnTitleSelected'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss'=>'marginleftonly'));
 
 $url = './card.php?action=create';
 if (!empty($socid)) $url .= '&socid='.$socid;
