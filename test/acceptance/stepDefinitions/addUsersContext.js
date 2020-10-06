@@ -2,6 +2,7 @@ const { Before, Given, When, Then, After } = require('cucumber');
 const { client } = require('nightwatch-api');
 const fetch = require('node-fetch');
 let initialUsers = {};
+let dolApiKey = '';
 
 Given('the administrator has logged in using the webUI', async function () {
 	await client.page.loginPage().navigate().waitForLoginPage();
@@ -46,7 +47,7 @@ const getUsers = async function () {
 	const url = client.globals.backend_url + 'api/index.php/users';
 	const users = {};
 	header['Accept'] = 'application/json';
-	header['DOLAPIKEY'] = client.globals.dolApiKey;
+	header['DOLAPIKEY'] = dolApiKey;
 	await fetch(url, {
 		method: 'GET',
 		headers: header
@@ -64,7 +65,7 @@ const adminHasCreatedUser = async function (dataTable) {
 	const header = {};
 	const url = client.globals.backend_url + 'api/index.php/users';
 	header['Accept'] = 'application/json';
-	header['DOLAPIKEY'] = client.globals.dolApiKey;
+	header['DOLAPIKEY'] = dolApiKey;
 	header['Content-Type'] = 'application/json';
 	const userDetails = dataTable.hashes();
 	for (const user of userDetails) {
@@ -90,6 +91,24 @@ const adminHasCreatedUser = async function (dataTable) {
 };
 
 Before(async () => {
+	const header = {}
+	const adminUsername = client.globals.adminUsername;
+	const adminPassword = client.globals.adminPassword;
+	const params = new URLSearchParams()
+	params.set('login', adminUsername)
+	params.set('password', adminPassword)
+	const apiKey = `http://localhost/dolibarr/htdocs/api/index.php/login?${params.toString()}`;
+	header['Accept'] = 'application/json'
+	await fetch(apiKey, {
+		method: 'GET',
+		headers: header
+	})
+		.then(async (response) => {
+			const jsonResponse = await response.json()
+			dolApiKey = jsonResponse['success']['token']
+		})
+})
+Before(async () => {
 	initialUsers = await getUsers();
 });
 
@@ -98,7 +117,7 @@ After(async () => {
 	const header = {};
 	const url = client.globals.backend_url + 'api/index.php/users/';
 	header['Accept'] = 'application/json';
-	header['DOLAPIKEY'] = client.globals.dolApiKey;
+	header['DOLAPIKEY'] = dolApiKey;
 	let found;
 	for (const finaluser in finalUsers) {
 		for (const initialuser in initialUsers) {
