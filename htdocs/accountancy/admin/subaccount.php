@@ -105,8 +105,8 @@ llxHeader('', $langs->trans("ReportThirdParty"));
 // Customer
 $sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '0' as type, sa.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
-$sql .= ' WHERE sa.entity IN ('.getEntity('societe').')';
-$sql .= ' AND sa.code_compta <> ""';
+$sql .= " WHERE sa.entity IN (".getEntity('societe').")";
+$sql .= " AND sa.code_compta <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
@@ -142,13 +142,13 @@ if (strlen(trim($search_subaccount))) {
 	}
 }
 if (strlen(trim($search_label)))				$sql .= natural_search("sa.nom", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$search_type."'";
+if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 
 // Supplier
 $sql .= " UNION ";
 $sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '1' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
-$sql .= ' WHERE sa.entity IN ('.getEntity('societe').')';
-$sql .= ' AND sa.code_compta_fournisseur <> ""';
+$sql .= " WHERE sa.entity IN (".getEntity('societe').")";
+$sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
@@ -189,8 +189,8 @@ if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$se
 // User
 $sql .= " UNION ";
 $sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '2' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
-$sql .= ' WHERE u.entity IN ('.getEntity('user').')';
-$sql .= ' AND u.accountancy_code <> ""';
+$sql .= " WHERE u.entity IN (".getEntity('user').")";
+$sql .= " AND u.accountancy_code <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
