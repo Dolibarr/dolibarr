@@ -98,7 +98,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
-		$sql .= " FROM ".MAIN_DB_PREFIX."livraison";
+		$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 
@@ -132,7 +132,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
-		$sql .= " FROM ".MAIN_DB_PREFIX."livraison";
+		$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 

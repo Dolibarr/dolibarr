@@ -17,7 +17,7 @@
 --
 -- ===================================================================
 
-create table llx_livraison
+create table llx_delivery
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,

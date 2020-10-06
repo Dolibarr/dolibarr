@@ -47,24 +47,24 @@ class Delivery extends CommonObject
 	/**
 	 * @var int Field with ID of parent key if this field has a parent
 	 */
-	public $fk_element = "fk_livraison";
+	public $fk_element = "fk_delivery";
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = "livraison";
+	public $table_element = "delivery";
 
 	/**
 	 * @var int    Name of subtable line
 	 */
-	public $table_element_line = "livraisondet";
+	public $table_element_line = "deliverydet";
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'sending';
 
-	public $brouillon;
+	public $draft;
 	public $socid;
 	public $ref_customer;
 
@@ -108,7 +108,7 @@ class Delivery extends CommonObject
 	 *  Create delivery receipt in database
 	 *
 	 *  @param 	User	$user       Objet du user qui cree
-	 *  @return int         		<0 si erreur, id livraison cree si ok
+	 *  @return int         		<0 si erreur, id delivery cree si ok
 	 */
     public function create($user)
 	{
@@ -122,14 +122,14 @@ class Delivery extends CommonObject
 
         $now = dol_now();
 
-		/* On positionne en mode brouillon le bon de livraison */
-		$this->brouillon = 1;
+		/* Delivery note as draft On positionne en mode draft le bon de livraison */
+		$this->draft = 1;
 
 		$this->user = $user;
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."delivery (";
 		$sql .= "ref";
 		$sql .= ", entity";
 		$sql .= ", fk_soc";
@@ -162,11 +162,11 @@ class Delivery extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."livraison");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."delivery");
 
 			$numref = "(PROV".$this->id.")";
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery ";
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 
@@ -207,7 +207,7 @@ class Delivery extends CommonObject
 
 					if (!$conf->expedition_bon->enabled)
 					{
-						// TODO uniformiser les statuts
+						// TODO standardize status uniformiser les statuts
 						$ret = $this->setStatut(2, $this->origin_id, $this->origin);
 						if (!$ret)
 						{
@@ -257,7 +257,7 @@ class Delivery extends CommonObject
 		$idprod = $fk_product;
 		$j = 0;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_origin_line,";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
 		$sql .= " VALUES (".$this->id.",".$origin_id.",";
 		$sql .= " ".($idprod > 0 ? $idprod : "null").",";
@@ -292,7 +292,7 @@ class Delivery extends CommonObject
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin";
         $sql .= ', l.fk_incoterms, l.location_incoterms';
         $sql .= ", i.libelle as label_incoterms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."livraison as l";
+		$sql .= " FROM ".MAIN_DB_PREFIX."delivery as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
 		$sql .= " WHERE l.rowid = ".$id;
@@ -330,7 +330,7 @@ class Delivery extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
-				if ($this->statut == 0) $this->brouillon = 1;
+				if ($this->statut == 0) $this->draft = 1;
 
 				// Retreive all extrafields
 				// fetch optionals attributes and labels
@@ -402,7 +402,7 @@ class Delivery extends CommonObject
 
 					// Test if is not already in valid status. If so, we stop to avoid decrementing the stock twice.
 					$sql = "SELECT ref";
-					$sql .= " FROM ".MAIN_DB_PREFIX."livraison";
+					$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
 					$sql .= " WHERE ref = '".$this->db->escape($numref)."'";
 					$sql .= " AND fk_statut <> 0";
 					$sql .= " AND entity = ".$conf->entity;
@@ -417,7 +417,7 @@ class Delivery extends CommonObject
 						}
 					}
 
-					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
+					$sql = "UPDATE ".MAIN_DB_PREFIX."delivery SET";
 					$sql .= " ref='".$this->db->escape($numref)."'";
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
@@ -570,14 +570,14 @@ class Delivery extends CommonObject
 
 		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 		{
-			$livraisonline = new DeliveryLigne($this->db);
-			$livraisonline->array_options = $array_options;
-			$livraisonline->id = $id;
-			$result = $livraisonline->insertExtraFields();
+			$line = new DeliveryLigne($this->db);
+			$line->array_options = $array_options;
+			$line->id = $id;
+			$result = $line->insertExtraFields();
 
 			if ($result < 0)
 			{
-				$this->error[] = $livraisonline->error;
+				$this->error[] = $line->error;
 				$error++;
 			}
 		}
@@ -643,8 +643,8 @@ class Delivery extends CommonObject
 
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraisondet";
-		$sql .= " WHERE fk_livraison = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deliverydet";
+		$sql .= " WHERE fk_delivery = ".$this->id;
 		if ($this->db->query($sql))
 		{
 			// Delete linked object
@@ -653,13 +653,13 @@ class Delivery extends CommonObject
 
 			if (!$error)
 			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."delivery";
 				$sql .= " WHERE rowid = ".$this->id;
 				if ($this->db->query($sql))
 				{
 					$this->db->commit();
 
-					// On efface le repertoire de pdf provisoire
+					// Deleting pdf folder's draft On efface le repertoire de pdf provisoire
 					$ref = dol_sanitizeFileName($this->ref);
 					if (!empty($conf->expedition->dir_output))
 					{
@@ -760,10 +760,10 @@ class Delivery extends CommonObject
 		$sql .= " cd.qty as qty_asked, cd.label as custom_label, cd.fk_unit,";
 		$sql .= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc,";
 		$sql .= " p.weight, p.weight_units,  p.width, p.width_units, p.length, p.length_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."deliverydet as ld";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql .= " WHERE ld.fk_origin_line = cd.rowid";
-		$sql .= " AND ld.fk_livraison = ".$this->id;
+		$sql .= " AND ld.fk_delivery = ".$this->id;
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -956,10 +956,10 @@ class Delivery extends CommonObject
 
 				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
-				$sql .= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
+				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
 				$sql .= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
 				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
-				$sql .= " WHERE ld.fk_livraison = l.rowid";
+				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
 				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
 				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
@@ -1009,7 +1009,7 @@ class Delivery extends CommonObject
         // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."livraison";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
@@ -1125,12 +1125,12 @@ class DeliveryLigne extends CommonObjectLine
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'livraisondet';
+	public $element = 'deliverydet';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'livraisondet';
+	public $table_element = 'deliverydet';
 
     /**
      *	Constructor

@@ -16,10 +16,5 @@
 --
 -- ===================================================================
 
-create table llx_livraisondet_extrafields
-(
-  rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
-  fk_object        integer NOT NULL,    -- object id
-  import_key       varchar(14)      	-- import key
-)ENGINE=innodb;
+
+ALTER TABLE llx_delivery_extrafields ADD INDEX idx_delivery_extrafields (fk_object);

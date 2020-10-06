@@ -1671,7 +1671,7 @@ if ($action == 'create')
     		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
     		$sql .= ", ".MAIN_DB_PREFIX."reception as e";
     		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-    		//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+    		//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
     		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
     		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
     		$sql .= " AND obj.fk_commande = ".$origin_id;
