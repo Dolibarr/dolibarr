@@ -490,9 +490,9 @@ if ($result)
 				print $accountstatic->getNomUrl(1);
 			} else {
 				print '&nbsp;';
-				print '</td>';
-				if (!$i) $totalarray['nbfield']++;
 			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Bank entry

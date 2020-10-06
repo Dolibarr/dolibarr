@@ -263,7 +263,6 @@ class PaymentVarious extends CommonObject
 				$this->subledger_account    = $obj->subledger_account;
 				$this->accountancy_code     = $obj->accountancy_code;
 				$this->fk_project           = $obj->fk_project;
-				$this->accountid			= 1; // to clone
 				$this->fk_bank              = $obj->fk_bank;
 				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_modif        = $obj->fk_user_modif;
