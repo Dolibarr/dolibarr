@@ -14,9 +14,27 @@ Then('the user should be logged in successfully', function () {
 });
 
 Then('the user should not be logged in successfully', function () {
-    return client.page.loginPage().unsuccessfulLogin;
+    return client.page.loginPage().unsuccessfulLogin();
 });
 
 Then('error message {string} should be displayed in the webUI', function (errorMessage) {
     return client.page.loginPage().errorMessageDisplay(errorMessage);
 });
+
+// When('user browses to the forgotten password page', function () {
+//    return client.page.loginPage().userBrowsesToForgottenPassword();
+// });
+
+// When('the user enters login {string} and the security code', function (username) {
+//     return client.page.loginPage().userEntersSecurityCode(username);
+//
+// });
+//
+// Then('the message {string} should be displayed in the webUI', async function (codeMessage) {
+// await client.page.loginPage().messageForSecurityCode(codeMessage);
+// });
+
+
+
+
+

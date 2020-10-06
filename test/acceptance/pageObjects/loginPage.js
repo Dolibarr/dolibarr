@@ -45,6 +45,28 @@ module.exports = {
                     .text.to.equal(errorMessage)
                 return this.useCss();
             }
+
+            // userBrowsesToForgottenPassword: function () {
+            //     return this.useXpath()
+            //         .waitForElementVisible('@passwordforgottenPage')
+            //         .click('@passwordforgottenPage')
+            // },
+            //
+            // userEntersSecurityCode: async function (username) {
+            //     await this.waitForElementVisible('@loginTable')
+            //         .waitForElementVisible('@usernameField')
+            //         .setValue('@usernameField', username)
+            //         .waitForElementVisible('@securityCodeField')
+            //     return this.useCss()
+            // },
+            //
+            // messageForSecurityCode: function (codeMessage) {
+            //     return this.useXpath()
+            //         .waitForElementVisible('@securityCodeMessage')
+            //         .expect.element('@securityCodeMessage')
+            //         .text.to.equal(codeMessage)
+            //
+            // }
         }
     ],
 
@@ -74,5 +96,17 @@ module.exports = {
                 selector: '//div[@class="center login_main_message"]/div[@class="error"]',
                 locateStrategy: 'xpath'
             }
+            // passwordforgottenPage: {
+            //     selector: '//div[@class="center"]//descendant::a[1]',
+            //     locateStrategy: 'xpath'
+            // },
+            // securityCodeField: {
+            //     selector: '#securitycode'
+            // },
+            // securityCodeMessage: {
+            //     selector: '//div[contains(@class, "center login_main_message")]/div[contains(@class, "ok clearboth")]/div[contains(@class, "warning paddingtopbottom")]',
+            //     locateStrategy:'xpath'
+            // }
+            
         }
 };

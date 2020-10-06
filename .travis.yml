@@ -8,13 +8,36 @@ dist: xenial
 #dist: bionic
 sudo: required
 
-language: php
+matrix:
+  include:
+    - language: php
+      php:
+        - '5.6'
+        - '7.0'
+        - '7.1'
+        - '7.2'
+        - '7.3'
+        - '7.4'
+        - nightly
+
+    - language: node_js
+      node_js:
+        -'10.19.0'
+      before_install:
+        - docker run -d -p 4444:4444 -p 5900:5900 -v /dev/shm:/dev/shm --name selenium selenium/standalone-chrome-debug
+      install:
+        - npm install
+      script: yarn test:e2e test/acceptance/features
+      env:
+        global:
+          - LAUNCH_URL=http://127.0.0.1/$TRAVIS_BUILD_DIR/htdocs
 
 # Start on every boot
 services:
 - memcached
 - mysql
 - postgresql
+- docker
 
 addons:
   # Force postgresql to 9.4 (the oldest availablable on xenial)
@@ -32,14 +55,7 @@ addons:
     # We need pgloader for import mysql database into pgsql
     - pgloader
 
-php:
-- '5.6'
-- '7.0'
-- '7.1'
-- '7.2'
-- '7.3'
-- '7.4'
-- nightly
+
 
 env:
   global:

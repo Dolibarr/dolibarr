@@ -25,3 +25,8 @@ Feature: user login
       | dolibarr |          |
       | dolibar  |          |
       | dolibar  | password |
+
+#  Scenario: User forgets the password
+#    When user browses to the forgotten password page
+#    And the user enters login "dolibarr" and the security code
+#    Then the message "If this login is a valid account, an email to reset password has been sent." should be displayed in the webUI
