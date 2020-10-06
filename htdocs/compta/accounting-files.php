@@ -581,7 +581,7 @@ if (!empty($date_start) && !empty($date_stop))
     foreach ($listofchoices as $choice => $val) {
     	$param .= '&'.$choice.'='.(GETPOST($choice, 'int') ? 1 : 0);
     }
-    print '<form name="dl" action="?action=dl" method="POST" >'."\n";
+    print '<form name="dl" action="'.$_SERVER["PHP_SELF"].'?action=dl" method="POST">'."\n";
     print '<input type="hidden" name="token" value="'.currentToken().'">';
 
     echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
@@ -592,7 +592,7 @@ if (!empty($date_start) && !empty($date_stop))
     	print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
     }
 
-    print '<input class="butAction" type="submit" value="'.$langs->trans("Download").'" />';
+    print '<input class="butAction butDownload" type="submit" value="'.$langs->trans("Download").'" />';
     print '</form>'."\n";
 
     print '<br>';
