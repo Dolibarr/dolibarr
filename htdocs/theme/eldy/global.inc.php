@@ -1811,8 +1811,8 @@ td.nobordernopadding.widthpictotitle.col-picto {
     color: #999;
 }
 
+/*
 span.widthpictotitle.pictotitle {
-	/* background: rgba(70, 3, 62, 0.5); */
     background: var(--colortexttitlenotab);
     opacity: 0.8;
     color: #fff !important;
@@ -1821,10 +1821,12 @@ span.widthpictotitle.pictotitle {
     min-width: 30px;
     text-align: center;
 }
+*/
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	/* margin-bottom: 4px; */
 }
+
 .pictoobjectwidth {
 	width: 14px;
 }

@@ -865,27 +865,28 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
+<?php if (!empty($conf->multicurrency->enabled)) { ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
 			<span class="close" href="#" onclick="document.getElementById('ModalCurrency').style.display = 'none';">&times;</span>
-			<h3><?php print $langs->trans("SetMultiCurrencyCode");?></h3>
+			<h3><?php print $langs->trans("SetMultiCurrencyCode"); ?></h3>
 		</div>
 		<div class="modal-body">
 			<?php
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
-			$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+			$sql .= " WHERE entity IN ('".getEntity('multicurrency')."')";
 			$resql = $db->query($sql);
 			if ($resql)
 			{
 				while ($obj = $db->fetch_object($resql))
 				print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
 			}
-
 			?>
 		</div>
 	</div>
 </div>
+<?php } ?>
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 

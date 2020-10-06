@@ -464,7 +464,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
 		print '<td class="tdoverflowmax300">';
-		if (preg_match('/(_pass|password|_pw|_key|securekey|serverkey|secret\d?|p12key|exportkey|_PW_[a-z]+|token)$/i', $obj->name)) {
+		if (isASecretKey($obj->name)) {
 			if (empty($dolibarr_main_prod)) {
 				print '<!-- '.$obj->value.' -->';
 			}

@@ -356,6 +356,8 @@ ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extraf
 ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
 
+DELETE FROM llx_const WHERE name in ('MAIN_INCLUDE_ZERO_VAT_IN_REPORTS');
+
 -- rename Table
 ALTER TABLE llx_livraison RENAME TO llx_delivery;
 ALTER TABLE llx_livraison_extrafields RENAME TO llx_delivery_extrafields;
@@ -377,4 +379,3 @@ ALTER TABLE llx_delivery DROP CONSTRAINT fk_delivery_fk_user_valid;
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
-
