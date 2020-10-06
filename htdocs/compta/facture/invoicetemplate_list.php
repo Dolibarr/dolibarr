@@ -357,7 +357,7 @@ if ($resql)
 	if (!empty($arrayfields['f.titre']['checked']))
 	{
 		print '<td class="liste_titre left">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Thirpdarty
@@ -529,7 +529,7 @@ if ($resql)
 
 			if (!empty($arrayfields['f.titre']['checked']))
 			{
-			    print '<td>';
+			    print '<td class="nowrap tdoverflowmax200">';
 			    print $invoicerectmp->getNomUrl(1);
 			    print "</a>";
 			    print "</td>\n";
