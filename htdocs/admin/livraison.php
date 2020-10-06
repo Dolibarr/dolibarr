@@ -245,13 +245,13 @@ foreach ($dirmodels as $reldir)
                         }
                         print '</td>';
 
-                        $livraison = new Delivery($db);
-                        $livraison->initAsSpecimen();
+                        $delivery = new Delivery($db);
+                        $delivery->initAsSpecimen();
 
                         // Info
                         $htmltooltip = '';
                         $htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-                        $nextval = $module->getNextValue($mysoc, $livraison);
+                        $nextval = $module->getNextValue($mysoc, $delivery);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip .= ''.$langs->trans("NextValue").': ';
                             if ($nextval) {

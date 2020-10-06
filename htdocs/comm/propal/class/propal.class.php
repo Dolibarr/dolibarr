@@ -152,9 +152,9 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|string $date_livraison;
+	 * @var integer|string $delivery_date;
 	 */
-	public $date_livraison;
+	public $delivery_date;
 
 
 	public $fin_validite;
@@ -2060,11 +2060,11 @@ class Propal extends CommonObject
 	 *	Set delivery date
 	 *
 	 *	@param      User 	$user        		Object user that modify
-	 *	@param      int		$date_livraison     Delivery date
+	 *	@param      int		$delivery_date     Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if ko, >0 if ok
 	 */
-    public function set_date_livraison($user, $date_livraison, $notrigger = 0)
+    public function set_delivery_date($user, $delivery_date, $notrigger = 0)
 	{
         // phpcs:enable
 		if (!empty($user->rights->propal->creer))
@@ -2074,7 +2074,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql .= " SET date_livraison = ".($date_livraison != '' ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2088,7 +2088,7 @@ class Propal extends CommonObject
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))

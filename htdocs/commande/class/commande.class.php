@@ -180,7 +180,7 @@ class Commande extends CommonOrder
 	 */
 	public $date_commande;
 
-	public $date_livraison; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 	/**
 	 * @var int ID
@@ -2548,11 +2548,11 @@ class Commande extends CommonOrder
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User	$user        		Objet utilisateur qui modifie
-	 *	@param      int		$date_livraison     Date de livraison
+	 *	@param      int		$delivery_date     Delivery date
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 si ko, >0 si ok
 	 */
-	public function set_date_livraison($user, $date_livraison, $notrigger = 0)
+	public function set_delivery_date($user, $delivery_date, $notrigger = 0)
 	{
 		// phpcs:enable
 		if ($user->rights->commande->creer)
@@ -2562,7 +2562,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-			$sql .= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2576,7 +2576,7 @@ class Commande extends CommonOrder
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))

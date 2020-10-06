@@ -1001,23 +1001,23 @@ class Delivery extends CommonObject
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      integer 		$date_livraison     Date de livraison
+	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    public function set_date_livraison($user, $date_livraison)
+    public function set_delivery_date($user, $delivery_date)
 	{
         // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
-			$sql .= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_delivery_date", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->date_delivery = $date_livraison;
+				$this->date_delivery = $delivery_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();

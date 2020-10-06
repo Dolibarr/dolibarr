@@ -425,7 +425,7 @@ if (empty($reshook))
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
-	    $result = $object->set_date_livraison($user, $datedelivery);
+	    $result = $object->set_delivery_date($user, $datedelivery);
 	    if ($result < 0)
 	    {
 	        setEventMessages($object->error, $object->errors, 'errors');

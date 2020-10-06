@@ -117,7 +117,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * Delivery date
 	 */
-	public $date_livraison;
+	public $delivery_date;
 
 	public $total_ht;
 	public $total_tva;
@@ -2263,11 +2263,11 @@ class CommandeFournisseur extends CommonOrder
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet user making change
-	 *	@param      integer  		$date_livraison     Planned delivery date
+	 *	@param      integer  		$delivery_date     Planned delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-	public function set_date_livraison($user, $date_livraison, $notrigger = 0)
+	public function set_delivery_date($user, $delivery_date, $notrigger = 0)
 	{
 		// phpcs:enable
 		if ($user->rights->fournisseur->commande->creer)
@@ -2277,7 +2277,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-			$sql .= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2291,7 +2291,7 @@ class CommandeFournisseur extends CommonOrder
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -2325,7 +2325,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Set the id projet
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      int				$id_projet    	 	Date de livraison
+	 *	@param      int				$id_projet    	 	Delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						<0 si ko, >0 si ok
 	 */

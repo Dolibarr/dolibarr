@@ -113,10 +113,10 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                 while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
                     $date = $this->db->jdate($objp->date_commande);
-                    $date_livraison = $this->db->jdate($objp->date_livraison);
+                    $delivery_date = $this->db->jdate($objp->date_livraison);
 					$datem = $this->db->jdate($objp->tms);
 
-                    $supplierorderstatic->date_livraison = $date_livraison;
+                    $supplierorderstatic->date_livraison = $delivery_date;
                     $supplierorderstatic->statut = $objp->fk_statut;
 
 					$supplierorderstatic->id = $objp->rowid;
@@ -153,7 +153,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-dolly" ></i> '.dol_print_date($date_livraison, 'day').'</span>',
+                        'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-dolly" ></i> '.dol_print_date($delivery_date, 'day').'</span>',
                         'asis' => 1
                     );
 

@@ -50,7 +50,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoenti
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'livraisondet'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'deliverydet'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
