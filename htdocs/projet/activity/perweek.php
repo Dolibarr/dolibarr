@@ -158,6 +158,7 @@ $search_array_options_task = $extrafields->getOptionalsFromPost('projet_task', '
 /*
  * Actions
  */
+
 $parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -465,7 +466,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperweek', $langs->trans('TimeSpent'), -1, 'task');
+dol_fiche_head($head, 'inputperweek', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
