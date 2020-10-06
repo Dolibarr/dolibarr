@@ -266,7 +266,7 @@ class mailing_fraise extends MailingTargets
         if ($dateendsubscriptionbefore > 0) $sql .= " AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql .= " AND a.fk_adherent_type = ta.rowid";
         // Filter on type
-        if (GETPOSTISET('filter_type')) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type'))."'";
+        if (GETPOSTISSET('filter_type')) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type'))."'";
         // Filter on category
         if (GETPOSTISSET('filter_category')) $sql .= " AND c.rowid='".$this->db->escape(GETPOST('filter_category'))."'";
         $sql .= " ORDER BY a.email";
@@ -302,7 +302,7 @@ class mailing_fraise extends MailingTargets
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'member'
-                                );
+                    );
                     $old = $obj->email;
                     $j++;
                 }
