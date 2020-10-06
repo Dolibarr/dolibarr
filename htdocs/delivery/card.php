@@ -57,7 +57,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 // Security check
 $id = GETPOST('id', 'int');
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+$result = restrictedArea($user, 'expedition', $id, 'delivery', 'livraison');
 
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
@@ -681,7 +681,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			$genallowed = $user->rights->expedition->livraison->lire;
 			$delallowed = $user->rights->expedition->livraison->creer;
 
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

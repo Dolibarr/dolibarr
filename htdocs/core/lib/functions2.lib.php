@@ -1793,7 +1793,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	} elseif ($objecttype == 'delivery') {
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
-		$module = 'livraison_bon';
+		$module = 'delivery_note';
 	} elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';

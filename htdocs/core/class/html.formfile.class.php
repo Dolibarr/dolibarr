@@ -417,7 +417,7 @@ class FormFile
 
 		$titletoshow = $langs->trans("Documents");
 		if (!empty($title)) $titletoshow = ($title == 'none' ? '' : $title);
-
+print($modulepart);
 		// Show table
 		if ($genallowed)
 		{
