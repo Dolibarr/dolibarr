@@ -20,7 +20,7 @@
 /**
  * \file 		htdocs/accountancy/admin/subaccount.php
  * \ingroup     Accountancy (Double entries)
- * \brief		List accounting sub-account
+ * \brief		List of accounting sub-account (auxiliary accounts)
  */
 
 require '../../main.inc.php';
@@ -184,7 +184,7 @@ if (strlen(trim($search_subaccount))) {
 	}
 }
 if (strlen(trim($search_label)))				$sql .= natural_search("sa.nom", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$search_type."'";
+if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 
 // User
 $sql .= " UNION ";
@@ -226,7 +226,7 @@ if (strlen(trim($search_subaccount))) {
 	}
 }
 if (strlen(trim($search_label)))				$sql .= natural_search("u.lastname", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$search_type."'";
+if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 
 $sql .= $db->order($sortfield, $sortorder);
 

@@ -179,8 +179,8 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$companystatic->code_compta = $obj->code_compta;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 16).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right">'.price((!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
 
@@ -243,8 +243,8 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$companystatic->email = $obj->email;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$supplierproposalstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 16).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$supplierproposalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
@@ -308,8 +308,8 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$companystatic->entity = $obj->entity;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$orderstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 16).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
@@ -373,8 +373,8 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$companystatic->email = $obj->email;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$supplierorderstatic->getNomUrl(1).'</td>';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 16).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$supplierorderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
@@ -441,7 +441,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 				$companystatic->email = $objp->email;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 48).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="right" nowrap>'.$companystatic->getLibCustProspStatut().'</td>';
 				print '<td class="right" nowrap>'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
 				print '</tr>';
@@ -493,7 +493,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$companystatic->email = $objp->email;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 44).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
 				print '</tr>';
 
