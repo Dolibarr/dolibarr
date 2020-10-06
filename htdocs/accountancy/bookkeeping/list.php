@@ -108,7 +108,7 @@ $hookmanager->initHooks(array('bookkeepinglist'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !isset($_POST['begin']) && !isset($_GET['begin']) && !isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export)
+if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export)
 {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values'))
 	{
@@ -671,12 +671,10 @@ if (!empty($arrayfields['t.doc_date']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -704,25 +702,25 @@ if (!empty($arrayfields['t.subledger_account']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
 	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 	{
+		print $langs->trans('From').' ';
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 	} else {
-		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'" placeholder="'.$langs->trans("From").'">';
 	}
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
 	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 	{
+		print $langs->trans('to').' ';
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 	} else {
-		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
+		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'" placeholder="'.$langs->trans("to").'">';
 	}
 	print '</div>';
 	print '</td>';
@@ -772,12 +770,10 @@ if (!empty($arrayfields['t.date_creation']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_date_creation_start, 'date_creation_start', 0, 0, 1);
+	print $form->selectDate($search_date_creation_start, 'date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_date_creation_end, 'date_creation_end', 0, 0, 1);
+	print $form->selectDate($search_date_creation_end, 'date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -786,12 +782,10 @@ if (!empty($arrayfields['t.tms']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_date_modification_start, 'date_modification_start', 0, 0, 1);
+	print $form->selectDate($search_date_modification_start, 'date_modification_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_date_modification_end, 'date_modification_end', 0, 0, 1);
+	print $form->selectDate($search_date_modification_end, 'date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '</td>';
 }
@@ -800,12 +794,10 @@ if (!empty($arrayfields['t.date_export']['checked']))
 {
     print '<td class="liste_titre center">';
     print '<div class="nowrap">';
-    print $langs->trans('From').' ';
-    print $form->selectDate($search_date_export_start, 'date_export_start', 0, 0, 1);
+    print $form->selectDate($search_date_export_start, 'date_export_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
     print '</div>';
     print '<div class="nowrap">';
-    print $langs->trans('to').' ';
-    print $form->selectDate($search_date_export_end, 'date_export_end', 0, 0, 1);
+    print $form->selectDate($search_date_export_end, 'date_export_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
     print '</div>';
     print '</td>';
 }

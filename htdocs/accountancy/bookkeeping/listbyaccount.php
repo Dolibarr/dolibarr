@@ -54,6 +54,7 @@ if ($search_accountancy_code_end == - 1) {
 }
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
+$search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
@@ -85,7 +86,7 @@ $hookmanager->initHooks(array('bookkeepingbyaccountlist'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (empty($search_date_start) && empty($search_date_end) && GETPOSTISSET('search_date_startday') && GETPOSTISSET('search_date_startmonth') && GETPOSTISSET('search_date_starthour')) {
+if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('search_date_startday') && !GETPOSTISSET('search_date_startmonth') && !GETPOSTISSET('search_date_starthour')) {
 	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
 	$sql .= $db->plimit(1);
@@ -148,6 +149,7 @@ if (empty($reshook))
 		$search_label_account = '';
 		$search_doc_ref = '';
 		$search_label_operation = '';
+		$search_mvt_num = '';
 		$search_direction = '';
 		$search_ledger_code = '';
 		$search_date_start = '';
@@ -191,6 +193,10 @@ if (empty($reshook))
 	if (!empty($search_label_account)) {
 		$filter['t.label_compte'] = $search_label_account;
 		$param .= '&search_label_compte=' . urlencode($search_label_account);
+	}
+	if (!empty($search_mvt_num)) {
+		$filter['t.piece_num'] = $search_mvt_num;
+		$param .= '&search_mvt_num=' . urlencode($search_mvt_num);
 	}
 	if (!empty($search_doc_ref)) {
 		$filter['t.doc_ref'] = $search_doc_ref;
@@ -396,10 +402,10 @@ $moreforfilter = '';
 // Accountancy account
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
-$moreforfilter .= '<div class="nowrap">';
+$moreforfilter .= '<div class="nowrap inline-block">';
 $moreforfilter .= $langs->trans('From').' ';
 $moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
-$moreforfilter .= $langs->trans('to').' ';
+$moreforfilter .= ' '.$langs->trans('to').' ';
 $moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
@@ -427,12 +433,10 @@ if (!empty($arrayfields['t.code_journal']['checked'])) {
 if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From') . ': ';
-	print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to') . ': ';
-	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }

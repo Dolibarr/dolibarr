@@ -2065,7 +2065,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
 					if ($shorturlwithoutparam) print '<a class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
-					else print '<span class="vsmenu">';
+					else print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) print '</a>';
 					else print '</span>';
