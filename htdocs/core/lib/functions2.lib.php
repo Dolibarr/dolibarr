@@ -1791,9 +1791,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
-		$classpath = 'livraison/class';
-		$myobject = 'livraison';
-		$module = 'livraison_bon';
+		$classpath = 'delivery/class';
+		$myobject = 'delivery';
+		$module = 'delivery_note';
 	} elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';

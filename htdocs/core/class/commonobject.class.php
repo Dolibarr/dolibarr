@@ -3314,7 +3314,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'shipping') {
 						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
 					} elseif ($objecttype == 'delivery') {
-						$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
+						$classpath = 'delivery/class'; $subelement = 'delivery'; $module = 'delivery_note';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
 						$classpath = 'fourn/class'; $module = 'fournisseur';
 					} elseif ($objecttype == 'fichinter') {

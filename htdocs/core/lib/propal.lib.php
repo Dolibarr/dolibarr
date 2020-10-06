@@ -43,13 +43,13 @@ function propal_prepare_head($object)
 	$h++;
 
 	if ((empty($conf->commande->enabled) && ((!empty($conf->expedition->enabled) && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-	    || (!empty($conf->expedition->enabled) && !empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
+	    || (!empty($conf->expedition->enabled) && !empty($conf->delivery_note->enabled) && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
 		if ($conf->expedition_bon->enabled) $text = $langs->trans("Shipment");
-		if ($conf->livraison_bon->enabled)  $text .= '/'.$langs->trans("Receivings");
+		if ($conf->delivery_note->enabled)  $text .= '/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
 		$h++;

@@ -53,7 +53,7 @@ function expedition_prepare_head(Expedition $object)
 
 	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
+		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$h++;
 	}
@@ -111,7 +111,7 @@ function expedition_admin_prepare_head()
 
 	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
+		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$head[$h][2] = 'receivings';
 		$h++;
@@ -119,7 +119,7 @@ function expedition_admin_prepare_head()
 
 	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/admin/livraison_extrafields.php';
+		$head[$h][0] = DOL_URL_ROOT.'/admin/delivery_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$head[$h][2] = 'attributes_receivings';
 		$h++;
@@ -127,7 +127,7 @@ function expedition_admin_prepare_head()
 
 	if (!empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/admin/livraisondet_extrafields.php';
+		$head[$h][0] = DOL_URL_ROOT.'/admin/deliverydet_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$head[$h][2] = 'attributeslines_receivings';
 		$h++;

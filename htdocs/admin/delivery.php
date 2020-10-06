@@ -24,9 +24,9 @@
  */
 
 /**
- *      \file       htdocs/admin/livraison.php
- *      \ingroup    livraison
- *      \brief      Page d'administration/configuration du module Delivery
+ *      \file       htdocs/admin/delivery.php
+ *      \ingroup    delivery
+ *      \brief      age to setup extra fields of delivery
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

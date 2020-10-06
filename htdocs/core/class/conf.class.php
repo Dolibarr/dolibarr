@@ -122,7 +122,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->expedition_bon = new stdClass();
-		$this->livraison_bon = new stdClass();
+		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
@@ -370,8 +370,8 @@ class Conf
 
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
-		// Sous module bons de livraison
-		$this->livraison_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_LIVRAISON) ? $this->global->MAIN_SUBMODULE_LIVRAISON : 0);
+		// Sub module delivery note  Sous module bons de livraison
+		$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_LIVRAISON) ? $this->global->MAIN_SUBMODULE_LIVRAISON : 0);
 
 		// Module fournisseur
 		if (!empty($this->fournisseur))
