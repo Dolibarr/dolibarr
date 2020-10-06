@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  * Prepare array with list of tabs
  *
- * @param	Project	$object		Object related to tabs
+ * @param	Project	$project	Object related to tabs
  * @return	array				Array of tabs to show
  */
 function project_prepare_head(Project $project)
