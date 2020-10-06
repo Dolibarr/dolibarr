@@ -8652,7 +8652,7 @@ function getElementProperties($element_type)
 	if ($element_type == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
-		$module = 'delivery_note';
+		$module = 'livraison_bon';
 	}
 	if ($element_type == 'contract') {
 		$classpath = 'contrat/class';

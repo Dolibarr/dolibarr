@@ -873,7 +873,7 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf;
 
-		if ($conf->delivery_note->enabled)
+		if ($conf->livraison_bon->enabled)
 		{
 			if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_CLOSED)
 			{

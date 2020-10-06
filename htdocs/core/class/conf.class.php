@@ -371,7 +371,7 @@ class Conf
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
 		// Sub module delivery note  Sous module bons de livraison
-		$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_LIVRAISON) ? $this->global->MAIN_SUBMODULE_LIVRAISON : 0);
+		$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
 
 		// Module fournisseur
 		if (!empty($this->fournisseur))

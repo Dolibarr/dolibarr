@@ -116,7 +116,7 @@ class Delivery extends CommonObject
 
 		dol_syslog("Delivery::create");
 
-		if (empty($this->model_pdf)) $this->model_pdf = $conf->global->LIVRAISON_ADDON_PDF;
+		if (empty($this->model_pdf)) $this->model_pdf = $conf->global->DELIVERY_ADDON_PDF;
 
 		$error = 0;
 
@@ -376,14 +376,14 @@ class Delivery extends CommonObject
         if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
        	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
 		{
-			if (!empty($conf->global->LIVRAISON_ADDON_NUMBER))
+			if (!empty($conf->global->DELIVERY_ADDON_NUMBER))
 			{
 				// Setting the command numbering module name
-				$modName = $conf->global->LIVRAISON_ADDON_NUMBER;
+				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
 
-				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/livraison/'.$modName.'.php'))
+				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php'))
 				{
-					require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/'.$modName.'.php';
+					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
 
 					$now = dol_now();
 
@@ -394,7 +394,7 @@ class Delivery extends CommonObject
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		            {
-		                $numref = $objMod->livraison_get_num($soc, $this);
+		                $numref = $objMod->delivery_get_num($soc, $this);
 		            } else {
 		                $numref = $this->ref;
 		            }
@@ -1050,12 +1050,12 @@ class Delivery extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->LIVRAISON_ADDON_PDF)) {
-				$modele = $conf->global->LIVRAISON_ADDON_PDF;
+			} elseif (!empty($conf->global->DELIVERY_ADDON_PDF)) {
+				$modele = $conf->global->DELIVERY_ADDON_PDF;
 			}
 		}
 
-		$modelpath = "core/modules/livraison/doc/";
+		$modelpath = "core/modules/delivery/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
@@ -1071,7 +1071,7 @@ class Delivery extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'livraison'
+			'delivery'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);

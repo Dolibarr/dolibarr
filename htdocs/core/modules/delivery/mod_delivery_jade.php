@@ -19,20 +19,20 @@
  */
 
 /**
- *   \file       htdocs/core/modules/livraison/mod_livraison_jade.php
+ *   \file       htdocs/core/modules/delivery/mod_delivery_jade.php
  *   \ingroup    delivery
  *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 
 /**
- *  \class      mod_livraison_jade
+ *  \class      mod_delivery_jade
  *  \brief      Classe du modele de numerotation de reference de bon de livraison Jade
  */
 
-class mod_livraison_jade extends ModeleNumRefDeliveryOrder
+class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -137,7 +137,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		dol_syslog("mod_livraison_jade::getNextValue", LOG_DEBUG);
+		dol_syslog("mod_delivery_jade::getNextValue", LOG_DEBUG);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
@@ -153,7 +153,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s", $max + 1);
 
-		dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog("mod_delivery_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
@@ -166,7 +166,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	 *  @param  Object      $object         Object livraison
 	 *  @return string                      Texte descriptif
 	 */
-	public function livraison_get_num($objsoc = 0, $object = '')
+	public function delivery_get_num($objsoc = 0, $object = '')
 	{
 		// phpcs:enable
 		return $this->getNextValue($objsoc, $object);

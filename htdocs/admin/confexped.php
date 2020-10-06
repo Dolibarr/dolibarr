@@ -67,12 +67,12 @@ if ($action == 'disable_sending')
 if ($action == 'activate_delivery')
 {
 	dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity); // We must also enable this
-	dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SUBMODULE_DELIVERY", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: confexped.php");
 	exit;
 } elseif ($action == 'disable_delivery')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
+	dolibarr_del_const($db, "MAIN_SUBMODULE_DELIVERY", $conf->entity);
 	header("Location: confexped.php");
 	exit;
 }
@@ -121,7 +121,7 @@ else
 print "</td>";
 print '</tr>';
 
-// Bon de livraison activation/desactivation
+// Delivery note activate/deactivate Bon de livraison activation/desactivation
 print '<tr>';
 print '<td>';
 print $langs->trans("DeliveriesOrderAbility");
@@ -131,7 +131,7 @@ print '<td>';
 print '</td>';
 print '<td class="center">';
 
-if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
+if (empty($conf->global->MAIN_SUBMODULE_DELIVERY))
 {
 	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {

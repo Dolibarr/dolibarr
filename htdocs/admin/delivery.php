@@ -95,7 +95,7 @@ if ($action == 'specimen')
     $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
     foreach ($dirmodels as $reldir)
     {
-        $file = dol_buildpath($reldir."core/modules/livraison/doc/pdf_".$modele.".modules.php", 0);
+        $file = dol_buildpath($reldir."core/modules/delivery/doc/pdf_".$modele.".modules.php", 0);
         if (file_exists($file))
         {
             $filefound = 1;
@@ -112,7 +112,7 @@ if ($action == 'specimen')
 
         if ($module->write_file($sending, $langs) > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=livraison&file=SPECIMEN.pdf");
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=delivery&file=SPECIMEN.pdf");
             return;
         } else {
             setEventMessages($module->error, $module->errors, 'errors');
@@ -134,17 +134,17 @@ if ($action == 'del')
     $ret = delDocumentModel($value, $type);
     if ($ret > 0)
     {
-        if ($conf->global->LIVRAISON_ADDON_PDF == "$value") dolibarr_del_const($db, 'LIVRAISON_ADDON_PDF', $conf->entity);
+        if ($conf->global->DELIVERY_ADDON_PDF == "$value") dolibarr_del_const($db, 'DELIVERY_ADDON_PDF', $conf->entity);
     }
 }
 
 if ($action == 'setdoc')
 {
-    if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+    if (dolibarr_set_const($db, "DELIVERY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
     {
         // La constante qui a ete lue en avant du nouveau set
         // on passe donc par une variable pour avoir un affichage coherent
-        $conf->global->LIVRAISON_ADDON_PDF = $value;
+        $conf->global->DELIVERY_ADDON_PDF = $value;
     }
 
     // On active le modele
@@ -160,7 +160,7 @@ if ($action == 'setmod')
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-    dolibarr_set_const($db, "LIVRAISON_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "DELIVERY_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -199,7 +199,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    $dir = dol_buildpath($reldir."core/modules/livraison/");
+    $dir = dol_buildpath($reldir."core/modules/delivery/");
 
     if (is_dir($dir))
     {
@@ -208,7 +208,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle)) !== false)
             {
-                if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
+                if (substr($file, 0, 14) == 'mod_delivery_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
                 {
                     $file = substr($file, 0, dol_strlen($file) - 4);
 
@@ -237,7 +237,7 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
                         print '<td class="center">';
-                        if ($conf->global->LIVRAISON_ADDON_NUMBER == "$file")
+                        if ($conf->global->DELIVERY_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
@@ -323,7 +323,7 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    $dir = dol_buildpath($reldir."core/modules/livraison/doc/");
+    $dir = dol_buildpath($reldir."core/modules/delivery/doc/");
 
     if (is_dir($dir))
     {
@@ -378,7 +378,7 @@ foreach ($dirmodels as $reldir)
 
 		    				// Default
 		    				print "<td align=\"center\">";
-		    				if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
+		    				if ($conf->global->DELIVERY_ADDON_PDF == "$name")
 		    				{
 		    					print img_picto($langs->trans("Default"), 'on');
 		    				} else {
