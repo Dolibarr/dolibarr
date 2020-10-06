@@ -245,9 +245,16 @@ function dol_json_decode($json, $assoc = false)
 
 	$out = _unval($out);
 
+	$array = array();
+
 	// Return an array
-	if ($out != '') eval('$array = '.$out.';');
-	else $array = array();
+	if ($out != '') {
+		try {
+			eval('$array = '.$out.';');
+		} catch (Exception $e) {
+			$array = array();
+		}
+	}
 
 	// Return an object
 	if (!$assoc)

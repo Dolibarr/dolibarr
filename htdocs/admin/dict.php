@@ -91,11 +91,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
-	$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 0, 15, 30, 0, 37, 0, 25, 0);
-} else {
-	$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 27, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 0, 15, 30, 0, 37, 0, 25, 0);
-}
+$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 0, 15, 30, 0, 37, 0, 25, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -133,7 +129,6 @@ $tabname[30] = MAIN_DB_PREFIX."c_format_cards";
 $tabname[32] = MAIN_DB_PREFIX."c_hrm_public_holiday";
 $tabname[33] = MAIN_DB_PREFIX."c_hrm_department";
 $tabname[34] = MAIN_DB_PREFIX."c_hrm_function";
-
 $tabname[35] = MAIN_DB_PREFIX."c_exp_tax_cat";
 $tabname[36] = MAIN_DB_PREFIX."c_exp_tax_range";
 $tabname[37] = MAIN_DB_PREFIX."c_units";
@@ -485,8 +480,8 @@ $tabcond[35] = !empty($conf->expensereport->enabled);
 $tabcond[36] = !empty($conf->expensereport->enabled);
 $tabcond[37] = !empty($conf->product->enabled);
 $tabcond[38] = !empty($conf->socialnetworks->enabled);
-$tabcond[39] = (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
-$tabcond[40] = ! empty($conf->societe->enabled);
+$tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 
 // List of help for fields
 $tabhelp = array();
@@ -1671,14 +1666,14 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link
                     if ($iserasable)
                     {
                         print '<td class="center">';
-                        if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+                        if ($user->admin) print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
                         //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
                     } else print '<td>&nbsp;</td>';

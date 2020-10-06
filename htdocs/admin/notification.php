@@ -95,7 +95,7 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "none"), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "restricthtml"), 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
 
 

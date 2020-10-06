@@ -41,8 +41,8 @@ class pdf_ban extends ModeleBankAccountDoc
 	public $emetteur;
 
 	/**
-     * @var string Dolibarr version of the loaded document
-     */
+	 * @var string Dolibarr version of the loaded document
+	 */
 	public $version = 'development';
 
 	/**
@@ -50,12 +50,12 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
+		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
 
 		$this->db = $db;
 		$this->name = "ban";
@@ -89,7 +89,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
@@ -97,9 +97,9 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
-    public function write_file($object, $outputlangs)
+	public function write_file($object, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -113,16 +113,16 @@ class pdf_ban extends ModeleBankAccountDoc
 		{
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
-		    // Definition of $dir and $file
-		    if ($object->specimen)
-		    {
-		        $dir = $conf->bank->dir_output;
-		        $file = $dir."/SPECIMEN.pdf";
-		    } else {
-		        $objectref = dol_sanitizeFileName($object->ref);
-		        $dir = $conf->bank->dir_output."/".$objectref;
-		        $file = $dir."/".$objectref.".pdf";
-		    }
+			// Definition of $dir and $file
+			if ($object->specimen)
+			{
+				$dir = $conf->bank->dir_output;
+				$file = $dir."/SPECIMEN.pdf";
+			} else {
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->bank->dir_output."/".$objectref;
+				$file = $dir."/".$objectref.".pdf";
+			}
 
 			if (!file_exists($dir))
 			{
@@ -146,20 +146,20 @@ class pdf_ban extends ModeleBankAccountDoc
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-                $pdf = pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-                $heightforinfotot = 50; // Height reserved to output the info and total part
-		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
-                $pdf->SetAutoPageBreak(1, 0);
+				$pdf = pdf_getInstance($this->format);
+				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
+				$heightforinfotot = 50; // Height reserved to output the info and total part
+				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				$pdf->SetAutoPageBreak(1, 0);
 
-                if (class_exists('TCPDF'))
-                {
-                    $pdf->setPrintHeader(false);
-                    $pdf->setPrintFooter(false);
-                }
-                $pdf->SetFont(pdf_getPDFFont($outputlangs));
+				if (class_exists('TCPDF'))
+				{
+					$pdf->setPrintHeader(false);
+					$pdf->setPrintFooter(false);
+				}
+				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -185,7 +185,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				$tab_top = 50;
 				$tab_height = 200;
 				$tab_top_newpage = 40;
-                $tab_height_newpage = 210;
+				$tab_height_newpage = 210;
 
 				// Affiche notes
 				if (!empty($object->note_public))
@@ -246,8 +246,8 @@ class pdf_ban extends ModeleBankAccountDoc
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
 				if (!empty($conf->global->MAIN_UMASK))
@@ -280,12 +280,12 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-    protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		// phpcs:enable
 		global $conf, $mysoc;
 
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -310,7 +310,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
-        $posx = $this->page_largeur - $this->marge_droite - 100;
+		$posx = $this->page_largeur - $this->marge_droite - 100;
 		$posy = $this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
@@ -321,8 +321,8 @@ class pdf_ban extends ModeleBankAccountDoc
 		{
 			if (is_readable($logo))
 			{
-			    $height = pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -376,7 +376,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
-     *
+	 *
 	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	Project		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output

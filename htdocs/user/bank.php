@@ -114,6 +114,49 @@ if ($action == 'update' && !$cancel)
 {
     $account->userid = $object->id;
 
+    /*
+    if ($action == 'update' && !$cancel)
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+    	if ($canedituser)    // Case we can edit all field
+    	{
+    		$error = 0;
+
+    		if (!$error)
+    		{
+    			$objectuser->fetch($id);
+
+    			$objectuser->oldcopy = clone $objectuser;
+
+    			$db->begin();
+
+    			$objectuser->default_range = GETPOST('default_range');
+    			$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
+
+    			if (!$error) {
+    				$ret = $objectuser->update($user);
+    				if ($ret < 0) {
+    					$error++;
+    					if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+    						$langs->load("errors");
+    						setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
+    					} else {
+    						setEventMessages($objectuser->error, $objectuser->errors, 'errors');
+    					}
+    				}
+    			}
+
+    			if (!$error && !count($objectuser->errors)) {
+    				setEventMessages($langs->trans("UserModified"), null, 'mesgs');
+    				$db->commit();
+    			} else {
+    				$db->rollback();
+    			}
+    		}
+    	}
+    }*/
+
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
 	$account->courant         = GETPOST('courant', 'alpha');
@@ -154,6 +197,23 @@ if ($action == 'setpersonal_mobile')
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
+
+// update default_c_exp_tax_cat
+if ($action == 'setdefault_c_exp_tax_cat')
+{
+	$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
+	$result = $object->update($user);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+}
+
+// update default range
+if ($action == 'setdefault_range')
+{
+	$object->default_range = GETPOST('default_range', 'int');
+	$result = $object->update($user);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+}
+
 
 
 /*
@@ -222,6 +282,51 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer, 'string', ($object->personal_mobile != '' ? dol_print_phone($object->personal_mobile) : ''));
 	print '</td>';
 	print '</tr>';
+
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+	{
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->rights->user->user->creer);
+		print '</td><td>';
+		if ($action == 'editdefault_c_exp_tax_cat') {
+			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
+			$ret .= '<input type="hidden" name="action" value="setdefault_c_exp_tax_cat">';
+			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
+			$ret .= $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
+			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
+			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '</form>';
+			print $ret;
+		} else {
+			print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+			//print $form->editfieldval("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->rights->user->user->creer, 'string', ($object->default_c_exp_tax_cat != '' ? $object->default_c_exp_tax_cat : ''));
+		}
+		print '</td>';
+		print '</tr>';
+
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("DefaultRangeNumber", 'default_range', $object->default_range, $object, $user->rights->user->user->creer);
+		print '</td><td>';
+		if ($action == 'editdefault_range') {
+			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
+			$ret .= '<input type="hidden" name="action" value="setdefault_range">';
+			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
+			$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
+			$ret .= $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
+			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
+			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '</form>';
+			print $ret;
+		} else {
+			print $object->default_range;
+		}
+		print '</td>';
+		print '</tr>';
+	}
 
     print '</table>';
 

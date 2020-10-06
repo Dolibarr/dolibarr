@@ -100,7 +100,7 @@ if ($action == 'add' && empty($cancel))
 	$object->label = GETPOST("label", 'alphanohtml');
 	$object->datesp = $datesp;
 	$object->dateep = $dateep;
-	$object->note = GETPOST("note", 'none');
+	$object->note = GETPOST("note", 'restricthtml');
 	$object->type_payment = ($type_payment > 0 ? $type_payment : 0);
 	$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 	$object->fk_user_author = $user->id;
@@ -484,7 +484,7 @@ if ($id)
 	{
 		if (!empty($user->rights->salaries->delete))
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}

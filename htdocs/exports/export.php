@@ -130,7 +130,7 @@ $entitytolang = array(
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
 $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["export_filtered_fields"] : array();
 $datatoexport = GETPOST("datatoexport", "aZ09");
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $step = GETPOST("step", "int") ?GETPOST("step", "int") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
@@ -302,9 +302,9 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes')
 
 if ($action == 'deleteprof')
 {
-	if ($_GET["id"])
+	if (GETPOST("id", 'int'))
 	{
-		$objexport->fetch($_GET["id"]);
+		$objexport->fetch(GETPOST('id', 'int'));
 		$result = $objexport->delete($user);
 	}
 }
@@ -1054,13 +1054,13 @@ if ($step == 4 && $datatoexport)
 
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td class="right">';
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '<input type="submit" class="button reposition" value="'.$langs->trans("Save").'">';
         print '</td></tr>';
 
         // List of existing export profils
     	$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE type = '".$datatoexport."'";
+		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
 		if (empty($conf->global->EXPORTS_SHARE_MODELS))$sql .= " AND fk_user=".$user->id;
 		$sql .= " ORDER BY rowid";
 		$resql = $db->query($sql);
@@ -1074,14 +1074,14 @@ if ($step == 4 && $datatoexport)
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td class="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
 				$i++;
 			}
 		} else {
-			dol_print_error($this->db);
+			dol_print_error($db);
 		}
 
         print '</table>';

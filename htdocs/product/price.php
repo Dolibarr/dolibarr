@@ -53,7 +53,7 @@ $mesg = ''; $error = 0; $errors = array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $eid = GETPOST('eid', 'int');
 
@@ -127,9 +127,9 @@ if (empty($reshook))
 	        // Get record from code
 	        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+	        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 	        $sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-	        $sql .= " AND t.code ='".$vatratecode."'";
+	        $sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 	        $resql = $db->query($sql);
 	        if ($resql)
 	        {
@@ -243,9 +243,9 @@ if (empty($reshook))
         	        // Get record from code
         	        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
         	        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-        	        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+        	        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
         	        $sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-        	        $sql .= " AND t.code ='".$vatratecode."'";
+        	        $sql .= " AND t.code ='".$db->escape($vatratecode)."'";
         	        $resql = $db->query($sql);
         	        if ($resql)
         	        {
@@ -296,9 +296,9 @@ if (empty($reshook))
 		        // Get record from code
 		        $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 		        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+		        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 		        $sql .= " AND t.taux = ".$tva_tx." AND t.active = 1";
-		        $sql .= " AND t.code ='".$vatratecode."'";
+		        $sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 		        $resql = $db->query($sql);
 		        if ($resql)
 		        {
@@ -436,7 +436,7 @@ if (empty($reshook))
 			// Ajout / mise à jour
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
-				$sql .= " price='".$price."',";
+				$sql .= " price='".$db->escape($price)."',";
 				$sql .= " unitprice=".$unitPrice.",";
 				$sql .= " quantity=".$quantity.",";
 				$sql .= " remise_percent=".$remise_percent.",";
@@ -525,9 +525,9 @@ if (empty($reshook))
 		    // Get record from code
 		    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		    $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+		    $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 		    $sql .= " AND t.taux = ".$tva_tx." AND t.active = 1";
-		    $sql .= " AND t.code ='".$vatratecode."'";
+		    $sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 		    $resql = $db->query($sql);
 		    if ($resql)
 		    {
@@ -625,9 +625,9 @@ if (empty($reshook))
 		    // Get record from code
 		    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-		    $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+		    $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 		    $sql .= " AND t.taux = ".$tva_tx." AND t.active = 1";
-		    $sql .= " AND t.code ='".$vatratecode."'";
+		    $sql .= " AND t.code ='".$db->escape($vatratecode)."'";
 		    $resql = $db->query($sql);
 		    if ($resql)
 		    {
@@ -913,7 +913,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							if (($user->rights->produit->creer || $user->rights->service->creer)) {
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 								print img_edit().'</a>';
-								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;token='.newToken().'&amp;rowid='.$prices["rowid"].'">';
 								print img_delete().'</a>';
 							} else {
 								print '&nbsp;';
@@ -1064,7 +1064,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					{
 						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 						print img_edit().'</a>';
-						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;token='.newToken().'&amp;rowid='.$prices["rowid"].'">';
 						print img_delete().'</a>';
 					} else {
 						print '&nbsp;';
@@ -1591,7 +1591,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     				print '<td class="right">';
     				if ($candelete)
     				{
-    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
+    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$objp->rowid.'">';
     					print img_delete();
     					print '</a>';
     				} else print '&nbsp;'; // Can not delete last price (it's current price)
@@ -2148,7 +2148,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';

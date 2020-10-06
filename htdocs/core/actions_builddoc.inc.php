@@ -82,7 +82,7 @@ if ($action == 'builddoc' && $permissiontoadd)
         if (empty($hideref)) $hideref = 0;
         if (empty($moreparams)) $moreparams = null;
 
-        $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+        $result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
         if ($result <= 0)
         {
             setEventMessages($object->error, $object->errors, 'errors');

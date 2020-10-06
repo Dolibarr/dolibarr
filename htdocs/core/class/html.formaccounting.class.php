@@ -174,15 +174,15 @@ class FormAccounting extends Form
             $sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			$sql .= " AND c.fk_country = co.rowid";
-            if (empty($allcountries)) $sql .= " AND co.code = '".$mysoc->country_code."'";
+            if (empty($allcountries)) $sql .= " AND co.code = '".$this->db->escape($mysoc->country_code)."'";
             $sql .= " ORDER BY c.label ASC";
         }
 
         dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-        $resql = $db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $db->num_rows($resql);
+        	$num = $this->db->num_rows($resql);
             if ($num)
             {
                 $out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -191,7 +191,7 @@ class FormAccounting extends Form
                 if ($useempty) $out .= '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object($resql);
+                	$obj = $this->db->fetch_object($resql);
                     $out .= '<option value="'.$obj->rowid.'"';
                     if ($obj->rowid == $selected) $out .= ' selected';
                     $out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
@@ -204,7 +204,7 @@ class FormAccounting extends Form
                 $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
             }
         } else {
-            dol_print_error($db, $db->lasterror());
+        	dol_print_error($this->db);
         }
 
         $out .= ajax_combobox($htmlname, array());

@@ -177,6 +177,14 @@ interface Database
 	 */
 	public function escape($stringtoencode);
 
+	/**
+	 * Sanitize a string for SQL forging
+	 *
+	 * @param   string $stringtosanitize 		String to escape
+	 * @return  string                      String escaped
+	 */
+	public function sanitize($stringtosanitize);
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get last ID after an insert INSERT

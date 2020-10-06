@@ -47,7 +47,12 @@ if ($action == 'set')
 
 	$gimcdf = GETPOST("GEOIPMAXMIND_COUNTRY_DATAFILE");
 
-	if (!$gimcdf && !file_exists($gimcdf))
+	if (!$error && $gimcdf && ! preg_match('/\.(dat|mmdb)$/', $gimcdf)) {
+		setEventMessages($langs->trans("ErrorFileMustHaveFormat", '.dat|.mmdb'), null, 'errors');
+		$error++;
+	}
+
+	if (!$error && $gimcdf && !file_exists($gimcdf))
 	{
 		setEventMessages($langs->trans("ErrorFileNotFound", $gimcdf), null, 'errors');
 		$error++;
@@ -126,7 +131,7 @@ if ($conf->global->GEOIP_VERSION == 'php')
 {
 	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /pathtodatafile/GeoLite2-Country.mmdb<br>';
 }
-print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
+print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE).'">';
 print '</td></tr>';
 
 print '</table>';
@@ -148,7 +153,7 @@ print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" targ
 if ($geoip)
 {
 	print '<br><br>';
-	print '<br>'.$langs->trans("TestGeoIPResult", $ip).':';
+	print '<br><span class="opacitymedium">'.$langs->trans("TestGeoIPResult", $ip).':</span>';
 
 	$ip = '24.24.24.24';
 	print '<br>'.$ip.' -> ';

@@ -38,7 +38,7 @@ if (!$user->admin) {
 }
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

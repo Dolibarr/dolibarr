@@ -39,7 +39,7 @@ if (!$user->rights->categorie->lire) accessforbidden();
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
 

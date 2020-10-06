@@ -30,7 +30,7 @@ $langs->loadLangs(array('admin', 'hrm'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters HRM_*
 $list = array(
@@ -58,9 +58,11 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans('Parameters'));
 
 $form = new Form($db);

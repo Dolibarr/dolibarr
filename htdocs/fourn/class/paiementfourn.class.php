@@ -119,7 +119,6 @@ class PaiementFourn extends Paiement
 				$this->entity         = $obj->entity;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->num_paiement   = $obj->num_payment;
 				$this->num_payment    = $obj->num_payment;
 				$this->bank_account   = $obj->fk_account;
 				$this->fk_account     = $obj->fk_account;
@@ -177,7 +176,7 @@ class PaiementFourn extends Paiement
 
 		foreach ($amounts as $key => $value)
 		{
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
+			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value? $value : 0, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
@@ -207,7 +206,7 @@ class PaiementFourn extends Paiement
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql .= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql .= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
+			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".$user->id.", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -256,7 +255,7 @@ class PaiementFourn extends Paiement
 									$outputlangs->setDefaultLang($newlang);
 								}
 								$ret = $invoice->fetch($facid); // Reload to get new records
-								$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+								$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 								if ($result < 0) {
 									setEventMessages($invoice->error, $invoice->errors, 'errors');
 									$error++;

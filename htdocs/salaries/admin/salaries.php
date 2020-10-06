@@ -36,7 +36,7 @@ $langs->loadLangs(array('admin', 'salaries'));
 if (!$user->admin)
     accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters SALARIES_*
 $list = array(

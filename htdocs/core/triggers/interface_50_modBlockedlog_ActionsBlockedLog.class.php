@@ -83,6 +83,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		    || $action === 'CASHCONTROL_VALIDATE'
 		    || (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
 		    || (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
+			|| (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) && in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)))
 		)
 		{
 			$qualified++;

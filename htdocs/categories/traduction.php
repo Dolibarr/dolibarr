@@ -37,7 +37,7 @@ $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
 $label  = GETPOST('label', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $type   = GETPOST('type', 'aZ09');
 
@@ -85,7 +85,7 @@ $cancel != $langs->trans("Cancel") &&
 	// check parameters
     $forcelangprod = GETPOST('forcelangprod', 'alpha');
     $libelle = GETPOST('libelle', 'alpha');
-    $desc = GETPOST('desc', 'none');
+    $desc = GETPOST('desc', 'restricthtml');
 
     if (empty($forcelangprod)) {
         $error++;
@@ -301,7 +301,7 @@ if ($action == 'edit')
 		{
 		    $s = picto_from_langcode($key);
 			print '<table class="border centpercent">';
-			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (!empty($conf->global->CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION))
@@ -338,7 +338,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
 	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', GETPOST('desc', 'none'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

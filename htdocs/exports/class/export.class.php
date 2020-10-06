@@ -338,7 +338,7 @@ class Export
 				}
 				break;
 			default:
-			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type '".$InfoFieldList[0]."' (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERR);
+			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type ".$InfoFieldList[0]." (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERR);
 		}
 
 		return $szFilterQuery;
@@ -539,6 +539,7 @@ class Export
 		if (empty($this->array_export_fields) || !is_array($this->array_export_fields))
 		{
 			$this->error = "ErrorBadParameter";
+			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -705,10 +706,10 @@ class Export
 		$sql .= 'filter';
 		$sql .= ') VALUES (';
 		$sql .= "'".$this->db->escape($this->model_name)."',";
-		$sql .= "'".$this->db->escape($this->datatoexport)."',";
-		$sql .= "'".$this->db->escape($this->hexa)."',";
-		$sql .= "'".$user->id."',";
-		$sql .= "'".$this->db->escape($this->hexafiltervalue)."'";
+		$sql .= " '".$this->db->escape($this->datatoexport)."',";
+		$sql .= " '".$this->db->escape($this->hexa)."',";
+		$sql .= ' '.($user->id > 0 ? $user->id : 'null').",";
+		$sql .= " '".$this->db->escape($this->hexafiltervalue)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -735,7 +736,7 @@ class Export
     {
 		$sql = 'SELECT em.rowid, em.label, em.type, em.field, em.filter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
-		$sql .= ' WHERE em.rowid = '.$id;
+		$sql .= ' WHERE em.rowid = '.((int) $id);
 
 		dol_syslog("Export::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -844,7 +845,7 @@ class Export
 				}
 				// suppression de l'export
 				print '<td class="right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&id='.$obj->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
 				print "</tr>";

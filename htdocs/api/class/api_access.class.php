@@ -59,6 +59,16 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		global $db;
+		$this->db = $db;
+	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * Check access
@@ -107,15 +117,15 @@ class DolibarrApiAccess implements iAuthenticate
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql .= " u.tms as date_modification, u.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql .= " WHERE u.api_key = '".$db->escape($api_key)."'";
+			$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."'";
 			// TODO Check if 2 users has same API key.
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				if ($db->num_rows($result))
+				if ($this->db->num_rows($result))
 				{
-					$obj = $db->fetch_object($result);
+					$obj = $this->db->fetch_object($result);
 					$login = $obj->login;
 					$stored_key = $obj->api_key;
 					$userentity = $obj->entity;
@@ -125,11 +135,11 @@ class DolibarrApiAccess implements iAuthenticate
 						$conf->entity = ($obj->entity ? $obj->entity : 1);
 						// We must also reload global conf to get params from the entity
 						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
-						$conf->setValues($db);
+						$conf->setValues($this->db);
 					}
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
+				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error_msg);
 			}
 
 			if ($stored_key != $api_key) {		// This should not happen since we did a search on api_key
@@ -141,7 +151,7 @@ class DolibarrApiAccess implements iAuthenticate
 			{
 			    throw new RestException(503, 'Error when searching login user from api key');
 			}
-			$fuser = new User($db);
+			$fuser = new User($this->db);
 			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');

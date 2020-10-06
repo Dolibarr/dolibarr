@@ -31,8 +31,8 @@ if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
 if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
 if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
-//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1); 			// File must be accessed by logon page so without login.
+//if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  	// We load menu manager class (note that object loaded may have wrong content because NOLOGIN is set and some values depends on login)
 if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
@@ -55,6 +55,10 @@ if (empty($user->id) && !empty($_SESSION['dol_login']))
 {
     $user->fetch('', $_SESSION['dol_login'], '', 1);
     $user->getrights();
+
+    // Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+    $menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+    $menumanager->loadMenu();
 }
 
 
@@ -190,6 +194,7 @@ $colortext = join(',', colorStringToArray($colortext));
 $colortextlink = join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
+
 if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 

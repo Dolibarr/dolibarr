@@ -218,7 +218,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu .dropdown-header{
-    padding: 5px 10px 10px 10px;
+    padding: 8px 10px 10px 10px;
 }
 
 .dropdown-menu > .user-footer {
@@ -232,6 +232,8 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu > .bookmark-footer{
+    border-top: 1px solid #f0f0f0;
+    background-color: #f9f9f9;
     padding: 10px;
 }
 

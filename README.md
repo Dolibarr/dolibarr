@@ -29,8 +29,8 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
-- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp)
-- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian
+- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_DoliWamp)
+- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
@@ -77,8 +77,8 @@ If you don't have time to install it yourself, you can try some commercial 'read
 ## UPGRADING
 
 Dolibarr supports upgrading usually wihtout the need for any (commercial) support (depending on if you use any commercial extensions) and supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
-
-- At first make a backup of your Dolibarr files & than see https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr
+ 
+- At first make a backup of your Dolibarr files & than [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Check that your installed PHP version is supported by the new version [see PHP support](./doc/phpmatrix.md).
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.

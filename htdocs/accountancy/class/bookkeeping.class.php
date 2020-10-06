@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1755,14 +1755,14 @@ class BookKeeping extends CommonObject
 			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.$next_piecenum.", '".$this->db->idate($now)."'";
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.$this->db->escape($piece_num);
+			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.$this->db->escape($piece_num);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1770,7 +1770,7 @@ class BookKeeping extends CommonObject
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
 		} elseif ($direction == 1) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.$piece_num;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1785,14 +1785,14 @@ class BookKeeping extends CommonObject
 			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE piece_num = '.$piece_num;
+			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE piece_num = '.((int) $piece_num);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.$piece_num;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -1910,7 +1910,7 @@ class BookKeeping extends CommonObject
 		$sql .= " AND asy.rowid = ".$pcgver;
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as parent ON aa.account_parent = parent.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as root ON parent.account_parent = root.rowid";
-		$sql .= " WHERE aa.account_number = '".$account."'";
+		$sql .= " WHERE aa.account_number = '".$this->db->escape($account)."'";
 		$sql .= " AND parent.active = 1";
 		$sql .= " AND root.active = 1";
 		$sql .= " AND aa.entity IN (".getEntity('accountancy').")";
@@ -1948,8 +1948,8 @@ class BookKeeping extends CommonObject
 		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa ";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND aa.account_number = '".$account."'";
-		$sql .= " AND asy.rowid = ".$pcgver;
+		$sql .= " AND aa.account_number = '".$this->db->escape($account)."'";
+		$sql .= " AND asy.rowid = ".((int) $pcgver);
 		$sql .= " AND aa.active = 1";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
 		$sql .= " WHERE aa.entity IN (".getEntity('accountancy').")";
@@ -2006,8 +2006,22 @@ class BookKeepingLine
 	public $label_operation;
 	public $debit;
 	public $credit;
+
+    /**
+     * @var float Amount
+     * @deprecated see $amount
+     */
 	public $montant;
-	public $sens;
+
+    /**
+     * @var float Amount
+     */
+	public $amount;
+
+    /**
+     * @var string Sens
+     */
+    public $sens;
     public $lettering_code;
 
 	/**

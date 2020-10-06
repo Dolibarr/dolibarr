@@ -41,7 +41,7 @@ if (!empty($conf->projet->enabled)) {
 $langs->loadLangs(array('bills', 'other', 'companies'));
 
 $id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 
@@ -215,15 +215,15 @@ if ($object->id > 0)
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
-	if ($societe->localtax1_assuj == "1") //Localtax1
+	if ($mysoc->localtax1_assuj == "1") //Localtax1
 	{
-		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	if ($societe->localtax2_assuj == "1") //Localtax2
+	if ($mysoc->localtax2_assuj == "1") //Localtax2
 	{
-		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
@@ -252,7 +252,24 @@ if ($object->id > 0)
 	$permission = $user->rights->fournisseur->facture->creer;
 	$permtoedit = $user->rights->fournisseur->facture->creer;
 	$param = '&facid='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+
+	$defaulttpldir = '/core/tpl';
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+	foreach ($dirtpls as $module => $reldir)
+	{
+		if (!empty($module)) {
+			$tpl = dol_buildpath($reldir.'/document_actions_post_headers.tpl.php');
+		} else {
+			$tpl = DOL_DOCUMENT_ROOT.$reldir.'/document_actions_post_headers.tpl.php';
+		}
+
+		if (empty($conf->file->strict_mode)) {
+			$res = @include $tpl;
+		} else {
+			$res = include $tpl; // for debug
+		}
+		if ($res) break;
+	}
 } else {
     print $langs->trans('ErrorUnknown');
 }

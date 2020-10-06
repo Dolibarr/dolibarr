@@ -165,7 +165,7 @@ class EmailCollectorFilter extends CommonObject
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid', 'isanswer', 'isnotanswer')) && empty($this->rulevalue))
+		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingidinmsgid', 'withouttrackingidinmsgid', 'withtrackingid', 'withouttrackingid', 'isanswer', 'isnotanswer')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));

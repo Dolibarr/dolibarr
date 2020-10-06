@@ -153,7 +153,6 @@ class RejetPrelevement
 			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * -1);
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
-			$pai->num_paiement = $fac->ref;
 			$pai->num_payment = $fac->ref;
 
 			if ($pai->create($this->user) < 0)  // we call with no_commit

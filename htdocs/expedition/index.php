@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,7 @@ if (!$user->rights->societe->client->voir && !$socid)
 	$sql .= $clause." sc.fk_user = ".$user->id;
 	$clause = " AND ";
 }
-$sql .= $clause." e.fk_statut = 0";
+$sql .= $clause." e.fk_statut = ".Expedition::STATUS_DRAFT;
 $sql .= " AND e.entity IN (".getEntity('expedition').")";
 if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 
@@ -96,7 +97,13 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
+	print '<th colspan="3">';
+	print $langs->trans("SendingsToValidate").' ';
+	print '<a href="'.DOL_URL_ROOT.'/expedition/list.php?search_status='.Expedition::STATUS_DRAFT.'">';
+	print '<span class="badge">'.$num.'</span>';
+	print '</a>';
+	print '</th>';
+	print '</tr>';
 
 	if ($num)
 	{
@@ -156,13 +163,21 @@ $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="4">';
+	print $langs->trans("LastSendings").' ';
+	print '<a href="'.DOL_URL_ROOT.'/expedition/list.php?search_status='.Expedition::STATUS_VALIDATED.'">';
+	print '<span class="badge">'.$num.'</span>';
+	print '</a>';
+	print '</th>';
+	print '</tr>';
+
 	if ($num)
 	{
 		$i = 0;
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="4">'.$langs->trans("LastSendings", $num).'</th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -189,8 +204,10 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-		print "</table></div><br>";
+	} else {
+		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
 	}
+	print "</table></div><br>";
 	$db->free($resql);
 } else dol_print_error($db);
 
@@ -214,13 +231,21 @@ if ($resql)
 	$langs->load("orders");
 
 	$num = $db->num_rows($resql);
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre">';
+	print '<th colspan="3">'.$langs->trans("OrdersToProcess").' ';
+	print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.','.Commande::STATUS_ACCEPTED.'">';
+	print '<span class="badge">'.$num.'</span>';
+	print '</a>';
+	print '</th>';
+	print '</tr>';
+
 	if ($num)
 	{
 		$i = 0;
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <span class="badge">'.$num.'</span></th></tr>';
 		while ($i < $num && $i < 10)
 		{
 			$obj = $db->fetch_object($resql);
@@ -254,9 +279,11 @@ if ($resql)
 			print '<td></td>';
 			print '</tr>';
 		}
-
-		print "</table></div><br>";
+	} else {
+		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
 	}
+
+	print "</table></div><br>";
 } else dol_print_error($db);
 
 

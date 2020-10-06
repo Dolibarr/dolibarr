@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
@@ -74,8 +75,8 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -199,48 +200,6 @@ if (empty($reshook))
     $permissiontodelete = $user->rights->expensereport->supprimer;
     $uploaddir = $conf->expensereport->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
-    if ($action == 'update' && !$cancel)
-    {
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-    	if ($canedituser)    // Case we can edit all field
-    	{
-    		$error = 0;
-
-    		if (!$error)
-    		{
-    			$objectuser->fetch($id);
-
-    			$objectuser->oldcopy = clone $objectuser;
-
-    			$db->begin();
-
-    			$objectuser->default_range = GETPOST('default_range');
-    			$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-
-    			if (!$error) {
-    				$ret = $objectuser->update($user);
-    				if ($ret < 0) {
-    					$error++;
-    					if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-    						$langs->load("errors");
-    						setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
-    					} else {
-    						setEventMessages($objectuser->error, $objectuser->errors, 'errors');
-    					}
-    				}
-    			}
-
-    			if (!$error && !count($objectuser->errors)) {
-    				setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-    				$db->commit();
-    			} else {
-    				$db->rollback();
-    			}
-    		}
-    	}
-    }
 }
 
 
@@ -251,6 +210,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formexpensereport = new FormExpenseReport($db);
 
 $fuser = new User($db);
 
@@ -302,7 +262,7 @@ if ($search_amount_ttc != '') $sql .= natural_search('d.total_ttc', $search_amou
 // User
 if ($search_user != '' && $search_user >= 0) $sql .= " AND u.rowid = '".$db->escape($search_user)."'";
 // Status
-if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
@@ -385,61 +345,11 @@ if ($resql)
 
 		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-
-		if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-		{
-			print '<table class="border centpercent">';
-
-			if ($action == 'edit')
-			{
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td>';
-				print $form->selectExpenseCategories($fuser->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($fuser->default_c_exp_tax_cat);
-				print $form->selectarray('default_range', range(0, $maxRangeNum), $fuser->default_range);
-				print '</td></tr>';
-			} else {
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td class="fk_c_exp_tax_cat">';
-				print dol_getIdFromCode($db, $fuser->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				print $fuser->default_range;
-				print '</td></tr>';
-			}
-
-			print '</table>';
-		}
-
-		print '</div>';
-
-		/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
-		{
-			print '<div class="underbanner clearboth"></div>';
-
-			print '<br>';
-
-			showMyBalance($holiday, $user_id);
-		}*/
-
 		dol_fiche_end();
 
 		if ($action != 'edit')
 		{
 			print '<div class="tabsAction">';
-
-			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$user_id.'" class="butAction">'.$langs->trans("Modify").'</a>';
-			}
 
 			$childids = $user->getAllChildIds(1);
 
@@ -447,9 +357,10 @@ if ($resql)
 				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
 			// Buttons for actions
-			if ($canedit)
-			{
+			if ($canedit) {
 				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
+			} else {
+				print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotEnoughPermission").'">'.$langs->trans("AddTrip").'</a>';
 			}
 
 			print '</div>';
@@ -461,11 +372,9 @@ if ($resql)
 	} else {
 		$title = $langs->trans("ListTripsAndExpenses");
 
-		$newcardbutton = '';
-		if ($user->rights->expensereport->creer)
-		{
-            $newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expensereport/card.php?action=create');
-		}
+		$url = DOL_URL_ROOT.'/expensereport/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
@@ -599,7 +508,7 @@ if ($resql)
 	if (!empty($arrayfields['d.fk_statut']['checked']))
 	{
     	print '<td class="liste_titre right">';
-    	select_expensereport_statut($search_status, 'search_status', 1, 1);
+    	$formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1);
     	print '</td>';
 	}
 	// Action column

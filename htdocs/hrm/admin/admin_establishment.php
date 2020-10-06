@@ -32,14 +32,6 @@ if (!$user->admin)
 
 $error = 0;
 
-// List of statut
-static $tmpstatus2label = array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
-);
-$status2label = array('');
-foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
-
 
 /*
  * Actions
@@ -104,12 +96,12 @@ if ($result)
 	print "</tr>\n";
 
 	if ($num > 0)
-    {
-	    $establishmentstatic = new Establishment($db);
+	{
+		$establishmentstatic = new Establishment($db);
 
 		while ($i < min($num, $limit))
 		{
-            $obj = $db->fetch_object($result);
+			$obj = $db->fetch_object($result);
 
 			$establishmentstatic->id = $obj->rowid;
 			$establishmentstatic->ref = $obj->ref;
@@ -123,16 +115,16 @@ if ($result)
 			print '<td class="left">'.$obj->address.'</td>';
 			print '<td class="left">'.$obj->zip.'</td>';
 			print '<td class="left">'.$obj->town.'</td>';
-            print '<td class="right">';
+			print '<td class="right">';
 			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
-            print "</tr>\n";
+			print "</tr>\n";
 
-            $i++;
-        }
-    } else {
-        print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    }
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	}
 
 	print '</table>';
 } else {

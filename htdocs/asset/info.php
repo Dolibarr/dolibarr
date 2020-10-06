@@ -31,19 +31,21 @@ $langs->loadLangs(array("asset"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'asset', $id, '');
+$result = restrictedArea($user, 'asset', $id);
 
 $object = new Asset($db);
 $object->fetch($id);
+
 
 /*
  * Actions
  */
 
+// None
 
 
 /*

@@ -227,7 +227,7 @@ class modUser extends DolibarrModules
 		    'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
 		    'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
 		    'u.dateemployment'=>'DateEmployment', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
-		    'u.birth'=>'BirthdayDate',
+		    'u.birth'=>'DateOfBirth',
 		    'u.datec'=>"DateCreation", 'u.tms'=>"DateLastModification",
 			'u.admin'=>"Administrator", 'u.statut'=>'Status', 'u.datelastlogin'=>'LastConnexion', 'u.datepreviouslogin'=>'PreviousConnexion',
 			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId"
@@ -283,7 +283,7 @@ class modUser extends DolibarrModules
 		    'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
 		    'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
 			'u.dateemployment'=>'DateEmployment', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
-		    'u.birth'=>'BirthdayDate',
+		    'u.birth'=>'DateOfBirth',
 		    'u.datec'=>"DateCreation",
 		    'u.statut'=>'Status'
 		);

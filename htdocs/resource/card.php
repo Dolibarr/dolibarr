@@ -35,12 +35,12 @@ $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
 $id						= GETPOST('id', 'int');
-$action					= GETPOST('action', 'alpha');
+$action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
-$description			= GETPOST('description');
-$confirm				= GETPOST('confirm');
-$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
+$description			= GETPOST('description', 'restricthtml');
+$confirm				= GETPOST('confirm', 'aZ09');
+$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -369,7 +369,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		    if ($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';
-		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
+		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
 		        print '</div>';
 		    }
 		}

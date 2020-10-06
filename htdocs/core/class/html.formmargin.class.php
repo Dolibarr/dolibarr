@@ -87,7 +87,7 @@ class FormMargin
 			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-				$product = new ProductFournisseur($db);
+				$product = new ProductFournisseur($this->db);
 				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
 					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			}
@@ -204,7 +204,7 @@ class FormMargin
 		if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
-	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
+	        $hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']);	// Clean cookie
 	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? '' : 'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
 	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? 'hideobject' : '').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
 

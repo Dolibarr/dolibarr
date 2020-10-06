@@ -205,9 +205,9 @@ class BonPrelevement extends CommonObject
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".$this->id;
 			$sql .= " AND fk_soc =".$client_id;
-			$sql .= " AND code_banque ='".$code_banque."'";
-			$sql .= " AND code_guichet ='".$code_guichet."'";
-			$sql .= " AND number ='".$number."'";
+			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
+			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
+			$sql .= " AND number = '".$this->db->escape($number)."'";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -234,10 +234,10 @@ class BonPrelevement extends CommonObject
 			$sql .= ", ".$client_id;
 			$sql .= ", '".$this->db->escape($client_nom)."'";
 			$sql .= ", '".price2num($amount)."'";
-			$sql .= ", '".$code_banque."'";
-			$sql .= ", '".$code_guichet."'";
-			$sql .= ", '".$number."'";
-			$sql .= ", '".$number_key."'";
+			$sql .= ", '".$this->db->escape($code_banque)."'";
+			$sql .= ", '".$this->db->escape($code_guichet)."'";
+			$sql .= ", '".$this->db->escape($number)."'";
+			$sql .= ", '".$this->db->escape($number_key)."'";
 			$sql .= ")";
 
 			if ($this->db->query($sql))
@@ -318,7 +318,7 @@ class BonPrelevement extends CommonObject
 				$this->type           = $obj->type;
 
 				$this->status         = $obj->status;
-				$this->statut         = $obj->status;	// For backward compatibility
+				$this->statut         = $obj->status; // For backward compatibility
 
 				$this->fetched = 1;
 
@@ -507,10 +507,9 @@ class BonPrelevement extends CommonObject
 					}
 
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
-					$paiement->num_paiement = $this->ref; // For backward compatibility
 					$paiement->id_prelevement = $this->id;
 
-					$paiement_id = $paiement->create($user);		// This use ->paiementid, that is ID of payment mode
+					$paiement_id = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
 					if ($paiement_id < 0)
 					{
 						$error++;
@@ -540,7 +539,7 @@ class BonPrelevement extends CommonObject
 
 				// Update withdrawal line
 				// TODO: Translate to ligneprelevement.class.php
-				if (! $error) {
+				if (!$error) {
 					$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
 					$sql .= " SET statut = 2";
 					$sql .= " WHERE fk_prelevement_bons = ".$this->id;
@@ -884,7 +883,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.rowid = pfd.fk_facture_fourn";
 			}
 			$sql .= " AND s.rowid = f.fk_soc";
-			$sql .= " AND f.fk_statut = 1";			// Invoice validated
+			$sql .= " AND f.fk_statut = 1"; // Invoice validated
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
@@ -1179,7 +1178,7 @@ class BonPrelevement extends CommonObject
 			/*
 			 * Update total defined after generation of file
 			 */
-			if (! $error) {
+			if (!$error) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " SET amount = ".price2num($this->total);
 				$sql .= " WHERE rowid = ".$this->id;
@@ -1303,7 +1302,7 @@ class BonPrelevement extends CommonObject
 
 		$result = '';
 
-		$labeltoshow = 'Withdraw';
+		$labeltoshow = 'PaymentByDirectDebit';
 		if ($this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
 		}
@@ -1381,7 +1380,7 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE rowid = '".$rowid."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		if ($this->db->query($sql))
 		{
@@ -1405,7 +1404,7 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$user." AND fk_action='".$action."'";
+		$sql .= " WHERE fk_user=".$user." AND fk_action='".$this->db->escape($action)."'";
 
 		if ($this->db->query($sql))
 		{
@@ -1434,7 +1433,7 @@ class BonPrelevement extends CommonObject
 			$now = dol_now();
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES (".$db->idate($now).",".$user.", 'NULL', 'NULL', '".$action."')";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".$user.", 'NULL', 'NULL', '".$this->db->escape($action)."')";
 
 			dol_syslog("adnotiff: ".$sql);
 			if ($this->db->query($sql))
@@ -1542,7 +1541,7 @@ class BonPrelevement extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
@@ -1657,7 +1656,7 @@ class BonPrelevement extends CommonObject
 					{
 						$obj = $this->db->fetch_object($resql);
 
-						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+						if (!empty($cachearraytotestduplicate[$obj->idfac])) {
 							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
 							$this->invoice_in_error[$obj->idfac] = $this->error;
 							$result = -2;
@@ -2192,7 +2191,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
@@ -2254,7 +2253,7 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;

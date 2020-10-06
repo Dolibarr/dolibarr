@@ -45,8 +45,8 @@ $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -76,11 +76,11 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($prev_id > 0 || $ref)
 {
   	if ($object->fetch($prev_id, $ref) >= 0)
-    {
-    	$head = prelevement_prepare_head($object);
+	{
+		$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'rejects', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -145,9 +145,9 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-    } else {
-      	dol_print_error($db);
-    }
+	} else {
+	  	dol_print_error($db);
+	}
 }
 
 
@@ -205,44 +205,44 @@ if ($resql)
 
 	if ($num > 0)
 	{
-      	$i = 0;
-	    while ($i < $num)
-        {
-    		$obj = $db->fetch_object($resql);
+	  	$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
 
-    		print '<tr class="oddeven"><td>';
+			print '<tr class="oddeven"><td>';
 
-    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
-    		print img_picto('', 'statut'.$obj->statut).' ';
-    		print substr('000000'.$obj->rowid, -6);
-    		print '</a></td>';
-    		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
+			print img_picto('', 'statut'.$obj->statut).' ';
+			print substr('000000'.$obj->rowid, -6);
+			print '</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
 
-    		print '<td class="right">'.price($obj->amount)."</td>\n";
-    		print '<td>'.$rej->motifs[$obj->motif].'</td>';
+			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
-    		print '<td class="center">'.yn($obj->afacturer).'</td>';
-    		print '<td class="center">'.$obj->fk_facture.'</td>';
-    		print "</tr>\n";
+			print '<td class="center">'.yn($obj->afacturer).'</td>';
+			print '<td class="center">'.$obj->fk_facture.'</td>';
+			print "</tr>\n";
 
-    		$total += $obj->amount;
+			$total += $obj->amount;
 
-    		$i++;
-    	}
+			$i++;
+		}
 	} else {
-	    print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
   	if ($num > 0)
-    {
-    	print '<tr class="liste_total"><td>&nbsp;</td>';
-    	print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-    	print '<td class="right">'.price($total)."</td>\n";
-    	print '<td colspan="3">&nbsp;</td>';
-    	print "</tr>\n";
-    }
-    print "</table>\n";
-    print '</div>';
+	{
+		print '<tr class="liste_total"><td>&nbsp;</td>';
+		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td class="right">'.price($total)."</td>\n";
+		print '<td colspan="3">&nbsp;</td>';
+		print "</tr>\n";
+	}
+	print "</table>\n";
+	print '</div>';
 
 	$db->free($resql);
 } else {

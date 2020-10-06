@@ -119,24 +119,18 @@ install:
   echo
 
 - |
-  echo "Installing Composer dependencies (PHP Unit, Parallel Lint & PHP CodeSniffer"
-  if [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
-    composer -n require phpunit/phpunit ^4 \
-                        jakub-onderka/php-parallel-lint ^0 \
-                        jakub-onderka/php-console-highlighter ^0 \
-                        squizlabs/php_codesniffer ^3
-  fi
+  echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer - for $TRAVIS_PHP_VERSION"
   if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] \
      [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
     composer -n require phpunit/phpunit ^5 \
-                        jakub-onderka/php-parallel-lint ^0 \
-                        jakub-onderka/php-console-highlighter ^0 \
+                        php-parallel-lint/php-parallel-lint ^0 \
+                        php-parallel-lint/php-console-highlighter ^0 \
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       composer -n require --ignore-platform-reqs phpunit/phpunit ^5 \
-                                                 jakub-onderka/php-parallel-lint ^0 \
-                                                 jakub-onderka/php-console-highlighter ^0 \
+                                                 php-parallel-lint/php-parallel-lint ^1 \
+                                                 php-parallel-lint/php-console-highlighter ^0 \
                                                  squizlabs/php_codesniffer ^3
     fi
   echo
@@ -283,7 +277,11 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/myclabs --exclude htdocs/includes/webmozart --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+  	--exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+  	--exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+  	--exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+  	--exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
   set +e
   echo
 

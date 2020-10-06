@@ -44,7 +44,7 @@ $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
@@ -752,7 +752,7 @@ if ($object->id > 0)
 			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
 
 			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&did='.$obj->rowid.'&type='.$type.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.$type.'">';
 			print img_delete();
 			print '</a></td>';
 

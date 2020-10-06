@@ -51,7 +51,7 @@ $optioncss   = GETPOST('optioncss', 'aZ');
 $search_ref   = GETPOST('search_ref', 'alpha');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield   = GETPOST('sortfield', 'alpha');
+$sortfield   = GETPOST('sortfield', 'aZ09comma');
 $sortorder   = GETPOST('sortorder', 'alpha');
 
 if (! $sortfield) $sortfield = "cp.rowid";

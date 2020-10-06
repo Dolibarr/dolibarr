@@ -107,8 +107,8 @@ if (empty($reshook))
 		$object->datev = $datev;
 		$object->datep = $datep;
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->label = GETPOST("label", 'none');
-		$object->note = GETPOST("note", 'none');
+		$object->label = GETPOST("label", 'restricthtml');
+		$object->note = GETPOST("note", 'restricthtml');
 		$object->type_payment = GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
 		$object->num_payment = GETPOST("num_payment", 'alpha');
 		$object->fk_user_author = $user->id;
@@ -550,7 +550,7 @@ if ($id)
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 			}
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';

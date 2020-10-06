@@ -2,6 +2,7 @@
 /**
  * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +29,15 @@
 function payment_prepare_head(Paiement $object)
 {
 
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Payment");
-	$head[$h][2] = 'payment';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Payment");
+    $head[$h][2] = 'payment';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -44,14 +45,49 @@ function payment_prepare_head(Paiement $object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment');
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment', 'remove');
 
-	return $head;
+    return $head;
+}
+
+/**
+ * Returns an array with the tabs for the "Bannkline" section
+ * It loads tabs from modules looking for the entity payment
+ *
+ * @param 	int		$id		ID of bank line
+ * @return 	array 			Tabs for the Bankline section
+ */
+function bankline_prepare_head($id)
+{
+    global $langs, $conf;
+
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
+    $head[$h][1] = $langs->trans('BankTransaction');
+    $head[$h][2] = 'bankline';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'bankline');
+
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'bankline', 'remove');
+
+    return $head;
 }
 
 /**

@@ -121,7 +121,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
     $coldisplay++;
     if (($line->fk_prev_id == null) && empty($disableremove)) {
         //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-        print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;lineid='.$line->id.'">';
+        print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$line->id.'">';
         print img_delete();
         print '</a>';
     }

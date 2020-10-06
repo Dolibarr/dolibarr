@@ -62,12 +62,19 @@ No vulnerability disclosure, including partial is allowed for the moment.
 
 ## Scope for qualified vulnerabilities
 
-ONLY vulnerabilities discovered when the following setup is used are accepted:
+ONLY vulnerabilities discovered, when the following setup on test platform is used, are accepted:
 
-* $dolibarr_main_prod must be 1 into conf.php
-* $dolibarr_nocsrfcheck must not be set to 0 (should be 1 by default) into conf.php
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this value should be switched soon to 1 by default)
-* ONLY security reports on "stable" modules are allowed (troubles into experimental and developement modules are not accepted).
+* $dolibarr_main_prod must be set to 1 into conf.php
+* $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
+* $dolibarr_main_force_https must be set to something else than 0.
+* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be enabled soon by default)
+* The module DebugBar must NOT be enabled (by default, this module is not enabled. This is a developer tool)
+* The module ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
+* ONLY security reports on modules provided by default and with the "stable" status are allowed (troubles into "experimental", "developement" or external modules are not accepted).
+* The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
+* The web server setup must be done so only the documents directory is in write mode. The root directory called htdocs must be readonly.
+* CSRF attacks are accepted for all when using a POST URL, but are accepted only for creating or updating data resctricted to the admin user when using GET URL.
+* Ability for a high level user to edit web site pages in the CMS by including javascript is an expected feature.
 
 Scope is the web application (back office) and the APIs.
 
@@ -84,25 +91,25 @@ Scope is the web application (back office) and the APIs.
 * CORS with real security impact
 * Horizontal and vertical privilege escalation
 * "HTTP Host Header" XSS
+* Software version disclosure (for non admin users only)
+* Stack traces or path disclosure (for non admin users only)
 
 
 ## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
 * "Self" XSS
-* Missing cookie flags
 * SSL/TLS best practices
-* Mixed content warnings
 * Denial of Service attacks
 * Clickjacking/UI redressing
-* Software version disclosure
-* Stack traces or path disclosure
-* Physical or social engineering attempts
-* Recently disclosed 0-day vulnerabilities
+* Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
 * Presence of autocomplete attribute on web forms
 * Vulnerabilities affecting outdated browsers or platforms
-* Issues that require physical access to a victim’s computer/device
 * Logout and other instances of low-severity Cross-Site Request Forgery
+* Missing cookie flags
 * Missing security-related HTTP headers which do not lead directly to a vulnerability
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
-* Reports on features flagged as experimental
+* Reports on features flagged as "experimental" or "development"
+* Software version or private IP disclosure when logged user is admin
+* Stack traces or path disclosure when logged user is admin
+* Any vulnerabilities due to a configuration different than the one defined into chapter "Scope for qualified vulnerabilities".
 

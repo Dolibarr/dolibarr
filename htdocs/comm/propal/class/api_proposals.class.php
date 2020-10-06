@@ -190,7 +190,7 @@ class Proposals extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0)
 			{
@@ -198,21 +198,21 @@ class Proposals extends DolibarrApi
 			}
 			$offset = $limit * $page;
 
-			$sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
         dol_syslog("API Rest request");
-		$result = $db->query($sql);
+        $result = $this->db->query($sql);
 
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
 			while ($i < $min)
 			{
-				$obj = $db->fetch_object($result);
-				$proposal_static = new Propal($db);
+				$obj = $this->db->fetch_object($result);
+				$proposal_static = new Propal($this->db);
 				if ($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
 					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1, 'external', 1);
@@ -221,7 +221,7 @@ class Proposals extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve propal list : '.$db->lasterror());
+			throw new RestException(503, 'Error when retrieve propal list : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No proposal found');
@@ -507,9 +507,10 @@ class Proposals extends DolibarrApi
 	 * Delete a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $rowid          Row key of the contact in the array contact_ids.
+	 * @param int    $contactid      Row key of the contact in the array contact_ids.
+	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
 	 *
-	 * @url	DELETE {id}/contact/{rowid}
+	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @return int
 	 *
@@ -517,7 +518,7 @@ class Proposals extends DolibarrApi
      * @throws RestException 404
      * @throws RestException 500
 	 */
-    public function deleteContact($id, $rowid)
+    public function deleteContact($id, $contactid, $type)
     {
         if (!DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401);
@@ -533,13 +534,19 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $result = $this->propal->delete_contact($rowid);
+		$contacts = $this->invoice->liste_contact();
 
-        if (!$result) {
-            throw new RestException(500, 'Error when deleted the contact');
-        }
+		foreach ($contacts as $contact) {
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$result = $this->propal->delete_contact($contact['rowid']);
 
-        return $this->propal;
+				if (!$result) {
+					throw new RestException(500, 'Error when deleted the contact');
+				}
+			}
+		}
+
+		return $this->_cleanObjectDatas($this->propal);
     }
 
 	/**

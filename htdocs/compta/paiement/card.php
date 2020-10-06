@@ -39,7 +39,7 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -60,7 +60,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
     $db->begin();
 
     $object->fetch($id);
-    $result = $object->update_note(GETPOST('note', 'none'));
+    $result = $object->update_note(GETPOST('note', 'restricthtml'));
     if ($result > 0)
     {
         $db->commit();
@@ -306,7 +306,7 @@ dol_fiche_end();
  * List of invoices
  */
 
-$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.entity, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql .= ' WHERE pf.fk_facture = f.rowid';
 $sql .= ' AND f.fk_soc = s.rowid';
