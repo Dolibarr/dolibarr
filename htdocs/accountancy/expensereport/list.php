@@ -217,6 +217,8 @@ if (strlen(trim($search_vat))) {
 $sql .= dolSqlDateFilter('erd.date', $search_day, $search_month, $search_year);
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 
+$sql .= ' GROUP BY erd.rowid ';
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
