@@ -191,7 +191,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Read delivery receipts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
+		$this->rights[$r][4] = 'delivery';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
@@ -199,7 +199,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Create/modify delivery receipts';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
+		$this->rights[$r][4] = 'delivery';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
@@ -207,7 +207,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Validate delivery receipts';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison_advance';
+		$this->rights[$r][4] = 'delivery_advance';
 		$this->rights[$r][5] = 'validate';
 
 		$r++;
@@ -215,7 +215,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Delete delivery receipts';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
+		$this->rights[$r][4] = 'delivery';
 		$this->rights[$r][5] = 'supprimer';
 
 

@@ -47,7 +47,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($conf->delivery_note->enabled && $user->rights->expedition->livraison->lire)
+	if ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)
 	{
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);

@@ -141,7 +141,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'order_supplier')   $permok = $user->rights->fournisseur->commande->creer;
 			if ($object->element == 'invoice_supplier') $permok = $user->rights->fournisseur->facture->creer;
 			if ($object->element == 'shipping')         $permok = $user->rights->expedition->creer;
-			if ($object->element == 'delivery')         $permok = $user->rights->expedition->livraison->creer;
+			if ($object->element == 'delivery')         $permok = $user->rights->expedition->delivery->creer;
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
 			if ($object->element == 'facturerec') 	    $permok = $user->rights->facture->creer;
 			if ($object->element == 'mo') 	    		$permok = $user->rights->mrp->write;

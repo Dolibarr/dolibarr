@@ -43,7 +43,7 @@ function propal_prepare_head($object)
 	$h++;
 
 	if ((empty($conf->commande->enabled) && ((!empty($conf->expedition->enabled) && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-	    || (!empty($conf->expedition->enabled) && !empty($conf->delivery_note->enabled) && $user->rights->expedition->livraison->lire))))
+	    || (!empty($conf->expedition->enabled) && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire))))
 	{
 		$langs->load("sendings");
 		$text = '';
