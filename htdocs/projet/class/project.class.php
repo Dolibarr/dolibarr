@@ -807,6 +807,45 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Return the count of a type of linked elements of this project
+	 *
+	 * @param string	$type			The type of the linked elements (e.g. 'propal', 'order', 'invoice', 'order_supplier', 'invoice_supplier')
+	 * @param string	$tablename		The name of table associated of the type
+	 * @param string	$projectkey 	(optional) Equivalent key to fk_projet for actual type
+	 * @return integer					The count of the linked elements (the count is zero on request error too)
+	 */
+	public function getElementCount($type, $tablename, $projectkey = 'fk_projet')
+	{
+		if ($this->id <= 0) return 0;
+
+		if ($type == 'agenda') {
+			$sql = "SELECT COUNT(id) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project = ".$this->id." AND entity IN (".getEntity('agenda').")";
+		} elseif ($type == 'expensereport') {
+			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".$this->id;
+		} elseif ($type == 'project_task') {
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".$this->id;
+		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".$this->id;
+		} elseif ($type == 'stock_mouvement') {
+			$sql = 'SELECT COUNT(ms.rowid) as nb FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".$this->id." AND ms.type_mouvement = 1";
+		} elseif ($type == 'loan') {
+			$sql = 'SELECT COUNT(l.rowid) as nb FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".$this->id;
+		} else {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".$this->id." AND entity IN (".getEntity($type).")";
+		}
+
+		$result = $this->db->query($sql);
+
+		if (!$result) return 0;
+
+		$obj = $this->db->fetch_object($result);
+
+		$this->db->free($result);
+
+		return $obj->nb;
+	}
+
+	/**
 	 * 		Delete tasks with no children first, then task with children recursively
 	 *
 	 *  	@param     	User		$user		User
