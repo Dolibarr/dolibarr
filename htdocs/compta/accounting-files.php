@@ -719,7 +719,7 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td class="center">'.$data['thirdparty_code']."</td>\n";
 
                 print '<td class="center">'.$data['country_code']."</td>\n";
-				
+
 				print '<td class="center">'.$data['divisa']."</td>\n";
 
                 print '<td align="right">'.$data['vatnum']."</td>\n";
