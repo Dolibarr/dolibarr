@@ -122,7 +122,11 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		define('K_SMALL_RATIO', 2 / 3);
 		define('K_THAI_TOPCHARS', true);
 		define('K_TCPDF_CALLS_IN_HTML', true);
-		define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
+		if (! empty($conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE)) {
+			define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
+		} else {
+			define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
+		}
 	}
 
 	// Load TCPDF

@@ -66,6 +66,10 @@ class Setup extends DolibarrApi
     {
         $list = array();
 
+        if (!DolibarrApiAccess::$user->rights->commande->lire) {
+        	throw new RestException(401);
+        }
+
         $sql = "SELECT rowid, code, libelle as label, module";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
         $sql .= " WHERE t.active = ".$active;
@@ -126,6 +130,10 @@ class Setup extends DolibarrApi
     public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
+
+        if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->rights->facture->lire) {
+        	throw new RestException(401);
+        }
 
         $sql = "SELECT id, code, type, libelle as label, module";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
@@ -467,6 +475,10 @@ class Setup extends DolibarrApi
     public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
+
+        if (!DolibarrApiAccess::$user->rights->commande->lire) {
+        	throw new RestException(401);
+        }
 
         $sql = "SELECT rowid, code, label";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_availability as t";
@@ -960,6 +972,10 @@ class Setup extends DolibarrApi
     {
         $list = array();
 
+        if (!DolibarrApiAccess::$user->admin) {
+        	throw new RestException(401, 'Only an admin user can get list of extrafields');
+        }
+
         if ($type == 'thirdparty') $type = 'societe';
         if ($type == 'contact') $type = 'socpeople';
 
@@ -1099,6 +1115,10 @@ class Setup extends DolibarrApi
     public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
+
+        if (!DolibarrApiAccess::$user->rights->propal->lire && !DolibarrApiAccess::$user->rights->commande->lire && !DolibarrApiAccess::$user->rights->facture->lire) {
+        	throw new RestException(401);
+        }
 
         $sql = "SELECT rowid as id, code, sortorder, libelle as label, libelle_facture as descr, type_cdr, nbjour, decalage, module";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
@@ -1545,15 +1565,15 @@ class Setup extends DolibarrApi
     	global $conf;
 
     	if (!DolibarrApiAccess::$user->admin
-    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
-    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    		&& (empty($conf->global->API_LOGINS_ALLOWED_FOR_CONST_READ) || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_CONST_READ)) {
+    		throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_CONST_READ');
     	}
 
     	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
     		throw new RestException(404, 'Error Bad or unknown value for constantname');
     	}
-    	if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $constantname)) {
-    		throw new RestException(403, 'Forbidden');
+    	if (isASecretKey($constantname)) {
+    		throw new RestException(403, 'Forbidden. This parameter cant be read with APIs');
     	}
 
     	return $conf->global->$constantname;
@@ -1578,7 +1598,7 @@ class Setup extends DolibarrApi
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
-    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+    		throw new RestException(503, 'Error API open to admin users only or to the users with logins defined into constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
     	}
 
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

@@ -51,7 +51,7 @@ $maxOpenCount		= empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->glob
 
 llxHeader("", $langs->trans("SupplierInvoicesArea"), 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
-print load_fiche_titre($langs->trans("SupplierInvoicesArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("SupplierInvoicesArea"), '', 'bill');
 
 print '<div class="fichecenter">';
 
