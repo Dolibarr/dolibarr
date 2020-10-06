@@ -5109,6 +5109,12 @@ div.ecmjqft {
 	right:4px;
 	clear: both;
 }
+#ecm-layout-north {
+	min-height: 40px;
+}
+#ecm-layout-north div.attachareaformuserfileecm {
+    padding-bottom: 0px;
+}
 div#ecm-layout-west {
     width: 380px;
     vertical-align: top;
