@@ -3538,8 +3538,7 @@ class Propal extends CommonObject
 				$error++;
 			}
 		} else if ($nextStatus == $this::STATUS_SIGNED && $this->statut == $this::STATUS_VALIDATED) {
-			$this->statut = $this::STATUS_SIGNED;
-			if (!$this->update($user)){
+			if ($this->cloture($user, $this::STATUS_SIGNED) <= 0) {
 				dol_print_error($this->db);
 				$error++;
 			}
