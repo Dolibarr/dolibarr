@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2020      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +150,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		// Customer invoices
 		if (GETPOST('selectinvoices')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
+			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.fk_soc, t.datef as date, t.multicurrency_code as divisa, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 		    $sql .= " WHERE datef between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -158,7 +159,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Vendor invoices
 		if (GETPOST('selectsupplierinvoices')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.fk_soc, t.datef as date, t.multicurrency_code as divisa, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 		    $sql .= " WHERE datef between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -318,8 +319,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                	$nofile = array();
 		                	$nofile['id'] = $objd->id;
 		                	$nofile['entity'] = $objd->entity;
-		                	$nofile['date'] = $db->idate($objd->date);
-		                	$nofile['date_due'] = $db->idate($objd->date_due);
+		                	$nofile['date'] = $objd->date;
+		                	$nofile['date_due'] = $objd->date_due;
 		                	$nofile['paid'] = $objd->paid;
 		                    $nofile['amount_ht'] = $objd->total_ht;
 		                    $nofile['amount_ttc'] = $objd->total_ttc;
@@ -330,6 +331,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                    $nofile['thirdparty_name'] = $objd->thirdparty_name;
 		                    $nofile['thirdparty_code'] = $objd->thirdparty_code;
 		                    $nofile['country_code'] = $objd->country_code;
+							$nofile['divisa'] = $objd->divisa;
 		                    $nofile['vatnum'] = $objd->vatnum;
 		                    $nofile['sens'] = $objd->sens;
 
@@ -339,8 +341,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                    {
 		                    	$file['id'] = $objd->id;
 		                    	$file['entity'] = $objd->entity;
-		                    	$file['date'] = $db->idate($objd->date);
-		                    	$file['date_due'] = $db->idate($objd->date_due);
+		                    	$file['date'] = $objd->date;
+		                    	$file['date_due'] = $objd->date_due;
 		                    	$file['paid'] = $objd->paid;
 		                        $file['amount_ht'] = $objd->total_ht;
 		                        $file['amount_ttc'] = $objd->total_ttc;
@@ -351,6 +353,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                        $file['thirdparty_name'] = $objd->thirdparty_name;
 		                        $file['thirdparty_code'] = $objd->thirdparty_code;
 		                        $file['country_code'] = $objd->country_code;
+								$file['divisa'] = $objd->divisa;
 		                        $file['vatnum'] = $objd->vatnum;
                                 $file['sens'] = $objd->sens;
 
@@ -433,6 +436,7 @@ if ($result && $action == "dl" && !$error)
     $log .= ','.$langs->transnoentitiesnoconv("ThirdParty");
     $log .= ','.$langs->transnoentitiesnoconv("Code");
     $log .= ','.$langs->transnoentitiesnoconv("Country");
+	$log .= ','.$langs->transnoentitiesnoconv("Divisa");
     $log .= ','.$langs->transnoentitiesnoconv("VATIntra");
     $log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
     $zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
@@ -458,8 +462,8 @@ if ($result && $action == "dl" && !$error)
             {
             	$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
             }
-            $log .= ','.dol_print_date($file['date'], 'dayrfc');
-            $log .= ','.dol_print_date($file['date_due'], 'dayrfc');
+            $log .= ','.date("d/m/Y", strtotime($file['date']));
+            $log .= ','.date("d/m/Y", strtotime($file['date_due']));
             $log .= ',"'.$file['ref'].'"';
             $log .= ','.$file['amount_ht'];
             $log .= ','.$file['amount_ttc'];
@@ -470,6 +474,7 @@ if ($result && $action == "dl" && !$error)
             $log .= ',"'.$file['thirdparty_name'].'"';
             $log .= ',"'.$file['thirdparty_code'].'"';
             $log .= ',"'.$file['country_code'].'"';
+			$log .= ',"'.$file['divisa'].'"';
             $log .= ',"'.$file['vatnum'].'"';
             $log .= ',"'.$file['sens'].'"';
             $log .= "\n";
@@ -641,12 +646,12 @@ if (!empty($date_start) && !empty($date_stop))
 
                 // Date
                 print '<td class="center">';
-                print dol_print_date($data['date'], 'day');
+                print date("d/m/Y", strtotime($data['date']));
                 print "</td>\n";
 
                 // Date
                 print '<td class="center">';
-                print dol_print_date($data['date_due'], 'day');
+                print date("d/m/Y", strtotime($data['date_due']));
                 print "</td>\n";
 
                 // Ref
@@ -714,6 +719,8 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td class="center">'.$data['thirdparty_code']."</td>\n";
 
                 print '<td class="center">'.$data['country_code']."</td>\n";
+				
+				print '<td class="center">'.$data['divisa']."</td>\n";
 
                 print '<td align="right">'.$data['vatnum']."</td>\n";
 
