@@ -142,6 +142,26 @@ class Ticket extends CommonObject
 	 */
 	public $severity_code;
 
+    /**
+     * Type label
+     */
+    public $type_label;
+
+    /**
+     * Category label
+     */
+    public $category_label;
+
+    /**
+     * Severity label
+     */
+    public $severity_label;
+
+        /**
+     * Email from user
+     */
+    public $email_from;
+
 	/**
 	 * @var int Création date
 	 */
