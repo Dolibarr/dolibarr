@@ -371,9 +371,9 @@ ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_author, ADD INDEX idx_
 ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_valid, ADD INDEX idx_delivery_fk_user_valid (fk_user_valid);
 
 -- drop constraint
-ALTER TABLE llx_delivery DROP CONSTRAINT fk_delivery_fk_soc;
-ALTER TABLE llx_delivery DROP CONSTRAINT fk_delivery_fk_user_author;
-ALTER TABLE llx_delivery DROP CONSTRAINT fk_delivery_fk_user_valid;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_soc;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_author;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_valid;
 
 -- add constraint
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
@@ -381,5 +381,5 @@ ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
 
 -- update llx_extrafields
-UPDATE llx_extrafields SET elementtype = 'delivery' WHERE llx_extrafields.elementtype = 'livraison' 
-UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE llx_extrafields.elementtype = 'livraison' 
+UPDATE llx_extrafields SET elementtype = 'delivery' WHERE llx_extrafields.elementtype = 'livraison';
+UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE llx_extrafields.elementtype = 'livraisondet';
