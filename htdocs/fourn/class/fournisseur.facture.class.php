@@ -702,7 +702,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->note_private			= $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;	// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->import_key = $obj->import_key;
 
 				//Incoterms
@@ -827,7 +827,7 @@ class FactureFournisseur extends CommonInvoice
 
 					// Accountancy
 					$line->code_ventilation = $obj->fk_code_ventilation;
-					$line->fk_accounting_account	= $obj->fk_code_ventilation;
+					$line->fk_accounting_account = $obj->fk_code_ventilation;
 
 					// Multicurrency
 					$line->fk_multicurrency = $obj->fk_multicurrency;

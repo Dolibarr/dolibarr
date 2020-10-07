@@ -122,7 +122,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		define('K_SMALL_RATIO', 2 / 3);
 		define('K_THAI_TOPCHARS', true);
 		define('K_TCPDF_CALLS_IN_HTML', true);
-		if (! empty($conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE)) {
+		if (!empty($conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE)) {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 		} else {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
@@ -2140,11 +2140,11 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			    if (empty($object->linkedObjects['commande']) && $object->element != 'commande')	// There is not already a link to order and object is not the order, so we show also info with order
 			    {
 			        $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-			        if (! empty($elementobject->linkedObjectsIds['commande'])){
+			        if (!empty($elementobject->linkedObjectsIds['commande'])) {
 						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 						$order = new Commande($db);
 						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
-						if ($ret < 1) { $order=null; }
+						if ($ret < 1) { $order = null; }
 					}
 			    }
 			    if (!is_object($order))

@@ -253,7 +253,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 			if ($pay != "delayed") {
 				$payment->create($user);
 				$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
-				$remaintopay = $invoice->getRemainToPay();    // Recalculate remain to pay after the payment is recorded
+				$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 			}
 		}
 
@@ -278,7 +278,7 @@ if ($action == 'history')
 	$invoice->fetch($placeid);
 }
 
-if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="") {
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "") {
 	$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
 }
 
@@ -737,7 +737,7 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	$.get("ajax/ajax.php?action=printinvoiceticket&term=<?php echo $_SESSION["takeposterminal"];?>&id="+id, function(data, status){
+	$.get("ajax/ajax.php?action=printinvoiceticket&term=<?php echo $_SESSION["takeposterminal"]; ?>&id="+id, function(data, status){
         $.ajax({
 			type: "POST",
 			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
@@ -902,12 +902,12 @@ if ($_SESSION["basiclayout"] != 1)
 	// In phone version only show when it is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
 		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
-		if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+		if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 			//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 			include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 			$multicurrency = new MultiCurrency($db);
 			$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
-			print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($invoice->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
+			print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($invoice->total_ttc * $multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
 		}
 		print '</td>';
 	}
@@ -1108,12 +1108,12 @@ if ($placeid > 0)
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);
-				if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+				if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 					//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 					$multicurrency = new MultiCurrency($db);
 					$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
-					$htmlforlines .= '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
+					$htmlforlines .= '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($line->total_ttc * $multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
 				}
 				$htmlforlines .= '</td>';
 			}
