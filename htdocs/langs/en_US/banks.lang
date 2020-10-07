@@ -168,6 +168,7 @@ ShowVariousPayment=Show miscellaneous payment
 AddVariousPayment=Add miscellaneous payment
 VariousPaymentId=Miscellaneous payment ID
 VariousPaymentLabel=Miscellaneous payment label
+ConfirmCloneVariousPayment=Confirm the clone of a miscellaneous payment
 SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to

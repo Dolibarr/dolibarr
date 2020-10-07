@@ -339,6 +339,24 @@ class PaymentVarious extends CommonObject
 	}
 
 	/**
+	 * Check if a miscellaneous payment can be created into database
+	 *
+	 * @return	boolean		True or false
+	 */
+	public function check()
+	{
+		$newamount = price2num($this->amount, 'MT');
+
+		// Validation of parameters
+		if (!($newamount) > 0 || empty($this->datep))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 *  Create in database
 	 *
 	 *  @param   User   $user   User that create
