@@ -74,7 +74,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	if ($result > 0)
 	{
 		$db->commit();
-		header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
+		header('Location: '.DOL_URL_ROOT.'/fourn/paiement/list.php');
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -166,7 +166,7 @@ if ($result > 0)
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 	}
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
