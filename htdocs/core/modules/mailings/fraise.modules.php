@@ -246,10 +246,10 @@ class mailing_fraise extends MailingTargets
         $sql .= " a.lastname, a.firstname,";
         $sql .= " a.datefin, a.civility as civility_id, a.login, a.societe"; // Other fields
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        if ($_POST['filter_category'])
+        if (GETPOST('filter_category'))
         {
         	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
-        	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
+        	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie ON c.rowid='".$this->db->escape(GETPOST('filter_category'))."'";
         }
         $sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
         $sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false
@@ -267,8 +267,6 @@ class mailing_fraise extends MailingTargets
         $sql .= " AND a.fk_adherent_type = ta.rowid";
         // Filter on type
         if (GETPOSTISSET('filter_type')) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type'))."'";
-        // Filter on category
-        if (GETPOSTISSET('filter_category')) $sql .= " AND c.rowid='".$this->db->escape(GETPOST('filter_category'))."'";
         $sql .= " ORDER BY a.email";
         //print $sql;
 
