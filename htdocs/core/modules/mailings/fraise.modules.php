@@ -249,7 +249,7 @@ class mailing_fraise extends MailingTargets
         if (GETPOST('filter_category'))
         {
         	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
-        	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie ON c.rowid='".$this->db->escape(GETPOST('filter_category'))."'";
+        	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
         }
         $sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
         $sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false
