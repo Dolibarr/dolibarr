@@ -379,3 +379,7 @@ ALTER TABLE llx_delivery DROP CONSTRAINT fk_delivery_fk_user_valid;
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
+
+-- update llx_extrafields
+UPDATE llx_extrafields SET elementtype = 'delivery' WHERE llx_extrafields.elementtype = 'livraison' 
+UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE llx_extrafields.elementtype = 'livraison' 
