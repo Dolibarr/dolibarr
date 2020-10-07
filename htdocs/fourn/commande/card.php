@@ -406,7 +406,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
-		if (!GETPOST('qty'))
+		if (GETPOST('qty', 'int') == '')
 		{
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -666,7 +666,7 @@ if (empty($reshook))
 		$productsupplier = new ProductFournisseur($db);
 		if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
 		{
-			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid', 'int')) < 0)
+			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty', 'int')), $line->fk_product, 'none', GETPOST('socid', 'int')) < 0)
 			{
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
@@ -719,7 +719,7 @@ if (empty($reshook))
 			$lineid,
 			$_POST['product_desc'],
 			$ht,
-			$_POST['qty'],
+			GETPOST('qty', 'int'),
 			$_POST['remise_percent'],
 			$vat_rate,
 			$localtax1_rate,
