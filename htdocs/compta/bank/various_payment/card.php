@@ -272,6 +272,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+		} else {
+			$id = $originalId;
+			$db->rollback();
+
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} else {
 		$db->rollback();

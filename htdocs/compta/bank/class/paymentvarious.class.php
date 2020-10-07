@@ -347,8 +347,8 @@ class PaymentVarious extends CommonObject
 	{
 		$newamount = price2num($this->amount, 'MT');
 
-		// Validation parametres
-		if (!$newamount > 0 || empty($this->datep))
+		// Validation of parameters
+		if (!($newamount) > 0 || empty($this->datep))
 		{
 			return false;
 		}
