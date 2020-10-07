@@ -278,6 +278,10 @@ if ($action == 'history')
 	$invoice->fetch($placeid);
 }
 
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="") {
+	$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
+}
+
 if (($action == "addline" || $action == "freezone") && $placeid == 0)
 {
 	$invoice->socid = $conf->global->$constforcompanyid;
@@ -402,7 +406,11 @@ if ($action == "deleteline") {
 		$invoice->deleteline($deletelineid);
 		$invoice->fetch($placeid);
 	}
-	if (count($invoice->lines) == 0) $invoice->delete($user);
+	if (count($invoice->lines) == 0) {
+		$invoice->delete($user);
+		header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+		exit;
+	}
 }
 
 if ($action == "delete") {
@@ -595,7 +603,7 @@ if ($action == "valid" || $action == "history")
 		if ($invoice->paye) $sectionwithinvoicelink .= '<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
 		else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
 	}
-	$sectionwithinvoicelink .= '</span>';
+	$sectionwithinvoicelink .= '</span><br>';
 	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		else $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
@@ -604,7 +612,7 @@ if ($action == "valid" || $action == "history")
 	} else {
 		$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
 		if ($conf->global->TAKEPOS_GIFT_RECEIPT) {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button><br>';
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button>';
 		}
 	}
 	if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
@@ -716,6 +724,7 @@ function Print(id, gift){
 
 function TakeposPrinting(id){
     var receipt;
+	console.log("TakeposPrinting" + id);
     $.get("receipt.php?facid="+id, function(data, status){
         receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
         $.ajax({
@@ -728,15 +737,12 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	var invoice='<?php
-	$data = json_encode($invoice);
-	$data = base64_encode($data);
-	echo $data;
-	?>';
-    $.ajax({
-        type: "POST",
-        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print.php',
-        data: 'invoice='+invoice
+	$.get("ajax/ajax.php?action=printinvoiceticket&term=<?php echo $_SESSION["takeposterminal"];?>&id="+id, function(data, status){
+        $.ajax({
+			type: "POST",
+			url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/printer/index.php',
+			data: 'invoice='+data
+		});
     });
 }
 
@@ -856,11 +862,14 @@ if (!empty($conf->use_javascript_ajax))
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.$mobilepage.' $_SESSION["basiclayout"]='.$_SESSION["basiclayout"].' conf->global->TAKEPOS_BAR_RESTAURANT='.$conf->global->TAKEPOS_BAR_RESTAURANT.' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
+if ($mobilepage == "invoice" || $mobilepage == "") {
+	print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
+}
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
 // In phone version only show when it is invoice page
 if ($mobilepage == "invoice" || $mobilepage == "") {
-	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
+	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
 }
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
@@ -893,6 +902,13 @@ if ($_SESSION["basiclayout"] != 1)
 	// In phone version only show when it is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
 		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
+		if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
+			//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+			include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+			$multicurrency = new MultiCurrency($db);
+			$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+			print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($invoice->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
+		}
 		print '</td>';
 	}
 	print '</td>';
@@ -1067,7 +1083,7 @@ if ($placeid > 0)
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
-				if (!empty($conf->stock->enabled))
+				if (!empty($conf->stock->enabled) && !empty($user->rights->stock->mouvement->lire))
 				{
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
@@ -1091,13 +1107,13 @@ if ($placeid > 0)
 				else $htmlforlines .= $line->qty;
 				$htmlforlines .= '</td>';
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
-				$htmlforlines .= price($line->total_ttc);
+				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);
 				if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"]!="" && $conf->currency!=$_SESSION["takeposcustomercurrency"]) {
 					//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 					$multicurrency = new MultiCurrency($db);
 					$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
-					$htmlforlines .= ' ('.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')';
+					$htmlforlines .= '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($line->total_ttc*$multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
 				}
 				$htmlforlines .= '</td>';
 			}

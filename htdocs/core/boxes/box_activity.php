@@ -202,7 +202,7 @@ class box_activity extends ModeleBoxes
                 $sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
                 if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
                 $sql .= ")";
-                $sql .= " WHERE c.entity = ".$conf->entity;
+        		$sql .= " WHERE c.entity IN (".getEntity('commande').")";
                 $sql .= " AND c.fk_soc = s.rowid";
                 if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
                 if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;

@@ -482,7 +482,7 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
     $moreforfilter .= '<div class="divsearchfield">';
     $moreforfilter .= $langs->trans('Categories').': ';

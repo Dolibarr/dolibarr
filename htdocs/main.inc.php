@@ -378,7 +378,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment')))
 	{
 		if (!GETPOSTISSET('token')) {
-			if (GETPOST('uploadform')) {
+			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused. File size too large.");
 				$langs->loadLangs(array("errors", "install"));
 				print $langs->trans("ErrorFileSizeTooLarge").' ';

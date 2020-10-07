@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2017  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2006,8 +2006,22 @@ class BookKeepingLine
 	public $label_operation;
 	public $debit;
 	public $credit;
+
+    /**
+     * @var float Amount
+     * @deprecated see $amount
+     */
 	public $montant;
-	public $sens;
+
+    /**
+     * @var float Amount
+     */
+	public $amount;
+
+    /**
+     * @var string Sens
+     */
+    public $sens;
     public $lettering_code;
 
 	/**

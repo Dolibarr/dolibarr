@@ -87,10 +87,10 @@ abstract class DoliDB implements Database
 	 *   @param	    int		$param      	Date TMS to convert
 	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-    public function idate($param)
+    public function idate($param, $tzoutput = 'tzserver')
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", 'tzserver');
 	}
 
 	/**
@@ -106,12 +106,17 @@ abstract class DoliDB implements Database
 	/**
 	 * Sanitize a string for SQL forging
 	 *
-	 * @param   string $stringtosanitize 	String to escape
+	 * @param   string 	$stringtosanitize 	String to escape
+	 * @param   int		$allowsimplequote 	Allow simple quote
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0)
 	{
-		return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
+		if ($allowsimplequote) {
+			return preg_replace('/[^a-z0-9_\-\.,\']/i', '', $stringtosanitize);
+		} else {
+			return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
+		}
 	}
 
 	/**
