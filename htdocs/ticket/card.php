@@ -170,8 +170,12 @@ if (empty($reshook)) {
 			$object->message = GETPOST("message", 'restricthtml');
 
 			$object->type_code = GETPOST("type_code", 'alpha');
+			$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
 			$object->category_code = GETPOST("category_code", 'alpha');
+			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
 			$object->severity_code = GETPOST("severity_code", 'alpha');
+			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
+			$object->email_from = $user->email;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
