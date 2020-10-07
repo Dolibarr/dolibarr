@@ -12,7 +12,8 @@ NEW: Module Reception (for a more accurate management of your receptions) moved 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Properties ->contactid has been renamed into ->contact_id
+* Properties ->contactid have been renamed into ->contact_id
+* Properties ->titre have been renamed into ->title 
 * Property $paiementid in API 'api_supplier_invoices.php' has been renamed into into $payment_mode_id (english)
 * The deprecated subsitution key __SIGNATURE__ has been removed. Replace with __USER_SIGNATURE__ if you used the old syntax in
   your email templates. 

@@ -188,8 +188,8 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$object->titre = GETPOST('titre', 'nohtml'); // deprecated
-			$object->title = GETPOST('titre', 'nohtml');
+			$object->titre = GETPOST('title', 'nohtml'); // deprecated
+			$object->title = GETPOST('title', 'nohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
             $object->note_public = GETPOST('note_public', 'restricthtml');
             $object->model_pdf = GETPOST('modelpdf', 'alpha');
