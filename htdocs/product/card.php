@@ -301,8 +301,8 @@ if (empty($reshook))
 			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 			$object->note               	 = $object->note_private; // deprecated
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
-	        $object->country_id = GETPOST('country_id', 'int');
-	        $object->state_id = GETPOST('state_id', 'int');
+			$object->country_id = GETPOST('country_id', 'int');
+			$object->state_id = GETPOST('state_id', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -965,14 +965,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$linkback = "";
 		print load_fiche_titre($title, $linkback, $picto);
 
-        // We set country_id, country_code and country for the selected country
-        $object->country_id = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : null;
-        if ($object->country_id > 0)
-        {
-            $tmparray = getCountry($object->country_id, 'all');
-            $object->country_code = $tmparray['code'];
-            $object->country = $tmparray['label'];
-        }
+		// We set country_id, country_code and country for the selected country
+		$object->country_id = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : null;
+		if ($object->country_id > 0)
+		{
+			$tmparray = getCountry($object->country_id, 'all');
+			$object->country_code = $tmparray['code'];
+			$object->country = $tmparray['label'];
+		}
 
 		dol_fiche_head('');
 
@@ -1151,26 +1151,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Origin country
 			print '<td>'.$langs->trans("CountryOrigin").'</td>';
 			print '<td>';
-            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-            print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td>';
 
-            // State
-            if (empty($conf->global->PRODUCT_DISABLE_STATE))
-            {
-            		if ($conf->browser->layout == 'phone') print '</tr><tr>';
-                if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
-                {
-                    print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                } else {
-                    print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                }
+			// State
+			if (empty($conf->global->PRODUCT_DISABLE_STATE))
+			{
+					if ($conf->browser->layout == 'phone') print '</tr><tr>';
+				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+				{
+					print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
+				} else {
+					print '<td>'.$form->editfieldkey('StateOrigin', 'state_id', '', $object, 0).'</td><td colspan="3">';
+				}
 
 				print $formcompany->select_state($object->state_id, $object->country_code);
-                print '</tr>';
-            }
-                print '</tr>';
+				print '</tr>';
+			}
+				print '</tr>';
 		}
 
 		// Other attributes
@@ -1616,7 +1616,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				// State
 				if (empty($conf->global->PRODUCT_DISABLE_STATE))
 				{
-            		if ($conf->browser->layout == 'phone') print '</tr><tr>';
+					if ($conf->browser->layout == 'phone') print '</tr><tr>';
 					if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
 					{
 						print '<td>'.$form->editfieldkey('Region-StateOrigine', 'state_id', '', $object, 0).'</td><td colspan="3">';
@@ -2389,7 +2389,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
 	$objectref = dol_sanitizeFileName($object->ref);
 	$relativepath = $comref.'/'.$objectref.'.pdf';
 	if (!empty($conf->product->multidir_output[$object->entity])) {
-    	$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
+		$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
 	} else {
 		$filedir = $conf->product->dir_output.'/'.$objectref;
 	}

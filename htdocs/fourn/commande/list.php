@@ -364,30 +364,30 @@ if (empty($reshook))
 							{
 								$fk_parent_line = 0;
 							}
-                            $result = $objecttmp->addline(
+							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->tva_tx,
 								$lines[$i]->localtax1_tx,
 								$lines[$i]->localtax2_tx,
-                            	$lines[$i]->qty,
-                            	$lines[$i]->fk_product,
+								$lines[$i]->qty,
+								$lines[$i]->fk_product,
 								$lines[$i]->remise_percent,
 								$date_start,
 								$date_end,
 								0,
 								$lines[$i]->info_bits,
-                            	'HT',
-                            	$product_type,
-                            	$lines[$i]->rang,
-                            	false,
-                            	$lines[$i]->array_options,
-                            	$lines[$i]->fk_unit,
-                            	$objecttmp->origin_id,
-                            	$lines[$i]->pa_ht,
-                            	$lines[$i]->ref_supplier,
-                            	$lines[$i]->special_code,
-                            	$fk_parent_line
+								'HT',
+								$product_type,
+								$lines[$i]->rang,
+								false,
+								$lines[$i]->array_options,
+								$lines[$i]->fk_unit,
+								$objecttmp->origin_id,
+								$lines[$i]->pa_ht,
+								$lines[$i]->ref_supplier,
+								$lines[$i]->special_code,
+								$fk_parent_line
 							);
 							if ($result > 0)
 							{
@@ -686,7 +686,7 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
 	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -1293,14 +1293,14 @@ if ($resql)
 
 	$db->free($resql);
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-    print '</table>'."\n";
-    print '</div>';
+	print '</table>'."\n";
+	print '</div>';
 
-    print '</form>'."\n";
+	print '</form>'."\n";
 
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;

@@ -130,10 +130,10 @@ if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
-    if ($res == 0)
-    {
-        $res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), null, $pageref);
-    }
+	if ($res == 0)
+	{
+		$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), null, $pageref);
+	}
 
 	// Check if pageid is inside the new website, if not we reset param pageid
 	if ($res >= 0 && $object->id > 0)
@@ -303,28 +303,28 @@ $permissiontodelete = $user->rights->website->delete;
 // Protections
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 {
-    $action = 'preview'; // To avoid to make an action on another page or another site when we click on button to select another site or page.
+	$action = 'preview'; // To avoid to make an action on another page or another site when we click on button to select another site or page.
 }
 if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
-    if ($action == 'addsite') $action = 'preview';
-    if ($action == 'updatesource') $action = 'preview';
+	if ($action == 'addsite') $action = 'preview';
+	if ($action == 'updatesource') $action = 'preview';
 
-    $pageid = $object->fk_default_home;
-    if (empty($pageid))
-    {
-    	$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
-    	if (!is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
-    	$atleastonepage = (is_array($array) && count($array) > 0);
+	$pageid = $object->fk_default_home;
+	if (empty($pageid))
+	{
+		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+		if (!is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+		$atleastonepage = (is_array($array) && count($array) > 0);
 
-    	$firstpageid = 0; $homepageid = 0;
-    	foreach ($array as $key => $valpage)
-    	{
-    		if (empty($firstpageid)) $firstpageid = $valpage->id;
-    		if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid = $valpage->id;
-    	}
-    	$pageid = ($homepageid ? $homepageid : $firstpageid); // We choose home page and if not defined yet, we take first page
-    }
+		$firstpageid = 0; $homepageid = 0;
+		foreach ($array as $key => $valpage)
+		{
+			if (empty($firstpageid)) $firstpageid = $valpage->id;
+			if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid = $valpage->id;
+		}
+		$pageid = ($homepageid ? $homepageid : $firstpageid); // We choose home page and if not defined yet, we take first page
+	}
 }
 if (GETPOST('refreshpage', 'alpha') && !in_array($action, array('updatecss'))) $action = 'preview';
 
@@ -529,9 +529,9 @@ if ($action == 'addsite')
 	$db->begin();
 
 	if (GETPOST('virtualhost', 'alpha') && !preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
-    {
-        $error++;
-        setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
+	{
+		$error++;
+		setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
 	}
 
 	if (!$error && !GETPOST('WEBSITE_REF', 'alpha'))
@@ -1278,54 +1278,54 @@ if ($action == 'updatecss')
 		{
 			$tmpvirtualhost = preg_replace('/\/$/', '', GETPOST('virtualhost', 'alpha'));
 			if ($tmpvirtualhost && !preg_match('/^http/', $tmpvirtualhost))
-    		{
-    		    $error++;
-    		    setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
-    		    $action = 'editcss';
-    		}
+			{
+				$error++;
+				setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
+				$action = 'editcss';
+			}
 
-    		if (!$error)
-    		{
-    			$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
-    			foreach ($arrayotherlang as $key => $val) {
-    				$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
-    			}
+			if (!$error)
+			{
+				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
+				foreach ($arrayotherlang as $key => $val) {
+					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
+				}
 
-    			$object->virtualhost = $tmpvirtualhost;
-    		    $object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-    		    $object->otherlang = join(',', $arrayotherlang);
-    		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
+				$object->virtualhost = $tmpvirtualhost;
+				$object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
+				$object->otherlang = join(',', $arrayotherlang);
+				$object->use_manifest = GETPOST('use_manifest', 'alpha');
 
-    		    $result = $object->update($user);
-        		if ($result < 0)
-        		{
-        		    $error++;
-        		    setEventMessages($object->error, $object->errors, 'errors');
-        		    $action = 'editcss';
-        		}
-    		}
+				$result = $object->update($user);
+				if ($result < 0)
+				{
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'editcss';
+				}
+			}
 		}
 
 		if (!$error)
 		{
-    		// Save master.inc.php file
-    		dol_syslog("Save master file ".$filemaster);
+			// Save master.inc.php file
+			dol_syslog("Save master file ".$filemaster);
 
-    		dol_mkdir($pathofwebsite);
+			dol_mkdir($pathofwebsite);
 
-    		// Now generate the master.inc.php page
-    		$result = dolSaveMasterFile($filemaster);
-    		if (!$result)
-    		{
-    			$error++;
-    			setEventMessages('Failed to write file '.$filemaster, null, 'errors');
-    		}
+			// Now generate the master.inc.php page
+			$result = dolSaveMasterFile($filemaster);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+			}
 
 
-    		// Html header file
-    		$htmlheadercontent = '';
+			// Html header file
+			$htmlheadercontent = '';
 
-    		/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
+			/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
     	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
     	    $htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
     	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
@@ -1335,84 +1335,84 @@ if ($action == 'updatecss')
     	    // $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
     	    $htmlheadercontent.= "// END PHP ?>\n";*/
 
-    		$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
+			$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
 
-    		/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
+			/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
     	    $htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
     	    $htmlheadercontent.= "// END PHP ?>"."\n";*/
 
-    		$htmlheadercontent = trim($htmlheadercontent)."\n";
+			$htmlheadercontent = trim($htmlheadercontent)."\n";
 
-    		$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
-    		if (!$result)
-    		{
-    			$error++;
-    			setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
-    		}
-
-
-    		// Css file
-    		$csscontent = '';
-
-    		$csscontent .= "<?php // BEGIN PHP\n";
-    		$csscontent .= '$websitekey=basename(__DIR__);'."\n";
-    		$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-    		$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-    		$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-    		$csscontent .= "ob_start();\n";
-    		$csscontent .= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
-    		$csscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-    		$csscontent .= "header('Content-type: text/css');\n";
-    		$csscontent .= "}\n";
-    		$csscontent .= "// END PHP ?>\n";
-
-    		$csscontent .= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
-
-    		$csscontent .= '<?php // BEGIN PHP'."\n";
-    		$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
-    		$csscontent .= "// END PHP ?>\n";
-
-    		dol_syslog("Save css content into ".$filecss);
-
-    		$result = dolSaveCssFile($filecss, $csscontent);
-    		if (!$result)
-    		{
-    			$error++;
-    			setEventMessages('Failed to write file '.$filecss, null, 'errors');
-    		}
+			$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
+			}
 
 
-    		// Js file
-    		$jscontent = '';
+			// Css file
+			$csscontent = '';
 
-    		$jscontent .= "<?php // BEGIN PHP\n";
-    		$jscontent .= '$websitekey=basename(__DIR__);'."\n";
-    		$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-    		$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-    		$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-    		$jscontent .= "ob_start();\n";
-    		$jscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-    		$jscontent .= "header('Content-type: application/javascript');\n";
-    		$jscontent .= "// END PHP ?>\n";
+			$csscontent .= "<?php // BEGIN PHP\n";
+			$csscontent .= '$websitekey=basename(__DIR__);'."\n";
+			$csscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+			$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+			$csscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+			$csscontent .= "ob_start();\n";
+			$csscontent .= "if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ \n";
+			$csscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+			$csscontent .= "header('Content-type: text/css');\n";
+			$csscontent .= "}\n";
+			$csscontent .= "// END PHP ?>\n";
 
-    		$jscontent .= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
+			$csscontent .= trim(GETPOST('WEBSITE_CSS_INLINE', 'none'))."\n";
 
-    		$jscontent .= '<?php // BEGIN PHP'."\n";
-    		$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
-    		$jscontent .= "// END PHP ?>\n";
+			$csscontent .= '<?php // BEGIN PHP'."\n";
+			$csscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");'."\n";
+			$csscontent .= "// END PHP ?>\n";
 
-    		$result = dolSaveJsFile($filejs, $jscontent);
-    		if (!$result)
-    		{
-    			$error++;
-    			setEventMessages('Failed to write file '.$filejs, null, 'errors');
-    		}
+			dol_syslog("Save css content into ".$filecss);
+
+			$result = dolSaveCssFile($filecss, $csscontent);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filecss, null, 'errors');
+			}
 
 
-    		// Robot file
-    		$robotcontent = '';
+			// Js file
+			$jscontent = '';
 
-    		/*$robotcontent.= "<?php // BEGIN PHP\n";
+			$jscontent .= "<?php // BEGIN PHP\n";
+			$jscontent .= '$websitekey=basename(__DIR__);'."\n";
+			$jscontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+			$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+			$jscontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+			$jscontent .= "ob_start();\n";
+			$jscontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+			$jscontent .= "header('Content-type: application/javascript');\n";
+			$jscontent .= "// END PHP ?>\n";
+
+			$jscontent .= trim(GETPOST('WEBSITE_JS_INLINE', 'none'))."\n";
+
+			$jscontent .= '<?php // BEGIN PHP'."\n";
+			$jscontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");'."\n";
+			$jscontent .= "// END PHP ?>\n";
+
+			$result = dolSaveJsFile($filejs, $jscontent);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filejs, null, 'errors');
+			}
+
+
+			// Robot file
+			$robotcontent = '';
+
+			/*$robotcontent.= "<?php // BEGIN PHP\n";
     	    $robotcontent.= '$websitekey=basename(__DIR__);'."\n";
     	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
     	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
@@ -1422,63 +1422,63 @@ if ($action == 'updatecss')
     	    $robotcontent.= "header('Content-type: text/css');\n";
     	    $robotcontent.= "// END PHP ?>\n";*/
 
-    		$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
+			$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
 
-    		/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
+			/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
     	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
     	    $robotcontent.= "// END PHP ?>"."\n";*/
 
-    		$result = dolSaveRobotFile($filerobot, $robotcontent);
-    		if (!$result)
-    		{
-    			$error++;
-    			setEventMessages('Failed to write file '.$filerobot, null, 'errors');
-    		}
+			$result = dolSaveRobotFile($filerobot, $robotcontent);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filerobot, null, 'errors');
+			}
 
 
-    		// Htaccess file
-    		$htaccesscontent = '';
-    		$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
+			// Htaccess file
+			$htaccesscontent = '';
+			$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
 
-    		$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
-    		if (!$result)
-    		{
-    			$error++;
-    			setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
-    		}
-
-
-       		// manifest.json file
-       		$manifestjsoncontent = '';
-
-       		$manifestjsoncontent .= "<?php // BEGIN PHP\n";
-       		$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-       		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-       		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-       		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-       		$manifestjsoncontent .= "ob_start();\n";
-       		$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-       		$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
-       		$manifestjsoncontent .= "// END PHP ?>\n";
-
-       		$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
-
-       		$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
-       		$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-       		$manifestjsoncontent .= "// END PHP ?>\n";
-
-       		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
-       		if (!$result)
-       		{
-       			$error++;
-       			setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
-       		}
+			$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
+			if (!$result)
+			{
+				$error++;
+				setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
+			}
 
 
-       		// README.md file
-       		$readmecontent = '';
+	   		// manifest.json file
+	   		$manifestjsoncontent = '';
 
-       		/*$readmecontent.= "<?php // BEGIN PHP\n";
+	   		$manifestjsoncontent .= "<?php // BEGIN PHP\n";
+	   		$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
+	   		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+	   		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+	   		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+	   		$manifestjsoncontent .= "ob_start();\n";
+	   		$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+	   		$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
+	   		$manifestjsoncontent .= "// END PHP ?>\n";
+
+	   		$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
+
+	   		$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
+	   		$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
+	   		$manifestjsoncontent .= "// END PHP ?>\n";
+
+	   		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
+	   		if (!$result)
+	   		{
+	   			$error++;
+	   			setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
+	   		}
+
+
+	   		// README.md file
+	   		$readmecontent = '';
+
+	   		/*$readmecontent.= "<?php // BEGIN PHP\n";
        		$readmecontent.= '$websitekey=basename(__DIR__);'."\n";
        		$readmecontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
        		$readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
@@ -1488,42 +1488,42 @@ if ($action == 'updatecss')
        		$readmecontent.= "header('Content-type: application/manifest+json');\n";
        		$readmecontent.= "// END PHP ?>\n";*/
 
-       		$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
+	   		$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
 
-       		/*$readmecontent.= '<?php // BEGIN PHP'."\n";
+	   		/*$readmecontent.= '<?php // BEGIN PHP'."\n";
        		$readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
        		$readmecontent.= "// END PHP ?>"."\n";*/
 
-       		$result = dolSaveReadme($filereadme, $readmecontent);
-       		if (!$result)
-       		{
-       			$error++;
-       			setEventMessages('Failed to write file '.$filereadme, null, 'errors');
-       		}
+	   		$result = dolSaveReadme($filereadme, $readmecontent);
+	   		if (!$result)
+	   		{
+	   			$error++;
+	   			setEventMessages('Failed to write file '.$filereadme, null, 'errors');
+	   		}
 
 
-       		// Save wrapper.php
+	   		// Save wrapper.php
 			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 
 
-    		// Message if no error
-    		if (!$error)
-    		{
-    			setEventMessages($langs->trans("Saved"), null, 'mesgs');
-    		}
+			// Message if no error
+			if (!$error)
+			{
+				setEventMessages($langs->trans("Saved"), null, 'mesgs');
+			}
 
-    		if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we don not make the redirect
-    		{
-    			$action = 'preview';
-    			if ($backtopage)
-	    		{
-	    			header("Location: ".$backtopage);
-	    			exit;
-	    		}
-    		}
-    		else {
-    			$action = 'editcss';
-    		}
+			if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we don not make the redirect
+			{
+				$action = 'preview';
+				if ($backtopage)
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
+			}
+			else {
+				$action = 'editcss';
+			}
 		}
 	}
 }
@@ -1660,7 +1660,7 @@ if ($action == 'updatemeta')
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS', 'alpha');
-        $objectpage->fk_object = GETPOST('WEBSITE_OBJECTID', 'aZ09');
+		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID', 'aZ09');
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
@@ -1932,35 +1932,35 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
 
-            // Security analysis
+			// Security analysis
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 			//print dol_escape_htmltag($phpfullcodestring);exit;
-            $forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open");
-            if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE))    // If option is not on, we disallow functions to write files
-            {
-                $forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
-            }
-            foreach ($forbiddenphpcommands as $forbiddenphpcommand)
-            {
-                if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring))
-                {
-                    $error++;
-                    setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
-                    if ($action == 'updatesource') $action = 'editsource';
-                    if ($action == 'updatecontent') $action = 'editcontent';
-                }
-            }
+			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open");
+			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE))    // If option is not on, we disallow functions to write files
+			{
+				$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+			}
+			foreach ($forbiddenphpcommands as $forbiddenphpcommand)
+			{
+				if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring))
+				{
+					$error++;
+					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+					if ($action == 'updatesource') $action = 'editsource';
+					if ($action == 'updatecontent') $action = 'editcontent';
+				}
+			}
 
-            if (empty($user->rights->website->writephp))
-            {
-                if ($phpfullcodestringold != $phpfullcodestring)
-                {
-                    $error++;
-                    setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
-                    if ($action == 'updatesource') $action = 'editsource';
-                    if ($action == 'updatecontent') $action = 'editcontent';
-                }
-            }
+			if (empty($user->rights->website->writephp))
+			{
+				if ($phpfullcodestringold != $phpfullcodestring)
+				{
+					$error++;
+					setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
+					if ($action == 'updatesource') $action = 'editsource';
+					if ($action == 'updatecontent') $action = 'editcontent';
+				}
+			}
 
 			// Clean data. We remove all the head section.
 			$objectpage->content = preg_replace('/<head>.*<\/head>/ims', '', $objectpage->content);
@@ -2434,28 +2434,28 @@ if (!GETPOST('hide_websitemenu'))
 		$htmltext = '';
 		if (empty($object->fk_default_home))
 		{
-		    $htmltext .= '<br><span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br><br>';
+			$htmltext .= '<br><span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br><br>';
 		}
 		elseif (empty($virtualurl))
 		{
-		    //$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
+			//$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
 		}
 		else {
-		    $htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
+			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
 		}
 		if (!empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER))
 		{
-		    $htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
+			$htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		}
 		else {
-    		$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
-    		$htmltext .= '<br>';
-    		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-    		$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
+			$htmltext .= '<br>';
+			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
 
-    		$examplewithapache = '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
-    		$examplewithapache .= '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
-    		$examplewithapache .= 'AllowOverride FileInfo Options
+			$examplewithapache = '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
+			$examplewithapache .= '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
+			$examplewithapache .= 'AllowOverride FileInfo Options
     		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
     		Require all granted
     		</Directory>
@@ -2470,14 +2470,14 @@ if (!GETPOST('hide_websitemenu'))
     		Require all granted
     		</Directory>';
 
-    		$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
-    		$htmltext .= '<div class="centpercent exampleapachesetup">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
+			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
+			$htmltext .= '<div class="centpercent exampleapachesetup">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
 
-    		$htmltext .= '<br>';
-    		$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
-    		$htmltext .= '<br>';
-    		$htmltext .= '<br>';
-    		$htmltext .= $langs->trans("YouCanAlsoDeployToAnotherWHP");
+			$htmltext .= '<br>';
+			$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
+			$htmltext .= '<br>';
+			$htmltext .= '<br>';
+			$htmltext .= $langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
 		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 3, 'helpvirtualhost');
 		print '</span>';
@@ -2818,14 +2818,14 @@ if (!GETPOST('hide_websitemenu'))
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 			$htmltext .= '<br>';
-            if ($conf->browser->layout == 'phone')
-            {
-                print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
-            }
-            else {
-            	//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
-            	print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
-            }
+			if ($conf->browser->layout == 'phone')
+			{
+				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+			}
+			else {
+				//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
+				print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
+			}
 		}
 		print '</span>'; // end websitehelp
 
@@ -3566,16 +3566,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 
 	print '<tr><td class="titlefieldcreate">';
-    print 'ObjectClass';
-    print '</td><td>';
-    print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
-    print '</td></tr>';
+	print 'ObjectClass';
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
+	print '</td></tr>';
 
-    print '<tr><td class="titlefieldcreate">';
-    print 'ObjectID';
-    print '</td><td>';
-    print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
-    print '</td></tr>';
+	print '<tr><td class="titlefieldcreate">';
+	print 'ObjectID';
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
+	print '</td></tr>';
 
 
 	$fuser = new User($db);
@@ -3585,8 +3585,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td><td>';
 	if ($pageauthorid > 0)
 	{
-	    $fuser->fetch($pageauthorid);
-	    print $fuser->getNomUrl(1);
+		$fuser->fetch($pageauthorid);
+		print $fuser->getNomUrl(1);
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 	}
@@ -3607,17 +3607,17 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	if ($action != 'createcontainer')
 	{
-	    print '<tr><td>';
-	    print $langs->trans('UserModif');
-	    print '</td><td>';
-	    if ($pageusermodifid > 0)
-	    {
-	        $fuser->fetch($pageusermodifid);
-	        print $fuser->getNomUrl(1);
-	    }
-	    print '</td></tr>';
+		print '<tr><td>';
+		print $langs->trans('UserModif');
+		print '</td><td>';
+		if ($pageusermodifid > 0)
+		{
+			$fuser->fetch($pageusermodifid);
+			print $fuser->getNomUrl(1);
+		}
+		print '</td></tr>';
 
-	    print '<tr><td>';
+		print '<tr><td>';
 		print $langs->trans('DateModification');
 		print '</td><td>';
 		print dol_print_date($pagedatemodification, 'dayhour', 'tzuser');
@@ -4232,7 +4232,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (empty($conf->global->WEBSITE_EDITINLINE))
 		{
-		    // Remove the contenteditable="true"
+			// Remove the contenteditable="true"
 			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		}
 		else {

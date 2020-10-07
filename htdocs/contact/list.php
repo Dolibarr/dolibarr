@@ -165,7 +165,7 @@ foreach ($object->fields as $key => $val)
 }
 
 // Add none object fields for "search in all"
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))	{
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$fieldstosearchall['s.nom'] = "ThirdParty";
 }
 
@@ -186,7 +186,7 @@ foreach ($object->fields as $key => $val) {
 
 // Add none object fields to fields for list
 $arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>22, 'checked'=>0);
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))	{
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
 }
 

@@ -84,8 +84,8 @@ function getEntity($element, $shared = 1, $currentobject = null)
 
 	// fix different element names (France to English)
 	switch ($element) {
-		case 'contrat':			$element = 'contract';			break;	// "/contrat/class/contrat.class.php"
-		case 'order_supplier':	$element = 'supplier_order';	break;	// "/fourn/class/fournisseur.commande.class.php"
+		case 'contrat':			$element = 'contract'; break; // "/contrat/class/contrat.class.php"
+		case 'order_supplier':	$element = 'supplier_order'; break; // "/fourn/class/fournisseur.commande.class.php"
 	}
 
 	if (is_object($mc))
@@ -1404,7 +1404,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) { $tabsname = str_replace("@", "", $picto); }
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';	// Do not use "reposition" class in the "More".
+		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -1415,7 +1415,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= "$('#moretabs".$tabsname."').mouseenter( function() {
 			var x = this.offsetLeft, y = this.offsetTop;
 			console.log('mouseenter ".$left." x='+x+' y='+y+' window.innerWidth='+window.innerWidth);
-			if ((window.innerWidth - x) < ".($widthofpopup+10).") {
+			if ((window.innerWidth - x) < ".($widthofpopup + 10).") {
 				$('#moretabsList".$tabsname."').css('".$right."','8px');
 			}
 			$('#moretabsList".$tabsname."').css('".$left."','auto');
@@ -2808,7 +2808,7 @@ function getUserRemoteIP()
 			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];	// value is clean here
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here
 	}
 	return $ip;
 }
@@ -4048,7 +4048,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	}
 
 	// Return a http error code if possible
-	if (! headers_sent()) {
+	if (!headers_sent()) {
 		http_response_code(500);
 	}
 
@@ -7833,7 +7833,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit))
 					{
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit);	// should be a numeric
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit); // should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -7841,7 +7841,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 			} elseif ($mode == 2 || $mode == -2)
 			{
-				$crit = preg_replace('/[^0-9,]/', '', $crit);	// ID are always integer
+				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
 				$newres .= $crit ? "IN (".$db->sanitize($db->escape($crit)).")" : "IN (0)";
 				if ($mode == -2) $newres .= ' OR '.$field.' IS NULL';
@@ -8979,8 +8979,8 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 
 	if ($method == -1) {
 		$method = 0;
-		if (! empty($conf->global->MAIN_FORCE_READFILE_WITH_FREAD)) $method = 1;
-		if (! empty($conf->global->MAIN_FORCE_READFILE_WITH_STREAM_COPY)) $method = 2;
+		if (!empty($conf->global->MAIN_FORCE_READFILE_WITH_FREAD)) $method = 1;
+		if (!empty($conf->global->MAIN_FORCE_READFILE_WITH_STREAM_COPY)) $method = 2;
 	}
 
 	// Be sure we don't have output buffering enabled to have readfile working correctly
