@@ -266,7 +266,7 @@ class mailing_fraise extends MailingTargets
         if ($dateendsubscriptionbefore > 0) $sql .= " AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql .= " AND a.fk_adherent_type = ta.rowid";
         // Filter on type
-        if (GETPOSTISSET('filter_type')) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type'))."'";
+        if (GETPOSTISSET('filter_type') && GETPOST('filter_type') > 0) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type'))."'";
         $sql .= " ORDER BY a.email";
         //print $sql;
 
