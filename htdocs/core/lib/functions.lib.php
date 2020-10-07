@@ -1209,6 +1209,38 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	}
 }
 
+/**
+ *	Return HTML code to output a button to open a dialog popup box.
+ *  Such buttons must be included inside a HTML form.
+ *
+ *	@param	string	$name				A name for the html component
+ *	@param	string	$label 	    		Label of button
+ *	@param  string	$buttonstring  		button string
+ *	@param  string	$url				Url to open
+ *  @param	string	$disabled			Disabled text
+ * 	@return	string						HTML component with button
+ */
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
+{
+	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<script language="javascript">
+				 jQuery(document).ready(function () {
+					 jQuery(".button_'.$name.'").click(function () {
+						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
+						 .dialog({
+						 	autoOpen: false,
+						 	modal: true,
+						 	height: (window.innerHeight - 150),
+						 	width: \'80%\',
+						 	title: "'.dol_escape_js($label).'"
+						 });
+						 $dialog.dialog(\'open\');
+					 });
+				 });
+				 </script>';
+	return $out;
+}
 
 /**
  *	Show tab header of a card
@@ -1224,6 +1256,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
  * 	@return	void
+ *  @deprecated Use print dol_get_fiche_head() instead
  */
 function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0, $moretabssuffix = '')
 {

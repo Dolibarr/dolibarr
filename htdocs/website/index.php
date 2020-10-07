@@ -2410,24 +2410,7 @@ if (!GETPOST('hide_websitemenu'))
 
 			if (! empty($conf->categorie->enabled)) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
-
-				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-				print '<a class="button bordertransp button_categories"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
-				print '<script language="javascript">
-				 jQuery(document).ready(function () {
-					 jQuery(".button_categories").click(function () {
-						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref.'" width="100%" height="98%"></iframe>\')
-						 .dialog({
-						 	autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: "'.dol_escape_js($langs->transnoentitiesnoconv("Categories")).'"
-						 });
-						 $dialog.dialog(\'open\');
-					 });
-				 });
-				 </script>';
+				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"><span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref, $disabled);
 			}
 
 			print '</span>';
