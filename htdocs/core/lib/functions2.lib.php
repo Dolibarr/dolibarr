@@ -2387,14 +2387,15 @@ function price2fec($amount)
 
 /**
  * Check the syntax of some PHP code.
- * @param string $code PHP code to check.
- * @return boolean|array If false, then check was successful, otherwise an array(message,line) of errors is returned.
+ *
+ * @param 	string 			$code 	PHP code to check.
+ * @return 	boolean|array 			If false, then check was successful, otherwise an array(message,line) of errors is returned.
  */
 function phpSyntaxError($code)
 {
-	if (!defined("CR")) define("CR","\r");
-	if (!defined("LF")) define("LF","\n") ;
-	if (!defined("CRLF")) define("CRLF","\r\n") ;
+	if (!defined("CR")) define("CR", "\r");
+	if (!defined("LF")) define("LF", "\n");
+	if (!defined("CRLF")) define("CRLF", "\r\n");
 
 	$braces=0;
 	$inString=0;
@@ -2406,14 +2407,16 @@ function phpSyntaxError($code)
 				case T_START_HEREDOC: ++$inString; break;
 				case T_END_HEREDOC:   --$inString; break;
 			}
-		} else if ($inString & 1) {
+		} elseif ($inString & 1) {
 			switch ($token) {
-				case '`': case '\'':
+				case '`':
+				case '\'':
 				case '"': --$inString; break;
 			}
 		} else {
 			switch ($token) {
-				case '`': case '\'':
+				case '`':
+				case '\'':
 				case '"': ++$inString; break;
 				case '{': ++$braces; break;
 				case '}':
@@ -2436,8 +2439,8 @@ function phpSyntaxError($code)
 		if ($braces) {
 			$braces = PHP_INT_MAX;
 		} else {
-			false !== strpos($code,CR) && $code = strtr(str_replace(CRLF,LF,$code),CR,LF);
-			$braces = substr_count($code,LF);
+			false !== strpos($code, CR) && $code = strtr(str_replace(CRLF, LF, $code), CR, LF);
+			$braces = substr_count($code, LF);
 		}
 		$code = ob_get_clean();
 		$code = strip_tags($code);
@@ -2455,4 +2458,3 @@ function phpSyntaxError($code)
 	@ini_set('log_errors', $inString);
 	return $code;
 }
-
