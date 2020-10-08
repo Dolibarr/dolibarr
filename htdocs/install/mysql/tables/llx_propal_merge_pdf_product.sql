@@ -22,7 +22,7 @@ CREATE TABLE llx_propal_merge_pdf_product (
   fk_user_author integer DEFAULT NULL,
   fk_user_mod integer NOT NULL,
   datec datetime NOT NULL,
-  tms timestamp NOT NULL,
+  tms timestamp,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
 
