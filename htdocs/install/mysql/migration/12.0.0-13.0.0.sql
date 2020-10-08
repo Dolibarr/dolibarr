@@ -383,3 +383,14 @@ ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (f
 -- update llx_extrafields
 UPDATE llx_extrafields SET elementtype = 'delivery' WHERE llx_extrafields.elementtype = 'livraison';
 UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE llx_extrafields.elementtype = 'livraisondet';
+
+-- update llx_ecm_files
+UPDATE llx_ecm_files SET src_object_type = 'delivery' WHERE llx_ecm_files.src_object_type = 'livraison';
+
+-- update llx_links
+UPDATE llx_links SET objecttype = 'delivery' WHERE llx_links.objecttype = 'livraison';
+
+-- update llx_document_model
+UPDATE llx_document_model SET type = 'delivery' WHERE llx_document_model.type = 'livraison';
+
+-- TODO Check DB llx_actioncomm, llx_element_element(already modified by shipping/delivery), llx_c_email_template, llx_c_type_contact, llx_object_langs because Module changing label livraison 2 delivery. I think those table have been manage by Module Expedition 
