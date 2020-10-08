@@ -952,11 +952,20 @@ class FormOther
      *  @param	int		$invert			Invert
      *  @param	string	$option			Option
      *  @param	string	$morecss		More css
+     *  @param  bool    $addjscombo     Add js combo
      *  @return	string
      */
-    public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+    public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
     {
         $out = '';
+
+        // Add code for jquery to use multiselect
+        if ($addjscombo)
+        {
+            // Enhance with select2
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+            $out .= ajax_combobox($htmlname);
+        }
 
         $currentyear = date("Y") + $offset;
         $max_year = $currentyear + $max_year;
