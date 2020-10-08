@@ -444,8 +444,8 @@ class ExportExcel2007new extends ModeleExports
 	 * Set cell value and automatically merge if we give an endcell
 	 *
 	 * @param string $val cell value
-	 * @param string $startCell
-	 * @param string $endCell
+	 * @param string $startCell starting cell
+	 * @param string $endCell  ending cell
 	 * @return int 1 if success -1 if failed
 	 */
 	public function setCellValue($val, $startCell, $endCell = '') {
@@ -471,6 +471,7 @@ class ExportExcel2007new extends ModeleExports
 	 *
 	 * @param string $thickness style \PhpOffice\PhpSpreadsheet\Style\Border
 	 * @param string $color     color \PhpOffice\PhpSpreadsheet\Style\Color
+	 * @return int 1 if ok
 	 */
 	public function setBorderStyle($thickness, $color) {
 		$this->styleArray['borders'] = array(
@@ -479,43 +480,50 @@ class ExportExcel2007new extends ModeleExports
 				'color' => array('argb' => $color)
 			)
 		);
+		return 1;
 	}
 
 	/**
 	 * Set font style
 	 *
-	 * @param bool   $bold
+	 * @param bool   $bold  true if bold
 	 * @param string $color color \PhpOffice\PhpSpreadsheet\Style\Color
+	 * @return int 1
 	 */
 	public function setFontStyle($bold, $color) {
 		$this->styleArray['font'] = array(
 			'color' => array('argb' => $color),
 			'bold' => $bold
 		);
+		return 1;
 	}
 
 	/**
 	 * Set alignment style (horizontal, left, right, ...)
 	 *
 	 * @param string $horizontal PhpOffice\PhpSpreadsheet\Style\Alignment
+	 * @return int 1
 	 */
 	public function setAlignmentStyle($horizontal) {
 		$this->styleArray['alignment'] = array('horizontal' => $horizontal);
+		return 1;
 	}
 
 	/**
 	 * Reset Style
+	 * @return int 1
 	 */
 	public function resetStyle() {
 		$this->styleArray = array();
+		return 1;
 	}
 
 	/**
 	 * Make a NxN Block in sheet
 	 *
-	 * @param string $startCell
+	 * @param string $startCell starting cell
 	 * @param array  $TDatas array(ColumnName=>array(Row value 1, row value 2, etc ...))
-	 * @param bool   $boldTitle
+	 * @param bool   $boldTitle true if bold headers
 	 * @return int 1 if OK, -1 if KO
 	 */
 	public function setBlock($startCell, $TDatas = array(), $boldTitle = false) {
@@ -551,7 +559,7 @@ class ExportExcel2007new extends ModeleExports
 	 *
 	 * @param string $startCell A1
 	 * @param array  $TDatas    array(Title=>val)
-	 * @param bool   $boldTitle
+	 * @param bool   $boldTitle true if bold titles
 	 * @return int 1 if OK, -1 if KO
 	 */
 	public function setBlock2Columns($startCell, $TDatas = array(), $boldTitle = false) {
@@ -581,13 +589,15 @@ class ExportExcel2007new extends ModeleExports
 	/**
 	 * Enable auto sizing for column range
 	 *
-	 * @param string $firstColumn
-	 * @param string $lastColumn
+	 * @param string $firstColumn first column to autosize
+	 * @param string $lastColumn  to last column to autosize
+	 * @return int 1
 	 */
 	public function enableAutosize($firstColumn, $lastColumn) {
 		foreach(range($firstColumn, $lastColumn) as $columnID) {
 			$this->workbook->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
 		}
+		return 1;
 	}
 
 	/**
