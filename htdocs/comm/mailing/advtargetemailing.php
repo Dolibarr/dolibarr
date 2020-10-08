@@ -426,7 +426,7 @@ if ($object->fetch($id) >= 0) {
 	print $form->showrefnav($object, 'id', $linkback);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 

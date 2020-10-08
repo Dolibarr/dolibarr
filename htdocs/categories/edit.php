@@ -33,16 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 $id = GETPOST('id', 'int');
-$ref = GETPOST('ref');
-$type = GETPOST('type');
+$ref = GETPOST('ref', 'alphanohtml');
+$type = GETPOST('type', 'alphanohtml');
 $action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 
 $socid = GETPOST('socid', 'int');
-$label = GETPOST('label');
-$description = GETPOST('description');
-$color = GETPOST('color', 'alpha');
+$label = GETPOST('label', 'alphanohtml');
+$description = GETPOST('description', 'restricthtml');
+$color = preg_replace('/[^0-9a-f#]/i', '', GETPOST('color', 'alphanohtml'));
 $visible = GETPOST('visible');
 $parent = GETPOST('parent');
 

@@ -59,10 +59,10 @@ if (!$sortfield) $sortfield = "label";
 if (!$sortorder) $sortorder = "ASC";
 
 $arrayfields = array(
-    'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-    'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-    'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-    'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
+	'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
+	'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
 );
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) unset($arrayfields['reconcilable']);
@@ -80,17 +80,17 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (!empty($cancel)) $action = '';
+	if (!empty($cancel)) $action = '';
 
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-    {
-    	$search_subaccount = "";
-    	$search_label = "";
-    	$search_type = "";
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+	{
+		$search_subaccount = "";
+		$search_label = "";
+		$search_type = "";
 		$search_array_options = array();
-    }
+	}
 }
 
 
@@ -273,13 +273,13 @@ if ($resql)
 	print '<div class="warning">'.$langs->trans("WarningCreateSubAccounts").'</div>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-    $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-    $moreforfilter = '';
-    $massactionbutton = '';
+	$moreforfilter = '';
+	$massactionbutton = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Line for search fields
 	print '<tr class="liste_titre_filter">';
@@ -293,7 +293,7 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['subaccount']['checked']))	print_liste_field_titre($arrayfields['subaccount']['label'], $_SERVER["PHP_SELF"], "subaccount", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['label']['checked']))		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], "label", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['type']['checked']))		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'center ');

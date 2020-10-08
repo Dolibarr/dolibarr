@@ -82,7 +82,7 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Select active chart of accounts
 ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
@@ -115,7 +115,7 @@ ExpenseReportsVentilation=Expense report binding
 CreateMvts=Create new transaction
 UpdateMvts=Modification of a transaction
 ValidTransaction=Validate transaction
-WriteBookKeeping=Register transactions in Ledger
+WriteBookKeeping=Register transactions in accounting
 Bookkeeping=Ledger
 AccountBalance=Account balance
 ObjectsRef=Source object ref

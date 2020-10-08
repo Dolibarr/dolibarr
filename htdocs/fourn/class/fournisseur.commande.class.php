@@ -1554,7 +1554,7 @@ class CommandeFournisseur extends CommonOrder
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
-			if (!$qty) $qty = 1;
+			if (empty($qty)) $qty = 0;
 			if (!$info_bits) $info_bits = 0;
 			if (empty($txtva)) $txtva = 0;
 			if (empty($txlocaltax1)) $txlocaltax1 = 0;
@@ -2526,7 +2526,6 @@ class CommandeFournisseur extends CommonOrder
 
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
-			if (!$qty) $qty = 1;
 			$pu = price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$txtva = price2num($txtva);

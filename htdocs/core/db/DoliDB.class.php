@@ -90,7 +90,7 @@ abstract class DoliDB implements Database
     public function idate($param)
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", 'tzserver');
 	}
 
 	/**

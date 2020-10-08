@@ -63,12 +63,12 @@ class modFournisseur extends DolibarrModules
 
 		// Data directories to create when module is enabled
 		$this->dirs = array(
-            "/fournisseur/temp",
-            "/fournisseur/commande",
-            "/fournisseur/commande/temp",
-            "/fournisseur/facture",
-            "/fournisseur/facture/temp"
-        );
+			"/fournisseur/temp",
+			"/fournisseur/commande",
+			"/fournisseur/commande/temp",
+			"/fournisseur/facture",
+			"/fournisseur/facture/temp"
+		);
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -299,7 +299,7 @@ class modFournisseur extends DolibarrModules
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (! empty($conf->multicurrency->enabled))
+		if (!empty($conf->multicurrency->enabled))
 		{
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -434,7 +434,7 @@ class modFournisseur extends DolibarrModules
 			'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote", 'p.rowid'=>'PaymentId', 'pf.amount'=>'AmountPayment',
 			'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber', 'p.fk_bank'=>'IdTransaction', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (! empty($conf->multicurrency->enabled))
+		if (!empty($conf->multicurrency->enabled))
 		{
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -528,7 +528,7 @@ class modFournisseur extends DolibarrModules
 			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (! empty($conf->multicurrency->enabled))
+		if (!empty($conf->multicurrency->enabled))
 		{
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -654,15 +654,15 @@ class modFournisseur extends DolibarrModules
 
 		//Import Supplier Invoice
 		//--------
-		$r=0;
+		$r = 0;
 
 		$r++;
-		$this->import_code[$r] = $this->rights_class . '_' . $r;
-		$this->import_label[$r] = "Supplier Invoice";	// Translation key
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "Supplier Invoice"; // Translation key
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = ['f' => MAIN_DB_PREFIX . 'facture_fourn', 'extra' => MAIN_DB_PREFIX . 'facture_fourn_extrafields'];
-		$this->import_tables_creator_array[$r] = ['f' => 'fk_user_author'];	// Fields to store import user id
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = ['f' => MAIN_DB_PREFIX.'facture_fourn', 'extra' => MAIN_DB_PREFIX.'facture_fourn_extrafields'];
+		$this->import_tables_creator_array[$r] = ['f' => 'fk_user_author']; // Fields to store import user id
 		$this->import_fields_array[$r] = [
 			'f.ref' => 'InvoiceRef*',
 			'f.ref_supplier' => 'RefSupplier',
@@ -697,19 +697,19 @@ class modFournisseur extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, " . $conf->entity . ")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
+				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 				$import_extrafield_sample[$fieldname] = $fieldlabel;
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn'];
-		$this->import_regex_array[$r] = ['f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency'];
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture_fourn'];
+		$this->import_regex_array[$r] = ['f.ref' => '(SI\d{4}-\d{4}|PROV.{1,32}$)', 'f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'];
 		$import_sample = [
 			'f.ref' => '(PROV001)',
 			'f.ref_supplier' => 'Supplier1',
@@ -751,10 +751,10 @@ class modFournisseur extends DolibarrModules
 		//Import Supplier Invoice Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
-		$this->import_label[$r] = "Supplier Invoice Lines";	// Translation key
+		$this->import_label[$r] = "Supplier Invoice Lines"; // Translation key
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = ['fd' => MAIN_DB_PREFIX . 'facture_fourn_det', 'extra' => MAIN_DB_PREFIX . 'facture_fourn_det_extrafields'];
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = ['fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields'];
 		$this->import_fields_array[$r] = [
 			'fd.fk_facture_fourn' => 'InvoiceRef*',
 			'fd.fk_parent_line' => 'FacParentLine',
@@ -784,19 +784,19 @@ class modFournisseur extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'facture_fourn_det' AND entity IN (0, " . $conf->entity . ")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
+				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 				$import_extrafield_sample[$fieldname] = $fieldlabel;
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'facture_fourn_det'];
-		$this->import_regex_array[$r] = ['fd.product_type' => '[0|1]$', 'fd.fk_product' => 'rowid@' . MAIN_DB_PREFIX . 'product', 'fd.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency'];
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture_fourn_det'];
+		$this->import_regex_array[$r] = ['fd.product_type' => '[0|1]$', 'fd.fk_product' => 'rowid@'.MAIN_DB_PREFIX.'product', 'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'];
 		$import_sample = [
 			'fd.fk_facture_fourn' => '(PROV001)',
 			'fd.fk_parent_line' => '',
@@ -835,7 +835,7 @@ class modFournisseur extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

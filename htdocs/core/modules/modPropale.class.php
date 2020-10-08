@@ -262,11 +262,11 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
-		$this->import_label[$r] = 'Proposals';	// Translation key
+		$this->import_label[$r] = 'Proposals'; // Translation key
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX . 'propal', 'extra' => MAIN_DB_PREFIX . 'propal_extrafields'];
-		$this->import_tables_creator_array[$r] = ['c'=>'fk_user_author'];	// Fields to store import user id
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'propal', 'extra' => MAIN_DB_PREFIX.'propal_extrafields'];
+		$this->import_tables_creator_array[$r] = ['c'=>'fk_user_author']; // Fields to store import user id
 		$this->import_fields_array[$r] = [
 			'c.ref' => 'Document Ref*',
 			'c.ref_client' => 'RefCustomer',
@@ -282,7 +282,7 @@ class modPropale extends DolibarrModules
 			'c.date_livraison' => 'DeliveryDate',
 			'c.fk_user_valid' => 'ValidatedById'
 		];
-		if (! empty($conf->multicurrency->enabled)) {
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -291,18 +291,18 @@ class modPropale extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'propal' AND entity IN (0, " . $conf->entity . ")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'propal' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
+				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 				$import_extrafield_sample[$fieldname] = $fieldlabel;
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'propal'];
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'propal'];
 		$this->import_regex_array[$r] = ['c.ref' => '[^ ]'];
 		$import_sample = [
 			'c.ref' => 'PROV0077',
@@ -339,12 +339,12 @@ class modPropale extends DolibarrModules
 		//Import Proposal Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'line_'.$r;
-		$this->import_label[$r] = "ProposalLine";	// Translation key
+		$this->import_label[$r] = "ProposalLine"; // Translation key
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = [
-			'cd' => MAIN_DB_PREFIX . 'propaldet',
-			'extra' => MAIN_DB_PREFIX . 'propaldet_extrafields'
+			'cd' => MAIN_DB_PREFIX.'propaldet',
+			'extra' => MAIN_DB_PREFIX.'propaldet_extrafields'
 		];
 		$this->import_fields_array[$r] = [
 			'cd.fk_propal' => 'Document Ref*',
@@ -366,7 +366,7 @@ class modPropale extends DolibarrModules
 			'cd.date_end' => 'End Date',
 			'cd.buy_price_ht' => 'LineBuyPriceHT'
 		];
-		if (! empty($conf->multicurrency->enabled)) {
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -379,14 +379,14 @@ class modPropale extends DolibarrModules
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
+				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 				$import_extrafield_sample[$fieldname] = $fieldlabel;
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'propaldet'];
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'propaldet'];
 		$this->import_regex_array[$r] = ['cd.product_type' => '[0|1]$'];
 		$import_sample = [
 			'cd.fk_propal' => 'PROV(0001)',

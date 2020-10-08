@@ -1533,7 +1533,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 			$nbok = 0;
 			for ($i = 0; $i < $nbfile; $i++)
 			{
-				if (empty($TFile['name'][$i])) continue;		// For example, when submitting a form with no file name
+				if (empty($TFile['name'][$i])) continue; // For example, when submitting a form with no file name
 
 				// Define $destfull (path to file including filename) and $destfile (only filename)
 				$destfull = $upload_dir."/".$TFile['name'][$i];
@@ -2053,7 +2053,7 @@ function dol_uncompress($inputfile, $outputdir)
 			for ($i = 0; $i < $zip->numFiles; $i++) {
 				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
 					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
-					continue;	// Discard the file
+					continue; // Discard the file
 				}
 				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
 			}

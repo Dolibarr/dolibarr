@@ -220,7 +220,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
+	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone', 1);
 	    print '</td>';
 		// Ref Project
 	   	if (!empty($conf->projet->enabled)) print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';

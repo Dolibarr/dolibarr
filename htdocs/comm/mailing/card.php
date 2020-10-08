@@ -465,13 +465,13 @@ if (empty($reshook))
 		$object->email_from     = GETPOST("from");
 		$object->email_replyto  = GETPOST("replyto");
 		$object->email_errorsto = GETPOST("errorsto");
-		$object->titre          = GETPOST("titre");
+		$object->title          = GETPOST("title");
 		$object->sujet          = GETPOST("sujet");
 		$object->body           = GETPOST("bodyemail", 'restricthtml');
 		$object->bgcolor        = GETPOST("bgcolor");
 		$object->bgimage        = GETPOST("bgimage");
 
-		if (!$object->titre) {
+		if (!$object->title) {
 			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		}
 		if (!$object->sujet) {
@@ -496,16 +496,16 @@ if (empty($reshook))
 	}
 
 	// Action update description of emailing
-	if ($action == 'settitre' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
+	if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
 	{
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
-		if ($action == 'settitre') $object->titre = trim(GETPOST('titre', 'alpha'));
+		if ($action == 'settitle') $object->title = trim(GETPOST('title', 'alpha'));
 		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'alpha'));
 		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'alpha'));
 		elseif ($action == 'setemail_errorsto') {
             $object->email_errorsto = trim(GETPOST('email_errorsto', 'alpha'));
-        } elseif ($action == 'settitre' && empty($object->titre)) {
+        } elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
@@ -854,9 +854,9 @@ if ($action == 'create')
 
 			// Description
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
 			// From
@@ -1144,7 +1144,7 @@ if ($action == 'create')
 			*/
 
 			// Topic
-			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 			// From
 			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 			// To

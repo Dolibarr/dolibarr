@@ -478,7 +478,7 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print "</tr>\n";
@@ -502,7 +502,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	if (!empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'], $_SERVER['PHP_SELF'], "f.suspended,f.frequency", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'nomaxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	if ($num > 0)

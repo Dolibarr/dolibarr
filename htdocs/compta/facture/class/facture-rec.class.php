@@ -74,6 +74,11 @@ class FactureRec extends CommonInvoice
 	 */
 	protected $table_ref_field = 'titre';
 
+	/**
+	 * @var string The label of recurring invoice
+	 */
+	public $title;
+
 	public $number;
 	public $date;
 	public $remise;

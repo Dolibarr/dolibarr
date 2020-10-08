@@ -358,6 +358,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
 
 DELETE FROM llx_const WHERE name in ('MAIN_INCLUDE_ZERO_VAT_IN_REPORTS');
 
+ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
+
 -- rename Table
 ALTER TABLE llx_livraison RENAME TO llx_delivery;
 ALTER TABLE llx_livraison_extrafields RENAME TO llx_delivery_extrafields;
