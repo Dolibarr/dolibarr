@@ -288,6 +288,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
+	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"])?$_SESSION["takeposinvoiceentity"]:$conf->entity;
 
 	if ($invoice->socid <= 0)
 	{
