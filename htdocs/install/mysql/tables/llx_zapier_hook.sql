@@ -24,6 +24,6 @@ CREATE TABLE llx_zapier_hook(
     status integer,
     date_creation datetime NOT NULL,
     fk_user integer NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     import_key varchar(14)
 ) ENGINE=innodb;

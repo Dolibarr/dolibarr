@@ -41,6 +41,6 @@ CREATE TABLE llx_menu
 	perms         text,										-- Condition to show enabled or disabled
 	enabled       text NULL, 					            -- Condition to show or hide
 	usertype      integer NOT NULL DEFAULT 0,				-- 0 if menu for all users, 1 for external only, 2 for internal only
-	tms           timestamp
+	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 	
 ) ENGINE=innodb;
