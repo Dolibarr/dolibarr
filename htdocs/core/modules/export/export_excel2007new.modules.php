@@ -448,18 +448,19 @@ class ExportExcel2007new extends ModeleExports
 	 * @param string $endCell  ending cell
 	 * @return int 1 if success -1 if failed
 	 */
-	public function setCellValue($val, $startCell, $endCell = '') {
+	public function setCellValue($val, $startCell, $endCell = '')
+	{
 		try {
 			$this->workbook->getActiveSheet()->setCellValue($startCell, $val);
 
-			if(! empty($endCell)) {
+			if (! empty($endCell)) {
 				$cellRange = $startCell.':'.$endCell;
 				$this->workbook->getActiveSheet()->mergeCells($startCell.':'.$endCell);
 			}
 			else $cellRange = $startCell;
-			if(! empty($this->styleArray)) $this->workbook->getActiveSheet()->getStyle($cellRange)->applyFromArray($this->styleArray);
+			if (! empty($this->styleArray)) $this->workbook->getActiveSheet()->getStyle($cellRange)->applyFromArray($this->styleArray);
 		}
-		catch(Exception $e) {
+		catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
@@ -473,7 +474,8 @@ class ExportExcel2007new extends ModeleExports
 	 * @param string $color     color \PhpOffice\PhpSpreadsheet\Style\Color
 	 * @return int 1 if ok
 	 */
-	public function setBorderStyle($thickness, $color) {
+	public function setBorderStyle($thickness, $color)
+	{
 		$this->styleArray['borders'] = array(
 			'outline' => array(
 				'borderStyle' => $thickness,
@@ -490,7 +492,8 @@ class ExportExcel2007new extends ModeleExports
 	 * @param string $color color \PhpOffice\PhpSpreadsheet\Style\Color
 	 * @return int 1
 	 */
-	public function setFontStyle($bold, $color) {
+	public function setFontStyle($bold, $color)
+	{
 		$this->styleArray['font'] = array(
 			'color' => array('argb' => $color),
 			'bold' => $bold
@@ -504,7 +507,8 @@ class ExportExcel2007new extends ModeleExports
 	 * @param string $horizontal PhpOffice\PhpSpreadsheet\Style\Alignment
 	 * @return int 1
 	 */
-	public function setAlignmentStyle($horizontal) {
+	public function setAlignmentStyle($horizontal)
+	{
 		$this->styleArray['alignment'] = array('horizontal' => $horizontal);
 		return 1;
 	}
@@ -513,7 +517,8 @@ class ExportExcel2007new extends ModeleExports
 	 * Reset Style
 	 * @return int 1
 	 */
-	public function resetStyle() {
+	public function resetStyle()
+	{
 		$this->styleArray = array();
 		return 1;
 	}
@@ -526,19 +531,20 @@ class ExportExcel2007new extends ModeleExports
 	 * @param bool   $boldTitle true if bold headers
 	 * @return int 1 if OK, -1 if KO
 	 */
-	public function setBlock($startCell, $TDatas = array(), $boldTitle = false) {
+	public function setBlock($startCell, $TDatas = array(), $boldTitle = false)
+	{
 		try {
-			if(! empty($TDatas)) {
+			if (! empty($TDatas)) {
 				$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
 				$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
 				$startRow = $startCell->getRow();
-				foreach($TDatas as $column => $TRows) {
-					if($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+				foreach ($TDatas as $column => $TRows) {
+					if ($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
 					$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
 					$this->setCellValue($column, $cell->getCoordinate());
 					$rowPos = $startRow;
-					if($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
-					foreach($TRows as $row) {
+					if ($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					foreach ($TRows as $row) {
 						$rowPos++;
 						$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $rowPos);
 						$this->setCellValue($row, $cell->getCoordinate());
@@ -547,7 +553,7 @@ class ExportExcel2007new extends ModeleExports
 				}
 			}
 		}
-		catch(Exception $e) {
+		catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
@@ -562,24 +568,25 @@ class ExportExcel2007new extends ModeleExports
 	 * @param bool   $boldTitle true if bold titles
 	 * @return int 1 if OK, -1 if KO
 	 */
-	public function setBlock2Columns($startCell, $TDatas = array(), $boldTitle = false) {
+	public function setBlock2Columns($startCell, $TDatas = array(), $boldTitle = false)
+	{
 		try {
-			if(! empty($TDatas)) {
+			if (! empty($TDatas)) {
 				$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
 				$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
 				$startRow = $startCell->getRow();
-				foreach($TDatas as $title => $val) {
+				foreach ($TDatas as $title => $val) {
 					$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
-					if($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					if ($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
 					$this->setCellValue($title, $cell->getCoordinate());
-					if($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					if ($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
 					$cell2 = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn + 1, $startRow);
 					$this->setCellValue($val, $cell2->getCoordinate());
 					$startRow++;
 				}
 			}
 		}
-		catch(Exception $e) {
+		catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
@@ -593,8 +600,9 @@ class ExportExcel2007new extends ModeleExports
 	 * @param string $lastColumn  to last column to autosize
 	 * @return int 1
 	 */
-	public function enableAutosize($firstColumn, $lastColumn) {
-		foreach(range($firstColumn, $lastColumn) as $columnID) {
+	public function enableAutosize($firstColumn, $lastColumn)
+	{
+		foreach (range($firstColumn, $lastColumn) as $columnID) {
 			$this->workbook->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
 		}
 		return 1;
@@ -609,11 +617,12 @@ class ExportExcel2007new extends ModeleExports
 	 * @param int    $offset    Starting offset
 	 * @return string Coordinate or -1 if KO
 	 */
-	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0) {
+	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0)
+	{
 		try {
 			$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
 			$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
-			if(! empty($offset)) $startColumn += $offset;
+			if (! empty($offset)) $startColumn += $offset;
 
 			$startRow = $startCell->getRow();
 			$startCell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
@@ -624,7 +633,7 @@ class ExportExcel2007new extends ModeleExports
 			$endCoordinate = $endCell->getCoordinate();
 			$this->workbook->getActiveSheet()->mergeCells($startCoordinate.':'.$endCoordinate);
 		}
-		catch(Exception $e) {
+		catch (Exception $e) {
 			$this->error = $e->getMessage();
 			return -1;
 		}
