@@ -734,7 +734,7 @@ foreach ($listofreferent as $key => $value)
                                     || !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
                                     || empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
                                 ) {
-                                    $total_ht_by_line = -$loanSchedule->amount_capital;
+                                    $total_ht_by_line -= $loanSchedule->amount_capital;
                                 }
                             }
                         }
