@@ -160,13 +160,13 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Show message
 $message = '';
-$urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.($conf->entity > 1 ? "&entity=".$conf->entity : "").'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
 $message .= '<br>';
-$urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.($conf->entity > 1 ? "&entity=".$conf->entity : "").'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
 $message .= '<br>';
-$urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.($conf->entity > 1 ? "&entity=".$conf->entity : "").'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'rss', $urlrss);
 $message .= '<br>';
 $message .= '<br>';
