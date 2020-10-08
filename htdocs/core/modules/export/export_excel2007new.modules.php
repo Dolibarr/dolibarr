@@ -60,6 +60,8 @@ class ExportExcel2007new extends ModeleExports
 
 	public $worksheet; // Handle sheet
 
+	public $styleArray;
+
 	public $row;
 
 	public $col;
