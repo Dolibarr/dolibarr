@@ -30,6 +30,6 @@ create table llx_projet_task_time
   invoice_line_id  integer DEFAULT NULL,                -- If we need to invoice each line of timespent, we can save invoice line id here
   import_key	   varchar(14),					-- Import key
   datec            datetime,					-- date creation time
-  tms              timestamp,					-- last modification date
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					-- last modification date
   note             text							-- A comment
 )ENGINE=innodb;

@@ -22,7 +22,7 @@ create table llx_projet
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc           integer,
   datec            datetime,					-- date creation project
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   dateo            date,						-- date start project
   datee            date,						-- date end project
   ref              varchar(50),
