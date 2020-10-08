@@ -40,7 +40,7 @@ for eg:
 
   `yarn run test:e2e test/acceptance/features/addUsers.feature`
 
-                                   Or
+                                     Or
 
   `LAUNCH_URL='<launch_url>' ADMIN_USERNAME='<admin_username>' ADMIN_PASSWORD='<admin_password>' yarn run test:e2e test/acceptance/features/`
 
@@ -48,7 +48,7 @@ The full script to run the acceptance test is specified in scripts object of pac
 
   `"test:e2e": "node_modules/cucumber/bin/cucumber-js --require test/acceptance/index.js --require test/acceptance/stepDefinitions -f node_modules/cucumber-pretty"`
 
-After you run the above command, you can see the tests running on the selenium docker container by using VNC.If you are on Ubuntu:
+After you run the above command, you can see the tests running.
 
 - open Remmina (Remmina is a Remote Desktop Client and comes installed with Ubuntu)
 
