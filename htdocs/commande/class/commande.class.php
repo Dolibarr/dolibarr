@@ -3531,6 +3531,8 @@ class Commande extends CommonOrder
 		$billedtext = '';
 		if (empty($donotshowbilled)) $billedtext .= ($billed ? ' - '.$langs->trans("Billed") : '');
 
+		$labelTooltip = '';
+
 		if ($status == self::STATUS_CANCELED) {
 			$labelStatus = $langs->trans('StatusOrderCanceled');
 			$labelStatusShort = $langs->trans('StatusOrderCanceledShort');
@@ -3544,8 +3546,9 @@ class Commande extends CommonOrder
 			$labelStatusShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
 			$statusType = 'status1';
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
-			$labelStatus = $langs->trans('StatusOrderSentShort').$billedtext;
+			$labelStatus = $langs->trans('StatusOrderSent').$billedtext;
 			$labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
+			$labelTooltip = $langs->trans("StatusOrderSent").' - '.$langs->trans("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->trans('StatusOrderToBill');
@@ -3553,11 +3556,11 @@ class Commande extends CommonOrder
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->trans('StatusOrderProcessed').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderProcessed').$billedtext;
+			$labelStatusShort = $langs->trans('StatusOrderProcessedShort').$billedtext;
 			$statusType = 'status6';
 		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->trans('StatusOrderDelivered');
-			$labelStatusShort = $langs->trans('StatusOrderDelivered');
+			$labelStatusShort = $langs->trans('StatusOrderDeliveredShort');
 			$statusType = 'status6';
 		} else {
 			$labelStatus = $langs->trans('Unknown');
@@ -3566,7 +3569,7 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
 	}
 
 
