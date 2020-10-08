@@ -725,42 +725,42 @@ class FormOther
 				$out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
 				$out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
 				$out .= '<script type="text/javascript">
-				 jQuery(document).ready(function(){
-					$(\'#colorpicker'.$prefix.'\').jPicker( {
-					window: {
-					  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
-					  effects:
-						{
-						type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
-						speed:
-						{
-						  show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
-						  hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
-						}
-						},
-					  position:
-						{
-						x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
-						y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
-						},
-					},
-					images: {
-						clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
-						picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
-			  		},
-					localization: // alter these to change the text presented by the picker (e.g. different language)
-					  {
-						text:
-						{
-						  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
-						  newColor: \''.dol_escape_js($langs->trans("New")).'\',
-						  currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-						  ok: \''.dol_escape_js($langs->trans("Save")).'\',
-						  cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
-						}
-					  }
-					} ); });
-				 </script>';
+	             jQuery(document).ready(function(){
+	                $(\'#colorpicker'.$prefix.'\').jPicker( {
+	                window: {
+	                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
+	                  effects:
+	                    {
+	                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
+	                    speed:
+	                    {
+	                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
+	                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
+	                    }
+	                    },
+	                  position:
+	                    {
+	                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
+	                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
+	                    },
+	                },
+	                images: {
+	                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
+	                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
+	          		},
+	                localization: // alter these to change the text presented by the picker (e.g. different language)
+	                  {
+	                    text:
+	                    {
+	                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
+	                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
+	                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
+	                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+	                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
+	                    }
+	                  }
+			        } ); });
+	             </script>';
 			}
 			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
 		} else // In most cases, this is not used. We used instead function with no specific list of colors
@@ -770,14 +770,14 @@ class FormOther
 				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
 				$out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
 				$out .= '<script type="text/javascript">
-				 jQuery(document).ready(function(){
-					 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
-						 size: 14,
-						 label: \'\',
-						 hide: true
-					 });
-				 });
-				 </script>';
+	             jQuery(document).ready(function(){
+	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
+	                     size: 14,
+	                     label: \'\',
+	                     hide: true
+	                 });
+	             });
+	             </script>';
 			}
 			$out .= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
 			//print '<option value="-1">&nbsp;</option>';
@@ -1077,68 +1077,68 @@ class FormOther
 		{
 			$selectboxlist .= '<script type="text/javascript" language="javascript">
 
-			// To update list of activated boxes
-			function updateBoxOrder(closing) {
-				var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
-				var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
-				var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-				if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
-				{
-					jQuery.ajax({
-						url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
-						async: false
-					});
-					// We force reload to be sure to get all boxes into list
-					window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox\';
-				}
-				else
-				{
-					jQuery.ajax({
-						url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
-						async: true
-					});
-				}
-			}
+	        // To update list of activated boxes
+	        function updateBoxOrder(closing) {
+	        	var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
+	        	var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
+	        	var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
+	        	{
+	        		jQuery.ajax({
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			async: false
+	        		});
+	        		// We force reload to be sure to get all boxes into list
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox\';
+	        	}
+	        	else
+	        	{
+	        		jQuery.ajax({
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			async: true
+	        		});
+	        	}
+	        }
 
-			jQuery(document).ready(function() {
-				jQuery("#boxcombo").change(function() {
-				var boxid=jQuery("#boxcombo").val();
-					if (boxid > 0) {
-						var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
-						var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
-						var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-						jQuery.ajax({
-							url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-							async: false
-						});
-						window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
-					}
-				});';
+	        jQuery(document).ready(function() {
+	        	jQuery("#boxcombo").change(function() {
+	        	var boxid=jQuery("#boxcombo").val();
+	        		if (boxid > 0) {
+	            		var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
+	            		var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
+	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+	    				jQuery.ajax({
+	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
+	    			        async: false
+	    		        });
+	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
+	                }
+	        	});';
 				if (!count($arrayboxtoactivatelabel)) $selectboxlist .= 'jQuery("#boxcombo").hide();';
 				$selectboxlist .= '
 
-				jQuery("#boxhalfleft, #boxhalfright").sortable({
-					handle: \'.boxhandle\',
-					revert: \'invalid\',
-		   			items: \'.boxdraggable\',
+	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
+	    	    	handle: \'.boxhandle\',
+	    	    	revert: \'invalid\',
+	       			items: \'.boxdraggable\',
 					containment: \'document\',
-					connectWith: \'#boxhalfleft, #boxhalfright\',
-					stop: function(event, ui) {
-						updateBoxOrder(1);  /* 1 to avoid message after a move */
-					}
-				});
+	        		connectWith: \'#boxhalfleft, #boxhalfright\',
+	        		stop: function(event, ui) {
+	        			updateBoxOrder(1);  /* 1 to avoid message after a move */
+	        		}
+	    		});
 
-				jQuery(".boxclose").click(function() {
-					var self = this;	// because JQuery can modify this
-					var boxid=self.id.substring(8);
-					var label=jQuery(\'#boxlabelentry\'+boxid).val();
-					console.log("We close box "+boxid);
-					jQuery(\'#boxto_\'+boxid).remove();
-					if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
-					updateBoxOrder(1);  /* 1 to avoid message after a remove */
-				});
+	        	jQuery(".boxclose").click(function() {
+	        		var self = this;	// because JQuery can modify this
+	        		var boxid=self.id.substring(8);
+	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
+	        		console.log("We close box "+boxid);
+	        		jQuery(\'#boxto_\'+boxid).remove();
+	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
+	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
+	        	});
 
-			});'."\n";
+        	});'."\n";
 
 			$selectboxlist .= '</script>'."\n";
 		}
