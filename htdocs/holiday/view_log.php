@@ -164,14 +164,14 @@ $sqlwhere = '';
 
 if (!empty($search_year) && $search_year > 0) {
 	if (!empty($search_month) && $search_month > 0) {
-		$from_date  = $db->idate(dol_get_first_day($search_year, $search_month, 1));
-		$to_date    = $db->idate(dol_get_last_day($search_year, $search_month, 1));
+		$from_date  = dol_get_first_day($search_year, $search_month, 1);
+		$to_date    = dol_get_last_day($search_year, $search_month, 1);
 	} else {
-		$from_date  = $db->idate(dol_get_first_day($search_year, 1, 1));
-		$to_date    = $db->idate(dol_get_last_day($search_year, 12, 1));
+		$from_date  = dol_get_first_day($search_year, 1, 1);
+		$to_date    = dol_get_last_day($search_year, 12, 1);
 	}
 
-	$sqlwhere .= "AND date_action BETWEEN '".$from_date."' AND '".$to_date."'";
+	$sqlwhere .= "AND date_action BETWEEN '".$db->idate($from_date)."' AND '".$db->idate($to_date)."'";
 }
 
 if (!empty($search_id) && $search_id > 0)                   $sqlwhere.= natural_search('rowid', $search_id, 1);
