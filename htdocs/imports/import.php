@@ -361,7 +361,7 @@ if ($step == 1 || !$datatoimport)
             print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key])
 			{
-				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'filenew').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15x"').'</a>';
 			} else {
 				print $langs->trans("NotEnoughPermissions");
 			}
