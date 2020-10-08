@@ -5476,6 +5476,9 @@ a span.select2-chosen
 .select2-results {
 	max-height:	400px;
 }
+.select2-results__option {
+	word-break: break-word;
+}
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: var(--colorbackvmenu1);
 	background-image: none;
