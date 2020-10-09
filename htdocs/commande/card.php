@@ -1863,6 +1863,7 @@ if ($action == 'create' && $usercancreate)
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
 
+		$object->fetch_thirdparty();
 		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
