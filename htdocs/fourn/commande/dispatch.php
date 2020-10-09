@@ -1290,7 +1290,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</td>';
 				}
 
-				if ($action != 'editline' && $lineid != $objp->dispatchlineid)
+				if ($action != 'editline' || $lineid != $objp->dispatchlineid)
 				{
 					print '<td class="linecoledit center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid=' . $objp->dispatchlineid .'#line_'. $objp->dispatchlineid . '">';
