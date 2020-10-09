@@ -45,7 +45,7 @@ if ($user->socid) $socid = $user->socid;
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
 
-if(!$user->rights->fournisseur->facture->lire) {
+if (!$user->rights->fournisseur->facture->lire) {
 	accessforbidden();
 }
 
@@ -343,8 +343,8 @@ print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'alig
 print '</tr>';
 
 $checkedCount = 0;
-foreach($arrayfields as $column) {
-	if($column['checked']) {
+foreach ($arrayfields as $column) {
+	if ($column['checked']) {
 		$checkedCount++;
 	}
 }

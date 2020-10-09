@@ -113,7 +113,7 @@ $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if(empty($reshook)) {
+if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// All tests are required to be compatible with all browsers
@@ -193,7 +193,7 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 	if ($userid) {
 		if ($userid == -1) $sql .= " AND f.fk_user_author IS NULL";
-		else  $sql .= " AND f.fk_user_author = ".$userid;
+		else $sql .= " AND f.fk_user_author = ".$userid;
 	}
 
 	// Search criteria
@@ -376,8 +376,8 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'alig
 print "</tr>";
 
 $checkedCount = 0;
-foreach($arrayfields as $column) {
-	if($column['checked']) {
+foreach ($arrayfields as $column) {
+	if ($column['checked']) {
 		$checkedCount++;
 	}
 }
