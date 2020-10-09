@@ -284,11 +284,11 @@ class IntracommReport extends CommonObject
 	 *
 	 * 	@param      int		$declaration		Reference declaration
 	 * 	@param      int		$res				Result of request SQL
-	 * 	@param      string	$code_douane_spe	Specific douane code
 	 *  @param      int		$i					Line Id
+	 * 	@param      string	$code_douane_spe	Specific customs authorities code
 	 *  @return     void
 	 */
-	public function addItemXMl(&$declaration, &$res, $code_douane_spe = '', $i)
+	public function addItemXMl(&$declaration, &$res, $i, $code_douane_spe = '')
 	{
 		$item = $declaration->addChild('Item');
 		$item->addChild('ItemNumber', $i);
