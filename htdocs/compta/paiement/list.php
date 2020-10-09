@@ -378,8 +378,8 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'alig
 print "</tr>";
 
 $checkedCount = 0;
-foreach($arrayfields as $column) {
-	if($column['checked']) {
+foreach ($arrayfields as $column) {
+	if ($column['checked']) {
 		$checkedCount++;
 	}
 }
