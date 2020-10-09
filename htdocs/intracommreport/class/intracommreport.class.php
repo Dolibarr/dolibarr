@@ -92,7 +92,7 @@ class IntracommReport extends CommonObject
 	 * Generate XML file
 	 *
 	 * @param int		$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
-	 * @param string	$type 				introduction or expedition
+	 * @param string	$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 * @param string	$period_reference	Period of reference
 	 * @return void
 	 */
@@ -144,7 +144,14 @@ class IntracommReport extends CommonObject
 		else return 0;
 	}
 
-	// $type_declaration tjrs = "expedition" à voir si ça évolue
+	/**
+	 * Generate XMLDes file
+	 *
+	 * @param int		$period_year		Year of declaration
+	 * @param int		$period_month		Month of declaration
+	 * @param string	$type_declaration	Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 * @return void
+	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
 		global $db, $conf, $mysoc;
@@ -167,9 +174,17 @@ class IntracommReport extends CommonObject
 		else return 0;
 	}
 
+	/**
+	 *  Add line from invoice
+	 *
+	 *  @param      int		$declaration		Reference declaration
+	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param      int		$period_reference	Reference period
+	 *  @param      string	$exporttype	    	deb=DEB, des=DES
+	 *  @return     int       			  		<0 if KO, >0 if OK
+	 */
 	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
-
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
@@ -182,7 +197,7 @@ class IntracommReport extends CommonObject
 			$i=1;
 
 			if (empty($resql->num_rows)) {
-				$this->errors[] = 'Aucune donnée pour cette période';
+				$this->errors[] = 'No data for this period';
 				return 0;
 			}
 
@@ -198,8 +213,8 @@ class IntracommReport extends CommonObject
 					$this->addItemXMlDes($declaration, $res, '', $i);
 				} else {
 					if (empty($res->fk_pays)) {
-						// On n'arrête pas la boucle car on veut savoir quels sont tous les tiers qui n'ont pas de pays renseigné
-						$this->errors[] = 'Pays non renseigné pour le tiers <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
+						// We don't stop the loop because we want to know all the third parties who don't have an informed country
+						$this->errors[] = 'Country not filled in for the third party <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
 					} else {
 						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
@@ -218,9 +233,16 @@ class IntracommReport extends CommonObject
 		return 1;
 	}
 
+	/**
+	 *  Add invoice line
+	 *
+	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param      int		$period_reference	Reference declaration
+	 *  @param      string	$exporttype	    	deb=DEB, des=DES
+	 *  @return     int       			  		<0 if KO, >0 if OK
+	 */
 	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
-
 		global $mysoc, $conf;
 
 		if ($type=='expedition' || $exporttype=='des') {
@@ -257,9 +279,17 @@ class IntracommReport extends CommonObject
 		return $sql;
 	}
 
+	/**
+	 *	Add item for DEB
+	 *
+	 * 	@param      int		$declaration		Reference declaration
+	 * 	@param      int		$res				Result of request SQL
+	 * 	@param      string	$code_douane_spe	Specific douane code
+	 *  @param      int		$i					Line Id
+	 *  @return     void
+	 */
 	public function addItemXMl(&$declaration, &$res, $code_douane_spe = '', $i)
 	{
-
 		$item = $declaration->addChild('Item');
 		$item->addChild('ItemNumber', $i);
 		$cn8 = $item->addChild('CN8');
@@ -280,16 +310,31 @@ class IntracommReport extends CommonObject
 		$item->addChild('regionCode', substr($res->zip, 0, 2));
 	}
 
-	public function addItemXMlDes($declaration, &$res, $code_douane_spe = '', $i)
+	/**
+	 *	Add item for DES
+	 *
+	 * 	@param      int		$declaration		Reference declaration
+	 * 	@param      int		$res				Result of request SQL
+	 *  @param      int		$i					Line Id
+	 *  @return     void
+	 */
+	public function addItemXMlDes($declaration, &$res, $i)
 	{
 		$item = $declaration->addChild('ligne_des');
 		$item->addChild('numlin_des', $i);
-		$item->addChild('valeur', round($res->total_ht)); // Montant total ht de la facture (entier attendu)
-		$item->addChild('partner_des', $res->tva_intra); // Représente le numéro TVA du client étranger
+		$item->addChild('valeur', round($res->total_ht)); // Total amount excl. tax of the invoice (whole amount expected)
+		$item->addChild('partner_des', $res->tva_intra); // Represents the foreign customer's VAT number
 	}
 
 	/**
-	 * Cette fonction ajoute un item en récupérant le code douane du produit ayant le plus haut montant dans la facture
+	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
+	 *
+	 * 	@param      int		$declaration		Reference declaration
+	 * 	@param      int		$TLinesFraisDePort	Data of shipping costs line
+	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param      int		$categ_fraisdeport	Id of category of shipping costs
+	 *  @param      int		$i					Line Id
+	 *  @return     void
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
@@ -301,8 +346,7 @@ class IntracommReport extends CommonObject
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
 			$more_sql = 'f.facnumber';
-		}
-		else { // Introduction
+		} else { // Introduction
 			$table = 'facture_fourn';
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
@@ -342,9 +386,9 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 *      Return next reference of declaration not already used (or last reference)
+	 *	Return next reference of declaration not already used (or last reference)
 	 *
-	 *      @return    string					free ref or last ref
+	 *	@return    string					free ref or last ref
 	 */
 	public function getNextDeclarationNumber()
 	{
