@@ -251,9 +251,10 @@ if ($result > 0)
 	print '<br>';
 
 	/**
-	 *	Liste des factures
+	 *	List of vendor invoices
 	 */
-	$sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom as name, s.rowid as socid';
+	$sql = 'SELECT f.rowid, f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ttc, f.date, f.fk_statut as status,';
+	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
@@ -285,6 +286,9 @@ if ($result > 0)
 
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+				$facturestatic->date = $db->jdate($obj->date);
+				$facturestatic->type = $obj->type;
+				$facturestatic->statut = $obj->status;
 
 				print '<tr class="oddeven">';
 				// Ref
