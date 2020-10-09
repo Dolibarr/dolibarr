@@ -100,7 +100,9 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ReportThirdParty"));
+$title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
+
+llxHeader('', $title);
 
 // Customer
 $sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '0' as type, sa.entity";
@@ -268,7 +270,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans('ReportThirdParty'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
 	print '<div class="warning">'.$langs->trans("WarningCreateSubAccounts").'</div>';
 

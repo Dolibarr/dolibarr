@@ -414,18 +414,24 @@ if ($resql)
 		// Account parent
 		if (!empty($arrayfields['aa.account_parent']['checked']))
 		{
-			if (!empty($obj->account_parent))
+			// Note: obj->account_parent is a foreign key to a rowid. It is field in child table and obj->rowid2 is same, but in parent table.
+			// So for orphans, obj->account_parent is set but not obj->rowid2
+			if (!empty($obj->account_parent) && !empty($obj->rowid2))
 			{
+				print "<td>";
+				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2;
-
-				print "<td>";
+				$accountparent->account_number = $obj->account_number2;	// Sotre an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 			} else {
-				print '<td>&nbsp;</td>';
+				print '<td>';
+				if (!empty($obj->account_parent)) {
+					print '<!-- Bad value for obj->account_parent = '.$obj->account_parent.': is a rowid that does not exists -->';
+				}
+				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 		}
