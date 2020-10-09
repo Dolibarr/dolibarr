@@ -213,7 +213,7 @@ if (empty($reshook))
 
 // Conciliation
 if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate
-	&& (GETPOST('pageplusone') == GETPOST('pageplusoneold')))
+	&& (!GETPOSTISSET('pageplusoneold') || (GETPOST('pageplusone') == GETPOST('pageplusoneold'))))
 {
 	$error = 0;
 
