@@ -21,7 +21,7 @@
  *	\ingroup    Intracomm report
  *	\brief      Page to manage intracomm report export
  */
-require_once '../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/intracommreport/class/intracommreport.class.php';
@@ -120,7 +120,7 @@ if ($action == 'create')
     print load_fiche_titre($langs->trans("IntracommReportTitle"));
 
     print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="export" />';
 
     dol_fiche_head();
@@ -258,7 +258,7 @@ if ($id > 0 && $action != 'edit') {
         dol_fiche_head();
 
         print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="export" />';
         print '<input type="hidden" name="exporttype" value="des" />';
         print '<input type="hidden" name="type" value="expedition" />'; // Permet d'utiliser le bon select de la requête sql
