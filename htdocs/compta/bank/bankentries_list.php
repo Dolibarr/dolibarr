@@ -212,7 +212,8 @@ if (empty($reshook))
 }
 
 // Conciliation
-if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate)
+if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && $user->rights->banque->consolidate
+	&& (GETPOST('pageplusone') == GETPOST('pageplusoneold')))
 {
 	$error = 0;
 
@@ -277,11 +278,11 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 {
 	$error = 0;
 
-	if (price2num($_POST["addcredit"]) > 0)
+	if (price2num(GETPOST("addcredit")) > 0)
 	{
-		$amount = price2num($_POST["addcredit"]);
+		$amount = price2num(GETPOST("addcredit"));
 	} else {
-		$amount = - price2num($_POST["adddebit"]);
+		$amount = - price2num(GETPOST("adddebit"));
 	}
 
 	$operation = GETPOST("operation", 'alpha');
@@ -785,11 +786,12 @@ if ($resql)
 		}
 	}
 
-	$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
+	/*$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
 	$morehtml .= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
 	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25 pageplusone" value="'.($page + 1).'">';
 	$morehtml .= '/'.$nbtotalofpages.' ';
 	$morehtml .= '</div>';
+	*/
 
 	if ($action != 'addline' && $action != 'reconcile')
 	{
@@ -801,7 +803,7 @@ if ($resql)
 	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) $picto = '';
 
-	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);
+	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
 
 	// We can add page now to param
 	if ($page != '') $param .= '&page='.urlencode($page);
