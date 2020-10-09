@@ -208,7 +208,7 @@ class Utils
 		}
 
 		// Check type parameter
-		if ($type == 'auto') $type = $db->type;
+		if ($type == 'auto') $type = $this->db->type;
 		if (!in_array($type, array('postgresql', 'pgsql', 'mysql', 'mysqli', 'mysqlnobin')))
 		{
 			$langs->load("errors");

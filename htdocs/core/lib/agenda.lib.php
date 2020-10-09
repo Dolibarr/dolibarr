@@ -140,34 +140,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</div>';
 	}
 
-	if ($canedit && $action == 'show_peruser')
-	{
-		print '<div class="divsearchfield">';
-		// Filter on hours
-		print img_picto('', 'clock', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("VisibleTimeRange").'</span>';
-		print "\n".'<div class="ui-grid-a inline-block"><div class="ui-block-a">';
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
-		if (empty($conf->dol_use_jmobile)) print ' - ';
-		else print '</div><div class="ui-block-b">';
-		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
-		print '</div></div>';
-		print '</div>';
-
-		// Filter on days
-		print '<div class="divsearchfield">';
-		print img_picto('', 'clock', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("VisibleDaysRange").'</span>';
-		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
-		if (empty($conf->dol_use_jmobile)) print ' - ';
-		else print '</div><div class="ui-block-b">';
-		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
-		print '</div></div>';
-		print '</div>';
-	}
-
 	// Hooks
 	$parameters = array('canedit'=>$canedit, 'pid'=>$pid, 'socid'=>$socid);
 	$object = null;
@@ -185,7 +157,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
  */
 function show_array_actions_to_do($max = 5)
 {
-	global $langs, $conf, $user, $db, $bc, $socid;
+	global $langs, $conf, $user, $db, $socid;
 
 	$now = dol_now();
 
@@ -199,7 +171,7 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE a.entity = ".$conf->entity;
+	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
     $sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
@@ -284,7 +256,7 @@ function show_array_actions_to_do($max = 5)
  */
 function show_array_last_actions_done($max = 5)
 {
-	global $langs, $conf, $user, $db, $bc, $socid;
+	global $langs, $conf, $user, $db, $socid;
 
 	$now = dol_now();
 
@@ -295,7 +267,7 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE a.entity = ".$conf->entity;
+	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
     $sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
     if ($socid) $sql .= " AND s.rowid = ".$socid;

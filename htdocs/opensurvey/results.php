@@ -58,7 +58,7 @@ if (GETPOST('retoursondage')) {
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 // Add vote
-if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrom, boutonp.x for firefox
+if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrome, boutonp.x for firefox
 {
 	if (GETPOST('nom'))
 	{
@@ -158,7 +158,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 
 	//on rajoute la valeur a la fin de tous les sujets deja entrés
 	$nouveauxsujets .= ',';
-	$nouveauxsujets .= str_replace(array(",", "@"), " ", $_POST["nouvellecolonne"]).(empty($_POST["typecolonne"]) ? '' : '@'.$_POST["typecolonne"]);
+	$nouveauxsujets .= str_replace(array(",", "@"), " ", GETPOST("nouvellecolonne")).(empty($_POST["typecolonne"]) ? '' : '@'.GETPOST("typecolonne"));
 
 	//mise a jour avec les nouveaux sujets dans la base
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
@@ -186,21 +186,21 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 
 		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"] != "vide") {
 			$nouvelledate .= "@";
-			$nouvelledate .= $_POST["nouvelleheuredebut"];
+			$nouvelledate .= GETPOST("nouvelleheuredebut");
 			$nouvelledate .= "h";
 
 			if ($_POST["nouvelleminutedebut"] != "vide") {
-				$nouvelledate .= $_POST["nouvelleminutedebut"];
+				$nouvelledate .= GETPOST("nouvelleminutedebut");
 			}
 		}
 
 		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"] != "vide") {
 			$nouvelledate .= "-";
-			$nouvelledate .= $_POST["nouvelleheurefin"];
+			$nouvelledate .= GETPOST("nouvelleheurefin");
 			$nouvelledate .= "h";
 
 			if ($_POST["nouvelleminutefin"] != "vide") {
-				$nouvelledate .= $_POST["nouvelleminutefin"];
+				$nouvelledate .= GETPOST("nouvelleminutefin");
 			}
 		}
 
@@ -393,7 +393,7 @@ if ($result <= 0)
 	exit;
 }
 
-$title = $object->titre." - ".$langs->trans('Card');
+$title = $object->title." - ".$langs->trans('Card');
 $helpurl = '';
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
@@ -441,16 +441,20 @@ print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td><
 print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td colspan="2">';
-if ($action == 'edit')
-{
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
-} else print dol_htmlentities($object->titre);
+if ($action == 'edit') {
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+} else {
+	print dol_htmlentities($object->title);
+}
 print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
-else print dol_print_date($object->date_fin, 'day');
+else {
+	print dol_print_date($object->date_fin, 'day');
+	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
+}
 print '</td></tr>';
 
 // Author
@@ -954,7 +958,7 @@ if (empty($testligneamodifier))
 	}
 
 	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
-	print '<td><input type="image" name="boutonp" value="'.$langs->trans("Vote").'" src="'.dol_buildpath('/opensurvey/img/add-24.png', 1).'"></td>'."\n";
+	print '<td><input type="image" name="boutonp" class="borderimp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 
@@ -1014,7 +1018,7 @@ if ($nbofcheckbox >= 2)
 }
 
 // S'il a oublié de remplir un nom
-if (isset($_POST["boutonp"]) && $_POST["nom"] == "") {
+if (GETPOSTISSET("boutonp") && GETPOST("nom") == "") {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 }
 

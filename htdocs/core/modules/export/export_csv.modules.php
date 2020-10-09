@@ -329,7 +329,6 @@ class ExportCsv extends ModeleExports
 		global $conf;
 		$addquote = 0;
 
-
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";
    		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);

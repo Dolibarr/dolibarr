@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array("admin", "members", "ldap"));
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $id, 'adherent_type');

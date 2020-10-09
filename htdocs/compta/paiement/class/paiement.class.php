@@ -9,6 +9,7 @@
  * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,8 @@ class Paiement extends CommonObject
 	public $amounts = array();               // array: invoice ID => amount for that invoice (in the main currency)>
 	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
 
+	public $pos_change = 0;	// Excess received in TakePOS cash payment
+
 	public $author;
 	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
 	public $paiementcode; // Code of payment.
@@ -86,13 +89,6 @@ class Paiement extends CommonObject
      * @var string type code
      */
     public $type_code;
-
-    /**
-     * @var string Numero du CHQ, VIR, etc...
-     * @deprecated
-     * @see $num_payment
-     */
-    public $numero;
 
     /**
      * @var string Numero du CHQ, VIR, etc...
@@ -140,6 +136,10 @@ class Paiement extends CommonObject
      */
     public $fk_paiement; // Type of payment
 
+    /**
+     * @var string payment external reference
+     */
+    public $ref_ext;
 
 	/**
 	 *	Constructor
@@ -161,7 +161,7 @@ class Paiement extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
-		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
+		$sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as type_code, c.libelle as type_label,';
 		$sql .= ' p.num_paiement as num_payment, p.note,';
 		$sql .= ' b.fk_account';
@@ -184,9 +184,9 @@ class Paiement extends CommonObject
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->ref ? $obj->ref : $obj->rowid;
+				$this->ref_ext        = $obj->ref_ext;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->num_paiement   = $obj->num_payment; // deprecated
 				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount; // deprecated
 				$this->amount         = $obj->amount;
@@ -276,6 +276,10 @@ class Paiement extends CommonObject
 
 		$this->ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
 
+		if (empty($this->ref_ext)) {
+			$this->ref_ext = '';
+		}
+
 		if ($way == 'dolibarr')
 		{
 			$total = $totalamount;
@@ -285,11 +289,12 @@ class Paiement extends CommonObject
 			$mtotal = $totalamount;
 		}
 
-		$num_payment = ($this->num_payment ? $this->num_payment : $this->num_paiement);
-		$note = ($this->note_public ? $this->note_public : $this->note);
+		$num_payment = $this->num_payment;
+		$note = ($this->note_private ? $this->note_private : $this->note);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
+		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((int) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -703,7 +708,7 @@ class Paiement extends CommonObject
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
-						$this->num_paiement,
+						$this->num_payment,
 						'withdraw'
 					);
 				}
@@ -795,7 +800,7 @@ class Paiement extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
             $sql .= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
-            $sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$type."' AND url_id = ".$this->id.")";
+            $sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".$this->id.")";
             $sql .= " AND rappro = 0";
 
             $result = $this->db->query($sql);
@@ -1154,7 +1159,7 @@ class Paiement extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-        $label = '<u>'.$langs->trans("Payment").'</u><br>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
         $label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
         if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
@@ -1167,7 +1172,7 @@ class Paiement extends CommonObject
             	foreach ($arraybill as $billid)
             	{
             		$facturestatic->fetch($billid);
-            		$label .= '<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2, 1);
+            		$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, 1);
             	}
             }
         }

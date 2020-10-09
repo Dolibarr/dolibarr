@@ -40,8 +40,6 @@ if ($user->socid > 0) $socid = $user->socid;
 $feature2 = 'user';
 $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) accessforbidden();
-
 
 $result = $user2->fetch($id);
 if ($result <= 0)

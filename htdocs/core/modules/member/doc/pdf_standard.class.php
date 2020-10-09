@@ -37,23 +37,23 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param	PDF			$pdf			PDF reference
+	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-    public function addSticker(&$pdf, $outputlangs, $param)
-    {
+	public function addSticker(&$pdf, $outputlangs, $param)
+	{
 		// use this method in future refactoring
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - __LOGO__ is replace with company logo
 	 * - __PHOTO__ is replace with photo provided as parameter
 	 *
-	 * @param	 PDF		$pdf			PDF
+	 * @param	 TCPDF		$pdf			PDF
 	 * @param	 string		$textleft		Text left
 	 * @param	 string		$header			Header
 	 * @param	 string		$footer			Footer
@@ -65,7 +65,7 @@ class pdf_standard extends CommonStickerGenerator
 	 */
 	public function Add_PDF_card(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $idmember = 0, $photo = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $db, $mysoc, $conf, $langs;
 		global $forceimgscalewidth, $forceimgscaleheight;
 
@@ -229,7 +229,7 @@ class pdf_standard extends CommonStickerGenerator
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
@@ -250,6 +250,11 @@ class pdf_standard extends CommonStickerGenerator
 		if (is_object($object))
 		{
 		    if ($object->country == '-') $object->country = '';
+
+			$now = dol_now();
+			$year = dol_print_date($now, '%Y');
+			$month = dol_print_date($now, '%m');
+			$day = dol_print_date($now, '%d');
 
     		// List of values to scan for a replacement
     		$substitutionarray = array(
@@ -306,14 +311,14 @@ class pdf_standard extends CommonStickerGenerator
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
-        // standard format or custom
-        if ($this->Tformat['paper-size'] != 'custom') {
-            $this->format = $this->Tformat['paper-size'];
-        } else {
-            //custom
-            $resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
-            $this->format = $resolution;
-        }
+		// standard format or custom
+		if ($this->Tformat['paper-size'] != 'custom') {
+			$this->format = $this->Tformat['paper-size'];
+		} else {
+			//custom
+			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
+			$this->format = $resolution;
+		}
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -334,13 +339,13 @@ class pdf_standard extends CommonStickerGenerator
 		$filename = 'tmp_cards.pdf';
 		if (is_object($object))
 		{
-		    $outputdir = $conf->adherent->dir_output;
-		    $dir = $outputdir."/".get_exdir(0, 0, 0, 0, $object, 'member');
-		    $file = $dir.'/'.$filename;
+			$outputdir = $conf->adherent->dir_output;
+			$dir = $outputdir."/".get_exdir(0, 0, 0, 0, $object, 'member');
+			$file = $dir.'/'.$filename;
 		} else {
-		    $outputdir = $conf->adherent->dir_temp;
-		    $dir = $outputdir;
-		    $file = $dir.'/'.$filename;
+			$outputdir = $conf->adherent->dir_temp;
+			$dir = $outputdir;
+			$file = $dir.'/'.$filename;
 		}
 
 		//var_dump($file);exit;
@@ -411,22 +416,22 @@ class pdf_standard extends CommonStickerGenerator
 		// Output to http stream
 		if (empty($nooutput))
 		{
-    		clearstatcache();
+			clearstatcache();
 
-    		$attachment = true;
-    		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
-    		$type = dol_mimetype($filename);
+			$attachment = true;
+			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
+			$type = dol_mimetype($filename);
 
-    		//if ($encoding)   header('Content-Encoding: '.$encoding);
-    		if ($type)		 header('Content-Type: '.$type);
-    		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-    		else header('Content-Disposition: inline; filename="'.$filename.'"');
+			//if ($encoding)   header('Content-Encoding: '.$encoding);
+			if ($type)		 header('Content-Type: '.$type);
+			if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+			else header('Content-Disposition: inline; filename="'.$filename.'"');
 
-    		// Ajout directives pour resoudre bug IE
-    		header('Cache-Control: Public, must-revalidate');
-    		header('Pragma: public');
+			// Ajout directives pour resoudre bug IE
+			header('Cache-Control: Public, must-revalidate');
+			header('Pragma: public');
 
-    		readfile($file);
+			readfile($file);
 		}
 
 		return 1;

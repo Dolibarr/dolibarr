@@ -27,7 +27,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					print '<th class="liste_titre thseparator"></th>';
 				} else {
-					if (! empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
+					if (!empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
 						$langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
 					}
 

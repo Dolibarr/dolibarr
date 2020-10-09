@@ -27,7 +27,7 @@ DangerZone=Danger zone
 BuildPackage=Crea pacchetto
 BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
 BuildDocumentation=Build documentation
-ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
+ModuleIsNotActive=Questo modulo non è ancora attivato. Vai su %s per renderlo live o fai clic qui
 ModuleIsLive=This module has been activated. Any change may break a current live feature.
 DescriptionLong=Long description
 EditorName=Name of editor
@@ -83,18 +83,18 @@ ListOfDictionariesEntries=Elenco voci dizionari
 ListOfPermissionsDefined=List of defined permissions
 SeeExamples=Vedi esempi qui
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>For document :</strong><br/>0 = not displayed <br/>1 = display<br/>2 = display only if not empty<br/><br/><strong>For document lines :</strong><br/>0 = not displayed <br/>1 = displayed in a column<br/>3 = display in line description column after the description<br/>4 = display in description column after the description only if not empty
+VisibleDesc=Il campo è visibile? (Esempi: 0 = Mai visibile, 1 = Visibile su elenco e crea / aggiorna / visualizza moduli, 2 = Visibile solo su elenco, 3 = Visibile solo su crea / aggiorna / visualizza modulo (non elenco), 4 = Visibile su elenco e aggiorna / visualizza solo modulo (non crea), 5 = Visibile solo sul modulo di visualizzazione fine elenco (non crea, non aggiorna). <br> <br> L'uso di un valore negativo significa che il campo non è mostrato per impostazione predefinita nell'elenco ma può essere selezionato per la visualizzazione). <br> <br> Può essere un'espressione, ad esempio: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Visualizza questo campo sui documenti PDF compatibili, puoi gestire la posizione con il campo "Posizione". <br/> Attualmente, noti modelli compatibili PDF sono: Eratostene (ordine), espadon (nave), spugna (fatture), ciano (PROPAL / citazione), cornas (ordine a fornitore) <br/> <br/> <strong> per il documento: </strong> <br/> 0 = non visualizzato <br/> 1 = visualizza <br/> 2 = visualizza solo se non vuota <br/> <br/> <strong> Per linee documenti: </strong> <br/> 0 = non visualizzato <br/> 1 = visualizzati in colonna <br/> 3 = visualizzazione nella descrizione di linea di colonna dopo la descrizione <br/> 4 = visualizzazione nella descrizione di colonna dopo la descrizione solo se non vuota
 DisplayOnPdf=Mostra sul PDF
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
 SearchAllDesc=Il campo è utilizzato per effettuare una ricerca dallo strumento di ricerca rapida? (Esempi: 1 o 0)
 SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.
 LanguageDefDesc=Enter in this files, all the key and the translation for each language file.
 MenusDefDesc=Define here the menus provided by your module
-DictionariesDefDesc=Define here the dictionaries provided by your module
+DictionariesDefDesc=Definisci qui i dizionari forniti dal tuo modulo
 PermissionsDefDesc=Define here the new permissions provided by your module
 MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), menus are also visible into the menu editor available to administrator users on %s.
-DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
+DictionariesDefDescTooltip=I dizionari forniti dal modulo / applicazione sono definiti nell'array <strong> $this->dictionaries </strong> nel file descrittore del modulo. Puoi modificare manualmente questo file o utilizzare l'editor incorporato. <br> <br> Nota: una volta definiti (e riattivato il modulo), i dizionari sono visibili nell'area di configurazione anche agli utenti amministratori su %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
 TriggerDefDesc=Define in the trigger file the code you want to execute for each business event executed.
@@ -116,8 +116,8 @@ ContentOfREADMECustomized=Nota: il contenuto del file README.md è stato sostitu
 RealPathOfModule=Real path of module
 ContentCantBeEmpty=Content of file can't be empty
 WidgetDesc=You can generate and edit here the widgets that will be embedded with your module.
-CSSDesc=You can generate and edit here a file with personalized CSS embedded with your module.
-JSDesc=You can generate and edit here a file with personalized Javascript embedded with your module.
+CSSDesc=Puoi generare e modificare qui un file con CSS personalizzato incorporato nel tuo modulo.
+JSDesc=Puoi generare e modificare qui un file con Javascript personalizzato incorporato nel tuo modulo.
 CLIDesc=You can generate here some command line scripts you want to provide with your module.
 CLIFile=CLI File
 NoCLIFile=No CLI files
@@ -127,16 +127,16 @@ UseSpecificFamily = Use a specific family
 UseSpecificAuthor = Use a specific author
 UseSpecificVersion = Use a specific initial version
 ModuleMustBeEnabled=The module/application must be enabled first
-IncludeRefGeneration=The reference of object must be generated automatically
-IncludeRefGenerationHelp=Check this if you want to include code to manage the generation automatically of the reference
+IncludeRefGeneration=Il riferimento dell'oggetto deve essere generato automaticamente
+IncludeRefGenerationHelp=Seleziona questa opzione se desideri includere il codice per gestire la generazione automatica del riferimento
 IncludeDocGeneration=Desidero generare alcuni documenti da questo oggetto
-IncludeDocGenerationHelp=If you check this, some code will be generated to add a "Generate document" box on the record.
+IncludeDocGenerationHelp=Se selezioni questa opzione, verrà generato del codice per aggiungere una casella "Genera documento" al record.
 ShowOnCombobox=Mostra il valore dentro il combobox
-KeyForTooltip=Key for tooltip
+KeyForTooltip=Chiave per tooltip
 CSSClass=Classe CSS
 NotEditable=Non modificabile
 ForeignKey=Chiave esterna
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
-AsciiToHtmlConverter=Ascii to HTML converter
-AsciiToPdfConverter=Ascii to PDF converter
-TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
+TypeOfFieldsHelp=Tipo di campi: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]("1" significa che aggiungiamo un pulsante + dopo la combinazione per creare il record, "filtro" può essere "status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)" per esempio)
+AsciiToHtmlConverter=Convertitore da Ascii a HTML
+AsciiToPdfConverter=Convertitore da Ascii a PDF
+TableNotEmptyDropCanceled=Tabella non vuota. Il rilascio è stato annullato.

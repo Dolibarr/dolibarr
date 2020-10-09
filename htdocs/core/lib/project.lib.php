@@ -30,23 +30,23 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param	Project	$project	Object related to tabs
+ * @return	array				Array of tabs to show
  */
-function project_prepare_head($object)
+function project_prepare_head(Project $project)
 {
 	global $db, $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/card.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
 
-	$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
+	$nbContact = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
+	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
 	if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 	$head[$h][2] = 'contact';
@@ -55,12 +55,12 @@ function project_prepare_head($object)
 	if (empty($conf->global->PROJECT_HIDE_TASKS))
 	{
 		// Then tab for sub level of projet, i mean tasks
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("Tasks");
 
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($db);
-		$nbTasks = count($taskstatic->getTasksArray(0, 0, $object->id, 0, 0));
+		$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
 		if ($nbTasks > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTasks).'</span>';
 		$head[$h][2] = 'tasks';
 		$h++;
@@ -71,7 +71,7 @@ function project_prepare_head($object)
 		//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
 		$sql .= " WHERE t.fk_task = pt.rowid";
-		$sql .= " AND pt.fk_projet =".$object->id;
+		$sql .= " AND pt.fk_projet =".$project->id;
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -79,7 +79,7 @@ function project_prepare_head($object)
 			if ($obj) $nbTimeSpent = 1;
 		} else dol_print_error($db);
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$project->id;
 		$head[$h][1] = $langs->trans("TimeSpent");
 		if ($nbTimeSpent > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
 		$head[$h][2] = 'timespent';
@@ -91,8 +91,32 @@ function project_prepare_head($object)
 		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
+		$count = 0;
+
+		if (!empty($conf->propal->enabled))				$count += $project->getElementCount('propal', 'propal');
+		if (!empty($conf->commande->enabled))			$count += $project->getElementCount('order', 'commande');
+		if (!empty($conf->facture->enabled))			$count += $project->getElementCount('invoice', 'facture');
+		if (!empty($conf->facture->enabled))			$count += $project->getElementCount('invoice_predefined', 'facture_rec');
+		if (!empty($conf->supplier_proposal->enabled))	$count += $project->getElementCount('proposal_supplier', 'supplier_proposal');
+		if (!empty($conf->supplier_order->enabled))		$count += $project->getElementCount('order_supplier', 'commande_fournisseur');
+		if (!empty($conf->supplier_invoice->enabled))	$count += $project->getElementCount('invoice_supplier', 'facture_fourn');
+		if (!empty($conf->contrat->enabled))			$count += $project->getElementCount('contract', 'contrat');
+		if (!empty($conf->ficheinter->enabled))			$count += $project->getElementCount('intervention', 'fichinter');
+		if (!empty($conf->expedition->enabled))			$count += $project->getElementCount('shipping', 'expedition');
+		if (!empty($conf->mrp->enabled))				$count += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
+		if (!empty($conf->deplacement->enabled))		$count += $project->getElementCount('trip', 'deplacement');
+		if (!empty($conf->expensereport->enabled))		$count += $project->getElementCount('expensereport', 'expensereport');
+		if (!empty($conf->don->enabled))				$count += $project->getElementCount('donation', 'don');
+		if (!empty($conf->loan->enabled))				$count += $project->getElementCount('loan', 'loan');
+		if (!empty($conf->tax->enabled))				$count += $project->getElementCount('chargesociales', 'chargesociales');
+		if (!empty($conf->projet->enabled))				$count += $project->getElementCount('project_task', 'projet_task');
+		if (!empty($conf->stock->enabled))				$count += $project->getElementCount('stock_mouvement', 'stock');
+		if (!empty($conf->salaries->enabled))			$count += $project->getElementCount('salaries', 'payment_salary');
+		if (!empty($conf->banque->enabled))				$count += $project->getElementCount('variouspayment', 'payment_various');
+
+		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("ProjectOverview");
+		if ($count > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$count.'</span>';
 		$head[$h][2] = 'element';
 		$h++;
 	}
@@ -101,15 +125,15 @@ function project_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'project');
+	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project');
 
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 	{
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
-		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
+		if (!empty($project->note_private)) $nbNote++;
+		if (!empty($project->note_public)) $nbNote++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$project->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notes';
@@ -118,10 +142,10 @@ function project_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($project->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
+	$nbLinks = Link::count($db, $project->element, $project->id);
+	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$project->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'document';
@@ -130,15 +154,15 @@ function project_prepare_head($object)
 	// Manage discussion
 	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
 	{
-		$nbComments = $object->getNbComments();
-		$head[$h][0] = DOL_URL_ROOT.'/projet/comment.php?id='.$object->id;
+		$nbComments = $project->getNbComments();
+		$head[$h][0] = DOL_URL_ROOT.'/projet/comment.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("CommentLink");
 		if ($nbComments > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbComments.'</span>';
 		$head[$h][2] = 'project_comment';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
 	$head[$h][1] .= $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
 	{
@@ -148,7 +172,7 @@ function project_prepare_head($object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'project', 'remove');
+	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'remove');
 
 	return $head;
 }
@@ -167,7 +191,7 @@ function task_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
-	$head[$h][1] = $langs->trans("Project");
+	$head[$h][1] = $langs->trans("Task");
 	$head[$h][2] = 'task_task';
 	$h++;
 
@@ -2144,7 +2168,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if (empty($arrayidofprojects)) $arrayidofprojects[0] = -1;
 
 	// Get list of project with calculation on tasks
-	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
+	$sql2 = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_soc, s.nom as socname, s.email, s.client, s.fournisseur,";
+	$sql2 .= " p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_percent, p.opp_amount,";
 	$sql2 .= " p.dateo, p.datee,";
 	$sql2 .= " COUNT(t.rowid) as nb, SUM(t.planned_workload) as planned_workload, SUM(t.planned_workload * t.progress / 100) as declared_progess_workload";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -2197,7 +2222,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if ($userAccess >= 0)
 			{
 				$projectstatic->ref = $objp->ref;
-				$projectstatic->statut = $objp->status; // deprecated
 				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
 				$projectstatic->datee = $db->jdate($objp->datee);
@@ -2216,6 +2240,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					$thirdpartystatic->id = $objp->fk_soc;
 					$thirdpartystatic->ref = $objp->socname;
 					$thirdpartystatic->name = $objp->socname;
+					$thirdpartystatic->client = $objp->client;
+					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->email = $objp->email;
 					print $thirdpartystatic->getNomUrl(1);
 				}
 				print '</td>';
@@ -2427,7 +2454,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $out .= '</b>';
 			$out .= '</a>';
 
-            $out .= '/';
+            $out .= ' / ';
 
 			$out .= '<a href="'.$url.'" >';
             $out .= '<span title="'.$langs->trans('PlannedWorkload').'" >';

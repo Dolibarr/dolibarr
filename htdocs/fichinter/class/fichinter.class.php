@@ -2,9 +2,9 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
@@ -58,8 +58,8 @@ class Fichinter extends CommonObject
 	'datet' =>array('type'=>'date', 'label'=>'Datet', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 	'duree' =>array('type'=>'double', 'label'=>'Duree', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 	'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'showoncombobox'=>1),
-	'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>110),
-	'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+	'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+	'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 	'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>120),
 	'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 	'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>130),
@@ -279,7 +279,7 @@ class Fichinter extends CommonObject
 		$sql .= ", ".$user->id;
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->description ? "'".$this->db->escape($this->description)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fk_project ? $this->fk_project : 0);
 		$sql .= ", ".($this->fk_contrat ? $this->fk_contrat : 0);
 		$sql .= ", ".$this->statut;
@@ -448,7 +448,8 @@ class Fichinter extends CommonObject
 				$this->fk_project   = $obj->fk_project;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->modelpdf = $obj->model_pdf;
+				$this->model_pdf    = $obj->model_pdf;
+				$this->modelpdf     = $obj->model_pdf;	// deprecated
 				$this->fk_contrat = $obj->fk_contrat;
 
 				$this->user_creation = $obj->fk_user_author;
@@ -764,7 +765,7 @@ class Fichinter extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowIntervention").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Intervention").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
@@ -809,7 +810,7 @@ class Fichinter extends CommonObject
 		$result .= $linkend;
 
 		global $action;
-		$hookmanager->initHooks(array('intervnetiondao'));
+		$hookmanager->initHooks(array('interventiondao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
@@ -1008,6 +1009,9 @@ class Fichinter extends CommonObject
 
 		if (!$error)
 		{
+			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+			$this->deleteEcmFiles();
+
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);
 			if ($conf->ficheinter->dir_output)
@@ -1128,7 +1132,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql .= " SET fk_contrat = '".$contractid."'";
+			$sql .= " SET fk_contrat = ".((int) $contractid);
 			$sql .= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))

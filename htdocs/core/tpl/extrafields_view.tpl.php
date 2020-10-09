@@ -176,7 +176,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $tmpkeyextra)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra)
 			{
 			    $fieldid = 'id';
 			    if ($object->table_element == 'societe') $fieldid = 'socid';
@@ -207,7 +207,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 	{
 		print "\n";
 		print '
-				<script type="text/javascript">
+				<script>
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{

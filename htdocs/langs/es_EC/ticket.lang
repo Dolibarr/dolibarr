@@ -15,7 +15,6 @@ Notify_TICKET_SENTBYMAIL=Enviar mensaje del ticket por correo electrónico
 NotRead=No leer
 Read=Leer
 NeedMoreInformation=Esperando información
-Answered=Contestada
 Waiting=Esperando
 Type=Tipo
 MailToSendTicketMessage=Para enviar un correo electrónico desde un ticket

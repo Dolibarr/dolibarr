@@ -59,6 +59,11 @@ class Livraison extends CommonObject
 	 */
 	public $table_element_line = "livraisondet";
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'sending';
+
 	public $brouillon;
 	public $socid;
 	public $ref_customer;
@@ -314,7 +319,8 @@ class Livraison extends CommonObject
 				$this->note                 = $obj->note_private; //TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->model_pdf            = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->origin               = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
@@ -715,9 +721,9 @@ class Livraison extends CommonObject
 		global $langs;
 
 		$result = '';
-		$picto = 'sending';
 
-		$label = $langs->trans("ShowReceiving").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
 
@@ -733,7 +739,7 @@ class Livraison extends CommonObject
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
-		if ($withpicto) $result .= ($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result .= ($linkstart.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
 		$result .= $linkstart.$this->ref.$linkend;
 		return $result;
@@ -880,6 +886,8 @@ class Livraison extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$sql .= " AND tosell = 1";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1040,8 +1048,8 @@ class Livraison extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'typhon';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
 			}

@@ -987,7 +987,7 @@ class Mo extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("MO").'</u>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("MO").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {
@@ -1064,7 +1064,7 @@ class Mo extends CommonObject
 			global $langs;
 			//$langs->load("mrp");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans("ToProduce").')';
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ValidatedToProduce');
 			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
 			$this->labelStatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
@@ -1191,8 +1191,8 @@ class Mo extends CommonObject
 			//$modele = 'standard';
 			$modele = ''; // Remove this once a pdf_standard.php exists.
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->MO_ADDON_PDF)) {
 				$modele = $conf->global->MO_ADDON_PDF;
 			}

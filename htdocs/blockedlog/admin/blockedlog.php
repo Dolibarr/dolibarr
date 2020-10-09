@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog"));
 
 if (!$user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 

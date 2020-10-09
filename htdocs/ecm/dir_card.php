@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
@@ -204,6 +205,16 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
 		$ecmdir->description = GETPOST("description");
+		$ret = $extrafields->setOptionalsFromPost(null, $ecmdir);
+		if ($ret < 0) $error++;
+		if (!$error) {
+			// Actions on extra fields
+			$result = $ecmdir->insertExtraFields();
+			if ($result < 0) {
+				setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+				$error++;
+			}
+		}
 		$result = $ecmdir->update($user);
 		if ($result > 0)
 		{
@@ -266,6 +277,10 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 $form = new Form($db);
 
 $object = new EcmDirectory($db); // Need to create a new one instance
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 
 if ($module == 'ecm')
 {
@@ -415,6 +430,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
 print '</td></tr>';
+print $object->showOptionals($extrafields, ($action == 'edit' ? 'edit' : 'view'));
 print '</table>';
 
 if ($action == 'edit')
@@ -457,7 +473,7 @@ if ($action != 'edit' && $action != 'delete')
 	//{
 	if ($permtoadd)
 	{
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
 	} else {
 		print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}

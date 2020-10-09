@@ -48,7 +48,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 //global $hookmanager;
 $hookmanager->initHooks(array('searchform'));
 
-$search_boxvalue = GETPOST('q', 'none');
+$search_boxvalue = GETPOST('q', 'restricthtml');
 
 $arrayresult = array();
 
@@ -117,6 +117,17 @@ if ((! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFOR
 if ((! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED) || ! empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$arrayresult['searchintosupplierinvoice'] = array('position'=>120, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_invoice').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+}
+
+// Miscellaneous payments
+if (!empty($conf->banque->enabled) && empty($conf->global->MAIN_SEARCHFORM_MISC_PAYMENTS_DISABLED) && $user->rights->banque->lire)
+{
+	$arrayresult['searchintomiscpayments'] = array(
+		'position'=>180,
+		'img'=>'object_payment',
+		'label'=>$langs->trans("SearchIntoMiscPayments", $search_boxvalue),
+		'text'=>img_picto('', 'object_payment').' '.$langs->trans("SearchIntoMiscPayments", $search_boxvalue),
+		'url'=>DOL_URL_ROOT.'/compta/bank/various_payment/list.php?leftmenu=tax_various'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
 if (!empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire)

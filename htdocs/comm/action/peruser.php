@@ -41,9 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
 
-$filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
+$filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
+$filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
+$usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 //$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = 0;
@@ -110,8 +110,8 @@ if ($dateselect > 0)
 $tmp = empty($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_h = GETPOST('begin_h', 'int') != '' ?GETPOST('begin_h', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOST('end_h', 'int') ?GETPOST('end_h', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOST('begin_h', 'int') != '' ? GETPOST('begin_h', 'int') : ($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOST('end_h', 'int') ? GETPOST('end_h', 'int') : ($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) $begin_h = 9;
 if ($end_h < 1 || $end_h > 24) $end_h = 18;
 if ($end_h <= $begin_h) $end_h = $begin_h + 1;
@@ -165,6 +165,7 @@ if ($action == 'delete_action')
 /*
  * View
  */
+
 $parameters = array(
 	'socid' => $socid,
 	'status' => $status,
@@ -319,6 +320,7 @@ if ($action == 'show_week') $tabactive = 'cardweek';
 if ($action == 'show_day')  $tabactive = 'cardday';
 if ($action == 'show_list') $tabactive = 'cardlist';
 if ($action == 'show_peruser') $tabactive = 'cardperuser';
+if ($action == 'show_pertype') $tabactive = 'cardpertype';
 
 $paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 
@@ -688,7 +690,35 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
-	echo '<td></td>';
+	echo '<td class="nopaddingtopimp nopaddingbottomimp">';
+
+	if ($canedit && $action == 'show_peruser')
+	{
+		// Filter on hours
+		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
+		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleTimeRange").'">'.$langs->trans("Hours").'</span>';
+		print "\n".'<div class="ui-grid-a inline-block"><div class="ui-block-a">';
+		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
+		else print '</div><div class="ui-block-b">';
+		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
+		print '</div></div>';
+
+		print '<br>';
+
+		// Filter on days
+		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
+		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
+		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
+		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
+		else print '</div><div class="ui-block-b">';
+		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
+		print '</div></div>';
+	}
+
+	print '</td>';
 	$i = 0; // 0 = sunday,
 	while ($i < 7)
 	{
@@ -698,7 +728,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo '<span class="opacitymedium spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
+		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day');
 		else print dol_print_date($currentdaytoshow, 'day');
@@ -1266,7 +1296,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 		print 'class="';
 		print ($style1 ? $style1.' ' : '');
-		print 'onclickopenref'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
+		print 'onclickopenref'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
 		print $string1;
 		print '</td><td ';
 		if ($style2 == 'peruser_notbusy') print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
@@ -1276,7 +1306,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 		print 'class="';
 		print ($style2 ? $style2.' ' : '');
-		print 'onclickopenref'.($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
+		print 'onclickopenref'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

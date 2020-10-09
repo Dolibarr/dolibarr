@@ -61,7 +61,7 @@ $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); //
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -100,7 +100,7 @@ $search_module_source = GETPOST('search_module_source', 'alpha');
 $search_pos_source = GETPOST('search_pos_source', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -111,7 +111,7 @@ $search_date_valid_start = dol_mktime(0, 0, 0, GETPOST('search_date_valid_startm
 $search_date_valid_end = dol_mktime(23, 59, 59, GETPOST('search_date_valid_endmonth', 'int'), GETPOST('search_date_valid_endday', 'int'), GETPOST('search_date_valid_endyear', 'int'));
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
@@ -205,6 +205,8 @@ $arrayfields = array(
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>220), // Not enabled by default because slow
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
+	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
@@ -478,15 +480,15 @@ if ($filtre)
 }
 if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
-if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->escape($search_type).")";
+if ($search_type != '' && $search_type != '-1') $sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
 if ($search_project_ref) $sql .= natural_search('p.ref', $search_project_ref);
 if ($search_project) $sql .= natural_search('p.title', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql .= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search('f.tva', $search_montant_vat, 1);
@@ -510,7 +512,7 @@ if ($search_status != '-1' && $search_status != '')
 		if ($search_status == '2') $sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
 		if ($search_status == '3') $sql .= " AND f.fk_statut = 3"; // abandonned
 	} else {
-		$sql .= " AND f.fk_statut IN (".$db->escape($search_status).")"; // When search_status is '1,2' for example
+		$sql .= " AND f.fk_statut IN (".$db->sanitize($db->escape($search_status)).")"; // When search_status is '1,2' for example
 	}
 }
 
@@ -674,10 +676,12 @@ if ($resql)
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton = '';
-	if ($user->rights->facture->creer && $contextpage != 'poslist')
+	// Show the new button only when this page is not opend from the Extended POS
+	if ($contextpage != 'poslist')
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/facture/card.php?action=create');
+		$url = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->facture->creer);
 	}
 
 	$i = 0;
@@ -725,7 +729,7 @@ if ($resql)
 	 	$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -734,7 +738,7 @@ if ($resql)
 		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->categorie->enabled))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -756,6 +760,7 @@ if ($resql)
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';
@@ -804,12 +809,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1);
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1);
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -818,12 +821,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1);
+		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
-		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1);
+		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -838,8 +839,7 @@ if ($resql)
 		print '</div>';
 		print '<div class="nowrap">';
 		print $langs->trans('to').' ';*/
-		print $langs->trans("Before").' ';
-		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1);
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
 		print '</div>';
 		print '</td>';
@@ -1039,6 +1039,18 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['f.note_public']['checked']))
+	{
+		// Note public
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['f.note_private']['checked']))
+	{
+		// Note private
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Status
 	if (!empty($arrayfields['f.fk_statut']['checked']))
 	{
@@ -1099,6 +1111,8 @@ if ($resql)
 	if (!empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER["PHP_SELF"], "f.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER["PHP_SELF"], "f.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.date_closing']['checked']))       print_liste_field_titre($arrayfields['f.date_closing']['label'], $_SERVER["PHP_SELF"], "f.date_closing", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.note_public']['checked']))       print_liste_field_titre($arrayfields['f.note_public']['label'], $_SERVER["PHP_SELF"], "f.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (!empty($arrayfields['f.note_private']['checked']))       print_liste_field_titre($arrayfields['f.note_private']['label'], $_SERVER["PHP_SELF"], "f.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	if (!empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type,dynamount_payed", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
@@ -1206,7 +1220,7 @@ if ($resql)
             // Ref
 			if (!empty($arrayfields['f.ref']['checked']))
 			{
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
@@ -1242,7 +1256,7 @@ if ($resql)
 			// Type
 			if (!empty($arrayfields['f.type']['checked']))
 			{
-				print '<td class="nowrap">';
+				print '<td class="nowraponall tdoverflowmax100" title="'.$facturestatic->getLibType().'">';
 				print $facturestatic->getLibType();
 				print "</td>";
 				if (!$i) $totalarray['nbfield']++;
@@ -1251,7 +1265,7 @@ if ($resql)
 			// Date
 			if (!empty($arrayfields['f.date']['checked']))
 			{
-				print '<td align="center" class="nowrap">';
+				print '<td align="center" class="nowraponall">';
 				print dol_print_date($db->jdate($obj->df), 'day');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1260,7 +1274,7 @@ if ($resql)
 			// Date
 			if (!empty($arrayfields['f.date_valid']['checked']))
 			{
-				print '<td align="center" class="nowrap">';
+				print '<td align="center" class="nowraponall">';
 				print dol_print_date($db->jdate($obj->date_valid), 'day');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1269,7 +1283,7 @@ if ($resql)
 			// Date limit
 			if (!empty($arrayfields['f.date_lim_reglement']['checked']))
 			{
-				print '<td align="center" class="nowrap">'.dol_print_date($datelimit, 'day');
+				print '<td align="center" class="nowraponall">'.dol_print_date($datelimit, 'day');
 				if ($facturestatic->hasDelay())
 				{
 				    print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
@@ -1281,7 +1295,7 @@ if ($resql)
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked']))
 			{
-				print '<td class="nocellnopadd nowrap">';
+				print '<td class="nocellnopadd nowraponall">';
 				if ($obj->project_id > 0)
 				{
 					print $projectstatic->getNomUrl(1);
@@ -1293,7 +1307,7 @@ if ($resql)
 			// Project title
 			if (!empty($arrayfields['p.title']['checked']))
 			{
-			    print '<td class="nowrap">';
+			    print '<td class="nowraponall">';
 			    if ($obj->project_id > 0)
 			    {
 			        print $projectstatic->title;
@@ -1326,7 +1340,7 @@ if ($resql)
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked']))
 			{
-				print '<td>';
+				print '<td class="nowraponall">';
 				print $obj->zip;
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1368,7 +1382,7 @@ if ($resql)
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked']))
 			{
-				print '<td>';
+				print '<td class="tdoverflowmax100">';
 				$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1404,7 +1418,7 @@ if ($resql)
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked']))
 			{
-				  print '<td class="right nowrap">'.price($obj->total_ht)."</td>\n";
+				  print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
 				  if (!$i) $totalarray['nbfield']++;
 				  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
 				  $totalarray['val']['f.total_ht'] += $obj->total_ht;
@@ -1412,7 +1426,7 @@ if ($resql)
 			// Amount VAT
 			if (!empty($arrayfields['f.total_vat']['checked']))
 			{
-				print '<td class="right nowrap">'.price($obj->total_vat)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->total_vat)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_vat';
 				$totalarray['val']['f.total_vat'] += $obj->total_vat;
@@ -1420,7 +1434,7 @@ if ($resql)
 			// Amount LocalTax1
 			if (!empty($arrayfields['f.total_localtax1']['checked']))
 			{
-				print '<td class="right nowrap">'.price($obj->total_localtax1)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->total_localtax1)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax1';
 				$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1;
@@ -1428,7 +1442,7 @@ if ($resql)
 			// Amount LocalTax2
 			if (!empty($arrayfields['f.total_localtax2']['checked']))
 			{
-				print '<td class="right nowrap">'.price($obj->total_localtax2)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->total_localtax2)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax2';
 				$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2;
@@ -1436,7 +1450,7 @@ if ($resql)
 			// Amount TTC
 			if (!empty($arrayfields['f.total_ttc']['checked']))
 			{
-				print '<td class="right nowrap">'.price($obj->total_ttc)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->total_ttc)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
@@ -1461,7 +1475,7 @@ if ($resql)
 
 			if (!empty($arrayfields['dynamount_payed']['checked']))
 			{
-				print '<td class="right nowrap">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowraponall">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (!$i) $totalarray['nbfield']++;
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalam';
 				$totalarray['val']['totalam'] += $totalpay;
@@ -1470,7 +1484,7 @@ if ($resql)
 			// Pending amount
 			if (!empty($arrayfields['rtp']['checked']))
 			{
-				print '<td class="right nowrap">';
+				print '<td class="right nowraponall">';
 				print (!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;');
 				print '</td>'; // TODO Use a denormalized field
 				if (!$i) $totalarray['nbfield']++;
@@ -1482,14 +1496,14 @@ if ($resql)
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked']))
 			{
-				  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+				  print '<td class="nowraponall">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 				  if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Currency rate
 			if (!empty($arrayfields['f.multicurrency_tx']['checked']))
 			{
-				  print '<td class="nowrap">';
+				  print '<td class="nowraponall">';
 				  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 				  print "</td>\n";
 				  if (!$i) $totalarray['nbfield']++;
@@ -1497,31 +1511,31 @@ if ($resql)
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked']))
 			{
-				  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+				  print '<td class="right nowraponall">'.price($obj->multicurrency_total_ht)."</td>\n";
 				  if (!$i) $totalarray['nbfield']++;
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.multicurrency_total_vat']['checked']))
 			{
-				print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->multicurrency_total_vat)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked']))
 			{
-				print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->multicurrency_total_ttc)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked']))
 			{
-				print '<td class="right nowrap">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowraponall">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (!$i) $totalarray['nbfield']++;
 			}
 
 			// Pending amount
 			if (!empty($arrayfields['multicurrency_rtp']['checked']))
 			{
-				print '<td class="right nowrap">';
+				print '<td class="right nowraponall">';
 				print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
 				print '</td>'; // TODO Use a denormalized field
 				if (!$i) $totalarray['nbfield']++;
@@ -1557,6 +1571,22 @@ if ($resql)
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
+			// Note public
+			if (!empty($arrayfields['f.note_public']['checked']))
+			{
+				print '<td class="center">';
+				print dol_escape_htmltag($obj->note_public);
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			// Note private
+			if (!empty($arrayfields['f.note_private']['checked']))
+			{
+				print '<td class="center">';
+				print dol_escape_htmltag($obj->note_private);
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
 			// Status
 			if (!empty($arrayfields['f.fk_statut']['checked']))
 			{
@@ -1566,7 +1596,7 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 			}
 
-			// Action column
+			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 			print '<td class="nowrap" align="center">';
 			if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			{
@@ -1597,19 +1627,22 @@ if ($resql)
 
 	print "</form>\n";
 
-	$hidegeneratedfilelistifempty = 1;
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
+	// Show the file area only when this page is not opend from the Extended POS
+	if ($contextpage != 'poslist') {
+		$hidegeneratedfilelistifempty = 1;
+		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
 
-	// Show list of available documents
-	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource .= str_replace('&amp;', '&', $param);
+		// Show list of available documents
+		$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+		$urlsource .= str_replace('&amp;', '&', $param);
 
-	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->facture->lire;
-	$delallowed = $user->rights->facture->creer;
-	$title = '';
+		$filedir = $diroutputmassaction;
+		$genallowed = $user->rights->facture->lire;
+		$delallowed = $user->rights->facture->creer;
+		$title = '';
 
-	print $formfile->showdocuments('massfilesarea_invoices', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+		print $formfile->showdocuments('massfilesarea_invoices', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	}
 } else {
 	dol_print_error($db);
 }

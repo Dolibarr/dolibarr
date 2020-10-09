@@ -57,7 +57,7 @@ if ($resql) {
 	}
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -130,7 +130,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
-$head = takepos_prepare_head();
+$head = takepos_admin_prepare_head();
 dol_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
@@ -194,7 +194,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -362,6 +362,13 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('GiftReceiptButton');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Delayed Pay Button
+print '<tr class="oddeven"><td>';
+print $langs->trans('AllowDelayedPayment');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Numbering module

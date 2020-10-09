@@ -43,7 +43,7 @@ if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 } else {
 	$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 }
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $idproduct = GETPOST('idproduct', 'int');
 
@@ -250,7 +250,7 @@ function SetQty(place, selectedline, qty){
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		?>
 	if (qty==0){
-		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		});
 	}
 	else{
@@ -262,7 +262,7 @@ function SetQty(place, selectedline, qty){
 	else {
 		?>
 	if (qty==0){
-		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		});
 	}
 	else{
@@ -271,7 +271,7 @@ function SetQty(place, selectedline, qty){
 	}
 		<?php
 	}
-	?>	
+	?>
 	LoadCats();
 }
 

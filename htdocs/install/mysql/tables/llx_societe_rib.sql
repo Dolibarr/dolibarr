@@ -27,7 +27,7 @@ create table llx_societe_rib
   label          varchar(200),
   fk_soc         integer NOT NULL,
   datec          datetime,
-  tms            timestamp,
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   -- For BAN
   bank           varchar(255),  -- bank name

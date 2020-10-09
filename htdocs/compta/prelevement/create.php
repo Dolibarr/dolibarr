@@ -46,7 +46,7 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -84,10 +84,10 @@ if (empty($reshook))
 			$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
 		}
 		$bprev = new BonPrelevement($db);
-	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
+		$executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
 
-	    // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
-	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
+		// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
+		$result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
 		if ($result < 0) {
 			setEventMessages($bprev->error, $bprev->errors, 'errors');
 		} elseif ($result == 0) {
@@ -185,33 +185,33 @@ if ($mesg) print $mesg;
 print '<div class="tabsAction">'."\n";
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
-    if ($pricetowithdraw) {
-        print $langs->trans('ExecutionDate').' ';
-        $datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-        print $form->selectDate($datere, 're');
+	if ($pricetowithdraw) {
+		print $langs->trans('ExecutionDate').' ';
+		$datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		print $form->selectDate($datere, 're');
 
-        if ($mysoc->isInEEC()) {
-        	$title = $langs->trans("CreateForSepa");
-        	if ($type == 'bank-transfer') {
-        		$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
-        	}
+		if ($mysoc->isInEEC()) {
+			$title = $langs->trans("CreateForSepa");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+			}
 
-        	if ($type != 'bank-transfer') {
-            	print '<select name="format">';
-            	print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
-            	print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
-            	print '</select>';
-        	}
-            print '<input class="butAction" type="submit" value="'.$title.'"/>';
-        } else {
-        	$title = $langs->trans("CreateAll");
-        	if ($type == 'bank-transfer') {
-        		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
-        	}
-        	print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
+			if ($type != 'bank-transfer') {
+				print '<select name="format">';
+				print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+				print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+				print '</select>';
+			}
+			print '<input class="butAction" type="submit" value="'.$title.'"/>';
+		} else {
+			$title = $langs->trans("CreateAll");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+			}
+			print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
 	} else {
 		if ($mysoc->isInEEC())
@@ -301,12 +301,12 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-    $param = '';
+	$param = '';
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($socid) $param .= '&socid='.urlencode($socid);
-    if ($option) $param .= "&option=".urlencode($option);
+	if ($option) $param .= "&option=".urlencode($option);
 
-    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	if (!empty($limit)) {
@@ -317,12 +317,12 @@ if ($resql)
 	if ($type == 'bank-transfer') {
 		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 	}
-    print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 
-    $tradinvoice = "Invoice";
-    if ($type == 'bank-transfer') {
-    	$tradinvoice = "SupplierInvoice";
-    }
+	$tradinvoice = "Invoice";
+	if ($type == 'bank-transfer') {
+		$tradinvoice = "SupplierInvoice";
+	}
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

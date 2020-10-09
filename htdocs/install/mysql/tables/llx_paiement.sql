@@ -22,9 +22,10 @@ create table llx_paiement
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   ref              varchar(30) NULL,                    -- payment reference number
+  ref_ext          varchar(255) NULL,                    -- payment external reference
   entity           integer   DEFAULT 1 NOT NULL,		-- Multi company id
   datec            datetime,							-- date de creation
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep            datetime,							-- payment date
   amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
   multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
@@ -37,5 +38,6 @@ create table llx_paiement
   fk_user_creat    integer,								-- utilisateur qui a cree l'info
   fk_user_modif    integer,								-- utilisateur qui a modifie l'info
   statut           smallint DEFAULT 0 NOT NULL,			-- Satut, 0 ou 1, 1 n'est plus supprimable
-  fk_export_compta integer DEFAULT 0 NOT NULL			-- fk_export_compta 0 pas exporte
+  fk_export_compta integer DEFAULT 0 NOT NULL,			-- fk_export_compta 0 pas exporte
+  pos_change       double(24,8) DEFAULT 0  				-- Excess received in TakePOS cash payment
 )ENGINE=innodb;

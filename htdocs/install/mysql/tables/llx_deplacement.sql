@@ -24,7 +24,7 @@ create table llx_deplacement
   ref				varchar(30) DEFAULT NULL,		-- Ref donation (TODO change to NOT NULL)
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   datec				datetime NOT NULL,
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   dated				datetime,
   fk_user			integer NOT NULL,
   fk_user_author	integer,

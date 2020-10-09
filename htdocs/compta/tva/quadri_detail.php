@@ -152,7 +152,7 @@ $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start; $prevquarter = $q;
@@ -213,6 +213,7 @@ $vatexpensereport = $langs->trans("VATPaid");
 
 
 // VAT Received and paid
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 $y = $year_current;
@@ -719,6 +720,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 	}
 
 	print '</table>';
+	print '</div>';
 
 	// Total to pay
 	print '<br><br>';

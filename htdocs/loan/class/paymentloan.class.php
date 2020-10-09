@@ -41,63 +41,63 @@ class PaymentLoan extends CommonObject
 	 */
 	public $table_element = 'payment_loan';
 
-    /**
-     * @var string String with name of icon for PaymentLoan
-     */
-    public $picto = 'money-bill-alt';
+	/**
+	 * @var string String with name of icon for PaymentLoan
+	 */
+	public $picto = 'money-bill-alt';
 
-    /**
-     * @var int Loan ID
-     */
-    public $fk_loan;
+	/**
+	 * @var int Loan ID
+	 */
+	public $fk_loan;
 
-    /**
-     * @var string Create date
-     */
-    public $datec = '';
+	/**
+	 * @var string Create date
+	 */
+	public $datec = '';
 
-    public $tms = '';
+	public $tms = '';
 
-    /**
-     * @var string Payment date
-     */
-    public $datep = '';
+	/**
+	 * @var string Payment date
+	 */
+	public $datep = '';
 
-    public $amounts = array(); // Array of amounts
+	public $amounts = array(); // Array of amounts
 
-    public $amount_capital; // Total amount of payment
+	public $amount_capital; // Total amount of payment
 
-    public $amount_insurance;
+	public $amount_insurance;
 
-    public $amount_interest;
+	public $amount_interest;
 
-    /**
-     * @var int Payment type ID
-     */
-    public $fk_typepayment;
+	/**
+	 * @var int Payment mode ID
+	 */
+	public $fk_typepayment;
 
-    /**
-     * @var int Payment ID
-     */
-    public $num_payment;
+	/**
+	 * @var int Payment ID
+	 */
+	public $num_payment;
 
-    /**
-     * @var int Bank ID
-     */
-    public $fk_bank;
+	/**
+	 * @var int Bank ID
+	 */
+	public $fk_bank;
 
-    /**
-     * @var int User ID
-     */
-    public $fk_user_creat;
+	/**
+	 * @var int User ID
+	 */
+	public $fk_user_creat;
 
-    /**
-     * @var int user ID
-     */
-    public $fk_user_modif;
+	/**
+	 * @var int user ID
+	 */
+	public $fk_user_modif;
 
-    public $type_code;
-    public $type_label;
+	public $type_code;
+	public $type_label;
 
 
 	/**
@@ -367,23 +367,23 @@ class PaymentLoan extends CommonObject
 			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
-        // Set loan unpaid if loan has no other payment
-        if (!$error)
-        {
-            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-            $loan = new Loan($this->db);
-            $loan->fetch($this->fk_loan);
-            $sum_payment = $loan->getSumPayment();
-            if ($sum_payment == 0)
-            {
-                dol_syslog(get_class($this)."::delete : set loan to unpaid", LOG_DEBUG);
-                if ($loan->set_unpaid($user) < 1)
-                {
-                    $error++;
-                    dol_print_error($this->db);
-                }
-            }
-        }
+		// Set loan unpaid if loan has no other payment
+		if (!$error)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+			$loan = new Loan($this->db);
+			$loan->fetch($this->fk_loan);
+			$sum_payment = $loan->getSumPayment();
+			if ($sum_payment == 0)
+			{
+				dol_syslog(get_class($this)."::delete : set loan to unpaid", LOG_DEBUG);
+				if ($loan->set_unpaid($user) < 1)
+				{
+					$error++;
+					dol_print_error($this->db);
+				}
+			}
+		}
 
 		//if (! $error)
 		//{
@@ -435,7 +435,7 @@ class PaymentLoan extends CommonObject
 		global $conf;
 
 		$error = 0;
-        $this->db->begin();
+		$this->db->begin();
 
 		if (!empty($conf->banque->enabled))
 		{
@@ -448,9 +448,9 @@ class PaymentLoan extends CommonObject
 			if ($mode == 'payment_loan') $total = -$total;
 
 			// Insert payment into llx_bank
-            $bank_line_id = $acc->addline(
+			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
+				$this->fk_typepayment, // Payment mode ID or code ("CHQ or VIR for example")
 				$label,
 				$total,
 				$this->num_payment,
@@ -498,36 +498,36 @@ class PaymentLoan extends CommonObject
 		}
 
 
-        // Set loan payment started if no set
-        if (!$error)
-        {
-            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-            $loan = new Loan($this->db);
-            $loan->fetch($fk_loan);
-            if ($loan->paid == $loan::STATUS_UNPAID)
-            {
-                dol_syslog(get_class($this)."::addPaymentToBank : set loan payment to started", LOG_DEBUG);
-                if ($loan->set_started($user) < 1)
-                {
-                    $error++;
-                    dol_print_error($this->db);
-                }
-            }
-        }
+		// Set loan payment started if no set
+		if (!$error)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+			$loan = new Loan($this->db);
+			$loan->fetch($fk_loan);
+			if ($loan->paid == $loan::STATUS_UNPAID)
+			{
+				dol_syslog(get_class($this)."::addPaymentToBank : set loan payment to started", LOG_DEBUG);
+				if ($loan->set_started($user) < 1)
+				{
+					$error++;
+					dol_print_error($this->db);
+				}
+			}
+		}
 
 		if (!$error)
 		{
-            $this->db->commit();
+			$this->db->commit();
 			return 1;
 		}
 		else {
-            $this->db->rollback();
+			$this->db->rollback();
 			return -1;
 		}
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between loan's payment and the line generate in llx_bank
 	 *
@@ -536,14 +536,14 @@ class PaymentLoan extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-		    $this->fk_bank = $id_bank;
+			$this->fk_bank = $id_bank;
 			return 1;
 		} else {
 			$this->error = $this->db->error();
@@ -556,9 +556,9 @@ class PaymentLoan extends CommonObject
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=No picto
 	 * 	@param	int		$maxlen						Max length label
-     *	@param	int  	$notooltip					1=Disable tooltip
-     *	@param	string	$moretitle					Add more text to title tooltip
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int  	$notooltip					1=Disable tooltip
+	 *	@param	string	$moretitle					Add more text to title tooltip
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)

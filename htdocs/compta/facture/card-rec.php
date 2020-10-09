@@ -188,11 +188,11 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$object->titre = GETPOST('titre', 'nohtml'); // deprecated
-			$object->title = GETPOST('titre', 'nohtml');
-			$object->note_private = GETPOST('note_private', 'none');
-            $object->note_public = GETPOST('note_public', 'none');
-            $object->modelpdf = GETPOST('modelpdf', 'alpha');
+			$object->titre = GETPOST('title', 'nohtml'); // deprecated
+			$object->title = GETPOST('title', 'nohtml');
+			$object->note_private = GETPOST('note_private', 'restricthtml');
+            $object->note_public = GETPOST('note_public', 'restricthtml');
+            $object->model_pdf = GETPOST('modelpdf', 'alpha');
 			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
@@ -405,7 +405,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -650,7 +650,7 @@ if (empty($reshook))
 	    				$outputlangs = new Translate("", $conf);
 	    				$outputlangs->setDefaultLang($newlang);
 	    			    }
-	    			    $model=$object->modelpdf;
+	    			    $model=$object->model_pdf;
 	    			    $ret = $object->fetch($id); // Reload to get new records
 
 	    			    $result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -713,7 +713,7 @@ if (empty($reshook))
 		$date_end = '';
 		//$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		//$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none') ? GETPOST('product_desc', 'none') : GETPOST('desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
@@ -861,7 +861,7 @@ if (empty($reshook))
                                 }
 
                                 $ret = $object->fetch($id); // Reload to get new records
-                                $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                                $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                     }*/
 
 				$object->fetch($object->id); // Reload lines
@@ -964,8 +964,8 @@ if ($action == 'create')
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1, 'customer').'</td>';
 		print '</tr>';
 
-		$note_public = GETPOST('note_public', 'none') ?GETPOST('note_public', 'none') : $object->note_public;
-		$note_private = GETPOST('note_private', 'none') ?GETPOST('note_private', 'none') : $object->note_private;
+		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
+		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
 		// Help of substitution key
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, null, $object);
@@ -1365,6 +1365,8 @@ if ($action == 'create')
 		// Only on template invoices
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date(($object->date_when ? $object->date_when : dol_now()), 'dayhour').')';
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree(($object->date_when ? $object->date_when : dol_now()), $object->frequency, $object->unit_frequency), 'dayhour').')';
+		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $object->nb_gen_done;
+		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $object->nb_gen_max;
 
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach ($substitutionarray as $key => $val)
@@ -1425,9 +1427,9 @@ if ($action == 'create')
                 $list[] = str_replace(':', '|', $k).':'.$model;
             }
             $select = 'select;'.implode(',', $list);
-            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
+            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->model_pdf, $object, $user->rights->facture->creer, $select);
         } else {
-            print $object->modelpdf;
+            print $object->model_pdf;
         }
         print "</td>";
         print '</tr>';
@@ -1617,13 +1619,12 @@ if ($action == 'create')
 		// Show object lines
 		if (!empty($object->lines))
 		{
-			//$disableedit=1;
-			//$disablemove=1;
+			$canchangeproduct = 1;
 			$ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line
-		if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
+		if ($object->statut == $object::STATUS_DRAFT && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
 		{
 			if ($action != 'editline')
 			{

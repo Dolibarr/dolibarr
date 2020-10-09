@@ -107,7 +107,7 @@ if ($action == 'add_payment')
     		$payment->amounts      = $amounts; // Tableau de montant
     		$payment->paymenttype  = GETPOST("paymenttype", 'int');
     		$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$payment->note_public  = GETPOST("note_public", 'none');
+    		$payment->note_public  = GETPOST("note_public", 'restricthtml');
 
     		if (!$error)
     		{

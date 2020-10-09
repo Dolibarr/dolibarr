@@ -30,7 +30,7 @@ create table llx_product
   ref_ext                       varchar(128),                       -- reference into an external system (not used by dolibarr)
 
   datec                         datetime,
-  tms                           timestamp,
+  tms                           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_parent                     integer	  DEFAULT 0,                -- Not used. Used by external modules. Virtual product id
 
   label                         varchar(255) NOT NULL,
@@ -39,6 +39,7 @@ create table llx_product
   note                          text,
   customcode                    varchar(32),                        -- Optionnal custom code
   fk_country                    integer DEFAULT NULL,               -- Optionnal id of original country
+  fk_state                      integer DEFAULT NULL,               -- Optionnal id of original state/province
   price                         double(24,8) DEFAULT 0,
   price_ttc                     double(24,8) DEFAULT 0,
   price_min                     double(24,8) DEFAULT 0,

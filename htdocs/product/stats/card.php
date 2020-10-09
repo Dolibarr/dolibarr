@@ -217,18 +217,20 @@ if ($result || empty($id))
 	// Choice of stats mode (byunit or bynumber)
 	if (!empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
-	if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
-	else print img_picto('', 'tick').' ';
+	if ($mode == 'bynumber') print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
+	else print '<span class="a-mesure">';
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') print '</a>';
+	else print '</span>';
 
 	if (!empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
-	else print ' &nbsp; / &nbsp; ';
+	else print ' &nbsp; ';
 
-	if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
-	else print img_picto('', 'tick').' ';
+	if ($mode == 'byunit') print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
+	else print '<span class="a-mesure">';
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') print '</a>';
+	else print '</span>';
 
 	if (!empty($conf->dol_use_jmobile)) print '</div></div>';
 	else print '<br>';

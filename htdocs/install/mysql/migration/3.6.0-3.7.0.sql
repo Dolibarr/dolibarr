@@ -137,7 +137,7 @@ DROP TABLE llx_compta_compte_generaux;
 -- Align size for accounting account
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
-ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
+ALTER TABLE llx_accountingaccount add column tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER datec;
 ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
@@ -233,7 +233,7 @@ create table llx_accounting_fiscalyear
 	statut			tinyint DEFAULT 0 NOT NULL,
 	entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
 	datec			datetime NOT NULL,
-	tms				timestamp,
+	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_author	integer NULL,
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
@@ -1050,7 +1050,7 @@ create table llx_c_email_templates
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
   fk_user         integer,                        -- Id utilisateur si modele prive, sinon null
   datec           datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label           varchar(255),					  -- Label of predefined email
   position        smallint,					      -- Position
   active          tinyint DEFAULT 1  NOT NULL,
@@ -1112,7 +1112,7 @@ ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
 CREATE TABLE llx_fichinterdet_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -1121,7 +1121,7 @@ ALTER TABLE llx_fichinterdet_extrafields ADD INDEX idx_ficheinterdet_extrafields
 
 CREATE TABLE llx_usergroup_extrafields (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

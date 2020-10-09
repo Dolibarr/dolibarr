@@ -34,7 +34,7 @@ if (!$user->admin)
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'agenda'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 $search_event = GETPOST('search_event', 'alpha');
@@ -165,6 +165,7 @@ if (!empty($triggers))
 		if ($module == 'member') $module = 'adherent';
 		if ($module == 'project') $module = 'projet';
 		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
+		if ($module == 'contact') $module = 'societe';
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);
@@ -172,7 +173,7 @@ if (!empty($triggers))
 			$module = $tmparray[1];
 		}
 
-		//print 'module='.$module.'<br>';
+		//print 'module='.$module.' code='.$trigger['code'].'<br>';
 		if (!empty($conf->$module->enabled))
 		{
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED

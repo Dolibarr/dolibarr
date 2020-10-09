@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'products'));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $oldvatrate = GETPOST('oldvatrate', 'alpha');
 $newvatrate = GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
@@ -90,7 +90,7 @@ if ($action == 'convert')
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product';
 			$sql .= ' WHERE entity IN ('.getEntity('product').')';
 			$sql .= " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
-			if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$vat_src_code_old."'";
+			if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			else " AND default_vat_code = IS NULL";
 
 			$resql = $db->query($sql);
@@ -182,9 +182,9 @@ if ($action == 'convert')
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
 		$sql .= " AND tva_tx = '".$db->escape($oldvatrate)."'";
-		if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$vat_src_code_old."'";
+		if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		else " AND default_vat_code = IS NULL";
-		$sql .= " AND s.fk_pays = '".$country_id."'";
+		$sql .= " AND s.fk_pays = ".((int) $country_id);
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql)

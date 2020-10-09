@@ -11,6 +11,7 @@
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
+ * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +122,11 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		define('K_SMALL_RATIO', 2 / 3);
 		define('K_THAI_TOPCHARS', true);
 		define('K_TCPDF_CALLS_IN_HTML', true);
-		define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
+		if (!empty($conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE)) {
+			define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
+		} else {
+			define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
+		}
 	}
 
 	// Load TCPDF
@@ -1315,7 +1320,11 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 					{
 						$libelleproduitservice = $desc."\n".$libelleproduitservice;
 					} else {
-						$libelleproduitservice .= $desc;
+						if (!empty($conf->global->HIDE_LABEL_VARIANT_PDF) && $prodser->isVariant()) {
+							$libelleproduitservice = $desc;
+						} else {
+							$libelleproduitservice .= $desc;
+						}
 					}
 				}
 			} else {
@@ -2068,7 +2077,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
  */
 function pdf_getLinkedObjects($object, $outputlangs)
 {
-	global $hookmanager;
+	global $db, $hookmanager;
 
 	$linkedobjects = array();
 
@@ -2130,8 +2139,13 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			    // We concat this record info into fields xxx_value. title is overwrote.
 			    if (empty($object->linkedObjects['commande']) && $object->element != 'commande')	// There is not already a link to order and object is not the order, so we show also info with order
 			    {
-			        $elementobject->fetchObjectLinked();
-			        if (!empty($elementobject->linkedObjects['commande'])) $order = reset($elementobject->linkedObjects['commande']);
+			        $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+			        if (!empty($elementobject->linkedObjectsIds['commande'])) {
+						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+						$order = new Commande($db);
+						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
+						if ($ret < 1) { $order = null; }
+					}
 			    }
 			    if (!is_object($order))
 			    {

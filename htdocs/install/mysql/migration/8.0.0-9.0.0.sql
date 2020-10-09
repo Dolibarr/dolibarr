@@ -43,7 +43,7 @@ ALTER TABLE llx_facture ADD COLUMN pos_source varchar(32);
 create table llx_facture_rec_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)
 ) ENGINE=innodb;
@@ -182,7 +182,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         note_public text,
         note_private text,
         date_creation datetime NOT NULL,
-        tms timestamp NOT NULL,
+        tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         fk_user_creat integer NOT NULL,
         fk_user_modif integer,
         import_key varchar(14),
@@ -202,7 +202,7 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	type varchar(128) NOT NULL,
 	rulevalue varchar(128) NULL,
 	date_creation datetime NOT NULL,
-	tms timestamp NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14),
@@ -217,7 +217,7 @@ CREATE TABLE llx_emailcollector_emailcollectoraction(
 	type varchar(128) NOT NULL,
 	actionparam varchar(255) NULL,
 	date_creation datetime NOT NULL,
-	tms timestamp NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	position integer DEFAULT 0,

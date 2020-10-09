@@ -134,7 +134,7 @@ $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start;
@@ -200,12 +200,13 @@ if ($local == 1) {
 }
 
 // VAT Received and paid
+print '<div class="div-table-responsive">';
 echo '<table class="noborder centpercent">';
 
 $y = $year_current;
 $total = 0;
 $i = 0;
-$columns = 5;
+$columns = 4;
 
 // Load arrays of datas
 $x_coll = tax_by_rate('localtax'.$local, $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
@@ -310,8 +311,9 @@ if (!is_array($x_coll) || !is_array($x_paye))
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
 
-	$span = $columns;
-	if ($modetax != 1) $span += 2;
+	$span = $columns - 1;
+	if ($modetax != 2) $span += 1;
+	if ($modetax != 1) $span += 1;
 
 	// Customers invoices
 	print '<tr class="liste_titre">';
@@ -467,10 +469,10 @@ if (!is_array($x_coll) || !is_array($x_paye))
 
     // Blank line
 	print '<tr><td colspan="'.($span + 1).'">&nbsp;</td></tr>';
-	print '</table>';
+	//print '</table>';
 	$diff = $x_coll_sum;
 
-	echo '<table class="noborder centpercent">';
+	//echo '<table class="noborder centpercent">';
 	//print table headers for this quadri - expenses now
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$elementsup.'</td>';
@@ -617,11 +619,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 		print '</tr>';
 	}
 
-	print '</table>';
-
 	// Total to pay
-    print '<br><br>';
-    print '<table class="noborder centpercent">';
     $diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
@@ -630,7 +628,9 @@ if (!is_array($x_coll) || !is_array($x_paye))
 
 	$i++;
 }
+
 print '</table>';
+print '</div>';
 
 // End of page
 llxFooter();

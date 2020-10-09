@@ -510,7 +510,7 @@ class Contrat extends CommonObject
 
 		if ($num)
 		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$num."', statut = 1";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$this->db->escape($num)."', statut = 1";
 			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".$this->id." AND statut = 0";
 
@@ -726,6 +726,7 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
+					$this->model_pdf = $obj->model_pdf;
 					$this->modelpdf = $obj->model_pdf;
 
 					$this->fk_projet = $obj->fk_project; // deprecated
@@ -1092,7 +1093,7 @@ class Contrat extends CommonObject
     			    }
 
     			    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    			    $sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+    			    $sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
     			    $resqlcontact = $this->db->query($sqlcontact);
     			    if ($resqlcontact)
@@ -1540,15 +1541,15 @@ class Contrat extends CommonObject
 			$sql .= ($fk_product > 0 ? $fk_product : "null").",";
 			$sql .= " ".$qty.",";
 			$sql .= " ".$txtva.",";
-			$sql .= " ".($vat_src_code ? "'".$vat_src_code."'" : "null").",";
+			$sql .= " ".($vat_src_code ? "'".$this->db->escape($vat_src_code)."'" : "null").",";
 			$sql .= " ".$txlocaltax1.",";
 			$sql .= " ".$txlocaltax2.",";
-			$sql .= " '".$localtax1_type."',";
-			$sql .= " '".$localtax2_type."',";
+			$sql .= " '".$this->db->escape($localtax1_type)."',";
+			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
-			$sql .= " '".$info_bits."',";
+			$sql .= " '".$this->db->escape($info_bits)."',";
 			$sql .= " ".price2num($price).",".price2num($remise).",";
 			if (isset($fk_fournprice)) $sql .= ' '.$fk_fournprice.',';
 			else $sql .= ' null,';
@@ -1716,8 +1717,8 @@ class Contrat extends CommonObject
 		$sql .= ",tva_tx='".price2num($tvatx)."'";
 		$sql .= ",localtax1_tx='".price2num($localtax1tx)."'";
 		$sql .= ",localtax2_tx='".price2num($localtax2tx)."'";
-		$sql .= ",localtax1_type='".$localtax1_type."'";
-		$sql .= ",localtax2_type='".$localtax2_type."'";
+		$sql .= ",localtax1_type='".$this->db->escape($localtax1_type)."'";
+		$sql .= ",localtax2_type='".$this->db->escape($localtax2_type)."'";
 		$sql .= ", total_ht='".price2num($total_ht)."'";
 		$sql .= ", total_tva='".price2num($total_tva)."'";
 		$sql .= ", total_localtax1='".price2num($total_localtax1)."'";
@@ -1910,7 +1911,6 @@ class Contrat extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
 
 		if ($mode == 4 || $mode == 6 || $mode == 7)
@@ -1967,7 +1967,7 @@ class Contrat extends CommonObject
         $label = '';
 
         if ($user->rights->contrat->lire) {
-            $label = '<u>'.$langs->trans("ShowContract").'</u>';
+        	$label = img_picto('', $this->picto).' <u>'.$langs->trans("Contract").'</u>';
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
             $label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
             $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
@@ -2256,7 +2256,7 @@ class Contrat extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["Contracts"] = $obj->nb;
+				$this->nb["contracts"] = $obj->nb;
 			}
             $this->db->free($resql);
 			return 1;
@@ -2309,6 +2309,8 @@ class Contrat extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$sql .= " AND tosell = 1";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

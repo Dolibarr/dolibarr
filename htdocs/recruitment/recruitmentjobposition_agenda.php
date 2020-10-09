@@ -50,7 +50,7 @@ $langs->loadLangs(array("recruitment", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -204,7 +204,7 @@ if ($object->id > 0)
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.$object->element.'&originid='.$object->id;
+	$out = '&origin='.$object->element.'@recruitment&originid='.$object->id;
 	$permok = $user->rights->agenda->myactions->create;
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok)
 	{

@@ -118,7 +118,7 @@ class StockMovements extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0)
             {
@@ -126,26 +126,26 @@ class StockMovements extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             $i = 0;
-            $num = $db->num_rows($result);
+            $num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $stockmovement_static = new MouvementStock($db);
+            	$obj = $this->db->fetch_object($result);
+            	$stockmovement_static = new MouvementStock($this->db);
                 if ($stockmovement_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
                 }
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve stock movement list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve stock movement list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No stock movement found');
@@ -303,7 +303,7 @@ class StockMovements extends DolibarrApi
         unset($object->note_public);
         unset($object->shipping_method_id);
         unset($object->fk_account);
-        unset($object->modelpdf);
+        unset($object->model_pdf);
         unset($object->fk_delivery_address);
         unset($object->cond_reglement);
         unset($object->cond_reglement_id);

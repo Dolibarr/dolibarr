@@ -33,7 +33,7 @@ $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on 
 
 $id = GETPOST('id', 'int');
 $eid = GETPOST('eid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
 $tab = GETPOST('tab', 'alpha');
@@ -206,7 +206,7 @@ if ($eid == 0)
 {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 } else {
-	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 }
 print '</div>';
 

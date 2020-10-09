@@ -118,7 +118,7 @@ class TicketStats extends Stats
     {
         $sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
         $sql .= " FROM ".$this->from;
-        $sql .= " WHERE date_format(datec,'%Y') = '".$year."'";
+        $sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape($year)."'";
         $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -138,7 +138,7 @@ class TicketStats extends Stats
     {
         $sql = "SELECT date_format(datec,'%m') as dm, avg(".$this->field.")";
         $sql .= " FROM ".$this->from;
-        $sql .= " WHERE date_format(datec,'%Y') = '".$year."'";
+        $sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape($year)."'";
         $sql .= " AND ".$this->where;
         $sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');

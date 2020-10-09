@@ -97,7 +97,7 @@ class pdf_timespent extends ModelePDFProjects
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
@@ -107,7 +107,7 @@ class pdf_timespent extends ModelePDFProjects
 	 */
 	public function write_file($object, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -154,30 +154,30 @@ class pdf_timespent extends ModelePDFProjects
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 
-                if (class_exists('TCPDF'))
-                {
-                    $pdf->setPrintHeader(false);
-                    $pdf->setPrintFooter(false);
-                }
-                $pdf->SetFont(pdf_getPDFFont($outputlangs));
-                // Set path to the background PDF File
-                if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-                {
-                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
-                    $tplidx = $pdf->importPage(1);
-                }
+				if (class_exists('TCPDF'))
+				{
+					$pdf->setPrintHeader(false);
+					$pdf->setPrintFooter(false);
+				}
+				$pdf->SetFont(pdf_getPDFFont($outputlangs));
+				// Set path to the background PDF File
+				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+				{
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$tplidx = $pdf->importPage(1);
+				}
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0, 0, $object->id);
 
-                if (!$object->id > 0)  // Special case when used with object = specimen, we may return all lines
-                {
-                    $tasksarray = array_slice($tasksarray, 0, min(5, count($tasksarray)));
-                }
+				if (!$object->id > 0)  // Special case when used with object = specimen, we may return all lines
+				{
+					$tasksarray = array_slice($tasksarray, 0, min(5, count($tasksarray)));
+				}
 
 				$object->lines = $tasksarray;
 				$nblines = count($object->lines);
@@ -423,8 +423,8 @@ class pdf_timespent extends ModelePDFProjects
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
 				if (!empty($conf->global->MAIN_UMASK))
@@ -447,7 +447,7 @@ class pdf_timespent extends ModelePDFProjects
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -462,7 +462,7 @@ class pdf_timespent extends ModelePDFProjects
 
 		$heightoftitleline = 10;
 
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetDrawColor(128, 128, 128);
 
@@ -498,7 +498,7 @@ class pdf_timespent extends ModelePDFProjects
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -515,7 +515,7 @@ class pdf_timespent extends ModelePDFProjects
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
-        $posx = $this->page_largeur - $this->marge_droite - 100;
+		$posx = $this->page_largeur - $this->marge_droite - 100;
 		$posy = $this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
@@ -526,8 +526,8 @@ class pdf_timespent extends ModelePDFProjects
 		{
 			if (is_readable($logo))
 			{
-			    $height = pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -586,19 +586,19 @@ class pdf_timespent extends ModelePDFProjects
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     *  Show footer of page. Need this->emetteur object
-     *
-     *  @param  PDF         $pdf                PDF
-     *  @param  Project     $object             Object to show
-     *  @param  Translate   $outputlangs        Object lang for output
-     *  @param  int         $hidefreetext       1=Hide free text
-     *  @return integer
-     */
+	/**
+	 *  Show footer of page. Need this->emetteur object
+	 *
+	 *  @param  TCPDF       $pdf                PDF
+	 *  @param  Project     $object             Object to show
+	 *  @param  Translate   $outputlangs        Object lang for output
+	 *  @param  int         $hidefreetext       1=Hide free text
+	 *  @return integer
+	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
-    {
-        global $conf;
-        $showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-        return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
-    }
+	{
+		global $conf;
+		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+	}
 }

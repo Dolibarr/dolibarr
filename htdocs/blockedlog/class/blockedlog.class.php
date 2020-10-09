@@ -185,6 +185,13 @@ class BlockedLog
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all POS modules
 		$moduleposenabled = ($conf->cashdesk->enabled || $conf->takepos->enabled || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
 		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
+
+		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
+			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
+			foreach ($tmparrayofmoresupportedevents as $val) {
+				$this->trackedevents[$val] = 'log'.$val;
+			}
+		}
 	}
 
 	/**
@@ -368,7 +375,7 @@ class BlockedLog
 		$this->object_data = new stdClass();
 		// Add fields to exclude
 		$arrayoffieldstoexclude = array(
-			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
+			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
             'linkedObjectsIds',
             'linkedObjects',
@@ -476,7 +483,7 @@ class BlockedLog
 			$this->object_data->ref = $object->ref;
 			$this->object_data->date = $datepayment;
 			$this->object_data->type_code = dol_getIdFromCode($this->db, $paymenttypeid, 'c_paiement', 'id', 'code');
-			$this->object_data->payment_num = ($object->num_paiement ? $object->num_paiement : $object->num_payment);
+			$this->object_data->payment_num = $object->num_payment;
 			//$this->object_data->fk_account = $object->fk_account;
 			$this->object_data->note = $object->note;
 			//var_dump($this->object_data);exit;

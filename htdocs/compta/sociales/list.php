@@ -35,7 +35,7 @@ if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/clas
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -138,8 +138,8 @@ if ($year > 0)
     $sql .= " AND (";
     // Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
     // ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-    $sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$year."') ";
-    $sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$year."')";
+    $sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$db->escape($year)."') ";
+    $sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
     $sql .= ")";
 }
 if ($filtre) {
@@ -220,7 +220,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
+	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone', 1);
 	    print '</td>';
 		// Ref Project
 	   	if (!empty($conf->projet->enabled)) print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'"></td>';

@@ -575,3 +575,4 @@ BILL_SUPPLIER_DELETEInDolibarr=Supplier invoice deleted
 UnitPriceXQtyLessDiscount=Unit price x Qty - Discount
 CustomersInvoicesArea=Customer billing area
 SupplierInvoicesArea=Supplier billing area
+FacParentLine=Invoice Line Parent

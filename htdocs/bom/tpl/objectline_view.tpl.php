@@ -111,21 +111,21 @@ print '</td>';
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
-    if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
-    } else {
-        print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'">'.img_edit().'</a>';
-    }
-    print '</td>';
+	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
+	} else {
+		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'">'.img_edit().'</a>';
+	}
+	print '</td>';
 
-    print '<td class="linecoldelete center">';
-    $coldisplay++;
-    if (($line->fk_prev_id == null) && empty($disableremove)) {
-        //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-        print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;lineid='.$line->id.'">';
-        print img_delete();
-        print '</a>';
-    }
-    print '</td>';
+	print '<td class="linecoldelete center">';
+	$coldisplay++;
+	if (($line->fk_prev_id == null) && empty($disableremove)) {
+		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$line->id.'">';
+		print img_delete();
+		print '</a>';
+	}
+	print '</td>';
 
 	if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 		print '<td class="linecolmove tdlineupdown center">';
@@ -146,14 +146,14 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 		$coldisplay++;
 	}
 } else {
-    print '<td colspan="3"></td>';
-    $coldisplay = $coldisplay + 3;
+	print '<td colspan="3"></td>';
+	$coldisplay = $coldisplay + 3;
 }
 
 if ($action == 'selectlines') {
-    print '<td class="linecolcheck center">';
-    print '<input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$line->id.'" >';
-    print '</td>';
+	print '<td class="linecolcheck center">';
+	print '<input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$line->id.'" >';
+	print '</td>';
 }
 
 print '</tr>';

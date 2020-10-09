@@ -282,7 +282,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Latest modified members
  */
-$max = 5;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql .= " a.tms as datem, datefin as date_end_subscription,";
@@ -337,7 +337,7 @@ if ($resql) {
 /*
  * Last modified subscriptions
  */
-$max = 5;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql .= " datefin as date_end_subscription,";

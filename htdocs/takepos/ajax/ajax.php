@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
+/* Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $category = GETPOST('category', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
 
@@ -68,6 +69,24 @@ if ($action == 'getProducts') {
     	echo 'Failed to load category with id='.$category;
     }
 } elseif ($action == 'search' && $term != '') {
+	// Change thirdparty with barcode
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+	$thirdparty = new Societe($db);
+	$result = $thirdparty->fetch('', '', '', $term);
+
+	if ( $result && $thirdparty->id > 0) {
+	    $rows = array();
+	    	$rows[] = array(
+	    		'rowid' => $thirdparty->id,
+	    		'name' => $thirdparty->name,
+	    		'barcode' => $thirdparty->barcode,
+          'object' => 'thirdparty'
+	    	);
+			echo json_encode($rows);
+			exit;
+	}
+
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
@@ -101,7 +120,8 @@ if ($action == 'getProducts') {
 	    		'tosell' => $obj->tosell,
 	    		'tobuy' => $obj->tobuy,
 	    		'barcode' => $obj->barcode,
-	    		'price' => $obj->price
+	    		'price' => $obj->price,
+			'object' => 'product'
 	    		//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 	    	);
 	    }

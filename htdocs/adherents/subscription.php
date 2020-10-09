@@ -40,15 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $typeid = GETPOST('typeid', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -628,7 +628,7 @@ if ($rowid > 0) {
                 $subscriptionstatic->ref = $objp->crowid;
                 $subscriptionstatic->id = $objp->crowid;
 
-                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $adh->typeid);
+                $typeid = $objp->cfk_type;
                 if ($typeid > 0) {
                     $adht->fetch($typeid);
                 }
@@ -854,7 +854,7 @@ if ($rowid > 0) {
             print '"></td></tr>';
 
             // Complementary action
-            if (!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) {
+            if ((!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
                 $company = new Societe($db);
                 if ($object->fk_soc) {
                     $result = $company->fetch($object->fk_soc);

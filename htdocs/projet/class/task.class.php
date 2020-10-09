@@ -60,14 +60,14 @@ class Task extends CommonObject
 	protected $childtables = array('projet_task_time');
 
 	/**
-     * @var int ID parent task
-     */
-    public $fk_task_parent;
+	 * @var int ID parent task
+	 */
+	public $fk_task_parent = 0;
 
-    /**
-     * @var string Label of task
-     */
-    public $label;
+	/**
+	 * @var string Label of task
+	 */
+	public $label;
 
 	/**
 	 * @var string description
@@ -82,20 +82,20 @@ class Task extends CommonObject
 	public $progress;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_statut;
 
 	public $priority;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_valid;
 
 	public $rang;
@@ -145,6 +145,9 @@ class Task extends CommonObject
 	{
 		global $conf, $langs;
 
+		//For the date
+		$now = dol_now();
+
 		$error = 0;
 
 		// Clean parameters
@@ -175,7 +178,7 @@ class Task extends CommonObject
 		$sql .= ", ".$this->fk_task_parent;
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
-		$sql .= ", '".$this->db->idate($this->date_c)."'";
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 		$sql .= ", ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
@@ -645,7 +648,7 @@ class Task extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = '<u>'.$langs->trans("ShowTask").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowTask").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->label))
@@ -773,15 +776,15 @@ class Task extends CommonObject
 			$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 			if ($includebilltime)
 			{
-                $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 			}
 			if ($filterontaskuser > 0)
 			{
 				$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
 			}
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
-            $sql .= " WHERE p.entity IN (".getEntity('project').")";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND t.fk_projet = p.rowid";
 		} elseif ($mode == 1)
 		{
@@ -795,7 +798,7 @@ class Task extends CommonObject
 				$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 				if ($includebilltime)
 				{
-				    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 				}
 				$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
@@ -803,11 +806,11 @@ class Task extends CommonObject
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
 				if ($includebilltime)
 				{
-				    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 				}
 			}
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
-            $sql .= " WHERE p.entity IN (".getEntity('project').")";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		} else return 'BadValueForParameterMode';
 
 		if ($filteronprojuser > 0)
@@ -844,12 +847,12 @@ class Task extends CommonObject
 		$sql .= $hookmanager->resPrint;
 		if ($includebilltime)
 		{
-    		$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
-    		$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-    		$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
-    		$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
-    		$sql .= " t.description, ";
-    		$sql .= " s.rowid, s.nom, s.email,";
+			$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
+			$sql .= " t.datec, t.dateo, t.datee, t.tms,";
+			$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
+			$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
+			$sql .= " t.description, ";
+			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 			if (!empty($extrafields->attributes['projet']['label']))
 			{
@@ -926,29 +929,29 @@ class Task extends CommonObject
 					$tasks[$i]->thirdparty_email = $obj->thirdparty_email;
 
 
-                    $tasks[$i]->fk_opp_status = $obj->fk_opp_status;
-                    $tasks[$i]->opp_amount = $obj->opp_amount;
-                    $tasks[$i]->opp_percent = $obj->opp_percent;
-                    $tasks[$i]->budget_amount = $obj->budget_amount;
-                    $tasks[$i]->usage_bill_time = $obj->usage_bill_time;
+					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
+					$tasks[$i]->opp_amount = $obj->opp_amount;
+					$tasks[$i]->opp_percent = $obj->opp_percent;
+					$tasks[$i]->budget_amount = $obj->budget_amount;
+					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
 
-                    if (!empty($extrafields->attributes['projet']['label']))
-                    {
-                        foreach ($extrafields->attributes['projet']['label'] as $key => $val)
-                        {
-                            if ($extrafields->attributes['projet']['type'][$key] != 'separate')
-                                $tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
-                        }
-                    }
+					if (!empty($extrafields->attributes['projet']['label']))
+					{
+						foreach ($extrafields->attributes['projet']['label'] as $key => $val)
+						{
+							if ($extrafields->attributes['projet']['type'][$key] != 'separate')
+								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+						}
+					}
 
-                    if (!empty($extrafields->attributes['projet_task']['label']))
-                    {
-                        foreach ($extrafields->attributes['projet_task']['label'] as $key => $val)
-                        {
-                            if ($extrafields->attributes['projet_task']['type'][$key] != 'separate')
-                                $tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
-                        }
-                    }
+					if (!empty($extrafields->attributes['projet_task']['label']))
+					{
+						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val)
+						{
+							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate')
+								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+						}
+					}
 				}
 
 				$i++;
@@ -1434,13 +1437,13 @@ class Task extends CommonObject
 		// Check parameters
 		if ($this->timespent_date == '')
 		{
-		    $this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
-		    return -1;
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
+			return -1;
 		}
 		if (!($this->timespent_fk_user > 0))
 		{
-		    $this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("User"));
-		    return -1;
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("User"));
+			return -1;
 		}
 
 		// Clean parameters
@@ -1564,8 +1567,8 @@ class Task extends CommonObject
 		}
 	}
 
-    /**	Load an object from its id and create a new one in database
-     *
+	/**	Load an object from its id and create a new one in database
+	 *
 	 *  @param	User	$user		            User making the clone
 	 *  @param	int		$fromid     			Id of object to clone
 	 *  @param	int		$project_id				Id of project to attach clone task
@@ -1577,7 +1580,7 @@ class Task extends CommonObject
 	 *  @param	bool	$clone_note				clone note of project
 	 *  @param	bool	$clone_prog				clone progress of project
 	 *  @return	int								New id of clone
-     */
+	 */
 	public function createFromClone(User $user, $fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
 	{
 		global $langs, $conf;
@@ -1798,7 +1801,7 @@ class Task extends CommonObject
 		return $this->LibStatut($this->fk_statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return status label for an object
 	 *
@@ -1808,7 +1811,7 @@ class Task extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		// list of Statut of the task
@@ -1910,7 +1913,7 @@ class Task extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1919,7 +1922,7 @@ class Task extends CommonObject
 	 */
 	public function load_board($user)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
@@ -1983,7 +1986,7 @@ class Task extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
@@ -1991,7 +1994,7 @@ class Task extends CommonObject
 	 */
 	public function load_state_board()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user;
 
 		$mine = 0; $socid = $user->socid;

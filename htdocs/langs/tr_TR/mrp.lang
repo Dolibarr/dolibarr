@@ -1,5 +1,6 @@
 Mrp=Üretim Emirleri
 MO=Üretim Emri
+MOs=Manufacturing orders
 MRPDescription=Üretim ve Üretim Siparişlerini (MO) yönetmek için modül.
 MRPArea=MRP Alanı
 MrpSetupPage=Setup of module MRP
