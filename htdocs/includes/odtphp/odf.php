@@ -141,6 +141,7 @@ class Odf
 			//}
 		}
 
+		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 
 		// Check if the value includes html tags
