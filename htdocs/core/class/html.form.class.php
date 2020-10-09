@@ -3607,7 +3607,7 @@ class Form
      *      @param  string	$htmlname       Name of the select field
      *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
      *      @param  int		$empty			1=can be empty, 0 else
-     * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
+     *      @param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
      *      @param  int     $active         Active or not, -1 = all
      *      @param  string  $morecss        Add more CSS on select tag
@@ -4700,7 +4700,7 @@ class Form
         {
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmode">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="token" value="'.newToken().'">';
             $this->selectTransportMode($selected, $htmlname, 2, $addempty, 0, 0, $active);
             print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             print '</form>';
