@@ -223,13 +223,14 @@ if ($object->id > 0)
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.$object->element.'&originid='.$object->id;
+	$out = '&amp;origin='.$object->element.'%40'.$object->module.'&amp;originid='.$object->id;
+	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
+	$out .= '&amp;backtopage='.urlencode($urlbacktopage);
 	$permok = $user->rights->agenda->myactions->create;
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok)
 	{
-		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') $out .= '&amp;socid='.$objthirdparty->id;
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
+		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";
