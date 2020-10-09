@@ -69,22 +69,9 @@ class IntracommReport extends CommonObject
      *
      * @param DoliDB $db Database handle
      */
-    public function __construct($db)
+    public function __construct(DoliDB $db)
     {
-        global $conf;
-
         $this->db = $db;
-
-		/*
-		parent::set_table(MAIN_DB_PREFIX.'deb_prodouane');
-		parent::add_champs('numero_declaration,entity','type=entier;');
-		parent::add_champs('type_declaration,periode,mode','type=chaine;');
-		parent::add_champs('content_xml','type=text;');
-		parent::add_champs('exporttype', array('type'=>'string', 'size'=>'10'));
-		parent::start();
-		parent::_init_vars();
-		*/
-
 		$this->exporttype = 'deb';
 	}
 
@@ -99,7 +86,7 @@ class IntracommReport extends CommonObject
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
 
-		global $db, $conf, $mysoc;
+		global $conf, $mysoc;
 
 		/**************Construction de quelques variables********************/
 		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
@@ -154,7 +141,7 @@ class IntracommReport extends CommonObject
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
-		global $db, $conf, $mysoc;
+		global $mysoc;
 
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" ?><fichier_des></fichier_des>');
 
@@ -185,13 +172,13 @@ class IntracommReport extends CommonObject
 	 */
 	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
-		global $db, $conf;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		$sql = $this->getSQLFactLines($type, $period_reference, $exporttype);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if ($resql) {
 			$i=1;
@@ -202,12 +189,12 @@ class IntracommReport extends CommonObject
 			}
 
 			if ($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
-				$categ_fraisdeport = new Categorie($db);
+				$categ_fraisdeport = new Categorie();
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
 			}
 
-			while ($res = $db->fetch_object($resql)) {
+			while ($res = $this->db->fetch_object($resql)) {
 				if ($exporttype == 'des')
 				{
 					$this->addItemXMlDes($declaration, $res, '', $i);
@@ -339,7 +326,7 @@ class IntracommReport extends CommonObject
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
 
-		global $db, $conf;
+		global $conf;
 
 		if ($type=='expedition') {
 			$table = 'facture';
@@ -376,8 +363,8 @@ class IntracommReport extends CommonObject
 						)
 					)';
 
-			$resql = $db->query($sql);
-			$ress = $db->fetch_object($resql);
+			$resql = $this->db->query($sql);
+			$ress = $this->db->fetch_object($resql);
 
 			$this->addItemXMl($declaration, $res, $ress->customcode, $i);
 
@@ -392,10 +379,8 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		global $db;
-
-		$resql = $db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
-		if ($resql) $res = $db->fetch_object($resql);
+		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
+		if ($resql) $res = $this->db->fetch_object($resql);
 
 		return ($res->max_numero_declaration + 1);
 	}
