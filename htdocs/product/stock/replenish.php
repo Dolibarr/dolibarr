@@ -630,7 +630,7 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 }
 
 if ($limit > 0 && $limit != $conf->liste_limit) {
-    $filters .= '&limit=' . urlencode($limit);
+    $filters .= '&limit='.urlencode($limit);
 }
 
 $param = (isset($type) ? '&type='.$type : '');
@@ -701,7 +701,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 print '<td class="liste_titre right">';
-if (! empty($conf->global->STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER)) {
+if (!empty($conf->global->STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER)) {
 	print $langs->trans('IncludeAlsoDraftOrders').'&nbsp;<input type="checkbox" id="draftorder" name="draftorder" '.(!empty($draftchecked) ? $draftchecked : '').'>';
 }
 print '</td>';
@@ -768,7 +768,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			}
 		}
 
-		$stockwarehouse=0;
+		$stockwarehouse = 0;
 		if ($usevirtualstock)
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.

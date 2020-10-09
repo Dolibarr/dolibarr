@@ -182,7 +182,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		    $sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 		}
-	    // Paiements of salaries
+	    // Payments of salaries
 		if (GETPOST('selectpaymentsofsalaries')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
 			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
@@ -203,7 +203,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 	    // Various payments
 		if (GETPOST('selectvariouspayment')) {
 			if (!empty($sql)) $sql .= " UNION ALL";
-			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
@@ -581,7 +581,7 @@ if (!empty($date_start) && !empty($date_stop))
     foreach ($listofchoices as $choice => $val) {
     	$param .= '&'.$choice.'='.(GETPOST($choice, 'int') ? 1 : 0);
     }
-    print '<form name="dl" action="?action=dl" method="POST" >'."\n";
+    print '<form name="dl" action="'.$_SERVER["PHP_SELF"].'?action=dl" method="POST">'."\n";
     print '<input type="hidden" name="token" value="'.currentToken().'">';
 
     echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
@@ -592,7 +592,7 @@ if (!empty($date_start) && !empty($date_stop))
     	print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
     }
 
-    print '<input class="butAction" type="submit" value="'.$langs->trans("Download").'" />';
+    print '<input class="butAction butDownload" type="submit" value="'.$langs->trans("Download").'" />';
     print '</form>'."\n";
 
     print '<br>';
@@ -606,13 +606,14 @@ if (!empty($date_start) && !empty($date_stop))
     print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
     print '<td>'.$langs->trans("Document").'</td>';
     print '<td>'.$langs->trans("Paid").'</td>';
-    print '<td align="right">'.$langs->trans("TotalHT").'</td>';
-    print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
-    print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
+    print '<td align="right">'.$langs->trans("TotalHT").($conf->multicurrency->enabled ? ' ('.$conf->currency.')' : '').'</td>';
+    print '<td align="right">'.$langs->trans("TotalTTC").($conf->multicurrency->enabled ? ' ('.$conf->currency.')' : '').'</td>';
+    print '<td align="right">'.$langs->trans("TotalVAT").($conf->multicurrency->enabled ? ' ('.$conf->currency.')' : '').'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td class="center">'.$langs->trans("Code").'</td>';
 	print '<td class="center">'.$langs->trans("Country").'</td>';
     print '<td class="center">'.$langs->trans("VATIntra").'</td>';
+    if ($conf->multicurrency->enabled) print '<td class="center">'.$langs->trans("Currency").'</td>';
     print '</tr>';
     if ($result)
     {
@@ -620,7 +621,11 @@ if (!empty($date_start) && !empty($date_stop))
 
         if (empty($TData))
         {
-            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
+            print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td>';
+            if (! empty($conf->multicurrency->enabled)) {
+            	print '<td></td>';
+            }
+            print '</tr>';
         } else {
             // Sort array by date ASC to calculate balance
 
@@ -647,7 +652,7 @@ if (!empty($date_start) && !empty($date_stop))
                 print dol_print_date($data['date'], 'day');
                 print "</td>\n";
 
-                // Date
+                // Date due
                 print '<td class="center">';
                 print dol_print_date($data['date_due'], 'day');
                 print "</td>\n";
@@ -658,10 +663,18 @@ if (!empty($date_start) && !empty($date_stop))
 				if ($data['item'] == 'Invoice') {
 					$invoice->id = $data['id'];
                 	$invoice->ref = $data['ref'];
+                	$invoice->total_ht = $data['amount_ht'];
+                	$invoice->total_ttc = $data['amount_ttc'];
+                	$invoice->total_tva = $data['amount_vat'];
+                	$invoice->multicurrency_code = $data['currency'];
                 	print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 				} elseif ($data['item'] == 'SupplierInvoice') {
                 	$supplier_invoice->id = $data['id'];
                 	$supplier_invoice->ref = $data['ref'];
+                	$supplier_invoice->total_ht = $data['amount_ht'];
+                	$supplier_invoice->total_ttc = $data['amount_ttc'];
+                	$supplier_invoice->total_tva = $data['amount_vat'];
+                	$supplier_invoice->multicurrency_code = $data['currency'];
                 	print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
 				} elseif ($data['item'] == 'ExpenseReport') {
                     $expensereport->id = $data['id'];
@@ -712,7 +725,7 @@ if (!empty($date_start) && !empty($date_stop))
                 // Total VAT
                 print '<td align="right">'.price($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'])."</td>\n";
 
-                print '<td>'.$data['thirdparty_name']."</td>\n";
+                print '<td class="tdoverflowmax150" title="'.$data['thirdparty_name'].'">'.$data['thirdparty_name']."</td>\n";
 
                 print '<td class="center">'.$data['thirdparty_code']."</td>\n";
 
@@ -730,6 +743,10 @@ if (!empty($date_start) && !empty($date_stop))
                     $totalVAT_debit -= $data['amount_vat'];
                 }
 
+                if (! empty($conf->multicurrency->enabled)) {
+                	print '<td class="center">'.$data['currency']."</td>\n";
+                }
+
                 print "</tr>\n";
             }
 
@@ -740,6 +757,9 @@ if (!empty($date_start) && !empty($date_stop))
             print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
             print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
             print '<td colspan="4"></td>';
+            if (! empty($conf->multicurrency->enabled)) {
+            	print '<td></td>';
+            }
             print "</tr>\n";
             // Total debits
             print '<tr class="liste_total">';
@@ -748,6 +768,9 @@ if (!empty($date_start) && !empty($date_stop))
             print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
             print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
             print '<td colspan="4"></td>';
+            if (! empty($conf->multicurrency->enabled)) {
+            	print '<td></td>';
+            }
             print "</tr>\n";
             // Balance
             print '<tr class="liste_total">';
@@ -756,6 +779,9 @@ if (!empty($date_start) && !empty($date_stop))
             print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
             print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
             print '<td colspan="4"></td>';
+            if (! empty($conf->multicurrency->enabled)) {
+            	print '<td></td>';
+            }
             print "</tr>\n";
         }
     }

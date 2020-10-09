@@ -12,7 +12,8 @@ NEW: Module Reception (for a more accurate management of your receptions) moved 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Properties ->contactid has been renamed into ->contact_id
+* Properties ->contactid have been renamed into ->contact_id
+* Properties ->titre have been renamed into ->title 
 * Property $paiementid in API 'api_supplier_invoices.php' has been renamed into into $payment_mode_id (english)
 * The deprecated subsitution key __SIGNATURE__ has been removed. Replace with __USER_SIGNATURE__ if you used the old syntax in
   your email templates. 
@@ -24,6 +25,7 @@ Following changes may create regressions for some external modules, but were nec
 * The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alphanohtml') so no html will be allowed. Use GETPOST(..., 'restricthtml') to accept HTML.
 * If you have links in your code with '&action=delete' as a parameter, you must also add '&token='.newToken() as another parameter to avoid CSRF protection errors.
 * The API addPayment for api_invoice has evolved to accept amount into a foreign currency. You must provide array(amount=>X,mutlicurrency_ammount=>Y) instead of amount.
+* The method select_thirdparty(), deprecated since 3.8, into html.form.class.php has been removed.
 
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
 FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename

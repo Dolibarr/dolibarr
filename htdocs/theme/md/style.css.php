@@ -5327,6 +5327,9 @@ a span.select2-chosen
 .select2-results {
 	max-height:	400px;
 }
+.select2-results__option {
+	word-break: break-word;
+}
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
@@ -6451,11 +6454,11 @@ if (is_object($db)) $db->close();
 ::-webkit-scrollbar {
 	width: 12px;
 }
-::-webkit-scrollbar-button {
-	background: #aaa;
-}
+/*::-webkit-scrollbar-button {
+	background: #bbb;
+}*/
 ::-webkit-scrollbar-track-piece {
-	background: #fff;
+	background: #f4f4f4;
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;

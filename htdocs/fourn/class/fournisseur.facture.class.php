@@ -702,7 +702,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->note_private			= $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;	// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->import_key = $obj->import_key;
 
 				//Incoterms
@@ -827,7 +827,7 @@ class FactureFournisseur extends CommonInvoice
 
 					// Accountancy
 					$line->code_ventilation = $obj->fk_code_ventilation;
-					$line->fk_accounting_account	= $obj->fk_code_ventilation;
+					$line->fk_accounting_account = $obj->fk_code_ventilation;
 
 					// Multicurrency
 					$line->fk_multicurrency = $obj->fk_multicurrency;
@@ -2286,7 +2286,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
 		if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-		$label = '<u>'.$langs->trans("SupplierInvoice").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierInvoice").'</u>';
 		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
 		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
 		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
@@ -2301,7 +2301,7 @@ class FactureFournisseur extends CommonInvoice
 		if (!empty($this->total_ht))
 			$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_tva))
-			$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+			$label .= '<br><b>'.$langs->trans('AmountVAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_ttc))
 			$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 		if ($moretitle) $label .= ' - '.$moretitle;

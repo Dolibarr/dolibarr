@@ -2423,14 +2423,14 @@ class Societe extends CommonObject
 
 		if (!empty($this->name))
 		{
-			$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->name;
-			if (!empty($this->name_alias)) $label .= ' ('.$this->name_alias.')';
+			$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
+			if (!empty($this->name_alias)) $label .= ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
 		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
 		if (!empty($this->country_code))
 			$label .= '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		if (!empty($this->tva_intra) || (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP) && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false))
-			$label .= '<br><b>'.$langs->trans('VATIntra').':</b> '.$this->tva_intra;
+			$label .= '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
 		if (!empty($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP))
 		{
 			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false) $label .= '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
@@ -2491,7 +2491,7 @@ class Societe extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($name, $maxlen) : $name);
+		if ($withpicto != 2) $result .= dol_escape_htmltag($maxlen ? dol_trunc($name, $maxlen) : $name);
 		$result .= $linkend;
 
 		global $action;

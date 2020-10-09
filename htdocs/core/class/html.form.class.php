@@ -1085,25 +1085,6 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return HTML code to select a company.
-	 *
-	 *  @param		int			$selected				Preselected products
-	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
-	 *  @param		int			$filter					Filter on thirdparty
-	 *  @param		int			$limit					Limit on number of returned lines
-	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
-	 * 	@param		int			$forcecombo				Force to load all values and output a standard combobox (with no beautification)
-	 *  @return		string								Return select box for thirdparty.
-	 *  @deprecated	3.8 Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
-	 */
-	public function select_thirdparty($selected = '', $htmlname = 'socid', $filter = '', $limit = 20, $ajaxoptions = array(), $forcecombo = 0)
-	{
-		// phpcs:enable
-		return $this->select_thirdparty_list($selected, $htmlname, $filter, 1, 0, $forcecombo, array(), '', 0, $limit);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 *  Output html form to select a third party
 	 *
 	 *	@param	string	$selected       		Preselected type
@@ -3460,6 +3441,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin && empty($noinfoadmin)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox($htmlname);
 	}
 
 
@@ -3529,6 +3511,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin && !$noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox('select'.$htmlname);
 	}
 
 
@@ -5315,6 +5298,7 @@ class Form
 		}
 
 		// Analysis of the pre-selection date
+		$reg = array();
 		if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/', $set_time, $reg))	// deprecated usage
 		{
 			// Date format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
@@ -5807,7 +5791,7 @@ class Form
 	 * @param	int				$disabled			1=Html component is disabled
 	 * @param	string	        $selected_input_value	Value of preselected input text (for use with ajax)
 	 * @return	string								Return HTML string
-	 * @see selectForFormsList() select_thirdparty()
+	 * @see selectForFormsList() select_thirdparty_list()
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{

@@ -23,7 +23,7 @@ create table llx_socpeople
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   datec				datetime,
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)

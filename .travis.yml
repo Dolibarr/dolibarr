@@ -6,7 +6,8 @@
 os: linux
 dist: xenial
 #dist: bionic
-sudo: required
+# Deprecated: The key sudo has no effect anymore.
+#sudo: required
 
 language: php
 
