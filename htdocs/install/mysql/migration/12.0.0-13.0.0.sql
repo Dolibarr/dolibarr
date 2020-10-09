@@ -358,4 +358,7 @@ ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
 
 DELETE FROM llx_const WHERE name in ('MAIN_INCLUDE_ZERO_VAT_IN_REPORTS');
 
+UPDATE llx_projet_task_time SET tms = null WHERE tms = 0;
+ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
