@@ -405,7 +405,7 @@ class ExpenseReport extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->status = 0;
-		$this->fk_statut = 0;	// deprecated
+		$this->fk_statut = 0; // deprecated
 
 		// Clear fields
 		$this->fk_user_author     = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
@@ -1353,7 +1353,7 @@ class ExpenseReport extends CommonObject
 			$sql .= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql))
 			{
-				$this->fk_statut = 99;	// deprecated
+				$this->fk_statut = 99; // deprecated
 				$this->status = 99;
 				$this->fk_user_refuse = $fuser->id;
 				$this->detail_refuse = $details;

@@ -1446,8 +1446,10 @@ if ($action == 'create' || $action == 'adduserldap')
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication))
 			{
-				if ($object->pass) $valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
-				else {
+				if ($object->pass) {
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+					$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+				} else {
 					if ($user->admin && $user->id == $object->id) {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
 						//$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';

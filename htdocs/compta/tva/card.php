@@ -98,7 +98,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	}
     $object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'restricthtml');
+	$object->note_private = GETPOST("note", 'restricthtml');
 
 	if (empty($object->datep))
 	{
@@ -239,7 +239,7 @@ if ($action == 'create')
     print '<label for="radiorefund">';
     print '<input type="radio" id="radiorefund" data-label="'.$langs->trans('VATRefund').'" class="flat" name="refund" value="1"'.($refund ? ' checked="checked"' : '').'>';
     print '&nbsp;';
-    print $langs->trans("Refund");
+    print $langs->trans("PaymentBack");
     print '</label>';
     print '</div>';
     print "<br>\n";

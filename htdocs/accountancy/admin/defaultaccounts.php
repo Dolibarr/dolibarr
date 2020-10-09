@@ -47,9 +47,9 @@ $action = GETPOST('action', 'aZ09');
 
 
 $list_account_main = array(
-    'ACCOUNTING_ACCOUNT_CUSTOMER',
-    'ACCOUNTING_ACCOUNT_SUPPLIER',
-    'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
+	'ACCOUNTING_ACCOUNT_CUSTOMER',
+	'ACCOUNTING_ACCOUNT_SUPPLIER',
+	'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
 $list_account = array();
@@ -120,9 +120,9 @@ if ($action == 'update') {
 
 		$constvalue = GETPOST($constname, 'alpha');
 
-	    if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error++;
-	    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -159,20 +159,20 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("ThirdParties").' | '.$langs->trans("Users").'</td><td></td></tr>';
 
 foreach ($list_account_main as $key) {
-    print '<tr class="oddeven value">';
-    // Param
-    $label = $langs->trans($key);
-    $keydesc = $key.'_Desc';
+	print '<tr class="oddeven value">';
+	// Param
+	$label = $langs->trans($key);
+	$keydesc = $key.'_Desc';
 
-    $htmltext = $langs->trans($keydesc);
-    print '<td class="fieldrequired" width="50%">';
-    print $form->textwithpicto($label, $htmltext);
-    print '</td>';
-    // Value
-    print '<td>'; // Do not force class=right, or it align also the content of the select box
-    print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-    print '</td>';
-    print '</tr>';
+	$htmltext = $langs->trans($keydesc);
+	print '<td class="fieldrequired" width="50%">';
+	print $form->textwithpicto($label, $htmltext);
+	print '</td>';
+	// Value
+	print '<td>'; // Do not force class=right, or it align also the content of the select box
+	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	print '</td>';
+	print '</tr>';
 }
 
 

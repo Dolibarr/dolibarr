@@ -84,8 +84,8 @@ function getEntity($element, $shared = 1, $currentobject = null)
 
 	// fix different element names (France to English)
 	switch ($element) {
-		case 'contrat':			$element = 'contract';			break;	// "/contrat/class/contrat.class.php"
-		case 'order_supplier':	$element = 'supplier_order';	break;	// "/fourn/class/fournisseur.commande.class.php"
+		case 'contrat':			$element = 'contract'; break; // "/contrat/class/contrat.class.php"
+		case 'order_supplier':	$element = 'supplier_order'; break; // "/fourn/class/fournisseur.commande.class.php"
 	}
 
 	if (is_object($mc))
@@ -1209,6 +1209,38 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	}
 }
 
+/**
+ *	Return HTML code to output a button to open a dialog popup box.
+ *  Such buttons must be included inside a HTML form.
+ *
+ *	@param	string	$name				A name for the html component
+ *	@param	string	$label 	    		Label of button
+ *	@param  string	$buttonstring  		button string
+ *	@param  string	$url				Url to open
+ *  @param	string	$disabled			Disabled text
+ * 	@return	string						HTML component with button
+ */
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
+{
+	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<script language="javascript">
+				 jQuery(document).ready(function () {
+					 jQuery(".button_'.$name.'").click(function () {
+						 var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
+						 .dialog({
+						 	autoOpen: false,
+						 	modal: true,
+						 	height: (window.innerHeight - 150),
+						 	width: \'80%\',
+						 	title: "'.dol_escape_js($label).'"
+						 });
+						 $dialog.dialog(\'open\');
+					 });
+				 });
+				 </script>';
+	return $out;
+}
 
 /**
  *	Show tab header of a card
@@ -1224,6 +1256,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
  * 	@return	void
+ *  @deprecated Use print dol_get_fiche_head() instead
  */
 function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0, $moretabssuffix = '')
 {
@@ -1371,7 +1404,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) { $tabsname = str_replace("@", "", $picto); }
 		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';	// Do not use "reposition" class in the "More".
+		$out .= '<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
 		$out .= '</div>';
@@ -1382,7 +1415,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= "$('#moretabs".$tabsname."').mouseenter( function() {
 			var x = this.offsetLeft, y = this.offsetTop;
 			console.log('mouseenter ".$left." x='+x+' y='+y+' window.innerWidth='+window.innerWidth);
-			if ((window.innerWidth - x) < ".($widthofpopup+10).") {
+			if ((window.innerWidth - x) < ".($widthofpopup + 10).") {
 				$('#moretabsList".$tabsname."').css('".$right."','8px');
 			}
 			$('#moretabsList".$tabsname."').css('".$left."','auto');
@@ -2775,7 +2808,7 @@ function getUserRemoteIP()
 			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];	// value is clean here
+		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here
 	}
 	return $ip;
 }
@@ -3100,7 +3133,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title',
 				'help', 'holiday',
 				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
-				'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
+				'map-marker-alt', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
@@ -3114,7 +3147,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
 				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
 				'off', 'on', 'order',
-				'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'play', 'playdisabled', 'previous', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
@@ -3148,7 +3181,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'email'=>'at',
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
-				'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
+				'member'=>'users', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
+				'trip'=>'wallet', 'group'=>'users',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
@@ -3159,7 +3193,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
 				'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
 				'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
@@ -4015,7 +4049,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	}
 
 	// Return a http error code if possible
-	if (! headers_sent()) {
+	if (!headers_sent()) {
 		http_response_code(500);
 	}
 
@@ -4342,6 +4376,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle right">';
+	print '<input type="hidden" name="pageplusoneold" value="'.($page+1).'">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
@@ -7800,7 +7835,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 					$numnewcrit = price2num($newcrit);
 					if (is_numeric($numnewcrit))
 					{
-						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit);	// should be a numeric
+						$newres .= ($i2 > 0 ? ' OR ' : '').$field.' '.$operator.' '.$db->sanitize($numnewcrit); // should be a numeric
 					} else {
 						$newres .= ($i2 > 0 ? ' OR ' : '').'1 = 2'; // force false
 					}
@@ -7808,7 +7843,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 			} elseif ($mode == 2 || $mode == -2)
 			{
-				$crit = preg_replace('/[^0-9,]/', '', $crit);	// ID are always integer
+				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$field." ".($mode == -2 ? 'NOT ' : '');
 				$newres .= $crit ? "IN (".$db->sanitize($db->escape($crit)).")" : "IN (0)";
 				if ($mode == -2) $newres .= ' OR '.$field.' IS NULL';
@@ -8336,7 +8371,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 
 
 /**
- * Function dolGetStatus
+ * Output the badge of a status.
  *
  * @param   string  $statusLabel       Label of badge no html : use in alt attribute for accessibility
  * @param   string  $statusLabelShort  Short label of badge no html
@@ -8344,7 +8379,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  * @param   string  $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
  * @param   int	    $displayMode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
  * @param   string  $url               The url for link
- * @param   array   $params            Various params for future : recommended rather than adding more function arguments
+ * @param   array   $params            Various params. Example: array('tooltip'=>'...', 'badgeParams'=>...)
  * @return  string                     Html status string
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
@@ -8413,7 +8448,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
-		$dolGetBadgeParams['attr']['title'] = $statusLabel;
+		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : $params['tooltip'];
 
 		if ($displayMode == 3) {
 			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
@@ -8946,8 +8981,8 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 
 	if ($method == -1) {
 		$method = 0;
-		if (! empty($conf->global->MAIN_FORCE_READFILE_WITH_FREAD)) $method = 1;
-		if (! empty($conf->global->MAIN_FORCE_READFILE_WITH_STREAM_COPY)) $method = 2;
+		if (!empty($conf->global->MAIN_FORCE_READFILE_WITH_FREAD)) $method = 1;
+		if (!empty($conf->global->MAIN_FORCE_READFILE_WITH_STREAM_COPY)) $method = 2;
 	}
 
 	// Be sure we don't have output buffering enabled to have readfile working correctly

@@ -16,7 +16,9 @@
 	color: #<?php echo $colortextbackhmenu; ?>;
 }
 
-
+.fa-15x {
+    font-size: 1.5em;
+}
 
 div.mainmenu.ticket::before {
     content: "\f3ff";

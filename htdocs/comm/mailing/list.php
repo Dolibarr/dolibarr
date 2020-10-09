@@ -238,7 +238,7 @@ if ($resql)
 		print $email->getNomUrl(1);
 		print '</td>';
 
-		print '<td>'.$obj->titre.'</td>';
+		print '<td>'.$obj->title.'</td>';
 		// Date creation
 
 		print '<td class="center">';

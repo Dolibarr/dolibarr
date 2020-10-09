@@ -231,7 +231,7 @@ else print "var received=0;";
 <div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
 
 <div class="paymentbordline paymentbordlinetotal">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code);?></span></span></center>
+	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
 <div class="paymentbordline paymentbordlineremain">
@@ -245,7 +245,7 @@ else print "var received=0;";
 	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change2" class="change2" value="0"></span></center>
 </div>
 <?php
-if (! empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 	print '<div class="paymentbordline paddingtop paddingbottom">
 	<center>';
 	$filter = '';

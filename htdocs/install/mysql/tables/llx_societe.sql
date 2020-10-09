@@ -114,7 +114,7 @@ create table llx_societe
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
 
-  tms                      timestamp,									-- last modification date
+  tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
   datec	                   datetime,                            		-- creation date
   fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
   fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info

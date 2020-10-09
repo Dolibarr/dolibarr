@@ -87,7 +87,7 @@ abstract class DoliDB implements Database
 	 *   @param	    int		$param      	Date TMS to convert
 	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-    public function idate($param, $tzoutput = 'tzserver')
+    public function idate($param)
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", 'tzserver');

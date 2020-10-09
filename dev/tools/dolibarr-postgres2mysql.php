@@ -357,8 +357,8 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = str_replace(" time with time zone", " time", $line);
 			$line = str_replace(" time without time zone", " time", $line);
 
-			$line = str_replace(" timestamp DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP", $line);
-			$line = str_replace(" timestamp without time zone DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP", $line);
+			$line = str_replace(" timestamp DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", $line);
+			$line = str_replace(" timestamp without time zone DEFAULT now()", " timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", $line);
 
 			if (strstr($line, "auto_increment") || preg_match('/ rowid int/', $line) || preg_match('/ id int/', $line)) {
 				$field = getfieldname($line);
