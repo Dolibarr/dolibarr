@@ -51,6 +51,7 @@ if (!empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ld
 if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (!empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->stock->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 $id = GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
@@ -96,6 +97,7 @@ $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'))
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
+if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -1203,7 +1205,9 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		print '<input size="30" type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
+		$accountancy_code = (GETPOSTISSET('accountancy_code') ? GETPOST('accountancy_code', 'alpha') : $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
+		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
+		// print '<input size="30" type="text" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
 		print '</td></tr>';
 	}
 
@@ -2558,7 +2562,8 @@ else
 				print '<td>';
 				if ($caneditfield)
 				{
-					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					//print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print $formaccounting->select_account($object->accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
 				}
 				else
 				{
