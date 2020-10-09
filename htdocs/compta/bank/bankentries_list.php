@@ -633,7 +633,7 @@ if ($resql)
 		print '</div>';
 
 		// Show last bank statements
-		$nbmax = 15; // We accept to show last 15 receipts (so we can have more than one year)
+		$nbmax = 12; // We show last 12 receipts (so we can have more than one year)
 		$liste = "";
 		$sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account=".$object->id." AND num_releve IS NOT NULL";
