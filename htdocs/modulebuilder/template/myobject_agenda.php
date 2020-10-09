@@ -223,15 +223,15 @@ if ($object->id > 0)
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.$object->element.'%40'.$object->module.'&originid='.$object->id;
+	$out = '&origin='.urlencode($object->element.'@'.$object->module).'&originid='.urlencode($object->id);
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
-	$out .= '&amp;backtopage='.urlencode($urlbacktopage);
+	$out .= '&backtopage='.urlencode($urlbacktopage);
 	$permok = $user->rights->agenda->myactions->create;
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok)
 	{
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-		if (get_class($objthirdparty) == 'Societe') $out .= '&amp;socid='.$objthirdparty->id;
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;percentage=-1';
+		if (get_class($objthirdparty) == 'Societe') $out .= '&socid='.urlencode($objthirdparty->id);
+		$out .= (!empty($objcon->id) ? '&contactid='.urlencode($objcon->id) : '').'&percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";
