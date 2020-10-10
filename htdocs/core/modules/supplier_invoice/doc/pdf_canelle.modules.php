@@ -134,7 +134,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->name = "canelle";
 		$this->description = $langs->trans('SuppliersInvoiceModel');
 
-		// Dimension page
+		// Page dimensions
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -145,12 +145,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1; // Affiche mode reglement
-		$this->option_condreg = 1; // Affiche conditions reglement
-		$this->option_codeproduitservice = 1; // Affiche code produit-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1; // Display payment mode
+		$this->option_condreg = 1; // Display payment terms
+		$this->option_codeproduitservice = 1; // Display product-service code
+		$this->option_multilang = 1; // Available in several languages
 
 		// Define column position
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -489,7 +489,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collection of totals by VAT value in $this->tva["taux"]=total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne = $object->lines[$i]->total_tva;
 
@@ -668,7 +668,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->atleastoneratenotnull = 0;
 		foreach ($this->tva as $tvakey => $tvaval)
 		{
-			if ($tvakey > 0)    // On affiche pas taux 0
+			if ($tvakey > 0)    // We do not display rate 0
 			{
 				$this->atleastoneratenotnull++;
 
@@ -1209,7 +1209,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
