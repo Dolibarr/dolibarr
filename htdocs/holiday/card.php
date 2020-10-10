@@ -147,12 +147,26 @@ if (empty($reshook))
 			$valideur = GETPOST('valideur', 'int');
 			$description = trim(GETPOST('description', 'restricthtml'));
 
+			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->writeall_advance))) {
+				$error++;
+				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+			} else {
+				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+					if (! in_array($fuserid, $childids)) {
+						$error++;
+						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+						$action = 'create';
+					}
+				}
+			}
+
 			// If no type
 			if ($type <= 0)
 			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// If no start date
@@ -160,21 +174,21 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 			// If no end date
 			if (empty($date_fin))
 			{
 				setEventMessages($langs->trans("NoDateFin"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 			// If start date after end date
 			if ($date_debut > $date_fin)
 			{
 				setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// Check if there is already holiday for this period
@@ -183,16 +197,16 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// If there is no Business Days within request
 			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 			if ($nbopenedday < 0.5)
 			{
-				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');		// No working day
 				$error++;
-				$action = 'add';
+				$action = 'create';
 			}
 
 			// If no validator designated
@@ -868,15 +882,15 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 {
-	// Si l'utilisateur n'a pas le droit de faire une demande
-	if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance))))
+	// If user has no permission to create a leave
+	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance))))
 	{
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
-		// Formulaire de demande de congés payés
+		// Form to add a leave request
 		print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
-		// Si il y a une erreur
+		// Error management
 		if (GETPOST('error')) {
 			switch (GETPOST('error')) {
 				case 'datefin' :
