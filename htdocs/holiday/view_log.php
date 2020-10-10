@@ -25,9 +25,16 @@
  */
 
 require '../main.inc.php';
+
+// Security check (access forbidden for external user too)
+if (empty($user->rights->holiday->define_holiday) || $user->socid > 0) {
+	accessforbidden();
+}
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $action             = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction         = GETPOST('massaction', 'alpha');												// The bulk action (combo box choice into lists)
@@ -39,15 +46,15 @@ $contextpage        = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ')
 $backtopage         = GETPOST('backtopage', 'alpha');												// Go back to a dedicated page
 $optioncss          = GETPOST('optioncss', 'aZ');													// Option for the css output (always '' except when 'print')
 
-$search_id          = GETPOST('search_id', 'alpha');
-$search_prev_solde  = GETPOST('search_prev_solde', 'alpha');
-$search_new_solde   = GETPOST('search_new_solde', 'alpha');
-$year               = GETPOST('year');
-if (empty($year))
-{
-    $tmpdate = dol_getdate(dol_now());
-    $year = $tmpdate['year'];
-}
+$search_id          = GETPOST('search_id', 'alphanohtml');
+$search_month       = GETPOST('search_month', 'int');
+$search_year        = GETPOST('search_year', 'int');
+$search_employee    = GETPOST('search_employee', 'int');
+$search_validator   = GETPOST('search_validator', 'int');
+$search_description = GETPOST('search_description', 'alphanohtml');
+$search_type        = GETPOST('search_type', 'int');
+$search_prev_solde  = GETPOST('search_prev_solde', 'alphanohtml');
+$search_new_solde   = GETPOST('search_new_solde', 'alphanohtml');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -60,10 +67,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="cpl.rowid";
 if (! $sortorder) $sortorder="DESC";
-
-
-// Protection if external user
-if ($user->socid > 0) accessforbidden();
 
 // Si l'utilisateur n'a pas le droit de lire cette page
 if (!$user->rights->holiday->read_all) accessforbidden();
@@ -92,81 +95,126 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+if (empty($reshook)) {
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
-        $search_id = '';
-        $toselect = '';
-        $search_array_options = array();
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
+		$search_month = '';
+		$search_year = '';
+		$search_employee = '';
+		$search_validator = '';
+		$search_description = '';
+		$search_type = '';
+		$search_prev_solde = '';
+		$search_new_solde = '';
+		$toselect = '';
+		$search_array_options = array();
+	}
 
-    if (GETPOST('button_removefilter_x', 'alpha')
-        || GETPOST('button_removefilter.x', 'alpha')
-        || GETPOST('button_removefilter', 'alpha')
-        || GETPOST('button_search_x', 'alpha')
-        || GETPOST('button_search.x', 'alpha')
-        || GETPOST('button_search', 'alpha'))
-    {
-        $massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
-    }
+	if (GETPOST('button_removefilter_x', 'alpha')
+		|| GETPOST('button_removefilter.x', 'alpha')
+		|| GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha')
+		|| GETPOST('button_search.x', 'alpha')
+		|| GETPOST('button_search', 'alpha'))
+	{
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
 
-    // Mass actions
-    /*$objectclass='MyObject';
-    $objectlabel='MyObject';
-    $permissiontoread = $user->rights->mymodule->read;
-    $permissiontodelete = $user->rights->mymodule->delete;
-    $uploaddir = $conf->mymodule->dir_output;
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    */
+	// Mass actions
+	/*$objectclass='MyObject';
+	$objectlabel='MyObject';
+	$permissiontoread = $user->rights->mymodule->read;
+	$permissiontodelete = $user->rights->mymodule->delete;
+	$uploaddir = $conf->mymodule->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	*/
 }
 
 
 // Definition of fields for lists
 $arrayfields = array(
-    'cpl.rowid'=>array('label'=>$langs->trans("ID"), 'checked'=>1),
-    'cpl.date_action'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-    'cpl.fk_user_action'=>array('label'=>$langs->trans("ActionByCP"), 'checked'=>1),
-    'cpl.fk_user_update'=>array('label'=>$langs->trans("UserUpdateCP"), 'checked'=>1),
-    'cpl.type_action'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
-    'cpl.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-    'cpl.prev_solde'=>array('label'=>$langs->trans("PrevSoldeCP"), 'checked'=>1),
-    'variation'=>array('label'=>$langs->trans("Variation"), 'checked'=>1),
-    'cpl.new_solde'=>array('label'=>$langs->trans("NewSoldeCP"), 'checked'=>1),
+	'cpl.rowid'=>array('label'=>$langs->trans("ID"), 'checked'=>1),
+	'cpl.date_action'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
+	'cpl.fk_user_action'=>array('label'=>$langs->trans("ActionByCP"), 'checked'=>1),
+	'cpl.fk_user_update'=>array('label'=>$langs->trans("UserUpdateCP"), 'checked'=>1),
+	'cpl.type_action'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
+	'cpl.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+	'cpl.prev_solde'=>array('label'=>$langs->trans("PrevSoldeCP"), 'checked'=>1),
+	'variation'=>array('label'=>$langs->trans("Variation"), 'checked'=>1),
+	'cpl.new_solde'=>array('label'=>$langs->trans("NewSoldeCP"), 'checked'=>1),
 );
+
 
 /*
  * View
  */
 
 $form = new Form($db);
-
+$formother = new FormOther($db);
+$holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
-llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
+llxHeader('', $langs->trans('CPTitreMenu'));
 
-$sqlwhere = " AND date_action BETWEEN ".
-$sqlwhere.= "'".$db->idate(dol_get_first_day($year, 1, 1))."'";
-$sqlwhere.= " AND ";
-$sqlwhere.= "'".$db->idate(dol_get_last_day($year, 12, 1))."'";
+$sqlwhere = '';
 
-if ($search_id != '')         $sqlwhere.= natural_search('rowid', $search_id, 1);
-if ($search_prev_solde != '') $sqlwhere.= natural_search('prev_solde', $search_prev_solde, 1);
-if ($search_new_solde != '')  $sqlwhere.= natural_search('new_solde', $search_new_solde, 1);
+if (!empty($search_year) && $search_year > 0) {
+	if (!empty($search_month) && $search_month > 0) {
+		$from_date  = dol_get_first_day($search_year, $search_month, 1);
+		$to_date    = dol_get_last_day($search_year, $search_month, 1);
+	} else {
+		$from_date  = dol_get_first_day($search_year, 1, 1);
+		$to_date    = dol_get_last_day($search_year, 12, 1);
+	}
+
+	$sqlwhere .= "AND date_action BETWEEN '".$db->idate($from_date)."' AND '".$db->idate($to_date)."'";
+}
+
+if (!empty($search_id) && $search_id > 0)                   $sqlwhere.= natural_search('rowid', $search_id, 1);
+if (!empty($search_validator) && $search_validator > 0)     $sqlwhere.= natural_search('fk_user_action', $search_validator, 1);
+if (!empty($search_employee) && $search_employee > 0)       $sqlwhere.= natural_search('fk_user_update', $search_employee, 1);
+if (!empty($search_description))                            $sqlwhere.= natural_search('type_action', $search_description);
+if (!empty($search_type) && $search_type > 0)               $sqlwhere.= natural_search('fk_type', $search_type, 1);
+if (!empty($search_prev_solde))                             $sqlwhere.= natural_search('prev_solde', $search_prev_solde, 1);
+if (!empty($search_new_solde))                              $sqlwhere.= natural_search('new_solde', $search_new_solde, 1);
 
 $sqlorder = $db->order($sortfield, $sortorder);
 
 // Recent changes are more important than old changes
 $log_holiday = $object->fetchLog($sqlorder, $sqlwhere); // Load $object->logs
 
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	//TODO: $result = $db->query($sql);
+	//TODO: $nbtotalofrecords = $db->num_rows($result);
+	$nbtotalofrecords = is_array($object->logs) ? count($object->logs) : 0;
+
+	if (($page * $limit) > $nbtotalofrecords) { // if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+}
+
+// TODO: $num = $db->num_rows($resql);
+$num = is_array($object->logs) ? count($object->logs) : 0;
+
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-if ($search_id) $param = '&search_id='.urlencode($search_id);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"])   $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit)                     $param .= '&limit='.urlencode($limit);
+if (!empty($search_id))                                             $param .= '&search_statut='.urlencode($search_statut);
+if (!empty($search_month) && $search_month > 0)                     $param .= '&search_month='.urlencode($search_month);
+if (!empty($search_year) && $search_year > 0)                       $param .= '&search_year='.urlencode($search_year);
+if (!empty($search_validator) && $search_validator > 0)             $param .= '&search_validator='.urlencode($search_validator);
+if (!empty($search_employee) && $search_employee > 0)               $param .= '&search_employee='.urlencode($search_employee);
+if (!empty($search_description))                                    $param .= '&search_description='.urlencode($search_description);
+if (!empty($search_type) && $search_type > 0)                       $param .= '&search_type='.urlencode($search_type);
+if (!empty($search_prev_solde))                                     $param .= '&search_prev_solde='.urlencode($search_prev_solde);
+if (!empty($search_new_solde))                                      $param .= '&search_new_solde='.urlencode($search_new_solde);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -178,44 +226,23 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$pagination = '<div class="pagination">';
-$pagination.= '<ul>';
-$pagination.= '<li class="pagination">';
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request', '', $user->rights->holiday->write);
+print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-$pagination.= '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year - 1).$param.'">';
-$pagination.= '<i class="fa fa-chevron-left" title="Previous"></i>';
-$pagination.= '</a>';
-
-$pagination.= '<li class="pagination">';
-$pagination.= '<span class="active">'.$langs->trans("Year").' '.$year.'</span>';
-$pagination.= '</li>';
-
-$pagination.= '<li class="pagination">';
-$pagination.= '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year + 1).$param.'">';
-$pagination.= '<i class="fa fa-chevron-right" title="Next"></i>';
-$pagination.= '</a>';
-$pagination.= '</li>';
-
-$pagination.= '</li>';
-$pagination.= '</ul>';
-$pagination.= '</div>';
-
-print load_fiche_titre($langs->trans('LogCP'), $pagination, 'title_hrm.png');
-
-print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
+print '<div class="info">'.$langs->trans('LastUpdateCP').': ';
 
 $lastUpdate = $object->getConfCP('lastUpdate');
-if ($lastUpdate)
-{
-    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($object->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
-    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+if ($lastUpdate) {
+	$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+	$yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
+	print '<strong>'.dol_print_date($db->jdate($object->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
+	print '<br>';
+	print $langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>';
+} else {
+	print $langs->trans('None');
 }
-else {
-    print $langs->trans('None');
-}
-print "</div><br>\n";
+print '</div>';
+print '<br>';
 
 $moreforfilter = '';
 
@@ -225,20 +252,84 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 $selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">';
 
-print '<tbody>';
+print '<tr class="liste_titre_filter">';
 
-print '<tr class="liste_titre">';
-if (!empty($arrayfields['cpl.rowid']['checked'])) print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
-if (!empty($arrayfields['cpl.date_action']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cpl.fk_user_action']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cpl.fk_user_update']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cpl.type_action']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cpl.fk_type']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cpl.prev_solde']['checked'])) print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_prev_solde" value="'.$search_prev_solde.'"></td>';
-if (!empty($arrayfields['variation']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cpl.new_solde']['checked'])) print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_new_solde" value="'.$search_new_solde.'"></td>';
+// Filter Id
+if (!empty($arrayfields['cpl.rowid']['checked'])) {
+	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+}
+
+// Filter: Date
+if (!empty($arrayfields['cpl.date_action']['checked'])) {
+	print '<td class="liste_titre right">';
+	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+	print $formother->selectyear($search_year, 'search_year', 1, 10, 5, 0, 0, '', 'maxwidth200', true);
+	print '</td>';
+}
+
+// Filter: Validator
+if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
+	$validator = new UserGroup($db);
+	$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+	$valideurobjects = $validator->listUsersForGroup($excludefilter);
+	$valideurarray = array();
+
+	foreach ($valideurobjects as $val) {
+		$valideurarray[$val->id] = $val->id;
+	}
+
+	print '<td class="liste_titre">';
+	print $form->select_dolusers($search_validator, "search_validator", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+	print '</td>';
+}
+
+// Filter: User
+if (!empty($arrayfields['cpl.fk_user_update']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+	print '</td>';
+}
+
+// Filter: Description
+if (!empty($arrayfields['cpl.type_action']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="maxwidth50" name="search_description" value="'.$search_description.'">';
+	print '</td>';
+}
+
+// Filter: Type
+if (!empty($arrayfields['cpl.fk_type']['checked'])) {
+	foreach ($alltypeleaves as $key => $val) {
+		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
+		$arraytypeleaves[$val['rowid']] = $labeltoshow;
+	}
+
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+	print '</td>';
+}
+
+// Filter: Previous balance
+if (!empty($arrayfields['cpl.prev_solde']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="maxwidth50" name="search_prev_solde" value="'.$search_prev_solde.'">';
+	print '</td>';
+}
+
+// Filter: Variation (only placeholder)
+if (!empty($arrayfields['variation']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+
+// Filter: New Balance
+if (!empty($arrayfields['cpl.new_solde']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="maxwidth50" name="search_new_solde" value="'.$search_new_solde.'">';
+	print '</td>';
+}
+
 // Action column
 print '<td class="liste_titre maxwidthsearch">';
 $searchpicto = $form->showFilterButtons();
@@ -256,51 +347,102 @@ if (!empty($arrayfields['cpl.fk_type']['checked'])) print_liste_field_titre($arr
 if (!empty($arrayfields['cpl.prev_solde']['checked'])) print_liste_field_titre($arrayfields['cpl.prev_solde']['label'], $_SERVER["PHP_SELF"], 'prev_solde', '', '', '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['variation']['checked'])) print_liste_field_titre($arrayfields['variation']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['cpl.new_solde']['checked'])) print_liste_field_titre($arrayfields['cpl.new_solde']['label'], $_SERVER["PHP_SELF"], 'new_solde', '', '', '', $sortfield, $sortorder, 'right ');
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print '</tr>';
 
+// TODO: $i = 0;
+$i = 1;
 
-foreach ($object->logs as $logs_CP)
+while ($i < min($num, $limit))
 {
-    $user_action = new User($db);
-    $user_action->fetch($logs_CP['fk_user_action']);
+	//TODO: $obj = $db->fetch_object($resql);
+	$obj = next($object->logs);
 
-    $user_update = new User($db);
-    $user_update->fetch($logs_CP['fk_user_update']);
+	$holidaylogstatic->id				= $obj['rowid'];
+	$holidaylogstatic->date				= $obj['date_action'];
+	$holidaylogstatic->validator		= $obj['fk_user_action'];
+	$holidaylogstatic->employee			= $obj['fk_user_update'];
+	$holidaylogstatic->description		= $obj['type_action'];
+	$holidaylogstatic->type				= $obj['fk_type'];
+	$holidaylogstatic->balance_previous	= $obj['prev_solde'];
+	$holidaylogstatic->balance_new		= $obj['new_solde'];
 
-    $delta = price2num($logs_CP['new_solde'] - $logs_CP['prev_solde'], 5);
-    $detasign = ($delta > 0 ? '+' : '');
+	print '<tr class="oddeven">';
 
-    print '<tr class="oddeven">';
-    if (!empty($arrayfields['cpl.rowid']['checked'])) print '<td>'.$logs_CP['rowid'].'</td>';
-    if (!empty($arrayfields['cpl.date_action']['checked'])) print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-    if (!empty($arrayfields['cpl.fk_user_action']['checked'])) print '<td>'.$user_action->getNomUrl(-1).'</td>';
-    if (!empty($arrayfields['cpl.fk_user_update']['checked'])) print '<td>'.$user_update->getNomUrl(-1).'</td>';
-    if (!empty($arrayfields['cpl.type_action']['checked'])) print '<td>'.$logs_CP['type_action'].'</td>';
-    if (!empty($arrayfields['cpl.fk_type']['checked']))
-    {
-        print '<td>';
-        $label = (($alltypeleaves[$logs_CP['fk_type']]['code'] && $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) != $alltypeleaves[$logs_CP['fk_type']]['code']) ? $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) : $alltypeleaves[$logs_CP['fk_type']]['label']);
-        print $label ? $label : $logs_CP['fk_type'];
-        print '</td>';
-    }
+	// Id
+	if (!empty($arrayfields['cpl.rowid']['checked'])) {
+		print '<td>'.$holidaylogstatic->id.'</td>';
+	}
 
-    if (!empty($arrayfields['cpl.prev_solde']['checked'])) print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'], 5).' '.$langs->trans('days').'</td>';
-    if (!empty($arrayfields['variation']['checked'])) print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
-    if (!empty($arrayfields['cpl.new_solde']['checked'])) print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'], 5).' '.$langs->trans('days').'</td>';
-    print '<td></td>';
-    print '</tr>'."\n";
+	// Date
+	if (!empty($arrayfields['cpl.date_action']['checked'])) {
+		print '<td style="text-align: center">'.$holidaylogstatic->date.'</td>';
+	}
+
+	// Validator
+	if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
+		$user_action = new User($db);
+		$user_action->fetch($holidaylogstatic->validator);
+		print '<td>'.$user_action->getNomUrl(-1).'</td>';
+	}
+
+	// Emloyee
+	if (!empty($arrayfields['cpl.fk_user_update']['checked'])) {
+		$user_update = new User($db);
+		$user_update->fetch($holidaylogstatic->employee);
+		print '<td>'.$user_update->getNomUrl(-1).'</td>';
+	}
+
+	// Description
+	if (!empty($arrayfields['cpl.type_action']['checked'])) {
+		print '<td>'.$holidaylogstatic->description.'</td>';
+	}
+
+	// Type
+	if (!empty($arrayfields['cpl.fk_type']['checked'])) {
+		if ($alltypeleaves[$holidaylogstatic->type]['code'] && $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']) != $alltypeleaves[$holidaylogstatic->type]['code']) {
+			$label = $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']);
+		} else {
+			$label = $alltypeleaves[$holidaylogstatic->type]['label'];
+		}
+
+		print '<td>';
+		print $label ? $label : $holidaylogstatic->type;
+		print '</td>';
+	}
+
+	// Previous balance
+	if (!empty($arrayfields['cpl.prev_solde']['checked'])) {
+		print '<td style="text-align: right;">'.price2num($holidaylogstatic->balance_previous, 5).' '.$langs->trans('days').'</td>';
+	}
+
+	// Variation
+	if (!empty($arrayfields['variation']['checked'])) {
+		$delta = price2num($holidaylogstatic->balance_new - $holidaylogstatic->balance_previous, 5);
+		$detasign = ($delta > 0 ? '+' : '');
+		print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
+	}
+
+	// New Balance
+	if (!empty($arrayfields['cpl.new_solde']['checked'])) {
+		print '<td style="text-align: right;">'.price2num($holidaylogstatic->balance_new, 5).' '.$langs->trans('days').'</td>';
+	}
+
+	// Buttons
+	print '<td></td>';
+
+	print '</tr>';
+
+	$i++;
 }
 
-if ($log_holiday == '2')
-{
-    print '<tr class="opacitymedium">';
-    print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
-    print '</tr>';
+if ($log_holiday == '2') {
+	print '<tr class="opacitymedium">';
+	print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
+	print '</tr>';
 }
 
-print '</tbody>'."\n";
-print '</table>'."\n";
+print '</table>';
 print '</div>';
 
 print '</form>';

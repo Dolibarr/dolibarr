@@ -139,8 +139,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_multilang = 1; // Available in several languages
 
 		// Define column position
 		$this->posxdate = $this->marge_gauche + 1;
@@ -168,7 +168,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 	}
@@ -462,13 +462,13 @@ class pdf_standard extends ModelePDFSuppliersPayments
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				// Affiche zone cheèque
+				// Display check zone
 				$posy = $this->_tableau_cheque($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
 				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Pied de page
+				// Footer page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 

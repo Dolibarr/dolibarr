@@ -12,8 +12,11 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
         networks:
             - internal-pod
+            - external-pod
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
