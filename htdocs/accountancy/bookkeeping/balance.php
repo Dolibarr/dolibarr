@@ -339,7 +339,7 @@ if ($action != 'export_csv')
 		print '<td class="nowraponall right">'.price($opening_balances["'".$line->numero_compte."'"]).'</td>';
 		print '<td class="nowraponall right">'.price($line->debit).'</td>';
 		print '<td class="nowraponall right">'.price($line->credit).'</td>';
-		print '<td class="nowraponall right">'.price($line->debit - $line->credit).'</td>';
+		print '<td class="nowraponall right">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
 		print '<td class="center">'.$link;
 		print '</td>';
 		print "</tr>\n";

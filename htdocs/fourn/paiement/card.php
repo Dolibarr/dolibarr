@@ -251,9 +251,10 @@ if ($result > 0)
 	print '<br>';
 
 	/**
-	 *	Liste des factures
+	 *	List of vendor invoices
 	 */
-	$sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom as name, s.rowid as socid';
+	$sql = 'SELECT f.rowid, f.rowid as facid, f.ref, f.ref_supplier, f.type, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.datef as date, f.fk_statut as status,';
+	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
@@ -285,6 +286,13 @@ if ($result > 0)
 
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+				$facturestatic->date = $db->jdate($objp->date);
+				$facturestatic->type = $objp->type;
+				$facturestatic->total_ht = $objp->total_ht;
+				$facturestatic->total_tva = $objp->total_tva;
+				$facturestatic->total_ttc = $objp->total_ttc;
+				$facturestatic->statut = $objp->status;
+				$facturestatic->alreadypaid = -1;	// unknown
 
 				print '<tr class="oddeven">';
 				// Ref
@@ -300,7 +308,7 @@ if ($result > 0)
 				// Payed
 				print '<td class="right">'.price($objp->amount).'</td>';
 				// Status
-				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->fk_statut, 6, 1).'</td>';
+				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->status, 6, 1).'</td>';
 				print "</tr>\n";
 
 				if ($objp->paye == 1)

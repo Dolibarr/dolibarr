@@ -1605,7 +1605,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					if ($pdfexists && !$error)
 					{
-						$heightforphotref = 70;
+						$heightforphotref = 80;
 						if (!empty($conf->dol_optimize_smallscreen)) $heightforphotref = 60;
 						// If the preview file is found
 						if (file_exists($fileimage))
@@ -4376,6 +4376,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle right">';
+	print '<input type="hidden" name="pageplusoneold" value="'.($page+1).'">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
