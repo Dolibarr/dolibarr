@@ -167,7 +167,7 @@ $usefilter = 0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
 $sql .= " e.fk_user, e.description, e.prefix_session,";
-$sql .= " u.login";
+$sql .= " u.login, u.admin, u.entity, u.firstname, u.lastname, u.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql .= " WHERE e.entity IN (".getEntity('event').")";
@@ -337,7 +337,18 @@ if ($result)
 		{
 			$userstatic->id = $obj->fk_user;
 			$userstatic->login = $obj->login;
+			$userstatic->admin = $obj->admin;
+			$userstatic->entity = $obj->entity;
+			$userstatic->status = $obj->status;
+
 			print $userstatic->getLoginUrl(1);
+			if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
+			{
+				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+			} elseif ($userstatic->admin)
+			{
+				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+			}
 		} else print '&nbsp;';
 		print '</td>';
 
