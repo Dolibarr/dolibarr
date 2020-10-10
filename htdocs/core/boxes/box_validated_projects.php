@@ -46,6 +46,9 @@ class box_validated_projects extends ModeleBoxes
     public $info_box_head = array();
     public $info_box_contents = array();
 
+    public $enabled = 1;
+
+
     /**
      *  Constructor
      *
@@ -54,15 +57,17 @@ class box_validated_projects extends ModeleBoxes
      */
     public function __construct($db, $param = '')
     {
-        global $user, $langs;
+        global $conf, $user, $langs;
 
         // Load translation files required by the page
         $langs->loadLangs(array('boxes', 'projects'));
 
         $this->db = $db;
-        $this->boxlabel = "ValidatedProjects";
+        $this->boxlabel = "ProjectsWithTask";
 
         $this->hidden = ! ($user->rights->projet->lire);
+
+		if ($conf->global->MAIN_FEATURES_LEVEL < 2) $this->enabled = 0;
     }
 
     /**
@@ -81,7 +86,7 @@ class box_validated_projects extends ModeleBoxes
         $totalnb = 0;
         $totalnbTask=0;
 
-        $textHead = $langs->trans("ValidatedProjects");
+        $textHead = $langs->trans("ProjectTasksWithoutTimeSpent");
         $this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
         // list the summary of the orders
@@ -96,17 +101,19 @@ class box_validated_projects extends ModeleBoxes
             $projectsListId='';
             if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
-            $sql = "SELECT p.rowid, p.ref as Ref, p.fk_soc as Client, p.dateo as startDate,";
-            $sql.= " (SELECT COUNT(t.rowid) FROM ".MAIN_DB_PREFIX."projet_task AS t";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
-            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_c_type_contact != 160 AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")) AS 'taskNumber'";
+            // I tried to solve sql error and performance problem, rewriting sql request but it is not clear what we want.
+            // Count of tasks without time spent for tasks we are assigned too or
+            // Count of tasks without time spent for all tasks of projects we are allowed to read (what it does) ?
+            $sql = "SELECT p.rowid, p.ref, p.fk_soc, p.dateo as startdate,";
+            $sql.= " COUNT(DISTINCT t.rowid) as tasknumber";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
+            $sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
+            // TODO Replace -1, -2, -3 with ID used for type of contat project_task into llx_c_type_contact. Once done, we can switch widget as stable.
+            $sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid AND fk_c_type_contact IN (-1, -2, -3)";
             $sql.= " WHERE p.fk_statut = 1"; // Only open projects
+            if ($projectsListId) $sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only project we ara allowed
 			$sql.= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
-			$sql.= " AND c.fk_socpeople = ".$user->id;
-			$sql.= " GROUP BY p.ref";
+			$sql.= " GROUP BY p.rowid, p.ref, p.fk_soc, p.dateo";
             $sql.= " ORDER BY p.dateo ASC";
 
             $result = $this->db->query($sql);
@@ -135,10 +142,7 @@ class box_validated_projects extends ModeleBoxes
                     $objp = $this->db->fetch_object($result);
 
                     $projectstatic->id = $objp->rowid;
-                    $projectstatic->ref = $objp->Ref;
-                    $projectstatic->customer = $objp->Client;
-                    $projectstatic->startDate = $objp->startDate;
-                    $projectstatic->taskNumber = $objp->taskNumber;
+                    $projectstatic->ref = $objp->ref;
 
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="nowraponall"',
@@ -146,21 +150,26 @@ class box_validated_projects extends ModeleBoxes
                         'asis' => 1
                     );
 
-                    $sql = 'SELECT rowid, nom FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->Client;
-					$resql = $this->db->query($sql);
-					if ($resql){
-						$socstatic = new Societe($this->db);
-						$obj = $this->db->fetch_object($resql);
-						$this->info_box_contents[$i][] = array(
-							'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
-							'text' => $obj->nom,
-							'asis' => 1,
-							'url' => DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid
-						);
-					}
-					else {
-						dol_print_error($this->db);
-					}
+                    if ($objp->fk_soc > 0) {
+                    	$sql = 'SELECT rowid, nom as name FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->fk_soc;
+                    	$resql = $this->db->query($sql);
+                    	//$socstatic = new Societe($this->db);
+                    	$obj2 = $this->db->fetch_object($resql);
+                    	$this->info_box_contents[$i][] = array(
+                    		'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
+                    		'text' => $obj2->name,
+                    		'asis' => 1,
+                    		'url' => DOL_URL_ROOT.'/societe/card.php?socid='.$obj2->rowid
+                    	);
+                    }
+                    else {
+                    	$this->info_box_contents[$i][] = array(
+                    		'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
+                    		'text' => '',
+                    		'asis' => 1,
+                    		'url' => ''
+                    	);
+                    }
 
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="center"',
@@ -169,7 +178,7 @@ class box_validated_projects extends ModeleBoxes
 
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="center"',
-                        'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
+                        'text' => $objp->tasknumber."&nbsp;".$langs->trans("Tasks"),
 						'asis' => 1,
                     );
                     $i++;

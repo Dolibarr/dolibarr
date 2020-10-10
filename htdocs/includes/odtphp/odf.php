@@ -156,6 +156,7 @@ class Odf
      */
 	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
 	{
+		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 		$convertedValue = $value;
 

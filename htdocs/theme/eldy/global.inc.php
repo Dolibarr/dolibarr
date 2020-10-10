@@ -713,7 +713,7 @@ textarea.centpercent {
 .longmessagecut {
     max-height: 250px;
     max-width: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body[class*="colorblind-"] .text-warning{

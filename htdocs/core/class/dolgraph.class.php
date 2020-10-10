@@ -533,7 +533,7 @@ class DolGraph
 		$vals = array();
 
 		$nblines = count($this->data);
-		$nbvalues = count($this->data[0]) - 1;
+		$nbvalues = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
 		for ($j = 0; $j < $nblines; $j++)
 		{
@@ -562,7 +562,7 @@ class DolGraph
 		$vals = array();
 
 		$nblines = count($this->data);
-		$nbvalues = count($this->data[0]) - 1;
+		$nbvalues = (empty($this->data[0]) ? 0 : count($this->data[0]) - 1);
 
 		for ($j = 0; $j < $nblines; $j++)
 		{
