@@ -197,7 +197,7 @@ class IntracommReport extends CommonObject
 			while ($res = $this->db->fetch_object($resql)) {
 				if ($exporttype == 'des')
 				{
-					$this->addItemXMlDes($declaration, $res, '', $i);
+					$this->addItemXMlDes($declaration, $res, $i);
 				} else {
 					if (empty($res->fk_pays)) {
 						// We don't stop the loop because we want to know all the third parties who don't have an informed country
@@ -205,7 +205,7 @@ class IntracommReport extends CommonObject
 					} else {
 						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
-						} else $this->addItemXMl($declaration, $res, '', $i);
+						} else $this->addItemXMl($declaration, $res, $i, '');
 					}
 				}
 
@@ -366,7 +366,7 @@ class IntracommReport extends CommonObject
 			$resql = $this->db->query($sql);
 			$ress = $this->db->fetch_object($resql);
 
-			$this->addItemXMl($declaration, $res, $ress->customcode, $i);
+			$this->addItemXMl($declaration, $res, $i, $ress->customcode);
 
 			$i++;
 		}
