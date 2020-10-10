@@ -82,7 +82,8 @@ if (($id > 0) || $ref)
 }
 
 $cancreate = 0;
-if (!empty($user->rights->holiday->write_all)) $cancreate = 1;
+
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)) $cancreate = 1;
 if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate = 1;
 
 $candelete = 0;
@@ -741,7 +742,8 @@ if (empty($reshook))
 		$object->fetch($id);
 
 		// Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
-		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || !empty($user->rights->holiday->write_all)))
+		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids)
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))))
 		{
 			$db->begin();
 
@@ -867,7 +869,7 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 {
 	// Si l'utilisateur n'a pas le droit de faire une demande
-	if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
+	if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance))))
 	{
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
@@ -981,11 +983,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
 		print '<td>';
 
-		if (empty($user->rights->holiday->write_all))
+		if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance))
 		{
 			print $form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
 			//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
-		} else print $form->select_dolusers(GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+		} else {
+			print $form->select_dolusers(GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+		}
 		print '</td>';
 		print '</tr>';
 
@@ -1459,7 +1463,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
 						}
 					}
-					if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || !empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
+					if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
 					{
 						if (($object->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 						else print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';

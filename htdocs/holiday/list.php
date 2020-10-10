@@ -421,7 +421,7 @@ if ($resql)
 
 		print '<div class="tabsAction">';
 
-		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
+		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))));
 
 		if ($canedit)
 		{

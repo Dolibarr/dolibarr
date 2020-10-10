@@ -1354,6 +1354,7 @@ if (empty($reshook))
 
 $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Card");
 $helpurl = "EN:Module_Expense_Reports";
+
 llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
