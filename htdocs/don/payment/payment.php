@@ -177,6 +177,19 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
+	if (!empty($conf->use_javascript_ajax))
+	{
+		print "\n".'<script type="text/javascript" language="javascript">';
+		//Add js for AutoFill
+		print ' $(document).ready(function () {';
+		print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+							$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
+						});';
+		print '	});'."\n";
+
+		print '	</script>'."\n";
+	}
+
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="rowid" value="'.$chid.'">';
@@ -257,6 +270,8 @@ if ($action == 'create')
 		if ($sumpaid < $objp->amount)
 		{
 			$namef = "amount_".$objp->id;
+			if (!empty($conf->use_javascript_ajax))
+				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
 			print '<input type="text" size="8" name="'.$namef.'">';
 		} else {
 			print '-';
