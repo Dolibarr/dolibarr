@@ -2357,6 +2357,48 @@ class Product extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Charge tableau des stats OF pour le produit/service
+	 *
+	 * @param  int $socid Id societe
+	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
+	 */
+	public function load_stats_mo($socid = 0) {
+		// phpcs:enable
+		global $conf, $user, $hookmanager;
+
+		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+		$sql .= " SUM(c.qty) as qty";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
+		if (!$user->rights->societe->client->voir && !$socid) {
+			$sql .= "INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".$user->id;
+		}
+		$sql .= " WHERE ";
+		$sql .= " c.entity IN (".getEntity('mo').")";
+
+		$sql .= " AND c.fk_product =".$this->id;
+		if ($socid > 0) {
+			$sql .= " AND c.fk_soc = ".$socid;
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_mo['customers'] = $obj->nb_customers ? $obj->nb_customers : 0;
+			$this->stats_mo['nb'] = $obj->nb;
+			$this->stats_mo['qty'] = $obj->qty ? $obj->qty : 0;
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsCustomerProposal', $parameters, $this, $action);
+			if ($reshook > 0) $this->stats_mo = $hookmanager->resArray['stats_mo'];
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

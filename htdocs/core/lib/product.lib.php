@@ -360,13 +360,13 @@ function show_stats_for_company($product, $socid)
 	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
 	{
 		$nblines++;
-		//$ret = $product->load_stats_mo($socid);
+		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
-		print $product->stats_mo['suppliers'];
+		print $product->stats_mo['customers'];
 		print '</td><td class="right">';
 		print $product->stats_mo['nb'];
 		print '</td><td class="right">';
