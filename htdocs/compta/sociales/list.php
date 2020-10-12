@@ -5,7 +5,7 @@
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin     	<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
