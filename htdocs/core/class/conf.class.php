@@ -203,7 +203,7 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
-							if (!is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = json_decode($value, true);
 							if (is_array($arrValue) && !empty($arrValue)) $value = $arrValue;
 							elseif (in_array($partname, array('login', 'menus', 'substitutions', 'triggers', 'tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
