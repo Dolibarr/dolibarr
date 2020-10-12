@@ -362,3 +362,7 @@ UPDATE llx_projet_task_time SET tms = null WHERE tms = 0;
 ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
+
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
+DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
+

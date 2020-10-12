@@ -142,13 +142,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1; // Affiche mode reglement
-		$this->option_condreg = 1; // Affiche conditions reglement
-		$this->option_codeproduitservice = 1; // Affiche code produit-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
-		$this->option_escompte = 0; // Affiche si il y a eu escompte
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1; // Display payment mode
+		$this->option_condreg = 1; // Display payment terms
+		$this->option_codeproduitservice = 1; // Display product-service code
+		$this->option_multilang = 1; // Available in several languages
+		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts

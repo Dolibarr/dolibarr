@@ -65,6 +65,7 @@ if ($action == 'delete')
 	$action = '';
 }
 
+
 /*
  * View
  */
@@ -119,7 +120,9 @@ if (in_array($type, array('pgsql'))) {
 print "});\n";
 print "</script>\n";
 
-print load_fiche_titre($langs->trans("Backup"), '', 'title_setup');
+$title = $langs->trans("Backup");
+
+print load_fiche_titre($title, '', 'title_setup');
 //print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
 print '<div class="center opacitymedium">';
@@ -139,7 +142,9 @@ print '<br>';
 
 print '<div id="backupdatabaseleft" class="fichehalfleft" >';
 
-print load_fiche_titre($title ? $title : $langs->trans("BackupDumpWizard"));
+$title = $langs->trans("BackupDumpWizard");
+
+print load_fiche_titre($title);
 
 print '<table width="100%" class="'.($useinecm ? 'nobordernopadding' : 'liste').' nohover">';
 print '<tr class="liste_titre">';

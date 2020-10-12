@@ -122,7 +122,7 @@ $utils = new Utils($db);
 // MYSQL
 if ($what == 'mysql')
 {
-    $cmddump = GETPOST("mysqldump"); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+    $cmddump = GETPOST("mysqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
     $cmddump = dol_sanitizePathName($cmddump);
 
     if (!empty($dolibarr_main_restrict_os_commands))
@@ -163,7 +163,7 @@ if ($what == 'mysqlnobin')
 // POSTGRESQL
 if ($what == 'postgresql')
 {
-    $cmddump = GETPOST("postgresqldump"); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+    $cmddump = GETPOST("postgresqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
     $cmddump = dol_sanitizePathName($cmddump);
 
     /* Not required, the command is output on screen but not ran for pgsql
