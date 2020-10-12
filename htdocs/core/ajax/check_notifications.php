@@ -83,11 +83,11 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder arm ON (arm.fk_actioncomm = a.id AND arm.fk_user = '.$user->id.' ) ';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources ar ON ar.fk_actioncomm = a.id';
-    $sql .= ' WHERE';
+    $sql .= ' WHERE 1=1';
 
     if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
     {
-        $sql .= ' (';
+        $sql .= ' AND (';
         $sql .= ' ( arm.typeremind = "browser" AND arm.dateremind < NOW() AND arm.status = 0  )';
         $sql .= ' OR ( datep BETWEEN "'.$db->idate($starttime).'" AND "'.$db->idate($time + $time_update - 1).'" )';
         $sql .= ' AND a.code <> "AC_OTH_AUTO"';
