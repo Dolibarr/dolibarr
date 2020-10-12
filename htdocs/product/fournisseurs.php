@@ -169,7 +169,7 @@ if (empty($reshook))
 		$supplier_description = GETPOST('supplier_description', 'alpha');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
-		$packaging = GETPOST('packaging', 'int');
+		$packaging = price2num(GETPOST("packaging", 'nohtml'), 'MS');
 
 		if ($tva_tx == '')
 		{
@@ -230,11 +230,6 @@ if (empty($reshook))
             }
         }
 
-        // TODO : may be remove, already done in class update_buyprice
-		if (empty($packaging)) $packaging = 1;
-		if ($packaging < $quantity) $packaging = $quantity;
-		$object->packaging = $packaging;
-
 		if (!$error)
 		{
 			$db->begin();
@@ -294,6 +289,10 @@ if (empty($reshook))
                 }
 
 				$newprice = price2num(GETPOST("price", "alpha"));
+
+				if (empty($packaging)) $packaging = 1;
+				if ($packaging < $quantity) $packaging = $quantity;
+				$object->packaging = $packaging;
 
                 if ($conf->multicurrency->enabled)
                 {
@@ -534,14 +533,9 @@ if ($id > 0 || $ref)
 
 					print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 					print '<td>';
-					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'nohtml'), 'MS') : "1";
-					if ($rowid)
-					{
-						print '<input type="hidden" name="packaging" value="'.$object->packaging.'">';
-						print price2num($object->packaging, 'MS');
-					} else {
-						print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
-					}
+					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'nohtml'), 'MS') : ((empty($rowid))?"1":price2num($object->packaging, 'MS'));
+					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
+
 					// Units
 					if ($conf->global->PRODUCT_USE_UNITS) {
 						$unit = $object->getLabelOfUnit();
