@@ -2222,7 +2222,7 @@ if ($action == 'create')
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
-		dol_get_fiche_head($head, 'card', $titre, -1, 'bill');
+		dol_fiche_head($head, 'card', $titre, -1, 'bill');
 
 		$formconfirm = '';
 
