@@ -56,9 +56,9 @@ class EcmFiles extends CommonObject
 
 	/**
 	 * hash of file content (md5_file(dol_osencode($destfull))
-     * @var string Ecm Files label
-     */
-    public $label;
+	 * @var string Ecm Files label
+	 */
+	public $label;
 
 	public $share; // hash for file sharing, empty by default (example: getRandomPassword(true))
 
@@ -85,13 +85,13 @@ class EcmFiles extends CommonObject
 	public $date_m = '';
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_c;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_m;
 
 	public $acl;
@@ -126,50 +126,50 @@ class EcmFiles extends CommonObject
 
 		// Clean parameters
 		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		}
 		if (isset($this->label)) {
-			 $this->label = trim($this->label);
+			$this->label = trim($this->label);
 		}
 		if (isset($this->share)) {
-			 $this->share = trim($this->share);
+			$this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			$this->entity = trim($this->entity);
 		}
 		if (isset($this->filename)) {
-			 $this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
+			$this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
 		}
 		if (isset($this->filepath)) {
-			 $this->filepath = trim($this->filepath);
-			 $this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath); // Remove last /
+			$this->filepath = trim($this->filepath);
+			$this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath); // Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
-			 $this->fullpath_orig = trim($this->fullpath_orig);
+			$this->fullpath_orig = trim($this->fullpath_orig);
 		}
 		if (isset($this->description)) {
-			 $this->description = trim($this->description);
+			$this->description = trim($this->description);
 		}
 		if (isset($this->keywords)) {
-			 $this->keywords = trim($this->keywords);
+			$this->keywords = trim($this->keywords);
 		}
 		if (isset($this->cover)) {
-			 $this->cover = trim($this->cover);
+			$this->cover = trim($this->cover);
 		}
 		if (isset($this->gen_or_uploaded)) {
-			 $this->gen_or_uploaded = trim($this->gen_or_uploaded);
+			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
 		if (isset($this->extraparams)) {
-			 $this->extraparams = trim($this->extraparams);
+			$this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_c)) {
-			 $this->fk_user_c = trim($this->fk_user_c);
+			$this->fk_user_c = trim($this->fk_user_c);
 		}
 		if (isset($this->fk_user_m)) {
-			 $this->fk_user_m = trim($this->fk_user_m);
+			$this->fk_user_m = trim($this->fk_user_m);
 		}
 		if (isset($this->acl)) {
-			 $this->acl = trim($this->acl);
+			$this->acl = trim($this->acl);
 		}
 		if (isset($this->src_object_type)) {
 			$this->src_object_type = trim($this->src_object_type);
@@ -182,8 +182,7 @@ class EcmFiles extends CommonObject
 		if (!empty($this->ref))
 		{
 			$ref = $this->ref;
-		}
-		else {
+		} else {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
 		}
@@ -199,16 +198,12 @@ class EcmFiles extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$maxposition = (int) $obj->maxposition;
-			}
-			else
-			{
+			} else {
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				return --$error;
 			}
 			$maxposition = $maxposition + 1;
-		}
-		else
-		{
+		} else {
 			$maxposition = $this->position;
 		}
 
@@ -240,14 +235,14 @@ class EcmFiles extends CommonObject
 		$sql .= 'gen_or_uploaded,';
 		$sql .= 'extraparams,';
 		$sql .= 'date_c,';
-		$sql .= 'date_m,';
+		$sql .= 'tms,';
 		$sql .= 'fk_user_c,';
 		$sql .= 'fk_user_m,';
 		$sql .= 'acl,';
 		$sql .= 'src_object_type,';
 		$sql .= 'src_object_id';
 		$sql .= ') VALUES (';
-		$sql .= " '".$ref."', ";
+		$sql .= " '".$this->db->escape($ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.$this->entity.',';
@@ -309,7 +304,7 @@ class EcmFiles extends CommonObject
 	 *
 	 * @param  int    $id          	   	Id object
 	 * @param  string $ref         	   	Hash of file name (filename+filepath). Not always defined on some version.
-	 * @param  string $relativepath    	Relative path of file from document directory. Example: path/path2/file
+	 * @param  string $relativepath    	Relative path of file from document directory. Example: 'path/path2/file' or 'path/path2/*'
 	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
 	 * @param  string $hashforshare    	Hash of file sharing.
 	 * @param  string $src_object_type 	src_object_type to search
@@ -338,7 +333,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
 		$sql .= " t.date_c,";
-		$sql .= " t.date_m,";
+		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
@@ -347,33 +342,32 @@ class EcmFiles extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
-		}*/
+		 if (! empty($conf->multicompany->enabled)) {
+		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
+		 }*/
 		if ($relativepath) {
 			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath);		// We must never have the .noexe into the database
-			$sql .= " AND t.filepath = '".$this->db->escape(dirname($relativepath))."' AND t.filename = '".$this->db->escape(basename($relativepathwithnoexe))."'";
+			$sql .= " AND t.filepath = '".$this->db->escape(dirname($relativepath))."'";
+			$filename = basename($relativepathwithnoexe);
+			if ($filename != '*') {
+				$sql .= " AND t.filename = '".$this->db->escape($filename)."'";
+			}
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		}
-		elseif (!empty($ref)) {		// hash of file path
+		} elseif (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		}
-		elseif (!empty($hashoffile)) {	// hash of content
+		} elseif (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		}
-		elseif (!empty($hashforshare)) {
+		} elseif (!empty($hashforshare)) {
 			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
-		}
-		elseif ($src_object_type && $src_object_id)
+		} elseif ($src_object_type && $src_object_id)
 		{
 			// Warning: May return several record, and only first one is returned !
 			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
-		}
-		else {
+		} else {
 			$sql .= ' AND t.rowid = '.$this->db->escape($id); // rowid already unique
 		}
 
@@ -409,9 +403,9 @@ class EcmFiles extends CommonObject
 				$this->src_object_id = $obj->src_object_id;
 			}
 
-			// Retrieve all extrafields for invoice
+			// Retrieve all extrafields for ecm_files
 			// fetch optionals attributes and labels
-			// $this->fetch_optionals();
+			$this->fetch_optionals();
 
 			// $this->fetch_lines();
 
@@ -461,7 +455,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
 		$sql .= " t.date_c,";
-		$sql .= " t.date_m,";
+		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
@@ -478,9 +472,9 @@ class EcmFiles extends CommonObject
 		}
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
-		if (! empty($conf->multicompany->enabled)) {
-		    $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
-		}*/
+		 if (! empty($conf->multicompany->enabled)) {
+		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
+		 }*/
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
@@ -618,7 +612,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
 		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
-		//$sql .= ' date_m = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
+		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
@@ -791,8 +785,7 @@ class EcmFiles extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -818,7 +811,7 @@ class EcmFiles extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -828,7 +821,7 @@ class EcmFiles extends CommonObject
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		return '';
 	}
@@ -874,9 +867,9 @@ class EcmFiles extends CommonObject
 class EcmfilesLine
 {
 	/**
-     * @var string ECM files line label
-     */
-    public $label;
+	 * @var string ECM files line label
+	 */
+	public $label;
 
 	/**
 	 * @var int Entity
@@ -901,13 +894,13 @@ class EcmfilesLine
 	public $date_m = '';
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_c;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_m;
 
 	public $acl;

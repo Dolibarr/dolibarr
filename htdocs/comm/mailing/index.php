@@ -129,9 +129,7 @@ if (is_resource($handle))
                             }
 
                             $db->free($result);
-                        }
-                        else
-                        {
+                        } else {
                             dol_print_error($db);
                         }
                         print '</tr>';
@@ -184,23 +182,19 @@ if ($result) {
 
 	        print '<tr class="oddeven">';
 	        print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
-	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
+	        print '<td>'.dol_trunc($obj->title, 38).'</td>';
 	        print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 	        print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
 	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
             print '</tr>';
 	        $i++;
 	    }
-    }
-    else
-    {
+    } else {
         print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print "</table></div><br>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

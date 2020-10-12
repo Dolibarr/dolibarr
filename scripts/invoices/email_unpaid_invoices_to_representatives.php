@@ -137,8 +137,7 @@ if ($resql) {
 			print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.", lang ".$outputlangs->defaultlang."): ";
 			if (dol_strlen($obj->email))
 				print "qualified.";
-			else
-				print "disqualified (no email).";
+			else print "disqualified (no email).";
 			print "\n";
 
 			unset($outputlangs);

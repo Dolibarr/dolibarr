@@ -86,8 +86,7 @@ $morehtml .= '</SELECT>';
 $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 if ($mine) $tooltiphelp = $langs->trans("MyTasksDesc");
-else
-{
+else {
 	if ($user->rights->projet->all->lire && !$socid) $tooltiphelp = $langs->trans("TasksDesc");
 	else $tooltiphelp = $langs->trans("TasksPublicDesc");
 }
@@ -146,7 +145,7 @@ $sql .= " AND p.entity = ".$conf->entity;
 $sql .= " AND tt.fk_task = t.rowid";
 $sql .= " AND tt.fk_user = ".$user->id;
 $sql .= " AND task_date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-$sql .= " AND p.rowid in (".$projectsListId.")";
+$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 $resql = $db->query($sql);
@@ -170,9 +169,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 print '<tr class="liste_total">';
@@ -203,7 +200,7 @@ $sql .= " AND p.entity = ".$conf->entity;
 $sql .= " AND tt.fk_task = t.rowid";
 $sql .= " AND tt.fk_user = ".$user->id;
 $sql .= " AND task_date BETWEEN '".$db->idate(dol_time_plus_duree(dol_mktime(0, 0, 0, $month, $day, $year), -1, 'd'))."' AND '".$db->idate(dol_time_plus_duree(dol_mktime(23, 59, 59, $month, $day, $year), -1, 'd'))."'";
-$sql .= " AND p.rowid in (".$projectsListId.")";
+$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 $resql = $db->query($sql);
@@ -227,9 +224,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 print '<tr class="liste_total">';
@@ -263,7 +258,7 @@ if ($db->type != 'pgsql')
     $sql.= " AND tt.fk_task = t.rowid";
     $sql.= " AND tt.fk_user = ".$user->id;
     $sql.= " AND task_date >= '".$db->idate(dol_get_first_day($year, $month)).'" AND ...";
-    $sql.= " AND p.rowid in (".$projectsListId.")";
+    $sql.= " AND p.rowid in (".$db->sanitize($projectsListId).")";
     $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
     $resql = $db->query($sql);
@@ -320,7 +315,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH))
     $sql .= " AND tt.fk_task = t.rowid";
     $sql .= " AND tt.fk_user = ".$user->id;
 	$sql .= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
-    $sql .= " AND p.rowid in (".$projectsListId.")";
+    $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
     $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
     $resql = $db->query($sql);
@@ -339,9 +334,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print "</tr>\n";
     	}
     	$db->free($resql);
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
     print '<tr class="liste_total">';
@@ -371,7 +364,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	$sql .= " AND tt.fk_task = t.rowid";
 	$sql .= " AND tt.fk_user = ".$user->id;
 	$sql .= " AND YEAR(task_date) = '".strftime("%Y", $now)."'";
-	$sql .= " AND p.rowid in (".$projectsListId.")";
+	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 	$resql = $db->query($sql);
@@ -391,9 +384,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print "</tr>\n";
 		}
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	print '<tr class="liste_total">';
@@ -409,7 +400,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
     // Get id of types of contacts for projects (This list never contains a lot of elements)
     $listofprojectcontacttype = array();
     $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    $sql .= " WHERE ctc.element = '".$projectstatic->element."'";
+    $sql .= " WHERE ctc.element = '".$db->escape($projectstatic->element)."'";
     $sql .= " AND ctc.source = 'internal'";
     $resql = $db->query($sql);
     if ($resql)
@@ -418,13 +409,12 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
         {
             $listofprojectcontacttype[$obj->rowid] = $obj->code;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
     // Get id of types of contacts for tasks (This list never contains a lot of elements)
     $listoftaskcontacttype = array();
     $sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    $sql .= " WHERE ctc.element = '".$taskstatic->element."'";
+    $sql .= " WHERE ctc.element = '".$db->escape($taskstatic->element)."'";
     $sql .= " AND ctc.source = 'internal'";
     $resql = $db->query($sql);
     if ($resql)
@@ -433,8 +423,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
         {
             $listoftaskcontacttype[$obj->rowid] = $obj->code;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 
@@ -456,7 +445,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 	    $sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (".$projectsListId.")"; // project i have permission on
+	if ($mine || empty($user->rights->projet->all->lire)) $sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	if ($mine)     // this may duplicate record if we are contact twice
 	{
         $sql .= " AND ect.fk_c_type_contact IN (".join(',', array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
@@ -536,8 +525,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 				$tasktmp->ref = $obj->ref;
 				$tasktmp->label = $obj->label;
 				print $tasktmp->getNomUrl(1, 'withproject', 'task', 1, '<br>');
-			}
-			else print $langs->trans("NoTasks");
+			} else print $langs->trans("NoTasks");
 			print '</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dateo), 'day').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datee), 'day');
@@ -580,9 +568,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

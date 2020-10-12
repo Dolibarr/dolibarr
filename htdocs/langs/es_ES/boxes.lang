@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Últimos %s pedidos de clientes modificados
 BoxTitleLastModifiedCustomerBills=Últimas %s  facturas a clientes modificadas
 BoxTitleLastModifiedCustomerOrders=Últimos %s pedidos de clientes modificados
 BoxTitleLastModifiedPropals=Últimos %s presupuestos modificados
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Facturas a clientes
 ForCustomersOrders=Pedidos de clientes
 ForProposals=Presupuestos
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=La cuenta de suspenso no está definida
 BoxLastCustomerShipments=Últimos envíos a clientes
 BoxTitleLastCustomerShipments=Últimos %s envíos a clientes 
 NoRecordedShipments=Ningún envío a clientes registrado
+# Pages
+AccountancyHome=Contabilidad

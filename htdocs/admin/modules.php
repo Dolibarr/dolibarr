@@ -40,7 +40,7 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
 $mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common');
 if (empty($mode)) $mode = 'common';
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 //var_dump($_POST);exit;
 $value = GETPOST('value', 'alpha');
 $page_y = GETPOST('page_y', 'int');
@@ -126,9 +126,7 @@ if ($action == 'install')
 		$langs->load("Error");
 		setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
 		$error++;
-	}
-	else
-	{
+	} else {
 		if (!$error && !preg_match('/\.zip$/i', $original_file))
 		{
 			$langs->load("errors");
@@ -174,9 +172,7 @@ if ($action == 'install')
 				$langs->load("errors");
 				setEventMessages($langs->trans($result['error'], $original_file), null, 'errors');
 				$error++;
-			}
-			else
-			{
+			} else {
 				// Now we move the dir of the module
 				$modulename = preg_replace('/module_/', '', $original_file);
 				$modulename = preg_replace('/\-([0-9][0-9\.]*)\.zip$/i', '', $modulename);
@@ -231,9 +227,7 @@ if ($action == 'install')
 					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
 			$error++;
 		}
@@ -249,8 +243,7 @@ if ($action == 'set' && $user->admin)
 {
 	$resarray = activateModule($value);
 	if (!empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
-	else
-	{
+	else {
 		//var_dump($resarray);exit;
 		if ($resarray['nbperms'] > 0)
 		{
@@ -265,14 +258,12 @@ if ($action == 'set' && $user->admin)
 					$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
 					setEventMessages($msg, null, 'warnings');
 				}
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 		}
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
-}
-elseif ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
+} elseif ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
 {
 	$result = unActivateModule($value);
 	if ($result) setEventMessages($result, null, 'errors');
@@ -342,8 +333,7 @@ foreach ($modulesdir as $dir)
 						continue;
 					}
 
-					try
-					{
+					try {
 						$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 						if (class_exists($modName))
 						{
@@ -376,9 +366,7 @@ foreach ($modulesdir as $dir)
 										if ($publisher)
 										{
 											$arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
-										}
-										else
-										{
+										} else {
 											$arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
 										}
 									}
@@ -431,20 +419,15 @@ foreach ($modulesdir as $dir)
 									else $categ[$specialstring] = 1;
 									$j++;
 									$i++;
-								}
-								else dol_syslog("Module ".get_class($objMod)." not qualified");
-							}
-							catch (Exception $e)
+								} else dol_syslog("Module ".get_class($objMod)." not qualified");
+							} catch (Exception $e)
 							{
 								 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
-						}
-						else
-						{
+						} else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
-					}
-					catch (Exception $e)
+					} catch (Exception $e)
 					{
 						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 					}
@@ -452,9 +435,7 @@ foreach ($modulesdir as $dir)
 			}
 		}
 		closedir($handle);
-	}
-	else
-	{
+	} else {
 		dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 	}
 }
@@ -479,8 +460,9 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules = count($conf->modules);
-$moreinfo = $langs->trans("TotalNumberOfActivatedModules", ($nbofactivatedmodules - 1), count($modules));
-if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
+$moreinfo2 = ($nbofactivatedmodules - 1)." / ".count($modules);
+if ($nbofactivatedmodules <= 1) $moreinfo2 .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -515,11 +497,19 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	dol_fiche_head($head, $newmode, '', -1);
 
 	$moreforfilter = '<div class="valignmiddle">';
+
+	$moreforfilter .= '<div class="floatright right pagination"><ul><li>';
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= '</li></ul></div>';
+
+	$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="">'.$moreinfo.'</span><br><b class="largenumber">'.$moreinfo2.'</b></div>';
+
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
-	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'">';
 	$moreforfilter .= '</div>';
-	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $langs->trans('Origin').': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	$moreforfilter .= '</div>';
 	if (!empty($conf->global->MAIN_FEATURES_LEVEL))
@@ -528,11 +518,11 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		if ($conf->global->MAIN_FEATURES_LEVEL < 0) $array_version['deprecated'] = $langs->trans("Deprecated");
 		if ($conf->global->MAIN_FEATURES_LEVEL > 0) $array_version['experimental'] = $langs->trans("Experimental");
 		if ($conf->global->MAIN_FEATURES_LEVEL > 1) $array_version['development'] = $langs->trans("Development");
-		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= '<div class="divsearchfield paddingtop">';
 		$moreforfilter .= $langs->trans('Version').': '.$form->selectarray('search_version', $array_version, $search_version, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 		$moreforfilter .= '</div>';
 	}
-	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $langs->trans('Status').': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
@@ -542,13 +532,6 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$moreforfilter .= '<input type="submit" name="buttonreset" class="button" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
-
-	$moreforfilter .= '<div class="floatright right">';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= '</div>';
-
-	$moreforfilter .= '<div class="floatright right margintoponly marginrightonly" style="padding-top: 3px">'.$moreinfo.'</div>';
 
 	$moreforfilter .= '</div>';
 
@@ -708,8 +691,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			if (!empty($objMod->disabled))
 			{
 				$codeenabledisable .= $langs->trans("Disabled");
-			}
-			elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1)))
+			} elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1)))
 			{
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) $codeenabledisable .= $langs->trans("Used");
 				else {
@@ -717,15 +699,12 @@ if ($mode == 'common' || $mode == 'commonkanban')
 					//print $langs->trans("Required");
 				}
 				if (!empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
-			}
-			else
-			{
+			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
-				}
-				else {
+				} else {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
@@ -753,49 +732,36 @@ if ($mode == 'common' || $mode == 'commonkanban')
 						{
 							$codetoconfig .= '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
 							//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
-						}
-						else
-						{
+						} else {
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
 							{
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
 								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
-							}
-							else
-							{
+							} else {
 								$urltouse = $urlpage;
 								$codetoconfig .= '<a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 							}
 						}
 					}
-				}
-				elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
+				} elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
 				{
 					$codetoconfig .= '<a class="valignmiddle" href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
-				}
-				else
-				{
+				} else {
 					$codetoconfig .= '<a class="valignmiddle" href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"', false, 0, 0, '', 'fa-15').'</a>';
 				}
-			}
-			else
-			{
+			} else {
 				$codetoconfig .= img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"', false, 0, 0, '', 'fa-15');
 			}
-		}
-		else	// Module not yet activated
+		} else // Module not yet activated
 		{
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled))
 			{
 				// Should never happened
-			}
-			elseif (!empty($objMod->disabled))
+			} elseif (!empty($objMod->disabled))
 			{
 				$codeenabledisable .= $langs->trans("Disabled");
-			}
-			else
-			{
+			} else {
 				// Module qualified for activation
 				$warningmessage = '';
 				if (!empty($arrayofwarnings[$modName]))
@@ -831,7 +797,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 					}
 				}
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
 				if ($warningmessage) $codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -858,9 +824,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			{
 				if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule paddingrightonly"', 1);
 				else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule paddingrightonly"');
-			}
-			else
-			{
+			} else {
 				print img_object($alttext, 'generic', 'class="valignmiddle paddingrightonly"');
 			}
 			print ' <span class="valignmiddle">'.$objMod->getName().'</span>';
@@ -1029,9 +993,7 @@ if ($mode == 'deploy')
 		{
 			$message = info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
 			$allowfromweb = -1;
-		}
-		else
-		{
+		} else {
 			if ($dirins_ok)
 			{
 				if (!is_writable(dol_osencode($dirins)))
@@ -1040,16 +1002,12 @@ if ($mode == 'deploy')
 					$message = info_admin($langs->trans("ErrorFailedToWriteInDir", $dirins), 0, 0, '1', 'warning');
 					$allowfromweb = 0;
 				}
-			}
-			else
-			{
+			} else {
 				$message = info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 				$allowfromweb = 0;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
 		$allowfromweb = 0;
 	}
@@ -1069,9 +1027,7 @@ if ($mode == 'deploy')
 		if ($allowfromweb == 1)
 		{
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
-		}
-		else
-		{
+		} else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
 			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
@@ -1151,9 +1107,7 @@ if ($mode == 'deploy')
 					print ' ';
 					print info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow, $maxphptoshowparam), 1);
 				}
-			}
-			else
-			{
+			} else {
 				print ' ('.$langs->trans("UploadDisabled").')';
 			}
 
@@ -1163,9 +1117,7 @@ if ($mode == 'deploy')
 			print '<br>';
 
 			print '<div class="center"><div class="logo_setup"></div></div>';
-		}
-		else
-		{
+		} else {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 			print $langs->trans("SetupIsReadyForUse").'<br>';

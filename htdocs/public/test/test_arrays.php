@@ -45,9 +45,7 @@ if (empty($usedolheader))
 
 
 	<?php
-}
-else
-{
+} else {
 	$arraycss = array();
 	$arrayjs = array();
 	/*

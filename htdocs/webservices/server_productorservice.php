@@ -450,14 +450,12 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 			        'product'=>$productorservice_result_fields
                 );
             }
-            else
-            {
+            else {
                 $error++;
                 $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }
@@ -505,7 +503,7 @@ function createProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
 
@@ -595,7 +593,7 @@ function createProductOrService($authentication, $product)
 
 				if ($savstockreal != $getstockreal)
 				{
-					$warehouse = new Entrepot($this->db);
+					$warehouse = new Entrepot($db);
 					$warehouse->fetch(0, $product['warehouse_ref']);
 					if ($warehouse->id > 0)
 					{
@@ -613,8 +611,7 @@ function createProductOrService($authentication, $product)
 							$newobject->error = 'You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
 						}
 					}
-					else
-					{
+					else {
 						$error++;
 						$newobject->error = 'You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
 					}
@@ -627,8 +624,7 @@ function createProductOrService($authentication, $product)
             $db->commit();
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
         }
-        else
-        {
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';
@@ -679,7 +675,7 @@ function updateProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
     if (!$error)
@@ -754,8 +750,7 @@ function updateProductOrService($authentication, $product)
         {
             $error++;
         }
-        else
-		{
+        else {
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled))
 			{
@@ -767,7 +762,7 @@ function updateProductOrService($authentication, $product)
 
 				if ($savstockreal != $getstockreal)
 				{
-					$warehouse = new Entrepot($this->db);
+					$warehouse = new Entrepot($db);
 					$warehouse->fetch(0, $product['warehouse_ref']);
 					if ($warehouse->id > 0)
 					{
@@ -785,8 +780,7 @@ function updateProductOrService($authentication, $product)
 							$newobject->error = 'You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
 						}
 					}
-					else
-					{
+					else {
 						$error++;
 						$newobject->error = 'You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
 					}
@@ -819,8 +813,7 @@ function updateProductOrService($authentication, $product)
             $db->commit();
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
         }
-        else
-		{
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';
@@ -847,8 +840,6 @@ function updateProductOrService($authentication, $product)
 function deleteProductOrService($authentication, $listofidstring)
 {
     global $db, $conf, $langs;
-
-    $now = dol_now();
 
     dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
 
@@ -890,8 +881,7 @@ function deleteProductOrService($authentication, $listofidstring)
 		        $firsterror = 'Product or service with id '.$id.' not found';
 		        break;
 	        }
-	        else
-			{
+	        else {
 		        $result = $newobject->delete($user);
 		        if ($result <= 0)
 		        {
@@ -910,8 +900,7 @@ function deleteProductOrService($authentication, $listofidstring)
             //$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'listofid'=>$listofiddeleted);
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'nbdeleted'=>count($listofiddeleted));
 	    }
-	    else
-	    {
+	    else {
 	    	$db->rollback();
 	        $error++;
 	        $errorcode = 'KO';
@@ -944,8 +933,6 @@ function deleteProductOrService($authentication, $listofidstring)
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
     global $db, $conf, $langs;
-
-    $now = dol_now();
 
     dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
 
@@ -983,8 +970,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
          		$i++;
          	}
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = $db->lasterrno();
             $errorlabel = $db->lasterror();
@@ -997,9 +983,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
         	'products'=>$arrayproducts
         );
-    }
-    else
-    {
+    } else {
         $objectresp = array(
 			'result'=>array('result_code' => 'OK', 'result_label' => ''),
         	'products'=>$arrayproducts
@@ -1139,21 +1123,18 @@ function getProductsForCategory($authentication, $id, $lang = '')
 					'products'=> $products
 					);
 				}
-				else
-				{
+				else {
 					$errorcode = 'NORECORDS_FOR_ASSOCIATION'; $errorlabel = 'No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}

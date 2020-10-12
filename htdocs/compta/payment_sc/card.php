@@ -66,9 +66,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
         $db->commit();
         header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
         exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
@@ -184,7 +182,7 @@ print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($o
 print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Numero
-print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_paiement.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
 
 // Montant
 print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
@@ -283,9 +281,7 @@ if ($resql)
 
 	print "</table>\n";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -315,10 +311,8 @@ if ($action == '')
 	{
 		if (!$disable_delete)
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else
-		{
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}

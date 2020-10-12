@@ -37,7 +37,7 @@ $langs->loadLangs(array("banks", "categories", "multicurrency"));
 if (!$user->rights->banque->transfer)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $error = 0;
 
 
@@ -87,9 +87,7 @@ if ($action == 'add')
 		if ($accountto->currency_code == $accountfrom->currency_code)
 		{
 			$amountto = $amount;
-		}
-		else
-		{
+		} else {
 			if (!$amountto)
 			{
 				$error++;
@@ -130,15 +128,11 @@ if ($action == 'add')
 				$mesgs = $langs->trans("TransferFromToDone", '<a href="bankentries_list.php?id='.$accountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$accountfrom->label."</a>", '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label."</a>", $amount, $langs->transnoentities("Currency".$conf->currency));
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
-			}
-			else
-			{
+			} else {
 				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 		    $error++;
 			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}

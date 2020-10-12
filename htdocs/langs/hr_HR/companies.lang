@@ -86,7 +86,7 @@ ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor,
 ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor vendor, discounts are not available
 PaymentBankAccount=Payment bank account
 OverAllProposals=Ponude kupcima
-OverAllOrders=Narudžbe
+OverAllOrders=Narudžbe kupaca
 OverAllInvoices=Računi
 OverAllSupplierProposals=Tražene cijene
 ##### Local Taxes #####

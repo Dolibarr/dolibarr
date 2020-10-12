@@ -92,9 +92,7 @@ if ($mode != 'sconly')
 {
     $center = ($year ? '<a href="list.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="list.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
-}
-else
-{
+} else {
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
 }
 
@@ -208,9 +206,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	print '</table>';
@@ -287,9 +283,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		    print "</table>";
 		    $db->free($result);
-		}
-		else
-		{
+		} else {
 		    dol_print_error($db);
 		}
 	}
@@ -300,19 +294,15 @@ if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1")
 {
 	$j = 1;
 	$numlt = 3;
-}
-elseif ($mysoc->localtax1_assuj == "1")
+} elseif ($mysoc->localtax1_assuj == "1")
 {
 	$j = 1;
 	$numlt = 2;
-}
-elseif ($mysoc->localtax2_assuj == "1")
+} elseif ($mysoc->localtax2_assuj == "1")
 {
 	$j = 2;
 	$numlt = 3;
-}
-else
-{
+} else {
 	$j = 0;
 	$numlt = 0;
 }
@@ -388,9 +378,7 @@ while ($j < $numlt)
 
 			print "</table>";
 			$db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -472,9 +460,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
             $db->free($result);
 
             print "<br>";
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
     }

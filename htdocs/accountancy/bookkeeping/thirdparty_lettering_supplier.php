@@ -146,7 +146,7 @@ $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
 $sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code, bk.date_validated ";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
-$sql .= " WHERE (bk.subledger_account =  '".$object->code_compta_fournisseur."' AND bk.numero_compte = '".$conf->global->ACCOUNTING_ACCOUNT_SUPPLIER."' )";
+$sql .= " WHERE (bk.subledger_account =  '".$db->escape($object->code_compta_fournisseur)."' AND bk.numero_compte = '".$db->escape($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER)."' )";
 if (dol_strlen($search_date_start) || dol_strlen($search_date_end)) {
 	$sql .= " AND (bk.doc_date BETWEEN '".$db->idate($search_date_start)."' AND  '".$db->idate($search_date_end)."' )";
 }

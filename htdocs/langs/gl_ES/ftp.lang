@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client module setup
-NewFTPClient=New FTP connection setup
-FTPArea=FTP Area
-FTPAreaDesc=This screen shows a view of an FTP server.
-SetupOfFTPClientModuleNotComplete=The setup of the FTP client module seems to be incomplete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
-FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
-FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Choose a FTP site from the menu...
-FailedToGetFile=Failed to get files %s
+FTPClientSetup=Configuración do módulo cliente FTP
+NewFTPClient=Nova configuracións cliente FTP
+FTPArea=Área FTP
+FTPAreaDesc=Esta pantalla amosa unha vista de servidor FTP
+SetupOfFTPClientModuleNotComplete=A configuración do módulo de cliente FTP parece incompleta
+FTPFeatureNotSupportedByYourPHP=O seu PHP no soporta as funcións FTP
+FailedToConnectToFTPServer=Non foi posible conectar co servidor FTP  (servidor: %s, porto %s)
+FailedToConnectToFTPServerWithCredentials=Non foi posible entrar co usuario/contrasinal FTP configurados
+FTPFailedToRemoveFile=Non foi posible eliminar o ficheiro <b>%s</b>.
+FTPFailedToRemoveDir=Non foi posible eliminar o directorio <b>%s</b> (Comprobe os permisos e que o directorio está baleiro).
+FTPPassiveMode=Modo pasivo
+ChooseAFTPEntryIntoMenu=Escolla un sitio FTP no menú ...
+FailedToGetFile=Non foi posible acadar os ficheiros %s

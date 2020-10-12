@@ -37,7 +37,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('companies', 'other', 'bills'));
 
 $action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
@@ -182,14 +182,10 @@ if ($id > 0 || !empty($ref))
 		$permtoedit = $user->rights->commande->creer;
 		$param = '&id='.$object->id.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-else
-{
+} else {
 	header('Location: index.php');
 	exit;
 }

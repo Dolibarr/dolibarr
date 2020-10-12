@@ -72,7 +72,6 @@ Deleted=Gelöscht
 
 # Dict
 Type=Typ
-Category=Analyse-Code
 Severity=Dringlichkeit
 
 # Email templates
@@ -128,11 +127,10 @@ TicketsAutoAssignTicket=Den Ersteller automatisch dem Ticket zuweisen
 TicketsAutoAssignTicketHelp=Wenn ein Ticket erstellt wird, kann der Ersteller automatisch dem Ticket zugewiesen werden.
 TicketNumberingModules=Ticketnummerierungsmodul
 TicketNotifyTiersAtCreation=Partner über Ticketerstellung informieren
-TicketGroup=Gruppe
 TicketsDisableCustomerEmail=E-Mails immer deaktivieren, wenn ein Ticket über die öffentliche Oberfläche erstellt wird
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Senden Sie E-Mails, wenn eine neue Nachricht hinzugefügt wird
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmail=Benachrichtigungen per E-Mail an (Update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
@@ -162,7 +160,7 @@ CreatedBy=Erstellt durch
 NewTicket=Ticket erstellen
 SubjectAnswerToTicket=Ticketantwort
 TicketTypeRequest=Anfrageart
-TicketCategory=Analyse-Code
+TicketCategory=Gruppe
 SeeTicket=Ticket zeigen
 TicketMarkedAsRead=Ticket als gelesen markiert
 TicketReadOn=Gelesen um

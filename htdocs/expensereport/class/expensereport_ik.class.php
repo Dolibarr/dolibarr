@@ -122,9 +122,7 @@ class ExpenseReportIk extends CoreObject
 			{
 				$categories[$obj->rowid] = $obj;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -182,9 +180,7 @@ class ExpenseReportIk extends CoreObject
 					$ranges[] = $object;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -222,9 +218,7 @@ class ExpenseReportIk extends CoreObject
 				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) $ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
 				$ranges[$obj->fk_c_exp_tax_cat]['ranges'][] = $obj;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -255,9 +249,7 @@ class ExpenseReportIk extends CoreObject
 		{
 			$obj = $db->fetch_object($resql);
 			return $obj->nbRange;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 

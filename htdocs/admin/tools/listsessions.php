@@ -31,7 +31,7 @@ $langs->loadLangs(array("companies", "install", "users", "other"));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -115,8 +115,7 @@ if ($action == 'purge')
 {
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
-}
-elseif ($action == 'lock')
+} elseif ($action == 'lock')
 {
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);
@@ -171,9 +170,7 @@ if ($savehandler == 'files')
 		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
 	print "</table>";
-}
-else
-{
+} else {
 	print $langs->trans("NoSessionListWithThisHandler");
 }
 
@@ -187,9 +184,7 @@ print '<div class="tabsAction">';
 if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
-}
-else
-{
+} else {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
 }
 

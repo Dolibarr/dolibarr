@@ -134,9 +134,8 @@ class PaymentSocialContribution extends CommonObject
 		if (isset($this->fk_charge)) $this->fk_charge = (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount = trim($this->amount);
 		if (isset($this->fk_typepaiement)) $this->fk_typepaiement = (int) $this->fk_typepaiement;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
 		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
 		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
@@ -194,14 +193,11 @@ class PaymentSocialContribution extends CommonObject
 							if ($remaintopay == 0)
 							{
 								$result = $contrib->set_paid($user);
-							}
-							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -215,9 +211,7 @@ class PaymentSocialContribution extends CommonObject
             $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -270,9 +264,8 @@ class PaymentSocialContribution extends CommonObject
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepaiement = $obj->fk_typepaiement;
-				$this->num_paiement = $obj->num_payment;
 				$this->num_payment = $obj->num_payment;
-				$this->note = $obj->note;
+				$this->note_private = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -286,9 +279,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -312,9 +303,8 @@ class PaymentSocialContribution extends CommonObject
 		if (isset($this->fk_charge)) $this->fk_charge = (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount = trim($this->amount);
 		if (isset($this->fk_typepaiement)) $this->fk_typepaiement = (int) $this->fk_typepaiement;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
 		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
 		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
@@ -333,7 +323,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? $this->fk_typepaiement : "null").",";
-		$sql .= " num_paiement=".(isset($this->num_paiement) ? "'".$this->db->escape($this->num_paiement)."'" : "null").",";
+		$sql .= " num_paiement=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
@@ -358,9 +348,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -414,9 +402,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -465,9 +451,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -517,7 +501,7 @@ class PaymentSocialContribution extends CommonObject
         global $conf;
 
 		// Clean data
-        $this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
+        $this->num_payment = trim($this->num_payment);
 
         $error = 0;
 
@@ -580,9 +564,7 @@ class PaymentSocialContribution extends CommonObject
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -591,9 +573,7 @@ class PaymentSocialContribution extends CommonObject
         if (!$error)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -616,9 +596,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -702,7 +680,7 @@ class PaymentSocialContribution extends CommonObject
 		$result = '';
 
 		if (empty($this->ref)) $this->ref = $this->lib;
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = $langs->trans("Payment").': '.$this->ref;
 
         if (!empty($this->id)) {
             $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

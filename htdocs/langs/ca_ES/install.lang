@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=S'han reportat error(s) durant el procés de migració
 YouTryInstallDisabledByDirLock=L'aplicació ha intentat actualitzar-se automàticament, però les pàgines d'instal·lació / actualització s'han desactivat per a la seguretat (el directori rep el nom amb el sufix .lock). <br>
 YouTryInstallDisabledByFileLock=L'aplicació s'ha intentat actualitzar automàticament, però les pàgines d'instal·lació / actualització s'han desactivat per a la seguretat (per l'existència d'un fitxer de bloqueig <strong> install.lock </strong> al directori de documents del dolibarr). <br>
 ClickHereToGoToApp=Fes clic aquí per anar a la teva aplicació
-ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+ClickOnLinkOrRemoveManualy=Si una actualització està en curs, espereu. Si no, feu clic al següent enllaç. Si sempre veieu aquesta mateixa pàgina, heu de suprimir / canviar el nom del fitxer install.lock del directori de documents.
 Loaded=Carregat
 FunctionTest=Prova de funció

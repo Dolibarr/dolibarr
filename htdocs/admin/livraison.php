@@ -63,16 +63,14 @@ if ($action == 'updateMask')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-    $free = GETPOST('DELIVERY_FREE_TEXT', 'none'); // No alpha here, we want exact string
+    $free = GETPOST('DELIVERY_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
     $res = dolibarr_set_const($db, "DELIVERY_FREE_TEXT", $free, 'chaine', 0, '', $conf->entity);
 
     if (!$res > 0) $error++;
@@ -80,9 +78,7 @@ if ($action == 'set_DELIVERY_FREE_TEXT')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -118,15 +114,11 @@ if ($action == 'specimen')
         {
             header("Location: ".DOL_URL_ROOT."/document.php?modulepart=livraison&file=SPECIMEN.pdf");
             return;
-        }
-        else
-        {
+        } else {
             setEventMessages($module->error, $module->errors, 'errors');
             dol_syslog($module->error, LOG_ERR);
         }
-    }
-    else
-    {
+    } else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -240,8 +232,7 @@ foreach ($dirmodels as $reldir)
                         $tmp = $module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
 							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
-						}
-                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
@@ -249,10 +240,8 @@ foreach ($dirmodels as $reldir)
                         if ($conf->global->LIVRAISON_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"), 'switch_on');
-                        }
-                        else
-                        {
-                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                        } else {
+                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
 
@@ -302,7 +291,7 @@ $def = array();
 
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 
 $resql = $db->query($sql);
@@ -316,9 +305,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -379,15 +366,13 @@ foreach ($dirmodels as $reldir)
 		    				if (in_array($name, $def))
 		    				{
 		    					print "<td align=\"center\">\n";
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 		    					print img_picto($langs->trans("Enabled"), 'switch_on');
 		    					print '</a>';
 		    					print "</td>";
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print "<td align=\"center\">\n";
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		    					print "</td>";
 		    				}
 
@@ -396,10 +381,8 @@ foreach ($dirmodels as $reldir)
 		    				if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
 		    				{
 		    					print img_picto($langs->trans("Default"), 'on');
-		    				}
-		    				else
-		    				{
-		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		    				} else {
+		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		    				}
 		    				print '</td>';
 
@@ -417,9 +400,7 @@ foreach ($dirmodels as $reldir)
 		    				if ($module->type == 'pdf')
 		    				{
 		    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
-		    				}
-		    				else
-		    				{
+		    				} else {
 		    					print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 		    				}
 		    				print '</td>';
@@ -462,9 +443,7 @@ $variablename = 'DELIVERY_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();

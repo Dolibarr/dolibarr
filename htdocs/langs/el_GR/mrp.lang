@@ -1,5 +1,6 @@
 Mrp=Παραγγελίες Παραγωγής
 MO=Παραγγελία Παραγωγής
+MOs=Manufacturing orders
 MRPDescription=Ενότητα για τη διαχείριση της παραγωγής και των Παραγγελιών Παραγωγής (MO).
 MRPArea=Περιοχή MRP
 MrpSetupPage=Ρύθμιση της μονάδας MRP

@@ -90,7 +90,7 @@ abstract class DoliDB implements Database
     public function idate($param)
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", 'tzserver');
 	}
 
 	/**
@@ -101,6 +101,22 @@ abstract class DoliDB implements Database
     public function lasterrno()
 	{
 		return $this->lasterrno;
+	}
+
+	/**
+	 * Sanitize a string for SQL forging
+	 *
+	 * @param   string 	$stringtosanitize 	String to escape
+	 * @param   int		$allowsimplequote 	Allow simple quote
+	 * @return  string                      String escaped
+	 */
+	public function sanitize($stringtosanitize, $allowsimplequote = 0)
+	{
+		if ($allowsimplequote) {
+			return preg_replace('/[^a-z0-9_\-\.,\']/i', '', $stringtosanitize);
+		} else {
+			return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
+		}
 	}
 
 	/**
@@ -120,9 +136,7 @@ abstract class DoliDB implements Database
 				dol_syslog('', 0, 1);
 			}
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
 			return 1;
@@ -146,14 +160,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened = 0;
 				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -174,9 +184,7 @@ abstract class DoliDB implements Database
 			$this->transaction_opened = 0;
 			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -252,9 +260,7 @@ abstract class DoliDB implements Database
 				$i++;
 			}
 			return $return;
-		}
-		else
-		{
+		} else {
 			return '';
 		}
 	}
@@ -331,7 +337,7 @@ abstract class DoliDB implements Database
 		if ($res)
 		{
 			$results = array();
-			if($this->num_rows($res) > 0){
+			if ($this->num_rows($res) > 0){
 				while ($obj = $this->fetch_object($res)){
 					$results[] = $obj;
 				}

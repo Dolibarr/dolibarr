@@ -26,3 +26,4 @@ ModuleZapierForDolibarrDesc = Mô-đun Zapier cho Dolibarr
 # Admin page
 #
 ZapierForDolibarrSetup = Thiết lập Zapier cho Dolibarr
+ZapierDescription=Interface with Zapier

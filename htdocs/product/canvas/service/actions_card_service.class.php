@@ -205,8 +205,7 @@ class ActionsCardService
 			if ($this->object->duration_value > 1)
 			{
 				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-			}
-			elseif ($this->object->duration_value > 0)
+			} elseif ($this->object->duration_value > 0)
 			{
 				$dur = array("h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 			}
@@ -267,9 +266,7 @@ class ActionsCardService
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db, $sql);
 		}
 	}
@@ -360,9 +357,7 @@ class ActionsCardService
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			print $sql;
 		}
 	}

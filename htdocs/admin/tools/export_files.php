@@ -30,22 +30,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
-$file = trim(GETPOST('zipfilename_template', 'alpha'));
+$file = GETPOST('zipfilename_template', 'alpha');
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);
 $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "date";
-if ($page < 0) { $page = 0; }
-elseif (empty($page)) $page = 0;
+if ($page < 0) { $page = 0; } elseif (empty($page)) $page = 0;
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
@@ -114,20 +113,18 @@ $utils = new Utils($db);
 if ($compression == 'zip')
 {
 	$file .= '.zip';
-    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.log|\/temp\/|documents\/admin\/documents\/)/');
+    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.back|\.old|\.log|[\\\/]temp[\\\/]|documents[\\\/]admin[\\\/]documents[\\\/])/i');
     if ($ret < 0)
     {
     	if ($ret == -2) {
     		$langs->load("errors");
     		$errormsg = $langs->trans("ErrNoZipEngine");
-    	}
-    	else {
+    	} else {
     		$langs->load("errors");
     		$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
     	}
     }
-}
-elseif (in_array($compression, array('gz', 'bz')))
+} elseif (in_array($compression, array('gz', 'bz')))
 {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
@@ -145,9 +142,7 @@ elseif (in_array($compression, array('gz', 'bz')))
         $langs->load("errors");
         dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
         $errormsg = 'Error tar generation return '.$retval;
-    }
-    else
-    {
+    } else {
         if ($compression == 'gz')
         {
             $cmd = "gzip -f ".$outputdir."/".$file;

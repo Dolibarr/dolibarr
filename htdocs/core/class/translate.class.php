@@ -95,8 +95,7 @@ class Translate
 			$langpref = str_replace("-", "_", $langpref);
 			$langlist = preg_split("/[;,]/", $langpref);
 			$codetouse = preg_replace('/[^_a-zA-Z]/', '', $langlist[0]);
-		}
-		else $codetouse = $srclang;
+		} else $codetouse = $srclang;
 
 		// We redefine $srclang
 		$langpart = explode("_", $codetouse);
@@ -111,10 +110,8 @@ class Translate
 				$srclang = strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				$longforlong = array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang = $longforlong[strtolower($srclang)];
-			}
-			else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
-		}
-		else {						// If it's for a codetouse that is a short code xx
+			} else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
+		} else {						// If it's for a codetouse that is a short code xx
     	    // Array to convert short lang code into long code.
 	        $longforshort = array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'nb'=>'nb_NO', 'no'=>'nb_NO');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang = $longforshort[strtolower($langpart[0])];
@@ -304,12 +301,10 @@ class Translate
 												$tabtranslatedomain[$key] = $value;
 											}
 										}
-									}
-									elseif ($key[0] == '#')
+									} elseif ($key[0] == '#')
 									{
 									    continue;
-									}
-									else {
+									} else {
 										// Convert some strings: Parse and render carriage returns. Also, change '\\s' into '\s' because transifex sync pull the string '\s' into string '\\s'
 										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
@@ -517,21 +512,28 @@ class Translate
     					}
     				}
     			}
-		    }
-		    else
-		    {
+		    } else {
 		        dol_print_error($db);
 		    }
 		}
 
 		if ($fileread) $this->_tab_loaded[$newdomain] = 1; // Set domain file as loaded
 
-		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Marque ce cas comme non trouve (no lines found for language)
+		if (empty($this->_tab_loaded[$newdomain])) $this->_tab_loaded[$newdomain] = 2; // Mark this case as not found (no lines found for language)
 
 		return 1;
 	}
 
-
+	/**
+	 * Get information with result of loading data for domain
+	 *
+	 * @param	string		$domain		Domain to check
+	 * @return 	int						0, 1, 2...
+	 */
+	public function isLoaded($domain)
+	{
+		return $this->_tab_loaded[$domain];
+	}
 
 	/**
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
@@ -557,24 +559,19 @@ class Translate
 	    if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
-        }
-		elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg))
+        } elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg))
 		{
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
-		}
-		elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg))
+		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg))
 		{
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		}
-        elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg))
+		} elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
-        }
-        elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg))
+        } elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
-        }
-        elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg))
+        } elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg))
         {
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
@@ -641,8 +638,7 @@ class Translate
             $str = str_replace(array('__lt__', '__gt__', '__quot__'), array('<', '>', '"',), $str);
 
 			return $str;
-		}
-		else								// Translation is not available
+		} else // Translation is not available
 		{
 		    //if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
@@ -712,9 +708,7 @@ class Translate
             }
 
             return $str;
-		}
-		else
-		{
+		} else {
 		    if ($key[0] == '$') { return dol_eval($key, 1); }
 			return $this->getTradFromKey($key);
 		}
@@ -830,9 +824,7 @@ class Translate
 				if ($usecode == 1 || !empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
 				{
 				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir), $maxlength);
-				}
-				else
-				{
+				} else {
 					$langs_available[$dir] = $this->trans('Language_'.$dir);
 				}
 				if ($mainlangonly) {
@@ -961,9 +953,7 @@ class Translate
 
 			$db->free($resql);
 			return $this->cache_labels[$tablename][$key];
-		}
-		else
-		{
+		} else {
 			$this->error = $db->lasterror();
 			return -1;
 		}
@@ -1061,9 +1051,7 @@ class Translate
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 			return -1;
 		}

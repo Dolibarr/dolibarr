@@ -112,6 +112,11 @@ class Website extends CommonObject
 	public $use_manifest;
 
 	/**
+	 * @var int
+	 */
+	public $position;
+
+	/**
 	 * List of containers
 	 *
 	 * @var array
@@ -201,6 +206,7 @@ class Website extends CommonObject
 		$sql .= 'virtualhost,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'date_creation,';
+		$sql .= 'position,';
 		$sql .= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : $this->entity).',';
@@ -213,6 +219,7 @@ class Website extends CommonObject
 		$sql .= ' '.(!isset($this->virtualhost) ? 'NULL' : "'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(!isset($this->fk_user_creat) ? $user->id : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->date_creation) || dol_strlen($this->date_creation) == 0 ? 'NULL' : "'".$this->db->idate($this->date_creation)."'").",";
+		$sql .= ' '.((int) $this->position).",";
 		$sql .= ' '.(!isset($this->date_modification) || dol_strlen($this->date_modification) == 0 ? 'NULL' : "'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
@@ -283,6 +290,7 @@ class Website extends CommonObject
 		$sql .= ' t.rowid,';
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
+		$sql .= " t.position,";
 		$sql .= " t.description,";
 		$sql .= " t.lang,";
 		$sql .= " t.otherlang,";
@@ -312,6 +320,7 @@ class Website extends CommonObject
 
 				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
+				$this->position = $obj->position;
 				$this->description = $obj->description;
 				$this->lang = $obj->lang;
 				$this->otherlang = $obj->otherlang;
@@ -621,7 +630,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $conf;
+        global $conf, $langs;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -663,12 +672,16 @@ class Website extends CommonObject
 		$object->virtualhost = '';
 		$object->date_creation = $now;
 		$object->fk_user_creat = $user->id;
+		$object->position = ((int) $object->position) + 1;
+		$object->status = self::STATUS_DRAFT;
+		if (empty($object->lang)) $object->lang = substr($langs->defaultlang, 0, 2); // Should not happen. Protection for corrupted site with no languages
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
@@ -728,8 +741,7 @@ class Website extends CommonObject
 						$newidforhome = $objectpagenew->id;
 					}
 				}
-				else
-				{
+				else {
 					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
 					$error++;
 				}
@@ -1090,8 +1102,7 @@ class Website extends CommonObject
 		{
 			return $filename;
 		}
-		else
-		{
+		else {
 			global $errormsg;
 			$this->error = $errormsg;
 			return '';
@@ -1264,8 +1275,7 @@ class Website extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return $object->id;
 		}
@@ -1342,9 +1352,7 @@ class Website extends CommonObject
 		if ($error)
 		{
 			return -1;
-		}
-		else
-		{
+		} else {
 			return $num;
 		}
 	}

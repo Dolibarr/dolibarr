@@ -218,9 +218,7 @@ class SimpleOpenID
         if (count($this->error) > 0)
         {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -458,9 +456,7 @@ class SimpleOpenID
             echo '<script language="JavaScript" type="text/javascript">window.location=\'';
             echo $redirect_to;
             echo '\';</script>';
-        }
-        else
-        {	// Default Header Redirect
+        } else {	// Default Header Redirect
             header('Location: '.$redirect_to);
         }
     }
@@ -502,9 +498,7 @@ class SimpleOpenID
         if ($data['is_valid'] == "true")
         {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -554,9 +548,7 @@ class SimpleOpenID
         {
             $this->ErrorStore('OPENID_NOSERVERSFOUND');
             return false;
-        }
-        else
-        {
+        } else {
             dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
             $this->SetOpenIDServer($server);
             return $server;

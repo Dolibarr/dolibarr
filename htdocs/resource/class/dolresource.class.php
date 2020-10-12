@@ -164,9 +164,7 @@ class Dolresource extends CommonObject
     		}
     		$this->db->rollback();
     		return -1 * $error;
-    	}
-    	else
-    	{
+    	} else {
     		$this->db->commit();
     		return $this->id;
     	}
@@ -223,9 +221,7 @@ class Dolresource extends CommonObject
     		$this->db->free($resql);
 
     		return $this->id;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
     		return -1;
@@ -329,9 +325,7 @@ class Dolresource extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -388,9 +382,7 @@ class Dolresource extends CommonObject
     		$this->db->free($resql);
 
     		return $this->id;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		return -1;
     	}
@@ -427,9 +419,7 @@ class Dolresource extends CommonObject
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
@@ -475,9 +465,7 @@ class Dolresource extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -522,11 +510,9 @@ class Dolresource extends CommonObject
     		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			elseif (strpos($key, 'ef.') !== false) {
+    			} elseif (strpos($key, 'ef.') !== false) {
     				$sql .= $value;
-    			}
-    			else {
+    			} else {
     				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
@@ -567,9 +553,7 @@ class Dolresource extends CommonObject
     			$this->db->free($resql);
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -608,8 +592,7 @@ class Dolresource extends CommonObject
    			foreach ($filter as $key => $value) {
    				if (strpos($key, 'date')) {
    					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-   				}
-   				else {
+   				} else {
    					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
@@ -645,9 +628,7 @@ class Dolresource extends CommonObject
    				$this->db->free($resql);
    			}
    			return $num;
-   		}
-   		else
-   		{
+   		} else {
    			$this->error = $this->db->lasterror();
    			return -1;
    		}
@@ -690,8 +671,7 @@ class Dolresource extends CommonObject
     		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			else {
+    			} else {
     				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
@@ -724,9 +704,7 @@ class Dolresource extends CommonObject
     			$this->db->free($resql);
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -816,9 +794,7 @@ class Dolresource extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -924,9 +900,7 @@ class Dolresource extends CommonObject
     			$i++;
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		dol_print_error($this->db);
     		return -1;
     	}
@@ -948,7 +922,7 @@ class Dolresource extends CommonObject
         global $conf, $langs;
 
         $result = '';
-        $label = '<u>'.$langs->trans("ShowResource").'</u>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         /*if (isset($this->status)) {
@@ -978,8 +952,7 @@ class Dolresource extends CommonObject
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
         	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.$get_params.'"';
         $linkstart .= $linkclose.'>';

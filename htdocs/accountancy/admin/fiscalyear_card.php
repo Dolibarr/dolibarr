@@ -71,9 +71,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-
-elseif ($action == 'add') {
+} elseif ($action == 'add') {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -302,16 +300,16 @@ if ($action == 'create')
 
 			if (!empty($user->rights->accounting->fiscalyear->write))
 			{
-    			/*
+				/*
     			 * Barre d'actions
     			 */
-    			print '<div class="tabsAction">';
+				print '<div class="tabsAction">';
 
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
-    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+				// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&token='.newToken().'&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 
-    			print '</div>';
+				print '</div>';
 			}
 		}
 	} else {

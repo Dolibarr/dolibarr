@@ -139,4 +139,4 @@ ForeignKey=Fremmed nøkkel
 TypeOfFieldsHelp=Type felt: <br> varchar (99), dobbel (24,8), ekte, tekst, html, datetime, tidstempel, heltall, heltall:ClassName:relativepath/to/classfile.class.php [:1[:filter]] ('1' betyr at vi legger til en + -knapp etter kombinasjonsboksen for å opprette posten, 'filter' kan være 'status=1 OG fk_user=__USER_ID OG enhet IN (__SHARED_ENTITIES__)' for eksempel)
 AsciiToHtmlConverter=Ascii til HTML konverter
 AsciiToPdfConverter=Ascii til PDF konverter
-TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
+TableNotEmptyDropCanceled=Tabellen er ikke tom. Drop har blitt kansellert.

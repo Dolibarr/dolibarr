@@ -47,7 +47,7 @@ $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
@@ -127,9 +127,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		        $action = '';
-			}
-			else
-			{
+			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -210,9 +208,7 @@ if (empty($reshook))
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
-			}
-			else
-			{
+			} else {
 				$_POST["price"] = 0;
 			}
 		}
@@ -255,8 +251,7 @@ if (empty($reshook))
 					$productLink = $object->getNomUrl(1, 'supplier');
 
 					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct", $productLink), null, 'errors');
-				}
-				elseif ($ret < 0)
+				} elseif ($ret < 0)
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -286,8 +281,8 @@ if (empty($reshook))
                             $sql .= '"'.$value.'", ';
                         }
                         $sql = substr($sql, 0, strlen($sql) - 2).')';
-                    } // else update the existing one
-                    else {
+                    } else {
+                        // update the existing one
                         $sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
                         foreach ($extrafield_values as $key => $value) {
                             $sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
@@ -315,9 +310,7 @@ if (empty($reshook))
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
-				}
-				else
-				{
+				} else {
 					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
@@ -346,14 +339,10 @@ if (empty($reshook))
 			{
 				$db->commit();
 				$action = '';
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'add_price';
 		}
 	}
@@ -458,9 +447,7 @@ if ($id > 0 || $ref)
 				{
 					$object->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
-				}
-				else
-				{
+				} else {
 					print load_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
@@ -483,9 +470,7 @@ if ($id > 0 || $ref)
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="hidden" name="socid" value="'.$socid.'">';
-				}
-				else
-				{
+				} else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
 					print $form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
@@ -508,9 +493,7 @@ if ($id > 0 || $ref)
 				{
                     print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
                     print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
-				}
-				else
-				{
+				} else {
 					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
@@ -534,9 +517,7 @@ if ($id > 0 || $ref)
 				{
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
 					print $object->fourn_qty;
-				}
-				else
-				{
+				} else {
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
                 // Units
@@ -569,9 +550,7 @@ if ($id > 0 || $ref)
 				    $tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
 					$default_vat = $tmpproductsupplier->fourn_tva_tx;
 					$default_npr = $tmpproductsupplier->fourn_tva_npr;
-				}
-				else
-				{
+				} else {
                     if (empty($default_vat))
                     {
                         $default_vat = $object->tva_tx;
@@ -879,6 +858,50 @@ SCRIPT;
 
 				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
+				// Definition of fields for lists
+				// Some fields are missing because they are not included in the database query
+				$arrayfields = array(
+					'pfp.datec'=>array('label'=>$langs->trans("AppliedPricesFrom"), 'checked'=>1, 'position'=>1),
+					's.nom'=>array('label'=>$langs->trans("Suppliers"), 'checked'=>1, 'position'=>2),
+					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => !empty($conf->global->FOURN_PRODUCT_AVAILABILITY), 'checked'=>0, 'position'=>4),
+					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
+					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
+					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => $conf->multicurrency->enabled, 'checked'=>0, 'position'=>10),
+					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>1, 'position'=>13),
+					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>1, 'position'=>14),
+					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>15),
+					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>16),
+					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => !empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING), 'checked'=>0, 'position'=>17),
+					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => $conf->barcode->enabled, 'checked'=>1, 'position'=>18),
+				);
+
+				// fetch optionals attributes and labels
+				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
+
+				if (!empty($extralabels)) {
+					foreach ($extralabels as $key => $value) {
+						// Show field if not hidden
+						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+							$extratitle = $langs->trans($value);
+							$arrayfields['ef.'.$key] = array('label'=>$extratitle, 'checked'=>0, 'position'=>(end($arrayfields)['position']+1), 'langfile'=>$extrafields->attributes["product_fournisseur_price"]['langfile'][$key], 'help'=>$extrafields->attributes["product_fournisseur_price"]['help'][$key]);
+						}
+					}
+				}
+
+				// Selection of new fields
+				include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+				$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formulaire">';
+				print '<input type="hidden" name="token" value="'. newToken() . '">';
+				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+				print '<input type="hidden" name="action" value="list">';
+				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
 				print '<table class="liste centpercent">';
@@ -886,42 +909,37 @@ SCRIPT;
 				$param = "&id=".$object->id;
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
-				print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+				if (!empty($arrayfields['pfp.datec']['checked']))					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
+				if (!empty($arrayfields['s.nom']['checked']))						print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
-				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
-				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.fk_availability']['checked']))			print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
+				if (!empty($arrayfields['pfp.quantity']['checked']))				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-                if ($conf->multicurrency->enabled) {
-                    print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-                }
-                print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
-                if ($conf->multicurrency->enabled) {
-                    print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
-                    print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
-                }
+                if ($conf->multicurrency->enabled)									print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+                if (!empty($arrayfields['pfp.unitprice']['checked']))				print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked']))	print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
+				if ($conf->multicurrency->enabled)									print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
-				if ($conf->barcode->enabled) {
-                    print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
-                    print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
-                }
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.delivery_time_days']['checked']))		print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($arrayfields['pfp.supplier_reputation']['checked']))		print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
+				if (!empty($arrayfields['pfp.barcode']['checked']))					print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
+				if (!empty($arrayfields['pfp.fk_barcode_type']['checked']))			print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
+				if (!empty($arrayfields['pfp.packaging']['checked']))				print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
+				if (!empty($arrayfields['pfp.tms']['checked']))						print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
 
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extralabels = $extrafields->attributes["product_fournisseur_price"]['label'];
+
 				if (!empty($extralabels)) {
 					foreach ($extralabels as $key => $value) {
 						// Show field if not hidden
 						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
                             if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
                             if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) $extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
-                            else $extratitle = $langs->trans($value);
-							print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+							else $extratitle = $langs->trans($value);
+							if (!empty($arrayfields['ef.'.$key]['checked'])) print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], 'ef.'.$key, '', $param, '', $sortfield, $sortorder, 'right ');
 						}
 					}
 				}
@@ -931,7 +949,7 @@ SCRIPT;
 				    $parameters = array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
 				    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
-				print_liste_field_titre('');
+				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list))
@@ -941,23 +959,25 @@ SCRIPT;
 						print '<tr class="oddeven">';
 
 						// Date from
-						print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour').'</td>';
+						if (!empty($arrayfields['pfp.datec']['checked'])) {
+							print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation : $productfourn->date_creation), 'dayhour').'</td>';
+						}
 
 						// Supplier
-						print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+						if (!empty($arrayfields['s.nom']['checked'])) {
+							print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
+						}
 
 						// Supplier ref
 						if ($usercancreate) // change required right here
 						{
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
-						}
-						else
-						{
+						} else {
 							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
 						}
 
 						// Availability
-						if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
+						if (!empty($arrayfields['pfp.fk_availability']['checked']))
 						{
 							$form->load_cache_availability();
                 			$availability = $form->cache_availability[$productfourn->fk_availability]['label'];
@@ -965,16 +985,18 @@ SCRIPT;
 						}
 
 						// Quantity
-						print '<td class="right">';
-						print $productfourn->fourn_qty;
-                        // Units
-                        if ($conf->global->PRODUCT_USE_UNITS) {
-                            $unit = $object->getLabelOfUnit();
-                            if ($unit !== '') {
-                                print '&nbsp;&nbsp;'.$langs->trans($unit);
-                            }
-                        }
-						print '</td>';
+						if (!empty($arrayfields['pfp.quantity']['checked'])) {
+							print '<td class="right">';
+							print $productfourn->fourn_qty;
+							// Units
+							if ($conf->global->PRODUCT_USE_UNITS) {
+								$unit = $object->getLabelOfUnit();
+								if ($unit !== '') {
+									print '&nbsp;&nbsp;'.$langs->trans($unit);
+								}
+							}
+							print '</td>';
+						}
 
 						// VAT rate
 						print '<td class="right">';
@@ -994,18 +1016,21 @@ SCRIPT;
                         }
 
 						// Unit price
-						print '<td class="right">';
-						print price($productfourn->fourn_unitprice);
-						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
-						print '</td>';
+						if (!empty($arrayfields['pfp.unitprice']['checked'])) {
+							print '<td class="right">';
+							print price($productfourn->fourn_unitprice);
+							//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
+							print '</td>';
+						}
 
-                        if ($conf->multicurrency->enabled) {
-                            // Unit price in currency
+						// Unit price in currency
+						if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked'])) {
                             print '<td class="right">';
                             print price($productfourn->fourn_multicurrency_unitprice);
-                            print '</td>';
+                            print '</td>';}
 
-                            // Currency
+						// Currency
+                        if ($conf->multicurrency->enabled) {
                             print '<td class="right">';
                             print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
                             print '</td>';
@@ -1017,24 +1042,30 @@ SCRIPT;
 						print '</td>';
 
 						// Delivery delay
-						print '<td class="right">';
-						print $productfourn->delivery_time_days;
-						print '</td>';
+						if (!empty($arrayfields['pfp.delivery_time_days']['checked'])) {
+							print '<td class="right">';
+							print $productfourn->delivery_time_days;
+							print '</td>';
+						}
 
 						// Reputation
-						print '<td class="center">';
-						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
-							print $object->reputations[$productfourn->supplier_reputation];
+						if (!empty($arrayfields['pfp.supplier_reputation']['checked'])) {
+							print '<td class="center">';
+							if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
+								print $object->reputations[$productfourn->supplier_reputation];
+							}
+							print'</td>';
 						}
-						print'</td>';
 
-						if ($conf->barcode->enabled) {
-                            // Barcode
+						// Barcode
+						if (!empty($arrayfields['pfp.barcode']['checked'])) {
                             print '<td align="right">';
                             print $productfourn->barcode;
-                            print '</td>';
+							print '</td>';
+						}
 
-                            // Barcode type
+						// Barcode type
+						if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
                             print '<td class="center">';
                             $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type : 0;
                             $productfourn->fetch_barcode();
@@ -1043,17 +1074,18 @@ SCRIPT;
 						}
 
 						// Packaging
-						if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-						{
+						if (!empty($arrayfields['pfp.packaging']['checked'])) {
 							print '<td align="center">';
 							print price2num($productfourn->packaging);
 							print '</td>';
 						}
 
 						// Date
-						print '<td align="right">';
-						print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
-						print '</td>';
+						if (!empty($arrayfields['pfp.tms']['checked'])) {
+							print '<td align="right">';
+							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
+							print '</td>';
+						}
 
 						// Extrafields
 						if (!empty($extralabels)) {
@@ -1068,14 +1100,14 @@ SCRIPT;
                             if ($resql) {
                                 if ($db->num_rows($resql) != 1) {
                                     foreach ($extralabels as $key => $value) {
-                                        if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+                                        if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
                                             print "<td></td>";
                                         }
                                     }
                                 } else {
                                     $obj = $db->fetch_object($resql);
                                     foreach ($extralabels as $key => $value) {
-                                        if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+                                        if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
                                             print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key})."</td>";
                                         }
                                     }
@@ -1104,20 +1136,17 @@ SCRIPT;
 
 						print '</tr>';
 					}
-				}
-				else
-				{
+				} else {
 				    dol_print_error($db);
 				}
 
 				print '</table>';
 				print '</div>';
+				print '</form>';
 			}
 		}
 	}
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

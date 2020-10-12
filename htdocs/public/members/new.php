@@ -59,7 +59,7 @@ $errmsg = '';
 $num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other"));
@@ -100,23 +100,17 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
     print '<body id="mainbody" class="publicnewmemberform">';
 
     // Define urllogo
-    $width = 0;
     $urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
     if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-        $width = 150;
-    }
-    elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
+    } elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-        $width = 150;
-    }
-    elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
+    } elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
     {
         $urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-        $width = 150;
     }
 
 	print '<div class="center">';
@@ -126,7 +120,6 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	print '<div class="backgreypublicpayment">';
     	print '<div class="logopublicpayment">';
     	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-    	if ($width) print ' width="'.$width.'"';
     	print '>';
     	print '</div>';
     	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
@@ -343,10 +336,8 @@ if ($action == 'add')
             		if (preg_match('/\d\.\d/', $appli))
             		{
             			if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-            		}
-            		else $appli .= " ".DOL_VERSION;
-            	}
-            	else $appli .= " ".DOL_VERSION;
+            		} else $appli .= " ".DOL_VERSION;
+            	} else $appli .= " ".DOL_VERSION;
 
             	$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
             	$from = $conf->global->ADHERENT_MAIL_FROM;
@@ -375,8 +366,7 @@ if ($action == 'add')
             {
                 $urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
                 // TODO Make replacement of __AMOUNT__, etc...
-            }
-            else $urlback = $_SERVER["PHP_SELF"]."?action=added";
+            } else $urlback = $_SERVER["PHP_SELF"]."?action=added";
 
             if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1')
             {
@@ -390,14 +380,11 @@ if ($action == 'add')
                         if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
                     	    $urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-                        }
-                        else
-                        {
+                        } else {
                             $urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
-                }
-            	elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+                } elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -407,14 +394,11 @@ if ($action == 'add')
                     	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                     	{
                     		$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-                    	}
-                    	else
-                    	{
+                    	} else {
                     		$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                     	}
                     }
-                }
-                elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
+                } elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
                     $urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -424,14 +408,11 @@ if ($action == 'add')
                     	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
                         	$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-                        }
-                        else
-                        {
+                        } else {
                         	$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
-                }
-				elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
+                } elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
                 {
                     $urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount', 'alpha'))) $urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -441,15 +422,11 @@ if ($action == 'add')
                     	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
                         	$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-                        }
-                        else
-                        {
+                        } else {
                         	$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
                     exit;
                 }
@@ -457,9 +434,7 @@ if ($action == 'add')
 
             if (!empty($entity)) $urlback .= '&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-        }
-        else
-        {
+        } else {
         	$error++;
             $errmsg .= join('<br>', $adh->errors);
         }
@@ -471,9 +446,7 @@ if ($action == 'add')
 
     	Header("Location: ".$urlback);
     	exit;
-    }
-    else
-    {
+    } else {
     	$db->rollback();
     }
 }
@@ -574,9 +547,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
     print $form->selectarray("type", $adht->liste_array(), GETPOST('type') ?GETPOST('type') : $defaulttype, $isempty);
     print '</td></tr>'."\n";
-}
-else
-{
+} else {
     $adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
     print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
 }
@@ -588,9 +559,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
     print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
-}
-else
-{
+} else {
     print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
     print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 }
@@ -611,7 +580,7 @@ print '</td></tr>';
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
-print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'none'), 0, 1).'</textarea></td></tr>'."\n";
+print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
 print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
@@ -667,7 +636,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
 print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'none'), 0, 1).'</textarea></td>';
+print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example
@@ -732,9 +701,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)
     if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {
         print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
-    }
-    else
-    {
+    } else {
         print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled size="6" value="'.$amount.'">';
         print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }

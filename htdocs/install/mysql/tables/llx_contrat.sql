@@ -26,7 +26,7 @@ create table llx_contrat
   ref_supplier				varchar(255),		            -- supplier contract ref
   ref_ext					varchar(255),		            -- external contract ref
   entity					integer DEFAULT 1 NOT NULL,		-- multi company id
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec						datetime,                   	-- creation date
   date_contrat				datetime,
   statut					smallint DEFAULT 0,				-- not used. deprecated

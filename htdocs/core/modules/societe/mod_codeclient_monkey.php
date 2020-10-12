@@ -133,7 +133,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
         $posindice = strlen($prefix) + 6;
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE ".$field." LIKE '".$prefix."____-%'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -144,9 +144,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 
@@ -184,33 +182,24 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
 			$result = -2;
-		}
-		else
-		{
+		} else {
 			if ($this->verif_syntax($code) >= 0)
 			{
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
 				if ($is_dispo <> 0)
 				{
 					$result = -3;
-				}
-				else
-				{
+				} else {
 					$result = 0;
 				}
-			}
-			else
-			{
+			} else {
 				if (dol_strlen($code) == 0)
 				{
 					$result = -2;
-				}
-				else
-				{
+				} else {
 					$result = -1;
 				}
 			}
@@ -237,8 +226,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$code."'";
-		else $sql .= " WHERE code_client = '".$code."'";
+		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
 
@@ -249,14 +238,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			if ($db->num_rows($resql) == 0)
 			{
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}
@@ -277,9 +262,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		if (dol_strlen($code) < 11)
 		{
 			$res = -1;
-		}
-		else
-		{
+		} else {
 			$res = 0;
 		}
 		return $res;

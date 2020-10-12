@@ -62,7 +62,6 @@ SubscriptionRequired=Se requiere suscripción
 VoteAllowed=Voto permitido
 Physical=Natural
 Moral=Juridica
-MorPhy=Juridica/Natural
 ResiliateMember=Terminar un miembro
 ConfirmResiliateMember=¿Estás seguro de que quieres terminar este miembro?
 ConfirmDeleteMember=¿Está seguro de que desea eliminar este miembro (la eliminación de un miembro eliminará todas sus suscripciones)?

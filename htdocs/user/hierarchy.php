@@ -79,9 +79,7 @@ $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_stat
 if (!is_array($user_arbo) && $user_arbo < 0)
 {
     setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
-}
-else
-{
+} else {
     // Define fulltree array
     $fulltree = $user_arbo;
     //var_dump($fulltree);
@@ -112,9 +110,7 @@ else
     		if (empty($entity))
     		{
     			$entitystring = $langs->trans("AllEntities");
-    		}
-    		else
-    		{
+    		} else {
     			$mc->getInfo($entity);
     			$entitystring = $mc->label;
     		}
@@ -124,18 +120,19 @@ else
     	if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
     	{
     		$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
-    	}
-    	elseif ($userstatic->admin)
+    	} elseif ($userstatic->admin)
     	{
     		$li .= img_picto($langs->trans("Administrator"), 'star');
     	}
     	$li .= ' ('.$val['login'].($entitystring ? ' - '.$entitystring : '').')';
 
+    	$entry = '<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
+
     	$data[] = array(
     		'rowid'=>$val['rowid'],
     		'fk_menu'=>$val['fk_user'],
     		'statut'=>$val['statut'],
-    		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
+    		'entry'=>$entry
     	);
     }
 
@@ -151,7 +148,9 @@ else
         $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=');
     }
 
-    $morehtmlright .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
+    $morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
+    $param = array('morecss'=>'marginleftonly btnTitleSelected');
+    $morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $param);
 
     print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton, 'user');
 
@@ -191,15 +190,13 @@ else
 
     if ($nbofentries > 0)
     {
-    	print '<tr '.$bc[false].'><td colspan="3">';
+    	print '<tr><td colspan="3">';
     	tree_recur($data, $data[0], 0);
     	print '</td>';
     	print '<td></td>';
     	print '</tr>';
-    }
-    else
-    {
-    	print '<tr '.$bc[true].'>';
+    } else {
+    	print '<tr class="oddeven">';
     	print '<td colspan="3">';
     	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
     	print '<td valign="middle">';

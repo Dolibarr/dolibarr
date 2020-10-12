@@ -43,9 +43,7 @@ class InfoBox
         		0 => 'Home',
         		27 => 'AccountancyHome'
         	);
-		}
-		else
-		{
+		} else {
 			return array(
 				0 => 'Home',
 				1 => 'userhome',
@@ -108,8 +106,7 @@ class InfoBox
             if (is_object($user)) $sql .= " AND b.fk_user IN (0,".$user->id.")";
             else $sql .= " AND b.fk_user = 0";
             $sql .= " ORDER BY b.box_order";
-        }
-        else	// available
+        } else // available
         {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
@@ -128,14 +125,13 @@ class InfoBox
 
                 if (!in_array($obj->box_id, $excludelist))
                 {
+                	$regs = array();
                     if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
                     {
                         $boxname = preg_replace('/\.php$/i', '', $regs[1]);
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
-                    }
-                    else
-                    {
+                    } else {
                         $boxname = preg_replace('/\.php$/i', '', $obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
                     }
@@ -199,17 +195,13 @@ class InfoBox
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled && ($includehidden || empty($box->hidden))) $boxes[] = $box;
                         else unset($box);
-                    }
-                    else
-                    {
+                    } else {
                         dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
                     }
                 }
                 $j++;
             }
-        }
-        else
-        {
+        } else {
             dol_syslog($db->lasterror(), LOG_ERR);
             return array('error'=>$db->lasterror());
         }
@@ -282,12 +274,13 @@ class InfoBox
                         //dol_syslog("aaaaa".count($listarray));
                         $i++;
                         $ii = sprintf('%02d', $i);
+
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
                         $sql .= "(box_id, position, box_order, fk_user, entity)";
                         $sql .= " values (";
                         $sql .= " ".$id.",";
                         $sql .= " ".$zone.",";
-                        $sql .= " '".$colonne.$ii."',";
+                        $sql .= " '".$db->escape($colonne.$ii)."',";
                         $sql .= " ".$userid.",";
                         $sql .= " ".$conf->entity;
                         $sql .= ")";
@@ -302,24 +295,17 @@ class InfoBox
                     }
                 }
             }
-            if ($error)
-            {
-                $error = $db->error();
-                $db->rollback();
-                return -2;
-            }
-            else
-            {
-                $db->commit();
-                return 1;
-            }
+        } else {
+        	$error++;
         }
-        else
+
+        if ($error)
         {
-            $error = $db->lasterror();
-            $db->rollback();
-            dol_syslog(get_class()."::saveboxorder ".$error);
-            return -1;
+        	$db->rollback();
+        	return -2;
+        } else {
+        	$db->commit();
+        	return 1;
         }
     }
 }

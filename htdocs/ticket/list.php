@@ -61,8 +61,8 @@ $mode = GETPOST('mode', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
@@ -95,16 +95,14 @@ foreach ($object->fields as $key => $val)
 }
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	's.nom'=>"ThirdParty",
-	's.name_alias'=>"AliasNameShort",
-	's.zip'=>"Zip",
-	's.town'=>"Town",
-);
+$fieldstosearchall = array();
 foreach ($object->fields as $key => $val)
 {
 	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.zip'] = "Zip";
+$fieldstosearchall['s.town'] = "Town";
 
 // Definition of fields for list
 $arrayfields = array();
@@ -387,9 +385,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -572,8 +568,9 @@ print '<input type="hidden" name="mode" value="'.$mode.'" >';
 if ($socid)     print '<input type="hidden" name="socid" value="'.$socid.'" >';
 if ($projectid) print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 
-$newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : ''), '', !empty($user->rights->ticket->write));
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+if (!empty($socid)) $url .= '&socid='.$socid;
+$newcardbutton = dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->rights->ticket->write);
 
 $picto = 'ticket';
 if ($socid > 0) $picto = '';
@@ -641,7 +638,7 @@ foreach ($object->fields as $key => $val)
 			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
-			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+			print '<td class="liste_titre center'.($cssforfield ? ' '.$cssforfield : '').'">';
 			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign') {
@@ -662,13 +659,15 @@ foreach ($object->fields as $key => $val)
 		    if ($search[$key]) $selectedarray = array_values($search[$key]);
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth150', 1, 0, '', '', '');
 			print '</td>';
-		}
-		elseif ($key == "fk_soc")
-		{
+		} elseif ($key == "fk_soc") {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
-		}
-		else {
-			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+		} else {
+			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+			if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+			elseif (strpos($val['type'], 'integer:') === 0) {
+				print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
+			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			print '</td>';
 		}
 	}
 }
@@ -693,7 +692,7 @@ print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val)
 {
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
-	if ($key == 'fk_statut') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	if ($key == 'fk_statut' || $key == 'severity_code') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield .= ($cssforfield ? ' ' : '').'right';
@@ -727,6 +726,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$cacheofoutputfield = array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -748,7 +748,7 @@ while ($i < min($num, $limit))
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		if (in_array($key, array('ref', 'fk_project'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
-		if ($key == 'fk_statut') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		if ($key == 'fk_statut' || $key == 'severity_code') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		if (!empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td';
@@ -759,18 +759,38 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
-			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
-			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
-			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
+			elseif ($key == 'type_code') {
+				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+				print '<span title="'.$s.'">';
+				print $s;
+				print '</span>';
+			}
+			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
 			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif ($key == 'fk_user_create') {
 				if ($object->fk_user_create > 0) {
 					$user_create->fetch($object->fk_user_create);
 					print $user_create->getNomUrl(-1);
 				}
+			} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
+			else {	// Example: key=fk_soc, obj->key=123 val=array('type'=>'integer', ...
+				$tmp = explode(':', $val['type']);
+				if ($tmp[0] == 'integer' && !empty($tmp[1]) && class_exists($tmp[1])) {
+					// It is a type of an foreign field. We will try to reduce the number of fetch that the showOutputField is making.
+					//var_dump('eeee-'.$key.'-'.$obj->$key.'-'.$val['type']);
+					if ($key && $obj->$key && $val['type'] && array_key_exists($key.'-'.$obj->$key.'-'.$val['type'], $cacheofoutputfield)) {
+						$result = $cacheofoutputfield[$key.'-'.$obj->$key.'-'.$val['type']];
+					} else {
+						$result = $object->showOutputField($val, $key, $obj->$key, '');
+						$cacheofoutputfield[$key.'-'.$obj->$key.'-'.$val['type']] = $result;
+					}
+				} else {
+					$result = $object->showOutputField($val, $key, $obj->$key, '');
+				}
+				print $result;
 			}
-			elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
-			else print $object->showOutputField($val, $key, $obj->$key, '');
+
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 			if (!empty($val['isameasure']))

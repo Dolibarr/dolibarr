@@ -104,9 +104,7 @@ class UserBankAccount extends Account
 
                 return $this->update($user);
             }
-        }
-        else
-        {
+        } else {
             print $this->db->error();
             return 0;
         }
@@ -142,17 +140,14 @@ class UserBankAccount extends Account
 
         if (trim($this->label) != '')
             $sql .= ",label = '".$this->db->escape($this->label)."'";
-        else
-            $sql .= ",label = NULL";
+        else $sql .= ",label = NULL";
         $sql .= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
         if ($result)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return 0;
         }
@@ -175,7 +170,7 @@ class UserBankAccount extends Account
         $sql .= " FROM ".MAIN_DB_PREFIX."user_rib";
         if ($id) $sql .= " WHERE rowid = ".$id;
         if ($ref) $sql .= " WHERE label = '".$this->db->escape($ref)."'";
-        if ($userid) $sql .= " WHERE fk_user = '".$userid."'";
+        if ($userid) $sql .= " WHERE fk_user = ".((int) $userid);
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -203,9 +198,7 @@ class UserBankAccount extends Account
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }

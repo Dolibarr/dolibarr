@@ -102,8 +102,7 @@ if ($company->id)
 		$v->setEmail($company->email, 'INTERNET');
 	}
 	// when e-mail of contact and company complete different use company e-mail at first (and contact e-mail at second)
-	else
-	{
+	else {
 		$v->setEmail($company->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)

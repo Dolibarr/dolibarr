@@ -110,7 +110,7 @@ UpdateConfCPOK=Updated successfully.
 Module27130Name= Management of leave requests
 Module27130Desc= Management of leave requests
 ErrorMailNotSend=An error occurred while sending email:
-NoticePeriod=Notice period
+NoticePeriod=Період повідомлення
 #Messages
 HolidaysToValidate=Validate leave requests
 HolidaysToValidateBody=Below is a leave request to validate

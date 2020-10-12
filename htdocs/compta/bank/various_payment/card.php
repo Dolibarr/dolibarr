@@ -41,8 +41,9 @@ $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "cat
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$action		= GETPOST('action', 'alpha');
-$cancel		= GETPOST('cancel', 'aZ09');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $accountid = GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
@@ -107,8 +108,8 @@ if (empty($reshook))
 		$object->datev = $datev;
 		$object->datep = $datep;
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
-		$object->label = GETPOST("label", 'none');
-		$object->note = GETPOST("note", 'none');
+		$object->label = GETPOST("label", 'restricthtml');
+		$object->note = GETPOST("note", 'restricthtml');
 		$object->type_payment = GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
 		$object->num_payment = GETPOST("num_payment", 'alpha');
 		$object->fk_user_author = $user->id;
@@ -163,9 +164,7 @@ if (empty($reshook))
 				$urltogo = ($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 				header("Location: ".$urltogo);
 				exit;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";
@@ -198,22 +197,16 @@ if (empty($reshook))
 					$db->commit();
 					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 					exit;
-				}
-				else
-				{
+				} else {
 					$object->error = $accountline->error;
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 		}
 	}
@@ -230,6 +223,64 @@ if (empty($reshook))
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	}
+}
+
+// Action clone object
+if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+
+if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->modifier))
+{
+	$db->begin();
+
+	$originalId = $id;
+
+	$object->fetch($id);
+
+	if ($object->id > 0)
+	{
+		$object->id = $object->ref = null;
+
+		if (GETPOST('clone_label', 'alphanohtml')) {
+			$object->label = GETPOST('clone_label', 'alphanohtml');
+		} else {
+			$object->label = $langs->trans("CopyOf").' '.$object->label;
+		}
+
+		$newdatepayment = dol_mktime(0, 0, 0, GETPOST('clone_date_paymentmonth', 'int'), GETPOST('clone_date_paymentday', 'int'), GETPOST('clone_date_paymentyear', 'int'));
+		$newdatevalue = dol_mktime(0, 0, 0, GETPOST('clone_date_valuemonth', 'int'), GETPOST('clone_date_valueday', 'int'), GETPOST('clone_date_valueyear', 'int'));
+		if ($newdatepayment) $object->datep = $newdatepayment;
+		if (!empty($newdatevalue)) {
+			$object->datev = $newdatevalue;
+		} else {
+			$object->datev = $newdatepayment;
+		}
+
+		if ($object->check())
+		{
+			$id = $object->create($user);
+			if ($id > 0)
+			{
+				$db->commit();
+				$db->close();
+
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			} else {
+				$id = $originalId;
+				$db->rollback();
+
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		} else {
+			$id = $originalId;
+			$db->rollback();
+
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} else {
+		$db->rollback();
+		dol_print_error($db, $object->error);
 	}
 }
 
@@ -375,8 +426,7 @@ if ($action == 'create')
         print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
         print '</td></tr>';
-	}
-	else // For external software
+	} else // For external software
 	{
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td><input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
@@ -391,14 +441,11 @@ if ($action == 'create')
         if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
         {
             print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
-        }
-        else
-        {
+        } else {
             print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
-    }
-    else // For external software
+    } else // For external software
     {
         print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
         print '<td><input class="minwidth100 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
@@ -430,6 +477,19 @@ if ($id)
 	$alreadyaccounted = $object->getVentilExportCompta();
 
 	$head = various_payment_prepare_head($object);
+
+	// Clone confirmation
+	if ($action === 'clone')
+	{
+		$formquestion = array(
+			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
+		);
+		$formquestion[] = array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1);
+		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1);
+		$formquestion[] = array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($accountid, "accountid", 0, '', 1));
+
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
+	}
 
 	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
@@ -554,6 +614,12 @@ if ($id)
 	// TODO
 	// Add button modify
 
+	// Clone
+	if ($user->rights->banque->modifier)
+	{
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/bank/various_payment/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
+	}
+
 	// Delete
 	if (empty($object->rappro))
 	{
@@ -562,16 +628,12 @@ if ($id)
 			if ($alreadyaccounted) {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("Accounted").'">'.$langs->trans("Delete").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 

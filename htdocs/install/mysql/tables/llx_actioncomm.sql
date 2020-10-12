@@ -33,7 +33,7 @@ create table llx_actioncomm
   code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
   
   datec				datetime,						-- date creation
-  tms				timestamp,						-- date modification
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
   fk_user_author	integer,						-- user id of user that has created record
   fk_user_mod		integer,						-- user id of user that has modified record
 
@@ -66,6 +66,7 @@ create table llx_actioncomm
   email_tocc		varchar(255),					-- when event was an email, we store here the email_tocc
   email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
   errors_to			varchar(255),					-- when event was an email, we store here the erros_to
+  reply_to			varchar(255),					-- when event was an email, we store here the reply_to
   
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'

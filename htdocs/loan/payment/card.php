@@ -57,15 +57,15 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
 	$db->query($sql);
 
+    $fk_loan = $payment->fk_loan;
+
 	$result = $payment->delete($user);
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/loan/list.php");
+		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".$fk_loan);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
@@ -95,15 +95,13 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->wri
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
+				$fac->generateDocument($fac->model_pdf, $outputlangs);
 			}
 		}
 
 		header('Location: card.php?id='.$payment->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
@@ -254,9 +252,7 @@ if ($resql)
 
 	print "</table>\n";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -285,10 +281,8 @@ if (empty($action) && !empty($user->rights->loan->delete))
 {
 	if (!$disable_delete)
 	{
-		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
+		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 	}
 }

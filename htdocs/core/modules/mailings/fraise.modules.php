@@ -154,9 +154,7 @@ class mailing_fraise extends MailingTargets
                 $s .= '</option>';
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
 
@@ -193,9 +191,7 @@ class mailing_fraise extends MailingTargets
         		$s .= '</option>';
         		$i++;
         	}
-        }
-        else
-        {
+        } else {
         	dol_print_error($this->db);
         }
 
@@ -242,37 +238,35 @@ class mailing_fraise extends MailingTargets
         $cibles = array();
         $now = dol_now();
 
-        $dateendsubscriptionafter = dol_mktime($_POST['subscriptionafterhour'], $_POST['subscriptionaftermin'], $_POST['subscriptionaftersec'], $_POST['subscriptionaftermonth'], $_POST['subscriptionafterday'], $_POST['subscriptionafteryear']);
-        $dateendsubscriptionbefore = dol_mktime($_POST['subscriptionbeforehour'], $_POST['subscriptionbeforemin'], $_POST['subscriptionbeforesec'], $_POST['subscriptionbeforemonth'], $_POST['subscriptionbeforeday'], $_POST['subscriptionbeforeyear']);
+        $dateendsubscriptionafter = dol_mktime(GETPOST('subscriptionafterhour', 'int'), GETPOST('subscriptionaftermin', 'int'), GETPOST('subscriptionaftersec', 'int'), GETPOST('subscriptionaftermonth', 'int'), GETPOST('subscriptionafterday', 'int'), GETPOST('subscriptionafteryear', 'int'));
+        $dateendsubscriptionbefore = dol_mktime(GETPOST('subscriptionbeforehour', 'int'), GETPOST('subscriptionbeforemin', 'int'), GETPOST('subscriptionbeforesec', 'int'), GETPOST('subscriptionbeforemonth', 'int'), GETPOST('subscriptionbeforeday', 'int'), GETPOST('subscriptionbeforeyear', 'int'));
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
         $sql .= " a.lastname, a.firstname,";
         $sql .= " a.datefin, a.civility as civility_id, a.login, a.societe"; // Other fields
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        if ($_POST['filter_category'])
+        if (GETPOST('filter_category'))
         {
-        	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
-        	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
+        	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
+        	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
         }
         $sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
         $sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false
         $sql .= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
         // Filter on status
-        if (isset($_POST["filter"]) && $_POST["filter"] == '-1') {
+        if (GETPOST("filter") == '-1') {
             $sql .= " AND a.statut=-1";
         }
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql .= " AND a.statut=0";
+        if (GETPOST("filter", 'aZ09') == '1a') $sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+        if (GETPOST("filter", 'aZ09') == '1b') $sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
+        if (GETPOST("filter", 'aZ09') === '0')  $sql .= " AND a.statut=0";
         // Filter on date
         if ($dateendsubscriptionafter > 0)  $sql .= " AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
         if ($dateendsubscriptionbefore > 0) $sql .= " AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
         $sql .= " AND a.fk_adherent_type = ta.rowid";
         // Filter on type
-        if ($_POST['filter_type']) $sql .= " AND ta.rowid='".$_POST['filter_type']."'";
-        // Filter on category
-        if ($_POST['filter_category']) $sql .= " AND c.rowid='".$_POST['filter_category']."'";
+        if (GETPOST('filter_type', 'int') > 0) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type', 'int'))."'";
         $sql .= " ORDER BY a.email";
         //print $sql;
 
@@ -306,16 +300,14 @@ class mailing_fraise extends MailingTargets
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'member'
-                                );
+                    );
                     $old = $obj->email;
                     $j++;
                 }
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_syslog($this->db->error());
             $this->error = $this->db->error();
             return -1;

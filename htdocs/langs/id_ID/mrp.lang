@@ -1,5 +1,6 @@
 Mrp=Pesanan Manufaktur
 MO=Pesanan manufaktur
+MOs=Manufacturing orders
 MRPDescription=Modul untuk mengelola produksi dan Pesanan Manufaktur (MO).
 MRPArea=Area MRP
 MrpSetupPage=Pengaturan MRP modul

@@ -72,9 +72,7 @@ if (empty($_REQUEST['typeid']))
 		$part = explode(':', $val);
 		if ($part[0] == 't.fk_typepayment') $typeid = $part[1];
 	}
-}
-else
-{
+} else {
 	$typeid = $_REQUEST['typeid'];
 }
 
@@ -148,11 +146,9 @@ if ($result)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
 
-	$newcardbutton = '';
-	if ($user->rights->tax->charges->creer)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/tva/card.php?action=create');
-    }
+	$url = DOL_URL_ROOT.'/compta/tva/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -174,22 +170,18 @@ if ($result)
 	// Date end period
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1);
+	print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1);
+	print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	// Date payment
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $form->selectDate($search_datepayment_start ? $search_datepayment_start : -1, 'search_datepayment_start', 0, 0, 1);
+	print $form->selectDate($search_datepayment_start ? $search_datepayment_start : -1, 'search_datepayment_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $form->selectDate($search_datepayment_end ? $search_datepayment_end : -1, 'search_datepayment_end', 0, 0, 1);
+	print $form->selectDate($search_datepayment_end ? $search_datepayment_end : -1, 'search_datepayment_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	// Type
 	print '<td class="liste_titre left">';
@@ -228,9 +220,7 @@ if ($result)
 		if ($obj->payment_code <> '')
 		{
 			$type = '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
-		}
-		else
-		{
+		} else {
 			$type = '<td>&nbsp;</td>';
 		}
 
@@ -266,8 +256,7 @@ if ($result)
 
 				$bankstatic->label = $obj->blabel;
 				print $bankstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td>';
 		}
 		// Amount
@@ -291,9 +280,7 @@ if ($result)
 	print '</form>';
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

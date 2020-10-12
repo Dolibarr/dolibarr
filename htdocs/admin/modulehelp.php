@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('errors', 'admin', 'modulebuilder'));
 
 $mode = GETPOST('mode', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 if (empty($mode)) $mode = 'desc';
 
@@ -105,8 +105,7 @@ foreach ($modulesdir as $dir)
 						continue;
 		        	}
 
-		            try
-		            {
+		            try {
 		                $res = include_once $dir.$file;
 		                if (class_exists($modName))
 						{
@@ -140,9 +139,7 @@ foreach ($modulesdir as $dir)
 		    					        if ($publisher)
 		    					        {
 		    					            $arrayofnatures['external_'.$publisher] = $langs->trans("External").' - '.$publisher;
-		    					        }
-		    					        else
-		    					        {
+		    					        } else {
 		    					            $arrayofnatures['external_'] = $langs->trans("External").' - '.$langs->trans("UnknownPublishers");
 		    					        }
 		    					    }
@@ -180,20 +177,15 @@ foreach ($modulesdir as $dir)
 		    			            else $categ[$specialstring] = 1;
 		    						$j++;
 		    			            $i++;
-		    					}
-		    					else dol_syslog("Module ".get_class($objMod)." not qualified");
-							}
-		            		catch (Exception $e)
+		    					} else dol_syslog("Module ".get_class($objMod)." not qualified");
+							} catch (Exception $e)
 		            		{
 		            		     dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 		            		}
-						}
-		            	else
-						{
+						} else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
-					}
-		            catch (Exception $e)
+					} catch (Exception $e)
 		            {
 		                 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 		            }
@@ -201,9 +193,7 @@ foreach ($modulesdir as $dir)
 		    }
 		}
 		closedir($handle);
-	}
-	else
-	{
+	} else {
 		dol_syslog("htdocs/admin/modulehelp.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 	}
 }
@@ -331,9 +321,7 @@ if ($mode == 'desc')
         if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) $textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text .= $textexternal;
         $text .= '<br>';
-    }
-    else
-    {
+    } else {
         $text .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core").'<br>';
     }
 
@@ -353,7 +341,7 @@ if ($mode == 'feature')
     $text .= '<br><br>';
 
     $text .= '<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
+	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
     if (count($sqlfiles) > 0)
     {
     	$text .= $langs->trans("Yes").' (';
@@ -364,8 +352,7 @@ if ($mode == 'feature')
     		$i++;
     	}
     	$text .= ')';
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -378,8 +365,7 @@ if ($mode == 'feature')
             $text .= ($i ? ', ' : '').$val;
             $i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -388,8 +374,7 @@ if ($mode == 'feature')
     if (dol_is_file($filedata))
     {
         $text .= $langs->trans("Yes").' ('.$moduledir.'/sql/data.sql)';
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -407,8 +392,7 @@ if ($mode == 'feature')
            		$i++;
         	}
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -416,8 +400,7 @@ if ($mode == 'feature')
     if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
     {
         $text .= $langs->trans("Yes");
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -425,8 +408,7 @@ if ($mode == 'feature')
     if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
     {
         $text .= $langs->trans("Yes");
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -439,8 +421,7 @@ if ($mode == 'feature')
             $text .= ($i ? ', ' : '').($val['label']);
             $i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -449,9 +430,7 @@ if ($mode == 'feature')
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
     	$yesno = 'Yes';
-    }
-    else
-    {
+    } else {
     	$yesno = 'No';
     }
     require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
@@ -479,8 +458,7 @@ if ($mode == 'feature')
             $text .= ($i ? ', ' : '').($val['file'] ? $val['file'] : $val[0]);
             $i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -510,8 +488,7 @@ if ($mode == 'feature')
         	$text .= ($i ? ', ' : '').($val);
         	$i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -524,8 +501,7 @@ if ($mode == 'feature')
         	$text .= ($i ? ', ' : '').($val[1]);
         	$i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -533,8 +509,7 @@ if ($mode == 'feature')
     if (isset($objMod->menu) && !empty($objMod->menu)) // objMod can be an array or just an int 1
     {
         $text .= $langs->trans("Yes");
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -547,8 +522,7 @@ if ($mode == 'feature')
             $text .= ($i ? ', ' : '').($val);
             $i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 
@@ -561,8 +535,7 @@ if ($mode == 'feature')
             $text .= ($i ? ', ' : '').($val);
             $i++;
         }
-    }
-    else $text .= $langs->trans("No");
+    } else $text .= $langs->trans("No");
 
     $text .= '<br>';
 

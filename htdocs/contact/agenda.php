@@ -76,16 +76,14 @@ if (GETPOST('actioncode', 'array'))
 {
     $actioncode = GETPOST('actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
     $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -159,9 +157,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
  	}
    	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
     $objcanvas->display_canvas($action); // Show template
-}
-else
-{
+} else {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
@@ -244,17 +240,10 @@ else
         $permok = $user->rights->agenda->myactions->create;
         if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok)
         {
-            //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-            if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') $out .= '&amp;socid='.$objthirdparty->id;
-            $out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
-        	//$out.=$langs->trans("AddAnAction").' ';
-        	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-        	//$out.="</a>";
+			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') $out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;percentage=-1&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+			$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
     	}
-
-
-    	//print '<div class="tabsAction">';
-        //print '</div>';
 
     	$newcardbutton = '';
     	if (!empty($conf->agenda->enabled))

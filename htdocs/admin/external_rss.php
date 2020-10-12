@@ -60,9 +60,7 @@ if ($result)
         preg_match('/([0-9]+)$/i', $obj->name, $reg);
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -82,8 +80,8 @@ if ($action == 'add' || GETPOST("modify"))
 		{
 			// Supprime boite box_external_rss de definition des boites
             /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
-			$sql.= " SET name = '".$boxlabel."'";
-	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
+			$sql.= " SET name = '".$db->escape($boxlabel)."'";
+	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape($_POST["norss"])." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)
@@ -92,9 +90,7 @@ if ($action == 'add' || GETPOST("modify"))
 				exit;
 	        }
             */
-		}
-		else
-		{
+		} else {
 			// Ajoute boite box_external_rss dans definition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
 			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
@@ -113,9 +109,7 @@ if ($action == 'add' || GETPOST("modify"))
             $db->commit();
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -161,9 +155,7 @@ if ($_POST["delete"])
 			}
 
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			dol_print_error($db, "sql=".$sql);
 			exit;
@@ -178,9 +170,7 @@ if ($_POST["delete"])
             $db->commit();
             header("Location: external_rss.php");
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -292,9 +282,7 @@ if ($resql)
 	    if ($result > 0 && empty($rss->error))
 	    {
 			print '<font class="ok">'.$langs->trans("Online").'</div>';
-		}
-		else
-		{
+		} else {
 			print '<font class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
 			if ($rssparser->error) print ' - '.$langs->trans($rssparser->error);
@@ -331,9 +319,7 @@ if ($resql)
 
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

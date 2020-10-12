@@ -47,7 +47,7 @@ $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sproduct = GETPOST('sproduct', 'int');
+$search_product = GETPOST('search_product', 'int');
 $search_dateyear = GETPOST('search_dateyear', 'int');
 $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
@@ -78,7 +78,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_datemonth = '';
     $search_dateday = '';
     $search_dateyear = '';
-    $sproduct = 0;
+    $search_product = 0;
 }
 
 
@@ -97,9 +97,11 @@ llxHeader('', $texte, $helpurl, '');
 print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 $head = array();
+
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
-$head[0][1] = $langs->trans('Status');
+$head[0][1] = $langs->trans('MissingStocks');
 $head[0][2] = 'replenish';
+
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
@@ -141,7 +143,7 @@ if (GETPOST('statut', 'int')) {
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= $db->order($sortfield, $sortorder);
-if (!$sproduct) {
+if (!$search_product) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
 
@@ -259,11 +261,11 @@ if ($resql)
 
     $userstatic = new User($db);
 
-	while ($i < min($num, $sproduct ? $num : $conf->liste_limit))
+	while ($i < min($num, $search_product ? $num : $conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
 
-        $showline = dolDispatchToDo($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid)));
+        $showline = dolDispatchToDo($obj->rowid) && (!$search_product || in_array($search_product, getProducts($obj->rowid)));
 
         if ($showline)
         {
@@ -314,9 +316,7 @@ if ($resql)
     $db->free($resql);
 
     dol_fiche_end();
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

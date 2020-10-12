@@ -126,9 +126,7 @@ if ($action == 'set')
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
@@ -155,26 +153,23 @@ if ($action == 'setlevel')
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
+
 
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("SyslogSetup"));
 
 $form = new Form($db);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SyslogSetup"), $linkback, 'title_setup');
 print '<br>';
-
-$def = array();
 
 $syslogfacility = $defaultsyslogfacility = dolibarr_get_const($db, "SYSLOG_FACILITY", 0);
 $syslogfile = $defaultsyslogfile = dolibarr_get_const($db, "SYSLOG_FILE", 0);
@@ -192,7 +187,7 @@ if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
 //print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
 
 // Output mode
-print load_fiche_titre($langs->trans("SyslogOutput"));
+print load_fiche_titre($langs->trans("SyslogOutput"), '', '');
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -217,6 +212,12 @@ foreach ($syslogModules as $moduleName)
 	print '<td width="140">';
 	print '<input class="oddeven" type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled' : '').'> ';
 	print $module->getName();
+	if ($moduleName == 'mod_syslog_syslog') {
+		if (! $module->isActive()) {
+			$langs->load("errors");
+			print $form->textwithpicto('', $langs->trans("ErrorPHPNeedModule", 'SysLog'));
+		}
+	}
 	print '</td>';
 
 	print '<td class="nowrap">';
@@ -230,8 +231,7 @@ foreach ($syslogModules as $moduleName)
 		    {
     			if (isset($_POST[$tmpoption])) $value = $_POST[$tmpoption];
     			elseif (!empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
-		    }
-			else $value = (isset($option['default']) ? $option['default'] : '');
+		    } else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
@@ -265,7 +265,7 @@ print "</form>\n";
 
 print '<br>'."\n\n";
 
-print load_fiche_titre($langs->trans("SyslogLevel"));
+print load_fiche_titre($langs->trans("SyslogLevel"), '', '');
 
 // Level
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

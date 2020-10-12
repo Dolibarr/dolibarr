@@ -246,8 +246,7 @@ if ($resql)
         }
     }
     print "</table><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 print '</div></div></div>';

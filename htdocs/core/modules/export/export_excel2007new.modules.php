@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 /**
  *	Class to build export files with Excel format
@@ -58,6 +59,8 @@ class ExportExcel2007new extends ModeleExports
 	public $workbook; // Handle file
 
 	public $worksheet; // Handle sheet
+
+	public $styleArray;
 
 	public $row;
 
@@ -273,9 +276,7 @@ class ExportExcel2007new extends ModeleExports
     		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     		{
     			$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
-    		}
-    		else
-    		{
+    		} else {
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
     		    if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto')))		// Set autowidth for some types
                 {
@@ -332,9 +333,7 @@ class ExportExcel2007new extends ModeleExports
 			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg))
 			{
 				$newvalue = $outputlangs->transnoentities($reg[1]);
-			}
-			else
-			{
+			} else {
 				$newvalue = $outputlangs->convToOutputCharset($newvalue);
 			}
 
@@ -344,16 +343,13 @@ class ExportExcel2007new extends ModeleExports
         	    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
         	    $coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
         	    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
-			}
-			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
+			} elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
 			{
         	    $newvalue = dol_stringtotime($newvalue);
         	    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
         	    $coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
         	    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
-			}
-			else
-			{
+			} else {
     	    	if ($typefield == 'Text' || $typefield == 'TextAuto')
     	    	{
     	    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
@@ -361,9 +357,7 @@ class ExportExcel2007new extends ModeleExports
     	    		$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
     	    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
     	    		$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-    	    	}
-    	    	else
-    	    	{
+    	    	} else {
     	    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $newvalue);
     	    	}
 			}
@@ -445,4 +439,204 @@ class ExportExcel2007new extends ModeleExports
 
     	return $letter;
     }
+
+	/**
+	 * Set cell value and automatically merge if we give an endcell
+	 *
+	 * @param string $val cell value
+	 * @param string $startCell starting cell
+	 * @param string $endCell  ending cell
+	 * @return int 1 if success -1 if failed
+	 */
+	public function setCellValue($val, $startCell, $endCell = '')
+	{
+		try {
+			$this->workbook->getActiveSheet()->setCellValue($startCell, $val);
+
+			if (! empty($endCell)) {
+				$cellRange = $startCell.':'.$endCell;
+				$this->workbook->getActiveSheet()->mergeCells($startCell.':'.$endCell);
+			}
+			else $cellRange = $startCell;
+			if (! empty($this->styleArray)) $this->workbook->getActiveSheet()->getStyle($cellRange)->applyFromArray($this->styleArray);
+		}
+		catch (Exception $e) {
+			$this->error = $e->getMessage();
+			return -1;
+		}
+		return 1;
+	}
+
+	/**
+	 * Set border style
+	 *
+	 * @param string $thickness style \PhpOffice\PhpSpreadsheet\Style\Border
+	 * @param string $color     color \PhpOffice\PhpSpreadsheet\Style\Color
+	 * @return int 1 if ok
+	 */
+	public function setBorderStyle($thickness, $color)
+	{
+		$this->styleArray['borders'] = array(
+			'outline' => array(
+				'borderStyle' => $thickness,
+				'color' => array('argb' => $color)
+			)
+		);
+		return 1;
+	}
+
+	/**
+	 * Set font style
+	 *
+	 * @param bool   $bold  true if bold
+	 * @param string $color color \PhpOffice\PhpSpreadsheet\Style\Color
+	 * @return int 1
+	 */
+	public function setFontStyle($bold, $color)
+	{
+		$this->styleArray['font'] = array(
+			'color' => array('argb' => $color),
+			'bold' => $bold
+		);
+		return 1;
+	}
+
+	/**
+	 * Set alignment style (horizontal, left, right, ...)
+	 *
+	 * @param string $horizontal PhpOffice\PhpSpreadsheet\Style\Alignment
+	 * @return int 1
+	 */
+	public function setAlignmentStyle($horizontal)
+	{
+		$this->styleArray['alignment'] = array('horizontal' => $horizontal);
+		return 1;
+	}
+
+	/**
+	 * Reset Style
+	 * @return int 1
+	 */
+	public function resetStyle()
+	{
+		$this->styleArray = array();
+		return 1;
+	}
+
+	/**
+	 * Make a NxN Block in sheet
+	 *
+	 * @param string $startCell starting cell
+	 * @param array  $TDatas array(ColumnName=>array(Row value 1, row value 2, etc ...))
+	 * @param bool   $boldTitle true if bold headers
+	 * @return int 1 if OK, -1 if KO
+	 */
+	public function setBlock($startCell, $TDatas = array(), $boldTitle = false)
+	{
+		try {
+			if (! empty($TDatas)) {
+				$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
+				$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
+				$startRow = $startCell->getRow();
+				foreach ($TDatas as $column => $TRows) {
+					if ($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
+					$this->setCellValue($column, $cell->getCoordinate());
+					$rowPos = $startRow;
+					if ($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					foreach ($TRows as $row) {
+						$rowPos++;
+						$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $rowPos);
+						$this->setCellValue($row, $cell->getCoordinate());
+					}
+					$startColumn++;
+				}
+			}
+		}
+		catch (Exception $e) {
+			$this->error = $e->getMessage();
+			return -1;
+		}
+		return 1;
+	}
+
+	/**
+	 * Make a 2xN Tab in Sheet
+	 *
+	 * @param string $startCell A1
+	 * @param array  $TDatas    array(Title=>val)
+	 * @param bool   $boldTitle true if bold titles
+	 * @return int 1 if OK, -1 if KO
+	 */
+	public function setBlock2Columns($startCell, $TDatas = array(), $boldTitle = false)
+	{
+		try {
+			if (! empty($TDatas)) {
+				$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
+				$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
+				$startRow = $startCell->getRow();
+				foreach ($TDatas as $title => $val) {
+					$cell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
+					if ($boldTitle) $this->setFontStyle(true, $this->styleArray['font']['color']['argb']);
+					$this->setCellValue($title, $cell->getCoordinate());
+					if ($boldTitle) $this->setFontStyle(false, $this->styleArray['font']['color']['argb']);
+					$cell2 = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn + 1, $startRow);
+					$this->setCellValue($val, $cell2->getCoordinate());
+					$startRow++;
+				}
+			}
+		}
+		catch (Exception $e) {
+			$this->error = $e->getMessage();
+			return -1;
+		}
+		return 1;
+	}
+
+	/**
+	 * Enable auto sizing for column range
+	 *
+	 * @param string $firstColumn first column to autosize
+	 * @param string $lastColumn  to last column to autosize
+	 * @return int 1
+	 */
+	public function enableAutosize($firstColumn, $lastColumn)
+	{
+		foreach (range($firstColumn, $lastColumn) as $columnID) {
+			$this->workbook->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+		}
+		return 1;
+	}
+
+	/**
+	 * Set a value cell and merging it by giving a starting cell and a length
+	 *
+	 * @param string $val       Cell value
+	 * @param string $startCell Starting cell
+	 * @param int    $length    Length
+	 * @param int    $offset    Starting offset
+	 * @return string Coordinate or -1 if KO
+	 */
+	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0)
+	{
+		try {
+			$startCell = $this->workbook->getActiveSheet()->getCell($startCell);
+			$startColumn = Coordinate::columnIndexFromString($startCell->getColumn());
+			if (! empty($offset)) $startColumn += $offset;
+
+			$startRow = $startCell->getRow();
+			$startCell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn, $startRow);
+			$startCoordinate = $startCell->getCoordinate();
+			$this->setCellValue($val, $startCell->getCoordinate());
+
+			$endCell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($startColumn + ($length - 1), $startRow);
+			$endCoordinate = $endCell->getCoordinate();
+			$this->workbook->getActiveSheet()->mergeCells($startCoordinate.':'.$endCoordinate);
+		}
+		catch (Exception $e) {
+			$this->error = $e->getMessage();
+			return -1;
+		}
+		return $endCoordinate;
+	}
 }

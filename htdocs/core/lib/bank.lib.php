@@ -334,8 +334,7 @@ function checkBanForAccount($account)
             return false; // Sould be 6 but can be 123-456
         elseif (strlen($account->code_banque) < 6)
             return false; // Sould be 6
-        else
-            return true;
+        else return true;
     }
 
     // No particular rule

@@ -224,9 +224,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				if ($i < $nbmax)
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -246,9 +244,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
-		}
-		else
-		{
+		} else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -331,7 +327,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product=".$objp->rowid;
-					$sql .= " AND lang='".$langs->getDefaultLang()."'";
+					$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
 
 					$resultd = $db->query($sql);
 					if ($resultd)
@@ -384,9 +380,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 			print '</div>';
 			print '<br>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -456,8 +450,7 @@ function activitytrim($product_type)
 
 			if ($product_type == 0)
 				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
-			else
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			else print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter3").'</td>';

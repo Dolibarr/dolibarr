@@ -36,10 +36,12 @@ if (empty($conf) || !is_object($conf))
 
 $langs->load("modulebuilder");
 
+$listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php<br>Product:product/class/product.class.php<br>Project:projet/class/project.class.php<br>...';
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
-<script type="text/javascript">
+<script>
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
     	{
@@ -177,8 +179,7 @@ if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_a
 			$param_chain .= $key.','.$value."\n";
 		}
 	}
-}
-elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
+} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
 {
 	$paramlist = array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -223,9 +224,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
         else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
     }
     print '</select>';
-}
-else
-{
+} else {
 	print $type2label[$type];
     print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
@@ -248,7 +247,7 @@ else
     <span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
     <span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue2')?></span>
     <span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
-    <span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"), 1, 0, '', 0, 2, 'helpvalue4')?></span>
+    <span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
     <span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
     <span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>
     </td></tr>

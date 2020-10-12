@@ -54,8 +54,8 @@ if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
 
 	// Load variable for pagination
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$sortfield = GETPOST('sortfield', 'alpha');
-	$sortorder = GETPOST('sortorder', 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 	$offset = $limit * $page;
@@ -129,8 +129,7 @@ if ($objecttype) {
     	}
         $ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
         $object = new $ObjectClassName($db);
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
         print 'Failed to load class for type '.$objecttype;
     }
 }
@@ -252,12 +251,10 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			if (is_null($obj->val)) {
 				$keytouse = '__NULL__';
 				$valuetranslated = $langs->transnoentitiesnoconv("NotDefined");
-			}
-			elseif ($obj->val === '') {
+			} elseif ($obj->val === '') {
 				$keytouse = '';
 				$valuetranslated = $langs->transnoentitiesnoconv("Empty");
-			}
-			else {
+			} else {
 				$keytouse = (string) $obj->val;
 				$valuetranslated = $obj->val;
 			}
@@ -267,8 +264,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
 				if (is_null($valuetranslated)) $valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 				$valuetranslated = $langs->trans($valuetranslated);
-			}
-			elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
+			} elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
 				$classname = $regs[1];
 				$classpath = $regs[2];
 				dol_include_once($classpath);
@@ -292,9 +288,17 @@ if (is_array($search_groupby) && count($search_groupby)) {
 
 		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
+			if (strpos($fieldtocount, 'te.') === 0) {
+                //if (!empty($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix])) {
+                //      $langs->load($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix]);
+                //}
+                $keyforlabeloffield = $extrafields->attributes[$object->table_element]['label'][$gvalwithoutprefix];
+            } else {
+                $keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+            }
 			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
 			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
-			$labeloffield = $langs->transnoentitiesnoconv($object->fields[$gvalwithoutprefix]['label']);
+			$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
 			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
@@ -314,7 +318,7 @@ $startyear = $endyear - 2;
 $param = '';
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="viewgraph">';
 print '<input type="hidden" name="tabfamily" value="'.$tabfamily.'">';
 
@@ -456,8 +460,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
         } elseif (preg_match('/\-day$/', $val)) {
             $tmpval = preg_replace('/\-day$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as x_".$key.', ';
-        }
-        else $sql .= $val.' as x_'.$key.', ';
+        } else $sql .= $val.' as x_'.$key.', ';
     }
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
@@ -469,24 +472,20 @@ if (!empty($search_measures) && !empty($search_xaxis))
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
     		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as g_".$key.', ';
-    	}
-    	else $sql .= $val.' as g_'.$key.', ';
+    	} else $sql .= $val.' as g_'.$key.', ';
     }
     foreach ($search_measures as $key => $val) {
         if ($val == 't.count') $sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
         elseif (preg_match('/\-sum$/', $val)) {
             $tmpval = preg_replace('/\-sum$/', '', $val);
             $sql .= 'SUM('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
-        }
-        elseif (preg_match('/\-average$/', $val)) {
+        } elseif (preg_match('/\-average$/', $val)) {
             $tmpval = preg_replace('/\-average$/', '', $val);
             $sql .= 'AVG('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
-        }
-        elseif (preg_match('/\-min$/', $val)) {
+        } elseif (preg_match('/\-min$/', $val)) {
         	$tmpval  = preg_replace('/\-min$/', '', $val);
         	$sql .= 'MIN('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
-        }
-        elseif (preg_match('/\-max$/', $val)) {
+        } elseif (preg_match('/\-max$/', $val)) {
         	$tmpval = preg_replace('/\-max$/', '', $val);
         	$sql .= 'MAX('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
         }
@@ -524,8 +523,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
         } elseif (preg_match('/\-day$/', $val)) {
             $tmpval = preg_replace('/\-day$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-        }
-        else $sql .= $val.', ';
+        } else $sql .= $val.', ';
     }
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
@@ -537,8 +535,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
     		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-    	}
-    	else $sql .= $val.', ';
+    	} else $sql .= $val.', ';
     }
     $sql = preg_replace('/,\s*$/', '', $sql);
     $sql .= ' ORDER BY ';
@@ -552,8 +549,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
         } elseif (preg_match('/\-day$/', $val)) {
             $tmpval = preg_replace('/\-day$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-        }
-        else $sql .= $val.', ';
+        } else $sql .= $val.', ';
     }
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
@@ -565,8 +561,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
     		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-    	}
-    	else $sql .= $val.', ';
+    	} else $sql .= $val.', ';
     }
     $sql = preg_replace('/,\s*$/', '', $sql);
 }

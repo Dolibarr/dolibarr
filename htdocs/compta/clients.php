@@ -66,7 +66,7 @@ $thirdpartystatic = new Societe($db);
 
 if ($action == 'note')
 {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$note."' WHERE rowid=".$socid;
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($note)."' WHERE rowid=".$socid;
 	$result = $db->query($sql);
 }
 
@@ -196,9 +196,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

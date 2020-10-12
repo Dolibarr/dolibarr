@@ -39,8 +39,10 @@ $hookmanager->initHooks(array('projectsindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+$action = GETPOST('action', 'aZ09');
 $search_project_user = GETPOST('search_project_user', 'int');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
+if ($mine == 0 && $search_project_user === '') $search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
@@ -51,7 +53,25 @@ if (!$user->rights->projet->lire) accessforbidden();
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 
-$max = 3;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+
+
+/*
+ * Actions
+ */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook)) {
+	if ($action == 'refresh_search_project_user') {
+		$search_project_user = GETPOST('search_project_user', 'int');
+		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
+
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+		$result = dol_set_user_param($db, $conf, $user, $tabparam);
+	}
+}
 
 
 /*
@@ -81,6 +101,7 @@ else $titleall = $langs->trans("AllAllowedProjects").'<br><br>';
 $morehtml = '';
 $morehtml .= '<form name="projectform" method="POST">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
+$morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
 $morehtml .= '<SELECT name="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
@@ -89,8 +110,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 $morehtml .= '</form>';
 
 if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
-else
-{
+else {
 	if (!empty($user->rights->projet->all->lire) && !$socid) $tooltiphelp = $langs->trans("ProjectsDesc");
 	else $tooltiphelp = $langs->trans("ProjectsPublicDesc");
 }
@@ -141,8 +161,7 @@ if ($resql)
 		}
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 //var_dump($listofoppcode);
 
 
@@ -273,8 +292,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
@@ -319,17 +337,17 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall tdoverflowmax100">';
-		if ($obj->socid)
+		if ($obj->socid > 0)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->email = $obj->email;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);
-		}
-		else
-		{
+		} else {
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
@@ -344,7 +362,7 @@ if ($resql)
 	if ($othernb) {
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
-		print '...';
+		print '<span class="opacitymedium">...</span>';
 		print '</td>';
 		print '<td class="nowrap right">';
 		print $othernb;
@@ -353,9 +371,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 print "</table>";

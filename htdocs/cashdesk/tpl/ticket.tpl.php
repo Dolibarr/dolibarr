@@ -102,13 +102,13 @@ $object->fetch($facid);
 <table class="totaux">
 <tr>
     <th class="nowrap"><?php echo $langs->trans("TotalHT"); ?></th>
-    <td class="nowrap"><?php echo price(price2num($obj_facturation->prixTotalHt(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n"; ?></td>
+    <td class="nowrap"><?php echo price(price2num($obj_facturation->amountWithoutTax(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n"; ?></td>
 </tr>
 <tr>
-    <th class="nowrap"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->montantTva(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n"; ?></td>
+    <th class="nowrap"><?php echo $langs->trans("TotalVAT").'</th><td class="nowrap">'.price(price2num($obj_facturation->amountVat(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n"; ?></td>
 </tr>
 <tr>
-    <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->prixTotalTtc(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n"; ?></td>
+    <th class="nowrap"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price(price2num($obj_facturation->amountWithTax(), 'MT'), '', $langs, 0, -1, -1, $conf->currency)."\n"; ?></td>
 </tr>
 </table>
 

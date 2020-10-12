@@ -139,9 +139,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -198,9 +196,7 @@ class Propalmergepdfproduct extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
@@ -236,7 +232,7 @@ class Propalmergepdfproduct extends CommonObject
     	$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
     	$sql .= " WHERE t.fk_product = ".$product_id;
     	if ($conf->global->MAIN_MULTILANGS && !empty($lang)) {
-    		$sql .= " AND t.lang = '".$lang."'";
+    		$sql .= " AND t.lang = '".$this->db->escape($lang)."'";
     	}
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
@@ -272,9 +268,7 @@ class Propalmergepdfproduct extends CommonObject
     		$this->db->free($resql);
 
     		return 1;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch_by_product ".$this->error, LOG_ERR);
     		return -1;
@@ -333,9 +327,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -376,9 +368,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -408,7 +398,7 @@ class Propalmergepdfproduct extends CommonObject
 			$sql .= " WHERE fk_product=".$product_id;
 
 			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
-				$sql .= " AND lang='".$lang_id."'";
+				$sql .= " AND lang='".$this->db->escape($lang_id)."'";
 			}
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -426,9 +416,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -469,9 +457,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -525,9 +511,7 @@ class Propalmergepdfproduct extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
