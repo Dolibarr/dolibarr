@@ -632,7 +632,7 @@ class modProduct extends DolibarrModules
 				'sp.tva_tx' => 'VATRate',
 				'sp.default_vat_code' => 'VATCode',
 				'sp.delivery_time_days' => 'DeliveryDelay',
-				'sp.supplier_reputation' => 'SupplierReputation'
+				'sp.supplier_reputation' => 'SupplierReputation',
 			);
 			if (is_object($mysoc) && $usenpr)       $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly'=>'VATNPR'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
@@ -652,6 +652,10 @@ class modProduct extends DolibarrModules
 					'sp.multicurrency_unitprice'=>'CurrencyUnitPrice',
 					'sp.multicurrency_price'=>'CurrencyPrice',
 				));
+			}
+
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
 			}
 
 			$this->import_convertvalue_array[$r] = array(
@@ -690,6 +694,11 @@ class modProduct extends DolibarrModules
 					'sp.multicurrency_unitprice'=>'',
 					// TODO Make this field not required and calculate it from price and qty
 					'sp.multicurrency_price'=>''
+				));
+			}
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
+					'sp.packagning'=>'1',
 				));
 			}
 
