@@ -591,7 +591,7 @@ if ($action == "order" and $placeid != 0)
 	$db->query($sql);
 	$invoice->fetch($placeid); //Reload object after set lines as printed
 	$linestoprint = 0;
-	
+
 	foreach ($invoice->lines as $line)
 	{
 		if ($line->special_code == "4") {
