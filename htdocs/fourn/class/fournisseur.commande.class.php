@@ -1725,7 +1725,7 @@ class CommandeFournisseur extends CommonOrder
 					}
 					else
 					{
-						if (($qty % $prod->packaging) > 0)
+						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0)
 						{
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
