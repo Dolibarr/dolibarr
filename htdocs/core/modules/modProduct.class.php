@@ -632,7 +632,7 @@ class modProduct extends DolibarrModules
 				'sp.tva_tx' => 'VATRate',
 				'sp.default_vat_code' => 'VATCode',
 				'sp.delivery_time_days' => 'DeliveryDelay',
-				'sp.supplier_reputation' => 'SupplierReputation',
+				'sp.supplier_reputation' => 'SupplierReputation'
 			);
 			if (is_object($mysoc) && $usenpr)       $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly'=>'VATNPR'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
