@@ -1183,7 +1183,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	}
 
 	/*
-     * Boutons actions
+     * Actions Buttons
      */
 	print '<div class="tabsAction">';
 	$parameters = array();

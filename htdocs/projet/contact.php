@@ -84,7 +84,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 	}
 }
 
-// bascule du statut d'un contact
+// Change contact's status
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
 	if ($object->fetch($id))
@@ -95,7 +95,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 	}
 }
 
-// Efface un contact
+// Delete a contact
 if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer)
 {
 	$object->fetch($id);
@@ -128,7 +128,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Edition and view mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 

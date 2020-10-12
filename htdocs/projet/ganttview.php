@@ -262,14 +262,14 @@ if (count($tasksarray) > 0)
 	$tasks = array();
 	$task_dependencies = array();
 	$taskcursor = 0;
-	foreach ($tasksarray as $key => $val)	// Task array are sorted by "project, position, dateo"
+	foreach ($tasksarray as $key => $val)	// Task array are sorted by "project, position, date"
 	{
 		$task->fetch($val->id, '');
 
 		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project); // If start with -, id is a project id
 
 		$tasks[$taskcursor]['task_id'] = $val->id;
-		$tasks[$taskcursor]['task_alternate_id'] = ($taskcursor + 1); // An id that has same order than position (requird by ganttchart)
+		$tasks[$taskcursor]['task_alternate_id'] = ($taskcursor + 1); // An id that has same order than position (required by ganttchart)
 		$tasks[$taskcursor]['task_project_id'] = $val->fk_project;
 		$tasks[$taskcursor]['task_parent'] = $idparent;
 
