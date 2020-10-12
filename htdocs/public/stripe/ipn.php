@@ -48,23 +48,18 @@ if (isset($_GET['connect']))
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
+	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
         $servicestatus = 1;
 	}
-}
-else {
+} else {
 	if (isset($_GET['test']))
 	{
 		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
 		$servicestatus = 0;
-	}
-	else
-	{
+	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
 		$servicestatus = 1;
@@ -91,8 +86,7 @@ $error = 0;
 
 try {
 	$event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
-}
-catch (\UnexpectedValueException $e) {
+} catch (\UnexpectedValueException $e) {
 	// Invalid payload
 	http_response_code(400); // PHP 5.4 or greater
 	exit();
@@ -125,12 +119,10 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled
 		{
 			$obj = $db->fetch_object($result);
 			$key = $obj->entity;
-		}
-		else {
+		} else {
 			$key = 1;
 		}
-	}
-	else {
+	} else {
 		$key = 1;
 	}
 	$ret = $mc->switchEntity($key);
@@ -186,15 +178,12 @@ if ($event->type == 'payout.created') {
 
         http_response_code(200); // PHP 5.4 or greater
         return 1;
-	}
-	else
-	{
+	} else {
 		$error++;
 		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
-}
-elseif ($event->type == 'payout.paid') {
+} elseif ($event->type == 'payout.paid') {
 	global $conf;
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
@@ -267,42 +256,32 @@ elseif ($event->type == 'payout.paid') {
 
 		http_response_code(200); // PHP 5.4 or greater
 		return 1;
-	}
-	else
-	{
+	} else {
 		$error++;
 		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
-}
-elseif ($event->type == 'customer.source.created') {
+} elseif ($event->type == 'customer.source.created') {
 	//TODO: save customer's source
-}
-elseif ($event->type == 'customer.source.updated') {
+} elseif ($event->type == 'customer.source.updated') {
 	//TODO: update customer's source
-}
-elseif ($event->type == 'customer.source.delete') {
+} elseif ($event->type == 'customer.source.delete') {
 	//TODO: delete customer's source
-}
-elseif ($event->type == 'customer.deleted') {
+} elseif ($event->type == 'customer.deleted') {
     $db->begin();
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
     $db->query($sql);
     $db->commit();
-}
-elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+} elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 	// TODO: Redirect to paymentok.php
-}
-elseif ($event->type == 'payment_intent.payment_failed') {
+} elseif ($event->type == 'payment_intent.payment_failed') {
     // TODO: Redirect to paymentko.php
-}
-elseif ($event->type == 'checkout.session.completed')		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+} elseif ($event->type == 'checkout.session.completed')		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 {
 	// TODO: create fees
 	// TODO: Redirect to paymentok.php
-}
-elseif ($event->type == 'payment_method.attached') {
+} elseif ($event->type == 'payment_method.attached') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 	$societeaccount = new SocieteAccount($db);
@@ -341,14 +320,11 @@ elseif ($event->type == 'payment_method.attached') {
 		if (!$error)
 		{
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 	}
-}
-elseif ($event->type == 'payment_method.updated') {
+} elseif ($event->type == 'payment_method.updated') {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	$companypaymentmode = new CompanyPaymentMode($db);
 	$companypaymentmode->fetch(0, '', 0, '', " AND stripe_card_ref = '".$db->escape($event->data->object->id)."'");
@@ -378,26 +354,20 @@ elseif ($event->type == 'payment_method.updated') {
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
-}
-elseif ($event->type == 'payment_method.detached') {
+} elseif ($event->type == 'payment_method.detached') {
 	$db->begin();
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE ref = '".$db->escape($event->data->object->id)."' and status = ".$servicestatus;
 	$db->query($sql);
 	$db->commit();
-}
-elseif ($event->type == 'charge.succeeded') {
+} elseif ($event->type == 'charge.succeeded') {
     // TODO: create fees
     // TODO: Redirect to paymentok.php
-}
-elseif ($event->type == 'charge.failed') {
+} elseif ($event->type == 'charge.failed') {
     // TODO: Redirect to paymentko.php
-}
-elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated == true)) {
+} elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated == true)) {
 	// This event is deprecated.
 }
 

@@ -36,7 +36,7 @@ $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -73,16 +73,12 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -94,9 +90,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 	if ($object->fetch($id))
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -111,9 +105,7 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
 	{
 		header("Location: contact.php?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

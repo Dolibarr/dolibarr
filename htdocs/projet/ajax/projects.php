@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $discard_closed = GETPOST('discardclosed', 'int');
 

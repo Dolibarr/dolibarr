@@ -90,9 +90,7 @@ if ($result < 0)
 	echo "User Error:".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
 	exit;
-}
-else
-{
+} else {
 	if (empty($user->id))
 	{
 		echo " User login:".$userlogin." do not exists";
@@ -167,9 +165,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0))
 		            echo "\nUser Error: ".$user->error."\n";
 		            dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
 		            exit(-1);
-		        }
-		        else
-		        {
+		        } else {
 		            if ($result == 0)
 		            {
 		                echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
@@ -206,9 +202,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0))
 			    echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 			    dol_syslog("cron_run_jobs.php::run_jobs Error".$cronjob->error, LOG_ERR);
 				$nbofjobslaunchedko++;
-			}
-			else
-			{
+			} else {
 				$nbofjobslaunchedok++;
 			}
 
@@ -225,9 +219,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0))
 			}
 
 			echo " - reprogrammed\n";
-		}
-		else
-		{
+		} else {
 		    echo " - not qualified\n";
 
 		    dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -237,9 +229,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0))
 	$conf = $savconf;
 
 	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok + $nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";
-}
-else
-{
+} else {
 	echo "Result: No active jobs found.";
 }
 

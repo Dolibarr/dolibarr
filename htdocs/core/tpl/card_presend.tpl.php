@@ -51,9 +51,7 @@ if ($action == 'presend')
 		if ($object->element == 'invoice_supplier')
 		{
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-		}
-		else
-		{
+		} else {
 			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
@@ -95,7 +93,7 @@ if ($action == 'presend')
 	{
 		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument'))
 		{
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
@@ -103,9 +101,7 @@ if ($action == 'presend')
 			if ($object->element == 'invoice_supplier')
 			{
 				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			}
-			else
-			{
+			} else {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
@@ -158,28 +154,19 @@ if ($action == 'presend')
 
 	// Fill list of recipient with email inside <>.
 	$liste = array();
-	if ($object->element == 'expensereport')
-	{
+	if ($object->element == 'expensereport') {
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	}
-	elseif ($object->element == 'societe')
-	{
+	} elseif ($object->element == 'societe') {
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
-	}
-	elseif ($object->element == 'contact')
-	{
+	} elseif ($object->element == 'contact') {
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	elseif ($object->element == 'user' || $object->element == 'member')
-	{
+	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	else
-	{
+	} else {
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -288,10 +275,10 @@ if ($action == 'presend')
 		}
 	}
 
-	// Tableau des substitutions
+	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
-	// Tableau des parametres complementaires
+	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');

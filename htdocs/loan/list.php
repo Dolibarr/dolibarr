@@ -36,8 +36,8 @@ if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'loan', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -55,7 +55,7 @@ $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'loanlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 
@@ -120,9 +120,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -152,11 +150,9 @@ if ($resql)
 	if ($search_amount) $param .= "&search_amount=".urlencode($search_amount);
 	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
-	$newcardbutton = '';
-	if ($user->rights->loan->write)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
-	}
+	$url = DOL_URL_ROOT.'/loan/card.php?action=create';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', $url, '', $user->rights->loan->write);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -261,9 +257,7 @@ if ($resql)
 	print '</form>'."\n";
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

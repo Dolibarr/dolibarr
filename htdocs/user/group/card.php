@@ -50,7 +50,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->loadLangs(array('users', 'other'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
@@ -114,9 +114,7 @@ if (empty($reshook)) {
 			$object->delete($user);
 			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
 			exit;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
 		}
@@ -131,9 +129,8 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= trim(GETPOST("nom", 'nohtml'));
-				//$object->nom = $object->name; // For backward compatibility
-				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+				$object->name	= GETPOST("nom", 'nohtml');
+				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -152,9 +149,7 @@ if (empty($reshook)) {
 
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else
-				{
+				} else {
 					$db->rollback();
 
 					$langs->load("errors");
@@ -162,9 +157,7 @@ if (empty($reshook)) {
 					$action = "create"; // Go back to create page
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
 		}
@@ -189,15 +182,11 @@ if (empty($reshook)) {
 				{
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else
-				{
+				} else {
 					setEventMessages($edituser->error, $edituser->errors, 'errors');
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
 		}
@@ -214,9 +203,8 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= trim(GETPOST("nom", 'nohtml'));
-			//$object->nom = $object->name; // For backward compatibility
-			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+			$object->name	= GETPOST("nom", 'nohtml');
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -231,15 +219,11 @@ if (empty($reshook)) {
 			{
 				setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
 				$db->commit();
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
 		}
@@ -286,9 +270,7 @@ if ($action == 'create')
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
-		}
-		else
-		{
+		} else {
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 		}
 	}
@@ -318,8 +300,7 @@ if ($action == 'create')
 /* Visu et edition                                                            */
 /*                                                                            */
 /* ************************************************************************** */
-else
-{
+else {
     if ($id)
     {
 		$res = $object->fetch_optionals();
@@ -404,12 +385,12 @@ else
 
 			if ($caneditperms)
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Modify").'</a>';
 			}
 
 			if ($candisableperms)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'&amp;token='.newToken().'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
 			print "</div>\n";
@@ -487,16 +468,12 @@ else
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
-						}
-						else
-						{
+						} else {
 							print "-";
 						}
 						print "</td></tr>\n";
 					}
-				}
-				else
-				{
+				} else {
 					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 				}
 				print "</table>";
@@ -516,7 +493,7 @@ else
 	        $genallowed = $user->rights->user->user->creer;
 	        $delallowed = $user->rights->user->user->supprimer;
 
-	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 	        // Show links to link elements
 	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
@@ -556,9 +533,7 @@ else
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);
 					print "</td></tr>\n";
-				}
-				else
-				{
+				} else {
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 				}
 			}

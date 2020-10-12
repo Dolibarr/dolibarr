@@ -2,7 +2,5 @@
 TypeContact_ticket_external_SUPPORTCLI=Kundenkontakt / Störfallverfolgung
 NotRead=Ungelesen
 InProgress=In Bearbeitung
-Category=Analysecode
-TicketCategory=Analysecode
 TicketCloseOn=Schliessungsdatum
 TicketAddIntervention=Einsatz erstellen

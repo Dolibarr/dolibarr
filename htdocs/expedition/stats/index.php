@@ -74,9 +74,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
 }
 
@@ -271,8 +269,12 @@ foreach ($data as $val)
 
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center">';
-	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
-	else print $langs->trans("ValidationDateNotDefinedEvenIfShipmentValidated");
+	if ($year) {
+		print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
+	} else {
+		// Technical error that should not happen
+		print 'Error: validation date of shipment is not defined. This looks strange because shipment is validated. Try to run /install/repair.php?standard=confirmed';
+	}
 	print '</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
@@ -290,8 +292,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     /*print $px2->show();

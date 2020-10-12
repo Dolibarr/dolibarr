@@ -173,9 +173,7 @@ class Events // extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -260,9 +258,7 @@ class Events // extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}

@@ -26,7 +26,7 @@ create table llx_facture_rec
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
   fk_soc             integer NOT NULL,
   datec              datetime,            -- date de creation
-  tms				 timestamp,           -- date creation/modification
+  tms				 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,           -- last modification date
 
   suspended          integer DEFAULT 0,					-- 1=suspended
   

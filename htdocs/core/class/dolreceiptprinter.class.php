@@ -186,7 +186,7 @@ class dolReceiptPrinter extends Printer
         	'dol_value_month' => 'DOL_VALUE_MONTH',
         	'dol_value_day' => 'DOL_VALUE_DAY',
         	'dol_value_day_letters' => 'DOL_VALUE_DAY',
-            //'dol_print_payment',
+            'dol_print_payment' => 'DOL_PRINT_PAYMENT',
         	'dol_print_logo' => 'DOL_PRINT_LOGO',
         	'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
         	'dol_value_object_id' => 'InvoiceID',
@@ -197,17 +197,16 @@ class dolReceiptPrinter extends Printer
         	'dol_print_object_local_tax2' => 'TotalLT2',
         	'dol_print_object_total' => 'Total',
         	'dol_print_object_number' => 'DOL_PRINT_OBJECT_NUMBER',
-        	'dol_value_object_points' => 'DOL_VALUE_OBJECT_POINTS',
+        	//'dol_value_object_points' => 'DOL_VALUE_OBJECT_POINTS',
         	'dol_print_order_lines' => 'DOL_PRINT_ORDER_LINES',
         	'dol_value_customer_firstname' => 'DOL_VALUE_CUSTOMER_FIRSTNAME',
         	'dol_value_customer_lastname' => 'DOL_VALUE_CUSTOMER_LASTNAME',
         	'dol_value_customer_mail' => 'DOL_VALUE_CUSTOMER_MAIL',
         	'dol_value_customer_phone' => 'DOL_VALUE_CUSTOMER_PHONE',
-        	'dol_value_customer_mobile' => 'DOL_VALUE_CUSTOMER_MOBILE',
         	'dol_value_customer_skype' => 'DOL_VALUE_CUSTOMER_SKYPE',
         	'dol_value_customer_tax_number' => 'DOL_VALUE_CUSTOMER_TAX_NUMBER',
-        	'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
-        	'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
+        	//'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
+        	//'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
         	'dol_value_mysoc_name' => 'DOL_VALUE_MYSOC_NAME',
         	'dol_value_mysoc_address' => 'Address',
         	'dol_value_mysoc_zip' => 'Zip',
@@ -572,7 +571,7 @@ class dolReceiptPrinter extends Printer
         // tags a remplacer par leur valeur avant de parser (dol_value_xxx)
         $this->template = str_replace('<dol_value_object_id>', $object->id, $this->template);
         $this->template = str_replace('<dol_value_object_ref>', $object->ref, $this->template);
-        $this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
+        //$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
         $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
         $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
         $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
@@ -583,12 +582,12 @@ class dolReceiptPrinter extends Printer
 
         $this->template = str_replace('<dol_value_customer_firstname>', $object->thirdparty->firstname, $this->template);
         $this->template = str_replace('<dol_value_customer_lastname>', $object->thirdparty->lastname, $this->template);
-        $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->mail, $this->template);
+        $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->email, $this->template);
         $this->template = str_replace('<dol_value_customer_phone>', $object->thirdparty->phone, $this->template);
-        $this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
-        $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->vatintra, $this->template);
-        $this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
-        $this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
+        //$this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
+        $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->tva_intra, $this->template);
+        //$this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
+        //$this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
 
         $this->template = str_replace('<dol_value_mysoc_name>', $mysoc->name, $this->template);
         $this->template = str_replace('<dol_value_mysoc_address>', $mysoc->address, $this->template);
@@ -776,6 +775,35 @@ class dolReceiptPrinter extends Printer
 							}
                         }
 						break;
+					case 'DOL_PRINT_PAYMENT':
+						$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+						$sql .= " cp.code";
+						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
+						$sql .= " ORDER BY p.datep";
+						$resql = $this->db->query($sql);
+						if ($resql)
+						{
+							$num = $this->db->num_rows($resql);
+							$i = 0;
+							while ($i < $num) {
+								$row = $this->db->fetch_object($resql);
+								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$amount_payment=($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
+								if ($row->code == "LIQ" && $row->pos_change>0) // Print change only in cash payments
+								{
+									$spacestoadd = $nbcharactbyline - strlen($langs->trans("Change")) - 12;
+									$spaces = str_repeat(' ', $spacestoadd);
+									$this->printer->text($spaces.$langs->trans("Change").' '.str_pad(price($row->pos_change), 10, ' ', STR_PAD_LEFT)."\n");
+								}
+								$i++;
+							}
+						}
+						break;
                     default:
                         $this->printer->text($vals[$tplline]['tag']);
                         $this->printer->text($vals[$tplline]['value']);
@@ -788,6 +816,7 @@ class dolReceiptPrinter extends Printer
 			if ($this->printer->connector instanceof DummyPrintConnector)
 			{
 				$data = $this->printer->connector->getData();
+				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") echo base64_encode($data);
 				dol_syslog($data);
 			}
 			// Close and print

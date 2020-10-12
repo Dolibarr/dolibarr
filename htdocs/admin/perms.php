@@ -116,7 +116,7 @@ $db->commit();
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'default', '', -1);
 
 
 // Show warning about external users
@@ -128,9 +128,10 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
-print '<td class="center">&nbsp;</td>';
 print '<td class="center">'.$langs->trans("Default").'</td>';
+print '<td class="center">&nbsp;</td>';
 print '<td>'.$langs->trans("Permissions").'</td>';
+if ($user->admin) print '<td class="right">'.$langs->trans("ID").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
@@ -178,7 +179,6 @@ if ($result)
         $found = false;
         foreach ($modules[$obj->module]->rights as $key => $val)
         {
-        	$rights_class = $objMod->rights_class;
         	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms))
         	{
         		$found = true;
@@ -209,6 +209,8 @@ if ($result)
            	print '<td>&nbsp;</td>';
             print '<td>&nbsp;</td>';
             print '<td>&nbsp;</td>';
+            // Permission id
+            if ($user->admin) print '<td class="right"></td>';
             print '</tr>'."\n";
         }
 
@@ -223,17 +225,21 @@ if ($result)
 		// Tick
 		if ($obj->bydefault == 1)
 		{
-			print '<td>';
-			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_remove().'</a>';
+			print '<td class="center">';
+			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=remove">';
+			//print img_edit_remove();
+			print img_picto('', 'switch_on');
+			print '</a>';
 			print '</td>';
 			print '<td class="center">';
-			print img_picto($langs->trans("Active"), 'tick');
+			//print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
-		}
-		else
-		{
-			print '<td>';
-			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
+		} else {
+			print '<td class="center">';
+			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">';
+			//print img_edit_add();
+			print img_picto('', 'switch_off');
+			print '</a>';
 			print '</td>';
 			print '<td class="center">';
 			print '&nbsp;';
@@ -243,12 +249,14 @@ if ($result)
 		// Permission and tick
         print '<td>'.$perm_libelle.'</td>';
 
+        // Permission id
+        if ($user->admin) print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
+
         print '</tr>'."\n";
 
         $i++;
     }
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 print '</table>';
 print '</div>';
 

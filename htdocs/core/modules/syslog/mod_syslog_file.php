@@ -90,8 +90,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		if (file_exists($filename) && is_writable($filename))
 		{
 			dol_syslog('admin/syslog: file '.$filename);
-		}
-		else $errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
+		} else $errors[] = $langs->trans("ErrorFailedToOpenFile", $filename);
 
 		return $errors;
 	}
@@ -151,9 +150,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				//throw new Exception('Failed to open log file '.basename($logfile));
 				print 'Failed to open log file '.($dolibarr_main_prod ?basename($logfile) : $logfile);
 			}
-		}
-		else
-		{
+		} else {
 			$logLevels = array(
 				LOG_EMERG => 'EMERG',
 				LOG_ALERT => 'ALERT',

@@ -34,7 +34,7 @@ $langs->loadLangs(array('bills', 'trips'));
 
 $id = GETPOST('id');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 /*

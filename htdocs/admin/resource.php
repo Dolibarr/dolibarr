@@ -37,7 +37,7 @@ $langs->loadLangs(array("admin", "resource"));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -91,9 +91,7 @@ if (empty($conf->use_javascript_ajax))
 	print '<td class="nowrap right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
-}
-else
-{
+} else {
 	print '<td width="60" class="right">';
 	$arrval = array(
 			'0'=>$langs->trans("No"),

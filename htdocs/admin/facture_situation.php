@@ -38,7 +38,7 @@ $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -246,10 +246,9 @@ function _printInputFormPart($confkey, $title = false, $desc = '', $metas = arra
     print '<input type="hidden" name="action" value="setModuleOptions">';
     if ($type == 'textarea') {
         print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
-	}elseif ($type == 'input') {
+	} elseif ($type == 'input') {
         print '<input '.$metascompil.'  />';
-    }
-	else {
+    } else {
 		// custom
 		print $type;
     }

@@ -95,6 +95,10 @@ var sServerPath = GetUrlParam( 'ServerPath' );
 if ( sServerPath.length > 0 )
 	oConnector.ConnectorUrl += 'ServerPath=' + encodeURIComponent( sServerPath ) + '&' ;
 
+/* @CHANGE LDR Overwrite value coming from parameters for security purpose */
+oConnector.ConnectorUrl = '<?php echo DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php?'; ?>';
+console.log('ConnectorUrl='+oConnector.ConnectorUrl);
+
 oConnector.ResourceType		= GetUrlParam( 'Type' );
 oConnector.ShowAllTypes		= ( oConnector.ResourceType.length == 0 );
 

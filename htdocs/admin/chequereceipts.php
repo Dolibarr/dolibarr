@@ -37,7 +37,7 @@ $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 
 
@@ -60,9 +60,7 @@ if ($action == 'updateMask')
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -74,7 +72,7 @@ if ($action == 'setmod')
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'none'); // No alpha here, we want exact string
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
@@ -83,9 +81,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
  	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -181,10 +177,8 @@ foreach ($dirmodels as $reldir)
 							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)
 							{
 								print img_picto($langs->trans("Activated"), 'switch_on');
-							}
-							else
-							{
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							} else {
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -259,9 +253,7 @@ $variablename = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 	print $doleditor->Create();

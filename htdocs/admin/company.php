@@ -84,9 +84,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 		$s = $mysoc->state_id.':'.$mysoc->state_code.':'.$mysoc->state_label;
 		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s, 'chaine', 0, '', $conf->entity);
-	}
-	else
-	{
+	} else {
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
 
@@ -102,7 +100,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL", GETPOST("mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB", GETPOST("web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note", 'none'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD", GETPOST("barcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	$dirforimage = $conf->mycompany->dir_output.'/logos/';
@@ -111,7 +109,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	foreach ($arrayofimages as $varforimage)
 	{
-		if ($_FILES[$varforimage]["name"] && ! preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
@@ -152,8 +150,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 							{
 								$imgThumbSmall = $reg[1]; // Save only basename
 								dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-							}
-							else dol_syslog($imgThumbSmall);
+							} else dol_syslog($imgThumbSmall);
 
 							// Create mini thumb, Used on menu or for setup page for example
 							$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
@@ -161,24 +158,18 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 							{
 								$imgThumbMini = $reg[1]; // Save only basename
 								dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-							}
-							else dol_syslog($imgThumbMini);
-						}
-						else dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
+							} else dol_syslog($imgThumbMini);
+						} else dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
 						$error++;
 						$langs->load("errors");
 						$tmparray = explode(':', $result);
 						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-					}
-					else
-					{
+					} else {
 						$error++;
 						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
@@ -234,9 +225,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		if (!isset($_REQUEST['lt1']))
 		{
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0, 'chaine', 0, '', $conf->entity);
-		}
-		else
-		{
+		} else {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1', 'aZ09'), 'chaine', 0, '', $conf->entity);
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC1", GETPOST("clt1", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -246,9 +235,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		if (!isset($_REQUEST['lt2']))
 		{
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0, 'chaine', 0, '', $conf->entity);
-		}
-		else
-		{
+		} else {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2', 'aZ09'), 'chaine', 0, '', $conf->entity);
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -257,9 +244,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 
@@ -293,8 +278,7 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumb
 			{
 				$imgThumbSmall = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-			}
-			else dol_syslog($imgThumbSmall);
+			} else dol_syslog($imgThumbSmall);
 
 			// Create mini thumbs. Used on menu or for setup page for example
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini', $quality);
@@ -302,22 +286,17 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumb
 			{
 				$imgThumbMini = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-			}
-			else dol_syslog($imgThumbMini);
+			} else dol_syslog($imgThumbMini);
 
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else
-		{
+		} else {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
 		}
-	}
-	else
-	{
+	} else {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFileDoesNotExists", $_GET["file"]), null, 'errors');
@@ -493,22 +472,22 @@ print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->
 print '<div class="centpertent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
 print '</div>';
-if (!empty($mysoc->logo_mini)) {
-	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
+if (!empty($mysoc->logo_small)) {
+	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 60px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo).'">';
 		print '</div>';
 		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	} else {
 		print '<div class="inline-block valignmiddle">';
-		print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 		print '</div>';
 	}
 }
@@ -520,23 +499,23 @@ print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto
 print '<div class="centpertent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
 print '</div>';
-if (!empty($mysoc->logo_squarred_mini)) {
-	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+if (!empty($mysoc->logo_squarred_small)) {
+	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {
 		print '<div class="inline-block valignmiddle marginrightonly">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
 		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo_squarred)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 60px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
 		print '</div>';
 		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	}
 	else {
 		print '<div class="inline-block valignmiddle">';
-		print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 		print '</div>';
 	}
 }
@@ -545,7 +524,7 @@ print '</td></tr>';
 
 // Note
 print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note', 'none') ? GETPOST('note', 'none') : $conf->global->MAIN_INFO_SOCIETE_NOTE).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $conf->global->MAIN_INFO_SOCIETE_NOTE).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
@@ -579,7 +558,7 @@ $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
@@ -589,7 +568,7 @@ print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="'.d
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-print '<input name="capital" id="capital" class="minwidth100" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL).'"></td></tr>';
+print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL).'"></td></tr>';
 
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
@@ -607,9 +586,7 @@ if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-')
 	if (!empty($mysoc->country_code))
 	{
 		print '<input name="siren" id="profid1" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '').'">';
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -622,9 +599,7 @@ if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-')
 	if (!empty($mysoc->country_code))
 	{
 		print '<input name="siret" id="profid2" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '').'">';
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -637,9 +612,7 @@ if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-')
 	if (!empty($mysoc->country_code))
 	{
 		print '<input name="ape" id="profid3" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '').'">';
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -652,9 +625,7 @@ if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-')
 	if (!empty($mysoc->country_code))
 	{
 		print '<input name="rcs" id="profid4" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '').'">';
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -667,9 +638,7 @@ if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-')
 	if (!empty($mysoc->country_code))
 	{
 		print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '').'">';
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -682,9 +651,7 @@ if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-')
 	if (!empty($mysoc->country_code))
 	{
 		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '').'">';
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';

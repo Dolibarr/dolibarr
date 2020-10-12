@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2020  Maxime DEMAREST              <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ $langs->loadLangs(array("admin", "other", "errors", "bills"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -55,9 +56,7 @@ if ($action == 'updateMask')
     if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -69,11 +68,12 @@ if ($action == 'setmod')
 
 if ($action == 'setparams')
 {
-	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS', 'none'); // No alpha here, we want exact string
-
+	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $freetext, 'chaine', 0, '', $conf->entity);
-
 	if (!$res > 0) $error++;
+
+    $res = dolibarr_set_const($db, "PAYMENTS_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
+    if (!$res > 0) $error++;
 
 	if ($error)
 	{
@@ -181,10 +181,8 @@ foreach ($dirmodels as $reldir)
                             if ($conf->global->PAYMENT_ADDON == $file || $conf->global->PAYMENT_ADDON.'.php' == $file)
                             {
                                 print img_picto($langs->trans("Activated"), 'switch_on');
-                            }
-                            else
-                            {
-                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                            } else {
+                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmo&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -250,6 +248,14 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS, 1);
+print '</td><td class="right">';
+print "</td></tr>\n";
+
+// Allow to group payments by mod in rapports
+print '<tr class="oddeven"><td>';
+print $langs->trans("GroupPaymentsByModOnReports");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("PAYMENTS_REPORT_GROUP_BY_MOD", $conf->global->PAYMENTS_REPORT_GROUP_BY_MOD, 1);
 print '</td><td class="right">';
 print "</td></tr>\n";
 

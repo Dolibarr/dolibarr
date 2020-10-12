@@ -114,11 +114,13 @@ if ($action == "confirm_update") {
 			$object->credit = $credit;
 
 			if (floatval($debit) != 0.0) {
-				$object->montant = $debit;
+				$object->montant = $debit;	// deprecated
+				$object->amount = $debit;
 				$object->sens = 'D';
 			}
 			if (floatval($credit) != 0.0) {
-				$object->montant = $credit;
+				$object->montant = $credit;	// deprecated
+				$object->amount = $credit;
 				$object->sens = 'C';
 			}
 
@@ -138,9 +140,7 @@ if ($action == "confirm_update") {
 			}
 		}
 	}
-}
-
-elseif ($action == "add") {
+} elseif ($action == "add") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
@@ -175,12 +175,14 @@ elseif ($action == "add") {
 		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
-			$object->montant = $debit;
+			$object->montant = $debit;	// deprecated
+			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if (floatval($credit) != 0.0) {
-			$object->montant = $credit;
+			$object->montant = $credit;	// deprecated
+			$object->amount = $credit;
 			$object->sens = 'C';
 		}
 
@@ -199,9 +201,7 @@ elseif ($action == "add") {
 			$action = '';
 		}
 	}
-}
-
-elseif ($action == "confirm_delete") {
+} elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
 	$result = $object->fetch($id, null, $mode);
@@ -216,9 +216,7 @@ elseif ($action == "confirm_delete") {
 		}
 	}
 	$action = '';
-}
-
-elseif ($action == "confirm_create") {
+} elseif ($action == "confirm_create") {
 	$error = 0;
 
 	$object = new BookKeeping($db);
@@ -247,7 +245,8 @@ elseif ($action == "confirm_create") {
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
-		$object->montant = 0;
+		$object->montant = 0;	// deprecated
+		$object->amount = 0;
 
 		$result = $object->createStd($user, 0, $mode);
 		if ($result < 0) {
@@ -293,7 +292,7 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = trim(GETPOST('doc_ref', 'alpha'));
+	$refdoc = GETPOST('doc_ref', 'alpha');
 	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -329,7 +328,7 @@ llxHeader('', $langs->trans("CreateMvts"));
 
 // Confirmation to delete the command
 if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'confirm_delete', '', 0, 1);
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -628,9 +627,7 @@ if ($action == 'create')
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 						{
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
-						}
-						else
-						{
+						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
@@ -685,9 +682,7 @@ if ($action == 'create')
 					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-					}
-					else
-					{
+					} else {
 						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
@@ -707,9 +702,7 @@ if ($action == 'create')
 					if ($total_debit == $total_credit)
 					{
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 

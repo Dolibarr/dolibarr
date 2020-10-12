@@ -51,8 +51,7 @@ if (!empty($output) && isset($amount) && isset($tva_tx))
 			$price = price2num($amount * (1 + ($tva_tx / 100)), 'MU');
 			$return['price_ht'] = $amount;
 			$return['price_ttc'] = (isset($price) && $price != '' ? price($price) : '');
-		}
-		elseif ($output == 'price_ht') {
+		} elseif ($output == 'price_ht') {
 			$price = price2num($amount / (1 + ($tva_tx / 100)), 'MU');
 			$return['price_ht'] = (isset($price) && $price != '' ? price($price) : '');
 			$return['price_ttc'] = ($tva_tx == 0 ? $price : $amount);

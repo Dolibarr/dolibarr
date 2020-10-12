@@ -162,7 +162,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$posindice = strlen($prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql .= " WHERE ref LIKE '".$prefix."____-%'";
+		$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
 		$resql = $db->query($sql);
@@ -172,9 +172,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 
@@ -186,7 +184,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $ref = '';
             $sql = "SELECT ref as ref";
             $sql .= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql .= " WHERE ref LIKE '".$prefix."____-".$num."'";
+            $sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$num."'";
             $sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
             $sql .= " ORDER BY ref DESC";
 
@@ -196,12 +194,10 @@ class mod_facture_mars extends ModeleNumRefFactures
             {
                 $obj = $db->fetch_object($resql);
                 if ($obj) $ref = $obj->ref;
-            }
-            else dol_print_error($db);
+            } else dol_print_error($db);
 
             return $ref;
-		}
-		elseif ($mode == 'next')
+		} elseif ($mode == 'next')
 		{
 			$date = $invoice->date; // This is invoice date (not creation date)
     		$yymm = strftime("%y%m", $date);
@@ -211,8 +207,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 
     		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
     		return $prefix.$yymm."-".$num;
-		}
-		else dol_print_error('', 'Bad parameter for getNextValue');
+		} else dol_print_error('', 'Bad parameter for getNextValue');
 	}
 
     /**

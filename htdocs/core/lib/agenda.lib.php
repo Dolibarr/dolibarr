@@ -51,6 +51,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
+	global $massaction;
 
 	$langs->load("companies");
 
@@ -63,44 +64,36 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="year" value="'.$year.'">';
 	print '<input type="hidden" name="month" value="'.$month.'">';
 	print '<input type="hidden" name="day" value="'.$day.'">';
-	print '<input type="hidden" name="action" value="'.$action.'">';
+	if ($massaction != 'predelete') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
+		print '<input type="hidden" name="action" value="'.$action.'">';
+	}
 	print '<input type="hidden" name="search_showbirthday" value="'.$showbirthday.'">';
-
-	print '<div class="fichecenter">';
-
-	if ($conf->browser->layout == 'phone') print '<div class="fichehalfleft">';
-	else print '<table class="nobordernopadding centpercent"><tr><td class="borderright">';
-
-	print '<table class="nobordernopadding centpercent tableforfield">';
 
 	if ($canedit)
 	{
+		print '<div class="divsearchfield">';
 		// Type
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("Type");
-		print '</td><td class="nowraponall">';
+		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
+		print '<span class="hideonsmartphone">'.$langs->trans("Type").'</span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
 		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 
 		// Assigned to
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td>';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'user', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("ActionsToDoBy").'</span>';
 		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500');
-		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or").' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
-		else print '<br>';
+		print '</div>';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("ToUserOfGroup").'</span>';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 
 		if ($conf->resource->enabled)
 		{
@@ -108,25 +101,21 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		    $formresource = new FormResource($db);
 
     		// Resource
-    		print '<tr>';
-    		print '<td class="nowrap">';
-    		print $langs->trans("Resource");
-    		print '</td><td class="nowraponall">';
-    		print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
+		    print '<div class="divsearchfield">';
+		    print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
+		    print '<span class="hideonsmartphone">'.$langs->trans("Resource").'</span>';
     		print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
-    		print '</td></tr>';
+    		print '</div>';
 		}
 	}
 
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("ThirdParty").' &nbsp; ';
-		print '</td><td class="nowraponall">';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'company', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("ThirdParty").'</span>';
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 	}
 
 	if (!empty($conf->projet->enabled) && $user->rights->projet->lire)
@@ -134,80 +123,29 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("Project").' &nbsp; ';
-		print '</td><td class="nowraponall">';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'project', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("Project").'</span>';
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 	}
 
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowraponall">';
+		print '<div class="divsearchfield">';
+		print img_picto('', 'setup', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("Status").'</span>';
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
-		print '</td></tr>';
-	}
-
-	if ($canedit && $action == 'show_peruser')
-	{
-		// Filter on hours
-		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("VisibleTimeRange").'</td>';
-		print "<td class='nowrap'>";
-		print '<div class="ui-grid-a"><div class="ui-block-a">';
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
-		if (empty($conf->dol_use_jmobile)) print ' - ';
-		else print '</div><div class="ui-block-b">';
-		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
-		print '</div></div>';
-		print '</td></tr>';
-
-		// Filter on days
-		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
-		print "<td class='nowrap'>";
-		print '<div class="ui-grid-a"><div class="ui-block-a">';
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
-		if (empty($conf->dol_use_jmobile)) print ' - ';
-		else print '</div><div class="ui-block-b">';
-		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
-		print '</div></div>';
-		print '</td></tr>';
+		print '</div>';
 	}
 
 	// Hooks
 	$parameters = array('canedit'=>$canedit, 'pid'=>$pid, 'socid'=>$socid);
+	$object = null;
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
-	print '</table>';
-
-	if ($conf->browser->layout == 'phone') print '</div>';
-	else print '</td>';
-
-	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
-	else print '<td class="center nowrap" valign="middle">';
-
-	print '<table class="centpercent"><tr><td align="center">';
-	print '<div class="formleftzone">';
-	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="'.$langs->trans("Refresh").'">';
-	print '</div>';
-	print '</td></tr>';
-	print '</table>';
-
-	if ($conf->browser->layout == 'phone') print '</div>';
-	else print '</td></tr></table>';
-
-	print '</div>'; // Close fichecenter
 	print '<div style="clear:both"></div>';
-
-	//print '</form>';
 }
 
 
@@ -248,7 +186,7 @@ function show_array_actions_to_do($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder centpercent">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$var = true;
@@ -304,9 +242,7 @@ function show_array_actions_to_do($max = 5)
 	    print "</table></div><br>";
 
 	    $db->free($resql);
-	}
-	else
-	{
+	} else {
 	    dol_print_error($db);
 	}
 }
@@ -346,7 +282,7 @@ function show_array_last_actions_done($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -393,9 +329,7 @@ function show_array_last_actions_done($max = 5)
 		print "</table></div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -524,7 +458,7 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php'.($param ? '?'.$param : '');
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?action=show_list'.($param ? '&'.$param : '');
     $head[$h][1] = $langs->trans("ViewList");
     $head[$h][2] = 'cardlist';
     $h++;

@@ -102,9 +102,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -127,8 +125,7 @@ if ($action == 'confirm_deletefile')
 	    		exit;
 	    	}
 	    	$relativepath = $ecmdir->getRelativePath();
-    	}
-    	else $relativepath = '';
+    	} else $relativepath = '';
     	$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
     	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 
@@ -221,15 +218,11 @@ if ($action == 'refreshmanual')
                     //print "Yes with id ".$parentdirisindatabase."<br>\n";
                     $fk_parent = $parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
-                }
-                else
-				{
+                } else {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
-            }
-            else
-            {
+            } else {
                 dol_syslog("Parent is root");
                 $fk_parent = 0; // Parent is root
             }
@@ -255,13 +248,10 @@ if ($action == 'refreshmanual')
                     $sqltree[] = $newdirsql; // We complete fulltree for following loops
                     //var_dump($sqltree);
                     $adirwascreated = 1;
-                }
-                else
-                {
+                } else {
                     dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
-            }
-            else {
+            } else {
                 $txt = "Parent of ".$dirdesc['fullname']." not found";
                 dol_syslog($txt);
                 //print $txt."<br>\n";
@@ -325,7 +315,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (!empty($conf->contrat->enabled)) { $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'contract', 'test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsByContracts")); }
 	if (!empty($conf->commande->enabled)) { $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order', 'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
 	if (!empty($conf->facture->enabled)) { $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }
-	if (!empty($conf->supplier_proposal->enabled)) { $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'supplier_proposal', 'test'=>$conf->supplier_proposal->enabled, 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBySupplierProposals")); }
+	if (!empty($conf->supplier_proposal->enabled)) { $langs->load("supplier_proposal"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'supplier_proposal', 'test'=>$conf->supplier_proposal->enabled, 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBySupplierProposals")); }
 	if (!empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
 	if (!empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }
 	if (!empty($conf->tax->enabled)) { $langs->load("compta"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
@@ -334,6 +324,8 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (!empty($conf->expensereport->enabled)) { $langs->load("trips"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsByExpenseReports")); }
 	if (!empty($conf->holiday->enabled)) { $langs->load("holiday"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsByHolidays")); }
 	if (!empty($conf->banque->enabled)) { $langs->load("banks"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsByBankAccount")); }
+	if (!empty($conf->mrp->enabled)) { $langs->load("mrp"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'mrp-mo', 'test'=>$conf->mrp->enabled, 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsByMO")); }
+	if (!empty($conf->recruitment->enabled)) { $langs->load("recruitment"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'recruitment-recruitmentcandidature', 'test'=>$conf->recruitment->enabled, 'label'=>$langs->trans("Candidatures"), 'desc'=>$langs->trans("ECMDocsByCandidature")); }
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsByUsers"));
 }
 
@@ -360,7 +352,7 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 $url = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
-print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
@@ -418,9 +410,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			    print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
 			    print $val['label'];
    			    print '</a>';
-			}
-			else
-			{
+			} else {
 			    print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
 			    print $val['label'];
 			    print '</a>';

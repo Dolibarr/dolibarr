@@ -5,7 +5,9 @@
 # We use dist: xenial to have php 5.6+ available
 os: linux
 dist: xenial
-sudo: required
+#dist: bionic
+# Deprecated: The key sudo has no effect anymore.
+#sudo: required
 
 language: php
 
@@ -118,24 +120,18 @@ install:
   echo
 
 - |
-  echo "Installing Composer dependencies (PHP Unit, Parallel Lint & PHP CodeSniffer"
-  if [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
-    composer -n require phpunit/phpunit ^4 \
-                        jakub-onderka/php-parallel-lint ^0 \
-                        jakub-onderka/php-console-highlighter ^0 \
-                        squizlabs/php_codesniffer ^3
-  fi
+  echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer - for $TRAVIS_PHP_VERSION"
   if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] \
      [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
     composer -n require phpunit/phpunit ^5 \
-                        jakub-onderka/php-parallel-lint ^0 \
-                        jakub-onderka/php-console-highlighter ^0 \
+                        php-parallel-lint/php-parallel-lint ^0 \
+                        php-parallel-lint/php-console-highlighter ^0 \
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       composer -n require --ignore-platform-reqs phpunit/phpunit ^5 \
-                                                 jakub-onderka/php-parallel-lint ^0 \
-                                                 jakub-onderka/php-console-highlighter ^0 \
+                                                 php-parallel-lint/php-parallel-lint ^1 \
+                                                 php-parallel-lint/php-console-highlighter ^0 \
                                                  squizlabs/php_codesniffer ^3
     fi
   echo
@@ -282,7 +278,11 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/myclabs --exclude htdocs/includes/webmozart --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+  	--exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+  	--exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+  	--exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+  	--exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
   set +e
   echo
 
@@ -291,7 +291,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
+  #phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
   if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .; fi
   set +e
   echo
@@ -404,6 +404,10 @@ script:
   php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
   php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
   php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
+  php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
+  php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
+  php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+
   # Enable modules not enabled into original dump
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?

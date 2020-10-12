@@ -72,7 +72,6 @@ Deleted=Deleted
 
 # Dict
 Type=유형
-Category=Analytic code
 Severity=Severity
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=Group
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +160,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=Group
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on

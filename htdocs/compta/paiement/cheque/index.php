@@ -76,9 +76,7 @@ if ($resql) {
     print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
     print '</td></tr>';
     print "</table>\n";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -140,9 +138,7 @@ if ($resql)
 	print "</table>";
 
 	$db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

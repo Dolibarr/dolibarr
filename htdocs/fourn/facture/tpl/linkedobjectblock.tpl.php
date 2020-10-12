@@ -59,9 +59,7 @@ foreach ($linkedObjectBlock as $key => $objectlink)
 				// If not abandonned
     			$total = $total + $sign * $objectlink->total_ht;
     			echo price($objectlink->total_ht);
-    		}
-    		else
-    		{
+    		} else {
     			echo '<strike>'.price($objectlink->total_ht).'</strike>';
     		}
     	} ?></td>

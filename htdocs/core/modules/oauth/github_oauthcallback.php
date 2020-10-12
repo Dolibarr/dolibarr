@@ -35,7 +35,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
 
 
@@ -80,7 +80,6 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-/** @var $apiService Service */
 $apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
@@ -142,8 +141,7 @@ if (!empty($_GET['code']))     // We are coming from oauth provider page
     } catch (Exception $e) {
         print $e->getMessage();
     }
-}
-else // If entry on page with no parameter, we arrive here
+} else // If entry on page with no parameter, we arrive here
 {
     $_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
@@ -152,9 +150,7 @@ else // If entry on page with no parameter, we arrive here
     if (GETPOST('state'))
     {
         $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
-    }
-    else
-    {
+    } else {
         $url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
     }
 

@@ -39,7 +39,7 @@ $langs->loadLangs(array("admin", "other", "errors", "propal"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -52,8 +52,7 @@ $type = 'propal';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $error = 0;
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstpropal = GETPOST('maskconstpropal', 'alpha');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
 	if ($maskconstpropal) $res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
@@ -63,14 +62,10 @@ if ($action == 'updateMask')
  	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-elseif ($action == 'specimen')
-{
+} elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
 	$propal = new Propal($db);
@@ -90,8 +85,7 @@ elseif ($action == 'specimen')
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -100,21 +94,15 @@ elseif ($action == 'specimen')
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;
-		}
-		else
-		{
+		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-elseif ($action == 'setribchq')
-{
+} elseif ($action == 'setribchq') {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
 
@@ -126,14 +114,10 @@ elseif ($action == 'setribchq')
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
-{
+} elseif ($action == 'set_PROPALE_DRAFT_WATERMARK') {
 	$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
 
 	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
@@ -142,15 +126,11 @@ elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
  	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-elseif ($action == 'set_PROPOSAL_FREE_TEXT')
-{
-	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'none'); // No alpha here, we want exact string
+} elseif ($action == 'set_PROPOSAL_FREE_TEXT') {
+	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
@@ -159,14 +139,10 @@ elseif ($action == 'set_PROPOSAL_FREE_TEXT')
  	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-elseif ($action == 'setdefaultduration')
-{
+} elseif ($action == 'setdefaultduration') {
 	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
 
 	if (!$res > 0) $error++;
@@ -174,59 +150,38 @@ elseif ($action == 'setdefaultduration')
  	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-
-elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
-{
+} elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL", $value, 'chaine', 0, '', $conf->entity);
 
     if (!$res > 0) $error++;
 
-    if (!$error)
-    {
+    if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-// Activate a model
-elseif ($action == 'set')
-{
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
         if ($conf->global->PROPALE_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROPALE_ADDON_PDF', $conf->entity);
 	}
-}
-
-elseif ($action == 'setdoc')
-{
-    if (dolibarr_set_const($db, "PROPALE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+    if (dolibarr_set_const($db, "PROPALE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		$conf->global->PROPALE_ADDON_PDF = $value;
 	}
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-
-elseif ($action == 'setmod')
-{
+} elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
@@ -310,10 +265,8 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->PROPALE_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+						} else {
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -363,7 +316,7 @@ print load_fiche_titre($langs->trans("ProposalsPDFModules"), '', '');
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$type."'";
+$sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
 if ($resql)
@@ -376,9 +329,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -444,15 +395,13 @@ foreach ($dirmodels as $reldir)
 	                            if (in_array($name, $def))
 	                            {
 	                            	print '<td class="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -461,10 +410,8 @@ foreach ($dirmodels as $reldir)
 	                            if ($conf->global->PROPALE_ADDON_PDF == "$name")
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	                            } else {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -496,9 +443,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
@@ -571,19 +516,14 @@ if (empty($conf->facture->enabled))
 					$i++;
 				}
 				print "</select>";
-			}
-			else
-			{
+			} else {
 				print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
 			}
 		}
-	}
-	else
-	{
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("BankModuleNotActive").'</span>';
 	}
-}
-else {
+} else {
 	print '<span class="opacitymedium">'.$langs->trans("SeeSetupOfModule", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
 }
 print "</td></tr>";
@@ -620,8 +560,7 @@ if (empty($conf->facture->enabled))
 		}
 	}
 	print "</select>";
-}
-else {
+} else {
 	print '<span class="opacitymedium">'.$langs->trans("SeeSetupOfModule", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
 }
 print "</td></tr>";
@@ -685,9 +624,7 @@ $variablename = 'PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
@@ -724,11 +661,11 @@ if ($conf->banque->enabled)
     {
         if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
         else
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
     }
     print '</td></tr>';

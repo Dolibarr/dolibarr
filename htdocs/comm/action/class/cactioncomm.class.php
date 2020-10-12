@@ -104,15 +104,11 @@ class CActionComm
 
                 $this->db->free($resql);
                 return 1;
-            }
-            else
-			{
+            } else {
                 $this->db->free($resql);
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -143,7 +139,7 @@ class CActionComm
         $sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         $sql .= " WHERE 1=1";
         if ($active != '') $sql .= " AND active=".$active;
-        if (!empty($excludetype)) $sql .= " AND type <> '".$excludetype."'";
+        if (!empty($excludetype)) $sql .= " AND type <> '".$this->db->escape($excludetype)."'";
         if ($morefilter) $sql .= " AND ".$morefilter;
         $sql .= " ORDER BY module, position, type";
 
@@ -208,9 +204,7 @@ class CActionComm
             if ($idorcode == 'id') $this->liste_array = $repid;
             if ($idorcode == 'code') $this->liste_array = $repcode;
             return $this->liste_array;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }

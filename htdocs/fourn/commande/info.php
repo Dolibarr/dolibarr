@@ -38,7 +38,7 @@ $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -55,9 +55,7 @@ if (GETPOST('actioncode', 'array'))
 {
     $actioncode = GETPOST('actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
     $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -196,9 +194,7 @@ if (!empty($conf->agenda->enabled))
     if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create))
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
-    }
-    else
-    {
+    } else {
         print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }

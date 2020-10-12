@@ -65,9 +65,7 @@ if ($action == 'update' || $action == 'add')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -99,9 +97,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf
     {
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
-    }
-    else
-    {
+    } else {
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip = new MailmanSpip($db);
 
@@ -118,9 +114,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf
 			{
 				$error++;
 				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				setEventMessages($langs->trans("MailmanCreationSuccess"), null);
 			}
         }
@@ -131,9 +125,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf
 			{
 				$error++;
 				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
 			}
         }
@@ -164,7 +156,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
 
     //$link=img_picto($langs->trans("Active"),'tick').' ';
-    $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
+    $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&token='.newToken().'&value=0&name=ADHERENT_USE_MAILMAN">';
     //$link.=$langs->trans("Disable");
     $link .= img_picto($langs->trans("Activated"), 'switch_on');
     $link .= '</a>';
@@ -211,12 +203,10 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
     print '</form>';
-}
-else
-{
+} else {
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
-    $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
+    $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value=1&name=ADHERENT_USE_MAILMAN">';
     //$link.=img_$langs->trans("Activate")
     $link .= img_picto($langs->trans("Disabled"), 'switch_off');
     $link .= '</a>';

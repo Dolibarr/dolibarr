@@ -74,20 +74,18 @@ print '<div class="inline-block toolbarbutton centpercent">';
 // Toolbar
 if ($permtoadd)
 {
-	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($websitekey ? '&website='.$websitekey : '').($pageid ? '&pageid='.$pageid : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($websitekey ? '&website='.$websitekey : '').($pageid ? '&pageid='.$pageid : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
-}
-else
-{
-    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
+} else {
+    print '<a href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
     print '<img class="toolbarbutton disabled" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
 if ($module == 'ecm')
 {
 	$tmpurl = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
-	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 	print '</a>';
 }
@@ -103,7 +101,7 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	if ((empty($section) || $section == -1) && ($module != 'medias'))
 	{
 		?>
-		<script type="text/javascript">
+		<script>
     	jQuery(document).ready(function() {
 			jQuery('#<?php echo $nameforformuserfile ?>').hide();
     	});
@@ -116,8 +114,7 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile = new FormFile($db);
     $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir);
-}
-else print '&nbsp;';
+} else print '&nbsp;';
 
 print '</div>';
 // End "Add new file" area
@@ -177,9 +174,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
 	    print '</td></tr>';
-    }
-    else	// Show file tree when ajax is disabled (rare)
-    {
+    } else { // Show filtree when ajax is disabled (rare)
         print '<tr><td style="padding-left: 20px">';
 
         $_POST['modulepart'] = $module;

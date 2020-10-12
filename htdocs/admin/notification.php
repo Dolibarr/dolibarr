@@ -84,9 +84,7 @@ if ($action == 'settemplates')
 		$db->commit();
 
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -97,7 +95,7 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "none"), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "restricthtml"), 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
 
 
@@ -106,9 +104,7 @@ if ($action == 'setvalue' && $user->admin)
     	$db->commit();
 
     	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
     	$db->rollback();
 
     	setEventMessages($langs->trans("Error"), null, 'errors');
@@ -140,8 +136,7 @@ if ($action == 'setfixednotif' && $user->admin)
 				$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
 				$newval = GETPOST($shortkey.'_key');
 				//print $newkey.' - '.$newval.'<br>';
-	    	}
-	    	elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg))
+	    	} elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg))
 	    	{
 	    		// Add a new entry
 	    		$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
@@ -160,9 +155,7 @@ if ($action == 'setfixednotif' && $user->admin)
     	$db->commit();
 
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-	{
+    } else {
 		$db->rollback();
 
         setEventMessages($langs->trans("Error"), null, 'errors');

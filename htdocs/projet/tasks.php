@@ -36,7 +36,7 @@ if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/cla
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -95,7 +95,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
 $label = GETPOST('label', 'alpha');
-$description = GETPOST('description', 'none');
+$description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
 $planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ?GETPOST('planned_workloadmin', 'int') : 0);
 $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
@@ -236,8 +236,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 			$error++;
-		}
-		elseif (empty($_POST['task_parent']))
+		} elseif (empty($_POST['task_parent']))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfProjectTask")), null, 'errors');
 			$action = 'create';
@@ -273,17 +272,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			if ($taskid > 0)
 			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
-			}
-			else
-			{
+			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("projects");
 					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
 					$duplicate_code_error = true;
-				}
-				else
-				{
+				} else {
 					setEventMessages($task->error, $task->errors, 'errors');
 				}
 				$action = 'create';
@@ -297,23 +292,19 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			{
 				header("Location: ".$backtopage);
 				exit;
-			}
-			elseif (empty($projectid))
+			} elseif (empty($projectid))
 			{
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode) ? '' : '?mode='.$mode));
 				exit;
 			}
 			$id = $projectid;
 		}
-	}
-	else
-	{
+	} else {
 		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
 			exit;
-		}
-		elseif (empty($id))
+		} elseif (empty($id))
 		{
 			// We go back on task list
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks/list.php'.(empty($mode) ? '' : '?mode='.$mode));
@@ -507,9 +498,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$langs->load("errors");
 		print $langs->trans("WarningProjectClosed");
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="createtask">';
@@ -536,9 +525,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		if (empty($duplicate_code_error))
 		{
 			print (GETPOSTISSET("ref") ?GETPOST("ref", 'alpha') : $defaultref);
-		}
-		else
-		{
+		} else {
 			print $defaultref;
 		}
 		print '<input type="hidden" name="taskref" value="'.($_POST["ref"] ? $_POST["ref"] : $defaultref).'">';
@@ -558,9 +545,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		if (is_array($contactsofproject) && count($contactsofproject))
 		{
 			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
-		}
-		else
-		{
+		} else {
 			print $langs->trans("NoUserAssignedToTheProject");
 		}
 		print '</td></tr>';
@@ -613,8 +598,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		print '</form>';
 	}
-}
-elseif ($id > 0 || !empty($ref))
+} elseif ($id > 0 || !empty($ref))
 {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
@@ -648,7 +632,8 @@ elseif ($id > 0 || !empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title = $langs->trans("ListOfTasks");
-	$linktotasks = dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition'));
+	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition btnTitleSelected'));
+	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
@@ -811,9 +796,7 @@ elseif ($id > 0 || !empty($ref))
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields);
-	}
-	else
-	{
+	} else {
 		$colspan = 10;
 		if ($object->usage_bill_time) $colspan += 2;
 		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
@@ -836,9 +819,7 @@ elseif ($id > 0 || !empty($ref))
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
 			}
-		}
-		else
-		{
+		} else {
 			if ($nboftaskshown < count($tasksarray) && !GETPOST('search_user_id', 'int'))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

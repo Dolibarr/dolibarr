@@ -164,8 +164,8 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
@@ -189,22 +189,17 @@ if ($action == 'update')
 				if ($result > 0)
 				{
 					dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
-				}
-				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result))
+				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result))
 				{
 					$error++;
 					$langs->load("errors");
 					$tmparray = explode(':', $result);
 					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				}
-				else
-				{
+				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
@@ -253,7 +248,7 @@ print '</tr>';
 
 // Default language
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 2);
+print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
 print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';

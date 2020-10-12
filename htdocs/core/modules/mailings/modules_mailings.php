@@ -98,9 +98,7 @@ class MailingTargets // This can't be abstract as it is used for some method
         {
             $obj = $this->db->fetch_object($result);
             return $obj->nb;
-        }
-        else
-        {
+        } else {
         	$this->error = $this->db->lasterror();
             return -1;
         }
@@ -144,8 +142,7 @@ class MailingTargets // This can't be abstract as it is used for some method
                 $this->error = $this->db->error();
                 return -1;
             }
-        }
-        else {
+        } else {
             return -1;
         }
         return $nb;
@@ -178,7 +175,7 @@ class MailingTargets // This can't be abstract as it is used for some method
        			$sql .= " tag,";
         		$sql .= " source_type)";
         		$sql .= " VALUES (".$mailing_id.",";
-        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'").",";
+        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$this->db->escape($targetarray['fk_contact'])."'").",";
         		$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
         		$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
         		$sql .= "'".$this->db->escape($targetarray['email'])."',";
@@ -192,9 +189,7 @@ class MailingTargets // This can't be abstract as it is used for some method
         		if ($result)
         		{
         			$j++;
-        		}
-        		else
-        		{
+        		} else {
         			if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
         			{
         				// Si erreur autre que doublon

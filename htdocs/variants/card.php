@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -90,9 +90,9 @@ if ($confirm == 'yes') {
 	if ($action == 'confirm_delete') {
 		$db->begin();
 
-		$res = $objectval->deleteByFkAttribute($object->id);
+		$res = $objectval->deleteByFkAttribute($object->id, $user);
 
-		if ($res < 1 || ($object->delete() < 1)) {
+		if ($res < 1 || ($object->delete($user) < 1)) {
 			$db->rollback();
 			setEventMessages($langs->trans('CoreErrorMessage'), $object->errors, 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -102,11 +102,10 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	}
-	elseif ($action == 'confirm_deletevalue')
+	} elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
-			if ($objectval->delete() < 1) {
+			if ($objectval->delete($user) < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -220,8 +219,8 @@ if ($action == 'edit') {
 
 	<div class="tabsAction">
 		<div class="inline-block divButAction">
-			<a href="card.php?id=<?php echo $object->id ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
-			<a href="card.php?id=<?php echo $object->id ?>&action=delete" class="butAction"><?php echo $langs->trans('Delete') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=edit&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Modify') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=delete&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Delete') ?></a>
 		</div>
 	</div>
 
@@ -264,7 +263,7 @@ if ($action == 'edit') {
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
 				<td class="right">
 					<a class="editfielda marginrightonly" href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
-					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
+					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&token=<?php echo newToken(); ?>&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
 			<?php
 		}

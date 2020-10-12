@@ -34,8 +34,7 @@ $mode = GETPOST('mode') ?GETPOST('mode') : '';
 
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
     $action = '';
     $socid = $user->socid;
 }
@@ -46,7 +45,7 @@ $startyear = $year - 2;
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "members"));
+$langs->loadLangs(array("companies", "members", "banks"));
 
 
 /*
@@ -68,74 +67,69 @@ print load_fiche_titre($title, '', 'object_group');
 
 dol_mkdir($dir);
 
-if ($mode)
-{
+if ($mode) {
     // Define sql
-    if ($mode == 'memberbycountry')
-    {
+    if ($mode == 'memberbycountry') {
         $label = $langs->trans("Country");
         $tab = 'statscountry';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY c.label, c.code";
         //print $sql;
     }
 
-	if ($mode == 'memberbystate')
-    {
+	if ($mode == 'memberbystate') {
         $label = $langs->trans("Country");
         $label2 = $langs->trans("State");
         $tab = 'statsstate';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY co.label, co.code, c.nom";
         //print $sql;
     }
-    if ($mode == 'memberbyregion') //
-    {
-        $label = $langs->trans("Country");
+    if ($mode == 'memberbyregion') { //
+		$label = $langs->trans("Country");
         $label2 = $langs->trans("Region"); //département
         $tab = 'statsregion'; //onglet
 
         $data = array(); //tableau de donnée
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY co.label, co.code, r.nom"; //+
         //print $sql;
     }
-    if ($mode == 'memberbytown')
-    {
+    if ($mode == 'memberbytown') {
         $label = $langs->trans("Country");
         $label2 = $langs->trans("Town");
         $tab = 'statstown';
 
         $data = array();
-        $sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
+        $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-        $sql .= " AND d.statut = 1";
+        $sql .= " AND d.statut != -1";
         $sql .= " GROUP BY c.label, c.code, d.town";
         //print $sql;
     }
@@ -148,15 +142,12 @@ if ($mode)
     // Define $data array
     dol_syslog("Count member", LOG_DEBUG);
     $resql = $db->query($sql);
-    if ($resql)
-    {
+    if ($resql) {
         $num = $db->num_rows($resql);
         $i = 0;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($resql);
-            if ($mode == 'memberbycountry')
-            {
+            if ($mode == 'memberbycountry') {
                 $data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
 							'code'=>$obj->code,
@@ -165,9 +156,8 @@ if ($mode)
                             'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
             }
-            if ($mode == 'memberbyregion') //+
-            {
-                $data[] = array(
+            if ($mode == 'memberbyregion') { //+
+				$data[] = array(
                     'label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
                     'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
 				    'label2'=>($obj->label2 ? $obj->label2 : $langs->trans("Unknown")),
@@ -176,8 +166,7 @@ if ($mode)
                     'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
 	        }
-            if ($mode == 'memberbystate')
-            {
+            if ($mode == 'memberbystate') {
                 $data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
 				            'label2'=>($obj->label2 ? $obj->label2 : $langs->trans("Unknown")),
@@ -186,8 +175,7 @@ if ($mode)
                             'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
             }
-            if ($mode == 'memberbytown')
-            {
+            if ($mode == 'memberbytown') {
                 $data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
                             'label2'=>($obj->label2 ? $obj->label2 : $langs->trans("Unknown")),
@@ -200,9 +188,7 @@ if ($mode)
             $i++;
         }
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -214,19 +200,15 @@ dol_fiche_head($head, $tab, $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title
-if ($mode && !count($data))
-{
+if ($mode && !count($data)) {
     print $langs->trans("NoValidatedMemberYet").'<br>';
     print '<br>';
-}
-else
-{
+} else {
     if ($mode == 'memberbycountry') print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
     elseif ($mode == 'memberbystate') print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
     elseif ($mode == 'memberbytown') print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
     elseif ($mode == 'memberbyregion') print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
-    else
-    {
+    else {
     	print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
         print '<br>';
         print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
@@ -242,8 +224,7 @@ else
 
 
 // Show graphics
-if (count($arrayjs) && $mode == 'memberbycountry')
-{
+if (count($arrayjs) && $mode == 'memberbycountry') {
     $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
     if (is_readable($color_file)) include_once $color_file;
 
@@ -261,8 +242,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 
     // loop and dump
     $i = 0;
-    foreach ($data as $val)
-    {
+    foreach ($data as $val) {
         $valcountry = strtoupper($val['code']); // Should be ISO-3166 code (faster)
         //$valcountry=ucfirst($val['label_en']);
         if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }    // fix case of uk (when we use labels)
@@ -291,20 +271,19 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     print '<br>';
 }
 
-if ($mode)
-{
-    // Print array / Affiche le tableau
-    print '<table class="liste centpercent">';
+if ($mode) {
+    // Print array
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="liste centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
     if ($label2) print '<td class="center">'.$label2.'</td>';
-    print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
     print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
     print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
     print '</tr>';
 
-    foreach ($data as $val)
-    {
+    foreach ($data as $val) {
         $year = $val['year'];
         print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
@@ -316,6 +295,7 @@ if ($mode)
     }
 
     print '</table>';
+    print '</div>';
 }
 
 

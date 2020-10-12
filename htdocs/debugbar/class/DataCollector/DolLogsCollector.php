@@ -77,9 +77,7 @@ class DolLogsCollector extends MessagesCollector
 		if ($uselogfile)
 		{
     		$this->getStorageLogs($this->path);
-		}
-		else
-		{
+		} else {
     	    $log_levels = $this->getLevels();
 
     	    foreach ($conf->logbuffer as $line) {

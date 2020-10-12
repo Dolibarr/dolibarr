@@ -23,13 +23,14 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
-
+	use CommonIncoterm;
 }
 
 /**

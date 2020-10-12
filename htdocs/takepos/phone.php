@@ -43,7 +43,7 @@ if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 } else {
 	$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 }
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $idproduct = GETPOST('idproduct', 'int');
 
@@ -169,9 +169,7 @@ elseif ($action == "checkplease") {
     	if ($categorycursor['level'] == $levelofmaincategories)
     	{
         	$maincategories[$key] = $categorycursor;
-    	}
-    	else
-    	{
+    	} else {
         	$subcategories[$key] = $categorycursor;
     	}
 	}
@@ -202,11 +200,11 @@ $( document ).ready(function() {
 function LoadPlace(placeid){
     place=placeid;
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
 		});';
 	}
@@ -217,12 +215,12 @@ function LoadPlace(placeid){
 function AddProduct(placeid, productid){
 	<?php
 	// If is a public terminal first show product information
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print 'place=placeid;
 		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
-	else{
+	else {
 		print 'AddProductConfirm(placeid, productid);';
 	}
 	?>
@@ -236,11 +234,11 @@ function PublicPreOrder(){
 function AddProductConfirm(placeid, productid){
 	place=placeid;
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
@@ -252,7 +250,7 @@ function SetQty(place, selectedline, qty){
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		?>
 	if (qty==0){
-		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		});
 	}
 	else{
@@ -264,7 +262,7 @@ function SetQty(place, selectedline, qty){
 	else {
 		?>
 	if (qty==0){
-		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		});
 	}
 	else{
@@ -273,7 +271,7 @@ function SetQty(place, selectedline, qty){
 	}
 		<?php
 	}
-	?>	
+	?>
 	LoadCats();
 }
 
@@ -286,11 +284,11 @@ function SetNote(place, selectedline){
 
 function LoadCats(){
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
 		});';
 	}
@@ -298,13 +296,13 @@ function LoadCats(){
 }
 
 function LoadProducts(idcat){
-    
+
 	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
 	}
-	else{
+	else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
 	}
@@ -357,7 +355,7 @@ function CheckPlease(payment){
 <div class="container">
 	<div class="phonebuttonsrow">
 		<?php
-		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';

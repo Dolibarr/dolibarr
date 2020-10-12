@@ -94,9 +94,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
         $localdt = new DateTime($newrefgmtdate, $localtz);
         $tmp = -1 * $localtz->getOffset($localdt);
         //print $refgmtdate.'='.$tmp;
-    }
-    else
-    {
+    } else {
     	$tmp = 0;
     	dol_print_error('', 'PHP version must be 5.3+');
     }
@@ -110,7 +108,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h)
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @return     int      			        	New timestamp
  */
 function dol_time_plus_duree($time, $duration_value, $duration_unit)
@@ -118,6 +116,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	global $conf;
 
 	if ($duration_value == 0)  return $time;
+	if ($duration_unit == 'i') return $time + (60 * $duration_value);
 	if ($duration_unit == 'h') return $time + (3600 * $duration_value);
 	if ($duration_unit == 'w') return $time + (3600 * 24 * 7 * $duration_value);
 
@@ -231,47 +230,37 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			{
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
-		}
-		elseif ($format == 'allhourminsec')
+		} elseif ($format == 'allhourminsec')
 		{
 		    return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
-		}
-		elseif ($format == 'allhourmin')
+		} elseif ($format == 'allhourmin')
 		{
 		    return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60)));
-		}
-		elseif ($format == 'allhour')
+		} elseif ($format == 'allhour')
 		{
 			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600)));
 		}
-	}
-	elseif ($format == 'hour')	// only hour part
+	} elseif ($format == 'hour')	// only hour part
 	{
 		$sTime = dol_print_date($iSecond, '%H', true);
-	}
-	elseif ($format == 'fullhour')
+	} elseif ($format == 'fullhour')
 	{
 		if (!empty($iSecond)) {
 			$iSecond = $iSecond / 3600;
-		}
-		else {
+		} else {
 			$iSecond = 0;
 		}
 		$sTime = $iSecond;
-	}
-	elseif ($format == 'min')	// only min part
+	} elseif ($format == 'min')	// only min part
 	{
 		$sTime = dol_print_date($iSecond, '%M', true);
-	}
-    elseif ($format == 'sec')	// only sec part
+	} elseif ($format == 'sec')	// only sec part
     {
         $sTime = dol_print_date($iSecond, '%S', true);
-    }
-    elseif ($format == 'month')	// only month part
+    } elseif ($format == 'month')	// only month part
     {
         $sTime = dol_print_date($iSecond, '%m', true);
-    }
-    elseif ($format == 'year')	// only year part
+    } elseif ($format == 'year')	// only year part
     {
         $sTime = dol_print_date($iSecond, '%Y', true);
     }
@@ -300,8 +289,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 		} elseif ($year_date > 0 && !empty($day_date)) {
 			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
 			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
-		} else
-			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
+		} else $sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
 	} elseif ($year_date > 0) {
 		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
 		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
@@ -346,8 +334,7 @@ function dol_stringtotime($string, $gm = 1)
         if ($syear < 50) $syear += 1900;
         if ($syear >= 50 && $syear < 100) $syear += 2000;
         $string = sprintf("%04d%02d%02d%02d%02d%02d", $syear, $smonth, $sday, $shour, $smin, $ssec);
-    }
-    elseif (
+    } elseif (
     	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i', $string, $reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
     	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i', $string, $reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
    		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i', $string, $reg)		// Convert date with format YYYYMMDDTHHMMSSZ
@@ -411,9 +398,7 @@ function dol_get_prev_month($month, $year)
 	{
 		$prev_month = 12;
 		$prev_year  = $year - 1;
-	}
-	else
-	{
+	} else {
 		$prev_month = $month - 1;
 		$prev_year  = $year;
 	}
@@ -432,9 +417,7 @@ function dol_get_next_month($month, $year)
 	{
 		$next_month = 1;
 		$next_year  = $year + 1;
-	}
-	else
-	{
+	} else {
 		$next_month = $month + 1;
 		$next_year  = $year;
 	}
@@ -483,8 +466,8 @@ function dol_get_next_week($day, $week, $month, $year)
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
  * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
- *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
+ *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
+ *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
  *  @return		int						Date for first day, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
@@ -508,9 +491,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 	{
 		$month = 1;
 		$year += 1;
-	}
-	else
-	{
+	} else {
 		$month += 1;
 	}
 
@@ -519,6 +500,28 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 	$datelim -= (3600 * 24);
 
 	return $datelim;
+}
+
+/**	Return GMT time for last hour of a given GMT date (it removes hours, min and second part)
+ *
+ *	@param		int			$date		Date
+ *  @return		int						Date for last hour of a given date
+ */
+function dol_get_last_hour($date)
+{
+	$tmparray = dol_getdate($date);
+	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
+}
+
+/**	Return GMT time for first hour of a given GMT date (it removes hours, min and second part)
+ *
+ *	@param		int			$date		Date
+ *  @return		int						Date for last hour of a given date
+ */
+function dol_get_first_hour($date)
+{
+	$tmparray = dol_getdate($date);
+	return dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
 }
 
 /**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.
@@ -563,9 +566,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
     		$prev_month = 12;
     		$prev_year  = $year - 1;
     	}
-    }
-    else
-    {
+    } else {
     	$prev_month = $month;
 		$prev_year = $year;
     }
@@ -636,25 +637,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$mois  = date("m", $timestampStart);
 		$annee = date("Y", $timestampStart);
 
-		// Check into var $conf->global->HOLIDAY_MORE_DAYS   MM-DD,YYYY-MM-DD, ...
-		// Do not use this anymore, use instead the dictionary of public holidays.
-		if (!empty($conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS))
-		{
-			$arrayofdaystring = explode(',', $conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS);
-			foreach ($arrayofdaystring as $daystring)
-			{
-				$tmp = explode('-', $daystring);
-				if ($tmp[2])
-				{
-					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie = true;
-				}
-				else
-				{
-					if ($tmp[0] == $mois && $tmp[1] == $jour) $ferie = true;
-				}
-			}
-		}
-
 		$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
 
 		// Loop on public holiday defined into hrm_public_holiday
@@ -674,9 +656,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				if (!empty($obj->dayrule) && $obj->dayrule != 'date')		// For example 'easter', '...'
 				{
 					$specialdayrule[$obj->dayrule] = $obj->dayrule;
-				}
-				else
-				{
+				} else {
 					$match = 1;
 					if (!empty($obj->year) && $obj->year != $annee) $match = 0;
 					if ($obj->month != $mois) $match = 0;
@@ -687,9 +667,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog($db->lasterror(), LOG_ERR);
 			return 'Error sql '.$db->lasterror();
 		}
@@ -857,9 +835,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 		if ($lastday == 1)
 		{
 			$bit = 0;
-		}
-		else
-		{
+		} else {
 			$bit = 1;
 		}
 		$nbjours = (int) floor(($timestampEnd - $timestampStart) / (60 * 60 * 24)) + 1 - $bit;
@@ -901,8 +877,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$nbOpenDay = ($numdays - $numholidays);
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = ($nbOpenDay * 24);
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
-	}
-	elseif ($timestampStart == $timestampEnd)
+	} elseif ($timestampStart == $timestampEnd)
 	{
 		$numholidays = 0;
 		if ($lastday) {
@@ -910,13 +885,11 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 			if ($numholidays == 1) return 0;
 		}
 
-		$nbOpenDay=$lastday;
+		$nbOpenDay = $lastday;
 
 		if ($inhour == 1) $nbOpenDay = ($nbOpenDay * 24);
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
-	}
-	else
-	{
+	} else {
 		return $langs->trans("Error");
 	}
 }

@@ -64,46 +64,36 @@ class FileUpload
 		if ($element == 'propal') {
 			$pathname = 'comm/propal';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'facture') {
+		} elseif ($element == 'facture') {
 			$pathname = 'compta/facture';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'project') {
+		} elseif ($element == 'project') {
 			$element = $pathname = 'projet';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'project_task') {
+		} elseif ($element == 'project_task') {
 			$pathname = 'projet'; $filename = 'task';
 			$dir_output = $conf->projet->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';
 			$parentObject = 'project';
-		}
-		elseif ($element == 'fichinter') {
+		} elseif ($element == 'fichinter') {
 			$element = 'ficheinter';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'order_supplier') {
+		} elseif ($element == 'order_supplier') {
 			$pathname = 'fourn'; $filename = 'fournisseur.commande';
 			$dir_output = $conf->fournisseur->commande->dir_output;
-		}
-		elseif ($element == 'invoice_supplier') {
+		} elseif ($element == 'invoice_supplier') {
 			$pathname = 'fourn'; $filename = 'fournisseur.facture';
 			$dir_output = $conf->fournisseur->facture->dir_output;
-		}
-		elseif ($element == 'product') {
+		} elseif ($element == 'product') {
 			$dir_output = $conf->product->multidir_output[$conf->entity];
-		}
-		elseif ($element == 'productbatch') {
+		} elseif ($element == 'productbatch') {
 			$dir_output = $conf->productbatch->multidir_output[$conf->entity];
-		}
-		elseif ($element == 'action') {
+		} elseif ($element == 'action') {
 			$pathname = 'comm/action'; $filename = 'actioncomm';
 			$dir_output = $conf->agenda->dir_output;
-		}
-		elseif ($element == 'chargesociales') {
+		} elseif ($element == 'chargesociales') {
 			$pathname = 'compta/sociales'; $filename = 'chargesociales';
 			$dir_output = $conf->tax->dir_output;
 		} else {
@@ -298,9 +288,7 @@ class FileUpload
 
 			if (preg_match('/error/i', $res)) return false;
 			return true;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -451,9 +439,7 @@ class FileUpload
 				} else {
 					dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
 				}
-			}
-			else
-			{
+			} else {
 				// Non-multipart uploads (PUT method support)
 				file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
 			}
@@ -469,8 +455,7 @@ class FileUpload
 						$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 					}
 				}
-			}
-			elseif ($this->options['discard_aborted_uploads'])
+			} elseif ($this->options['discard_aborted_uploads'])
 			{
 				unlink($file_path);
 				$file->error = 'abort';
@@ -493,9 +478,7 @@ class FileUpload
 		if ($file_name)
 		{
 			$info = $this->getFileObject($file_name);
-		}
-		else
-		{
+		} else {
 			$info = $this->getFileObjects();
 		}
 		header('Content-type: application/json');

@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("help", "members", "other", "admin"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -200,9 +200,7 @@ if ($showpromotemessage)
             print '<textarea style="width:80%; min-height: 60px">';
             print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
             print '</textarea>';
-        }
-        else
-        {
+        } else {
             print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
             print '<textarea style="width:80%; min-height: 60px">';
             print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);

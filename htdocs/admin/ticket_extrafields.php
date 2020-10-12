@@ -39,7 +39,7 @@ foreach ($tmptype2label as $key => $val) {
 	$type2label[$key] = $langs->trans($val);
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'ticket'; //Must be the $table_element of the class that manage extrafield
 

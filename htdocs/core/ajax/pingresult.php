@@ -30,7 +30,7 @@ if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $hash_unique_id = GETPOST('hash_unique_id', 'alpha');
 $hash_algo = GETPOST('hash_algo', 'alpha');
 
@@ -66,7 +66,6 @@ elseif ($action == 'firstpingko')
 	// Note: pings are by installation, done on entity 1.
 	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt'); // erase last value
 	print 'First ping KO saved for entity '.$conf->entity;
-}
-else {
+} else {
 	print 'Error action='.$action.' not supported';
 }

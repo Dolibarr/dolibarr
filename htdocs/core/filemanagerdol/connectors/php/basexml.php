@@ -84,8 +84,8 @@ function CreateXmlFooter()
 /**
  * SendError
  *
- * @param 	integer $number	Number
- * @param 	unknown_type $text		Text
+ * @param 	integer $number		Number
+ * @param 	string 	$text		Text
  * @return	void
  */
 function SendError($number, $text)
@@ -97,9 +97,7 @@ function SendError($number, $text)
 	{
 		SendErrorNode($number, $text);
 		CreateXmlFooter();
-	}
-	else
-	{
+	} else {
 		SetXmlHeaders();
 
 		dol_syslog('Error: '.$number.' '.$text, LOG_ERR);
@@ -127,6 +125,5 @@ function SendErrorNode($number, $text)
 {
 	if ($text)
 		echo '<Error number="'.$number.'" text="'.htmlspecialchars($text).'" />';
-	else
-		echo '<Error number="'.$number.'" />';
+	else echo '<Error number="'.$number.'" />';
 }

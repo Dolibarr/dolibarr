@@ -95,9 +95,7 @@ class Fournisseur extends Societe
 		{
 			$obj = $this->db->fetch_object($resql);
 			return $obj->nb;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -136,9 +134,7 @@ class Fournisseur extends Societe
 			}
             $this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -166,9 +162,7 @@ class Fournisseur extends Societe
 		{
 			dol_syslog("Fournisseur::CreateCategory : Success");
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog("Fournisseur::CreateCategory : Failed (".$this->error.")");
 			return -1;
@@ -204,9 +198,7 @@ class Fournisseur extends Societe
 			{
 				$arr[$obj->rowid] = $obj->name;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 		}

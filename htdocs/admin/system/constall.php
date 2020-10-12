@@ -84,7 +84,6 @@ $configfileparameters = array(
 							'?dolibarr_js_CKEDITOR',
 							'?dolibarr_js_JQUERY',
 							'?dolibarr_js_JQUERY_UI',
-							'?dolibarr_js_JQUERY_FLOT',
 							'?dolibarr_font_DOL_DEFAULT_TTF',
 							'?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 							'separator',
@@ -132,7 +131,6 @@ $configfilelib = array(
 					'dolibarr_js_CKEDITOR',
 					'dolibarr_js_JQUERY',
 					'dolibarr_js_JQUERY_UI',
-					'dolibarr_js_JQUERY_FLOT',
 					'dolibarr_font_DOL_DEFAULT_TTF',
 					'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 					'separator',
@@ -173,9 +171,7 @@ foreach ($configfileparameters as $key)
 		if ($newkey == 'separator')
 		{
 			print '<td colspan="3">&nbsp;</td>';
-		}
-		else
-		{
+		} else {
 			// Label
 			print "<td>".$configfilelib[$i].'</td>';
 			// Key
@@ -219,9 +215,7 @@ if (empty($conf->multicompany->enabled))
 {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
-}
-else
-{
+} else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) $sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 }

@@ -39,7 +39,7 @@ ALTER TABLE llx_societe DROP COLUMN description;
 ALTER TABLE llx_societe DROP COLUMN services;
 ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(128);
 
-ALTER TABLE llx_bank ADD COLUMN tms timestamp after datec;
+ALTER TABLE llx_bank ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after datec;
   
 -- Monaco VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 271,  27,'19.6','0','VAT standard rate (France hors DOM-TOM)',1);
@@ -267,7 +267,7 @@ ALTER TABLE llx_extrafields ADD COLUMN fieldrequired INTEGER DEFAULT 0;
 create table llx_socpeople_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
@@ -276,7 +276,7 @@ ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_ob
 create table llx_actioncomm_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -835,7 +835,7 @@ CREATE TABLE llx_product_price_by_qty
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   fk_product_price	integer NOT NULL,
-  date_price		timestamp,
+  date_price		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   price			double (24,8) DEFAULT 0,
   price_ttc		double (24,8) DEFAULT 0,
   qty_min		real DEFAULT 0
@@ -910,7 +910,7 @@ ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(8);
 create table llx_user_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- member id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;

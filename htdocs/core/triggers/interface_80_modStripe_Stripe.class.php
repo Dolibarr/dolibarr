@@ -177,9 +177,7 @@ class InterfaceStripe extends DolibarrTriggers
 										//$taxids = $customer->allTaxIds($customer->id);
 										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
 									}
-								}
-								else
-								{
+								} else {
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data))
 									{
@@ -193,8 +191,7 @@ class InterfaceStripe extends DolibarrTriggers
 
 							// Update Customer on Stripe
 							$customer->save();
-						}
-						catch (Exception $e)
+						} catch (Exception $e)
 						{
 						    //var_dump(\Stripe\Stripe::getApiVersion());
 							$this->errors[] = $e->getMessage();
@@ -207,17 +204,19 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
+			if (! empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRPARTY)) {
+				// By default, we do not delete the stripe account. We may need to reuse it with its payment_intent, for example if delete is for a merge of thirdparties.
+				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 
-			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-			if ($customer)
-			{
-				try {
-					$customer->delete();
-				}
-				catch (Exception $e)
+				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+				if ($customer)
 				{
-					dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
+					try {
+						$customer->delete();
+					} catch (Exception $e)
+					{
+						dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
+					}
 				}
 			}
 
@@ -254,8 +253,7 @@ class InterfaceStripe extends DolibarrTriggers
 							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
 								$card->save();
-							}
-							catch (Exception $e)
+							} catch (Exception $e)
 							{
 								$ok = -1;
 								$this->error = $e->getMessages();

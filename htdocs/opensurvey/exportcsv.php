@@ -108,14 +108,11 @@ if ($resql)
 			{
 				$input .= 'OK;';
 				$somme[$k]++;
-			}
-			elseif ($car == "2")
+			} elseif ($car == "2")
 			{
 				$input .= 'KO;';
 				$somme[$k]++;
-			}
-			else
-			{
+			} else {
 				$input .= ';';
 			}
 		}
@@ -123,8 +120,7 @@ if ($resql)
 		$input .= "\r\n";
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 $filesize = strlen($input);

@@ -78,8 +78,7 @@ class CommandeStats extends Stats
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
-		}
-		elseif ($mode == 'supplier')
+		} elseif ($mode == 'supplier')
 		{
 			$object = new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";

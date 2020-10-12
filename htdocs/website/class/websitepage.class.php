@@ -3,6 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +52,8 @@ class WebsitePage extends CommonObject
 
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_website;
 
 	public $pageurl;
@@ -104,6 +105,15 @@ class WebsitePage extends CommonObject
 	 */
 	public $author_alias;
 
+   	/**
+   	 * @var string path of external object
+   	 */
+	public $object_type;
+
+	/**
+	 * @var string id of external object
+	 */
+	public $fk_object;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -135,25 +145,25 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-     * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-     */
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields = array(
-	    'rowid'          =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'rowid'          =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'pageurl'        =>array('type'=>'varchar(16)', 'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Ref/alias of page'),
 		'aliasalt'       =>array('type'=>'varchar(255)', 'label'=>'AliasAlt', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>0, 'position'=>11, 'searchall'=>0, 'comment'=>'Alias alternative of page'),
 		'type_container' =>array('type'=>'varchar(16)', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
 		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'help'=>'UseTextBetween5And70Chars'),
-	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1),
+		'description'    =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1),
 		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image', 'enabled'=>1, 'visible'=>1, 'position'=>32, 'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
 		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
 		'lang'           =>array('type'=>'varchar(6)', 'label'=>'Lang', 'enabled'=>1, 'notnull'=>-1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
-	    'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
-	    'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
-	    'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
-	    'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
+		'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
+		'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
+		'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
+		'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
 		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom', 'enabled'=>1, 'visible'=>1, 'index'=>1, 'position'=>400, 'comment'=>'URL page content was grabbed from'),
-	    'date_creation'  =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'date_creation'  =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'tms'            =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
 		'fk_user_creat'  =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
@@ -161,6 +171,8 @@ class WebsitePage extends CommonObject
 		'fk_user_modif'  =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
+		'object_type' => array('type' => 'varchar(255)','label' => 'ObjectType', 'enabled'=>1, 'visible'=>1, 'position'=>46, 'searchall'=>0, 'help'=>''),
+		'fk_object' => array('type' => 'varchar(255)','label' => 'ObjectId', 'enabled'=>1, 'visible'=>1, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -260,7 +272,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.author_alias,";
 		$sql .= " t.fk_user_modif,";
-		$sql .= " t.import_key";
+		$sql .= " t.import_key,";
+		$sql .= " t.object_type,";
+		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
@@ -268,26 +282,25 @@ class WebsitePage extends CommonObject
 		{
 			$sql .= ' AND t.rowid = '.$id;
 		}
-		else
-		{
+		else {
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
-			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
-			    if ($page) {
-			    	$pagetouse = $page;
-			    	$langtouse = '';
-			    	$tmppage = explode('/', $page);
-			    	if (!empty($tmppage[1])) {
-			    		$pagetouse = $tmppage[1];
-			    		if (strlen($tmppage[0])) $langtouse = $tmppage[0];
-			    	}
-			    	$sql .= " AND t.pageurl = '".$this->db->escape($pagetouse)."'";
-			    	if ($langtouse) $sql .= " AND t.lang = '".$this->db->escape($langtouse)."'";
-			    }
-			    if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
+				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
+				if ($page) {
+					$pagetouse = $page;
+					$langtouse = '';
+					$tmppage = explode('/', $page);
+					if (!empty($tmppage[1])) {
+						$pagetouse = $tmppage[1];
+						if (strlen($tmppage[0])) $langtouse = $tmppage[0];
+					}
+					$sql .= " AND t.pageurl = '".$this->db->escape($pagetouse)."'";
+					if ($langtouse) $sql .= " AND t.lang = '".$this->db->escape($langtouse)."'";
+				}
+				if ($aliasalt)	$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
 			}
 		}
-        $sql .= $this->db->plimit(1);
+		$sql .= $this->db->plimit(1);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -320,6 +333,8 @@ class WebsitePage extends CommonObject
 				$this->author_alias = $obj->author_alias;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->import_key = $obj->import_key;
+				$this->object_type = $obj->object_type;
+				$this->fk_object = $obj->fk_object;
 			}
 			$this->db->free($resql);
 
@@ -375,7 +390,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.author_alias,";
 		$sql .= " t.fk_user_modif,";
-		$sql .= " t.import_key";
+		$sql .= " t.import_key,";
+		$sql .= " t.object_type,";
+		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
@@ -383,13 +400,13 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.' = '.$value;
 				} elseif ($key == 'type_container') {
-					$sqlwhere[] = $key."='".$value."'";
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
 					$foundnull = 0;
-					foreach(explode(',', $value) as $tmpvalue) {
+					foreach (explode(',', $value) as $tmpvalue) {
 						if ($tmpvalue == 'null') {
 							$foundnull++;
 							continue;
@@ -444,6 +461,8 @@ class WebsitePage extends CommonObject
 				$record->author_alias = $obj->author_alias;
 				$record->fk_user_modif = $obj->fk_user_modif;
 				$record->import_key = $obj->import_key;
+				$record->object_type = $obj->object_type;
+				$record->fk_object = $obj->fk_object;
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -600,7 +619,7 @@ class WebsitePage extends CommonObject
 			}
 		}
 
-		if (! $error) {
+		if (!$error) {
 			return 1;
 		} else {
 			return -1;
@@ -693,43 +712,43 @@ class WebsitePage extends CommonObject
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
+	 *  @param	integer	$notooltip			1=Disable tooltip
+	 *  @param	int		$maxlen				Max length of visible user name
+	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        $result = '';
+		$result = '';
 
-        $label = '<u>'.$langs->trans("Page").'</u>';
-        $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
-        $label .= '<b>'.$langs->trans('ID').':</b> '.$this->id.'<br>';
-        $label .= '<b>'.$langs->trans('Title').':</b> '.$this->title.'<br>';
-        $label .= '<b>'.$langs->trans('Language').':</b> '.$this->lang;
+		$label = '<u>'.$langs->trans("Page").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
+		$label .= '<b>'.$langs->trans('ID').':</b> '.$this->id.'<br>';
+		$label .= '<b>'.$langs->trans('Title').':</b> '.$this->title.'<br>';
+		$label .= '<b>'.$langs->trans('Language').':</b> '.$this->lang;
 
-        $url = DOL_URL_ROOT.'/website/index.php?websiteid='.$this->fk_website.'&pageid='.$this->id;
+		$url = DOL_URL_ROOT.'/website/index.php?websiteid='.$this->fk_website.'&pageid='.$this->id;
 
-        $linkclose = '';
-        if (empty($notooltip))
-        {
-        	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-        	{
-        		$label = $langs->trans("ShowMyObject");
-        		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
-        	}
-        	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-        	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		$linkclose = '';
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label = $langs->trans("ShowMyObject");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		}
+		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
-        $linkstart = '<a href="'.$url.'"';
-        $linkstart .= $linkclose.'>';
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		//$linkstart = $linkend = '';
@@ -753,7 +772,7 @@ class WebsitePage extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -763,7 +782,7 @@ class WebsitePage extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
@@ -782,6 +801,21 @@ class WebsitePage extends CommonObject
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return $this->setCategoriesCommon($categories, Categorie::TYPE_WEBSITE_PAGE);
+	}
 
 	/**
 	 * Initialise object with example values

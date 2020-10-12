@@ -36,7 +36,7 @@ if (!empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
@@ -70,9 +70,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -90,9 +88,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer)
 	if ($object->fetch($id))
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

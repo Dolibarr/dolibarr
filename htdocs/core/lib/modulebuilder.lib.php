@@ -83,8 +83,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	//$pathoffiletoedittmp=$destdir.'/class/'.strtolower($objectname).'.class.php.tmp';
 	//dol_delete_file($pathoffiletoedittmp, 0, 1, 1);
 
-	try
-	{
+	try {
 		include_once $pathoffiletoeditsrc;
 		if (class_exists($objectname)) $object = new $objectname($db);
 		else return -4;
@@ -193,8 +192,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 
 		return $object;
-	}
-	catch (Exception $e)
+	} catch (Exception $e)
 	{
 		print $e->getMessage();
 		return -5;
@@ -209,11 +207,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
+ *  @param	Object		$object			If object was already loaded/known, it is pass to avoid another include and new.
+ *  @param	string		$moduletype		'external' or 'internal'
  * 	@return	int							<=0 if KO, >0 if OK
  *  @see rebuildObjectClass()
  */
-function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null)
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null, $moduletype = 'external')
 {
 	global $db, $langs;
 
@@ -225,8 +224,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoclasssrc = $readdir.'/class/'.strtolower($objectname).'.class.php';
 
 	// Edit .sql file
-	$pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-	$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	if ($moduletype == 'internal') {
+		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	} else {
+		$pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+	}
+
 	if (!dol_is_file($pathoffiletoeditsrc))
 	{
 		$langs->load("errors");
@@ -235,16 +240,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 
 	// Load object from myobject.class.php
-	try
-	{
+	try {
 		if (!is_object($object))
 		{
 			include_once $pathoffiletoclasssrc;
 			if (class_exists($objectname)) $object = new $objectname($db);
 			else return -1;
 		}
-	}
-	catch (Exception $e)
+	} catch (Exception $e)
 	{
 		print $e->getMessage();
 	}
@@ -271,8 +274,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid')  $texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
 			if ($key == 'entity') $texttoinsert .= ' DEFAULT 1';
-			else
-			{
+			else {
 				if ($val['default'] != '')
 				{
 					if (preg_match('/^null$/i', $val['default'])) $texttoinsert .= " DEFAULT NULL";
@@ -293,15 +295,18 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	if ($result)
 	{
 		@chmod($pathoffiletoedittarget, octdec($newmask));
-	}
-	else
-	{
+	} else {
 		$error++;
 	}
 
 	// Edit .key.sql file
-	$pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-	$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+	if ($moduletype == 'internal') {
+		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+	} else {
+		$pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+	}
 
 	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
@@ -338,9 +343,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	if ($result)
 	{
 		@chmod($pathoffiletoedittarget, octdec($newmask));
-	}
-	else
-	{
+	} else {
 		$error++;
 	}
 

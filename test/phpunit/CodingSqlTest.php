@@ -158,7 +158,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
             print 'Process dir '.$dir."\n";
             $filesarray = scandir($dir);
 
-            foreach($filesarray as $key => $file)
+            foreach ($filesarray as $key => $file)
             {
                 if (! preg_match('/\.sql$/', $file))
                     continue;
@@ -204,19 +204,14 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
                 {
                     // Test for migration files only
-                }
-                elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
+                } elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
                 {
                     // Test for data files only
-                }
-                else
-                {
+                } else {
                     if (preg_match('/\.key\.sql$/', $file))
                     {
                         // Test for key files only
-                    }
-                    else
-                    {
+                    } else {
                         // Test for non key files only
                         $result=(strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
                         print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
@@ -247,7 +242,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
-        foreach($filesarray as $key => $file) {
+        foreach ($filesarray as $key => $file) {
             if (! preg_match('/\.sql$/', $file))
                 continue;
 

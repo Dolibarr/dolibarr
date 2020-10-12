@@ -39,15 +39,15 @@ $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
 $type = GETPOST('type', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder = GETPOST('sortorder', 'alpha');
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if ($page == -1 || $page == null) { $page = 0; }
 $offset = $limit * $page;
@@ -75,9 +75,7 @@ if ($action == 'confirm_rejet')
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		}
-
-		elseif ($daterej > dol_now())
+		} elseif ($daterej > dol_now())
 		{
 			$error++;
 			$langs->load("error");
@@ -104,14 +102,10 @@ if ($action == 'confirm_rejet')
 				header("Location: line.php?id=".$id);
 				exit;
 			}
-		}
-		else
-		{
+		} else {
 			$action = "rejet";
 		}
-	}
-	else
-	{
+	} else {
 		header("Location: line.php?id=".$id);
 		exit;
 	}
@@ -174,25 +168,19 @@ if ($id)
 				{
 					/* Historique pour certaines install */
 					print $langs->trans("Unknown");
-				}
-				else
-				{
+				} else {
 					print dol_print_date($rej->date_rejet, 'day');
 				}
 				print '</td></tr>';
 				print '<tr><td>'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
-			}
-			else
-			{
+			} else {
 				print '<tr><td>'.$resf.'</td></tr>';
 			}
 		}
 
 		print '</table>';
 		dol_fiche_end();
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -259,15 +247,11 @@ if ($id)
 				if ($user->rights->prelevement->bons->credit)
 				{
 					print '<a class="butActionDelete" href="line.php?action=rejet&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
 		}
 	}
@@ -344,9 +328,7 @@ if ($id)
 		print "</table>";
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

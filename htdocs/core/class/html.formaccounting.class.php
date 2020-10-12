@@ -82,9 +82,7 @@ class FormAccounting extends Form
 		{
 		    $options = $this->options_cache[$usecache];
 		    $selected = $selectid;
-		}
-		else
-		{
+		} else {
 			$sql = "SELECT rowid, code, label, nature, entity, active";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE active = 1";
@@ -170,23 +168,21 @@ class FormAccounting extends Form
 			$sql .= " AND c.category_type = 0";
             if (empty($allcountries)) $sql .= " AND c.fk_country = ".$mysoc->country_id;
             $sql .= " ORDER BY c.label ASC";
-        }
-        else
-        {
+        } else {
             $sql = "SELECT c.rowid, c.label as type, c.range_account";
             $sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			$sql .= " AND c.fk_country = co.rowid";
-            if (empty($allcountries)) $sql .= " AND co.code = '".$mysoc->country_code."'";
+            if (empty($allcountries)) $sql .= " AND co.code = '".$this->db->escape($mysoc->country_code)."'";
             $sql .= " ORDER BY c.label ASC";
         }
 
         dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-        $resql = $db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $db->num_rows($resql);
+        	$num = $this->db->num_rows($resql);
             if ($num)
             {
                 $out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -195,7 +191,7 @@ class FormAccounting extends Form
                 if ($useempty) $out .= '<option value="0">&nbsp;</option>';
                 while ($i < $num)
                 {
-                    $obj = $db->fetch_object($resql);
+                	$obj = $this->db->fetch_object($resql);
                     $out .= '<option value="'.$obj->rowid.'"';
                     if ($obj->rowid == $selected) $out .= ' selected';
                     $out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
@@ -204,15 +200,11 @@ class FormAccounting extends Form
                 }
                 $out .= '</select>';
                 //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-            }
-            else
-            {
+            } else {
                 $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
             }
-        }
-        else
-        {
-            dol_print_error($db, $db->lasterror());
+        } else {
+        	dol_print_error($this->db);
         }
 
         $out .= ajax_combobox($htmlname, array());
@@ -287,9 +279,7 @@ class FormAccounting extends Form
 		{
 		    $options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		    $selected = $selectid;
-		}
-		else
-		{
+		} else {
     		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
     		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
@@ -315,9 +305,7 @@ class FormAccounting extends Form
 				if (empty($obj->labelshort))
 				{
 					$labeltoshow = $obj->label;
-				}
-				else
-				{
+				} else {
 					$labeltoshow = $obj->labelshort;
 				}
 

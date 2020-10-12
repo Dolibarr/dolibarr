@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=禁止在银行帐户中直接记录交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日记帐上启用草稿导出
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=销售日记帐
 ACCOUNTING_PURCHASE_JOURNAL=采购日记帐
@@ -284,6 +285,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=未调解
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=应用批量类别
 AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=会计科目的类别已被删除

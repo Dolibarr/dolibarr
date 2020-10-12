@@ -137,9 +137,7 @@ if ($resql)
 		$found = $notfound;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db, 'Error');
 	$found = 'Error';
 }
@@ -164,9 +162,7 @@ if (!empty($number))
             print $txt;
             dol_syslog($txt, LOG_ERR);
             print '</body>'."\n";
-        }
-        else
-        {
+        } else {
             $txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
             dol_syslog($txt);
             print '<body onload="javascript:history.go(-1);">'."\n";
@@ -188,8 +184,7 @@ if (!empty($number))
             print '</body>'."\n";
         }
     }
-}
-else {
+} else {
     print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 

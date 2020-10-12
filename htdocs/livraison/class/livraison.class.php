@@ -59,6 +59,11 @@ class Livraison extends CommonObject
 	 */
 	public $table_element_line = "livraisondet";
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'sending';
+
 	public $brouillon;
 	public $socid;
 	public $ref_customer;
@@ -215,25 +220,19 @@ class Livraison extends CommonObject
 				{
 					$this->db->commit();
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					$error++;
 					$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 			$this->db->rollback();
@@ -320,7 +319,8 @@ class Livraison extends CommonObject
 				$this->note                 = $obj->note_private; //TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->model_pdf            = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->origin               = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
@@ -344,16 +344,12 @@ class Livraison extends CommonObject
 				}
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = 'Delivery with id '.$id.' not found sql='.$sql;
 				dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -399,9 +395,7 @@ class Livraison extends CommonObject
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		            {
 		                $numref = $objMod->livraison_get_num($soc, $this);
-		            }
-		            else
-					{
+		            } else {
 		                $numref = $this->ref;
 		            }
             		$this->newref = dol_sanitizeFileName($numref);
@@ -500,17 +494,13 @@ class Livraison extends CommonObject
 			        {
 			            $this->db->commit();
 			            return 1;
-			        }
-			        else
-					{
+			        } else {
 			            $this->db->rollback();
 			            return -1;
 			        }
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "Non autorise";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -633,9 +623,7 @@ class Livraison extends CommonObject
 				$this->update_price();
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
 		}
@@ -704,23 +692,17 @@ class Livraison extends CommonObject
                     // End call triggers
 
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
@@ -739,9 +721,9 @@ class Livraison extends CommonObject
 		global $langs;
 
 		$result = '';
-		$picto = 'sending';
 
-		$label = $langs->trans("ShowReceiving").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
+		$label .= '<b>'.$langs->trans("Status").'</b>: '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
 
@@ -757,7 +739,7 @@ class Livraison extends CommonObject
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
-		if ($withpicto) $result .= ($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result .= ($linkstart.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
 		$result .= $linkstart.$this->ref.$linkend;
 		return $result;
@@ -904,6 +886,8 @@ class Livraison extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$sql .= " AND tosell = 1";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -990,16 +974,13 @@ class Livraison extends CommonObject
 					if ($row[0] == $objSourceLine->rowid)
 					{
 						$array[$i]['qty'] = $objSourceLine->qty - $row[1];
-					}
-					else
-					{
+					} else {
 						$array[$i]['qty'] = $objSourceLine->qty;
 					}
 
 					$array[$i]['ref'] = $objSourceLine->ref;
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
-				}
-				elseif ($objSourceLine->qty - $row[1] < 0)
+				} elseif ($objSourceLine->qty - $row[1] < 0)
 				{
 					$array[$i]['qty'] = $objSourceLine->qty - $row[1]." Erreur livraison !";
 					$array[$i]['ref'] = $objSourceLine->ref;
@@ -1009,9 +990,7 @@ class Livraison extends CommonObject
 					$i++;
 			}
 			return $array;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." - sql=$sqlSourceLine";
 			return -1;
 		}
@@ -1040,15 +1019,11 @@ class Livraison extends CommonObject
 			{
 				$this->date_delivery = $date_livraison;
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}
@@ -1073,8 +1048,8 @@ class Livraison extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'typhon';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
 			}

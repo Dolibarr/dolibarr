@@ -51,9 +51,7 @@ $invoice = new Facture($db);
 if ($invoiceid > 0)
 {
     $invoice->fetch($invoiceid);
-}
-else
-{
+} else {
     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
@@ -64,9 +62,7 @@ else
     if (!$invoiceid)
     {
         $invoiceid = 0; // Invoice does not exist yet
-    }
-    else
-    {
+    } else {
         $invoice->fetch($invoiceid);
     }
 }

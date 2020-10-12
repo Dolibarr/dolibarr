@@ -170,9 +170,9 @@ if ($action == 'display' || $action == 'delete') {
 				print '<td>'.length_accountg($cpt->account_number).'</td>';
 				print '<td>'.$cpt->label.'</td>';
 				print '<td class="right">';
-				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=".$cat_id."&cptid=".$cpt->rowid."'>";
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&account_category='.$cat_id.'&cptid='.$cpt->rowid.'">';
 				print $langs->trans("DeleteFromCat");
-				print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+				print img_picto($langs->trans("DeleteFromCat"), 'unlink', 'class="paddingleft"');
 				print "</a>";
 				print "</td>";
 				print "</tr>\n";

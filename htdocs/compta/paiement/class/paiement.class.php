@@ -9,6 +9,7 @@
  * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,8 @@ class Paiement extends CommonObject
 	public $amounts = array();               // array: invoice ID => amount for that invoice (in the main currency)>
 	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
 
+	public $pos_change = 0;	// Excess received in TakePOS cash payment
+
 	public $author;
 	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
 	public $paiementcode; // Code of payment.
@@ -86,13 +89,6 @@ class Paiement extends CommonObject
      * @var string type code
      */
     public $type_code;
-
-    /**
-     * @var string Numero du CHQ, VIR, etc...
-     * @deprecated
-     * @see $num_payment
-     */
-    public $numero;
 
     /**
      * @var string Numero du CHQ, VIR, etc...
@@ -140,6 +136,10 @@ class Paiement extends CommonObject
      */
     public $fk_paiement; // Type of payment
 
+    /**
+     * @var string payment external reference
+     */
+    public $ref_ext;
 
 	/**
 	 *	Constructor
@@ -161,7 +161,7 @@ class Paiement extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
-		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
+		$sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as type_code, c.libelle as type_label,';
 		$sql .= ' p.num_paiement as num_payment, p.note,';
 		$sql .= ' b.fk_account';
@@ -184,9 +184,9 @@ class Paiement extends CommonObject
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->ref ? $obj->ref : $obj->rowid;
+				$this->ref_ext        = $obj->ref_ext;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->num_paiement   = $obj->num_payment; // deprecated
 				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount; // deprecated
 				$this->amount         = $obj->amount;
@@ -204,15 +204,11 @@ class Paiement extends CommonObject
 
 				$this->db->free($resql);
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->free($resql);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -246,9 +242,7 @@ class Paiement extends CommonObject
 		{
 			$amounts = &$this->amounts;
 			$amounts_to_update = &$this->multicurrency_amounts;
-		}
-		else
-		{
+		} else {
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
@@ -282,22 +276,25 @@ class Paiement extends CommonObject
 
 		$this->ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
 
+		if (empty($this->ref_ext)) {
+			$this->ref_ext = '';
+		}
+
 		if ($way == 'dolibarr')
 		{
 			$total = $totalamount;
 			$mtotal = $totalamount_converted; // Maybe use price2num with MT for the converted value
-		}
-		else
-		{
+		} else {
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
 
-		$num_payment = ($this->num_payment ? $this->num_payment : $this->num_paiement);
-		$note = ($this->note_public ? $this->note_public : $this->note);
+		$num_payment = $this->num_payment;
+		$note = ($this->note_private ? $this->note_private : $this->note);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
+		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((int) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -344,8 +341,7 @@ class Paiement extends CommonObject
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
                             elseif ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             //else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-                            else
-                            {
+                            else {
                                 // If invoice is a down payment, we also convert down payment to discount
                                 if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
@@ -433,15 +429,11 @@ class Paiement extends CommonObject
                             	$error++;
                             }
                         }
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->lasterror();
 						$error++;
 					}
-				}
-				else
-				{
+				} else {
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
@@ -453,9 +445,7 @@ class Paiement extends CommonObject
 				if ($result < 0) { $error++; }
 				// Fin appel triggers
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
@@ -467,9 +457,7 @@ class Paiement extends CommonObject
 		    $this->multicurrency_amount = $mtotal;
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -505,9 +493,7 @@ class Paiement extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -2;
 		}
@@ -573,9 +559,7 @@ class Paiement extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error;
 			$this->db->rollback();
 			return -5;
@@ -724,7 +708,7 @@ class Paiement extends CommonObject
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
-						$this->num_paiement,
+						$this->num_payment,
 						'withdraw'
 					);
 				}
@@ -736,9 +720,7 @@ class Paiement extends CommonObject
 				    if ($result < 0) { $error++; }
 				    // Fin appel triggers
 				}
-            }
-            else
-			{
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -746,9 +728,7 @@ class Paiement extends CommonObject
             if (!$error)
             {
             	$this->db->commit();
-            }
-            else
-			{
+            } else {
             	$this->db->rollback();
             }
         }
@@ -756,9 +736,7 @@ class Paiement extends CommonObject
         if (!$error)
         {
             return $bank_line_id;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -782,9 +760,7 @@ class Paiement extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this).'::update_fk_bank '.$this->error);
 			return -1;
@@ -824,7 +800,7 @@ class Paiement extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
             $sql .= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
-            $sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$type."' AND url_id = ".$this->id.")";
+            $sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".$this->id.")";
             $sql .= " AND rappro = 0";
 
             $result = $this->db->query($sql);
@@ -845,9 +821,7 @@ class Paiement extends CommonObject
 
                 $this->db->commit();
                 return 0;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 return -2;
             }
@@ -876,9 +850,7 @@ class Paiement extends CommonObject
             {
             	$this->num_payment = $this->db->escape($num);
                 return 0;
-            }
-            else
-            {
+            } else {
                 $this->error = 'Error -1 '.$this->db->error();
                 return -2;
             }
@@ -901,9 +873,7 @@ class Paiement extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this).'::valide '.$this->error);
 			return -1;
@@ -925,9 +895,7 @@ class Paiement extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this).'::reject '.$this->error);
 			return -1;
@@ -971,9 +939,7 @@ class Paiement extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
     }
@@ -1005,9 +971,7 @@ class Paiement extends CommonObject
 			}
 
 			return $billsarray;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
@@ -1039,9 +1003,7 @@ class Paiement extends CommonObject
     		}
 
     		return $amounts;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->error();
     		dol_syslog(get_class($this).'::getAmountsArray Error '.$this->error.' -', LOG_DEBUG);
     		return -1;
@@ -1124,9 +1086,7 @@ class Paiement extends CommonObject
 			}
 
 			return $numref;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Invoice"));
 			return "";
@@ -1199,7 +1159,7 @@ class Paiement extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-        $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
         $label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
         if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
@@ -1212,7 +1172,7 @@ class Paiement extends CommonObject
             	foreach ($arraybill as $billid)
             	{
             		$facturestatic->fetch($billid);
-            		$label .= '<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2, 1);
+            		$label .= '<br> '.$facturestatic->getNomUrl(1, '', 0, 0, '', 1).' '.$facturestatic->getLibStatut(2, 1);
             	}
             }
         }
@@ -1227,8 +1187,7 @@ class Paiement extends CommonObject
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
         	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $url = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id;
 

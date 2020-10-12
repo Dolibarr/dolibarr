@@ -2,6 +2,31 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 13.0.0 compared to 12.0.0 *****
+For users:
+NEW: Add module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
+NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable.
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Properties ->contactid have been renamed into ->contact_id
+* Properties ->titre have been renamed into ->title 
+* Property $paiementid in API 'api_supplier_invoices.php' has been renamed into into $payment_mode_id (english)
+* The deprecated subsitution key __SIGNATURE__ has been removed. Replace with __USER_SIGNATURE__ if you used the old syntax in
+  your email templates. 
+* The hidden option HOLIDAY_MORE_PUBLIC_HOLIDAYS has been removed. Use instead the dictionary table if you need to define custom
+  days of holiday.
+* Property 'num_paiement' has been renamed 'num_payment' everywhere for better code consistency.
+* If you build a class that implement CommonObject to use the incoterm properties or methods (->fk_incoterm, ->label_incoterm, ->location_incoterm),
+  you must now also include declaration of the Trait 'CommonIncoterm' in your class. All incoterm functions were moved into this Trait. 
+* The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alphanohtml') so no html will be allowed. Use GETPOST(..., 'restricthtml') to accept HTML.
+* If you have links in your code with '&action=delete' as a parameter, you must also add '&token='.newToken() as another parameter to avoid CSRF protection errors.
+* The API addPayment for api_invoice has evolved to accept amount into a foreign currency. You must provide array(amount=>X,mutlicurrency_ammount=>Y) instead of amount.
+* The method select_thirdparty(), deprecated since 3.8, into html.form.class.php has been removed.
+
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
 FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename
 FIX: 11.0 - expenses lines overlapping the total amounts frame
@@ -373,14 +398,14 @@ Following changes may create regressions for some external modules, but were nec
 
 WARNING FOR DOLIWAMP USERS ONLY:
 
-Only people that installed Dolibarr using the all-in-one autoinstaller for Windows called "DoliWAMP" are concerned by the following warnings:
+Only people that installed Dolibarr using the all-in-one auto-installer for Windows called "DoliWAMP" are concerned by the following warnings:
  
-* DoliWAMP autoinstaller for Windows is not more available on 32bits systems. Use standard package if you need to use such architecture.
-* It is not possible to migrate from an installation done with the old DoliWAMP autoinstaller for Windows by using this new one. You must make a backup 
-  of your database, make a fresh installation using the new installer and reload.
-* Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but was never recommanded as a production
-  solution on a local desktop since a desktop computer has not a backup and security policy as good as on a server (when there is one). 
-  DoliWAMP remains a solution for fast test or demo purposes.
+* DoliWAMP auto-installer for Windows is no more available on 32 bits systems. Use standard package if you need to use such architecture.
+* It is not possible to migrate from an installation done with the old DoliWAMP auto-installer for Windows by using this new one. 
+  You must make a backup of your database, make a fresh installation using the new installer and reload your backup. 
+  Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but is not recommended as a production 
+  solution on a local desktop since a local desktop computer has often no backup and security policy, or not as good as on a server (when there is one). 
+  DoliWAMP remains a solution for fast test or demo purposes. Prefer using standard packages for production.
 
 
 ***** ChangeLog for 11.0.5 compared to 11.0.4 *****

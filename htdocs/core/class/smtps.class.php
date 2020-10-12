@@ -228,6 +228,21 @@ class SMTPs
     private $_trackId = '';
     private $_moreInHeader = '';
 
+    /**
+     * An array of options for stream_context_create()
+     */
+	private $_options = [];
+
+    /**
+     * Set delivery receipt
+     *
+     * @param	array		$_options		An array of options for stream_context_create()
+     * @return	void
+     */
+	public function setOptions($_options = [])
+    {
+        $this->_options = $_options;
+    }
 
     /**
      * Set delivery receipt
@@ -316,8 +331,7 @@ class SMTPs
 
         if ($_part === true)
         $_retValue = $this->_errorsTo;
-        else
-        $_retValue = $this->_errorsTo[$_part];
+        else $_retValue = $this->_errorsTo[$_part];
 
         return $_retValue;
     }
@@ -373,17 +387,32 @@ class SMTPs
         {
             $this->_setErr(99, $host.' is either offline or is an invalid host name.');
             $_retVal = false;
-        }
-        else
-        {
-            //See if we can connect to the SMTP server
-            if ($this->socket = @fsockopen(
-                preg_replace('@tls://@i', '', $this->getHost()), // Host to 'hit', IP or domain
+        } else {
+            if (function_exists('stream_socket_client') && !empty($this->_options)) {
+                $socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
+                set_error_handler([$this, 'errorHandler']);
+                $this->socket = @stream_socket_client(
+					preg_replace('@tls://@i', '', $this->getHost()) .    // Host to 'hit', IP or domain
+                    ':' . $this->getPort(),             // which Port number to use
+                    $this->errno,                       // actual system level error
+                    $this->errstr,                      // and any text that goes with the error
+                    $this->_smtpTimeout,                // timeout for reading/writing data over the socket
+                    STREAM_CLIENT_CONNECT,
+                    $socket_context                     // Options for connection
+                );
+        	} else {
+                $this->socket = @fsockopen(
+					preg_replace('@tls://@i', '', $this->getHost()),       // Host to 'hit', IP or domain
                 $this->getPort(), // which Port number to use
                 $this->errno, // actual system level error
                 $this->errstr, // and any text that goes with the error
                 $this->_smtpTimeout     // timeout for reading/writing data over the socket
-            )) {
+                );
+            }
+
+            //See if we can connect to the SMTP server
+            if (is_resource($this->socket))
+            {
                 // Fix from PHP SMTP class by 'Chris Ryan'
                 // Sometimes the SMTP server takes a little longer to respond
                 // so we will give it a longer timeout for the first read
@@ -395,8 +424,7 @@ class SMTPs
                 $_retVal = $this->socket;
             }
             // This connection attempt failed.
-            else
-            {
+            else {
                 // @CHANGE LDR
                 if (empty($this->errstr)) $this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
                 $this->_setErr($this->errno, $this->errstr);
@@ -521,9 +549,7 @@ class SMTPs
             if (!$_retVal) {
                 $this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
-        }
-        else
-        {
+        } else {
             $this->_setErr(126, '"'.$host.'" does not support authenticated connections.');
         }
 
@@ -555,8 +581,7 @@ class SMTPs
             }
 
             // This is a "normal" SMTP Server "handshack"
-            else
-            {
+            else {
                 // Send the RFC821 specified HELO.
                 $host = $this->getHost();
                 $usetls = preg_match('@tls://@i', $host);
@@ -684,8 +709,7 @@ class SMTPs
         }
 
         // Read the Systems php.ini file
-        else
-        {
+        else {
             // Set these properties ONLY if they are set in the php.ini file.
             // Otherwise the default values will be used.
             if ($_host = ini_get('SMTPs'))
@@ -952,8 +976,7 @@ class SMTPs
 
         if ($_part === true)
         $_retValue = $this->_msgFrom;
-        else
-        $_retValue = $this->_msgFrom[$_part];
+        else $_retValue = $this->_msgFrom[$_part];
 
         return $_retValue;
     }
@@ -982,8 +1005,7 @@ class SMTPs
 
         if ($_part === true)
             $_retValue = $this->_msgReplyTo;
-        else
-            $_retValue = $this->_msgReplyTo[$_part];
+        else $_retValue = $this->_msgReplyTo[$_part];
 
         return $_retValue;
     }
@@ -1017,8 +1039,7 @@ class SMTPs
                 $_addrList = explode(',', $_addrList);
 
                 // Stick it in an array
-                else
-                $_addrList = array($_addrList);
+                else $_addrList = array($_addrList);
             }
 
             // take the array of addresses and split them further
@@ -1039,8 +1060,7 @@ class SMTPs
                     $aryHost[$_tmpHost[1]][$_type][$_tmpHost[0]] = $_tmpaddr[0];
                 }
                 // We only have an eMail address
-                else
-                {
+                else {
                     // Strip off the beggining '<'
                     $_strAddr = str_replace('<', '', $_strAddr);
 
@@ -1096,9 +1116,7 @@ class SMTPs
             $_aryEmail['real'] = trim($_tmpAry[0], ' ">');
 
             $_aryEmail['addr'] = $_tmpAry[1];
-        }
-        else
-        $_aryEmail['addr'] = $_tmpAry[0];
+        } else $_aryEmail['addr'] = $_tmpAry[0];
 
         // Pull User Name and Host.tld apart
         list($_aryEmail['user'], $_aryEmail['host']) = explode('@', $_aryEmail['addr']);
@@ -1169,9 +1187,7 @@ class SMTPs
                             {
                                 $_realName = '"'.$_realName.'"';
                                 $_RCPT_list[] = $_realName.' <'.$_addr.'@'.$_host.'>';
-                            }
-                            else
-                            {
+                            } else {
                                 $_RCPT_list[] = $_addr.'@'.$_host;
                             }
                         }
@@ -1179,15 +1195,11 @@ class SMTPs
                 }
 
                 return implode(', ', $_RCPT_list);
-            }
-            else
-            {
+            } else {
                 $this->_setErr(101, 'No eMail Address for message to be sent to.');
                 return false;
             }
-        }
-        else
-        {
+        } else {
             $this->_setErr(102, 'eMail type not defined.');
             return false;
         }
@@ -1320,9 +1332,7 @@ class SMTPs
             $_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
             $_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
             $_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
-        }
-        else
-        {
+        } else {
             $_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
         }
         if (!empty($_SERVER['REMOTE_ADDR'])) $_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
@@ -1369,8 +1379,7 @@ class SMTPs
         //{
         if ($strType == 'html')
         $strMimeType = 'text/html';
-        else
-        $strMimeType = 'text/plain';
+        else $strMimeType = 'text/plain';
 
         // Make RFC821 Compliant, replace bare linefeeds
         $strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
@@ -1512,9 +1521,7 @@ class SMTPs
                     $content .= "--".$this->_getBoundary('related')."--\r\n";
                     $content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
                     $content .= "\r\n";
-                }
-                else
-                {
+                } else {
                     if (key_exists('image', $this->_msgContent))
                     {
                         $content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";

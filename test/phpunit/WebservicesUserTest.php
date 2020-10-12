@@ -170,7 +170,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -197,7 +197,7 @@ class WebservicesUserTest extends PHPUnit\Framework\TestCase
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }

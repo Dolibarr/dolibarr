@@ -41,7 +41,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'mrp_mo';
 
@@ -68,7 +68,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("MrpSetupPage"), $linkback, 'title_setup');
 
 
-$head = mrpAdminPrepareHead(null);
+$head = mrpAdminPrepareHead();
 
 dol_fiche_head($head, 'mrp_extrafields', $langs->trans("ExtraFields"), -1, 'account');
 

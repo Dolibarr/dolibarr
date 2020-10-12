@@ -146,7 +146,6 @@ class ExtraLanguages
 			$keyprefix = $keyprefix.'options_';
 		}
 
-
 		return $out;
 	}
 
