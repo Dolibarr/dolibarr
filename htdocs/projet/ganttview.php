@@ -239,7 +239,7 @@ $linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt 
 $linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly btnTitleSelected'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
+print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask');
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered

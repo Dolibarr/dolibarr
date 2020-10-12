@@ -269,6 +269,7 @@ WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security pur
 WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
 WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the mass actions on lists
 WarningDateOfLineMustBeInExpenseReportRange=Warning, the date of line is not in the range of the expense report
+WarningProjectDraft=Project is still in draft mode. Don't forget to validate it if you plan to use tasks.
 WarningProjectClosed=Project is closed. You must re-open it first.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
 WarningFailedToAddFileIntoDatabaseIndex=Warning, failed to add file entry into ECM database index table

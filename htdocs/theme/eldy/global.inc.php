@@ -4987,9 +4987,14 @@ div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
-.gtaskname div, .gtaskname {
+div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
+    line-height: 2;
+}
+
+.gtaskname div, .gtaskname, .gstartdate div, .gstartdate, .genddate div, .genddate {
 	font-size: unset !important;
 }
+
 div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
 	font-size: unset !important;
 	font-weight: normal !important;

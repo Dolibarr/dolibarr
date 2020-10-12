@@ -492,13 +492,20 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print load_fiche_titre($langs->trans("NewTask"), '', 'projecttask');
 
-	if ($object->statut == Project::STATUS_CLOSED)
-	{
+	if ($object->statut == Project::STATUS_CLOSED) {
 		print '<div class="warning">';
 		$langs->load("errors");
 		print $langs->trans("WarningProjectClosed");
 		print '</div>';
 	} else {
+		if ($object->statut == Project::STATUS_DRAFT)
+		{
+			print '<div class="warning">';
+			$langs->load("errors");
+			print $langs->trans("WarningProjectDraft");
+			print '</div>';
+		}
+
 		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="createtask">';
@@ -636,7 +643,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask');
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
