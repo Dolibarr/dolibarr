@@ -56,6 +56,8 @@ $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
 }
+$categorie = new Categorie($db);
+
 // product/service
 $selected_type = GETPOST('search_type', 'int');
 if ($selected_type =='') $selected_type = -1;
@@ -257,11 +259,24 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.=" AND cp.fk_product is null";
 	}
 	elseif ($selected_cat) {	// Into a specific category
+
+        if ($subcat)
+        {
+            $TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
+
+            $listofcatsql = "";
+            foreach ($TListOfCats as $key => $cat)
+            {
+                if ($key !== 0) $listofcatsql .= ",";
+                $listofcatsql .= $cat['rowid'];
+            }
+        }
+
         $sql.= " AND (p.rowid IN ";
-        $sql.= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE cp.fk_categorie IN ";
-        $sql.= " (SELECT rowid FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$selected_cat;
-        if ($subcat) $sql.=" OR fk_parent = " . $selected_cat;
-        $sql.= ")))";
+        $sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
+        if ($subcat) $sql .= "cp.fk_categorie IN (". $listofcatsql.")";
+        else $sql.="cp.fk_categorie = ".$selected_cat;
+        $sql.= "))";
 	}
     if($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
