@@ -79,6 +79,7 @@ class PropaleStats extends Stats
     		$this->field = 'total_ht';
     		$this->field_line = 'total_ht';
 
+			// how to see draft stats if we exclude them ???
     		$this->where .= " p.fk_statut > 0";
         }
         if ($mode == 'supplier')
