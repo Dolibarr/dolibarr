@@ -43,7 +43,7 @@ $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
 $parameter = GETPOST('parameter', 'alpha');
 
-$template = GETPOST('template', 'alpha');
+$template = GETPOST('template', 'none');
 $templatename = GETPOST('templatename', 'alpha');
 $templateid = GETPOST('templateid', 'int');
 
