@@ -230,10 +230,9 @@ if (empty($reshook))
             }
         }
 
+        // TODO : may be remove, already done in class update_buyprice
 		if (empty($packaging)) $packaging = 1;
-
 		if ($packaging < $quantity) $packaging = $quantity;
-
 		$object->packaging = $packaging;
 
 		if (!$error)
@@ -529,6 +528,28 @@ if ($id > 0 || $ref)
                 }
 				print '</td></tr>';
 
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+					// Packaging
+					print '<tr>';
+
+					print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+					print '<td>';
+					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'nohtml'), 'MS') : "1";
+					if ($rowid)
+					{
+						print '<input type="hidden" name="packaging" value="'.$object->packaging.'">';
+						print price2num($object->packaging, 'MS');
+					} else {
+						print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
+					}
+					// Units
+					if ($conf->global->PRODUCT_USE_UNITS) {
+						$unit = $object->getLabelOfUnit();
+						if ($unit !== '') {
+							print '&nbsp;&nbsp;'.$langs->trans($unit);
+						}
+					}
+				}
 				// Vat rate
 				$default_vat = '';
 
