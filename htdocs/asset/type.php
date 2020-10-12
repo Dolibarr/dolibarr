@@ -34,7 +34,7 @@ if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/account
 $langs->load("assets");
 
 $rowid  = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -77,6 +77,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x'
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('assettypecard', 'globalcard'));
 
+$permissiontoadd = $user->rights->asset->setup_advance;
 
 /*
  *	Actions
@@ -107,8 +108,7 @@ if ($action == 'add' && $user->rights->asset->write)
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	else {
+	} else {
 		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."asset_type WHERE label='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
@@ -128,15 +128,11 @@ if ($action == 'add' && $user->rights->asset->write)
 		{
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
-	}
-	else
-	{
+	} else {
 		$action = 'create';
 	}
 }
@@ -162,9 +158,7 @@ if ($action == 'update' && $user->rights->asset->write)
 	if ($ret >= 0 && !count($object->errors))
 	{
 		setEventMessages($langs->trans("AssetsTypeModified"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -182,9 +176,7 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
 		setEventMessages($langs->trans("AssetsTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("AssetsTypeCanNotBeDeleted"), null, 'errors');
 		$action = '';
 	}
@@ -220,14 +212,6 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
-        $newcardbutton = '';
-        if ($user->rights->asset->configurer)
-        {
-            $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/asset/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAssetType').'</span>';
-            $newcardbutton .= '<span class="fa fa-plus-circle valignmiddle"></span>';
-            $newcardbutton .= '</a>';
-        }
-
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -236,6 +220,8 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewAssetType'), '', 'fa fa-plus-circle', dol_buildpath('/asset/type.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, $newcardbutton, '', $limit);
 
@@ -247,9 +233,9 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
-		print '<th align="center">'.$langs->trans("AccountancyCodeAsset").'</th>';
-		print '<th align="center">'.$langs->trans("AccountancyCodeDepreciationAsset").'</th>';
-		print '<th align="center">'.$langs->trans("AccountancyCodeDepreciationExpense").'</th>';
+		print '<th class="center">'.$langs->trans("AccountancyCodeAsset").'</th>';
+		print '<th class="center">'.$langs->trans("AccountancyCodeDepreciationAsset").'</th>';
+		print '<th class="center">'.$langs->trans("AccountancyCodeDepreciationExpense").'</th>';
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
@@ -276,7 +262,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $objp->accountancy_code_asset, 1);
 
-				print $accountingaccount->getNomUrl(0, 0, 0, '', 0);
+				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 			} else {
 				print $objp->accountancy_code_asset;
 			}
@@ -288,7 +274,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 				$accountingaccount2 = new AccountingAccount($db);
 				$accountingaccount2->fetch('', $objp->accountancy_code_depreciation_asset, 1);
 
-				print $accountingaccount2->getNomUrl(0, 0, 0, '', 0);
+				print $accountingaccount2->getNomUrl(0, 1, 1, '', 0);
 			} else {
 				print $objp->accountancy_code_depreciation_asset;
 			}
@@ -300,7 +286,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 				$accountingaccount3 = new AccountingAccount($db);
 				$accountingaccount3->fetch('', $objp->accountancy_code_depreciation_expense, 1);
 
-				print $accountingaccount3->getNomUrl(0, 0, 0, '', 0);
+				print $accountingaccount3->getNomUrl(0, 1, 1, '', 0);
 			} else {
 				print $objp->accountancy_code_depreciation_expense;
 			}
@@ -308,8 +294,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 			if ($user->rights->asset->write)
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else
-				print '<td class="right">&nbsp;</td>';
+			else print '<td class="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
@@ -317,9 +302,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '</div>';
 
 		print '</form>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -367,8 +350,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 		print '</td></tr>';
-	}
-	else // For external software
+	} else // For external software
 	{
 		// Accountancy_code_asset
 		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
@@ -525,7 +507,7 @@ if ($rowid > 0)
 		// Delete
 		if ($user->rights->asset->write)
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";
@@ -578,8 +560,7 @@ if ($rowid > 0)
 			print '<td>';
 			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 			print '</td></tr>';
-		}
-		else // For external software
+		} else // For external software
 		{
 			// Accountancy_code_asset
 			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';

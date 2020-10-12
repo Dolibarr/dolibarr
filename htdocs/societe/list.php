@@ -10,6 +10,7 @@
  * Copyright (C) 2017       Rui Strecht      	    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -63,9 +64,9 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml') ?GETPOST('search_all', '
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
 $search_id = trim(GETPOST("search_id", "int"));
-$search_nom = trim(GETPOST("search_nom", 'none'));
-$search_alias = trim(GETPOST("search_alias", 'none'));
-$search_nom_only = trim(GETPOST("search_nom_only", 'none'));
+$search_nom = trim(GETPOST("search_nom", 'restricthtml'));
+$search_alias = trim(GETPOST("search_alias", 'restricthtml'));
+$search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
 $search_barcode = trim(GETPOST("search_barcode", 'alpha'));
 $search_customer_code = trim(GETPOST('search_customer_code', 'alpha'));
 $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));
@@ -119,6 +120,7 @@ $pagenext = $page + 1;
 
 if ($type == 'c') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'customerlist'; if ($search_type == '') $search_type = '1,3'; }
 if ($type == 'p') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'prospectlist'; if ($search_type == '') $search_type = '2,3'; }
+if ($type == 't') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'customerlist'; if ($search_type == '') $search_type = '1,2,3'; }
 if ($type == 'f') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage = 'supplierlist'; if ($search_type == '') $search_type = '4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -139,6 +141,8 @@ $fieldstosearchall = array(
 	's.code_fournisseur'=>"SupplierCode",
 	's.code_compta'=>"CustomerAccountancyCodeShort",
 	's.code_compta_fournisseur'=>"SupplierAccountancyCodeShort",
+	's.zip'=>"Zip",
+	's.town'=>"Town",
 	's.email'=>"EMail",
 	's.url'=>"URL",
 	's.tva_intra'=>"VATIntra",
@@ -386,12 +390,11 @@ if ($resql)
 		if ($level == $obj->code) $level = $langs->trans($obj->label);
 		$tab_level[$obj->code] = $level;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
-$sql .= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
+$sql .= " st.libelle as stcomm, st.picto as stcomm_picto, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql .= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql .= " s.tms as date_update, s.datec as date_creation,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
@@ -431,7 +434,6 @@ if ($search_sale == -2) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciau
 elseif ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid)                $sql .= " AND s.rowid = ".$socid;
 if ($search_sale && $search_sale != -2)    $sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 if (!$user->rights->fournisseur->lire) $sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 if ($search_sale == -2)    $sql .= " AND sc.fk_user IS NULL";
@@ -456,7 +458,7 @@ if ($search_town)          $sql .= natural_search("s.town", $search_town);
 if (strlen($search_zip))   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state)         $sql .= natural_search("state.nom", $search_state);
 if ($search_region)        $sql .= natural_search("region.nom", $search_region);
-if ($search_country && $search_country != '-1')       $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
+if ($search_country && $search_country != '-1')       $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
 if ($search_email)         $sql .= natural_search("s.email", $search_email);
 if (strlen($search_phone)) $sql .= natural_search("s.phone", $search_phone);
 if (strlen($search_fax))   $sql .= natural_search("s.fax", $search_fax);
@@ -469,7 +471,7 @@ if (strlen($search_idprof5)) $sql .= natural_search("s.idprof5", $search_idprof5
 if (strlen($search_idprof6)) $sql .= natural_search("s.idprof6", $search_idprof6);
 if (strlen($search_vat))     $sql .= natural_search("s.tva_intra", $search_vat);
 // Filter on type of thirdparty
-if ($search_type > 0 && in_array($search_type, array('1,3', '2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
+if ($search_type > 0 && in_array($search_type, array('1,3', '2,3'))) $sql .= " AND s.client IN (".$db->sanitize($db->escape($search_type)).")";
 if ($search_type > 0 && in_array($search_type, array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if ($search_status != '' && $search_status >= 0) $sql .= natural_search("s.status", $search_status, 2);
@@ -482,10 +484,12 @@ if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("s.fk_s
 if ($search_import_key)    $sql .= natural_search("s.import_key", $search_import_key);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 // Add where from hooks
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
+}
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -595,21 +599,28 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete'] = '<span
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = '';
-if ($user->rights->societe->creer && $contextpage != 'poslist')
+$typefilter = '';
+$label = 'MenuNewThirdParty';
+
+if (!empty($type))
 {
-	$typefilter = '';
-	$label = 'MenuNewThirdParty';
+	$typefilter = '&amp;type='.$type;
+	if ($type == 'p') $label = 'MenuNewProspect';
+	if ($type == 'c') $label = 'MenuNewCustomer';
+	if ($type == 'f') $label = 'NewSupplier';
+}
 
-	if (!empty($type))
-	{
-		$typefilter = '&amp;type='.$type;
-		if ($type == 'p') $label = 'MenuNewProspect';
-		if ($type == 'c') $label = 'MenuNewCustomer';
-		if ($type == 'f') $label = 'NewSupplier';
-	}
-
-    $newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
+// Show the new button only when this page is not opend from the Extended POS (pop-up window)
+// but allow it too, when a user has the rights to create a new customer
+if ($contextpage != 'poslist')
+{
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
+} elseif ($user->rights->societe->creer) {
+	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.$_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.urlencode($place);
+	$label = 'MenuNewCustomer';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -652,7 +663,7 @@ if ($search_all)
 $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p')
 {
-	if (!empty($conf->categorie->enabled))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -663,7 +674,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 }
 if (empty($type) || $type == 'f')
 {
-	if (!empty($conf->categorie->enabled))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -693,6 +704,7 @@ if ($moreforfilter)
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+// Show the massaction checkboxes only when this page is not opend from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
@@ -1045,13 +1057,11 @@ while ($i < min($num, $limit))
 	{
 		$savalias = $obj->name_alias;
 		if (!empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias = '';
-		print '<td class="tdoverflowmax200">';
+		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').'>';
 		if ($contextpage == 'poslist')
 		{
 		    print $obj->name;
-		}
-		else
-		{
+		} else {
 		    print $companystatic->getNomUrl(1, '', 100, 0, 1);
 		}
 		print "</td>\n";
@@ -1122,7 +1132,7 @@ while ($i < min($num, $limit))
 	// Country
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax100">';
 		$labelcountry = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $obj->country_label;
 		print $labelcountry;
 		print '</td>';
@@ -1196,6 +1206,7 @@ while ($i < min($num, $limit))
 		print "<td>".$obj->idprof6."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
+	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked']))
 	{
 		print "<td>";
@@ -1212,25 +1223,17 @@ while ($i < min($num, $limit))
 	{
 		print '<td class="center">';
 		$s = '';
-		if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
-		{
-	  		$companystatic->name = $langs->trans("Customer");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'customer', 0, 1);
-		}
 		if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			if ($s) $s .= ", ";
-			$companystatic->name = $langs->trans("Prospect");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'prospect', 0, 1);
+			$s .= '<a class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</a>';
+		}
+		if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+		{
+			$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $obj->fournisseur)
 		{
-			if ($s) $s .= ", ";
-			$companystatic->name = $langs->trans("Supplier");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'supplier', 0, 1);
+			$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 		}
 		print $s;
 		print '</td>';
@@ -1250,13 +1253,13 @@ while ($i < min($num, $limit))
 	{
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
+		print '<div class="inline-block">' . $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
 		foreach ($prospectstatic->cacheprospectstatus as $key => $val)
 		{
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code']).'</a>';
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommsocid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm&token='.newToken() . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
 		}
 		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;
@@ -1309,7 +1312,7 @@ while ($i < min($num, $limit))
 		if (!$i) $totalarray['nbfield']++;
 	}
 
-	// Action column
+	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
 	print '<td class="nowrap center">';
 	if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{

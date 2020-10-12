@@ -66,38 +66,34 @@ class MenuManager
     {
     	global $conf, $user, $langs;
 
-		// On sauve en session le menu principal choisi
-		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"] = $_GET["mainmenu"];
-		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"] = $_GET["idmenu"];
+		// We save into session the main menu selected
+    	if (GETPOSTISSET("mainmenu")) $_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
+    	if (GETPOSTISSET("idmenu"))   $_SESSION["idmenu"] = GETPOST("idmenu", 'int');
 
-		// Read mainmenu and leftmenu that define which menu to show
-        if (isset($_GET["mainmenu"]))
+		// Read now mainmenu and leftmenu that define which menu to show
+    	if (GETPOSTISSET("mainmenu"))
         {
         	// On sauve en session le menu principal choisi
-        	$mainmenu = $_GET["mainmenu"];
+        	$mainmenu = GETPOST("mainmenu", 'aZ09');
         	$_SESSION["mainmenu"] = $mainmenu;
         	$_SESSION["leftmenuopened"] = "";
-        }
-        else
-        {
+        } else {
         	// On va le chercher en session si non defini par le lien
         	$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
         }
         if (!empty($forcemainmenu)) $mainmenu = $forcemainmenu;
 
-        if (isset($_GET["leftmenu"]))
+        if (GETPOSTISSET("leftmenu"))
         {
         	// On sauve en session le menu principal choisi
-        	$leftmenu = $_GET["leftmenu"];
+        	$leftmenu = GETPOST("leftmenu", 'aZ09');
         	$_SESSION["leftmenu"] = $leftmenu;
 
         	if ($_SESSION["leftmenuopened"] == $leftmenu)	// To collapse
         	{
         		//$leftmenu="";
         		$_SESSION["leftmenuopened"] = "";
-        	}
-        	else
-        	{
+        	} else {
         		$_SESSION["leftmenuopened"] = $leftmenu;
         	}
         } else {
@@ -146,14 +142,11 @@ class MenuManager
         {
         	if ($mode == 'top')  print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
         	if ($mode == 'left') print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata);
-        }
-        else
-		{
+        } else {
         	$conf->global->MAIN_SHOW_LOGO = 0;
         	if ($mode == 'top')  print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0);
         	if ($mode == 'left') print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 		}
-
 		if ($mode == 'topnb')
 		{
 		    print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode); // no output
@@ -215,8 +208,7 @@ class MenuManager
         				{
         					if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) print $langs->trans("Access");
         				    else print $langs->trans("Dashboard");
-        				}
-        				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+        				} else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
         				print '</li>'."\n";
         			}
@@ -226,13 +218,10 @@ class MenuManager
         			    if ($val['enabled'])
         			    {
         			        $lastlevel[0] = 'enabled';
-        			    }
-        			    elseif ($showmenu)                 // Not enabled but visible (so greyed)
+        			    } elseif ($showmenu)                 // Not enabled but visible (so greyed)
         			    {
         			        $lastlevel[0] = 'greyed';
-        			    }
-        			    else
-        			    {
+        			    } else {
         			        $lastlevel[0] = 'hidden';
         			    }
         			}
@@ -263,9 +252,7 @@ class MenuManager
        						if (!preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url']))
        						{
        							$relurl2 = dol_buildpath($val2['url'], 1);
-       						}
-       						else
-       						{
+       						} else {
        							$relurl2 = $val2['url'];
        						}
 	        				$canonurl2 = preg_replace('/\?.*$/', '', $val2['url']);
@@ -290,21 +277,16 @@ class MenuManager
 		        					//print ' data-ajax="false"';
 		        					print '>';
 		        					$lastlevel2[$val2['level']] = 'enabled';
-	        					}
-	        					else					// Not allowed but visible (greyed)
+	        					} else // Not allowed but visible (greyed)
 	        					{
 				        			print '<a href="#" class="vsmenudisabled">';
 				        			$lastlevel2[$val2['level']] = 'greyed';
 	        					}
-	        				}
-	        				else
-	        				{
+	        				} else {
 	        				    if ($val2['enabled'])	// Allowed
 	        				    {
 	        				        $lastlevel2[$val2['level']] = 'enabled';
-	        				    }
-	        				    else
-	        				    {
+	        				    } else {
 	        				        $lastlevel2[$val2['level']] = 'greyed';
 	        				    }
 	        				}
@@ -313,8 +295,7 @@ class MenuManager
 	        				{
 	        					if ($val2['enabled'])	// Allowed
 	        						print '</a>';
-	        					else
-	        						print '</a>';
+	        					else print '</a>';
 	        				}
 	        				print '</li>'."\n";
        					}

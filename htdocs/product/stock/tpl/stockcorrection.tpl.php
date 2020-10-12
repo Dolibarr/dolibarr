@@ -68,7 +68,9 @@ print '<tr>';
 if ($object->element == 'product') {
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
-	print $formproduct->selectWarehouses((GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ?GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+	$ident = (GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
+	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+	print $formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
@@ -101,14 +103,18 @@ if (!empty($conf->productbatch->enabled) &&
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("EatByDate").'</td><td>';
-	$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-	print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
-	print '</td>';
-	print '<td>'.$langs->trans("SellByDate").'</td><td>';
-	$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
-	print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
-	print '</td>';
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print '<td>'.$langs->trans("EatByDate").'</td><td>';
+		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+		print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
+		print '</td>';
+	}
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		print '<td>'.$langs->trans("SellByDate").'</td><td>';
+		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
+		print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
+		print '</td>';
+	}
 	print '</tr>';
 }
 

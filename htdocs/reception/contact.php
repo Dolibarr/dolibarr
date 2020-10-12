@@ -41,7 +41,7 @@ $langs->load("companies");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
@@ -90,9 +90,7 @@ if ($action == 'addcontact' && $user->rights->reception->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
@@ -120,8 +118,7 @@ elseif ($action == 'deletecontact' && $user->rights->reception->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }

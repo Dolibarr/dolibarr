@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->load('projects');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -57,9 +57,7 @@ if ($id > 0 || !empty($ref))
 		if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -75,9 +73,7 @@ if (!empty($project_ref) && !empty($withproject))
 		{
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}
@@ -243,8 +239,7 @@ if ($object->id > 0)
 	{
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 	    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
-	}
-	else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+	} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 	$morehtmlref = '';
 

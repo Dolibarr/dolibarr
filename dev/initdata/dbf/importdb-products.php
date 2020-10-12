@@ -227,8 +227,7 @@ while ($fields = $db->fetch_array($resql)) {
 		$error++;    // $errorrecord will be reset
 	}
 	$j++;
-} else
-    die("error : $sql");
+} else die("error : $sql");
 
 
 

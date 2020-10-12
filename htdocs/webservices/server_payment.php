@@ -197,8 +197,7 @@ function createPayment($authentication, $payment)
             $db->commit();
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$new_payment->id);
         }
-        else
-        {
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';

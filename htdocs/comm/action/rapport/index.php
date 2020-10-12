@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
@@ -185,8 +185,7 @@ if ($resql)
 				print '</td>';
 				print '<td class="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
 				print '<td class="center">'.dol_print_size(dol_filesize($file)).'</td>';
-			}
-			else {
+			} else {
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
@@ -201,9 +200,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

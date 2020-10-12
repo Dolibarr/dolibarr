@@ -25,7 +25,7 @@
 /**
  *  Class to manage ECM directories
  */
-class EcmDirectory // extends CommonObject
+class EcmDirectory extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -35,7 +35,7 @@ class EcmDirectory // extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	//public $table_element='ecm_directories';
+	public $table_element = 'ecm_directories';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -164,9 +164,7 @@ class EcmDirectory // extends CommonObject
 			$this->error = "ErrorDirAlreadyExists";
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);
 			return -1;
-		}
-		else
-		{
+		} else {
 			$this->db->begin();
 
 			// Insert request
@@ -207,15 +205,11 @@ class EcmDirectory // extends CommonObject
 				{
 					$this->db->commit();
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = "Error ".$this->db->lasterror();
 				$this->db->rollback();
 				return -1;
@@ -273,9 +267,7 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -302,9 +294,7 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
-		}
-		else
-		{
+		} else {
 		    if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
 		    elseif ($value == '+') $this->cachenbofdoc++;
 		    elseif ($value == '-') $this->cachenbofdoc--;
@@ -331,7 +321,7 @@ class EcmDirectory // extends CommonObject
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.date_c as date_c,";
-		$sql .= " t.date_m as date_m";
+		$sql .= " t.tms as date_m";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
 		$sql .= " WHERE t.rowid = ".$id;
 
@@ -355,12 +345,14 @@ class EcmDirectory // extends CommonObject
 				$this->date_m = $this->db->jdate($obj->date_m);
 			}
 
+			// Retrieve all extrafields for ecm_files
+			// fetch optionals attributes and labels
+			$this->fetch_optionals();
+
 			$this->db->free($resql);
 
 			return $obj ? 1 : 0;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -398,9 +390,7 @@ class EcmDirectory // extends CommonObject
 			$this->db->rollback();
 			$this->error = "Error ".$this->db->lasterror();
 			return -2;
-		}
-		else
-		{
+		} else {
             // Call trigger
             $result = $this->call_trigger('MYECMDIR_DELETE', $user);
             if ($result < 0)
@@ -417,9 +407,7 @@ class EcmDirectory // extends CommonObject
 			if ($deletedirrecursive)
 			{
 				$result = @dol_delete_dir_recursive($file, 0, 0);
-			}
-			else
-			{
+			} else {
 				$result = @dol_delete_dir($file, 0);
 			}
 		}
@@ -427,9 +415,7 @@ class EcmDirectory // extends CommonObject
 		if ($result || !@is_dir(dol_osencode($file)))
 		{
 			$this->db->commit();
-		}
-		else
-		{
+		} else {
 			$this->error = 'ErrorFailToDeleteDir';
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
@@ -529,8 +515,7 @@ class EcmDirectory // extends CommonObject
 				$idtosearch = $this->cats[$cursorindex]['id_mere'];
 				$i++;
 			}
-		}
-		while ($cursorindex >= 0 && !empty($idtosearch) && $i < 100); // i avoid infinite loop
+		} while ($cursorindex >= 0 && !empty($idtosearch) && $i < 100); // i avoid infinite loop
 
 		return $ret;
 	}
@@ -564,9 +549,7 @@ class EcmDirectory // extends CommonObject
 				$this->motherof[$obj->id_son] = $obj->id_parent;
 			}
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -672,18 +655,14 @@ class EcmDirectory // extends CommonObject
 						$newelempos = count($this->cats[$obj->rowid]['id_children']);
 						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
 						$this->cats[$obj->rowid]['id_children'][$newelempos] = $obj->rowid_fille;
-					}
-					else
-					{
+					} else {
 						//print "this->cats[".$obj->rowid."]['id_children'] n'est pas encore un tableau<br>";
 						$this->cats[$obj->rowid]['id_children'] = array($obj->rowid_fille);
 					}
 				}
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -722,9 +701,7 @@ class EcmDirectory // extends CommonObject
             $this->cats[$id_categ]['fullrelativename'] .= '/'.$this->cats[$id_categ]['label'];
 			$this->cats[$id_categ]['fulllabel'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fulllabel'];
 			$this->cats[$id_categ]['fulllabel'] .= ' >> '.$this->cats[$id_categ]['label'];
-		}
-		else
-		{
+		} else {
 			$this->cats[$id_categ]['fullpath'] = '_'.$id_categ;
             $this->cats[$id_categ]['fullrelativename'] = $this->cats[$id_categ]['label'];
 			$this->cats[$id_categ]['fulllabel'] = $this->cats[$id_categ]['label'];
@@ -767,9 +744,7 @@ class EcmDirectory // extends CommonObject
 		if (empty($all))  // By default
 		{
 			$sql .= " WHERE rowid = ".$this->id;
-		}
-		else
-		{
+		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 		}
 
@@ -779,9 +754,7 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->cachenbofdoc = count($filelist);
 			return $this->cachenbofdoc;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -812,9 +785,7 @@ class EcmDirectory // extends CommonObject
             if (!empty($this->errors))
             {
                 $this->errors = array_merge($this->errors, $interface->errors);
-            }
-            else
-            {
+            } else {
                 $this->errors = $interface->errors;
             }
         }

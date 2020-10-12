@@ -46,7 +46,7 @@ class Mailing extends CommonObject
 	 */
 	public $picto = 'email';
 
-	public $titre;
+	public $title;
 	public $sujet;
 	public $body;
 	public $nbemail;
@@ -115,7 +115,7 @@ class Mailing extends CommonObject
 
 		$this->db->begin();
 
-		$this->titre = trim($this->titre);
+		$this->title = trim($this->title);
 		$this->email_from = trim($this->email_from);
 
 		if (!$this->email_from)
@@ -130,9 +130,9 @@ class Mailing extends CommonObject
 		$sql .= " (date_creat, fk_user_creat, entity)";
 		$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", ".$conf->entity.")";
 
-		if (!$this->titre)
+		if (!$this->title)
 		{
-			$this->titre = $langs->trans("NoTitle");
+			$this->title = $langs->trans("NoTitle");
 		}
 
 		dol_syslog("Mailing::Create", LOG_DEBUG);
@@ -144,18 +144,14 @@ class Mailing extends CommonObject
 			if ($this->update($user) > 0)
 			{
 				$this->db->commit();
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
 			}
 
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -171,7 +167,7 @@ class Mailing extends CommonObject
 	public function update($user)
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET titre = '".$this->db->escape($this->titre)."'";
+		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
 		$sql .= ", body = '".$this->db->escape($this->body)."'";
 		$sql .= ", email_from = '".$this->db->escape($this->email_from)."'";
@@ -186,9 +182,7 @@ class Mailing extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -204,7 +198,7 @@ class Mailing extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
+		$sql = "SELECT m.rowid, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
@@ -227,7 +221,7 @@ class Mailing extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->statut = $obj->statut;
 				$this->nbemail = $obj->nbemail;
-				$this->titre = $obj->titre;
+				$this->title = $obj->title;
 
 				$this->sujet = $obj->sujet;
 				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
@@ -253,15 +247,11 @@ class Mailing extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::fetch Erreur -1");
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::fetch Erreur -2");
 			return -2;
 		}
@@ -293,7 +283,7 @@ class Mailing extends CommonObject
 		$object->statut = 0;
 
 		// Clear fields
-		$object->titre = $langs->trans("CopyOf").' '.$object->titre.' '.dol_print_date(dol_now());
+		$object->title = $langs->trans("CopyOf").' '.$object->title.' '.dol_print_date(dol_now());
 
 		// If no option copy content
 		if (empty($option1))
@@ -368,9 +358,7 @@ class Mailing extends CommonObject
 							);
 						}
 					}
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
@@ -386,9 +374,7 @@ class Mailing extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -412,9 +398,7 @@ class Mailing extends CommonObject
 		if ($this->db->query($sql))
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -437,9 +421,7 @@ class Mailing extends CommonObject
 		if ($resql)
 		{
 			return $this->delete_targets();
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -462,9 +444,7 @@ class Mailing extends CommonObject
 		if ($resql)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return 0;
 		}
@@ -490,9 +470,7 @@ class Mailing extends CommonObject
 		if ($resql)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -512,8 +490,7 @@ class Mailing extends CommonObject
 	    if ($mode == 'alreadysent') $sql .= " AND statut <> 0";
 	    elseif ($mode == 'alreadysentok') $sql .= " AND statut > 0";
 	    elseif ($mode == 'alreadysentko') $sql .= " AND statut = -1";
-	    else
-	    {
+	    else {
 	        $this->error = 'BadValueForParameterMode';
 	        return -2;
 	    }
@@ -523,9 +500,7 @@ class Mailing extends CommonObject
 	    {
 	        $obj = $this->db->fetch_object($resql);
 	        if ($obj) return $obj->nb;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->error = $this->db->lasterror();
 	        return -1;
 	    }
@@ -585,8 +560,7 @@ class Mailing extends CommonObject
 			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 			 */
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';

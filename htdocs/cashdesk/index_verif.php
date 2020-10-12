@@ -89,7 +89,7 @@ if ($retour >= 0)
 
 	$sql = "SELECT rowid, lastname, firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user";
-	$sql .= " WHERE login = '".$username."'";
+	$sql .= " WHERE login = '".$db->escape($username)."'";
 	$sql .= " AND entity IN (0,".$conf->entity.")";
 
 	$result = $db->query($sql);
@@ -116,14 +116,10 @@ if ($retour >= 0)
 
 		header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&id=NOUV');
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-else
-{
+} else {
 	// Load translation files required by the page
     $langs->loadLangs(array("other", "errors"));
 	$retour = $langs->trans("ErrorBadLoginPassword");

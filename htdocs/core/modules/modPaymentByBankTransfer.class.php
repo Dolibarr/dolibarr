@@ -54,7 +54,7 @@ class modPaymentByBankTransfer extends DolibarrModules
 		$this->description = "Management of payment by bank transfer";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module

@@ -23,6 +23,6 @@ create table llx_boxes_def
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   file        varchar(200) NOT NULL,        -- Do not increase this as file+note must be small to allow index
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms         timestamp,  
+  tms         timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  
   note        varchar(130)                  -- Do not increase this as file+note must be small to allow index
 )ENGINE=innodb;

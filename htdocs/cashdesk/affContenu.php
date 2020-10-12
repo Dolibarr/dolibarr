@@ -36,9 +36,7 @@ if (isset($_SESSION['serObjFacturation']))
 {
     $obj_facturation = unserialize($_SESSION['serObjFacturation']);
     unset($_SESSION['serObjFacturation']);
-}
-else
-{
+} else {
 	// ... sinon, c'est une nouvelle vente
 	$obj_facturation = new Facturation();
 }
@@ -47,7 +45,7 @@ else
 
 $obj_facturation->calculTotaux(); // Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 
-$total_ttc = $obj_facturation->prixTotalTtc();
+$total_ttc = $obj_facturation->amountWithTax();
 
 /*var_dump($obj_facturation);
 var_dump($_SESSION['poscart']);
@@ -72,9 +70,7 @@ if (in_array(
 	))
 {
 	include $page.'.php';
-}
-else
-{
+} else {
 	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
 }
 

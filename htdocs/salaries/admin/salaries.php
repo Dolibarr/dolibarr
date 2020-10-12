@@ -36,7 +36,7 @@ $langs->loadLangs(array('admin', 'salaries'));
 if (!$user->admin)
     accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters SALARIES_*
 $list = array(
@@ -62,9 +62,7 @@ if ($action == 'update')
     if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -114,9 +112,7 @@ foreach ($list as $key)
 	if (!empty($conf->accounting->enabled))
 	{
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
+	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 	print '</td></tr>';

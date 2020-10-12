@@ -36,7 +36,7 @@ $langs->loadLangs(array('products', 'languages'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
@@ -73,27 +73,21 @@ $cancel != $langs->trans("Cancel") &&
 	$current_lang = $langs->getDefaultLang();
 
 	// update de l'objet
-	if ($_POST["forcelangprod"] == $current_lang)
-	{
+	if ($_POST["forcelangprod"] == $current_lang) {
 		$object->label			= $_POST["libelle"];
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
 		$object->update($object->id, $user);
-	}
-	else
-	{
+	} else {
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
 	}
 
 	// sauvegarde en base
-	if ($object->setMultiLangs($user) > 0)
-	{
+	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$action = 'add';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -115,9 +109,7 @@ $cancel != $langs->trans("Cancel") &&
 			$object->label			= $_POST["libelle-".$key];
 			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
-		}
-		else
-		{
+		} else {
 			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
@@ -127,9 +119,7 @@ $cancel != $langs->trans("Cancel") &&
 	if ($object->setMultiLangs($user) > 0)
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -148,9 +138,7 @@ $cancel != $langs->trans("Cancel") &&
 	if ($object->delMultiLangs($langtodelete, $user) > 0)
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -248,7 +236,7 @@ if ($action == 'edit')
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s = picto_from_langcode($key);
-			print "<br>".($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+			print "<br>".($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
@@ -277,15 +265,14 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add')
+} elseif ($action != 'add')
 {
 	if (!empty($object->multilangs))
 	{
 		foreach ($object->multilangs as $key => $value)
 		{
 			$s = picto_from_langcode($key);
-			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';

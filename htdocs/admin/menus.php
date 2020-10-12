@@ -96,9 +96,7 @@ if ($action == 'update' && !$cancel)
 				if ($result > 0)
 				{
 					$db->commit();
-				}
-				else
-				{
+				} else {
 					$error++;
 					setEventMessages($langs->trans("FailedToInitializeMenu").' '.$key, null, 'errors');
 					$db->rollback();

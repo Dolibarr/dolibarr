@@ -187,17 +187,13 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	{
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 0 && $numero < 1) {
+		} elseif ($numero >= 0 && $numero < 1) {
 			return ("CERO PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 1000000 && $numero < 1000001) {
+		} elseif ($numero >= 1000000 && $numero < 1000001) {
 			return ("UN MILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
+		} elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
 			return ("UN BILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		else {
+		} else {
 			$entexto = "";
 			$number = $numero;
 			if ($number >= 1000000000) {
@@ -220,8 +216,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1)
 					$entexto .= " MILL&OacuteN ";
-				else
-					$entexto .= " MILLONES ";
+				else $entexto .= " MILLONES ";
 			}
 			if ($number >= 1000) {
 				$cdm = (int) ($numero / 100000);
@@ -264,7 +259,7 @@ function hundreds2text($hundreds, $tens, $units)
 	$decenas = array("", "", "TREINTA ", "CUARENTA ", "CINCUENTA ", "SESENTA ", "SETENTA ", "OCHENTA ", "NOVENTA ");
 	$veintis = array("VEINTE", "VEINTIUN", "VEINTID&OacuteS", "VEINTITR&EacuteS", "VEINTICUATRO", "VEINTICINCO", "VEINTIS&EacuteIS", "VEINTISIETE", "VEINTIOCHO", "VEINTINUEVE");
 	$diecis = array("DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE", "DIECIS&EacuteIS", "DIECISIETE", "DIECIOCHO", "DIECINUEVE");
-    $unidades = array("UN", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE");
+	$unidades = array("UN", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE");
 	$entexto = "";
 	if ($hundreds != 0) {
 		$entexto .= $centenas[$hundreds - 1];
@@ -277,13 +272,11 @@ function hundreds2text($hundreds, $tens, $units)
 			$entexto .= $unidades[$units - 1];
 		}
 		return $entexto;
-	}
-	elseif ($tens == 2) {
+	} elseif ($tens == 2) {
 		if ($hundreds != 0) $entexto .= " ";
 		$entexto .= " ".$veintis[$units];
 		return $entexto;
-	}
-	elseif ($tens == 1) {
+	} elseif ($tens == 1) {
 		if ($hundreds != 0) $entexto .= " ";
 		$entexto .= $diecis[$units];
 		return $entexto;

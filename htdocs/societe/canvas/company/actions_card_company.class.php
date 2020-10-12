@@ -134,19 +134,13 @@ class ActionsCardCompany extends ActionsCardCommon
 				{
 					$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-				}
-				else
-				{
+				} else {
 					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 				}
-			}
-			else
-			{
+			} else {
 				$this->tpl['tva_intra'] = $s;
 			}
-		}
-		else
-		{
+		} else {
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
@@ -173,19 +167,13 @@ class ActionsCardCompany extends ActionsCardCommon
 					{
 						$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-					}
-					else
-					{
+					} else {
 						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 					}
-				}
-				else
-				{
+				} else {
 					$this->tpl['tva_intra'] = $s;
 				}
-			}
-			else
-			{
+			} else {
 				$this->tpl['tva_intra'] = '&nbsp;';
 			}
 
@@ -196,9 +184,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				$socm->fetch($this->object->parent);
 				$this->tpl['parent_company'] = $socm->getNomUrl(1).' '.($socm->code_client ? "(".$socm->code_client.")" : "");
 				$this->tpl['parent_company'] .= ($socm->town ? ' - '.$socm->town : '');
-			}
-			else
-			{
+			} else {
 				$this->tpl['parent_company'] = $langs->trans("NoParentCompany");
 			}
 		}

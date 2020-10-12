@@ -50,7 +50,7 @@ $langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -118,18 +118,14 @@ if ($action == 'add')
 		$db->commit();
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
 		$_GET["commande_id"] = $_POST["commande_id"];
 		$action = 'create';
 	}
-}
-
-elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
+} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
     ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
     || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
 )
@@ -147,7 +143,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		$model = $object->modelpdf;
+		$model = $object->model_pdf;
 		$ret = $object->fetch($id); // Reload to get new records
 
 		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -166,9 +162,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 		if (!empty($backtopage)) header("Location: ".$backtopage);
 		else header("Location: ".DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1');
 		exit;
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -195,7 +189,7 @@ if ($action == 'update_extras')
 	$object->oldcopy = dol_clone($object);
 
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 	if ($ret < 0) $error++;
 
 	if (!$error)
@@ -261,8 +255,7 @@ $formfile = new FormFile($db);
 
 if ($action == 'create')    // Create. Seems to no be used
 {
-}
-else	// View
+} else // View
 {
 	if ($object->id > 0)
 	{
@@ -452,9 +445,7 @@ else	// View
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
-			}
-			else
-			{
+			} else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
 			}
 			print '</td>';
@@ -475,9 +466,7 @@ else	// View
 				if ($action != 'editincoterm')
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-				}
-				else
-				{
+				} else {
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}
 		        print '</td></tr>';
@@ -574,9 +563,7 @@ else	// View
 							}
 
 							$label = (!empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $object->lines[$i]->product_label;
-						}
-						else
-						{
+						} else {
 							$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : $object->lines[$i]->product_label);
 						}
 
@@ -596,9 +583,7 @@ else	// View
 						{
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
 						}
-					}
-					else
-					{
+					} else {
 						print "<td>";
 						if ($object->lines[$i]->fk_product_type == 1) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
@@ -673,11 +658,9 @@ else	// View
 				{
 					if ($conf->expedition_bon->enabled)
 					{
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
-					}
-					else
-					{
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
+					} else {
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
 					}
 				}
 
@@ -698,7 +681,7 @@ else	// View
 			$genallowed = $user->rights->expedition->livraison->lire;
 			$delallowed = $user->rights->expedition->livraison->creer;
 
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)
@@ -719,15 +702,11 @@ else	// View
 			// Rien a droite
 
 			print '</td></tr></table>';
-		}
-		else
-		{
+		} else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";
 		}
-	}
-	else
-	{
+	} else {
 		/* Expedition non trouvee */
 		print "Expedition inexistante ou acces refuse";
 	}

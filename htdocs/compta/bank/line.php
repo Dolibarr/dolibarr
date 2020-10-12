@@ -32,6 +32,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
@@ -43,7 +44,7 @@ if (!empty($conf->salaries->enabled)) $langs->load("salaries");
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST("rowid", 'int');
 $orig_account = GETPOST("orig_account");
@@ -76,15 +77,15 @@ if ($user->rights->banque->consolidate && $action == 'donext')
 {
     $al = new AccountLine($db);
     $al->dateo_next($_GET["rowid"]);
-}elseif ($user->rights->banque->consolidate && $action == 'doprev')
+} elseif ($user->rights->banque->consolidate && $action == 'doprev')
 {
     $al = new AccountLine($db);
     $al->dateo_previous($_GET["rowid"]);
-}elseif ($user->rights->banque->consolidate && $action == 'dvnext')
+} elseif ($user->rights->banque->consolidate && $action == 'dvnext')
 {
     $al = new AccountLine($db);
     $al->datev_next($_GET["rowid"]);
-}elseif ($user->rights->banque->consolidate && $action == 'dvprev')
+} elseif ($user->rights->banque->consolidate && $action == 'dvprev')
 {
     $al = new AccountLine($db);
     $al->datev_previous($_GET["rowid"]);
@@ -99,9 +100,7 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
@@ -120,9 +119,7 @@ if ($user->rights->banque->modifier && $action == "update")
 	if (GETPOST('accountid', 'int') > 0 && !$acline->rappro && !$acline->getVentilExportCompta())	// We ask to change bank account
 	{
 		$actarget->fetch(GETPOST('accountid', 'int'));
-	}
-	else
-	{
+	} else {
 		$actarget->fetch($id);
 	}
 
@@ -142,15 +139,15 @@ if ($user->rights->banque->modifier && $action == "update")
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
-		if (isset($_POST['value']))      $sql .= " fk_type='".$db->escape($_POST['value'])."',";
-		if (isset($_POST['num_chq']))    $sql .= " num_chq='".$db->escape($_POST["num_chq"])."',";
-		if (isset($_POST['banque']))     $sql .= " banque='".$db->escape($_POST["banque"])."',";
-		if (isset($_POST['emetteur']))   $sql .= " emetteur='".$db->escape($_POST["emetteur"])."',";
+		if (isset($_POST['value']))      $sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+		if (isset($_POST['num_chq']))    $sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
+		if (isset($_POST['banque']))     $sql .= " banque='".$db->escape(GETPOST("banque"))."',";
+		if (isset($_POST['emetteur']))   $sql .= " emetteur='".$db->escape(GETPOST("emetteur"))."',";
 		// Blocked when conciliated
 		if (!$acline->rappro)
 		{
-			if (isset($_POST['label']))      $sql .= " label='".$db->escape($_POST["label"])."',";
-			if (isset($_POST['amount']))     $sql .= " amount='".$amount."',";
+			if (isset($_POST['label']))      $sql .= " label = '".$db->escape(GETPOST("label"))."',";
+			if (isset($_POST['amount']))     $sql .= " amount= '".$db->escape($amount)."',";
 			if (isset($_POST['dateomonth'])) $sql .= " dateo = '".$db->idate($dateop)."',";
 			if (isset($_POST['datevmonth'])) $sql .= " datev = '".$db->idate($dateval)."',";
 		}
@@ -191,9 +188,7 @@ if ($user->rights->banque->modifier && $action == "update")
 		{
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			dol_print_error($db);
 		}
@@ -218,7 +213,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         $db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-        $sql .= " SET num_releve=".($num_rel ? "'".$num_rel."'" : "null");
+        $sql .= " SET num_releve=".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
         if (empty($num_rel)) $sql .= ", rappro = 0";
         else $sql .= ", rappro = ".$rappro;
         $sql .= " WHERE rowid = ".$rowid;
@@ -229,9 +224,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         {
 	        setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -254,16 +247,7 @@ foreach ($cats as $cat) {
     $arrayselected[] = $cat->id;
 }
 
-$tabs = array(
-    array(
-        DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$rowid,
-        $langs->trans('BankTransaction')
-    ),
-    array(
-        DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid,
-        $langs->trans('Info')
-    )
-);
+$head = bankline_prepare_head($rowid);
 
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
@@ -304,7 +288,7 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account', 0);
+        dol_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -314,7 +298,7 @@ if ($result)
 		print '<div class="fichecenter2">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         $i++;
 
@@ -324,9 +308,7 @@ if ($result)
         if (!$objp->rappro && !$bankline->getVentilExportCompta())
         {
         	$form->select_comptes($acct->id, 'accountid', 0, '', 0);
-        }
-        else
-        {
+        } else {
         	print $acct->getNomUrl(1, 'transactions', 'reflabel');
         }
         print '</td>';
@@ -350,8 +332,7 @@ if ($result)
                     print $langs->trans("Payment");
                     print '</a>';*/
                     print $paymenttmp->getNomUrl(1);
-                }
-                elseif ($links[$key]['type'] == 'payment_supplier') {
+                } elseif ($links[$key]['type'] == 'payment_supplier') {
                     require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
                     $paymenttmp = new PaiementFourn($db);
                     $paymenttmp->fetch($links[$key]['url_id']);
@@ -361,79 +342,66 @@ if ($result)
                     print $langs->trans("Payment");
                     print '</a>';*/
                     print $paymenttmp->getNomUrl(1);
-                }
-                elseif ($links[$key]['type'] == 'company') {
+                } elseif ($links[$key]['type'] == 'company') {
                     $societe = new Societe($db);
                     $societe->fetch($links[$key]['url_id']);
                     print $societe->getNomUrl(1);
-                }
-                elseif ($links[$key]['type'] == 'sc') {
+                } elseif ($links[$key]['type'] == 'sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('SocialContribution'), 'bill').' ';
                     print $langs->trans("SocialContribution").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'payment_sc') {
+                } elseif ($links[$key]['type'] == 'payment_sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('Payment'), 'payment').' ';
                     print $langs->trans("SocialContributionPayment");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'payment_vat') {
+                } elseif ($links[$key]['type'] == 'payment_vat') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('VAT'), 'payment').' ';
                     print $langs->trans("VATPayment");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'payment_salary') {
+                } elseif ($links[$key]['type'] == 'payment_salary') {
                     print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('PaymentSalary'), 'payment').' ';
                     print $langs->trans("SalaryPayment");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'payment_loan') {
+                } elseif ($links[$key]['type'] == 'payment_loan') {
                     print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('LoanPayment'), 'payment').' ';
                     print $langs->trans("PaymentLoan");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'loan') {
+                } elseif ($links[$key]['type'] == 'loan') {
                     print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('Loan'), 'bill').' ';
                     print $langs->trans("Loan");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'member') {
+                } elseif ($links[$key]['type'] == 'member') {
                     print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('Member'), 'user').' ';
                     print $links[$key]['label'];
                     print '</a>';
-                }
-				elseif ($links[$key]['type'] == 'payment_donation') {
+                } elseif ($links[$key]['type'] == 'payment_donation') {
                     print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('Donation'), 'payment').' ';
                     print $langs->trans("DonationPayment");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'banktransfert') {
+                } elseif ($links[$key]['type'] == 'banktransfert') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('Transaction'), 'payment').' ';
                     print $langs->trans("TransactionOnTheOtherAccount");
                     print '</a>';
-                }
-                elseif ($links[$key]['type'] == 'user') {
+                } elseif ($links[$key]['type'] == 'user') {
                     print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('User'), 'user').' ';
                     print $langs->trans("User");
                     print '</a>';
-                }
-				elseif ($links[$key]['type'] == 'payment_various') {
+                } elseif ($links[$key]['type'] == 'payment_various') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('VariousPayment'), 'payment').' ';
                     print $langs->trans("VariousPayment");
                     print '</a>';
-                }
-                else {
+                } else {
                     print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                     print img_object('', 'generic').' ';
                     print $links[$key]['label'];
@@ -463,9 +431,7 @@ if ($result)
                 print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);
             }
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>'.$objp->fk_type.' '.$objp->num_chq.'</td>';
         }
         print "</tr>";
@@ -479,9 +445,7 @@ if ($result)
             print '<td>';
             print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>'.$objp->emetteur.'</td>';
         }
         print "</tr>";
@@ -495,9 +459,7 @@ if ($result)
         	print '<td>';
         	print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
         	print '</td>';
-        }
-        else
-        {
+        } else {
         	print '<td>'.$objp->banque.'</td>';
         }
         print "</tr>";
@@ -517,9 +479,7 @@ if ($result)
                 print img_edit_add()."</a>";
             }
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>';
             print dol_print_date($db->jdate($objp->do), "day");
             print '</td>';
@@ -541,9 +501,7 @@ if ($result)
                 print img_edit_add()."</a>";
             }
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>';
             print dol_print_date($db->jdate($objp->dv), "day");
             print '</td>';
@@ -560,24 +518,18 @@ if ($result)
             {
                 // Label generique car entre parentheses. On l'affiche en le traduisant
                 print $langs->trans($reg[1]);
-            }
-            else
-            {
+            } else {
                 print $objp->label;
             }
             print '">';
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>';
             if (preg_match('/^\((.*)\)$/i', $objp->label, $reg))
             {
                 // Label generique car entre parentheses. On l'affiche en le traduisant
                 print $langs->trans($reg[1]);
-            }
-            else
-            {
+            } else {
                 print $objp->label;
             }
             print '</td>';
@@ -591,9 +543,7 @@ if ($result)
             print '<td>';
             print '<input name="amount" class="flat maxwidth100" '.($objp->rappro ? ' disabled' : '').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$acct->currency_code);
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>';
             print price($objp->amount);
             print '</td>';
@@ -649,16 +599,12 @@ if ($result)
                 {
                     print $langs->trans("AccountStatement").' <input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
                     print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
-                }
-                else
-                {
+                } else {
                     print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
                 }
                 if ($objp->num_releve) print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
                 print '</td>';
-            }
-            else
-            {
+            } else {
                 print '<td>'.$objp->num_releve.'&nbsp;</td>';
             }
             print '</tr>';
@@ -669,9 +615,7 @@ if ($result)
                 print '<td>';
                 print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"]) ? ($_POST["reconciled"] ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
                 print '</td>';
-            }
-            else
-            {
+            } else {
                 print '<td>'.yn($objp->rappro).'</td>';
             }
             print '</tr>';
@@ -694,8 +638,7 @@ if ($result)
     }
 
     $db->free($result);
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 // End of page
 llxFooter();

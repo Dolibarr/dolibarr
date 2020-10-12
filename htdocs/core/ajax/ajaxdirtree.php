@@ -49,8 +49,7 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
 	$preopened = GETPOST('preopened');
 
 	if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/', '', $selecteddir); // We removed last '/' except if it is '/'
-}
-else    // For no ajax call
+} else // For no ajax call
 {
 	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
 
@@ -73,8 +72,7 @@ if ($modulepart == 'ecm')
 {
 	$fullpathselecteddir = $conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $conf->ecm->dir_output.'/'.($preopened != '/' ? $preopened : '');
-}
-elseif ($modulepart == 'medias')
+} elseif ($modulepart == 'medias')
 {
 	$fullpathselecteddir = $dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $dolibarr_main_data_root.'/medias/'.($preopened != '/' ? $preopened : '');
@@ -95,8 +93,7 @@ if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpat
 if ($modulepart == 'ecm')
 {
 	if (!$user->rights->ecm->read) accessforbidden();
-}
-elseif ($modulepart == 'medias')
+} elseif ($modulepart == 'medias')
 {
 	// Always allowed
 }
@@ -471,8 +468,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 							if ($modulepart == 'ecm')
 							{
 								$newfullpathselecteddir = $conf->ecm->dir_output.'/'.($val['fullrelativename'] != '/' ? $val['fullrelativename'] : '');
-							}
-							elseif ($modulepart == 'medias')
+							} elseif ($modulepart == 'medias')
 							{
 								$newfullpathselecteddir = $dolibarr_main_data_root.'/medias/'.($val['fullrelativename'] != '/' ? $val['fullrelativename'] : '');
 							}
@@ -486,7 +482,6 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 				echo "</ul>\n";
 			}
-		}
-		else print "PermissionDenied";
+		} else print "PermissionDenied";
 	}
 }

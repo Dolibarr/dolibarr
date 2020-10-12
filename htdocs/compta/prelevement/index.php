@@ -161,15 +161,11 @@ if ($resql)
             print '</tr>';
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
     }
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -232,9 +228,7 @@ if ($result)
 
     print "</table></div><br>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

@@ -84,9 +84,7 @@ if ($result < 0)
 	$langs->load("errors");
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
-}
-else
-{
+} else {
 	// Calcul $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -102,9 +100,7 @@ else
 		$obj = $db->fetch_object($resql);
 		$min = $db->jdate($obj->min);
 		$max = $db->jdate($obj->max);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	if (empty($min)) $min = dol_now() - 3600 * 24;
@@ -134,8 +130,8 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -151,9 +147,7 @@ else
 				$i++;
 			}
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -165,7 +159,7 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$year."-".sprintf("%02s", $month)."-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
@@ -174,9 +168,7 @@ else
 			$row = $db->fetch_row($resql);
 			$solde = $row[0];
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -199,9 +191,7 @@ else
 			if ($day > time())
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
-			}
-			else
-			{
+			} else {
 				$datas[$i] = $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
@@ -277,8 +267,8 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -294,9 +284,7 @@ else
 				$i++;
 			}
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -308,7 +296,7 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$year."-01-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-01-01'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
@@ -317,9 +305,7 @@ else
 			$row = $db->fetch_row($resql);
 			$solde = $row[0];
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -343,9 +329,7 @@ else
 			if ($day > $now)
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
-			}
-			else
-			{
+			} else {
 				$datas[$i] = $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
@@ -431,9 +415,7 @@ else
 				$amounts[$row[0]] = $row[1];
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -459,9 +441,7 @@ else
 			if ($day > ($max + 86400))
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
-			}
-			else
-			{
+			} else {
 				$datas[$i] = 0 + $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
@@ -539,8 +519,8 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount > 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
@@ -557,9 +537,7 @@ else
 				$i++;
 			}
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -577,8 +555,8 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount < 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
@@ -591,9 +569,7 @@ else
 				$debits[$row[0]] = abs($row[1]);
 			}
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -656,8 +632,8 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
@@ -674,9 +650,7 @@ else
 				$i++;
 			}
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 		$sql = "SELECT date_format(b.datev,'%m')";
@@ -685,8 +659,8 @@ else
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%m')";
@@ -699,9 +673,7 @@ else
 				$debits[$row[0]] = abs($row[1]);
 			}
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -770,16 +742,12 @@ if ($account)
 		{
 			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
     		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam, 0, '', '', 1);
-		}
-		else
-		{
+		} else {
 			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.$moreparam.'">'.$langs->trans("BackToAccount").'</a>';
 			print $langs->trans("AllAccounts");
 			//print $morehtml;
 		}
-	}
-	else
-	{
+	} else {
 	    $bankaccount = new Account($db);
 		$listid = explode(',', $account);
 		foreach ($listid as $key => $id)
@@ -790,9 +758,7 @@ if ($account)
 			if ($key < (count($listid) - 1)) print ', ';
 		}
 	}
-}
-else
-{
+} else {
 	print $langs->trans("AllAccounts");
 }
 
@@ -808,9 +774,7 @@ if ($mode == 'showalltime')
 	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
 	print $langs->trans("GoBack");
 	print '</a>';
-}
-else
-{
+} else {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
 	print $langs->trans("ShowAllTimeBalance");
 	print '</a>';

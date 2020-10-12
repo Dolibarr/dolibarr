@@ -26,10 +26,8 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield = '';
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					print '<th class="liste_titre thseparator"></th>';
-				}
-				else
-				{
-					if (! empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
+				} else {
+					if (!empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
 						$langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
 					}
 

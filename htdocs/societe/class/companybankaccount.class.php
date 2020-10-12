@@ -111,20 +111,14 @@ class CompanyBankAccount extends Account
 					if (!$error)
 					{
 						return 1;
-					}
-					else
-					{
+					} else {
 						return 0;
 					}
-				}
-				else
-				{
+				} else {
 					return 1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 			return 0;
 		}
@@ -167,8 +161,7 @@ class CompanyBankAccount extends Account
 		}
 		if (trim($this->label) != '')
 			$sql .= ",label = '".$this->db->escape($this->label)."'";
-		else
-			$sql .= ",label = NULL";
+		else $sql .= ",label = NULL";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
@@ -183,19 +176,13 @@ class CompanyBankAccount extends Account
 				if (!$error)
 				{
 					return 1;
-				}
-				else
-				{
+				} else {
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				return 1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -258,9 +245,7 @@ class CompanyBankAccount extends Account
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -307,9 +292,7 @@ class CompanyBankAccount extends Account
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1 * $error;
 		}
@@ -354,9 +337,7 @@ class CompanyBankAccount extends Account
 			if ($this->db->num_rows($result1) == 0)
 			{
 				return 0;
-			}
-			else
-			{
+			} else {
 				$obj = $this->db->fetch_object($result1);
 
 				$this->db->begin();
@@ -376,16 +357,12 @@ class CompanyBankAccount extends Account
 					dol_print_error($this->db);
 					$this->db->rollback();
 					return -1;
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 					return 1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}

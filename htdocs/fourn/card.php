@@ -118,7 +118,7 @@ if (empty($reshook))
         $object->oldcopy = dol_clone($object);
 
         // Fill array 'array_options' with data from update form
-        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 
         if ($ret < 0) $error++;
 
@@ -235,9 +235,7 @@ if ($object->id > 0)
 	if ($action == 'editconditions')
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'cond_reglement_supplier_id', -1, 1);
-	}
-	else
-	{
+	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_supplier_id, 'none');
 	}
 	print "</td>";
@@ -254,9 +252,7 @@ if ($object->id > 0)
 	if ($action == 'editmode')
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_supplier_id, 'mode_reglement_supplier_id', 'DBIT', 1, 1);
-	}
-	else
-	{
+	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_supplier_id, 'none');
 	}
 	print "</td>";
@@ -334,9 +330,7 @@ if ($object->id > 0)
         {
             $adh->ref = $adh->getFullName($langs);
             print $adh->getNomUrl(1);
-        }
-        else
-        {
+        } else {
             print $langs->trans("ThirdpartyNotLinkedToMember");
         }
         print '</td>';
@@ -372,7 +366,7 @@ if ($object->id > 0)
 	    $icon = 'bill';
 	    if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 	    $boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat .= '</div>';
 	    if ($link) $boxstat .= '</a>';
@@ -390,7 +384,7 @@ if ($object->id > 0)
 	    $icon = 'bill';
 	    if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 	    $boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat .= '</div>';
 	    if ($link) $boxstat .= '</a>';
@@ -408,7 +402,7 @@ if ($object->id > 0)
 	    $icon = 'bill';
 	    if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 	    $boxstat .= '<span class="boxstatsindicator">'.price($outstandingTotal, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 	    $boxstat .= '</div>';
 	    if ($link) $boxstat .= '</a>';
@@ -419,7 +413,7 @@ if ($object->id > 0)
 	    $icon = 'bill';
 	    if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' '.$text.'</span><br>';
+	    $boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 	    $boxstat .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 	    $boxstat .= '</div>';
 	    if ($link) $boxstat .= '</a>';
@@ -566,9 +560,7 @@ if ($object->id > 0)
 	            if ($obj->dc)
 	            {
 	                print dol_print_date($db->jdate($obj->dc), 'day');
-	            }
-	            else
-	            {
+	            } else {
 	                print "-";
 	            }
 	            print '</td>';
@@ -579,9 +571,7 @@ if ($object->id > 0)
 	        $db->free($resql);
 
 	        if ($num > 0) print "</table>";
-	    }
-	    else
-	    {
+	    } else {
 	        dol_print_error($db);
 	    }
 	}
@@ -605,12 +595,10 @@ if ($object->id > 0)
 		// Show orders we can bill
 		if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
 		{
-			$sql2 .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")"; //  Must match filter in htdocs/fourn/orderstoinvoice.php
-		}
-		else
-		{
+			$sql2 .= " AND c.fk_statut IN (".$db->sanitize(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY).")"; //  Must match filter in htdocs/fourn/commande/list.php
+		} else {
 			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
-			$sql2 .= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+			$sql2 .= " AND c.fk_statut IN (".$db->sanitize($db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS)).")";
 		}
 		$sql2 .= " AND c.billed = 0";
 		// Find order that are not already invoiced
@@ -677,9 +665,7 @@ if ($object->id > 0)
 				if ($obj->dc)
 				{
 					print dol_print_date($db->jdate($obj->dc), 'day');
-				}
-				else
-				{
+				} else {
 					print "-";
 				}
 				print '</td>';
@@ -690,9 +676,7 @@ if ($object->id > 0)
 			$db->free($resql);
 
 			if ($num > 0) print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -761,9 +745,7 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 			if ($num > 0) print '</table>';
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -813,17 +795,13 @@ if ($object->id > 0)
 		{
 			if (!empty($orders2invoice) && $orders2invoice > 0)
 			{
-				if ($object->status == 1)
-				{
+				if ($object->status == 1) {
 					// Company is open
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-				}
-				else
-				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisSupplier").'</a></div>';
+				} else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
-			}
-			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')').'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+			} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')').'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
@@ -842,9 +820,7 @@ if ($object->id > 0)
         	if ($user->rights->agenda->myactions->create)
         	{
             	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
-        	}
-        	else
-        	{
+        	} else {
             	print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
         	}
     	}
@@ -870,9 +846,7 @@ if ($object->id > 0)
     	// List of done actions
     	show_actions_done($conf, $langs, $db, $object);
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

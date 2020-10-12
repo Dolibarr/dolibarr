@@ -208,14 +208,10 @@ class MailmanSpip
                     if ($result)
                     {
                         return 1;
-                    }
-                    else $this->error = $mydb->lasterror();
-                }
-                else $this->error = 'Failed to connect to SPIP';
-            }
-            else $this->error = 'BadSPIPConfiguration';
-        }
-        else $this->error = 'SPIPNotEnabled';
+                    } else $this->error = $mydb->lasterror();
+                } else $this->error = 'Failed to connect to SPIP';
+            } else $this->error = 'BadSPIPConfiguration';
+        } else $this->error = 'SPIPNotEnabled';
 
         return 0;
     }
@@ -249,14 +245,10 @@ class MailmanSpip
                     if ($result)
                     {
                         return 1;
-                    }
-                    else $this->error = $mydb->lasterror();
-                }
-                else $this->error = 'Failed to connect to SPIP';
-            }
-            else $this->error = 'BadSPIPConfiguration';
-        }
-        else $this->error = 'SPIPNotEnabled';
+                    } else $this->error = $mydb->lasterror();
+                } else $this->error = 'Failed to connect to SPIP';
+            } else $this->error = 'BadSPIPConfiguration';
+        } else $this->error = 'SPIPNotEnabled';
 
         return 0;
     }
@@ -290,25 +282,18 @@ class MailmanSpip
                             // nous avons au moins une reponse
                             $mydb->close($result);
                             return 1;
-                        }
-                        else
-                        {
+                        } else {
                             // nous n'avons pas de reponse => n'existe pas
                             $mydb->close($result);
                             return 0;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->error = $mydb->lasterror();
                         $mydb->close();
                     }
-                }
-                else $this->error = 'Failed to connect to SPIP';
-            }
-            else $this->error = 'BadSPIPConfiguration';
-        }
-        else $this->error = 'SPIPNotEnabled';
+                } else $this->error = 'Failed to connect to SPIP';
+            } else $this->error = 'BadSPIPConfiguration';
+        } else $this->error = 'SPIPNotEnabled';
 
         return -1;
     }
@@ -373,13 +358,10 @@ class MailmanSpip
 					{
 						$this->mladded_ko[$list] = $object->email;
 					    return -2;
-					}
-					else $this->mladded_ok[$list] = $object->email;
+					} else $this->mladded_ok[$list] = $object->email;
 	            }
 	            return count($lists);
-	        }
-	        else
-	        {
+	        } else {
 	            $this->error = "ADHERENT_MAILMAN_URL not defined";
 	            return -1;
 	        }
@@ -447,13 +429,10 @@ class MailmanSpip
 					{
 						$this->mlremoved_ko[$list] = $object->email;
 					    return -2;
-					}
-					else $this->mlremoved_ok[$list] = $object->email;
+					} else $this->mlremoved_ok[$list] = $object->email;
 	            }
 	            return count($lists);
-	        }
-	        else
-			{
+	        } else {
 	            $this->error = "ADHERENT_MAILMAN_UNSUB_URL not defined";
 	            return -1;
 	        }

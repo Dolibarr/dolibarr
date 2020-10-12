@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/public/ticket/view.php
  *       \ingroup    ticket
- *       \brief      Public file to add and manage ticket
+ *       \brief      Public file to show one ticket
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -162,6 +162,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -171,7 +172,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
 	{
 		// TODO Add message...
-		$ret = $object->dao->newMessage($user, $action, 0);
+		$ret = $object->dao->newMessage($user, $action, 0, 1);
 
 
 
@@ -187,9 +188,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($action == "add_message")
 		{
 			$action = 'presend';
-		}
-		else
-		{
+		} else {
 			$action = '';
 		}
 	}
@@ -240,17 +239,17 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Ref
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-		print $object->dao->ref;
+		print dol_escape_htmltag($object->dao->ref);
 		print '</td></tr>';
 
 		// Tracking ID
 		print '<tr><td>'.$langs->trans("TicketTrackId").'</td><td>';
-		print $object->dao->track_id;
+		print dol_escape_htmltag($object->dao->track_id);
 		print '</td></tr>';
 
 		// Subject
 		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
-		print $object->dao->subject;
+		print dol_escape_htmltag($object->dao->subject);
 		print '</td></tr>';
 
 		// Statut
@@ -260,17 +259,17 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td>';
-		print $object->dao->type_label;
+		print dol_escape_htmltag($object->dao->type_label);
 		print '</td></tr>';
 
 		// Category
 		print '<tr><td>'.$langs->trans("Category").'</td><td>';
-		print $object->dao->category_label;
+		print dol_escape_htmltag($object->dao->category_label);
 		print '</td></tr>';
 
 		// Severity
 		print '<tr><td>'.$langs->trans("Severity").'</td><td>';
-		print $object->dao->severity_label;
+		print dol_escape_htmltag($object->dao->severity_label);
 		print '</td></tr>';
 
 		// Creation date
@@ -316,7 +315,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Progression
 		print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-		print ($object->dao->progress > 0 ? $object->dao->progress : '0').'%';
+		print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
 		print '</td></tr>';
 
 		print '</table>';
@@ -372,9 +371,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		// Message list
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'object_conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
-	}
-	else
-	{
+	} else {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 } else {

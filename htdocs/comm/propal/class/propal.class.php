@@ -41,12 +41,15 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *	Class to manage proposals
  */
 class Propal extends CommonObject
 {
+	use CommonIncoterm;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -390,9 +393,7 @@ class Propal extends CommonObject
 			if ($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
 			{
 				$price = $prod->multiprices[$this->thirdparty->price_level];
-			}
-			else
-			{
+			} else {
 				$price = $prod->price;
 			}
 
@@ -473,22 +474,16 @@ class Propal extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $line->error;
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -2;
 		}
@@ -561,9 +556,7 @@ class Propal extends CommonObject
 			if ($price_base_type == 'HT')
 			{
 				$pu = $pu_ht;
-			}
-			else
-			{
+			} else {
 				$pu = $pu_ttc;
 			}
 
@@ -715,23 +708,17 @@ class Propal extends CommonObject
                 {
                     $this->db->commit();
                     return $this->line->id;
-                }
-                else
-                {
+                } else {
                     $this->error = $this->db->error();
                     $this->db->rollback();
                     return -1;
                 }
-            }
-            else
-            {
+            } else {
                 $this->error = $this->line->error;
                 $this->db->rollback();
                 return -2;
             }
-        }
-		else
-		{
+        } else {
 			dol_syslog(get_class($this)."::addline status of proposal must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
@@ -741,15 +728,15 @@ class Propal extends CommonObject
 	/**
 	 *  Update a proposal line
 	 *
-	 *  @param      int			$rowid           	Id de la ligne
-	 *  @param      float		$pu		     	  	Prix unitaire (HT ou TTC selon price_base_type)
+	 *  @param      int			$rowid           	Id of line
+	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float		$qty            	Quantity
-	 *  @param      float		$remise_percent  	Remise effectuee sur le produit
-	 *  @param      float		$txtva	          	Taux de TVA
+	 *  @param      float		$remise_percent  	Discount on line
+	 *  @param      float		$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
-	 *	@param	  	string		$price_base_type	HT ou TTC
+	 *	@param	  	string		$price_base_type	HT or TTC
 	 *	@param      int			$info_bits        	Miscellaneous informations
 	 *	@param		int			$special_code		Special code (also used by externals modules!)
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
@@ -841,7 +828,6 @@ class Propal extends CommonObject
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
 			$line->fetch($rowid);
-			$line->fetch_optionals();
 
 			$staticline = clone $line;
 
@@ -917,17 +903,13 @@ class Propal extends CommonObject
 
 				$this->db->commit();
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->line->error;
 
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::updateline Erreur -2 Propal en mode incompatible pour cette action");
 			return -2;
 		}
@@ -959,15 +941,11 @@ class Propal extends CommonObject
 
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
@@ -1083,10 +1061,10 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$user->id."'" : "NULL");
+		$sql .= ", ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
@@ -1141,8 +1119,7 @@ class Propal extends CommonObject
                 					$error++;
                 				}
                 			}
-                		}
-                		else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+                		} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
                 		{
                 			$origin_id = $tmp_origin_id;
                 			$ret = $this->add_object_linked($origin, $origin_id);
@@ -1169,9 +1146,7 @@ class Propal extends CommonObject
                         if (!is_object($this->lines[$i]))	// If this->lines is not array of objects, coming from REST API
                         {   // Convert into object this->lines[$i].
                             $line = (object) $this->lines[$i];
-                        }
-                        else
-                        {
+                        } else {
                             $line = $this->lines[$i];
                         }
 						// Reset fk_parent_line for line that are not child lines or special product
@@ -1267,16 +1242,12 @@ class Propal extends CommonObject
 							if ($result < 0) { $error++; }
 							// End call triggers
 						}
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->lasterror();
 						$error++;
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -1286,15 +1257,11 @@ class Propal extends CommonObject
 				$this->db->commit();
 				dol_syslog(get_class($this)."::create done id=".$this->id);
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1375,9 +1342,7 @@ class Propal extends CommonObject
 			$object->ref_client = '';
 
 			// TODO Change product price if multi-prices
-		}
-		else
-		{
+		} else {
 		    $objsoc->fetch($object->socid);
 		}
 
@@ -1446,9 +1411,7 @@ class Propal extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1502,8 +1465,7 @@ class Propal extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
-		}
-		else $sql .= " WHERE p.rowid=".$rowid;
+		} else $sql .= " WHERE p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1534,7 +1496,8 @@ class Propal extends CommonObject
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
-				$this->modelpdf             = $obj->model_pdf;
+				$this->model_pdf            = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf;	// deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -1615,9 +1578,7 @@ class Propal extends CommonObject
 
 			$this->error = "Record Not Found";
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1641,7 +1602,7 @@ class Propal extends CommonObject
 		if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
 		if (isset($this->note) || isset($this->note_private)) $this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
-		if (isset($this->modelpdf)) $this->modelpdf = trim($this->modelpdf);
+		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 		if (!empty($this->duree_validite)) $this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 
@@ -1711,9 +1672,7 @@ class Propal extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1841,9 +1800,7 @@ class Propal extends CommonObject
 			$this->db->free($result);
 
 			return $num;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -3;
 		}
@@ -1891,9 +1848,7 @@ class Propal extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$num = $this->getNextNumRef($soc);
-		}
-		else
-		{
+		} else {
 			$num = $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
@@ -1966,9 +1921,7 @@ class Propal extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -2030,9 +1983,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2092,9 +2043,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2154,9 +2103,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2217,9 +2164,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2228,9 +2173,7 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1 * $error;
 			}
-		}
-		else
-		{
+		} else {
 			$error_str = 'Propal status do not meet requirement '.$this->statut;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
@@ -2290,9 +2233,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2301,9 +2242,7 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1 * $error;
 			}
-		}
-		else
-		{
+		} else {
 			$error_str = 'Propal status do not meet requirement '.$this->statut;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
@@ -2359,9 +2298,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2370,9 +2307,7 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1 * $error;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -2429,9 +2364,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2497,9 +2430,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2565,9 +2496,7 @@ class Propal extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -2578,12 +2507,12 @@ class Propal extends CommonObject
 	 *	Close the commercial proposal
 	 *
 	 *	@param      User	$user		Object user that close
-	 *	@param      int		$statut		Statut
+	 *	@param      int		$status		Status
 	 *	@param      string	$note		Complete private note with this note
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-    public function cloture($user, $statut, $note = "", $notrigger = 0)
+    public function cloture($user, $status, $note = "", $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2595,19 +2524,19 @@ class Propal extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->modelpdf;
+			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 			$triggerName = 'PROPAL_CLOSE_REFUSED';
 
-			if ($statut == self::STATUS_SIGNED)
+			if ($status == self::STATUS_SIGNED)
 			{
 				$triggerName = 'PROPAL_CLOSE_SIGNED';
-				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->modelpdf;
+				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
 				$soc = new Societe($this->db);
@@ -2621,7 +2550,7 @@ class Propal extends CommonObject
 					return -2;
 				}
 			}
-			if ($statut == self::STATUS_BILLED)	// Why this ?
+			if ($status == self::STATUS_BILLED)	// ->cloture() can also be called when we set it to billed, after setting it to signed
 			{
 				$triggerName = 'PROPAL_CLASSIFY_BILLED';
 			}
@@ -2643,7 +2572,7 @@ class Propal extends CommonObject
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->statut = $statut;
+				$this->statut = $status;
 				$this->date_cloture = $now;
 				$this->note_private = $newprivatenote;
 			}
@@ -2660,9 +2589,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->statut = $this->oldcopy->statut;
 				$this->date_cloture = $this->oldcopy->date_cloture;
 				$this->note_private = $this->oldcopy->note_private;
@@ -2670,9 +2597,7 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -2721,9 +2646,7 @@ class Propal extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2788,9 +2711,7 @@ class Propal extends CommonObject
 
 		    $this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2856,13 +2777,10 @@ class Propal extends CommonObject
 					if ($shortlist == 1)
 					{
 						$ga[$obj->propalid] = $obj->ref;
-					}
-					elseif ($shortlist == 2)
+					} elseif ($shortlist == 2)
 					{
 						$ga[$obj->propalid] = $obj->ref.' ('.$obj->name.')';
-					}
-					else
-					{
+					} else {
 						$ga[$i]['id'] = $obj->propalid;
 						$ga[$i]['ref'] 	= $obj->ref;
 						$ga[$i]['name'] = $obj->name;
@@ -2872,9 +2790,7 @@ class Propal extends CommonObject
 				}
 			}
 			return $ga;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -2914,10 +2830,8 @@ class Propal extends CommonObject
 				if ($objecttype == 'facture')
 				{
 					$linkedInvoices[] = $object;
-				}
-				// Cas des factures liees par un autre objet (ex: commande)
-				else
-				{
+				} // Cas des factures liees par un autre objet (ex: commande)
+				else {
 					$this->fetchObjectLinked($object, $objecttype);
 					foreach ($this->linkedObjectsIds as $subobjecttype => $subobjectid)
 					{
@@ -2968,13 +2882,10 @@ class Propal extends CommonObject
 					}
 				}
 				return $ga;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else return $ga;
+		} else return $ga;
 	}
 
 	/**
@@ -3074,30 +2985,22 @@ class Propal extends CommonObject
 						dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
 						$this->db->commit();
 						return 1;
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->lasterror();
 						$this->db->rollback();
 						return 0;
 					}
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -3151,9 +3054,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -3162,9 +3063,7 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1 * $error;
 			}
-		}
-		else
-		{
+		} else {
 			$error_str = 'Propal status do not meet requirement '.$this->statut;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
@@ -3223,9 +3122,7 @@ class Propal extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -3234,9 +3131,7 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1 * $error;
 			}
-		}
-		else
-		{
+		} else {
 			$error_str = 'Propal status do not meet requirement '.$this->statut;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
@@ -3293,9 +3188,7 @@ class Propal extends CommonObject
 				}
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -3430,9 +3323,7 @@ class Propal extends CommonObject
 			}
 
 			return $response;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -3456,6 +3347,8 @@ class Propal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -3510,9 +3403,7 @@ class Propal extends CommonObject
 				$line->total_ttc = 60;
 				$line->total_tva = 10;
 				$line->remise_percent = 50;
-			}
-			else
-			{
+			} else {
 				$line->total_ht = 100;
 				$line->total_ttc = 120;
 				$line->total_tva = 20;
@@ -3571,9 +3462,7 @@ class Propal extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -3623,16 +3512,12 @@ class Propal extends CommonObject
 			if ($numref != "")
 			{
 				return $numref;
-			}
-			else
-			{
+			} else {
 				$this->error = $obj->error;
 				//dol_print_error($db,"Propale::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Proposal"));
 			return "";
@@ -3662,7 +3547,7 @@ class Propal extends CommonObject
 
 		if ($user->rights->propal->lire)
 		{
-			$label = '<u>'.$langs->trans("Proposal").'</u>';
+			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Proposal").'</u>';
 			if (!empty($this->ref))
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!empty($this->ref_client))
@@ -3680,14 +3565,11 @@ class Propal extends CommonObject
 
 			if ($option == '') {
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
-			}
-			elseif ($option == 'compta') {  // deprecated
+			} elseif ($option == 'compta') {  // deprecated
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;
-			}
-			elseif ($option == 'expedition') {
+			} elseif ($option == 'expedition') {
 				$url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id.$get_params;
-			}
-			elseif ($option == 'document') {
+			} elseif ($option == 'document') {
 				$url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id.$get_params;
 			}
 
@@ -3795,8 +3677,8 @@ class Propal extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->PROPALE_ADDON_PDF)) {
 				$modele = $conf->global->PROPALE_ADDON_PDF;
 			}
@@ -4036,14 +3918,10 @@ class PropaleLigne extends CommonObjectLine
 				$this->db->free($result);
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -4092,9 +3970,7 @@ class PropaleLigne extends CommonObjectLine
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->pa_ht = $result;
 			}
 		}
@@ -4181,9 +4057,7 @@ class PropaleLigne extends CommonObjectLine
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -4235,9 +4109,7 @@ class PropaleLigne extends CommonObjectLine
 			$this->db->commit();
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -4257,6 +4129,8 @@ class PropaleLigne extends CommonObjectLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+
+		if (empty($this->id) && ! empty($this->rowid)) $this->id = $this->rowid;
 
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx = 0;
@@ -4284,9 +4158,7 @@ class PropaleLigne extends CommonObjectLine
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->pa_ht = $result;
 			}
 		}
@@ -4333,7 +4205,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4341,7 +4213,6 @@ class PropaleLigne extends CommonObjectLine
 		{
 			if (!$error)
 			{
-				$this->id = $this->rowid;
 				$result = $this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -4363,9 +4234,7 @@ class PropaleLigne extends CommonObjectLine
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
@@ -4398,9 +4267,7 @@ class PropaleLigne extends CommonObjectLine
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;

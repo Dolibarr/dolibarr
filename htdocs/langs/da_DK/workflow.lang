@@ -16,5 +16,8 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassificer den tilknyttede kildes 
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassificer tilsluttet kildeleverandørforslag som faktureret, når leverandørfakturaen er bekræftet (og hvis fakturaens størrelse er det samme som det samlede beløb for det linkede forslag)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassificer købt købsordre med kilden som faktureret, når leverandørfakturaen er bekræftet (og hvis fakturaens størrelse er den samme som det samlede beløb for den tilknyttede ordre)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatisk oprettelse
 AutomaticClassification=Automatisk klassificering

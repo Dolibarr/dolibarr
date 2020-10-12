@@ -93,15 +93,12 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
 	$usertoprocess = $user;
 	$search_usertoprocessid = $usertoprocess->id;
-}
-elseif ($search_usertoprocessid > 0)
+} elseif ($search_usertoprocessid > 0)
 {
 	$usertoprocess = new User($db);
 	$usertoprocess->fetch($search_usertoprocessid);
 	$search_usertoprocessid = $usertoprocess->id;
-}
-else
-{
+} else {
 	$usertoprocess = new User($db);
 }
 
@@ -193,9 +190,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	{
 		$result = $object->fetch($taskid, $ref);
 		if ($result < 0) $error++;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
 		$error++;
 	}
@@ -231,9 +226,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -246,9 +239,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned"), null, 'warnings');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -307,9 +298,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			{
 				$object->timespent_datehour = dol_mktime(GETPOST($key."hour", 'int'), GETPOST($key."min", 'int'), 0, $monthofday, $dayofday, $yearofday);
 				$object->timespent_withhour = 1;
-			}
-			else
-			{
+			} else {
 				$object->timespent_datehour = dol_mktime(12, 0, 0, $monthofday, $dayofday, $yearofday);
 			}
 			$object->timespent_date = $object->timespent_datehour;
@@ -317,9 +306,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			if ($object->timespent_date > 0)
 			{
 				$result = $object->addTimeSpent($user);
-			}
-			else
-			{
+			} else {
 				setEventMessages("ErrorBadDate", null, 'errors');
 				$error++;
 				break;
@@ -341,9 +328,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			header('Location: '.$_SERVER["PHP_SELF"].'?'.($projectid ? 'id='.$projectid : '').($search_usertoprocessid ? '&search_usertoprocessid='.$search_usertoprocessid : '').($mode ? '&mode='.$mode : '').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
 			exit;
 		}
-	}
-	else
-	{
+	} else {
    		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
 	}
 }
@@ -463,13 +448,12 @@ print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'task');
+dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
 if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
-else
-{
+else {
 	if (empty($usertoprocess->id) || $usertoprocess->id < 0)
 	{
 		if ($user->rights->projet->all->lire && !$socid) print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
@@ -479,9 +463,7 @@ else
 if ($mine || ($usertoprocess->id == $user->id))
 {
 	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
-}
-else
-{
+} else {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
 print '</div>';
@@ -790,9 +772,7 @@ if (count($tasksarray) > 0)
                 <td class="liste_total"></td>
                 </tr>';
 	}
-}
-else
-{
+} else {
 	print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }
 print "</table>";

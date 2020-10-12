@@ -67,8 +67,7 @@ function facture_prepare_head($object)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) $nbStandingOrders = $obj->nb;
-        }
-        else dol_print_error($db);
+        } else dol_print_error($db);
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';

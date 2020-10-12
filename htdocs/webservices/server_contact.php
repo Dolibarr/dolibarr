@@ -333,14 +333,12 @@ function getContact($authentication, $id, $ref_ext)
 			        'contact'=>$contact_result_fields
                 );
 	        }
-	        else
-	        {
+	        else {
 	            $error++;
 	            $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 	        }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
         }
@@ -451,8 +449,7 @@ function createContact($authentication, $contact)
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -584,8 +581,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 
 			);
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}

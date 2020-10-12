@@ -77,9 +77,7 @@ if (empty($pageid))
     {
         $object->fetch($websiteid);
         $website = $object->ref;
-    }
-    else
-    {
+    } else {
         $object->fetch(0, $website);
     }
 

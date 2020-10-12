@@ -132,13 +132,11 @@ if ($result)
 			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
 			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
 			print "</td>";
-		}
-		else
-		{
+		} else {
 			print "<td >".$objp->label."</td>";
 			print '<td class="center">';
-			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>';
-			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a>';
+			print '<a class="editfielda reposition marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit&amp;token='.newToken().'">'.img_edit().'</a>';
+			print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete&amp;token='.newToken().'">'.img_delete().'</a>';
 			print '</td>';
 		}
 		print "</tr>";

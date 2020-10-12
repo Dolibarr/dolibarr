@@ -87,7 +87,9 @@ function ldap_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, '', $head, $h, 'ldap');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ldap');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ldap', 'remove');
 
 	return $head;
 }
@@ -112,18 +114,14 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 	if (!function_exists("ldap_connect"))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
-	}
-	elseif (empty($conf->global->LDAP_SERVER_HOST))
+	} elseif (empty($conf->global->LDAP_SERVER_HOST))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
-	}
-	elseif (empty($key) || empty($dn) || empty($objectclass))
+	} elseif (empty($key) || empty($dn) || empty($objectclass))
 	{
 		$langs->load("errors");
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
 	}
 	print '<br><br>';
@@ -170,8 +168,7 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 				if (strtolower($key) == 'userpassword') $hide = 1;
 			}
 			show_ldap_content($val, $level + 1, $count, $var, $hide, $val["count"]);
-		}
-		elseif ($subcount)
+		} elseif ($subcount)
 		{
 			$subcount--;
 			$newstring = dol_htmlentitiesbr($val);

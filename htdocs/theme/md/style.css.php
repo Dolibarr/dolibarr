@@ -56,6 +56,10 @@ if (empty($user->id) && !empty($_SESSION['dol_login']))
 {
 	$user->fetch('', $_SESSION['dol_login'], '', 1);
 	$user->getrights();
+
+	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	$menumanager->loadMenu();
 }
 
 
@@ -157,24 +161,20 @@ else $colortextbackhmenu = '000000';
 $colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; }
-else { $colortextbackvmenu = '000000'; }
+if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; } else { $colortextbackvmenu = '000000'; }
 
 $colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '')
 {
 	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-	if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; }
-	else { $colortexttitle = '101010'; $colorshadowtitle = 'FFFFFF'; }
-}
-else $colorshadowtitle = '888888';
+	if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; } else { $colortexttitle = '101010'; $colorshadowtitle = 'FFFFFF'; }
+} else $colorshadowtitle = '888888';
 
 $colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktabcard1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; }
-else { $colortextbacktab = '111111'; }
+if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; } else { $colortextbacktab = '111111'; }
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));
@@ -456,6 +456,9 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+.logopublicpayment #dolpaymentlogo {
+	max-height: 100px;
+}
 a.buttonticket {
 	padding-left: 5px;
 	padding-right: 5px;
@@ -637,9 +640,16 @@ div.floatright
 {
     float:<?php print $right; ?>;
 }
+.block
+{
+	display:block;
+}
 .inline-block
 {
 	display:inline-block;
+}
+.largenumber {
+    font-size: 1.4em;
 }
 
 th .button {
@@ -782,6 +792,11 @@ textarea.centpercent {
     font-size: 0.85em;
     opacity: 0.7;
 }
+.longmessagecut {
+    max-height: 250px;
+    max-width: 100%;
+    overflow-y: auto;
+}
 
 .text-warning{
     color : <?php print $textWarning; ?>
@@ -874,6 +889,34 @@ if ($conf->browser->layout == 'phone') {
    	white-space: nowrap;
 }
 <?php } ?>
+
+
+.a-filter, .a-mesure {
+    border-radius: 50px;
+    background: var(--colortexttitlenotab);
+    color: #fff;
+    padding: 8px 10px 8px 6px;
+}
+.a-filter:before {
+    content: "\f0b0";
+}
+.a-mesure:before {
+    content: "\f080";
+}
+.a-filter:before, .a-mesure:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.a-filter-disabled, .a-mesure-disabled {
+    border-radius: 50px;
+    background: var(--colorbacktitle1);
+    padding: 8px;
+    opacity: 0.6;
+}
+
+
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -958,6 +1001,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 100px !important;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1160,12 +1209,14 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
+.maxwidth250 { max-width: 250px; }
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }
+.minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
@@ -1227,6 +1278,8 @@ table[summary="list_of_modules"] .fa-cog {
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
+
+	.clearbothonsmartphone { clear: both; display: block; }
 }
 
 /* Force values for small screen 570 */
@@ -1413,6 +1466,22 @@ td.showDragHandle {
 <?php } ?>
 }
 
+/* DOL_XXX For having horizontal scroll into array (like with smartphone) */
+
+.classforhorizontalscrolloftabs #id-container {
+	width: 100%;
+}
+.classforhorizontalscrolloftabs .side-nav {
+	display: block;
+	float: left;
+}
+.classforhorizontalscrolloftabs #id-right {
+	width:calc(100% - 210px);
+	display: inline-block;
+}
+
+
+
 .side-nav {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
@@ -1465,9 +1534,10 @@ td.showDragHandle {
 ?>
 }
 
-/*
-*	Slide animation
-*/
+
+/**
+ *	Slide animation
+ */
 .side-nav-vert, #id-right {
 	transition: padding-left 0.5s ease, margin-left 0.5s ease;
 }
@@ -2150,9 +2220,7 @@ div.mainmenu.website {
 		        print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
 	                }';
-		    }
-		    else
-		    {
+		    } else {
 		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
 		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
 		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
@@ -2161,9 +2229,7 @@ div.mainmenu.website {
 		        print "}\n";
 	    	}
 	    	$generic++;
-		}
-		else
-		{
+		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
 			print "}\n";
@@ -2889,6 +2955,12 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .nopaddingright {
 	padding-<?php print $right; ?>: 0px;
 }
+.nopaddingtopimp {
+	padding-top: 0px !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0px !important;
+}
 .notopnoleft {
 	border-collapse: collapse;
 	border: 0px;
@@ -3226,6 +3298,14 @@ table.hidepaginationprevious .paginationprevious {
 }
 table.hidepaginationnext .paginationnext {
 	display: none;
+}
+.paginationafterarrows a.btnTitlePlus {
+    border: 1px solid var(--btncolorborder);
+}
+.paginationafterarrows a.btnTitlePlus:hover span:before {
+    /* text-shadow: 0px 0px 5px #ccc; */
+    /* filter: invert(0.3); */
+    font-size: 1.03em;
 }
 
 
@@ -3922,10 +4002,14 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+    text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
-.secondary, div.titre {
+div.titre {
+	color: var(--colortexttitlenotab);
+}
+.secondary {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {
@@ -4073,17 +4157,20 @@ div.ui-tooltip {
 	max-width: <?php print dol_size(600, 'width'); ?>px !important;
 }
 
-.mytooltip {
+div.ui-tooltip.mytooltip {
 	width: <?php print dol_size(450, 'width'); ?>px;
 	border-top: solid 1px #BBBBBB;
 	border-<?php print $left; ?>: solid 1px #BBBBBB;
 	border-<?php print $right; ?>: solid 1px #444444;
 	border-bottom: solid 1px #444444;
-	padding: 5px 20px;
+	padding: 10px 20px;
 	border-radius: 0;
 	box-shadow: 0 0 4px grey;
 	margin: 2px;
 	font-stretch: condensed;
+	/*background: var(--tooltipbgcolor) !important;
+	color : var(--tooltipfontcolor);*/
+	line-height: 1.6em;
 }
 
 
@@ -4336,6 +4423,7 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
+div.event { margin: 8px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 3px; border-radius: 3px; min-height: 20px;	}
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
@@ -5239,6 +5327,9 @@ a span.select2-chosen
 .select2-results {
 	max-height:	400px;
 }
+.select2-results__option {
+	word-break: break-word;
+}
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
@@ -6138,6 +6229,41 @@ border-top-right-radius: 6px;
 
 
 /* ============================================================================== */
+/* CSS style for debugbar                                                         */
+/* ============================================================================== */
+
+span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
+    width: 250px !important;
+}
+.phpdebugbar-indicator span.phpdebugbar-tooltip {
+    opacity: .95 !important;
+}
+a.phpdebugbar-tab.phpdebugbar-active {
+	background-image: unset !important;
+}
+.phpdebugbar-indicator .fa {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 600;
+}
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error:before,
+div.phpdebugbar-widgets-exceptions a.phpdebugbar-widgets-editor-link:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
+{
+	font-family: "Font Awesome 5 Free" !important;
+}
+
+/* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */
 
@@ -6328,11 +6454,11 @@ if (is_object($db)) $db->close();
 ::-webkit-scrollbar {
 	width: 12px;
 }
-::-webkit-scrollbar-button {
-	background: #aaa;
-}
+/*::-webkit-scrollbar-button {
+	background: #bbb;
+}*/
 ::-webkit-scrollbar-track-piece {
-	background: #fff;
+	background: #f4f4f4;
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;

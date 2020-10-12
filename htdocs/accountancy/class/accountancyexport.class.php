@@ -362,7 +362,7 @@ class AccountancyExport
 			if ($line->sens == 'D') {
 				print price($line->montant).$separator;
 				print ''.$separator;
-			}elseif ($line->sens == 'C') {
+			} elseif ($line->sens == 'C') {
 				print ''.$separator;
 				print price($line->montant).$separator;
 			}
@@ -518,11 +518,12 @@ class AccountancyExport
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
-			if (!empty($data->date_echeance))
+			if (!empty($data->date_echeance)) {
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%y'); // elarifr:  format must be ddmmyy
-			else
+			} else {
 				$Tab['date_echeance'] = '000000';
+			}
 
 			//elarifr please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
 			//$Tab['lettrage'] = str_repeat(' ', 5);
@@ -597,12 +598,11 @@ class AccountancyExport
 
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
 
-			if($data->sens == 'D'){
+			if ($data->sens == 'D') {
 				$Tab['montant_debit']  =  str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
-			}
-			else{
+			} else {
 				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -616,11 +616,12 @@ class AccountancyExport
 
 			$Tab['code_stat'] = str_repeat(' ', 4);
 
-			if (!empty($data->date_echeance))
+			if (!empty($data->date_echeance)) {
 				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%Y');
-			else
+			} else {
 				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
+			}
 
 			$Tab['monnaie'] = '1';
 
@@ -897,12 +898,10 @@ class AccountancyExport
             if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num)
             {
                 $sammelBuchung = true;
-            }
-            elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
+            } elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
             {
                 $sammelBuchung = true;
-            }
-            elseif ($aIndex + 1 < $aSize
+            } elseif ($aIndex + 1 < $aSize
                     && $objectLines[$aIndex + 1]->piece_num == $line->piece_num
                     && $aIndex - 1 < $aSize
                     && $objectLines[$aIndex - 1]->piece_num == $line->piece_num
@@ -924,9 +923,7 @@ class AccountancyExport
             if ($line->sens == 'D')
             {
                 print 'S'.$this->separator;
-            }
-            else
-            {
+            } else {
                 print 'H'.$this->separator;
             }
             //Grp
@@ -937,14 +934,10 @@ class AccountancyExport
                 if ($line->piece_num == $thisPieceNum)
                 {
                     print length_accounta($thisPieceAccountNr).$this->separator;
-                }
-                else
-                {
+                } else {
                     print "div".$this->separator;
                 }
-            }
-            else
-            {
+            } else {
                 print length_accounta($line->code_tiers).$this->separator;
             }
             //SId
@@ -960,9 +953,7 @@ class AccountancyExport
             if ($sammelBuchung)
             {
                 print "2".$this->separator;
-            }
-            else
-            {
+            } else {
                 print "1".$this->separator;
             }
             // Code
@@ -971,9 +962,7 @@ class AccountancyExport
             if ($line->montant >= 0)
             {
                 print $line->montant.$this->separator;
-            }
-            else
-            {
+            } else {
                 print ($line->montant * -1).$this->separator;
             }
             // Steuer
@@ -1171,7 +1160,8 @@ class AccountancyExport
 			// TYPE C
 			if ($last_codeinvoice != $line->doc_ref) {
 				//recherche societe en fonction de son code client
-				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe WHERE code_client = '".$line->thirdparty_code."'";
+				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe";
+				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
 
 				if ($resql && $this->db->num_rows($resql) > 0)
@@ -1458,7 +1448,9 @@ class AccountancyExport
 			print self::trunc($line->code_journal, 6).$separator; //Journal code
 
 			if (!empty($line->subledger_account)) $account = $line->subledger_account;
-			else  $account = $line->numero_compte;
+			else {
+				$account = $line->numero_compte;
+			}
 			print self::trunc($account, 15).$separator; //Account number
 
 			print self::trunc($line->label_compte, 60).$separator; //Account label

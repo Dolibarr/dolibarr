@@ -36,7 +36,7 @@ $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 if (!$user->admin)
 accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters ACCOUNTING_*
 $list = array(
@@ -101,9 +101,7 @@ if ($action == 'update')
     if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }

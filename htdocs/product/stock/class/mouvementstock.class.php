@@ -41,7 +41,14 @@ class MouvementStock extends CommonObject
 	public $table_element = 'stock_mouvement';
 
 
+    /**
+     * @var int ID product
+     */
 	public $product_id;
+
+    /**
+     * @var int ID warehouse
+     */
 	public $warehouse_id;
 	public $qty;
 
@@ -58,7 +65,7 @@ class MouvementStock extends CommonObject
 	public $price;
 
 	/**
-     * @var int ID
+     * @var int ID user author
      */
 	public $fk_user_author;
 
@@ -204,6 +211,7 @@ class MouvementStock extends CommonObject
 		{
 			if (empty($batch))
 			{
+				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
 				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
 
@@ -411,7 +419,7 @@ class MouvementStock extends CommonObject
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
 			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ";
-			$sql .= " ".($batch ? "'".$batch."'" : "null").", ";
+			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
 			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".((int) $this->type).",";
@@ -908,13 +916,13 @@ class MouvementStock extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock", LOG_ERR);
 				$result = -1;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::createBatch error invalid param dluo".$error, LOG_ERR);
+			dol_syslog(get_class($this)."::createBatch error invalid param dluo", LOG_ERR);
 			$result = -1;
 		}
 
@@ -993,6 +1001,10 @@ class MouvementStock extends CommonObject
 			case 'mo':
 				require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 				$origin = new Mo($this->db);
+				break;
+			case 'user':
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$origin = new User($this->db);
 				break;
 
 			default:
@@ -1130,20 +1142,16 @@ class MouvementStock extends CommonObject
 		if ($mode == 0 || $mode == 1)
 		{
 			return $langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
@@ -1169,8 +1177,8 @@ class MouvementStock extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'stdmovement';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->MOUVEMENT_ADDON_PDF)) {
 				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
 			}

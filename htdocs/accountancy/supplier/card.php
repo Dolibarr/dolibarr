@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -63,9 +63,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write)
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		else
-		{
+		} else {
 		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		    if ($backtopage)
 		    {

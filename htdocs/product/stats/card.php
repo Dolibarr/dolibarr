@@ -90,15 +90,12 @@ if (!$id && empty($ref))
         $helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
         //$title=$langs->trans("StatisticsOfProducts");
         $title = $langs->trans("Statistics");
-    }
-    elseif ($type == '1')
+    } elseif ($type == '1')
     {
         $helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
         //$title=$langs->trans("StatisticsOfServices");
         $title = $langs->trans("Statistics");
-    }
-    else
-    {
+    } else {
         $helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
         //$title=$langs->trans("StatisticsOfProductsOrServices");
         $title = $langs->trans("Statistics");
@@ -108,9 +105,7 @@ if (!$id && empty($ref))
     if ($type == 1) $picto = 'service';
 
     print load_fiche_titre($title, $mesg, $picto);
-}
-else
-{
+} else {
     $result = $object->fetch($id, $ref);
 
 	$title = $langs->trans('ProductServiceCard');
@@ -164,13 +159,8 @@ if (empty($id) & empty($ref))
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $langs->trans("PopuProp");
-    $head[$h][2] = 'popularityprop';
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/product/popucom.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $langs->trans("PopuCom");
-    $head[$h][2] = 'popularitycommande';
+    $head[$h][1] = $langs->trans("ProductsPerPopularity");
+    $head[$h][2] = 'popularity';
     $h++;
 
     dol_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
@@ -227,18 +217,20 @@ if ($result || empty($id))
 	// Choice of stats mode (byunit or bynumber)
 	if (!empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
-	if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
-	else print img_picto('', 'tick').' ';
+	if ($mode == 'bynumber') print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
+	else print '<span class="a-mesure">';
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') print '</a>';
+	else print '</span>';
 
 	if (!empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
-	else print ' &nbsp; / &nbsp; ';
+	else print ' &nbsp; ';
 
-	if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
-	else print img_picto('', 'tick').' ';
+	if ($mode == 'byunit') print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
+	else print '<span class="a-mesure">';
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') print '</a>';
+	else print '</span>';
 
 	if (!empty($conf->dol_use_jmobile)) print '</div></div>';
 	else print '<br>';
@@ -324,9 +316,7 @@ if ($result || empty($id))
 				if (dol_is_file($dir.'/'.$graphfiles[$key]['file']))
 				{
 					// TODO Load cachefile $graphfiles[$key]['file']
-				}
-				else
-				{
+				} else {
 				    $morefilters = '';
 				    if ($search_categ > 0)
 				    {
@@ -370,9 +360,7 @@ if ($result || empty($id))
 
 					$graphfiles[$key]['total'] = $px->total();
 					$graphfiles[$key]['output'] = $px->show();
-				}
-				else
-				{
+				} else {
 					dol_print_error($db, 'Error for calculating graph on key='.$key.' - '.$object->error);
 				}
 			}
@@ -401,9 +389,7 @@ if ($result || empty($id))
 			if ($i % 2 == 0)
 			{
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
-			}
-			else
-			{
+			} else {
 				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
 			}
 
@@ -412,9 +398,7 @@ if ($result || empty($id))
 			{
 			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
 			    else $dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
-			}
-			else
-			{
+			} else {
 			    $dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).((string) $type != '' ? '&type='.$type : '').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
@@ -436,9 +420,7 @@ if ($result || empty($id))
 			if ($i % 2 == 0)
 			{
 				print "\n".'</div>'."\n";
-			}
-			else
-			{
+			} else {
 				print "\n".'</div></div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}

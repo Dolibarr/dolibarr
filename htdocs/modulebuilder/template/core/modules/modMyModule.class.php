@@ -297,7 +297,7 @@ class modMyModule extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List MyObject',
+			'titre'=>'List_MyObject',
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'mymodule_myobject_list',
 			'url'=>'/mymodule/myobject_list.php',
@@ -311,7 +311,7 @@ class modMyModule extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New MyObject',
+			'titre'=>'New_MyObject',
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'mymodule_myobject_new',
 			'url'=>'/mymodule/myobject_card.php?action=create',
@@ -323,7 +323,6 @@ class modMyModule extends DolibarrModules
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		END MODULEBUILDER LEFTMENU MYOBJECT */
-
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */

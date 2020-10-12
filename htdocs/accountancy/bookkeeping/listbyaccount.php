@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
@@ -54,6 +54,7 @@ if ($search_accountancy_code_end == - 1) {
 }
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
+$search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
@@ -67,8 +68,8 @@ if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
@@ -79,12 +80,13 @@ if ($sortfield == "") $sortfield = "t.doc_date,t.rowid";
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
+$formfile = new FormFile($db);
 $hookmanager->initHooks(array('bookkeepingbyaccountlist'));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (empty($search_date_start) && empty($search_date_end) && GETPOSTISSET('search_date_startday') && GETPOSTISSET('search_date_startmonth') && GETPOSTISSET('search_date_starthour')) {
+if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('search_date_startday') && !GETPOSTISSET('search_date_startmonth') && !GETPOSTISSET('search_date_starthour')) {
 	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
 	$sql .= $db->plimit(1);
@@ -147,6 +149,7 @@ if (empty($reshook))
 		$search_label_account = '';
 		$search_doc_ref = '';
 		$search_label_operation = '';
+		$search_mvt_num = '';
 		$search_direction = '';
 		$search_ledger_code = '';
 		$search_date_start = '';
@@ -190,6 +193,10 @@ if (empty($reshook))
 	if (!empty($search_label_account)) {
 		$filter['t.label_compte'] = $search_label_account;
 		$param .= '&search_label_compte=' . urlencode($search_label_account);
+	}
+	if (!empty($search_mvt_num)) {
+		$filter['t.piece_num'] = $search_mvt_num;
+		$param .= '&search_mvt_num=' . urlencode($search_mvt_num);
 	}
 	if (!empty($search_doc_ref)) {
 		$filter['t.doc_ref'] = $search_doc_ref;
@@ -255,18 +262,14 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
 		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
@@ -277,9 +280,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
@@ -298,7 +299,7 @@ $formfile = new FormFile($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-$title_page = $langs->trans("Bookkeeping").' '.strtolower($langs->trans("By")).' '.strtolower($langs->trans("AccountAccounting"));
+$title_page = $langs->trans("Operations").' - '.$langs->trans("VueByAccountAccounting").' ('.$langs->trans("Bookkeeping").')';
 
 llxHeader('', $title_page);
 
@@ -362,7 +363,7 @@ if ($action == 'delbookkeepingyear') {
 		'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
 	print $formconfirm;
 }
 
@@ -374,16 +375,19 @@ if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$opt
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 
 
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
+$newcardbutton .= dolGetButtonTitle($langs->trans('VueByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss'=>'marginleftonly btnTitleSelected'));
+
+$newcardbutton .= ' &nbsp; ';
+
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$newcardbutton, '', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -398,10 +402,10 @@ $moreforfilter = '';
 // Accountancy account
 $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
-$moreforfilter .= '<div class="nowrap">';
+$moreforfilter .= '<div class="nowrap inline-block">';
 $moreforfilter .= $langs->trans('From').' ';
 $moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
-$moreforfilter .= $langs->trans('to').' ';
+$moreforfilter .= ' '.$langs->trans('to').' ';
 $moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
@@ -429,12 +433,10 @@ if (!empty($arrayfields['t.code_journal']['checked'])) {
 if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
-	print $langs->trans('From') . ': ';
-	print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to') . ': ';
-	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
@@ -539,9 +541,7 @@ while ($i < min($num, $limit))
 				print price($sous_total_debit - $sous_total_credit);
 				print '</td>';
 				print '<td></td>';
-			}
-			else
-			{
+			} else {
 				print '<td></td>';
 				print '<td class="nowraponall right">';
 				print price($sous_total_credit - $sous_total_debit);
@@ -613,8 +613,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		}
-		elseif ($line->doc_type == 'supplier_invoice')
+		} elseif ($line->doc_type == 'supplier_invoice')
 		{
 			$langs->loadLangs(array('bills'));
 
@@ -627,8 +626,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
-		}
-		elseif ($line->doc_type == 'expense_report')
+		} elseif ($line->doc_type == 'expense_report')
 		{
 			$langs->loadLangs(array('trips'));
 
@@ -641,9 +639,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		}
-		else
-		{
+		} else {
 			// Other type
 		}
 
@@ -707,10 +703,10 @@ while ($i < min($num, $limit))
 	print '<td class="nowraponall center">';
 	if (empty($line->date_export)) {
 		if ($user->rights->accounting->mouvements->creer) {
-			print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_edit().'</a>';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_edit().'</a>';
 		}
 		if ($user->rights->accounting->mouvements->supprimer) {
-			print '&nbsp;<a href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
+			print ' &nbsp; <a class="paddingleft" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}
 	}
 	print '</td>';
@@ -744,9 +740,7 @@ if ($balance > 0 )
 	print price($sous_total_debit - $sous_total_credit);
 	print '</td>';
 	print '<td></td>';
-}
-else
-{
+} else {
 	print '<td></td>';
 	print '<td class="nowraponall right">';
 	print price($sous_total_credit - $sous_total_debit);

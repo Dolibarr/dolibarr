@@ -39,6 +39,8 @@ if (!empty($conf->commande->enabled))
 	{
 	    $langs->load("orders");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#order" method="POST">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	    print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Order")).': ';
         print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref', 'alpha').'" size="10">';
         print '<input type="submit" class="none button" value="'.$langs->trans("GetSecuredUrl").'">';
@@ -62,6 +64,8 @@ if (!empty($conf->facture->enabled))
 	{
 	    $langs->load("bills");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#invoice" method="POST">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	    print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Invoice")).': ';
         print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref', 'alpha').'" size="10">';
         print '<input type="submit" class="none button" value="'.$langs->trans("GetSecuredUrl").'">';
@@ -85,6 +89,8 @@ if (!empty($conf->contrat->enabled))
 	{
 	    $langs->load("contracts");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#contractline" method="POST">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	    print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("ContractLine")).': ';
         print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref', 'alpha').'" size="10">';
         print '<input type="submit" class="none button" value="'.$langs->trans("GetSecuredUrl").'">';
@@ -108,6 +114,8 @@ if (!empty($conf->adherent->enabled))
 	{
 	    $langs->load("members");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#membersubscription" method="POST">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	    print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Member")).': ';
         print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref', 'alpha').'" size="10">';
         print '<input type="submit" class="none reposition button" value="'.$langs->trans("GetSecuredUrl").'">';
@@ -131,6 +139,8 @@ if (!empty($conf->don->enabled))
 	{
 	    $langs->load("members");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'#donation" method="POST">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	    print $langs->trans("EnterRefToBuildUrl", $langs->transnoentitiesnoconv("Don")).': ';
         print '<input type="text class="flat" id="generate_donation_ref" name="generate_donation_ref" value="'.GETPOST('generate_donation_ref', 'alpha').'" size="10">';
         print '<input type="submit" class="none reposition button" value="'.$langs->trans("GetSecuredUrl").'">';
@@ -148,7 +158,7 @@ if (!empty($conf->don->enabled))
 
 if (!empty($conf->use_javascript_ajax))
 {
-	print "\n".'<script type="text/javascript">';
+	print "\n".'<script>';
 	print '$(document).ready(function () {
 		$("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {

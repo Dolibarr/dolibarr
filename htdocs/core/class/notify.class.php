@@ -171,7 +171,7 @@ class Notify
 				if ($notifcode)
 				{
 					if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
-					else $sql .= " AND a.code = '".$notifcode."'"; // New usage
+					else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 				}
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
 				if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
@@ -194,9 +194,7 @@ class Notify
 						}
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
@@ -216,7 +214,7 @@ class Notify
 				if ($notifcode)
 				{
 					if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
-					else $sql .= " AND a.code = '".$notifcode."'"; // New usage
+					else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 				}
 				$sql .= " AND c.entity IN (".getEntity('user').")";
 				if ($userid > 0) $sql .= " AND c.rowid = ".$userid;
@@ -239,9 +237,7 @@ class Notify
 						}
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
@@ -258,9 +254,7 @@ class Notify
 					if ($notifcode)
 					{
 						if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
-					}
-					else
-					{
+					} else {
 						if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
 					}
 
@@ -279,8 +273,7 @@ class Notify
 								$tmpuser->fetch($user->fk_user);
 								if ($tmpuser->email) $newval2 = trim($tmpuser->email);
 								else $newval2 = '';
-							}
-							else $newval2 = '';
+							} else $newval2 = '';
 						}
 						if ($newval2)
 						{
@@ -362,7 +355,7 @@ class Notify
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
-			else $sql .= " AND a.code = '".$notifcode."'"; // New usage
+			else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			$sql .= " AND s.rowid = ".$object->socid;
 
 			$sql .= "\nUNION\n";
@@ -522,9 +515,7 @@ class Notify
 						{
 							// We can't add PDF as it is not generated yet.
 							$filepdf = '';
-						}
-						else
-						{
+						} else {
 							$filepdf = $pdf_path;
 						}
 
@@ -567,8 +558,7 @@ class Notify
 							if ($obj->type_target == 'touserid') {
 	 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid ? $object->socid : 'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-							}
-							else {
+							} else {
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid ? $object->socid : 'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
 							}
@@ -576,27 +566,19 @@ class Notify
 							{
 								dol_print_error($this->db);
 							}
-						}
-						else
-						{
+						} else {
 							$error++;
 							$this->errors[] = $mailfile->error;
 						}
-					}
-					else
-				    {
+					} else {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
 					}
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog("No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = ".$object->socid);
 			}
-		}
-		else
-		{
+		} else {
 	   		$error++;
 			$this->errors[] = $this->db->lasterror();
 			dol_syslog("Failed to get list of notification to send ".$this->db->lasterror(), LOG_ERR);
@@ -743,9 +725,7 @@ class Notify
 				{
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
-				}
-				else
-				{
+				} else {
 					$filepdf = $pdf_path;
 				}
 
@@ -808,9 +788,7 @@ class Notify
 						{
 							dol_print_error($this->db);
 						}
-					}
-					else
-					{
+					} else {
 						$error++;
 						$this->errors[] = $mailfile->error;
 					}

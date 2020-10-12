@@ -96,7 +96,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS 
 $sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
 if ($search_status != '' && $search_status != '-4')
 {
-	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
 if (trim($search_ref) != '')
 {
@@ -269,8 +269,7 @@ if ($resql)
 				$projectstatic->public = $objp->public;
 				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';
@@ -283,9 +282,7 @@ if ($resql)
     print '</div>';
     print "</form>\n";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

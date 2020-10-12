@@ -19,7 +19,7 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-print '<script type="text/javascript" language="javascript">
+print '<script>
 	$(document).ready(function() {
 
 		// Click Function

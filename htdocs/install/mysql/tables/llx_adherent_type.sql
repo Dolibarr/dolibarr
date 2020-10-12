@@ -26,7 +26,7 @@ create table llx_adherent_type
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   entity           integer DEFAULT 1 NOT NULL,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50) NOT NULL,
   morphy           varchar(3) NOT NULL,

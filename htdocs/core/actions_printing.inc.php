@@ -75,8 +75,7 @@ if ($action == 'print_file' && $user->rights->printing->read) {
 						setEventMessages($printer->error, $printer->errors);
 						setEventMessages($langs->transnoentitiesnoconv("FileWasSentToPrinter", basename(GETPOST('file', 'alpha'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
 					}
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$ret = 1;
 					setEventMessages($e->getMessage(), null, 'errors');

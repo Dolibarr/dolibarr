@@ -169,7 +169,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }

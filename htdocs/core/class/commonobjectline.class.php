@@ -51,11 +51,21 @@ abstract class CommonObjectLine extends CommonObject
 
 
 	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
 	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
-	 * 	@param	string $type 	Label type (long, short or code). This can be a translation key.
-	 *	@return	string|int 		<0 if ko, label if ok
+	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
+	 *	@return	string|int 		<0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -81,9 +91,7 @@ abstract class CommonObjectLine extends CommonObject
 			else $label = $res[$label_type];
 			$this->db->free($resql);
 			return $label;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error().' sql='.$sql;
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;

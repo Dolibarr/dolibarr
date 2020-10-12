@@ -164,7 +164,7 @@ if ($resql)
 
 		$result = '';
 		$link = $linkend = '';
-		$link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php', 1).'?socid='.$obj->rowid.'">';
+		$link = '<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$obj->rowid.'">';
 		$linkend = '</a>';
 		$name = $obj->name;
 		$result .= ($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
@@ -184,9 +184,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

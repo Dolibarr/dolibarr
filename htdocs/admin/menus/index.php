@@ -2,7 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ foreach ($dirmenus as $dirmenu)
     $dirsmartphone[] = $dirmenu.'smartphone';
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $menu_handler_top = $conf->global->MAIN_MENU_STANDARD;
@@ -118,9 +118,7 @@ if ($action == 'up')
 	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'down')
+} elseif ($action == 'down')
 {
 	$current = array();
 	$next = array();
@@ -174,9 +172,7 @@ elseif ($action == 'down')
 	$sql .= " WHERE m.rowid = ".$next['rowid'];
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'confirm_delete' && $confirm == 'yes')
+} elseif ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$db->begin();
 
@@ -191,9 +187,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit;
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 
 		$reload = 0;
@@ -326,20 +320,20 @@ if ($conf->use_javascript_ajax)
 			$titre = $langs->trans($menu['titre']);
 
 			$entry = '<table class="nobordernopadding centpercent"><tr><td>';
-			$entry .= '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
+			$entry .= '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
 			$entry .= '</td><td class="right">';
-			$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+			$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+			$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
 			$entry .= '&nbsp; &nbsp; &nbsp;';
-			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 			$entry .= '</td></tr></table>';
 
-			$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-			$buttons .=	'<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-			$buttons .=	'<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
-			$buttons .=	'&nbsp; &nbsp; &nbsp;';
-			$buttons .=	'<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+			$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+			$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+			$buttons .= '&nbsp; &nbsp; &nbsp;';
+			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
@@ -408,9 +402,7 @@ if ($conf->use_javascript_ajax)
 	}
 
 	print '</div>';
-}
-else
-{
+} else {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }

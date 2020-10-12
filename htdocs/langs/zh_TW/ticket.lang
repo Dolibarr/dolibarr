@@ -72,7 +72,6 @@ Deleted=已刪除
 
 # Dict
 Type=類型
-Category=分析代碼
 Severity=嚴重程度
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=自動分配建立服務單的用戶
 TicketsAutoAssignTicketHelp=建立服務單時，可以自動將用戶分配給服務單。
 TicketNumberingModules=服務單編號模組
 TicketNotifyTiersAtCreation=建立時通知合作方
-TicketGroup=群組
 TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
 TicketsPublicNotificationNewMessage=當有新訊息時寄送電子郵件
 TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
@@ -162,7 +160,7 @@ CreatedBy=建立者
 NewTicket=新服務單
 SubjectAnswerToTicket=服務單回應
 TicketTypeRequest=需求類型
-TicketCategory=分析代碼
+TicketCategory=群組
 SeeTicket=查閱服務單
 TicketMarkedAsRead=服務單已標記為已讀
 TicketReadOn=繼續讀取

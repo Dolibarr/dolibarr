@@ -24,12 +24,15 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  * 	Superclass for invoices classes
  */
 abstract class CommonInvoice extends CommonObject
 {
+	use CommonIncoterm;
+
     /**
      * Standard invoice
      */
@@ -140,9 +143,7 @@ abstract class CommonInvoice extends CommonObject
 			$this->db->free($resql);
 			if ($multicurrency) return $obj->multicurrency_amount;
 			else return $obj->amount;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -170,9 +171,7 @@ abstract class CommonInvoice extends CommonObject
 	    if ($result >= 0)
 	    {
 	        return $result;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -193,9 +192,7 @@ abstract class CommonInvoice extends CommonObject
 	    if ($result >= 0)
 	    {
 	        return $result;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -216,9 +213,7 @@ abstract class CommonInvoice extends CommonObject
 	    if ($result >= 0)
 	    {
 	        return $result;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -248,9 +243,7 @@ abstract class CommonInvoice extends CommonObject
 				$idarray[] = $row[0];
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 		return $idarray;
@@ -284,15 +277,11 @@ abstract class CommonInvoice extends CommonObject
 			{
 				// If there is any
 				return $obj->rowid;
-			}
-			else
-			{
+			} else {
 				// If no invoice replaces it
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -311,6 +300,7 @@ abstract class CommonInvoice extends CommonObject
 		$table2 = 'paiement';
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
+		$field3=', p.ref_ext';
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 		{
@@ -318,10 +308,11 @@ abstract class CommonInvoice extends CommonObject
 			$table2 = 'paiementfourn';
 			$field = 'fk_facturefourn';
 			$field2 = 'fk_paiementfourn';
+			$field3='';
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
+		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code'.$field3;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
 		$sql .= ' WHERE pf.'.$field.' = '.$this->id;
 		//$sql.= ' WHERE pf.'.$field.' = 1';
@@ -339,7 +330,11 @@ abstract class CommonInvoice extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$retarray[] = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$tmp = array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				if (!empty($field3)) {
+				    $tmp['ref_ext'] = $obj->ref_ext;
+				}
+				$retarray[]=$tmp;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -352,8 +347,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
 				$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
-			}
-			elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+			} elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 			{
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
@@ -372,15 +366,12 @@ abstract class CommonInvoice extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 						if ($multicurrency) {
 							$retarray[] = array('amount'=>$obj->multicurrency_amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
-						}
-						else {
+						} else {
 							$retarray[] = array('amount'=>$obj->amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
 						}
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					dol_print_error($this->db);
 					return array();
@@ -389,9 +380,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			return $retarray;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return array();
@@ -473,7 +462,7 @@ abstract class CommonInvoice extends CommonObject
 		$type = 'customer_invoice';
 		if ($this->element == 'invoice_supplier') $type = 'supplier_invoice';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -482,9 +471,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				$alreadydispatched = $obj->nb;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -549,41 +536,33 @@ abstract class CommonInvoice extends CommonObject
 		    if ($status == 0) {
 		        $labelStatus = $langs->trans('BillStatusDraft');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusDraft');
-		    }
-		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
+		    } elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
 		        $labelStatus = $langs->trans('BillStatusClosedUnpaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 		        $statusType = 'status5';
-		    }
-		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
+		    } elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
 		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType = 'status9';
-		    }
-		    elseif ($alreadypaid <= 0) {
+		    } elseif ($alreadypaid == 0) {
 		        $labelStatus = $langs->trans('BillStatusNotPaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType = 'status1';
-		    }
-		    else {
+		    } else {
 		        $labelStatus = $langs->trans('BillStatusStarted');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusStarted');
 		        $statusType = 'status3';
 		    }
-		}
-		else
-		{
+		} else {
 		    $statusType = 'status6';
 
 		    if ($type == self::TYPE_CREDIT_NOTE) {
 		        $labelStatus = $langs->trans('BillStatusPaidBackOrConverted'); // credit note
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted'); // credit note
-		    }
-		    elseif ($type == self::TYPE_DEPOSIT) {
+		    } elseif ($type == self::TYPE_DEPOSIT) {
 		        $labelStatus = $langs->trans('BillStatusConverted'); // deposit invoice
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusConverted'); // deposit invoice
-		    }
-		    else {
+		    } else {
 		        $labelStatus = $langs->trans('BillStatusPaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaid');
 		    }
@@ -629,9 +608,7 @@ abstract class CommonInvoice extends CommonObject
 				$cdr_type = $obj->type_cdr;
 				$cdr_decalage = $obj->decalage;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -657,9 +634,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				$mois = 1;
 				$annee += 1;
-			}
-			else
-			{
+			} else {
 				$mois += 1;
 			}
 			// We move at the beginning of the next month, and we take a day off
@@ -682,8 +657,9 @@ abstract class CommonInvoice extends CommonObject
 
 			if ($diff < 0) $datelim = $date_lim_current;
 			else $datelim = $date_lim_next;
+		} else {
+			return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
 		}
-		else return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
 
 		return $datelim;
 	}
@@ -767,49 +743,38 @@ abstract class CommonInvoice extends CommonObject
 
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 						$resql = $this->db->query($sql);
-						if (!$resql)
-						{
+						if (!$resql) {
 							$this->error = $this->db->lasterror();
 							dol_syslog(get_class($this).'::demandeprelevement Erreur');
 							$error++;
 						}
-					}
-					else
-					{
+					} else {
 						$this->error = 'WithdrawRequestErrorNilAmount';
 						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
 						$error++;
 					}
 
-					if (!$error)
-					{
+					if (!$error) {
 						// Force payment mode of invoice to withdraw
 						$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement', 'code', 'id', 1);
-						if ($payment_mode_id > 0)
-						{
+						if ($payment_mode_id > 0) {
 							$result = $this->setPaymentMethods($payment_mode_id);
 						}
 					}
 
 					if ($error) return -1;
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = "A request already exists";
 					dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
 					return 0;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "Status of invoice does not allow this";
 			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
 			return -3;
@@ -833,9 +798,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->db->query($sql))
 		{
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
 			return -1;

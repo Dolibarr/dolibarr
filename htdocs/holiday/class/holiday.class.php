@@ -204,16 +204,12 @@ class Holiday extends CommonObject
 			if ($numref != "")
 			{
 				return $numref;
-			}
-			else
-			{
+			} else {
 				$this->error = $obj->error;
 				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Error")." ".$langs->trans("Error_HOLIDAY_ADDON_NotDefined");
 			return "";
 		}
@@ -238,9 +234,7 @@ class Holiday extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -344,9 +338,7 @@ class Holiday extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -427,16 +419,13 @@ class Holiday extends CommonObject
 				$this->fetch_optionals();
 
 				$result = 1;
-			}
-			else {
+			} else {
 				$result = 0;
 			}
 			$this->db->free($resql);
 
 			return $result;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -560,9 +549,7 @@ class Holiday extends CommonObject
 			// Returns 1 with the filled array
 			$this->holiday = $tab_result;
 			return 1;
-		}
-		else
-		{
+		} else {
 			// SQL Error
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
@@ -685,9 +672,7 @@ class Holiday extends CommonObject
 			// Returns 1 and adds the array to the variable
 			$this->holiday = $tab_result;
 			return 1;
-		}
-		else
-		{
+		} else {
 			// SQL Error
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
@@ -711,9 +696,7 @@ class Holiday extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id))
 		{
 			$num = $this->getNextNumRef(null);
-		}
-		else
-		{
+		} else {
 			$num = $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
@@ -757,9 +740,7 @@ class Holiday extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -871,9 +852,7 @@ class Holiday extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -984,9 +963,7 @@ class Holiday extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1037,9 +1014,7 @@ class Holiday extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1082,8 +1057,7 @@ class Holiday extends CommonObject
 				{
 					return false;
 				}
-			}
-			elseif ($halfday == -1)
+			} elseif ($halfday == -1)
 			{
 				// new start afternoon, new end afternoon
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
@@ -1095,8 +1069,7 @@ class Holiday extends CommonObject
 					if ($dateStart < $dateEnd) return false;
 					if ($dateEnd < $infos_CP['date_fin'] || in_array($infos_CP['halfday'], array(0, -1))) return false;
 				}
-			}
-			elseif ($halfday == 1)
+			} elseif ($halfday == 1)
 			{
 				// new start morning, new end morning
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
@@ -1108,8 +1081,7 @@ class Holiday extends CommonObject
 				{
 					if ($dateEnd > $infos_CP['date_debut'] || in_array($infos_CP['halfday'], array(0, 1))) return false;
 				}
-			}
-			elseif ($halfday == 2)
+			} elseif ($halfday == 2)
 			{
 				// new start afternoon, new end morning
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
@@ -1120,9 +1092,7 @@ class Holiday extends CommonObject
 				{
 					if ($dateEnd > $infos_CP['date_debut'] || in_array($infos_CP['halfday'], array(0, 1))) return false;
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error('', 'Bad value of parameter halfday when calling function verifDateHolidayCP');
 			}
 		}
@@ -1152,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
-		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->escape($status).")";
+		if ($status != '-1') $sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1189,8 +1159,7 @@ class Holiday extends CommonObject
 					break;
 				}
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return array('morning'=>$isavailablemorning, 'afternoon'=>$isavailableafternoon);
 	}
@@ -1209,7 +1178,11 @@ class Holiday extends CommonObject
 
 		$result = '';
 
-		$label = $langs->trans("Show").': '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Holiday").'</u>';
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->statut)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 
@@ -1300,21 +1273,22 @@ class Holiday extends CommonObject
 		$nb = count($name) + 1;
 
 		// Select HTML
-		$statut = '<select name="'.$htmlname.'" class="flat">'."\n";
-		$statut .= '<option value="-1">&nbsp;</option>'."\n";
+		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat">'."\n";
+		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
 		for ($i = 1; $i < $nb; $i++) {
 			if ($i == $selected) {
-				$statut .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
-			}
-			else {
-				$statut .= '<option value="'.$i.'">'.$langs->trans($name[$i - 1]).'</option>'."\n";
+				$out .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
+			} else {
+				$out .= '<option value="'.$i.'">'.$langs->trans($name[$i - 1]).'</option>'."\n";
 			}
 		}
 
-		$statut .= '</select>'."\n";
-		print $statut;
+		$out .= '</select>'."\n";
+		$out .= ajax_combobox($htmlname);
+
+		print $out;
 	}
 
 	/**
@@ -1328,8 +1302,8 @@ class Holiday extends CommonObject
     {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-		$sql .= " value = '".$value."'";
-		$sql .= " WHERE name = '".$name."'";
+		$sql .= " value = '".$this->db->escape($value)."'";
+		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
 		dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1370,20 +1344,14 @@ class Holiday extends CommonObject
 					if ($result)
 					{
 						return $createifnotfound;
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->lasterror();
 						return -2;
 					}
-				}
-				else
-				{
+				} else {
 					return '';
 				}
-			}
-			else
-			{
+			} else {
 				return $obj->value;
 			}
 		} else {
@@ -1463,18 +1431,14 @@ class Holiday extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
 			}
 
 			return 0;
-		}
-		else
-		{
+		} else {
 			// Mise à jour pour un utilisateur
 			$nbHoliday = price2num($nbHoliday, 5);
 
@@ -1497,9 +1461,7 @@ class Holiday extends CommonObject
 						$error++;
 						$this->errors[] = $this->db->lasterror();
 					}
-				}
-				else
-				{
+				} else {
 					// Insert for user
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users(nb_holiday, fk_user, fk_type) VALUES (";
 					$sql .= $nbHoliday;
@@ -1511,9 +1473,7 @@ class Holiday extends CommonObject
 						$this->errors[] = $this->db->lasterror();
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$this->errors[] = $this->db->lasterror();
 				$error++;
 			}
@@ -1521,9 +1481,7 @@ class Holiday extends CommonObject
 			if (!$error)
 			{
 				return 1;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
 		}
@@ -1540,7 +1498,7 @@ class Holiday extends CommonObject
 
 		$sql = "SELECT value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday_config";
-		$sql .= " WHERE name = '".$name."'";
+		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
 		$result = $this->db->query($sql);
 
@@ -1564,7 +1522,7 @@ class Holiday extends CommonObject
 	 */
 	public function createCPusers($single = false, $userid = '')
 	{
-		// Si c'est l'ensemble des utilisateurs à ajouter
+		// do we have to add balance for all users ?
 		if (!$single)
 		{
 			dol_syslog(get_class($this).'::createCPusers');
@@ -1574,17 +1532,15 @@ class Holiday extends CommonObject
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
 				$sql .= " (fk_user, nb_holiday)";
-				$sql .= " VALUES ('".$users['rowid']."','0')";
+				$sql .= " VALUES (".((int) $users['rowid'])."', '0')";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) dol_print_error($this->db);
 			}
-		}
-		else
-		{
+		} else {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
 			$sql .= " (fk_user, nb_holiday)";
-			$sql .= " VALUES ('".$userid."','0')";
+			$sql .= " VALUES (".((int) $userid)."', '0')";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) dol_print_error($this->db);
@@ -1601,7 +1557,7 @@ class Holiday extends CommonObject
     {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
-		$sql .= " WHERE fk_user = '".$user_id."'";
+		$sql .= " WHERE fk_user = ".((int) $user_id);
 
 		$this->db->query($sql);
 	}
@@ -1629,9 +1585,7 @@ class Holiday extends CommonObject
 			//return number_format($obj->nb_holiday,2);
 			if ($obj) return $obj->nb_holiday;
 			else return null;
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
@@ -1668,9 +1622,7 @@ class Holiday extends CommonObject
 					$sql .= " WHERE ((ug.fk_user = u.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql .= " OR u.entity = 0)"; // Show always superadmin
-				}
-				else
-				{
+				} else {
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
@@ -1699,16 +1651,12 @@ class Holiday extends CommonObject
 					}
 					// Retoune le tableau des utilisateurs
 					return $stringlist;
-				}
-				else
-				{
+				} else {
 					// Erreur SQL
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				// We want only list of vacation balance for user ids
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
@@ -1738,17 +1686,13 @@ class Holiday extends CommonObject
 					}
 					// Retoune le tableau des utilisateurs
 					return $stringlist;
-				}
-				else
-				{
+				} else {
 					// Erreur SQL
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			// Si faux donc return array
 			// List for Dolibarr users
 			if ($type)
@@ -1767,9 +1711,7 @@ class Holiday extends CommonObject
 					$sql .= " WHERE ((ug.fk_user = u.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql .= " OR u.entity = 0)"; // Show always superadmin
-				}
-				else
-				{
+				} else {
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 
@@ -1810,9 +1752,7 @@ class Holiday extends CommonObject
 					$this->errors[] = "Error ".$this->db->lasterror();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				// List of vacation balance users
 				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
@@ -1850,9 +1790,7 @@ class Holiday extends CommonObject
 					}
 					// Retoune le tableau des utilisateurs
 					return $tab_result;
-				}
-				else
-				{
+				} else {
 					// Erreur SQL
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
@@ -1895,9 +1833,7 @@ class Holiday extends CommonObject
 				$i++;
 			}
 			return $users_validator;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch_users_approver_holiday  Error ".$this->error, LOG_ERR);
 			return -1;
@@ -1989,11 +1925,11 @@ class Holiday extends CommonObject
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " '".$fk_user_action."',";
-		$sql .= " '".$fk_user_update."',";
+		$sql .= " '".$this->db->escape($fk_user_action)."',";
+		$sql .= " '".$this->db->escape($fk_user_update)."',";
 		$sql .= " '".$this->db->escape($label)."',";
-		$sql .= " '".$prev_solde."',";
-		$sql .= " '".$new_solde."',";
+		$sql .= " '".$this->db->escape($prev_solde)."',";
+		$sql .= " '".$this->db->escape($new_solde)."',";
 		$sql .= " ".$fk_type;
 		$sql .= ")";
 
@@ -2018,9 +1954,7 @@ class Holiday extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return $this->optRowid;
 		}
@@ -2091,9 +2025,7 @@ class Holiday extends CommonObject
 			// Retourne 1 et ajoute le tableau à la variable
 			$this->logs = $tab_result;
 			return 1;
-		}
-		else
-		{
+		} else {
 			// Erreur SQL
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
@@ -2131,8 +2063,7 @@ class Holiday extends CommonObject
 
 				return $types;
 			}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return array();
 	}
@@ -2195,9 +2126,7 @@ class Holiday extends CommonObject
             }
             $this->db->free($resql);
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;
@@ -2253,9 +2182,7 @@ class Holiday extends CommonObject
             }
 
             return $response;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;

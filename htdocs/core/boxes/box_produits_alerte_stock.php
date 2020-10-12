@@ -130,7 +130,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld .= " WHERE fk_product=".$objp->rowid;
-						$sqld .= " AND lang='".$langs->getDefaultLang()."'";
+						$sqld .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
@@ -171,8 +171,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                     {
                         $price_base_type = $langs->trans($objp->price_base_type);
                         $price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-	                }
-	                else //Parse the dynamic price
+	                } else //Parse the dynamic price
 	               	{
 						$productstatic->fetch($objp->rowid, '', '', 1);
 	                    $priceparser = new PriceParser($this->db);
@@ -181,9 +180,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 							if ($objp->price_base_type == 'HT')
 							{
 								$price_base_type = $langs->trans("HT");
-							}
-							else
-							{
+							} else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
 								$price_base_type = $langs->trans("TTC");
 							}
@@ -228,17 +225,14 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
 				$this->db->free($result);
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
-		}
-		else {
+		} else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

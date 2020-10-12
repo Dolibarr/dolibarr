@@ -58,9 +58,9 @@ class pdf_standard extends ModelePDFProduct
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -181,9 +181,7 @@ class pdf_standard extends ModelePDFProduct
 			{
 				$dir = $conf->product->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
-			}
-			else
-			{
+			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->product->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -334,9 +332,7 @@ class pdf_standard extends ModelePDFProduct
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
-				}
-				else
-				{
+				} else {
 					$height_note = 0;
 				}
 
@@ -573,15 +569,11 @@ class pdf_standard extends ModelePDFProduct
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "PRODUCT_OUTPUTDIR");
 			return 0;
 		}
@@ -740,17 +732,13 @@ class pdf_standard extends ModelePDFProduct
 	        {
 	            $height = pdf_getHeightForLogo($logo);
 	            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-	        }
-	        else
-	        {
+	        } else {
 	            $pdf->SetTextColor(200, 0, 0);
 	            $pdf->SetFont('', 'B', $default_font_size - 2);
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        $text = $this->emetteur->name;
 	        $pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 	    }

@@ -95,8 +95,7 @@ if (empty($pageid))
 		if ($result > 0)
 		{
 			$pageid = $objectpage->id;
-		}
-		elseif ($result == 0)
+		} elseif ($result == 0)
 		{
 			// Page not found from ref=pageurl, we try using alternative alias
 			$result = $objectpage->fetch(0, $object->id, null, $pageref);
@@ -105,9 +104,7 @@ if (empty($pageid))
 				$pageid = $objectpage->id;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		if ($object->fk_default_home > 0)
 		{
 			$result = $objectpage->fetch($object->fk_default_home);
@@ -164,9 +161,7 @@ if ($pageid == 'css')   // No more used ?
 	//else
 	header('Cache-Control: no-cache');
 	$original_file = $dolibarr_main_data_root.'/website/'.$websitekey.'/styles.css.php';
-}
-else
-{
+} else {
 	$original_file = $dolibarr_main_data_root.'/website/'.$websitekey.'/page'.$pageid.'.tpl.php';
 }
 

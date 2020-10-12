@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,4 +82,51 @@ function loan_prepare_head($object)
     complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'remove');
 
     return $head;
+}
+
+/**
+ * Calculate remaining loan mensuality and interests
+ *
+ * @param   int     $mens		Value of this mensuality (interests include, set 0 if we don't paid interests for this mensuality)
+ * @param   float   $capital    Remaining capital for this mensuality
+ * @param   float   $rate		Loan rate
+ * @param   int     $echance	Actual loan term
+ * @param   int   	$nbterm  	Total number of term for this loan
+ * @return  array				Array with remaining capital, interest, and mensuality for each remaining terms
+ */
+function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
+{
+    global $conf;
+    require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+    $object = new LoanSchedule($db);
+
+    // If mensuality is 0 we don't pay interests and remaining capital not modified
+    if ($mens == 0)
+    {
+        $int = 0;
+        $cap_rest = $capital;
+    }
+    else {
+        $int = ($capital * ($rate / 12));
+        $int = round($int, 2, PHP_ROUND_HALF_UP);
+        $cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
+    }
+    $output[$echance] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
+
+    $echance++;
+    $capital = $cap_rest;
+    while ($echance <= $nbterm) {
+        $mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $echance + 1), 2, PHP_ROUND_HALF_UP);
+
+        $int = ($capital * ($rate / 12));
+        $int = round($int, 2, PHP_ROUND_HALF_UP);
+        $cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
+
+        $output[$echance] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
+
+        $capital = $cap_rest;
+        $echance++;
+    }
+
+    return $output;
 }

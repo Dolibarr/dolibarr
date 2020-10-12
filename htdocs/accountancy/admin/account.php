@@ -54,8 +54,8 @@ if (!$user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -119,8 +119,7 @@ if (empty($reshook))
 			{
 				$obj = $db->fetch_object($resql);
 				$country_code = $obj->code;
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 
 			// Try to load sql file
 			if ($country_code)
@@ -143,9 +142,7 @@ if (empty($reshook))
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans("ErrorDuringChartLoad"), null, 'warnings');
 				}
 			}
@@ -233,10 +230,9 @@ if (strlen(trim($search_account))) {
 				$search_account_tmp_clean = preg_replace('/^\^/', '', $search_account_tmp);
 				$search_account_clean = preg_replace('/^\^/', '', $search_account);
 			}
-			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
-			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
-		}
-		else $sql .= natural_search("aa.account_number", $search_account_tmp);
+			$sql .= " AND (aa.account_number LIKE '".$db->escape($startchar.$search_account_tmp_clean)."'";
+			$sql .= " OR aa.account_number LIKE '".$db->escape($startchar.$search_account_clean)."%')";
+		} else $sql .= natural_search("aa.account_number", $search_account_tmp);
 	}
 }
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
@@ -267,15 +263,15 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
 	if ($search_label) $param .= '&search_label='.urlencode($search_label);
 	if ($search_labelshort) $param .= '&search_labelshort='.urlencode($search_labelshort);
 	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
     if (!empty($conf->use_javascript_ajax))
     {
@@ -298,13 +294,11 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
     $newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
 
-
-    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts")." : ";
@@ -328,8 +322,7 @@ if ($resql)
 
             $i++;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
     print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
@@ -348,15 +341,15 @@ if ($resql)
 
 	// Line for search fields
 	print '<tr class="liste_titre_filter">';
-	if (!empty($arrayfields['aa.account_number']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="'.$search_account.'"></td>';
-	if (!empty($arrayfields['aa.label']['checked']))			print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
-	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_labelshort" value="'.$search_labelshort.'"></td>';
+	if (!empty($arrayfields['aa.account_number']['checked']))	print '<td class="liste_titre"><input type="text" class="flat width100" name="search_account" value="'.$search_account.'"></td>';
+	if (!empty($arrayfields['aa.label']['checked']))			print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$search_label.'"></td>';
+	if (!empty($arrayfields['aa.labelshort']['checked']))		print '<td class="liste_titre"><input type="text" class="flat width100" name="search_labelshort" value="'.$search_labelshort.'"></td>';
 	if (!empty($arrayfields['aa.account_parent']['checked'])) {
 		print '<td class="liste_titre">';
 		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
 		print '</td>';
 	}
-	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat width100" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (!empty($arrayfields['aa.reconcilable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
@@ -395,7 +388,7 @@ if ($resql)
 		if (!empty($arrayfields['aa.account_number']['checked']))
 		{
 			print "<td>";
-			print $accountstatic->getNomUrl(1, 0, 0, '', 0, 1);
+			print $accountstatic->getNomUrl(1, 0, 0, '', 0, 1, 0, 'accountcard');
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -421,20 +414,24 @@ if ($resql)
 		// Account parent
 		if (!empty($arrayfields['aa.account_parent']['checked']))
 		{
-			if (!empty($obj->account_parent))
+			// Note: obj->account_parent is a foreign key to a rowid. It is field in child table and obj->rowid2 is same, but in parent table.
+			// So for orphans, obj->account_parent is set but not obj->rowid2
+			if (!empty($obj->account_parent) && !empty($obj->rowid2))
 			{
+				print "<td>";
+				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2;
-
-				print "<td>";
+				$accountparent->account_number = $obj->account_number2;	// Sotre an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) $totalarray['nbfield']++;
-			}
-			else
-			{
-				print '<td>&nbsp;</td>';
+			} else {
+				print '<td>';
+				if (!empty($obj->account_parent)) {
+					print '<!-- Bad value for obj->account_parent = '.$obj->account_parent.': is a rowid that does not exists -->';
+				}
+				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 		}
@@ -488,11 +485,11 @@ if ($resql)
 		// Action
 		print '<td class="center">';
 		if ($user->rights->accounting->chartofaccount) {
-			print '<a class="editfielda" href="./card.php?action=update&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
+			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a class="marginleftonly" href="./card.php?action=delete&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
+			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 			print img_delete();
 			print '</a>';
 		}

@@ -39,7 +39,7 @@ $langs->loadLangs(array('projects', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
@@ -102,9 +102,7 @@ if (empty($reshook))
 			{
 				header("Location: index.php");
 				exit;
-			}
-			else
-			{
+			} else {
 				dol_syslog($object->error, LOG_DEBUG);
 				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
@@ -121,12 +119,12 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 		$error = 0;
-		if (empty($_POST["ref"]))
+		if (! GETPOST('ref'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
 		}
-		if (empty($_POST["title"]))
+		if (! GETPOST('title'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
@@ -150,13 +148,13 @@ if (empty($reshook))
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alpha');
-			$object->title           = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alpha');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
+			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public          = GETPOST('public', 'alphanohtml');
+			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
+			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
 			$object->date_c = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
@@ -183,9 +181,7 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -212,22 +208,16 @@ if (empty($reshook))
 					$backtopage = $backtopage.'&projectid='.$object->id; // Old method
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 					header("Location:card.php?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 
 				$action = 'create';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'create';
 		}
 	}
@@ -258,10 +248,10 @@ if (empty($reshook))
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
-			$object->title        = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
-			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
@@ -334,9 +324,7 @@ if (empty($reshook))
 		{
 			$db->rollback();
 			$action = 'edit';
-		}
-		else
-		{
+		} else {
 			$db->commit();
 
 			if (GETPOST('socid', 'int') > 0) $object->fetch_thirdparty(GETPOST('socid', 'int'));
@@ -356,7 +344,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 		}
-		$result = $object->generateDocument($object->modelpdf, $outputlangs);
+		$result = $object->generateDocument($object->model_pdf, $outputlangs);
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -377,8 +365,7 @@ if (empty($reshook))
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else
-				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 			$action = '';
 		}
 	}
@@ -420,9 +407,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
-		}
-		else
-		{
+		} else {
 			dol_syslog($object->error, LOG_DEBUG);
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -442,9 +427,7 @@ if (empty($reshook))
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			// Load new object
 			$newobject = new Project($db);
 			$newobject->fetch($result);
@@ -546,7 +529,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	print '<tr><td class="tdtop">';
@@ -609,8 +592,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		{
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
-		}
-		else print $text;
+		} else print $text;
 		if (!GETPOSTISSET('backtopage')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -671,7 +653,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('description', GETPOST("description", 'none'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -703,9 +685,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	{
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	else
-	{
+	} else {
 		print ' &nbsp; &nbsp; ';
 		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	}
@@ -743,8 +723,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         	});
         });
         </script>';
-}
-elseif ($object->id > 0)
+} elseif ($object->id > 0)
 {
 	/*
      * Show or edit
@@ -895,8 +874,7 @@ elseif ($object->id > 0)
 			{
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-			}
-			else print $text;
+			} else print $text;
 			print '</td></tr>';
 		}
 
@@ -984,9 +962,7 @@ elseif ($object->id > 0)
 		}
 
 		print '</table>';
-	}
-	else
-	{
+	} else {
 		dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 		// Project card
@@ -995,7 +971,7 @@ elseif ($object->id > 0)
 
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= $object->title;
+		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
 		if ($object->thirdparty->id > 0)
@@ -1239,9 +1215,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
 			}
@@ -1252,9 +1226,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}
 			}
@@ -1265,9 +1237,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
 				}
 			}
@@ -1278,9 +1248,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
 				}
 			}
@@ -1346,9 +1314,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a>';
 				}
 			}
@@ -1358,10 +1324,8 @@ elseif ($object->id > 0)
 			{
 				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 				{
-					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-				}
-				else
-				{
+					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}
 			}
@@ -1388,7 +1352,7 @@ elseif ($object->id > 0)
 		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
 		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
 
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1418,9 +1382,7 @@ elseif ($object->id > 0)
 	// Hook to add more things on page
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('mainCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-}
-else
-{
+} else {
 	print $langs->trans("RecordNotFound");
 }
 

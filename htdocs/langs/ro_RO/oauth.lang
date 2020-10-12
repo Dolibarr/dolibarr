@@ -28,5 +28,5 @@ OAUTH_GITHUB_NAME=Serviciul OAuth GitHub
 OAUTH_GITHUB_ID=ID-ul OAuth GitHub
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_GITHUB_DESC=Mergeți la <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> această pagină </a> apoi "Înregistrați o nouă aplicație" pentru a crea acreditările OAuth
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_TEST_NAME=Testare OAuth Stripe
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

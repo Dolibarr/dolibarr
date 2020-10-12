@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
@@ -19,7 +19,7 @@
 
 /**
  *  \file       htdocs/admin/system/dolibarr.php
- *  \brief      Page to show Dolibarr informations
+ *  \brief      Page to show Dolibarr information
  */
 
 require '../../main.inc.php';
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin)
 	accessforbidden();
@@ -76,9 +76,7 @@ if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 {
     // Compare version with last install database version (upgrades never occured)
     if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
-}
-else
-{
+} else {
     // Compare version with last upgrade database version
     if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
 }
@@ -107,14 +105,10 @@ if (function_exists('curl_init'))
 
             // Show version
             print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
-        }
-        else
-        {
+        } else {
             print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction">'.$langs->trans("Check").'</a>';
     }
 }
@@ -323,7 +317,6 @@ $configfileparameters = array(
 		'?dolibarr_js_CKEDITOR' => 'dolibarr_js_CKEDITOR',
 		'?dolibarr_js_JQUERY' => 'dolibarr_js_JQUERY',
 		'?dolibarr_js_JQUERY_UI' => 'dolibarr_js_JQUERY_UI',
-		'?dolibarr_js_JQUERY_FLOT' => 'dolibarr_js_JQUERY_FLOT',
 		'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 		'separator4' => '',
@@ -365,16 +358,19 @@ foreach ($configfileparameters as $key => $value)
 		if (strpos($newkey, 'separator') !== false)
 		{
 			print '<td colspan="3">&nbsp;</td>';
-		}
-		else
-		{
+		} else {
 			// Label
 			print "<td>".$value.'</td>';
 			// Key
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
+			if (in_array($newkey, array('dolibarr_main_db_pass', 'dolibarr_main_auth_ldap_admin_pass'))) {
+				if (empty($dolibarr_main_prod)) {
+					print '<!-- '.${$newkey}.' -->';
+				}
+				print '**********';
+			}
 			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			elseif ($newkey == 'dolibarr_main_document_root_alt') {
 				$tmparray = explode(',', ${$newkey});
@@ -404,7 +400,14 @@ foreach ($configfileparameters as $key => $value)
 
 				$valuetoshow = ${$newkey};
 				if (empty($valuetoshow)) {
-					print img_warning($langs->trans('SwitchThisForABetterSecurity'));
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 1));
+				}
+			} elseif ($newkey == 'dolibarr_nocsrfcheck') {
+				print ${$newkey};
+
+				$valuetoshow = ${$newkey};
+				if (!empty($valuetoshow)) {
+					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
 				}
 			} else {
 			    print ${$newkey};
@@ -443,9 +446,7 @@ if (empty($conf->multicompany->enabled))
 {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
-}
-else
-{
+} else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) $sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 }
@@ -462,7 +463,16 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
-		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
+		print '<td class="tdoverflowmax300">';
+		if (isASecretKey($obj->name)) {
+			if (empty($dolibarr_main_prod)) {
+				print '<!-- '.$obj->value.' -->';
+			}
+			print '**********';
+		} else {
+			print dol_escape_htmltag($obj->value);
+		}
+		print '</td>'."\n";
 		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		print "</tr>\n";
 

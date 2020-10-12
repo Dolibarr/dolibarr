@@ -127,15 +127,12 @@ function barcode_encode($code, $encoding)
         /* use built-in EAN-Encoder */
         dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
         $bars = barcode_encode_ean($code, $encoding);
-    }
-    elseif (file_exists($genbarcode_loc))	// For example C39
+    } elseif (file_exists($genbarcode_loc))	// For example C39
     {
         /* use genbarcode */
         dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
         $bars = barcode_encode_genbarcode($code, $encoding);
-    }
-    else
-    {
+    } else {
         print "barcode_encode needs an external programm for encodings other then EAN/ISBN (code=".$code.", encoding=".$encoding.")<BR>\n";
         print "<UL>\n";
         print "<LI>download gnu-barcode from <A href=\"https://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
@@ -263,9 +260,7 @@ function barcode_encode_genbarcode($code, $encoding)
         $text = fgets($fp, 1024);
         $encoding = fgets($fp, 1024);
         pclose($fp);
-    }
-    else
-    {
+    } else {
         dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run popen ".$fullcommandclear, LOG_ERR);
         return false;
     }
@@ -396,18 +391,14 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
     {
         header("Content-Type: image/jpeg; name=\"barcode.jpg\"");
         imagejpeg($im);
-    }
-    elseif ($mode == 'gif')
+    } elseif ($mode == 'gif')
     {
         header("Content-Type: image/gif; name=\"barcode.gif\"");
         imagegif($im);
-    }
-    elseif (!empty($filebarcode))    // To wxrite into  afile onto disk
+    } elseif (!empty($filebarcode))    // To wxrite into  afile onto disk
     {
         imagepng($im, $filebarcode);
-    }
-    else
-    {
+    } else {
         header("Content-Type: image/png; name=\"barcode.png\"");
         imagepng($im);
     }

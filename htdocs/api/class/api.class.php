@@ -250,8 +250,7 @@ class DolibarrApi
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
 			$featuresarray = explode("&", $resource);
-		}
-		elseif (preg_match('/\|/', $resource)) {
+		} elseif (preg_match('/\|/', $resource)) {
 			$featuresarray = explode("|", $resource);
 		}
 
@@ -317,9 +316,7 @@ class DolibarrApi
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {
 	        $tmpescaped = "'".$db->escape($regbis[1])."'";
-	    }
-	    else
-	    {
+	    } else {
 	        $tmpescaped = $db->escape($tmpescaped);
 	    }
 	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;

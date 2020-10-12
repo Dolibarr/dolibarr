@@ -547,17 +547,14 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 				't.rowid' => $unit,
 				't.active' => 1
 			);
-		}
-		elseif ($scale !== '')
+		} elseif ($scale !== '')
 		{
 			$arrayforfilter = array(
 				't.scale' => $scale,
 				't.unit_type' => $measuring_style,
 				't.active' => 1
 			);
-		}
-		else
-		{
+		} else {
 			$arrayforfilter = array(
 				't.rowid' => $unit,
 				't.unit_type' => $measuring_style,
@@ -578,8 +575,7 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 			$measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label] = $labeltoreturn;
 			return $labeltoreturn;
 		}
-	}
-	else {
+	} else {
 		return $measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label];
 	}
 }

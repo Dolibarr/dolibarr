@@ -217,9 +217,7 @@ class ExportCsv extends ModeleExports
 		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -253,9 +251,7 @@ class ExportCsv extends ModeleExports
 		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -332,7 +328,6 @@ class ExportCsv extends ModeleExports
 	{
 		global $conf;
 		$addquote = 0;
-
 
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";

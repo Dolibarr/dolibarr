@@ -35,7 +35,7 @@ $langs->loadLangs(array('projects', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
@@ -68,18 +68,14 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
     		if ($result <= 0)
     		{
     			dol_print_error($db, $projectstatic->error, $projectstatic->errors);
-    		}
-    		else
-    		{
+    		} else {
     			$contactsofproject = $projectstatic->getListContactId('internal');
     			foreach ($contactsofproject as $key => $val)
     			{
     				$result = $object->add_contact($val, GETPOST("type"), GETPOST("source"));
     			}
     		}
-    	}
-    	else
-    	{
+    	} else {
   			$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
     	}
     }
@@ -88,16 +84,12 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -109,9 +101,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 	if ($object->fetch($id, $ref))
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -126,9 +116,7 @@ if ($action == 'deleteline' && $user->rights->projet->creer)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -142,9 +130,7 @@ if (!empty($project_ref) && !empty($withproject))
 		if (count($tasksarray) > 0)
 		{
 			$id = $tasksarray[0]->id;
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
 			exit;
 		}
@@ -325,8 +311,7 @@ if ($id > 0 || !empty($ref))
 		{
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
-		}
-		else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+		} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 		$morehtmlref = '';
 
@@ -533,7 +518,7 @@ if ($id > 0 || !empty($ref))
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
 					print img_picto($langs->trans('Unlink'), 'unlink');
 					print '</a>';
 				}
@@ -545,9 +530,7 @@ if ($id > 0 || !empty($ref))
 			}
 		}
 		print "</table>";
-	}
-	else
-	{
+	} else {
 		print "ErrorRecordNotFound";
 	}
 }
