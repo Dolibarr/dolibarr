@@ -827,6 +827,158 @@ class modFournisseur extends DolibarrModules
 		$this->import_convertvalue_array[$r] = [
 			'fd.fk_facture_fourn' => ['rule' => 'fetchidfromref', 'file' => '/fourn/class/fournisseur.facture.class.php', 'class' => 'FactureFournisseur', 'method' => 'fetch'],
 		];
+
+		//Import Purchase Orders
+		$r++;
+		$this->import_code[$r] = 'commande_fournisseur_' . $r;
+		$this->import_label[$r] = 'Purchase Orders';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = [];
+		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX . 'commande_fournisseur', 'extra' => MAIN_DB_PREFIX . 'commande_fournisseur_extrafields'];
+		$this->import_tables_creator_array[$r] = ['c' => 'fk_user_author'];	// Fields to store import user id
+		$this->import_fields_array[$r] = [
+			'c.ref'               => 'Document Ref*',
+			'c.ref_supplier'      => 'RefSupplier',
+			'c.fk_soc'            => 'ThirdPartyName*',
+			'c.fk_projet'         => 'ProjectId',
+			'c.date_creation'     => 'DateCreation',
+			'c.date_valid'        => 'DateValid',
+			'c.date_approve'      => 'DateApprove',
+			'c.date_commande'     => 'DateOrder',
+			'c.fk_user_modif'     => 'ModifiedById',
+			'c.fk_user_valid'     => 'ValidatedById',
+			'c.fk_user_approve'   => 'ApprovedById',
+			'c.source'            => 'Source',
+			'c.fk_statut'         => 'Status*',
+			'c.billed'            => 'Billed(0/1)',
+			'c.remise_percent'    => 'GlobalDiscount',
+			'c.tva'               => 'TotalTVA',
+			'c.total_ht'          => 'TotalHT',
+			'c.total_ttc'         => 'TotalTTC',
+			'c.note_private'      => 'NotePrivate',
+			'c.note_public'       => 'Note',
+			'c.date_livraison'    => 'DeliveryDate',
+			'c.fk_cond_reglement' => 'Payment Condition',
+			'c.fk_mode_reglement' => 'Payment Mode',
+			'c.model_pdf'         => 'Model'
+		];
+
+		if (! empty($conf->multicurrency->enabled)) {
+			$this->import_fields_array[$r]['c.multicurrency_code']      = 'Currency';
+			$this->import_fields_array[$r]['c.multicurrency_tx']        = 'CurrencyRate';
+			$this->import_fields_array[$r]['c.multicurrency_total_ht']  = 'MulticurrencyAmountHT';
+			$this->import_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->import_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+
+		// Add extra fields
+		$import_extrafield_sample = [];
+		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, " . $conf->entity . ")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.' . $obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseur'];
+		$this->import_regex_array[$r] = [
+			'c.ref' => '(PO\d{4}-\d{4}|PORDER.{1,32}$|PROV.{1,32}$)',
+			'c.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency'
+		];
+
+		$this->import_updatekeys_array[$r] = ['c.ref' => 'Ref'];
+		$this->import_convertvalue_array[$r] = [
+			'c.fk_soc' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetch',
+				'element' => 'ThirdParty'
+			],
+			'c.fk_mode_reglement' => [
+				'rule' => 'fetchidfromcodeorlabel',
+				'file' => '/compta/paiement/class/cpaiement.class.php',
+				'class' => 'Cpaiement',
+				'method' => 'fetch',
+				'element' => 'cpayment'
+			],
+			'c.source' => ['rule' => 'zeroifnull'],
+		];
+
+		//Import PO Lines
+		$r++;
+		$this->import_code[$r] = 'commande_fournisseurdet_'.$r;
+		$this->import_label[$r] = 'PO Lines';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = [];
+		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX . 'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX . 'commande_fournisseurdet_extrafields'];
+		$this->import_fields_array[$r] = [
+			'cd.fk_commande'    => 'Document Ref*',
+			'cd.fk_parent_line' => 'PrParentLine',
+			'cd.fk_product'     => 'IdProduct',
+			'cd.label'          => 'Label',
+			'cd.description'    => 'LineDescription',
+			'cd.tva_tx'         => 'LineVATRate',
+			'cd.qty'            => 'LineQty',
+			'cd.remise_percent' => 'Reduc. Percent',
+			'cd.remise'         => 'Reduc.',
+			'cd.subprice'       => 'Sub Price',
+			'cd.total_ht'       => 'LineTotalHT',
+			'cd.total_tva'      => 'LineTotalVAT',
+			'cd.total_ttc'      => 'LineTotalTTC',
+			'cd.product_type'   => 'TypeOfLineServiceOrProduct',
+			'cd.date_start'     => 'Start Date',
+			'cd.date_end'       => 'End Date',
+			'cd.info_bits'      => 'InfoBits',
+			'cd.special_code'   => 'Special Code',
+			'cd.rang'           => 'LinePosition',
+			'cd.fk_unit'        => 'Unit'
+		];
+
+		if (! empty($conf->multicurrency->enabled)) {
+			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
+			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
+			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->import_fields_array[$r]['cd.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+
+		// Add extra fields
+		$sql="SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, " . $conf->entity . ")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.' . $obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseurdet'];
+		$this->import_regex_array[$r] = [
+			'cd.product_type'       => '[0|1]$',
+			'cd.fk_product'         => 'rowid@' . MAIN_DB_PREFIX . 'product',
+			'cd.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency'
+		];
+		$this->import_updatekeys_array[$r] = ['cd.fk_commande' => 'Purchase Order Id'];
+		$this->import_convertvalue_array[$r] = [
+			'cd.fk_commande' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/fourn/class/fournisseur.commande.class.php',
+				'class'   => 'CommandeFournisseur',
+				'method'  => 'fetch',
+				'element' => 'order_supplier'
+			],
+			'cd.info_bits' => ['rule' => 'zeroifnull'],
+			'cd.special_code' => ['rule' => 'zeroifnull'],
+		];
 	}
 
 

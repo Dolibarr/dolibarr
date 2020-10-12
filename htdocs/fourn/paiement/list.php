@@ -57,20 +57,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
 $action					= GETPOST('action', 'alpha');
-$massaction 			= GETPOST('massaction', 'alpha');
+$massaction				= GETPOST('massaction', 'alpha');
 $optioncss				= GETPOST('optioncss', 'alpha');
 $contextpage			= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
 
 $socid					= GETPOST('socid', 'int');
 
-$search_ref 			= GETPOST('search_ref', 'alpha');
+$search_ref				= GETPOST('search_ref', 'alpha');
 $search_day				= GETPOST('search_day', 'int');
 $search_month			= GETPOST('search_month', 'int');
-$search_year 			= GETPOST('search_year', 'int');
+$search_year			= GETPOST('search_year', 'int');
 $search_company			= GETPOST('search_company', 'alpha');
 $search_payment_type	= GETPOST('search_payment_type');
 $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
-$search_bank_account 	= GETPOST('search_bank_account', 'int');
+$search_bank_account	= GETPOST('search_bank_account', 'int');
 $search_amount			= GETPOST('search_amount', 'alpha');		// alpha because we must be able to search on '< x'
 
 $limit					= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -86,7 +86,15 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "p.datep";
 
-// TODO: add global search for this list
+$search_all = trim(GETPOSTISSET("search_all") ? GETPOSTISSET("search_all", 'alpha') : GETPOST('sall'));
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'p.ref'=>"RefPayment",
+	's.nom'=>"ThirdParty",
+	'p.num_paiement'=>"Numero",
+	'p.amount'=>"Amount",
+);
 
 $arrayfields = array(
 	'p.ref'				=>array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
@@ -99,6 +107,7 @@ $arrayfields = array(
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
 
@@ -164,6 +173,8 @@ if ($search_cheque_num != '')	$sql .= natural_search('p.num_paiement', $search_c
 if ($search_amount)				$sql .= natural_search('p.amount', $search_amount, 1);
 if ($search_bank_account > 0)	$sql .= ' AND b.fk_account='.$search_bank_account."'";
 
+if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -222,6 +233,12 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
+
+if ($search_all)
+{
+	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+}
 
 $moreforfilter = '';
 

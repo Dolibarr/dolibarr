@@ -4118,17 +4118,13 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && !empty($object->brouillon) && $usercancreate && empty($conf->global->FAC_FORCE_DATE_VALIDATION))
+	if ($action != 'editinvoicedate' && !empty($object->brouillon) && $usercancreate && empty($conf->global->FAC_FORCE_DATE_VALIDATION))
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 
-	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
-		if ($action == 'editinvoicedate') {
-			$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date, 'invoicedate');
-		} else {
-			print dol_print_date($object->date, 'day');
-		}
+	if ($action == 'editinvoicedate') {
+		$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date, 'invoicedate');
 	} else {
 		print dol_print_date($object->date, 'day');
 	}

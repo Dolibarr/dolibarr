@@ -3441,6 +3441,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin && empty($noinfoadmin)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox($htmlname);
 	}
 
 
@@ -3510,6 +3511,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin && !$noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox('select'.$htmlname);
 	}
 
 

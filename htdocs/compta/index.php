@@ -1040,8 +1040,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			}
 
 			if ($othernb) {
+				$colspan = 6;
+				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap" colspan="5">';
+				print '<td class="nowrap" colspan="'.$colspan.'">';
 				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
 				print '</td>';
 				print "</tr>\n";
@@ -1174,8 +1176,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			}
 
 			if ($othernb) {
+				$colspan = 6;
+				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap" colspan="5">';
+				print '<td class="nowrap" colspan="'.$colspan.'">';
 				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
 				print '</td>';
 				print "</tr>\n";

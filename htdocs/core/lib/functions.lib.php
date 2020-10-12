@@ -1605,7 +1605,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					if ($pdfexists && !$error)
 					{
-						$heightforphotref = 70;
+						$heightforphotref = 80;
 						if (!empty($conf->dol_optimize_smallscreen)) $heightforphotref = 60;
 						// If the preview file is found
 						if (file_exists($fileimage))
@@ -3133,7 +3133,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title',
 				'help', 'holiday',
 				'intervention', 'label', 'language', 'list', 'listlight', 'lot',
-				'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
+				'map-marker-alt', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
 				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
@@ -3147,7 +3147,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
 				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
 				'off', 'on', 'order',
-				'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'play', 'playdisabled', 'previous', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
@@ -3181,7 +3181,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'email'=>'at',
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
-				'member'=>'users', 'mrp'=>'cubes', 'trip'=>'wallet', 'group'=>'users',
+				'member'=>'users', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
+				'trip'=>'wallet', 'group'=>'users',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
@@ -3192,7 +3193,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
 				'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
 				'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
@@ -4375,6 +4376,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle right">';
+	print '<input type="hidden" name="pageplusoneold" value="'.($page+1).'">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
@@ -8369,7 +8371,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 
 
 /**
- * Function dolGetStatus
+ * Output the badge of a status.
  *
  * @param   string  $statusLabel       Label of badge no html : use in alt attribute for accessibility
  * @param   string  $statusLabelShort  Short label of badge no html
@@ -8377,7 +8379,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  * @param   string  $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
  * @param   int	    $displayMode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
  * @param   string  $url               The url for link
- * @param   array   $params            Various params for future : recommended rather than adding more function arguments
+ * @param   array   $params            Various params. Example: array('tooltip'=>'...', 'badgeParams'=>...)
  * @return  string                     Html status string
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
@@ -8446,7 +8448,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
-		$dolGetBadgeParams['attr']['title'] = $statusLabel;
+		$dolGetBadgeParams['attr']['title'] = empty($params['tooltip']) ? $statusLabel : $params['tooltip'];
 
 		if ($displayMode == 3) {
 			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);

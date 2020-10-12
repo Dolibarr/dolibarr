@@ -221,24 +221,24 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"]))
 }
 
 
-// Init session. Name of session is specific to Dolibarr instance.
-// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
-$prefix = dol_getprefix('');
+// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
+require_once 'master.inc.php';
 
+// Init session. Name of session is specific to Dolibarr instance.
+// Must be done after the include of master.inc.php so $conf file is loaded and vars like $dolibarr_main_force_https are set.
+// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
+$prefix = dol_getprefix('');		// This uses the $conf file
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 session_name($sessionname);
-// This create lock, released when session_write_close() or end of page.
+// This create lock, released by session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION'))
 {
 	session_start();
 }
-
-// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
-require_once 'master.inc.php';
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');

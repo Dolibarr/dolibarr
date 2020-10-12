@@ -32,7 +32,7 @@ create table llx_categorie
 	fk_soc          integer DEFAULT NULL,				-- not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
 	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not
     date_creation	datetime,							-- date creation 
-    tms     		timestamp,							-- date modification
+    tms     		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,							-- last modification date
     fk_user_creat	integer,							-- user making creation
     fk_user_modif	integer,							-- user making last change
     import_key      varchar(14)							-- Import key

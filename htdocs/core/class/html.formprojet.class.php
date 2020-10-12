@@ -368,6 +368,7 @@ class FormProjets
 				} else $out .= '&nbsp;';
 				$out .= '</option>';
 			}
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -387,6 +388,18 @@ class FormProjets
 						}
 
 						$labeltoshow = '';
+
+						$disabled = 0;
+						if ($obj->fk_statut == Project::STATUS_DRAFT)
+						{
+							$disabled = 1;
+						} elseif ($obj->fk_statut == Project::STATUS_CLOSED)
+						{
+							if ($discard_closed == 2) $disabled = 1;
+						} elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled = 1;
+						}
 
 						if ($showproject == 'all')
 						{
