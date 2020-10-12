@@ -169,7 +169,7 @@ if (empty($reshook))
 		$supplier_description = GETPOST('supplier_description', 'alpha');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
-		$packaging = price2num(GETPOST("packaging", 'nohtml'), 'MS');
+		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
 
 		if ($tva_tx == '')
 		{
