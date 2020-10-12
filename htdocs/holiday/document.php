@@ -41,7 +41,7 @@ $langs->loadLangs(array('other', 'holiday', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -50,8 +50,8 @@ $result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -130,7 +130,8 @@ if ($object->id)
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>';
     $typeleaves = $object->getTypes(1, -1);
-    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $typeleaves[$object->fk_type]['label'];
+    $labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+    print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
     print '</td>';
     print '</tr>';
 
@@ -140,7 +141,9 @@ if ($object->id)
     if (!$edit)
     {
         print '<tr>';
-        print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+        print '<td>';
+        print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+        print '</td>';
         print '<td>'.dol_print_date($object->date_debut, 'day');
         print ' &nbsp; &nbsp; ';
         print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
@@ -148,7 +151,9 @@ if ($object->id)
         print '</tr>';
     } else {
         print '<tr>';
-        print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+        print '<td>';
+        print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+        print '</td>';
         print '<td>';
         print $form->selectDate($object->date_debut, 'date_debut_');
         print ' &nbsp; &nbsp; ';
@@ -160,7 +165,9 @@ if ($object->id)
     if (!$edit)
     {
         print '<tr>';
-        print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+        print '<td>';
+        print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+        print '</td>';
         print '<td>'.dol_print_date($object->date_fin, 'day');
         print ' &nbsp; &nbsp; ';
         print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
@@ -168,7 +175,9 @@ if ($object->id)
         print '</tr>';
     } else {
         print '<tr>';
-        print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+        print '<td>';
+        print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+        print '</td>';
         print '<td>';
         print $form->selectDate($object->date_fin, 'date_fin_');
         print ' &nbsp; &nbsp; ';
@@ -176,8 +185,17 @@ if ($object->id)
         print '</td>';
         print '</tr>';
     }
+
+    // Nb days consumed
     print '<tr>';
-    print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
+    print '<td>';
+    $htmlhelp = $langs->trans('NbUseDaysCPHelp');
+    $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+    $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+    if ($includesaturday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+    if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
+    print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
+    print '</td>';
     print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
     print '</tr>';
 

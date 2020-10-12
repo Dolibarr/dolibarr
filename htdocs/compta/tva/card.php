@@ -98,16 +98,16 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	}
     $object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'none');
+	$object->note_private = GETPOST("note", 'restricthtml');
 
-	if (empty($object->datev))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
-		$error++;
-	}
 	if (empty($object->datep))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
+		$error++;
+	}
+	if (empty($object->datev))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PeriodEndDate")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->type_payment) || $object->type_payment < 0)
@@ -239,7 +239,7 @@ if ($action == 'create')
     print '<label for="radiorefund">';
     print '<input type="radio" id="radiorefund" data-label="'.$langs->trans('VATRefund').'" class="flat" name="refund" value="1"'.($refund ? ' checked="checked"' : '').'>';
     print '&nbsp;';
-    print $langs->trans("Refund");
+    print $langs->trans("PaymentBack");
     print '</label>';
     print '</div>';
     print "<br>\n";
@@ -379,7 +379,7 @@ if ($id)
 	{
 		if (!empty($user->rights->tax->charges->supprimer))
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}

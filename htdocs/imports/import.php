@@ -77,8 +77,8 @@ $importmodelid = GETPOST('importmodelid');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 1);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
-$separator			= (GETPOST('separator') ? GETPOST('separator') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
-$enclosure			= (GETPOST('enclosure') ? GETPOST('enclosure') : '"');
+$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
+$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -148,9 +148,9 @@ if ($action == 'builddoc')
 
 if ($action == 'deleteprof')
 {
-	if ($_GET["id"])
+	if (GETPOST("id", 'int'))
 	{
-		$objimport->fetch($_GET["id"]);
+		$objimport->fetch(GETPOST("id", 'int'));
 		$result = $objimport->delete($user);
 	}
 }
@@ -212,9 +212,9 @@ if ($step == 3 && $datatoimport)
 	{
 		$langs->load("other");
 
-		$param = '&datatoimport='.$datatoimport.'&format='.$format;
-		if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-		if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+		$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
+		if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+		if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 
 		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$ret = dol_delete_file($file);
@@ -321,8 +321,8 @@ if ($step == 1 || !$datatoimport)
 	$_SESSION["dol_array_match_file_to_database"] = '';
 
 	$param = '';
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -346,22 +346,22 @@ if ($step == 1 || !$datatoimport)
 
 	if (count($objimport->array_import_module))
 	{
-		$sortedarrayofmodules = dol_sort_array($objimport->array_import_module, 'module_position', 'asc', 0, 0, 1);
+		$sortedarrayofmodules = dol_sort_array($objimport->array_import_module, 'position_of_profile', 'asc', 0, 0, 1);
 		foreach ($sortedarrayofmodules as $key => $value)
 		{
-			//var_dump($objimport->array_import_code[$key]);
+			//var_dump($key.' '.$value['position_of_profile'].' '.$value['import_code'].' '.$objimport->array_import_module[$key]['module']->getName().' '.$objimport->array_import_code[$key]);
 			print '<tr class="oddeven"><td>';
-			$titleofmodule = $objimport->array_import_module[$key]->getName();
+			$titleofmodule = $objimport->array_import_module[$key]['module']->getName();
 			// Special cas for import common to module/services
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 			print $titleofmodule;
 			print '</td><td>';
-			print img_object($objimport->array_import_module[$key]->getName(), $objimport->array_import_icon[$key]).' ';
+			print img_object($objimport->array_import_module[$key]['module']->getName(), $objimport->array_import_icon[$key]).' ';
 			print $objimport->array_import_label[$key];
             print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key])
 			{
-				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'filenew').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15x"').'</a>';
 			} else {
 				print $langs->trans("NotEnoughPermissions");
 			}
@@ -380,9 +380,9 @@ if ($step == 1 || !$datatoimport)
 // STEP 2: Page to select input format file
 if ($step == 2 && $datatoimport)
 {
-	$param = '&datatoimport='.$datatoimport;
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&datatoimport='.urlencode($datatoimport);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -400,7 +400,7 @@ if ($step == 2 && $datatoimport)
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]->getName();
+	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 	print $titleofmodule;
@@ -409,7 +409,7 @@ if ($step == 2 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
@@ -424,7 +424,7 @@ if ($step == 2 && $datatoimport)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
-	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport", img_picto('', 'filenew')).'</span><br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport", img_picto('', 'next', '')).'</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -445,7 +445,7 @@ if ($step == 2 && $datatoimport)
 		print '<td style="text-align:center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td style="text-align:right">';
-		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'filenew').'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15x"').'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -460,9 +460,9 @@ if ($step == 2 && $datatoimport)
 // STEP 3: Page to select file
 if ($step == 3 && $datatoimport)
 {
-	$param = '&datatoimport='.$datatoimport.'&format='.$format;
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -490,7 +490,7 @@ if ($step == 3 && $datatoimport)
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]->getName();
+	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 	print $titleofmodule;
@@ -499,7 +499,7 @@ if ($step == 3 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
@@ -549,7 +549,7 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 
-	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport", img_picto('', 'filenew')).'</span><br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport", img_picto('', 'next')).'</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -639,11 +639,11 @@ if ($step == 3 && $datatoimport)
 			// Affiche date fichier
 			print '<td style="text-align:right">'.dol_print_date(dol_filemtime($dir.'/'.$file), 'dayhour').'</td>';
 			// Del button
-			print '<td style="text-align:right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&step=3'.$param.'&urlfile='.urlencode($relativepath);
+			print '<td style="text-align:right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&step=3'.$param.'&urlfile='.urlencode($relativepath);
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td style="text-align:right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'filenew').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15x"').'</a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -753,9 +753,9 @@ if ($step == 4 && $datatoimport)
 
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
 
-	$param = '&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -773,7 +773,7 @@ if ($step == 4 && $datatoimport)
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]->getName();
+	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 	print $titleofmodule;
@@ -782,7 +782,7 @@ if ($step == 4 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
@@ -1147,7 +1147,7 @@ if ($step == 4 && $datatoimport)
 		// List of existing import profils
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
-		$sql .= " WHERE type = '".$datatoimport."'";
+		$sql .= " WHERE type = '".$db->escape($datatoimport)."'";
 		$sql .= " ORDER BY rowid";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -1160,7 +1160,7 @@ if ($step == 4 && $datatoimport)
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td><td style="text-align:right">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&token='.newToken().'&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
 				print '</tr>';
@@ -1213,10 +1213,10 @@ if ($step == 5 && $datatoimport)
 
 	$nboflines = $obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
-	$param = '&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
+	$param = '&leftmenu=import&format='.urlencode($format).'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines).'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param; // $param2 = $param without excludefirstline and endatlinenb
-	if ($excludefirstline)		$param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb)			$param .= '&endatlinenb='.$endatlinenb;
+	if ($excludefirstline)		$param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb)			$param .= '&endatlinenb='.urlencode($endatlinenb);
 	if (!empty($updatekeys))	$param .= '&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
 
 	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
@@ -1239,7 +1239,7 @@ if ($step == 5 && $datatoimport)
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]->getName();
+	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 	print $titleofmodule;
@@ -1248,7 +1248,7 @@ if ($step == 5 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
@@ -1642,9 +1642,9 @@ if ($step == 6 && $datatoimport)
 
 	$nboflines = (!empty($_GET["nboflines"]) ? $_GET["nboflines"] : dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
-	$param = '&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-	if ($excludefirstline) $param .= '&excludefirstline='.$excludefirstline;
-	if ($endatlinenb) $param .= '&endatlinenb='.$endatlinenb;
+	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines);
+	if ($excludefirstline) $param .= '&excludefirstline='.urlencode($excludefirstline);
+	if ($endatlinenb) $param .= '&endatlinenb='.urlencode($endatlinenb);
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
@@ -1662,7 +1662,7 @@ if ($step == 6 && $datatoimport)
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	$titleofmodule = $objimport->array_import_module[0]->getName();
+	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
 	if (in_array($objimport->array_import_code[0], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 	print $titleofmodule;
@@ -1671,7 +1671,7 @@ if ($step == 6 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]->getName(), $objimport->array_import_icon[0]).' ';
+	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 

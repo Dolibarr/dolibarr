@@ -31,7 +31,7 @@ $langs->loadLangs(array('admin', 'hrm'));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 

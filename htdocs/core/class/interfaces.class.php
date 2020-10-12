@@ -83,8 +83,7 @@ class Interfaces
         if (!is_object($user))	    // Warning
         {
             dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
-            global $db;
-            $user = new User($db);
+            $user = new User($this->db);
         }
         //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
 

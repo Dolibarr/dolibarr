@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $facid = GETPOST('facid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $email = GETPOST('email', 'alpha');
 
 if (empty($user->rights->takepos->run)) {
@@ -51,29 +51,31 @@ $invoice->fetch($facid);
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
-if ($action=="send")
+if ($action == "send")
 {
-    include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-    $formmail = new FormMail($db);
-    $outputlangs = new Translate('', $conf);
-    $model_id = $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE;
-    $arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
-    $subject = $arraydefaultmessage->topic;
-    ob_start(); // turn on output receipt
-    include 'receipt.php';
-    $receipt = ob_get_contents(); // get the contents of the output buffer
-    ob_end_clean();
-    $msg="<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
-    $sendto=$email;
-    $from=$mysoc->email;
-    $mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1);
-    if ($mail->error || $mail->errors) {
-        setEventMessages($mail->error, $mail->errors, 'errors');
-    } else {
-        $result = $mail->sendfile();
-    }
-    exit;
+	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	$formmail = new FormMail($db);
+	$outputlangs = new Translate('', $conf);
+	$model_id = $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE;
+	$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
+	$subject = $arraydefaultmessage->topic;
+
+	ob_start(); // turn on output receipt
+	include 'receipt.php';
+	$receipt = ob_get_contents(); // get the contents of the output buffer
+	ob_end_clean();
+
+	$msg="<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
+	$sendto=$email;
+	$from=$mysoc->email;
+	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1);
+	if ($mail->error || $mail->errors) {
+		setEventMessages($mail->error, $mail->errors, 'errors');
+	} else {
+		$result = $mail->sendfile();
+	}
+	exit;
 }
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();

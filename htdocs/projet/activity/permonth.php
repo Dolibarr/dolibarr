@@ -365,7 +365,7 @@ $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertr
 $picto = 'calendarweek';
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
@@ -373,7 +373,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'task');
+dol_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';

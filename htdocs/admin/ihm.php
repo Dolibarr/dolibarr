@@ -164,8 +164,8 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 

@@ -28,7 +28,10 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
--- Missing in v12
+-- Missing in v12 or lower
+
+ALTER TABLE llx_payment_salary MODIFY COLUMN ref varchar(30) NULL;
+ALTER TABLE llx_payment_various MODIFY COLUMN ref varchar(30) NULL;
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
@@ -44,7 +47,7 @@ ALTER TABLE llx_bom_bom_extrafields ADD INDEX idx_bom_bom_extrafields_fk_object 
 create table llx_mrp_mo_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
@@ -105,28 +108,28 @@ ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
 
 
 CREATE TABLE llx_recruitment_recruitmentjobposition(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	entity INTEGER DEFAULT 1 NOT NULL, 
-	label varchar(255) NOT NULL, 
-	qty integer DEFAULT 1 NOT NULL, 
-	fk_soc integer, 
-	fk_project integer, 
-	fk_user_recruiter integer, 
-	fk_user_supervisor integer, 
-	fk_establishment integer, 
-	date_planned date, 
-	remuneration_suggested varchar(255), 
-	description text, 
-	note_public text, 
-	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	last_main_doc varchar(255), 
-	import_key varchar(14), 
-	model_pdf varchar(255), 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+	entity INTEGER DEFAULT 1 NOT NULL,
+	label varchar(255) NOT NULL,
+	qty integer DEFAULT 1 NOT NULL,
+	fk_soc integer,
+	fk_project integer,
+	fk_user_recruiter integer,
+	fk_user_supervisor integer,
+	fk_establishment integer,
+	date_planned date,
+	remuneration_suggested varchar(255),
+	description text,
+	note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	last_main_doc varchar(255),
+	import_key varchar(14),
+	model_pdf varchar(255),
 	status smallint NOT NULL
 ) ENGINE=innodb;
 
@@ -147,7 +150,7 @@ ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN remuneration_sugge
 create table llx_recruitment_recruitmentjobposition_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -160,23 +163,24 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity integer NOT NULL DEFAULT 1,
-	fk_recruitmentjobposition INTEGER NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	description text, 
-	note_public text, 
-	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
-	model_pdf varchar(255), 
-	status smallint NOT NULL, 
-	firstname varchar(128), 
+	fk_recruitmentjobposition INTEGER NULL,
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+	description text,
+	note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
+	model_pdf varchar(255),
+	status smallint NOT NULL,
+	firstname varchar(128),
 	lastname varchar(128),
 	email varchar(255),
 	phone varchar(64),
-	remuneration_requested integer, 
+	date_birth date,
+	remuneration_requested integer,
 	remuneration_proposed integer,
 	email_msgid varchar(255),
 	fk_recruitment_origin INTEGER NULL
@@ -186,6 +190,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN entity integer NOT NULL DEFAULT 1;
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_recruitment_origin INTEGER NULL;
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN date_birth date;
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_ref (ref);
@@ -195,7 +200,7 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_rec
 create table llx_recruitment_recruitmentcandidature_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -270,9 +275,10 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitme
 
 ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
-ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float; 
-ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float; 
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float;
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float;
 
+ALTER TABLE llx_product ADD COLUMN fk_state integer DEFAULT NULL;
 
 ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
@@ -284,8 +290,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
 
-ALTER TABLE llx_ecm_directories CHANGE COLUMN date_m tms timestamp;
-ALTER TABLE llx_ecm_files CHANGE COLUMN date_m tms timestamp;
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_m tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_m tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'recruitment','recruitmentcandidature_send','',0,null,null,'(AnswerCandidature)'                    ,100,'$conf->recruitment->enabled',1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourCandidature)__',       '__(Hello)__ __CANDIDATE_FULLNAME__,<br><br>\n\n__(YourCandidatureAnswer)__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
 
@@ -314,3 +320,49 @@ ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehou
 
 ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
 ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_total_ttc;
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
+
+ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_paiement ADD COLUMN ref_ext varchar(255) AFTER ref;
+
+ALTER TABLE llx_bank ADD COLUMN origin_id integer;
+ALTER TABLE llx_bank ADD COLUMN origin_type varchar(64) NULL;
+ALTER TABLE llx_bank ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_menu MODIFY COLUMN enabled text;
+
+CREATE TABLE llx_ecm_files_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_ecm_files_extrafields ADD INDEX idx_ecm_files_extrafields (fk_object);
+
+CREATE TABLE llx_ecm_directories_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extrafields (fk_object);
+ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
+ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
+
+DELETE FROM llx_const WHERE name in ('MAIN_INCLUDE_ZERO_VAT_IN_REPORTS');
+
+UPDATE llx_projet_task_time SET tms = null WHERE tms = 0;
+ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
+
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
+DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
+

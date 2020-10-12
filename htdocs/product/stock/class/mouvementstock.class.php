@@ -217,6 +217,7 @@ class MouvementStock extends CommonObject
 		{
 			if (empty($batch))
 			{
+				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
 				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
 
@@ -424,7 +425,7 @@ class MouvementStock extends CommonObject
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
 			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ";
-			$sql .= " ".($batch ? "'".$batch."'" : "null").", ";
+			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
 			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".((int) $this->type).",";
@@ -1007,6 +1008,10 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 				$origin = new Mo($this->db);
 				break;
+			case 'user':
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$origin = new User($this->db);
+				break;
 
 			default:
 				if ($origintype)
@@ -1178,8 +1183,8 @@ class MouvementStock extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'stdmovement';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->MOUVEMENT_ADDON_PDF)) {
 				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
 			}

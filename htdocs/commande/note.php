@@ -38,7 +38,7 @@ $langs->loadLangs(array('companies', 'bills', 'orders'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = 0;

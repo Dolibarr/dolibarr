@@ -45,7 +45,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $operationid = GETPOST('operationid', 'int');
@@ -148,7 +148,7 @@ if (GETPOST('addoperation', 'alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
-	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'restricthtml');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;
@@ -165,19 +165,19 @@ if (GETPOST('addoperation', 'alpha'))
 
 if ($action == 'updateoperation')
 {
-    $emailcollectoroperation = new EmailCollectorAction($db);
-    $emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
+	$emailcollectoroperation = new EmailCollectorAction($db);
+	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
 
-    $emailcollectoroperation->actionparam = GETPOST('operationparam2', 'none');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'restricthtml');
 
-    $result = $emailcollectoroperation->update($user);
+	$result = $emailcollectoroperation->update($user);
 
-    if ($result > 0)
-    {
-        $object->fetchActions();
-    } else {
-        setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
-    }
+	if ($result > 0)
+	{
+		$object->fetchActions();
+	} else {
+		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	}
 }
 if ($action == 'deleteoperation')
 {
@@ -199,11 +199,11 @@ if ($action == 'confirm_collect')
 	$res = $object->doCollectOneCollector();
 	if ($res > 0)
 	{
-	    $debuginfo = $object->debuginfo;
-	    setEventMessages($object->lastresult, null, 'mesgs');
+		$debuginfo = $object->debuginfo;
+		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
-	    $debuginfo = $object->debuginfo;
-	    setEventMessages($object->error, null, 'errors');
+		$debuginfo = $object->debuginfo;
+		setEventMessages($object->error, null, 'errors');
 	}
 
 	$action = '';
@@ -475,27 +475,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven">';
 	print '<td>';
 	$arrayoftypes = array(
-	    'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
-	    'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
-	    'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
-	    'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
-	    'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
-	    'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
-	    // disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
-	    //'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
-	    //'X1'=>'---',
-	    //'notinsubject'=>array('label'=>'SubjectNotIn', 'data-placeholder'=>'SearchString'),
-	    //'notinbody'=>array('label'=>'BodyNotIn', 'data-placeholder'=>'SearchString'),
-	    'X2'=>'---',
-	    'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
-	    'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
-	    'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
-	    'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
-	    'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-	    'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-	    'X3'=>'---',
-	    'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
-	    'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
+		'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
+		'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
+		'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
+		'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
+		'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
+		'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
+		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
+		//'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
+		//'X1'=>'---',
+		//'notinsubject'=>array('label'=>'SubjectNotIn', 'data-placeholder'=>'SearchString'),
+		//'notinbody'=>array('label'=>'BodyNotIn', 'data-placeholder'=>'SearchString'),
+		'X2'=>'---',
+		'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
+		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
+		'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
+		'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
+		'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+		'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+		'X3'=>'---',
+		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
+		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
+		'withtrackingidinmsgid'=>array('label'=>'WithDolTrackingIDInMsgId', 'data-noparam'=>1),
+		'withouttrackingidinmsgid'=>array('label'=>'WithoutDolTrackingIDInMsgId', 'data-noparam'=>1),
 		'X4'=>'---',
 		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
 		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
@@ -538,7 +540,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
 		print '<td class="right">';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&token='.urlencode(newToken()).'&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -559,9 +561,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven">';
 	print '<td>';
 	$arrayoftypes = array(
-	    'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
-	    'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
-	    'recordevent'=>'RecordEvent');
+		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
+		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	if ($conf->recruitment->enabled) $arrayoftypes['candidature'] = 'CreateCandidature';
@@ -602,7 +604,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
 		if (in_array($ruleaction['type'], array('recordevent')))
 		{
-            print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
+			print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
@@ -610,11 +612,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="wordbreak">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid)
 		{
-		    print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
-		    print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
-		    print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
+			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
+			print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-		    print $ruleaction['actionparam'];
+			print $ruleaction['actionparam'];
 		}
 		print '</td>';
 		// Move up/down
@@ -630,7 +632,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Delete
 		print '<td class="right nowraponall">';
 		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
 		$i++;
@@ -641,7 +643,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 
 	if (!empty($conf->use_javascript_ajax)) {
-	    $urltorefreshaftermove = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$id;
+		$urltorefreshaftermove = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
@@ -668,23 +670,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a></div>';
 
 			// Clone
-		    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a></div>';
 
-		    // Collect now
-		    if (count($object->actions) > 0) {
+			// Collect now
+			if (count($object->actions) > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=collect">'.$langs->trans("CollectNow").'</a></div>';
-		    } else {
-		    	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
-		    }
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
+			}
 
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.urlencode(newToken()).'">'.$langs->trans('Delete').'</a></div>';
 		}
 		print '</div>'."\n";
 	}
 
 	if (!empty($debuginfo))
 	{
-	    print info_admin($debuginfo);
+		print info_admin($debuginfo);
 	}
 
 
@@ -705,7 +707,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->emailcollector->read;	// If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->emailcollector->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('emailcollector', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	    print $formfile->showdocuments('emailcollector', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		*/
 	/*
 		// Show links to link elements

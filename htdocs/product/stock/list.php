@@ -59,8 +59,8 @@ if (!empty($conf->categorie->enabled))
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -229,13 +229,13 @@ foreach ($search as $key => $val)
 {
 	$class_key = $key;
 	if ($class_key == 'status') $class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
-	if (($key == 'status' && $search[$key] == -1) || $key=='entity') continue;
+	if (($key == 'status' && $search[$key] == -1) || $key == 'entity') continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
 		if ($search[$key] == '-1') $search[$key] = '';
 		$mode_search = 2;
 	}
-	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : 't.' . $class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : 't.'.$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -375,7 +375,7 @@ if ($search_all)
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);

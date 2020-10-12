@@ -242,7 +242,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'src_object_type,';
 		$sql .= 'src_object_id';
 		$sql .= ') VALUES (';
-		$sql .= " '".$ref."', ";
+		$sql .= " '".$this->db->escape($ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.$this->entity.',';
@@ -403,9 +403,9 @@ class EcmFiles extends CommonObject
 				$this->src_object_id = $obj->src_object_id;
 			}
 
-			// Retrieve all extrafields for invoice
+			// Retrieve all extrafields for ecm_files
 			// fetch optionals attributes and labels
-			// $this->fetch_optionals();
+			$this->fetch_optionals();
 
 			// $this->fetch_lines();
 

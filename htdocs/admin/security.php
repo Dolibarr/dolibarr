@@ -265,7 +265,7 @@ foreach ($arrayhandler as $key => $module)
         {
             print img_picto('', 'tick');
         } else {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
         }
         print "</td></tr>\n";
 	}

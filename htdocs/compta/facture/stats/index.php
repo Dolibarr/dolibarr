@@ -94,7 +94,7 @@ dol_mkdir($dir);
 $stats = new FactureStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($mode == 'customer')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+	if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
     if (is_array($custcats) && !empty($custcats)) {
         $stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
         $stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
@@ -102,7 +102,7 @@ if ($mode == 'customer')
 }
 if ($mode == 'supplier')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+	if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 }
 
 // Build graphic number of object

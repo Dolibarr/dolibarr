@@ -54,7 +54,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->update_note(GETPOST('note', 'none'));
+	$result = $object->update_note(GETPOST('note', 'restricthtml'));
 	if ($result > 0)
 	{
 		$db->commit();
@@ -74,7 +74,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	if ($result > 0)
 	{
 		$db->commit();
-		header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
+		header('Location: '.DOL_URL_ROOT.'/fourn/paiement/list.php');
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -166,7 +166,7 @@ if ($result > 0)
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 	}
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
@@ -251,9 +251,10 @@ if ($result > 0)
 	print '<br>';
 
 	/**
-	 *	Liste des factures
+	 *	List of vendor invoices
 	 */
-	$sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom as name, s.rowid as socid';
+	$sql = 'SELECT f.rowid, f.rowid as facid, f.ref, f.ref_supplier, f.type, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.datef as date, f.fk_statut as status,';
+	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
@@ -285,6 +286,13 @@ if ($result > 0)
 
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+				$facturestatic->date = $db->jdate($objp->date);
+				$facturestatic->type = $objp->type;
+				$facturestatic->total_ht = $objp->total_ht;
+				$facturestatic->total_tva = $objp->total_tva;
+				$facturestatic->total_ttc = $objp->total_ttc;
+				$facturestatic->statut = $objp->status;
+				$facturestatic->alreadypaid = -1;	// unknown
 
 				print '<tr class="oddeven">';
 				// Ref
@@ -300,7 +308,7 @@ if ($result > 0)
 				// Payed
 				print '<td class="right">'.price($objp->amount).'</td>';
 				// Status
-				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->fk_statut, 6, 1).'</td>';
+				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->status, 6, 1).'</td>';
 				print "</tr>\n";
 
 				if ($objp->paye == 1)
@@ -345,7 +353,7 @@ if ($result > 0)
 		{
 			if ($allow_delete)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}
@@ -367,7 +375,7 @@ if ($result > 0)
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 		$genallowed = $user->rights->fournisseur->facture->lire;
 		$delallowed = $user->rights->fournisseur->facture->creer;
-		$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
 		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 		$somethingshown = $formfile->numoffiles;

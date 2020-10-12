@@ -1,6 +1,4 @@
 <?php
-use Sabre\VObject\Recur\EventIterator\HandleRDateExpandTest;
-
 /* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
@@ -987,11 +985,11 @@ function migrate_contracts_det($db, $langs, $conf)
                 $sql .= $obj->cref.", ".($obj->fk_product ? $obj->fk_product : 0).", ";
                 $sql .= "0, ";
                 $sql .= "'".$db->escape($obj->label)."', null, ";
-                $sql .= ($obj->date_contrat ? "'".$obj->date_contrat."'" : "null").", ";
+                $sql .= ($obj->date_contrat ? "'".$db->escape($obj->date_contrat)."'" : "null").", ";
                 $sql .= "null, ";
                 $sql .= "null, ";
-                $sql .= "'".$obj->tva_tx."' , 1, ";
-                $sql .= "'".$obj->price."', '".$obj->price."', ".$obj->fk_user_author.",";
+                $sql .= "'".$db->escape($obj->tva_tx)."' , 1, ";
+                $sql .= "'".$db->escape($obj->price)."', '".$db->escape($obj->price)."', ".$obj->fk_user_author.",";
                 $sql .= "null";
                 $sql .= ")";
 
@@ -1180,9 +1178,11 @@ function migrate_contracts_date2($db, $langs, $conf)
                 $obj = $db->fetch_object($resql);
                 if ($obj->date_contrat > $obj->datemin)
                 {
+                	$datemin = $db->jdate($obj->datemin);
+
                     print $langs->trans('MigrationContractsInvalidDateFix', $obj->cref, $obj->date_contrat, $obj->datemin)."<br>\n";
                     $sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
-                    $sql .= " SET date_contrat='".$obj->datemin."'";
+                    $sql .= " SET date_contrat='".$db->idate($datemin)."'";
                     $sql .= " WHERE rowid=".$obj->cref;
                     $resql2 = $db->query($sql);
                     if (!$resql2) dol_print_error($db);
@@ -2097,9 +2097,11 @@ function migrate_commande_livraison($db, $langs, $conf)
 
                     if ($resql2)
                     {
+                    	$date_livraison = $db->jdate($obj->date_livraison);
+
                         $sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-                        $sqlu .= " ref_client='".$obj->ref_client."'";
-                        $sqlu .= ", date_livraison='".$obj->date_livraison."'";
+                        $sqlu .= " ref_client='".$db->escape($obj->ref_client)."'";
+                        $sqlu .= ", date_livraison='".$db->idate($date_livraison)."'";
                         $sqlu .= " WHERE rowid = ".$obj->rowid;
                         $resql3 = $db->query($sqlu);
                         if (!$resql3)
@@ -2181,8 +2183,8 @@ function migrate_detail_livraison($db, $langs, $conf)
                     $sql = "UPDATE ".MAIN_DB_PREFIX."livraisondet SET";
                     $sql .= " fk_product=".$obj->fk_product;
                     $sql .= ",description='".$db->escape($obj->description)."'";
-                    $sql .= ",subprice='".$obj->subprice."'";
-                    $sql .= ",total_ht='".$obj->total_ht."'";
+                    $sql .= ",subprice='".$db->escape($obj->subprice)."'";
+                    $sql .= ",total_ht='".$db->escape($obj->total_ht)."'";
                     $sql .= " WHERE fk_commande_ligne = ".$obj->rowid;
                     $resql2 = $db->query($sql);
 
@@ -2199,7 +2201,7 @@ function migrate_detail_livraison($db, $langs, $conf)
                             $total_ht = $obju->total_ht + $obj->total_ht;
 
                             $sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-                            $sqlu .= " total_ht='".$total_ht."'";
+                            $sqlu .= " total_ht='".$db->escape($total_ht)."'";
                             $sqlu .= " WHERE rowid=".$obj->fk_livraison;
                             $resql4 = $db->query($sqlu);
                             if (!$resql4)
@@ -2283,7 +2285,7 @@ function migrate_stocks($db, $langs, $conf)
                 $obj = $db->fetch_object($resql);
 
                 $sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
-                $sql .= " stock = '".$obj->total."'";
+                $sql .= " stock = '".$db->escape($obj->total)."'";
                 $sql .= " WHERE rowid=".$obj->fk_product;
 
                 $resql2 = $db->query($sql);
@@ -2352,7 +2354,7 @@ function migrate_menus($db, $langs, $conf)
                     $obj = $db->fetch_object($resql);
 
                     $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
-                    $sql .= " enabled = '".$obj->action."'";
+                    $sql .= " enabled = '".$db->escape($obj->action)."'";
                     $sql .= " WHERE rowid=".$obj->rowid;
                     $sql .= " AND enabled = '1'";
 
@@ -2428,7 +2430,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
                     $obj = $db->fetch_object($resql);
 
                     $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-                    $sql .= " fk_adresse_livraison = '".$obj->fk_adresse_livraison."'";
+                    $sql .= " fk_adresse_livraison = '".$db->escape($obj->fk_adresse_livraison)."'";
                     $sql .= " WHERE rowid=".$obj->fk_expedition;
 
                     $resql2 = $db->query($sql);
@@ -2517,7 +2519,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
                 print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
                 $sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
-                $sql .= " ".$field2." = '".$obj->rowid."'";
+                $sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
                 $sql .= " WHERE rowid=".$obj->field;
 
                 $resql2 = $db->query($sql);
@@ -2577,7 +2579,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
                 print 'Line '.$obj->rowid.' in '.$table1.' is linked to record '.$obj->field.' in '.$table2.' that has no link to '.$table1.'. We fix this.<br>';
                 $sql = "UPDATE ".MAIN_DB_PREFIX.$table2." SET";
-                $sql .= " ".$field2." = '".$obj->rowid."'";
+                $sql .= " ".$field2." = '".$db->escape($obj->rowid)."'";
                 $sql .= " WHERE rowid=".$obj->field;
 
                 $resql2 = $db->query($sql);
@@ -2830,9 +2832,9 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
                     $sqlInsert .= ", targettype";
                     $sqlInsert .= ") VALUES (";
                     $sqlInsert .= $obj->$fk_source;
-                    $sqlInsert .= ", '".$sourcetype."'";
+                    $sqlInsert .= ", '".$db->escape($sourcetype)."'";
                     $sqlInsert .= ", ".$obj->$fk_target;
-                    $sqlInsert .= ", '".$targettype."'";
+                    $sqlInsert .= ", '".$db->escape($targettype)."'";
                     $sqlInsert .= ")";
 
                     $result = $db->query($sqlInsert);
@@ -3032,8 +3034,8 @@ function migrate_customerorder_shipping($db, $langs, $conf)
                         $obj = $db->fetch_object($resql);
 
                         $sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-                        $sqlUpdate .= " ref_customer = '".$obj->ref_client."'";
-                        $sqlUpdate .= ", date_delivery = '".($obj->date_livraison ? $obj->date_livraison : 'null')."'";
+                        $sqlUpdate .= " ref_customer = '".$db->escape($obj->ref_client)."'";
+                        $sqlUpdate .= ", date_delivery = '".$db->escape($obj->date_livraison ? $obj->date_livraison : 'null')."'";
                         $sqlUpdate .= " WHERE rowid = ".$obj->shipping_id;
 
                         $result = $db->query($sqlUpdate);
@@ -3219,8 +3221,8 @@ function migrate_shipping_delivery2($db, $langs, $conf)
                 $obj = $db->fetch_object($resql);
 
                 $sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-                $sqlUpdate .= " ref_customer = '".$obj->ref_customer."',";
-                $sqlUpdate .= " date_delivery = ".($obj->date_delivery ? "'".$obj->date_delivery."'" : 'null');
+                $sqlUpdate .= " ref_customer = '".$db->escape($obj->ref_customer)."',";
+                $sqlUpdate .= " date_delivery = ".($obj->date_delivery ? "'".$db->escape($obj->date_delivery)."'" : 'null');
                 $sqlUpdate .= " WHERE rowid = ".$obj->delivery_id;
 
                 $result = $db->query($sqlUpdate);
@@ -3286,7 +3288,7 @@ function migrate_actioncomm_element($db, $langs, $conf)
 			$db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
-			$sql .= "fk_element = ".$field.", elementtype = '".$type."'";
+			$sql .= "fk_element = ".$field.", elementtype = '".$db->escape($type)."'";
 			$sql .= " WHERE ".$field." IS NOT NULL";
 			$sql .= " AND fk_element IS NULL";
 			$sql .= " AND elementtype IS NULL";
@@ -3345,7 +3347,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 		$sqlSelect = "SELECT id";
 		$sqlSelect .= " FROM ".MAIN_DB_PREFIX."c_paiement";
 		$sqlSelect .= " WHERE id = ".$old_id;
-		$sqlSelect .= " AND code = '".$elements['code'][$key]."'";
+		$sqlSelect .= " AND code = '".$db->escape($elements['code'][$key])."'";
 
 		$resql = $db->query($sqlSelect);
 		if ($resql)
@@ -3360,13 +3362,13 @@ function migrate_mode_reglement($db, $langs, $conf)
 				$sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET ";
 				$sqla .= "fk_paiement = ".$elements['new_id'][$key];
 				$sqla .= " WHERE fk_paiement = ".$old_id;
-				$sqla .= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".$old_id." AND code = '".$elements['code'][$key]."')";
+				$sqla .= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".$old_id." AND code = '".$db->escape($elements['code'][$key])."')";
 				$resqla = $db->query($sqla);
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
 				$sql .= "id = ".$elements['new_id'][$key];
 				$sql .= " WHERE id = ".$old_id;
-				$sql .= " AND code = '".$elements['code'][$key]."'";
+				$sql .= " AND code = '".$db->escape($elements['code'][$key])."'";
 				$resql = $db->query($sql);
 
 				if ($resqla && $resql)

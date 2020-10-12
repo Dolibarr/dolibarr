@@ -66,15 +66,15 @@ class MenuManager
     {
     	global $conf, $user, $langs;
 
-		// On sauve en session le menu principal choisi
-		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"] = $_GET["mainmenu"];
-		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"] = $_GET["idmenu"];
+		// We save into session the main menu selected
+    	if (GETPOSTISSET("mainmenu")) $_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
+    	if (GETPOSTISSET("idmenu"))   $_SESSION["idmenu"] = GETPOST("idmenu", 'int');
 
-		// Read mainmenu and leftmenu that define which menu to show
-        if (isset($_GET["mainmenu"]))
+		// Read now mainmenu and leftmenu that define which menu to show
+    	if (GETPOSTISSET("mainmenu"))
         {
         	// On sauve en session le menu principal choisi
-        	$mainmenu = $_GET["mainmenu"];
+        	$mainmenu = GETPOST("mainmenu", 'aZ09');
         	$_SESSION["mainmenu"] = $mainmenu;
         	$_SESSION["leftmenuopened"] = "";
         } else {
@@ -83,10 +83,10 @@ class MenuManager
         }
         if (!empty($forcemainmenu)) $mainmenu = $forcemainmenu;
 
-        if (isset($_GET["leftmenu"]))
+        if (GETPOSTISSET("leftmenu"))
         {
         	// On sauve en session le menu principal choisi
-        	$leftmenu = $_GET["leftmenu"];
+        	$leftmenu = GETPOST("leftmenu", 'aZ09');
         	$_SESSION["leftmenu"] = $leftmenu;
 
         	if ($_SESSION["leftmenuopened"] == $leftmenu)	// To collapse
@@ -147,7 +147,6 @@ class MenuManager
         	if ($mode == 'top')  print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0);
         	if ($mode == 'left') print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 		}
-
 		if ($mode == 'topnb')
 		{
 		    print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode); // no output

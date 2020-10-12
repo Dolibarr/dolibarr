@@ -29,7 +29,7 @@ $langs->load("admin");
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $choice = GETPOST('choice', 'aZ09');
 

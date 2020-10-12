@@ -40,7 +40,7 @@ $langs->loadLangs(array('admin', 'oauth'));
 if (!$user->admin)
     accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

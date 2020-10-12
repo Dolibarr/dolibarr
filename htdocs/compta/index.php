@@ -49,7 +49,7 @@ $langs->loadLangs(array('compta', 'bills'));
 if (!empty($conf->commande->enabled))
 	$langs->load("orders");
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $bid = GETPOST('bid', 'int');
 
 // Security check
@@ -60,7 +60,7 @@ if ($user->socid > 0)
 	$socid = $user->socid;
 }
 
-$max = 3;
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('invoiceindex'));
@@ -159,8 +159,8 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql.= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
-	$sql.= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
+	$sql .= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
 
 	// Add Group from hooks
 	$parameters = array();
@@ -213,11 +213,11 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td class="nowrap">';
+				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
 				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td class="nowrap">';
-				print $companystatic->getNomUrl(1, 'customer', 16);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $companystatic->getNomUrl(1, 'customer');
 				print '</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -305,11 +305,11 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td class="nowrap">';
-				print $facturesupplierstatic->getNomUrl(1, '', 16);
+				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+				print $facturesupplierstatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td>';
-				print $companystatic->getNomUrl(1, 'supplier', 16);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $companystatic->getNomUrl(1, 'supplier');
 				print '</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -370,6 +370,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
+		$othernb = 0;
 
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -385,6 +386,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			while ($i < $num && $i < $conf->liste_limit)
 			{
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
 
 				$facturestatic->ref = $obj->ref;
 				$facturestatic->id = $obj->rowid;
@@ -441,6 +450,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$totalam += $obj->am;
 
 				$i++;
+			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 		} else {
 			$colspan = 5;
@@ -501,9 +518,19 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		{
 			$i = 0;
 			$total = $total_ttc = $totalam = 0;
+			$othernb = 0;
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
 
 				$facstatic->ref = $obj->ref;
 				$facstatic->id = $obj->rowid;
@@ -523,11 +550,11 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$thirdpartystatic->code_compta = '';
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven nowraponall"><td>';
+				print '<tr class="oddeven nowraponall tdoverflowmax100"><td>';
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td>';
-				print $thirdpartystatic->getNomUrl(1, 'supplier', 44);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $thirdpartystatic->getNomUrl(1, 'supplier');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -538,6 +565,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
 				$i++;
+			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 		} else {
 			$colspan = 5;
@@ -574,10 +609,10 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var = false;
 		$num = $db->num_rows($result);
 
 		$i = 0;
+		$othernb = 0;
 
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -596,6 +631,14 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 			{
 				$objp = $db->fetch_object($result);
 
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
+
 				$donationstatic->id = $objp->rowid;
 				$donationstatic->ref = $objp->rowid;
 				$donationstatic->lastname = $objp->lastname;
@@ -604,7 +647,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				$label = $donationstatic->getFullName($langs);
 				if ($objp->societe) $label .= ($label ? ' - ' : '').$objp->societe;
 
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven tdoverflowmax100">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
 				print '<td class="nowrap right">'.price($objp->amount).'</td>';
@@ -613,6 +656,14 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				print '</tr>';
 
 				$i++;
+			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -663,9 +714,19 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			{
 				$i = 0;
 				$tot_ttc = 0;
+				$othernb = 0;
+
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
+
+					if ($i >= $max) {
+						$othernb += 1;
+						$i++;
+						$total += $obj->total_ht;
+						$total_ttc += $obj->total_ttc;
+						continue;
+					}
 
 					$chargestatic->id = $obj->rowid;
 					$chargestatic->ref = $obj->rowid;
@@ -673,7 +734,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$chargestatic->paye = $obj->paye;
 
 					print '<tr class="oddeven">';
-					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
+					print '<td class="nowraponall">'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="nowrap right">'.price($obj->amount).'</td>';
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
@@ -682,6 +743,14 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 					$tot_ttc += $obj->amount;
 					$i++;
+				}
+
+				if ($othernb) {
+					print '<tr class="oddeven">';
+					print '<td class="nowrap" colspan="5">';
+					print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+					print '</td>';
+					print "</tr>\n";
 				}
 
 				print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Total").'</td>';
@@ -740,6 +809,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 		if ($num)
 		{
 			$i = 0;
+			$othernb = 0;
 
             print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
@@ -763,6 +833,14 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
 
 				$societestatic->id = $obj->socid;
 				$societestatic->name = $obj->name;
@@ -797,8 +875,8 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
 				print '</td>';
 
-				print '<td class="left">';
-                print $societestatic->getNomUrl(1, 'customer', 44);
+				print '<td class="nowrap tdoverflowmax100">';
+                print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -810,6 +888,14 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				//print "x".$tot_ttc."z".$obj->tot_fttc;
 				$tot_tobill += ($obj->total_ttc - $obj->tot_fttc);
 				$i++;
+			}
+
+			if ($othernb) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="5">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
@@ -861,6 +947,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
+		$othernb = 0;
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -886,6 +973,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			while ($i < $num && $i < $conf->liste_limit)
 			{
 				$obj = $db->fetch_object($resql);
+
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
 
 				$facturestatic->ref = $obj->ref;
 				$facturestatic->id = $obj->rowid;
@@ -927,14 +1022,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td class="left">';
-				print $societestatic->getNomUrl(1, 'customer', 44);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="nowrap right">'.price($obj->am).'</td>';
-				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
+				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am, $obj->type).'</td>';
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
@@ -942,6 +1037,16 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$totalam += $obj->am;
 
 				$i++;
+			}
+
+			if ($othernb) {
+				$colspan = 6;
+				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="'.$colspan.'">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</font> </td>';
@@ -970,7 +1075,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 {
 	$facstatic = new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 	$sql .= ", ff.date_lim_reglement";
 	$sql .= ", s.nom as name";
     $sql .= ", s.rowid as socid, s.email";
@@ -991,7 +1096,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$reshook = $hookmanager->executeHooks('printFieldListWhereSupplierUnpaid', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
+	$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 	$sql .= " ORDER BY ff.date_lim_reglement ASC";
 
@@ -999,6 +1104,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
+		$othernb = 0;
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -1028,8 +1134,17 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			{
 				$obj = $db->fetch_object($resql);
 
+				if ($i >= $max) {
+					$othernb += 1;
+					$i++;
+					$total += $obj->total_ht;
+					$total_ttc += $obj->total_ttc;
+					continue;
+				}
+
 				$facstatic->ref = $obj->ref;
 				$facstatic->id = $obj->rowid;
+				$facstatic->type = $obj->type;
 				$facstatic->total_ht = $obj->total_ht;
 				$facstatic->total_tva = $obj->total_tva;
 				$facstatic->total_ttc = $obj->total_ttc;
@@ -1044,20 +1159,30 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$societestatic->code_compta = $obj->code_compta;
 				$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td>';
+				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$societestatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="nowrap right">'.price($obj->am).'</td>';
-				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
+				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am, $obj->type).'</td>';
 				print '</tr>';
 				$total += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
 				$i++;
+			}
+
+			if ($othernb) {
+				$colspan = 6;
+				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
+				print '<tr class="oddeven">';
+				print '<td class="nowrap" colspan="'.$colspan.'">';
+				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '</td>';
+				print "</tr>\n";
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</font> </td>';

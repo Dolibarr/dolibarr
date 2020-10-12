@@ -47,7 +47,7 @@ function user_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("UserCard");
+	$head[$h][1] = $langs->trans("User");
 	$head[$h][2] = 'user';
 	$h++;
 
@@ -129,8 +129,9 @@ function user_prepare_head($object)
 			dol_print_error($db);
 		}
 
+		$langs->load("mails");
 		$head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Notifications");
+		$head[$h][1] = $langs->trans("NotificationsAuto");
 		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notify';
 		$h++;

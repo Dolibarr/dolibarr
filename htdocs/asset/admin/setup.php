@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "assets"));
 if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array('FIXEDASSETS_MYPARAM1'=>array('css'=>'minwidth200'), 'FIXEDASSETS_MYPARAM2'=>array('css'=>'minwidth500'));

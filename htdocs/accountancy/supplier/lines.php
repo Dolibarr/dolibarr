@@ -62,8 +62,8 @@ $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) $page = 0;
 $offset = $limit * $page;
@@ -94,7 +94,7 @@ $formaccounting = new FormAccounting($db);
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_societe = '';
-    $search_lineid = '';
+	$search_lineid = '';
 	$search_ref = '';
 	$search_invoice = '';
 	$search_label = '';
@@ -196,7 +196,7 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_lineid) {
-    $sql .= natural_search("l.rowid", $search_lineid, 1);
+	$sql .= natural_search("l.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search("f.ref", $search_invoice);
@@ -250,13 +250,13 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -318,7 +318,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="' . dol_escape_htmltag($search_societe) . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
 	//	print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
@@ -348,29 +348,29 @@ if ($result) {
 	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
-    $thirdpartystatic = new Societe($db);
+	$thirdpartystatic = new Societe($db);
 	$facturefournisseur_static = new FactureFournisseur($db);
 	$productstatic = new ProductFournisseur($db);
-    $accountingaccountstatic = new AccountingAccount($db);
+	$accountingaccountstatic = new AccountingAccount($db);
 
-    $i = 0;
+	$i = 0;
 	while ($i < min($num_lines, $limit))
-    {
+	{
 		$objp = $db->fetch_object($result);
 
 		$facturefournisseur_static->ref = $objp->ref;
 		$facturefournisseur_static->id = $objp->facid;
 
-        $thirdpartystatic->id = $objp->socid;
-        $thirdpartystatic->name = $objp->name;
-        $thirdpartystatic->client = $objp->client;
-        $thirdpartystatic->fournisseur = $objp->fournisseur;
-        $thirdpartystatic->code_client = $objp->code_client;
-        $thirdpartystatic->code_compta_client = $objp->code_compta_client;
-        $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-        $thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-        $thirdpartystatic->email = $objp->email;
-        $thirdpartystatic->country_code = $objp->country_code;
+		$thirdpartystatic->id = $objp->socid;
+		$thirdpartystatic->name = $objp->name;
+		$thirdpartystatic->client = $objp->client;
+		$thirdpartystatic->fournisseur = $objp->fournisseur;
+		$thirdpartystatic->code_client = $objp->code_client;
+		$thirdpartystatic->code_compta_client = $objp->code_compta_client;
+		$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+		$thirdpartystatic->email = $objp->email;
+		$thirdpartystatic->country_code = $objp->country_code;
 
 		$productstatic->ref = $objp->product_ref;
 		$productstatic->id = $objp->product_id;
@@ -415,7 +415,7 @@ if ($result) {
 		print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
 		// Thirdparty
-		print '<td class="tdoverflowmax100">' . $thirdpartystatic->getNomUrl(1, 'supplier') . '</td>';
+		print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
 
 		// Country
 		print '<td>';
@@ -428,7 +428,7 @@ if ($result) {
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		print '<td class="center">';
-        print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
@@ -437,14 +437,14 @@ if ($result) {
 		print '</tr>';
 		$i++;
 	}
-    print '</table>';
-    print "</div>";
+	print '</table>';
+	print "</div>";
 
-    if ($nbtotalofrecords > $limit) {
-        print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
-    }
+	if ($nbtotalofrecords > $limit) {
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
+	}
 
-    print '</form>';
+	print '</form>';
 } else {
 	print $db->lasterror();
 }

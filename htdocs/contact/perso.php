@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 $langs->loadLangs(array('companies', 'other'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
@@ -188,7 +188,7 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Date To Birth
-    print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
+    print '<tr><td>'.$langs->trans("DateOfBirth").'</td><td>';
     $form = new Form($db);
     print $form->selectDate($object->birthday, 'birthday', 0, 0, 1, "perso", 1, 0);
     print '</td>';
@@ -272,7 +272,7 @@ if ($action == 'edit')
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday, "day");
+        print '<td>'.$langs->trans("DateOfBirth").'</td><td colspan="3">'.dol_print_date($object->birthday, "day");
 
         print ' &nbsp; ';
         //var_dump($birthdatearray);
@@ -288,7 +288,7 @@ if ($action == 'edit')
         else print $langs->trans("BirthdayAlertOff");
         print '</td>';
     } else {
-        print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3"></td>';
+        print '<td>'.$langs->trans("DateOfBirth").'</td><td colspan="3"></td>';
     }
     print "</tr>";
 

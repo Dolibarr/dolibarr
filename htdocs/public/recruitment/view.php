@@ -241,14 +241,13 @@ print '<div with="100%" id="tablepublicpayment">';
 print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 $error = 0;
-$var = false;
 $found = true;
 
 print '<br>';
 
 // Label
 print $langs->trans("Label").' : ';
-print '<b>'.$object->label.'</b><br>';
+print '<b>'.dol_escape_htmltag($object->label).'</b><br>';
 
 // Date
 print  $langs->trans("DateExpected").' : ';
@@ -263,7 +262,7 @@ print '</b><br>';
 // Remuneration
 print  $langs->trans("Remuneration").' : ';
 print '<b>';
-print $object->remuneration_suggested;
+print dol_escape_htmltag($object->remuneration_suggested);
 print '</b><br>';
 
 // Contact
@@ -280,10 +279,16 @@ if (empty($emailforcontact)) {
 }
 print '<b>';
 print $tmpuser->getFullName(-1);
-print ' - '.img_picto('', 'email', 'class="paddingrightonly"').dol_print_email($emailforcontact);
+print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
 print '</b>';
 print '</b><br>';
 
+if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
+	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+}
+if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
+	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+}
 
 print '<br>';
 
@@ -291,7 +296,7 @@ print '<br>';
 
 $text = $object->description;
 print $text;
-print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
 print '</div>'."\n";
 print "\n";

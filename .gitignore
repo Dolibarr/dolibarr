@@ -36,8 +36,21 @@ htdocs/includes/jakub-onderka/
 htdocs/includes/phpdocumentor/
 htdocs/includes/phpspec/
 htdocs/includes/phpunit/
+htdocs/includes/php-parallel-lint/
 htdocs/includes/sebastian/
 htdocs/includes/squizlabs/
-htdocs/includes/symfony/
 htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
+
+# Node Modules
+build/yarn-error.log
+build/node_modules/
+node_modules/
+
+#yarn
+yarn.lock
+
+#package-lock
+package-lock.json
+
+doc/install.lock

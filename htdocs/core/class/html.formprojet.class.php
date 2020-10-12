@@ -170,7 +170,7 @@ class FormProjets
 			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql .= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 			elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 			{
-				$sql .= " AND (p.fk_soc IN (".$socid.", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc IN (".$socid.", ".((int) $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") OR p.fk_soc IS NULL)";
 			}
 		}
 		if (!empty($filterkey)) $sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
@@ -368,6 +368,7 @@ class FormProjets
 				} else $out .= '&nbsp;';
 				$out .= '</option>';
 			}
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -387,6 +388,18 @@ class FormProjets
 						}
 
 						$labeltoshow = '';
+
+						$disabled = 0;
+						if ($obj->fk_statut == Project::STATUS_DRAFT)
+						{
+							$disabled = 1;
+						} elseif ($obj->fk_statut == Project::STATUS_CLOSED)
+						{
+							if ($discard_closed == 2) $disabled = 1;
+						} elseif ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled = 1;
+						}
 
 						if ($showproject == 'all')
 						{

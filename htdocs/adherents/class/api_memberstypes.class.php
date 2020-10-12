@@ -109,23 +109,23 @@ class MembersTypes extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result) {
             $i = 0;
-            $num = $db->num_rows($result);
+            $num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min) {
-            	$obj = $db->fetch_object($result);
+            	$obj = $this->db->fetch_object($result);
                 $membertype = new AdherentType($this->db);
                 if ($membertype->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($membertype);
@@ -133,7 +133,7 @@ class MembersTypes extends DolibarrApi
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve member type list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve member type list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No member type found');
@@ -293,7 +293,7 @@ class MembersTypes extends DolibarrApi
         unset($object->cond_reglement);
         unset($object->fk_delivery_address);
         unset($object->shipping_method_id);
-        unset($object->modelpdf);
+        unset($object->model_pdf);
         unset($object->fk_account);
         unset($object->note_public);
         unset($object->note_private);

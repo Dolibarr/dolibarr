@@ -275,7 +275,7 @@ class modCategorie extends DolibarrModules
 			'p.town' => 'Town',
 			'country.code' => 'CountryCode',
 			'country.label' => 'Country',
-			'p.birthday' => 'DateToBirth',
+			'p.birthday' => 'DateOfBirth',
 			'p.poste' => 'PostOrFunction',
 			'p.phone' => 'Phone',
 			'p.phone_perso' => 'PhonePerso',

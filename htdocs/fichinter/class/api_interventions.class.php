@@ -144,7 +144,7 @@ class Interventions extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0)
             {
@@ -152,28 +152,28 @@ class Interventions extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit + 1, $offset);
         }
 
         dol_syslog("API Rest request");
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
 
         if ($result)
         {
-            $num = $db->num_rows($result);
+        	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i = 0;
             while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
-                $fichinter_static = new Fichinter($db);
+            	$obj = $this->db->fetch_object($result);
+            	$fichinter_static = new Fichinter($this->db);
                 if ($fichinter_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($fichinter_static);
                 }
                 $i++;
             }
         } else {
-            throw new RestException(503, 'Error when retrieve intervention list : '.$db->lasterror());
+        	throw new RestException(503, 'Error when retrieve intervention list : '.$this->db->lasterror());
         }
         if (!count($obj_ret)) {
             throw new RestException(404, 'No intervention found');

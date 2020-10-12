@@ -47,7 +47,7 @@ $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 $id = GETPOST('id', 'int');
 $msg_id = GETPOST('msg_id', 'int');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
@@ -114,11 +114,11 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 		}
 	}
 
-	if (!GETPOST("subject", "none")) {
+	if (!GETPOST("subject", "restricthtml")) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 		$action = '';
-	} elseif (!GETPOST("message", "none")) {
+	} elseif (!GETPOST("message", "restricthtml")) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
 		$action = '';
@@ -136,8 +136,8 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 		$object->track_id = generate_random_id(16);
 
-		$object->subject = GETPOST("subject", "none");
-		$object->message = GETPOST("message", "none");
+		$object->subject = GETPOST("subject", "restricthtml");
+		$object->message = GETPOST("message", "restricthtml");
 		$object->origin_email = $origin_email;
 
 		$object->type_code = GETPOST("type_code", 'aZ09');
@@ -208,12 +208,12 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 				// Send email to customer
 
 				$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubject', $object->ref, $object->track_id);
-				$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')) . '<br><br>';
-				$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket') . '<br>';
+				$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
+				$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
 				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
-				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>') . '<br>';
-				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl') . '<br><br>';
+				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>').'<br>';
+				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
 				$message .= $infos_new_ticket;
 				$message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
@@ -245,7 +245,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 				if ($sendto)
 				{
 					$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
-					$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id) . '<br><br>';
+					$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 					$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 					$message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
 					$message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
@@ -256,7 +256,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 					if (is_array($object->array_options) && count($object->array_options) > 0) {
 						foreach ($object->array_options as $key => $value) {
 							$key = substr($key, 8); // remove "options_"
-							$message_admin .= '<li>' . $langs->trans($extrafields->attributes[$object->element]['label'][$key]) . ' : ' . $extrafields->showOutputField($key, $value) . '</li>';
+							$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value).'</li>';
 						}
 					}
 					$message_admin .= '</ul>';

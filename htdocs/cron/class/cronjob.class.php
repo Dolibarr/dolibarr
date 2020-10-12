@@ -151,7 +151,7 @@ class Cronjob extends CommonObject
 		if (isset($this->unitfrequency)) $this->unitfrequency = trim($this->unitfrequency);
 		if (isset($this->frequency)) $this->frequency = trim($this->frequency);
 		if (isset($this->status)) $this->status = trim($this->status);
-		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->nbrun)) $this->nbrun = trim($this->nbrun);
 		if (isset($this->libname)) $this->libname = trim($this->libname);
 		if (isset($this->test)) $this->test = trim($this->test);
@@ -251,7 +251,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->status) ? '0' : $this->status).",";
 		$sql .= " ".$user->id.",";
 		$sql .= " ".$user->id.",";
-		$sql .= " ".(!isset($this->note) ? 'NULL' : "'".$this->db->escape($this->note)."'").",";
+		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
 		$sql .= " ".(!isset($this->nbrun) ? '0' : $this->db->escape($this->nbrun)).",";
 		$sql .= " ".(empty($this->maxrun) ? '0' : $this->db->escape($this->maxrun)).",";
 		$sql .= " ".(!isset($this->libname) ? 'NULL' : "'".$this->db->escape($this->libname)."'").",";
@@ -322,7 +322,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.processing,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.nbrun,";
 		$sql .= " t.maxrun,";
 		$sql .= " t.libname,";
@@ -366,7 +366,7 @@ class Cronjob extends CommonObject
 				$this->processing = $obj->processing;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_mod = $obj->fk_user_mod;
-				$this->note = $obj->note;
+				$this->note_private = $obj->note_private;
 				$this->nbrun = $obj->nbrun;
 				$this->maxrun = $obj->maxrun;
 				$this->libname = $obj->libname;
@@ -429,7 +429,7 @@ class Cronjob extends CommonObject
     	$sql .= " t.processing,";
     	$sql .= " t.fk_user_author,";
     	$sql .= " t.fk_user_mod,";
-    	$sql .= " t.note,";
+    	$sql .= " t.note as note_private,";
     	$sql .= " t.nbrun,";
     	$sql .= " t.libname,";
     	$sql .= " t.test";
@@ -501,7 +501,7 @@ class Cronjob extends CommonObject
 	    			$line->processing = $obj->processing;
 	    			$line->fk_user_author = $obj->fk_user_author;
 	    			$line->fk_user_mod = $obj->fk_user_mod;
-	    			$line->note = $obj->note;
+	    			$line->note_private = $obj->note_private;
 	    			$line->nbrun = $obj->nbrun;
 	    			$line->libname = $obj->libname;
 	    			$line->test = $obj->test;
@@ -551,7 +551,7 @@ class Cronjob extends CommonObject
 		if (isset($this->unitfrequency)) $this->unitfrequency = trim($this->unitfrequency);
 		if (isset($this->frequency)) $this->frequency = trim($this->frequency);
 		if (isset($this->status)) $this->status = trim($this->status);
-		if (isset($this->note)) $this->note = trim($this->note);
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->nbrun)) $this->nbrun = trim($this->nbrun);
         if (isset($this->libname)) $this->libname = trim($this->libname);
         if (isset($this->test)) $this->test = trim($this->test);
@@ -625,7 +625,7 @@ class Cronjob extends CommonObject
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
 		$sql .= " fk_user_mod=".$user->id.",";
-		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
+		$sql .= " note=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? $this->nbrun : "null").",";
 		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? $this->maxrun : "0").",";
 		$sql .= " libname=".(isset($this->libname) ? "'".$this->db->escape($this->libname)."'" : "null").",";
@@ -785,7 +785,7 @@ class Cronjob extends CommonObject
 		$this->processing = 0;
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
-		$this->note = '';
+		$this->note_private = '';
 		$this->nbrun = '';
 		$this->maxrun = 100;
         $this->libname = '';
@@ -1008,13 +1008,23 @@ class Cronjob extends CommonObject
     				$retval = $this->lastresult;
     				$error++;
 			    }
+			    if (in_array(strtolower(trim($this->methodename)), array('executecli')))
+			    {
+			    	$this->error = $langs->trans('CronMethodNotAllowed', $this->methodename, $this->objectname);
+			    	dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+			    	$this->lastoutput = $this->error;
+			    	$this->lastresult = -1;
+			    	$retval = $this->lastresult;
+			    	$error++;
+			    }
 			}
 
 			// Load langs
 			if (!$error)
 			{
 				$result = $langs->load($this->module_name);
-				$result = $langs->load($this->module_name.'@'.$this->module_name); // If this->module_name was an existing language file, this will make nothing
+				$result = $langs->load($this->module_name.'@'.$this->module_name, 0, 0, '', 0, 1);
+
 				if ($result < 0)	// If technical error
 				{
 					dol_syslog(get_class($this)."::run_jobs Cannot load module lang file - ".$langs->error, LOG_ERR);
@@ -1118,23 +1128,32 @@ class Cronjob extends CommonObject
 		// Run a command line
 		if ($this->jobtype == 'command')
 		{
-			$outputdir = $conf->cron->dir_temp;
-			if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
+			global $dolibarr_cron_allow_cli;
 
-			if (!empty($outputdir))
-			{
-				dol_mkdir($outputdir);
-				$outputfile = $outputdir.'/cronjob.'.$userlogin.'.out'; // File used with popen method
+			if (empty($dolibarr_cron_allow_cli)) {
+				$langs->load("errors");
+				$this->error      = $langs->trans("FailedToExecutCommandJob");
+				$this->lastoutput = '';
+				$this->lastresult = $langs->trans("ErrorParameterMustBeEnabledToAllwoThisFeature", 'dolibarr_cron_allow_cli');
+			} else {
+				$outputdir = $conf->cron->dir_temp;
+				if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
 
-				// Execute a CLI
-				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($this->db);
-				$arrayresult = $utils->executeCLI($this->command, $outputfile);
+				if (!empty($outputdir))
+				{
+					dol_mkdir($outputdir);
+					$outputfile = $outputdir.'/cronjob.'.$userlogin.'.out'; // File used with popen method
 
-				$retval = $arrayresult['result'];
-				$this->error      = $arrayresult['error'];
-				$this->lastoutput = $arrayresult['output'];
-				$this->lastresult = $arrayresult['result'];
+					// Execute a CLI
+					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+					$utils = new Utils($this->db);
+					$arrayresult = $utils->executeCLI($this->command, $outputfile);
+
+					$retval = $arrayresult['result'];
+					$this->error      = $arrayresult['error'];
+					$this->lastoutput = $arrayresult['output'];
+					$this->lastresult = $arrayresult['result'];
+				}
 			}
 		}
 

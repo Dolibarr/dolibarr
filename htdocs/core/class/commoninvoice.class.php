@@ -24,12 +24,15 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  * 	Superclass for invoices classes
  */
 abstract class CommonInvoice extends CommonObject
 {
+	use CommonIncoterm;
+
     /**
      * Standard invoice
      */
@@ -297,6 +300,7 @@ abstract class CommonInvoice extends CommonObject
 		$table2 = 'paiement';
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
+		$field3=', p.ref_ext';
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 		{
@@ -304,10 +308,11 @@ abstract class CommonInvoice extends CommonObject
 			$table2 = 'paiementfourn';
 			$field = 'fk_facturefourn';
 			$field2 = 'fk_paiementfourn';
+			$field3='';
 			$sharedentity = 'facture_fourn';
 		}
 
-		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
+		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code'.$field3;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
 		$sql .= ' WHERE pf.'.$field.' = '.$this->id;
 		//$sql.= ' WHERE pf.'.$field.' = 1';
@@ -325,7 +330,11 @@ abstract class CommonInvoice extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$retarray[] = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$tmp = array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				if (!empty($field3)) {
+				    $tmp['ref_ext'] = $obj->ref_ext;
+				}
+				$retarray[]=$tmp;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -453,7 +462,7 @@ abstract class CommonInvoice extends CommonObject
 		$type = 'customer_invoice';
 		if ($this->element == 'invoice_supplier') $type = 'supplier_invoice';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -535,7 +544,7 @@ abstract class CommonInvoice extends CommonObject
 		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType = 'status9';
-		    } elseif ($alreadypaid <= 0) {
+		    } elseif ($alreadypaid == 0) {
 		        $labelStatus = $langs->trans('BillStatusNotPaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType = 'status1';

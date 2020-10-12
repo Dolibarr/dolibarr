@@ -36,7 +36,7 @@ $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects

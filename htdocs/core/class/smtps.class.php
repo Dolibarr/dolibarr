@@ -228,6 +228,21 @@ class SMTPs
     private $_trackId = '';
     private $_moreInHeader = '';
 
+    /**
+     * An array of options for stream_context_create()
+     */
+	private $_options = [];
+
+    /**
+     * Set delivery receipt
+     *
+     * @param	array		$_options		An array of options for stream_context_create()
+     * @return	void
+     */
+	public function setOptions($_options = [])
+    {
+        $this->_options = $_options;
+    }
 
     /**
      * Set delivery receipt
@@ -373,14 +388,31 @@ class SMTPs
             $this->_setErr(99, $host.' is either offline or is an invalid host name.');
             $_retVal = false;
         } else {
-            //See if we can connect to the SMTP server
-            if ($this->socket = @fsockopen(
-                preg_replace('@tls://@i', '', $this->getHost()), // Host to 'hit', IP or domain
+            if (function_exists('stream_socket_client') && !empty($this->_options)) {
+                $socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
+                set_error_handler([$this, 'errorHandler']);
+                $this->socket = @stream_socket_client(
+					preg_replace('@tls://@i', '', $this->getHost()) .    // Host to 'hit', IP or domain
+                    ':' . $this->getPort(),             // which Port number to use
+                    $this->errno,                       // actual system level error
+                    $this->errstr,                      // and any text that goes with the error
+                    $this->_smtpTimeout,                // timeout for reading/writing data over the socket
+                    STREAM_CLIENT_CONNECT,
+                    $socket_context                     // Options for connection
+                );
+        	} else {
+                $this->socket = @fsockopen(
+					preg_replace('@tls://@i', '', $this->getHost()),       // Host to 'hit', IP or domain
                 $this->getPort(), // which Port number to use
                 $this->errno, // actual system level error
                 $this->errstr, // and any text that goes with the error
                 $this->_smtpTimeout     // timeout for reading/writing data over the socket
-            )) {
+                );
+            }
+
+            //See if we can connect to the SMTP server
+            if (is_resource($this->socket))
+            {
                 // Fix from PHP SMTP class by 'Chris Ryan'
                 // Sometimes the SMTP server takes a little longer to respond
                 // so we will give it a longer timeout for the first read

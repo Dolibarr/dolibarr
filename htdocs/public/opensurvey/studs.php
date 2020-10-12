@@ -66,7 +66,7 @@ if (GETPOST('ajoutcomment', 'alpha'))
 
 	$error = 0;
 
-	$comment = GETPOST("comment", 'none');
+	$comment = GETPOST("comment", 'restricthtml');
 	$comment_user = GETPOST('commentuser', 'nohtml');
 
 	if (!$comment)
@@ -77,7 +77,7 @@ if (GETPOST('ajoutcomment', 'alpha'))
 	if (!$comment_user)
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 	}
 
 	if (!in_array($comment_user, $listofvoters))
@@ -161,7 +161,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
 						//var_dump($body);exit;
 
-						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
+						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
 						$result = $cmailfile->sendfile();
 					}
 				}
@@ -242,7 +242,7 @@ $form = new Form($db);
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 
-llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss, $numsondage);
+llxHeaderSurvey($object->title, "", 0, 0, $arrayofjs, $arrayofcss, $numsondage);
 
 if (empty($object->ref))     // For survey, id is a hex string
 {
@@ -272,14 +272,14 @@ print $langs->trans("OpenSurveyHowTo").'<br><br>';
 
 print '<div class="corps"> '."\n";
 
-//affichage du titre du sondage
-$titre = str_replace("\\", "", $object->titre);
+// show title of survey
+$titre = str_replace("\\", "", $object->title);
 print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
 
-//affichage des commentaires du sondage
-if ($object->commentaires)
+// show description of survey
+if ($object->description)
 {
-	print dol_htmlentitiesbr($object->commentaires);
+	print dol_htmlentitiesbr($object->description);
 	print '<br>'."\n";
 }
 
@@ -390,7 +390,7 @@ if ($object->format == "D")
 	for ($i = 0; isset($toutsujet[$i]); $i++)
 	{
 		$tmp = explode('@', $toutsujet[$i]);
-		print '<td class="sujet">'.$tmp[0].'</td>'."\n";
+		print '<td class="sujet">'.dol_escape_htmltag($tmp[0]).'</td>'."\n";
 	}
 
 	print '</tr>'."\n";
@@ -598,7 +598,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom'])))
 	}
 
 	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
-	print '<td><input type="image" name="boutonp" value="'.$langs->trans("Vote").'" src="'.dol_buildpath('/opensurvey/img/add-24.png', 1).'"></td>'."\n";
+	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', false, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 
@@ -716,7 +716,7 @@ $comments = $object->getComments();
 
 if ($comments)
 {
-	print "<br><b>".$langs->trans("CommentsOfVoters").":</b><br>\n";
+	print '<br><u><span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span></u><br>'."\n";
 
 	foreach ($comments as $obj) {
 		// ligne d'un usager pré-authentifié
@@ -731,9 +731,9 @@ if ($comments)
 
 // Form to add comment
 if ($object->allow_comments) {
-	print '<div class="addcomment">'.$langs->trans("AddACommentForPoll")."<br>\n";
+	print '<div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'none'), 0, 1).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
 	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";

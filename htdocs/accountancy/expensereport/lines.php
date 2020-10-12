@@ -55,8 +55,8 @@ $search_year = GETPOST("search_year", "int");
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) $page = 0;
 $pageprev = $page - 1;
@@ -86,8 +86,8 @@ $formaccounting = new FormAccounting($db);
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-    $search_login = '';
-    $search_expensereport = '';
+	$search_login = '';
+	$search_expensereport = '';
 	$search_label = '';
 	$search_desc = '';
 	$search_amount = '';
@@ -178,7 +178,7 @@ $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't sha
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 // Add search filter like
 if (strlen(trim($search_login))) {
-    $sql .= natural_search("u.login", $search_login);
+	$sql .= natural_search("u.login", $search_login);
 }
 if (strlen(trim($search_expensereport))) {
 	$sql .= natural_search("er.ref", $search_expensereport);
@@ -207,13 +207,13 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -228,7 +228,7 @@ if ($result) {
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-    if ($search_login)       $param .= '&search_login='.urlencode($search_login);
+	if ($search_login)       $param .= '&search_login='.urlencode($search_login);
 	if ($search_expensereport) $param .= "&search_expensereport=".urlencode($search_expensereport);
 	if ($search_label)		$param .= "&search_label=".urlencode($search_label);
 	if ($search_desc)		$param .= "&search_desc=".urlencode($search_desc);
@@ -257,14 +257,14 @@ if ($result) {
 
 	$moreforfilter = '';
 
-    print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-    print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
-    print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
+	print '<td class="liste_titre"></td>';
 	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
-	if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre center">';
@@ -278,16 +278,16 @@ if ($result) {
 	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
 	print '<td class="liste_titre center">';
-    $searchpicto = $form->showFilterButtons();
-    print $searchpicto;
-    print '</td>';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-    print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
-    print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
 		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -296,31 +296,31 @@ if ($result) {
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
-    $checkpicto = $form->showCheckAddButtons();
+	$checkpicto = $form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
 	$expensereportstatic = new ExpenseReport($db);
 	$accountingaccountstatic = new AccountingAccount($db);
-    $userstatic = new User($db);
+	$userstatic = new User($db);
 
-    $i = 0;
+	$i = 0;
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
 		$expensereportstatic->ref = $objp->ref;
 		$expensereportstatic->id = $objp->erid;
 
-        $userstatic->id = $objp->rowid;
-        $userstatic->ref = $objp->label;
-        $userstatic->login = $objp->login;
-        $userstatic->statut = $objp->statut;
-        $userstatic->email = $objp->email;
-        $userstatic->gender = $objp->gender;
-        $userstatic->firstname = $objp->firstname;
-        $userstatic->lastname = $objp->lastname;
-        $userstatic->employee = $objp->employee;
-        $userstatic->photo = $objp->photo;
+		$userstatic->id = $objp->rowid;
+		$userstatic->ref = $objp->label;
+		$userstatic->login = $objp->login;
+		$userstatic->statut = $objp->statut;
+		$userstatic->email = $objp->email;
+		$userstatic->gender = $objp->gender;
+		$userstatic->firstname = $objp->firstname;
+		$userstatic->lastname = $objp->lastname;
+		$userstatic->employee = $objp->employee;
+		$userstatic->photo = $objp->photo;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
 		$accountingaccountstatic->label = $objp->label;
@@ -329,28 +329,28 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
-        // Login
-        print '<td class="nowraponall">';
-        print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
-        print '</td>';
+		// Login
+		print '<td class="nowraponall">';
+		print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
+		print '</td>';
 
-        // Line id
+		// Line id
 		print '<td>'.$objp->rowid.'</td>';
 
-        // Ref Expense report
+		// Ref Expense report
 		print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 
 		// Date validation
-		if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
 		}
 
 		print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
 
-        // Fees label
+		// Fees label
 		print '<td class="tdoverflow">'.($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))).'</td>';
 
-        // Fees description -- Can be null
+		// Fees description -- Can be null
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
@@ -360,13 +360,13 @@ if ($result) {
 		// Amount without taxes
 		print '<td class="nowrap right">'.price($objp->total_ht).'</td>';
 
-        // Vat rate
+		// Vat rate
 		print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
 		// Accounting account affected
 		print '<td class="center">';
 		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
-        print ' <a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print ' <a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
@@ -379,7 +379,7 @@ if ($result) {
 	print "</div>";
 
 	if ($nbtotalofrecords > $limit) {
-	    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, '', 0, '', '', $limit, 1);
 	}
 
 	print '</form>';

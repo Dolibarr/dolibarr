@@ -23,6 +23,7 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
@@ -70,6 +71,10 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ECMSetup"), $linkback, 'title_setup');
 print '<br>';
 
+$head = ecm_admin_prepare_head();
+
+dol_fiche_head($head, 'ecm', $langs->trans("ECM"), -1, 'ecm');
+
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -92,10 +97,10 @@ if ($conf->use_javascript_ajax)
 } else {
 	if (empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ECM_AUTO_TREE_ENABLED&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} elseif (!empty($conf->global->USER_MAIL_REQUIRED))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ECM_AUTO_TREE_ENABLED&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';

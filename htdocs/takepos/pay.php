@@ -52,21 +52,21 @@ if (empty($user->rights->takepos->run)) {
 $invoice = new Facture($db);
 if ($invoiceid > 0)
 {
-    $invoice->fetch($invoiceid);
+	$invoice->fetch($invoiceid);
 } else {
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-    $resql = $db->query($sql);
-    $obj = $db->fetch_object($resql);
-    if ($obj)
-    {
-        $invoiceid = $obj->rowid;
-    }
-    if (!$invoiceid)
-    {
-        $invoiceid = 0; // Invoice does not exist yet
-    } else {
-        $invoice->fetch($invoiceid);
-    }
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	if ($obj)
+	{
+		$invoiceid = $obj->rowid;
+	}
+	if (!$invoiceid)
+	{
+		$invoiceid = 0; // Invoice does not exist yet
+	} else {
+		$invoice->fetch($invoiceid);
+	}
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');
@@ -91,16 +91,16 @@ $resql = $db->query($sql);
 
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-        $paycode = $obj->code;
-        if ($paycode == 'LIQ') $paycode = 'CASH';
-        if ($paycode == 'CB')  $paycode = 'CB';
-        if ($paycode == 'CHQ') $paycode = 'CHEQUE';
+		$paycode = $obj->code;
+		if ($paycode == 'LIQ') $paycode = 'CASH';
+		if ($paycode == 'CB')  $paycode = 'CB';
+		if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-        $accountname = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-        if (!empty($conf->global->$accountname) && $conf->global->$accountname > 0) {
-        	$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
-        	$arrayOfValidPaymentModes[] = $obj;
-        }
+		$accountname = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
+		if (!empty($conf->global->$accountname) && $conf->global->$accountname > 0) {
+			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
+			$arrayOfValidPaymentModes[] = $obj;
+		}
 	}
 }
 ?>
@@ -116,7 +116,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) print '<link rel="stylesheet" href=
 $remaintopay = 0;
 if ($invoice->id > 0)
 {
-    $remaintopay = $invoice->getRemainToPay();
+	$remaintopay = $invoice->getRemainToPay();
 }
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
@@ -129,9 +129,9 @@ else print "var received=0;";
 	function addreceived(price)
 	{
     	<?php
-    	if (empty($conf->global->TAKEPOS_NUMPAD)) print 'received+=String(price);'."\n";
-    	else print 'received+=parseFloat(price);'."\n";
-    	?>
+		if (empty($conf->global->TAKEPOS_NUMPAD)) print 'received+=String(price);'."\n";
+		else print 'received+=parseFloat(price);'."\n";
+		?>
     	$('.change1').html(pricejs(parseFloat(received), 'MT'));
     	$('.change1').val(parseFloat(received));
 		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
@@ -231,21 +231,21 @@ else print "var received=0;";
 <div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
 
 <div class="paymentbordline paymentbordlinetotal">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></span></center>
+	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('TotalTTC'); ?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
 <div class="paymentbordline paymentbordlineremain">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></span></center>
+	<center><span class="takepospay"><font color="white"><?php echo $langs->trans('RemainToPay'); ?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span></center>
 </div>
 <?php } ?>
 <div class="paymentbordline paymentbordlinereceived">
-    <center><span class="takepospay"><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></span></center>
+    <center><span class="takepospay"><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change1" class="change1" value="0"></span></center>
 </div>
 <div class="paymentbordline paymentbordlinechange">
-	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></span></center>
+	<center><span class="takepospay"><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span><input type="hidden" id="change2" class="change2" value="0"></span></center>
 </div>
 <?php
-if (! empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+if (!empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
 	print '<div class="paymentbordline paddingtop paddingbottom">
 	<center>';
 	$filter = '';
@@ -268,13 +268,13 @@ $action_buttons = array(
 		"function" =>"reset()",
 		"span" => "style='font-size: 150%;'",
 		"text" => "C",
-	    "class" => "poscolorblue"
+		"class" => "poscolorblue"
 	),
 	array(
 		"function" => "parent.$.colorbox.close();",
 		"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
 		"text" => "X",
-	    "class" => "poscolordelete"
+		"class" => "poscolordelete"
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
@@ -284,7 +284,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 0) {
-    $paycode = $arrayOfValidPaymentModes[0]->code;
+	$paycode = $arrayOfValidPaymentModes[0]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
@@ -307,7 +307,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '6' : '5').');">'.($numpad == 0 ? '6' : '5').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 1) {
-    $paycode = $arrayOfValidPaymentModes[1]->code;
+	$paycode = $arrayOfValidPaymentModes[1]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
@@ -331,7 +331,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '3' : '0.50').');">'.($numpad == 0 ? '3' : '0.50').'</button>';
 ?>
 <?php if (count($arrayOfValidPaymentModes) > 2) {
-    $paycode = $arrayOfValidPaymentModes[2]->code;
+	$paycode = $arrayOfValidPaymentModes[2]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
 		$paycode = 'cash';
@@ -346,7 +346,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.$langs->trans($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.'"></span>' : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
 } else {
-    $button = array_pop($action_buttons);
+	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 
@@ -372,7 +372,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";
 foreach ($action_buttons as $button) {
-    $newclass = $class.($button["class"] ? " ".$button["class"] : "");
+	$newclass = $class.($button["class"] ? " ".$button["class"] : "");
 	print '<button type="button" class="'.$newclass.'" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
 

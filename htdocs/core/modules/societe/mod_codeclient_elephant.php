@@ -320,8 +320,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$code."'";
-		else $sql .= " WHERE code_client = '".$code."'";
+		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
 		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
 
 		$resql = $db->query($sql);

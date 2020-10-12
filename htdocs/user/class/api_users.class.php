@@ -90,7 +90,7 @@ class Users extends DolibarrApi
 
     	// Select products of given category
     	if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+    		$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
 			$sql .= " AND c.fk_user = t.rowid ";
     	}
 
@@ -105,7 +105,7 @@ class Users extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-	    $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 	    if ($limit) {
 	        if ($page < 0)
 	        {
@@ -113,27 +113,27 @@ class Users extends DolibarrApi
 	        }
 	        $offset = $limit * $page;
 
-	        $sql .= $db->plimit($limit + 1, $offset);
+	        $sql .= $this->db->plimit($limit + 1, $offset);
 	    }
 
-	    $result = $db->query($sql);
+	    $result = $this->db->query($sql);
 
 	    if ($result)
 	    {
 	        $i = 0;
-	        $num = $db->num_rows($result);
+	        $num = $this->db->num_rows($result);
 	        $min = min($num, ($limit <= 0 ? $num : $limit));
 	        while ($i < $min)
 	        {
-	            $obj = $db->fetch_object($result);
-	            $user_static = new User($db);
+	        	$obj = $this->db->fetch_object($result);
+	        	$user_static = new User($this->db);
 	            if ($user_static->fetch($obj->rowid)) {
 	                $obj_ret[] = $this->_cleanObjectDatas($user_static);
 	            }
 	            $i++;
 	        }
 	    } else {
-	        throw new RestException(503, 'Error when retrieve User list : '.$db->lasterror());
+	    	throw new RestException(503, 'Error when retrieve User list : '.$this->db->lasterror());
 	    }
 	    if (!count($obj_ret)) {
 	        throw new RestException(404, 'No User found');
@@ -490,7 +490,7 @@ class Users extends DolibarrApi
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-	    $sql .= $db->order($sortfield, $sortorder);
+        $sql .= $this->db->order($sortfield, $sortorder);
 	    if ($limit) {
 	        if ($page < 0)
 	        {
@@ -498,19 +498,19 @@ class Users extends DolibarrApi
 	        }
 	        $offset = $limit * $page;
 
-	        $sql .= $db->plimit($limit + 1, $offset);
+	        $sql .= $this->db->plimit($limit + 1, $offset);
 	    }
 
-	    $result = $db->query($sql);
+	    $result = $this->db->query($sql);
 
 	    if ($result)
 	    {
 	        $i = 0;
-	        $num = $db->num_rows($result);
+	        $num = $this->db->num_rows($result);
 	        $min = min($num, ($limit <= 0 ? $num : $limit));
 	        while ($i < $min)
 	        {
-	            $obj = $db->fetch_object($result);
+	        	$obj = $this->db->fetch_object($result);
 	            $group_static = new UserGroup($this->db);
 	            if ($group_static->fetch($obj->rowid)) {
 	                $obj_ret[] = $this->_cleanObjectDatas($group_static);
@@ -518,7 +518,7 @@ class Users extends DolibarrApi
 	            $i++;
 	        }
 	    } else {
-	        throw new RestException(503, 'Error when retrieve Group list : '.$db->lasterror());
+	    	throw new RestException(503, 'Error when retrieve Group list : '.$this->db->lasterror());
 	    }
 	    if (!count($obj_ret)) {
 	        throw new RestException(404, 'No Group found');
@@ -627,7 +627,7 @@ class Users extends DolibarrApi
 	    unset($object->openid);
 
 	    unset($object->lines);
-	    unset($object->modelpdf);
+	    unset($object->model_pdf);
 	    unset($object->skype);
 	    unset($object->twitter);
 	    unset($object->facebook);

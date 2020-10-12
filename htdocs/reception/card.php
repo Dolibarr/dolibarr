@@ -154,7 +154,7 @@ if (empty($reshook))
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -189,7 +189,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -246,9 +246,8 @@ if (empty($reshook))
 		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 		$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
-		$object->ref_int = GETPOST('ref_int', 'alpha');
-		$object->note_private = GETPOST('note_private', 'none');
-		$object->note_public = GETPOST('note_public', 'none');
+		$object->note_private = GETPOST('note_private', 'restricthtml');
+		$object->note_public = GETPOST('note_public', 'restricthtml');
 		$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 		$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
@@ -392,7 +391,7 @@ if (empty($reshook))
 	    			$outputlangs = new Translate("", $conf);
 	    			$outputlangs->setDefaultLang($newlang);
 	    		}
-	    		$model = $object->modelpdf;
+	    		$model = $object->model_pdf;
 	    		$ret = $object->fetch($id); // Reload to get new records
 
 	    		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -486,7 +485,7 @@ if (empty($reshook))
 	        $outputlangs = new Translate("", $conf);
 	        $outputlangs->setDefaultLang($newlang);
 	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result <= 0)
 	    {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -644,7 +643,7 @@ if (empty($reshook))
 				}
 
 				$ret = $object->fetch($object->id); // Reload to get new records
-				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
@@ -1910,10 +1909,10 @@ if ($action == 'create')
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Display lines extrafields
@@ -2036,7 +2035,7 @@ if ($action == 'create')
 
 			if ($user->rights->reception->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
 			}
 		}
 
@@ -2060,7 +2059,7 @@ if ($action == 'create')
 		$genallowed = $user->rights->reception->lire;
 		$delallowed = $user->rights->reception->creer;
 
-		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('reception', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
@@ -2091,7 +2090,7 @@ if ($action == 'create')
 		// Build document if it not exists
 		if (!$file || !is_readable($file))
 		{
-			$result = $object->generateDocument(GETPOST('model') ?GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument(GETPOST('model') ?GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
 				dol_print_error($db, $object->error, $object->errors);

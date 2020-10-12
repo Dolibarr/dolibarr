@@ -41,8 +41,8 @@ if (!$user->rights->mailing->lire || $user->socid > 0) accessforbidden();
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -237,7 +237,7 @@ if ($object->fetch($id) >= 0)
 
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
@@ -665,7 +665,7 @@ if ($object->fetch($id) >= 0)
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
 				/*if ($obj->statut == -1)	// Sent with error

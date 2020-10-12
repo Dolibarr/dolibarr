@@ -292,7 +292,7 @@ if (empty($action) || $action == 'delete_section')
 	print '<div class="tabsAction">';
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}

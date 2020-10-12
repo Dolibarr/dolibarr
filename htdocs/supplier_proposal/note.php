@@ -37,7 +37,7 @@ $langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;

@@ -130,8 +130,8 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -159,7 +159,7 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$year."-".sprintf("%02s", $month)."-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
@@ -267,8 +267,8 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -296,7 +296,7 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$year."-01-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-01-01'";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
@@ -519,8 +519,8 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount > 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
@@ -555,8 +555,8 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount < 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
@@ -632,8 +632,8 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
@@ -659,8 +659,8 @@ if ($result < 0)
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
 		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%m')";

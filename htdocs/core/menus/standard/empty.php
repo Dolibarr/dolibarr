@@ -402,8 +402,8 @@ class MenuManager
 						if ($this->menu->liste[$i]['enabled'])
 						{
 							print $tabstring;
-							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>';
-							else print '<span class="vsmenu">';
+							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu"  itle="'.dol_escape_htmltag($this->menu->liste[$i]['titre']).'" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>';
+							else print '<span class="vsmenu" title="'.dol_escape_htmltag($this->menu->liste[$i]['titre']).'">';
 							if ($this->menu->liste[$i]['url']) print $this->menu->liste[$i]['titre'].'</a>';
 							else print '</span>';
 						} else {

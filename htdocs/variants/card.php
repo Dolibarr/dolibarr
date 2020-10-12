@@ -22,7 +22,7 @@ require 'class/ProductAttributeValue.class.php';
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $label = GETPOST('label', 'alpha');
 $ref = GETPOST('ref', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
@@ -219,8 +219,8 @@ if ($action == 'edit') {
 
 	<div class="tabsAction">
 		<div class="inline-block divButAction">
-			<a href="card.php?id=<?php echo $object->id ?>&action=edit" class="butAction"><?php echo $langs->trans('Modify') ?></a>
-			<a href="card.php?id=<?php echo $object->id ?>&action=delete" class="butAction"><?php echo $langs->trans('Delete') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=edit&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Modify') ?></a>
+			<a href="card.php?id=<?php echo $object->id ?>&action=delete&token=<?php echo newToken(); ?>" class="butAction"><?php echo $langs->trans('Delete') ?></a>
 		</div>
 	</div>
 
@@ -263,7 +263,7 @@ if ($action == 'edit') {
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
 				<td class="right">
 					<a class="editfielda marginrightonly" href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
-					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
+					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&token=<?php echo newToken(); ?>&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
 			<?php
 		}

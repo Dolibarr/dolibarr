@@ -75,7 +75,7 @@ $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $lineid = GETPOST('lineid', 'int');
@@ -251,7 +251,7 @@ if (empty($reshook))
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($id); // Reload to get new records
-				$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			if ($result >= 0) {
 				header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
@@ -458,7 +458,7 @@ if (empty($reshook))
 					$outputlangs->setDefaultLang($newlang);
 					$outputlangs->load('products');
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -530,7 +530,7 @@ if (empty($reshook))
 			}
 			$ret = $object->fetch($id); // Reload to get new records
 
-			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setref' && $usercancreate)
@@ -644,7 +644,7 @@ if (empty($reshook))
 						$outputlangs->setDefaultLang($newlang);
 						$outputlangs->load('products');
 					}
-					$model = $object->modelpdf;
+					$model = $object->model_pdf;
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -728,7 +728,7 @@ if (empty($reshook))
 							$outputlangs->setDefaultLang($newlang);
 							$outputlangs->load('products');
 						}
-						$model = $object->modelpdf;
+						$model = $object->model_pdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -746,8 +746,8 @@ if (empty($reshook))
 	elseif ($action == 'confirm_paid_partially' && $confirm == 'yes' && $usercanissuepayment)
 	{
 		$object->fetch($id);
-		$close_code = GETPOST("close_code", 'none');
-		$close_note = GETPOST("close_note", 'none');
+		$close_code = GETPOST("close_code", 'restricthtml');
+		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
 			$result = $object->set_paid($user, $close_code, $close_note);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -757,8 +757,8 @@ if (empty($reshook))
 	} // Classify "abandoned"
 	elseif ($action == 'confirm_canceled' && $confirm == 'yes') {
 		$object->fetch($id);
-		$close_code = GETPOST("close_code", 'none');
-		$close_note = GETPOST("close_note", 'none');
+		$close_code = GETPOST("close_code", 'restricthtml');
+		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
 			$result = $object->set_canceled($user, $close_code, $close_note);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -987,11 +987,11 @@ if (empty($reshook))
 
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public		= trim(GETPOST('note_public', 'none'));
+				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
+				$object->model_pdf = $_POST['model'];
 				$object->fk_project			= $_POST['projectid'];
 				$object->cond_reglement_id	= $_POST['cond_reglement_id'];
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
@@ -1015,7 +1015,7 @@ if (empty($reshook))
 		}
 
 		// Credit note invoice
-		if ($_POST['type'] == Facture::TYPE_CREDIT_NOTE)
+		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE)
 		{
 			$sourceinvoice = GETPOST('fac_avoir');
 			if (!($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
@@ -1033,7 +1033,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 
 			if (!$error)
 			{
@@ -1041,20 +1041,19 @@ if (empty($reshook))
 					$object->entity = $originentity;
 				}
 				$object->socid = GETPOST('socid', 'int');
-				$object->ref = $_POST['ref'];
+				$object->ref = GETPOST('ref');
 				$object->date = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public		= trim(GETPOST('note_public', 'none'));
+				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				// We do not copy the private note
-				$object->ref_client			= $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
-				$object->fk_project			= $_POST['projectid'];
+				$object->ref_client			= GETPOST('ref_client');
+				$object->model_pdf = GETPOST('model');
+				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= 0;
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->remise_absolue		= GETPOST('remise_absolue');
+				$object->remise_percent		= GETPOST('remise_percent');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1256,22 +1255,21 @@ if (empty($reshook))
 			if (!$error)
 			{
 				$object->socid = GETPOST('socid', 'int');
-				$object->type            = $_POST['type'];
-				$object->ref             = $_POST['ref'];
+				$object->type            = GETPOST('type');
+				$object->ref             = GETPOST('ref');
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public = trim(GETPOST('note_public', 'none'));
-				$object->note_private    = trim(GETPOST('note_private', 'none'));
-				$object->ref_client      = $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf        = $_POST['model'];
-				$object->fk_project = $_POST['projectid'];
-				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_client      = GETPOST('ref_client');
+				$object->model_pdf        = GETPOST('model');
+				$object->fk_project = GETPOST('projectid', 'int');
+				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = $_POST['amount'];
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->amount = price2num(GETPOST('amount'));
+				$object->remise_absolue		= GETPOST('remise_absolue');
+				$object->remise_percent		= GETPOST('remise_percent');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1309,21 +1307,20 @@ if (empty($reshook))
 				// Si facture standard
 				$object->socid = GETPOST('socid', 'int');
 				$object->type				= GETPOST('type');
-				$object->ref = $_POST['ref'];
+				$object->ref = GETPOST('ref');
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public		= trim(GETPOST('note_public', 'none'));
-				$object->note_private = trim(GETPOST('note_private', 'none'));
-				$object->ref_client			= $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
-				$object->fk_project			= $_POST['projectid'];
-				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
-				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
+				$object->note_private = trim(GETPOST('note_private', 'restricthtml'));
+				$object->ref_client			= GETPOST('ref_client');
+				$object->model_pdf = GETPOST('model');
+				$object->fk_project			= GETPOST('projectid');
+				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->mode_reglement_id	= GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->amount = $_POST['amount'];
-				$object->remise_absolue		= $_POST['remise_absolue'];
-				$object->remise_percent		= $_POST['remise_percent'];
+				$object->amount = price2num(GETPOST('amount'));
+				$object->remise_absolue		= GETPOST('remise_absolue');
+				$object->remise_percent		= GETPOST('remise_percent');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -1667,7 +1664,7 @@ if (empty($reshook))
     						    $originidforcontact=$srcobject->origin_id;
     						}
     						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$db->escape($originforcontact)."'";
 
     						$resqlcontact = $db->query($sqlcontact);
     						if ($resqlcontact)
@@ -1801,12 +1798,11 @@ if (empty($reshook))
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public = trim(GETPOST('note_public', 'none'));
-				$object->note = trim(GETPOST('note', 'none'));
-				$object->note_private = trim(GETPOST('note', 'none'));
+				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
+				$object->note = trim(GETPOST('note', 'restricthtml'));
+				$object->note_private = trim(GETPOST('note', 'restricthtml'));
 				$object->ref_client = GETPOST('ref_client', 'alpha');
-				$object->ref_int = GETPOST('ref_int', 'alpha');
-				$object->modelpdf = GETPOST('model', 'alpha');
+				$object->model_pdf = GETPOST('model', 'alpha');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
@@ -1851,7 +1847,7 @@ if (empty($reshook))
 					$outputlangs->setDefaultLang($newlang);
 					$outputlangs->load('products');
 				}
-				$model = $object->modelpdf;
+				$model = $object->model_pdf;
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1883,9 +1879,9 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'none') : '');
-		$price_ht = GETPOST('price_ht');
-		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
 		{
@@ -2016,7 +2012,7 @@ if (empty($reshook))
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
 				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
-				if (!empty($price_ht))
+				if (!empty($price_ht) || $price_ht === '0')
 				{
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
@@ -2145,7 +2141,7 @@ if (empty($reshook))
 							$outputlangs->setDefaultLang($newlang);
 							$outputlangs->load('products');
 						}
-						$model = $object->modelpdf;
+						$model = $object->model_pdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2204,7 +2200,7 @@ if (empty($reshook))
 		$date_end = '';
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'none') ? GETPOST('product_desc', 'none') : GETPOST('desc', 'none'));
+		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
@@ -2335,10 +2331,10 @@ if (empty($reshook))
 				}
 			}
 
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
+			$result = $object->updateline(GETPOST('lineid', 'int'), $description, $pu_ht, $qty, price2num(GETPOST('remise_percent', 'alpha')),
 				$date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type,
-				GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('progress'),
-				$_POST['units'], $pu_ht_devise);
+				GETPOST('fk_parent_line', 'int'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, price2num(GETPOST('progress', 'alpha')),
+				GETPOST('units', 'alpha'), $pu_ht_devise);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -2356,7 +2352,7 @@ if (empty($reshook))
 					}
 
 					$ret = $object->fetch($id); // Reload to get new records
-					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -2629,7 +2625,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -3939,7 +3935,7 @@ if ($action == 'create')
 		}
 	}
 
-	if ($action == 'deletepaiement')
+	if ($action == 'deletepayment')
 	{
 		$payment_id = GETPOST('paiement_id');
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 'no', 1);
@@ -4122,17 +4118,13 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && !empty($object->brouillon) && $usercancreate && empty($conf->global->FAC_FORCE_DATE_VALIDATION))
+	if ($action != 'editinvoicedate' && !empty($object->brouillon) && $usercancreate && empty($conf->global->FAC_FORCE_DATE_VALIDATION))
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 
-	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
-		if ($action == 'editinvoicedate') {
-			$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date, 'invoicedate');
-		} else {
-			print dol_print_date($object->date, 'day');
-		}
+	if ($action == 'editinvoicedate') {
+		$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date, 'invoicedate');
 	} else {
 		print dol_print_date($object->date, 'day');
 	}
@@ -4420,44 +4412,50 @@ if ($action == 'create')
 	print '<div class="fichehalfright">';
 	print '<div class="ficheaddleft">';
 
+	print '<!-- amounts -->'."\n";
 	print '<table class="border bordertop tableforfield centpercent">';
+
+	$sign = 1;
+	if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && $object->type == $object::TYPE_CREDIT_NOTE) {
+		$sign = -1;	// We invert sign for output
+	}
 
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 	{
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td class="nowrap amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap amountcard">'.price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td class="nowrap amountcard">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap amountcard">'.price($sign * $object->multicurrency_total_tva, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td class="nowrap amountcard">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap amountcard">'.price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 	}
 
 	// Amount
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans('AmountHT').'</td>';
-	print '<td class="nowrap amountcard">'.price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<td class="nowrap amountcard">'.price($sign * $object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap amountcard">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td class="nowrap amountcard">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+		print '<td class="nowrap amountcard">'.price($sign * $object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	}
 	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td class=nowrap amountcard">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+		print '<td class=nowrap amountcard">'.price($sign * $object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	}
 
 	// Revenue stamp
@@ -4515,13 +4513,11 @@ if ($action == 'create')
 	}
 
 	// Total with tax
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap amountcard">'.price($sign * $object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	print '</table>';
 
 
-	$sign = 1;
-	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
 	$nbrows = 8;
 	$nbcols = 3;
 	if (!empty($conf->projet->enabled))
@@ -4664,6 +4660,8 @@ if ($action == 'create')
 	    print '</table>';
 	}
 
+	$sign = 1;
+	if ($object->type == $object::TYPE_CREDIT_NOTE) $sign = -1;
 
 	// List of payments already done
 
@@ -4741,7 +4739,7 @@ if ($action == 'create')
 				print '<td class="center">';
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0)
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -5284,7 +5282,7 @@ if ($action == 'create')
 				{
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a>';
 				} else {
-					print '<a class="butActionDelete'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionDelete'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
@@ -5311,7 +5309,7 @@ if ($action == 'create')
 
 		print $formfile->showdocuments(
 			'facture', $filename, $filedir, $urlsource, $genallowed,
-			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
+			$delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '',
 			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
 
 		$somethingshown = $formfile->numoffiles;

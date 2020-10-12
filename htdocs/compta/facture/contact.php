@@ -42,7 +42,7 @@ $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // Fo
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->socid) $socid = $user->socid;

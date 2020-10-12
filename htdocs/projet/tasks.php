@@ -36,7 +36,7 @@ if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/cla
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -95,7 +95,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 
 $progress = GETPOST('progress', 'int');
 $label = GETPOST('label', 'alpha');
-$description = GETPOST('description', 'none');
+$description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
 $planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ?GETPOST('planned_workloadmin', 'int') : 0);
 $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;

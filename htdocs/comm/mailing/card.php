@@ -41,7 +41,7 @@ $langs->load("mails");
 if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) accessforbidden();
 
 $id = (GETPOST('mailid', 'int') ? GETPOST('mailid', 'int') : GETPOST('id', 'int'));
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $urlfrom = GETPOST('urlfrom');
 
@@ -211,7 +211,6 @@ if (empty($reshook))
 						$substitutionarray['__OTHER4__'] = $other4;
 						$substitutionarray['__OTHER5__'] = $other5;
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
-						$substitutionarray['__SIGNATURE__'] = $signature; // For backward compatibility
 						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
 
@@ -463,16 +462,16 @@ if (empty($reshook))
 	{
 		$mesgs = array();
 
-		$object->email_from     = trim($_POST["from"]);
-		$object->email_replyto  = trim($_POST["replyto"]);
-		$object->email_errorsto = trim($_POST["errorsto"]);
-		$object->titre          = trim($_POST["titre"]);
-		$object->sujet          = trim($_POST["sujet"]);
-		$object->body           = trim($_POST["bodyemail"]);
-		$object->bgcolor        = trim($_POST["bgcolor"]);
-		$object->bgimage        = trim($_POST["bgimage"]);
+		$object->email_from     = GETPOST("from");
+		$object->email_replyto  = GETPOST("replyto");
+		$object->email_errorsto = GETPOST("errorsto");
+		$object->title          = GETPOST("title");
+		$object->sujet          = GETPOST("sujet");
+		$object->body           = GETPOST("bodyemail", 'restricthtml');
+		$object->bgcolor        = GETPOST("bgcolor");
+		$object->bgimage        = GETPOST("bgimage");
 
-		if (!$object->titre) {
+		if (!$object->title) {
 			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		}
 		if (!$object->sujet) {
@@ -497,16 +496,16 @@ if (empty($reshook))
 	}
 
 	// Action update description of emailing
-	if ($action == 'settitre' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
+	if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
 	{
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
-		if ($action == 'settitre') $object->titre = trim(GETPOST('titre', 'alpha'));
+		if ($action == 'settitle') $object->title = trim(GETPOST('title', 'alpha'));
 		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'alpha'));
 		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'alpha'));
 		elseif ($action == 'setemail_errorsto') {
             $object->email_errorsto = trim(GETPOST('email_errorsto', 'alpha'));
-        } elseif ($action == 'settitre' && empty($object->titre)) {
+        } elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
@@ -564,10 +563,10 @@ if (empty($reshook))
 		{
 			$mesgs = array();
 
-			$object->sujet          = trim($_POST["sujet"]);
-			$object->body           = trim($_POST["bodyemail"]);
-			$object->bgcolor        = trim($_POST["bgcolor"]);
-			$object->bgimage        = trim($_POST["bgimage"]);
+			$object->sujet          = GETPOST("sujet");
+			$object->body           = GETPOST("bodyemail", 'restricthtml');
+			$object->bgcolor        = GETPOST("bgcolor");
+			$object->bgimage        = GETPOST("bgimage");
 
 			if (!$object->sujet) {
 				$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTopic"));
@@ -739,7 +738,7 @@ if ($action == 'create')
 	print '<div style="padding-top: 10px">';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'none'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtml'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
 	$doleditor->Create();
 	print '</div>';
 
@@ -855,9 +854,9 @@ if ($action == 'create')
 
 			// Description
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
 			// From
@@ -1015,7 +1014,7 @@ if ($action == 'create')
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
 					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
 					}
 				}
 
@@ -1145,7 +1144,7 @@ if ($action == 'create')
 			*/
 
 			// Topic
-			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 			// From
 			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 			// To

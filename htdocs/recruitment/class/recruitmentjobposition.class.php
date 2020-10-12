@@ -98,7 +98,7 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
@@ -391,10 +391,12 @@ class RecruitmentJobPosition extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
+				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
+				} elseif (strpos($value, '%') === false) {
+					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -688,13 +690,13 @@ class RecruitmentJobPosition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $this->modelpdf;
-			$triggerName = 'PROPAL_CLOSE_REFUSED';
+			$modelpdf = $this->model_pdf;
+			$triggerName = 'RECRUITMENTJOB_CLOSE_REFUSED';
 
 			if ($status == self::STATUS_RECRUITED)
 			{
 				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
-				$modelpdf = $this->modelpdf;
+				$modelpdf = $this->model_pdf;
 
 				if ($result < 0)
 				{
@@ -796,7 +798,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("PositionToBeFilled").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("PositionToBeFilled").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
@@ -1074,8 +1076,8 @@ class RecruitmentJobPosition extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_recruitmentjobposition';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
 			}

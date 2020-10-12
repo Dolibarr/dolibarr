@@ -5,8 +5,6 @@ Tools=Tools
 TMenuTools=Tools
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Birthday
-BirthdayDate=Birthday date
-DateToBirth=Birth date
 BirthdayAlertOn=birthday alert active
 BirthdayAlertOff=birthday alert inactive
 TransKey=Translation of the key TransKey
@@ -16,6 +14,8 @@ PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
 TextNextMonthOfInvoice=Following month (text) of invoice date
+PreviousMonth=Previous month
+CurrentMonth=Current month
 ZipFileGeneratedInto=Zip file generated into <b>%s</b>.
 DocFileGeneratedInto=Doc file generated into <b>%s</b>.
 JumpToLogin=Disconnected. Go to login page...
@@ -259,7 +259,7 @@ ContactCreatedByEmailCollector=Contact/address created by email collector from e
 ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
-
+ 
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats
