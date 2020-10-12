@@ -654,6 +654,10 @@ class modProduct extends DolibarrModules
 				));
 			}
 
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
+			}
+
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
@@ -690,6 +694,11 @@ class modProduct extends DolibarrModules
 					'sp.multicurrency_unitprice'=>'',
 					// TODO Make this field not required and calculate it from price and qty
 					'sp.multicurrency_price'=>''
+				));
+			}
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
+					'sp.packagning'=>'1',
 				));
 			}
 
