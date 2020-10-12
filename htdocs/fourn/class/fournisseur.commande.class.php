@@ -499,7 +499,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$line->fk_product          = $objp->fk_product;
 
-				$line->label               = $objp->label; 
+				$line->label               = $objp->label;
 				$line->libelle             = $objp->product_label; // deprecated
 				$line->product_label       = $objp->product_label;
 				$line->product_desc        = $objp->product_desc;
@@ -1544,7 +1544,7 @@ class CommandeFournisseur extends CommonOrder
 
 	 *	@return     int             				<=0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $label_product='')
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $label_product = '')
 	{
 		global $langs, $mysoc, $conf;
 
@@ -3351,7 +3351,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
-		$sql .= ' cd.label,'; 
+		$sql .= ' cd.label,';
 		$sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
@@ -3477,7 +3477,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= " (fk_commande, label, description, date_start, date_end,";
 		$sql .= " fk_product, product_type, special_code, rang,";
 		$sql .= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
-		$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";		        
+		$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
 		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
 		$sql .= ")";
 		$sql .= " VALUES (".$this->fk_commande.", '".$this->db->escape($this->label)."','".$this->db->escape($this->desc)."',";
