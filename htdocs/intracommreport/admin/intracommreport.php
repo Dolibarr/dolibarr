@@ -96,13 +96,14 @@ print load_fiche_titre($langs->trans("IntracommReportSetup"), $linkback, 'title_
 
 $head = intracommReportAdminPrepareHead();
 
-dol_fiche_head($head, 'general', $langs->trans("IntracommReport"), 0, "intracommreport");
+dol_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, "intracommreport");
 
-print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<td>'.$langs->trans("Parameters").' (DEB)</td>'."\n";
+print_fiche_titre($langs->trans("Parameters").' (DEB)');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -166,7 +167,9 @@ print "</tr>\n";
 
 print '</table>';
 
-print '<td>'.$langs->trans("Parameters").' (DES)</td>'."\n";
+
+print_fiche_titre($langs->trans("Parameters").' (DES)');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
