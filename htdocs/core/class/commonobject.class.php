@@ -296,6 +296,12 @@ abstract class CommonObject
 	 */
 	public $cond_reglement_id;
 
+    /**
+     * @var int Transport mode ID (For module intracomm report)
+     * @see setTransportMode()
+     */
+    public $transport_mode_id;
+
 	/**
 	 * @var int Payment terms ID
 	 * @deprecated Kept for compatibility
@@ -1999,7 +2005,7 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') $this->mode_reglement_supplier_id = $id;
 				return 1;
 			} else {
-				dol_syslog(get_class($this).'::setPaymentMethods Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog(get_class($this).'::setPaymentMethods Error '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -2036,7 +2042,7 @@ abstract class CommonObject
 
 				return 1;
 			} else {
-				dol_syslog(get_class($this).'::setMulticurrencyCode Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog(get_class($this).'::setMulticurrencyCode Error '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -2140,7 +2146,7 @@ abstract class CommonObject
 
 				return 1;
 			} else {
-				dol_syslog(get_class($this).'::setMulticurrencyRate Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog(get_class($this).'::setMulticurrencyRate Error '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -2179,7 +2185,7 @@ abstract class CommonObject
 				$this->cond_reglement = $id; // for compatibility
 				return 1;
 			} else {
-				dol_syslog(get_class($this).'::setPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog(get_class($this).'::setPaymentTerms Error '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -2190,6 +2196,42 @@ abstract class CommonObject
 		}
 	}
 
+    /**
+     *  Change the transport mode methods
+     *
+     *  @param		int		$id		Id of new payment method
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    public function setTransportMode($id)
+    {
+        dol_syslog(get_class($this).'::setTransportMode('.$id.')');
+        if ($this->statut >= 0 || $this->element == 'societe')
+        {
+            $fieldname = 'fk_transport_mode';
+            if ($this->element == 'societe') $fieldname = 'transport_mode';
+            if (get_class($this) == 'Fournisseur') $fieldname = 'transport_mode_supplier';
+
+            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+            $sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
+            $sql .= ' WHERE rowid='.$this->id;
+
+            if ($this->db->query($sql))
+            {
+                $this->transport_mode_id = $id;
+                // for supplier
+                if (get_class($this) == 'Fournisseur') $this->transport_mode_supplier_id = $id;
+                return 1;
+            } else {
+                dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
+                $this->error=$this->db->error();
+                return -1;
+            }
+        } else {
+            dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
+            $this->error='Status of the object is incompatible '.$this->statut;
+            return -2;
+        }
+    }
 
 	/**
 	 *  Change the retained warranty payments terms
@@ -2213,7 +2255,7 @@ abstract class CommonObject
 				$this->retained_warranty_fk_cond_reglement = $id;
 				return 1;
 			} else {
-				dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+				dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Error '.$sql.' - '.$this->db->error());
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -2245,7 +2287,7 @@ abstract class CommonObject
 			return 1;
 		} else {
 			$this->error = $this->db->error();
-			dol_syslog(get_class($this).'::setDeliveryAddress Erreur '.$sql.' - '.$this->error);
+			dol_syslog(get_class($this).'::setDeliveryAddress Error '.$sql.' - '.$this->error);
 			return -1;
 		}
 	}
@@ -8286,7 +8328,7 @@ abstract class CommonObject
 	 * @param  int		$fromId	Id object source
 	 * @param  int		$toId	Id object cible
 	 * @param  string	$type	Type of category ('product', ...)
-	 * @return int      < 0 si erreur, > 0 si ok
+	 * @return int      < 0 if error, > 0 if ok
 	 */
 	public function cloneCategories($fromId, $toId, $type = '')
 	{

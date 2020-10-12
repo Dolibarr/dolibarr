@@ -151,7 +151,7 @@ if (empty($reshook))
 				}
 			}
 		} else {
-			header("Location: index.php");
+			header("Location: list.php");
 			exit();
 		}
 	}

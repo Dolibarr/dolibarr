@@ -103,9 +103,46 @@ ALTER TABLE llx_user DROP COLUMN whatsapp;
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 
+-- Intracomm Report
+CREATE TABLE llx_c_transport_mode (
+  rowid     integer AUTO_INCREMENT PRIMARY KEY,
+  entity    integer	DEFAULT 1 NOT NULL,	-- multi company id
+  code      varchar(3) NOT NULL,
+  label     varchar(255) NOT NULL,
+  active    tinyint DEFAULT 1  NOT NULL
+) ENGINE=innodb;
+
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('ROU', 'Transport par route', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('AIR', 'Transport par air', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('POS', 'Envois postaux', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('OLE', 'Installations de transport fixe (oléoduc)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('NAV', 'Transport par navigation intérieure', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('PRO', 'Propulsion propre', 1);
+
+ALTER TABLE llx_facture ADD COLUMN fk_transport_mode integer after location_incoterms;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_transport_mode integer after location_incoterms;
+
+ALTER TABLE llx_societe ADD COLUMN transport_mode tinyint after cond_reglement;
+ALTER TABLE llx_societe ADD COLUMN transport_mode_supplier tinyint after cond_reglement_supplier;
+
+CREATE TABLE llx_intracommreport
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+
+  ref				varchar(30)        NOT NULL,			-- report reference number
+  entity			integer  DEFAULT 1 NOT NULL,			-- multi company id
+  type_declaration	varchar(32),
+  period			varchar(32),
+  mode				varchar(32),
+  content_xml		text,
+  type_export		varchar(10),
+  datec             datetime,
+  tms               timestamp
+)ENGINE=innodb;
+
 ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
-
-
 
 CREATE TABLE llx_recruitment_recruitmentjobposition(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -275,6 +312,7 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitme
 
 ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
+
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float;
 

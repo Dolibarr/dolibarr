@@ -86,6 +86,8 @@ create table llx_facture
   fk_incoterms          integer,								-- for incoterms
   location_incoterms    varchar(255),							-- for incoterms
 
+  fk_mode_transport     integer,								-- for intracomm report
+
   situation_cycle_ref smallint,  -- situation cycle reference
   situation_counter   smallint,  -- situation counter
   situation_final     smallint,  -- is the situation final ?
