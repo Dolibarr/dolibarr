@@ -3291,11 +3291,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $fk_facture;
 
-	/**
-	 * @var string supplier order line label
-	 */
-	public $label;
-
 	public $rang = 0;
 	public $special_code = 0;
 
@@ -3316,7 +3311,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $ref_supplier;
 	public $remise;
-	public $product_libelle;
 
 
 	/**
@@ -3344,7 +3338,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
-		$sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
@@ -3387,8 +3381,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->special_code     = $objp->special_code;
 
 				$this->ref = $objp->product_ref;
+
 				$this->product_ref      = $objp->product_ref;
-				$this->product_libelle  = $objp->product_libelle;
+				$this->product_label    = $objp->product_label;
 				$this->product_desc     = $objp->product_desc;
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
 				{

@@ -816,6 +816,47 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 abstract class CommonInvoiceLine extends CommonObjectLine
 {
 	/**
+	 * Custom label of line. Not used by default.
+	 * @deprecated
+	 */
+	public $label;
+
+	/**
+	 * @deprecated
+	 * @see $product_ref
+	 */
+	public $ref; // Product ref (deprecated)
+	/**
+	 * @deprecated
+	 * @see $product_label
+	 */
+	public $libelle; // Product label (deprecated)
+
+	/**
+	 * Type of the product. 0 for product 1 for service
+	 * @var int
+	 */
+	public $product_type = 0;
+
+	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
+
+	/**
+	 * Product label
+	 * @var string
+	 */
+	public $product_label;
+
+	/**
+	 * Product description
+	 * @var string
+	 */
+	public $product_desc;
+
+	/**
 	 * Quantity
 	 * @var double
 	 */
@@ -826,12 +867,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $subprice;
-
-	/**
-	 * Type of the product. 0 for product 1 for service
-	 * @var int
-	 */
-	public $product_type = 0;
 
 	/**
 	 * Id of corresponding product
