@@ -510,7 +510,7 @@ form {
 form#addproduct {
     padding-top: 10px;
 }
-div.float
+div.float, span.floatleft
 {
     float:<?php print $left; ?>;
 }

@@ -1165,13 +1165,13 @@ if ($id > 0 || !empty($ref)) {
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid)
 				{
 					print '<form name="editdispatchedlines" id="editdispatchedlines" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#line_' . GETPOST('lineid') . '" method="POST">
-					<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
+					<input type="hidden" name="token" value="'.newToken().'">
 					<input type="hidden" name="action" value="updateline">
 					<input type="hidden" name="mode" value="">
-					<input type="hidden" name="lineid" value="' . $objp->dispatchlineid . '">';
+					<input type="hidden" name="lineid" value="'.$objp->dispatchlineid.'">';
 				}
 
-				print '<tr ' . $bc[$var] . ' id="line_'.$objp->dispatchlineid.'" >';
+				print '<tr class="oddeven" id="line_'.$objp->dispatchlineid.'" >';
 
 				if (!empty($conf->reception->enabled)) {
 					print '<td>';

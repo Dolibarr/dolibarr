@@ -245,7 +245,7 @@ if (empty($reshook))
 	    {
 	        $action = 'create';
 	    }
-	    // Le reste propre a cette action s'affiche en bas de page.
+	    // All the next of this action is displayed at the page's bottom.
 	}
 
 
@@ -292,7 +292,7 @@ if (empty($reshook))
 	        $thirdparty = new Societe($db);
             if ($socid > 0) $thirdparty->fetch($socid);
 
-	        // Creation de la ligne paiement
+	        // Creation of payment line
 	        $paiement = new PaiementFourn($db);
 	        $paiement->datepaye     = $datepaye;
 	        $paiement->amounts      = $amounts; // Array of amounts
@@ -521,7 +521,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $sql .= " WHERE f.entity = ".$conf->entity;
 	            $sql .= ' AND f.fk_soc = '.$object->socid;
 	            $sql .= ' AND f.paye = 0';
-	            $sql .= ' AND f.fk_statut = 1'; // Statut=0 => non validee, Statut=2 => annulee
+	            $sql .= ' AND f.fk_statut = 1'; // Status=0 => unvalidated, Status=2 => canceled
 	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE)
 	            {
 	                $sql .= ' AND f.type IN (0,1,3,5)'; // Standard invoice, replacement, deposit, situation
@@ -756,7 +756,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            }
 			}
 
-	        // Bouton Enregistrer
+	        // Save Button
 	        if ($action != 'add_paiement')
 	        {
 				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");

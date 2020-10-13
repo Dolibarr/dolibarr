@@ -8,8 +8,8 @@
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -347,6 +347,12 @@ if (empty($reshook))
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
+    // transport mode
+    if ($action == 'settransportmode' && $user->rights->fournisseur->facture->creer)
+    {
+        $result=$object->setTransportMode(GETPOST('transport_mode_id', 'int'));
+    }
+
 	// Set label
 	elseif ($action == 'setlabel' && $usercancreate)
 	{
@@ -660,7 +666,8 @@ if (empty($reshook))
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
+				$object->transport_mode_id	= GETPOST('transport_mode_id', 'int');
 
 				// Proprietes particulieres a facture de remplacement
 				$object->fk_facture_source = GETPOST('fac_replacement');
@@ -725,7 +732,8 @@ if (empty($reshook))
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx	= GETPOST('originmulticurrency_tx', 'int');
+				$object->transport_mode_id	= GETPOST('transport_mode_id', 'int');
 
 				// Proprietes particulieres a facture avoir
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
@@ -838,6 +846,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->transport_mode_id	= GETPOST('transport_mode_id');
 
 				// Auto calculation of date due if not filled by user
 				if (empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
@@ -1687,6 +1696,7 @@ if ($action == 'create')
 		$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
 		$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
+		$transport_mode_id  = (!empty($objectsrc->transport_mode_id) ? $objectsrc->transport_mode_id : (!empty($soc->transport_mode_id) ? $soc->transport_mode_id : 0));
 
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -1705,6 +1715,7 @@ if ($action == 'create')
 	} else {
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
+		$transport_mode_id	= $societe->transport_mode_supplier_id;
 		$fk_account         = $societe->fk_account;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
@@ -2053,6 +2064,15 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+    // Intracomm report
+    if (!empty($conf->intracommreport->enabled))
+    {
+        $langs->loadLangs(array("intracommreport"));
+        print '<tr><td>' . $langs->trans('IntracommReportTransportMode') . '</td><td>';
+        $form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
+        print '</td></tr>';
+    }
+
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
@@ -2109,7 +2129,7 @@ if ($action == 'create')
 			}
 		}
 
-		echo '</td></tr>';
+		print '</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) //Localtax1
@@ -2631,6 +2651,26 @@ if ($action == 'create')
 			}
 			print '</td></tr>';
 		}
+
+        // Intracomm report
+        $langs->loadLangs(array("intracommreport"));
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('IntracommReportTransportMode');
+        print '</td>';
+        if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+        }
+        print '</tr></table>';
+        print '</td><td colspan="2">';
+        if ($action == 'editmode')
+        {
+            $form->formTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
+        }
+        else {
+            $form->formTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
+        }
+        print '</td></tr>';
 
 		// Other attributes
 		$cols = 2;

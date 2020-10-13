@@ -662,9 +662,9 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		// Version (with picto warning or not)
 		$version = $objMod->getVersion(0);
 		$versiontrans = '';
-		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), 'style="float: left"');
-		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), 'style="float: left"');
-		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), 'style="float: left"');
+		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), '', 'floatleft paddingright');
+		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), '', 'floatleft paddingright');
+		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), '', 'floatleft paddingright');
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
 		}

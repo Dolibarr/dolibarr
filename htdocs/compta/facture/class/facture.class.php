@@ -4738,10 +4738,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $fk_facture;
 	//! Id parent line
 	public $fk_parent_line;
-	/**
-	 * @deprecated
-	 */
-	public $label;
+
 	//! Description ligne
 	public $desc;
 	public $ref_ext; // External reference of the line
@@ -4770,21 +4767,6 @@ class FactureLigne extends CommonInvoiceLine
 
 	public $date_start;
 	public $date_end;
-
-	// From llx_product
-	/**
-	 * @deprecated
-	 * @see $product_ref
-	 */
-	public $ref; // Product ref (deprecated)
-	public $product_ref; // Product ref
-	/**
-	 * @deprecated
-	 * @see $product_label
-	 */
-	public $libelle; // Product label (deprecated)
-	public $product_label; // Product label
-	public $product_desc; // Description produit
 
 	public $skip_update_total; // Skip update price total for special lines
 
@@ -4825,7 +4807,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.multicurrency_total_ht,';
 		$sql .= ' fd.multicurrency_total_tva,';
 		$sql .= ' fd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql .= ' WHERE fd.rowid = '.$rowid;
@@ -4871,10 +4853,11 @@ class FactureLigne extends CommonInvoiceLine
 			$this->marque_tx			= $marginInfos[2];
 
 			$this->ref = $objp->product_ref; // deprecated
-			$this->product_ref = $objp->product_ref;
-			$this->libelle				= $objp->product_libelle; // deprecated
-			$this->product_label		= $objp->product_libelle;
+
+			$this->product_ref          = $objp->product_ref;
+			$this->product_label		= $objp->product_label;
 			$this->product_desc			= $objp->product_desc;
+
 			$this->fk_unit				= $objp->fk_unit;
 			$this->fk_user_modif		= $objp->fk_user_modif;
 			$this->fk_user_author = $objp->fk_user_author;

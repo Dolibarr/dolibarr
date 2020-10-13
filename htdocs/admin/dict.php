@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2019	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
@@ -91,7 +91,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 0, 15, 30, 0, 37, 0, 25, 0);
+$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 0, 25, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -135,6 +135,7 @@ $tabname[37] = MAIN_DB_PREFIX."c_units";
 $tabname[38] = MAIN_DB_PREFIX."c_socialnetworks";
 $tabname[39] = MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabname[40] = MAIN_DB_PREFIX."c_stcommcontact";
+$tabname[41] = MAIN_DB_PREFIX."c_transport_mode";
 
 // Dictionary labels
 $tablib = array();
@@ -178,6 +179,7 @@ $tablib[37] = "DictionaryMeasuringUnits";
 $tablib[38] = "DictionarySocialNetworks";
 $tablib[39] = "DictionaryProspectContactLevel";
 $tablib[40] = "DictionaryProspectContactStatus";
+$tablib[41] = "DictionaryTransportMode";
 
 // Requests to extract data
 $tabsql = array();
@@ -221,6 +223,7 @@ $tabsql[37] = "SELECT r.rowid, r.code, r.label, r.short_label, r.unit_type, r.sc
 $tabsql[38] = "SELECT rowid, entity, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
 $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
+$tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -264,6 +267,7 @@ $tabsqlsort[37] = "r.unit_type ASC, r.scale ASC, r.code ASC";
 $tabsqlsort[38] = "rowid, code ASC";
 $tabsqlsort[39] = "sortorder ASC";
 $tabsqlsort[40] = "code ASC";
+$tabsqlsort[41] = "code ASC";
 
 // Field names in select result for dictionary display
 $tabfield = array();
@@ -307,6 +311,7 @@ $tabfield[37] = "code,label,short_label,unit_type,scale";
 $tabfield[38] = "code,label,url,icon,entity";
 $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
+$tabfield[41] = "code,label";
 
 // Edit field names for editing a record
 $tabfieldvalue = array();
@@ -350,6 +355,7 @@ $tabfieldvalue[37] = "code,label,short_label,unit_type,scale";
 $tabfieldvalue[38] = "code,label,url,icon";
 $tabfieldvalue[39] = "code,libelle,sortorder";
 $tabfieldvalue[40] = "code,libelle,picto";
+$tabfieldvalue[41] = "code,label";
 
 // Field names in the table for inserting a record
 $tabfieldinsert = array();
@@ -394,6 +400,7 @@ $tabfieldinsert[37] = "code,label,short_label,unit_type,scale";
 $tabfieldinsert[38] = "code,label,url,icon,entity";
 $tabfieldinsert[39] = "code,label,sortorder";
 $tabfieldinsert[40] = "code,libelle,picto";
+$tabfieldinsert[41] = "code,label";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -439,6 +446,7 @@ $tabrowid[37] = "";
 $tabrowid[38] = "";
 $tabrowid[39] = "code";
 $tabrowid[40] = "id";
+$tabrowid[41] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
@@ -482,6 +490,7 @@ $tabcond[37] = !empty($conf->product->enabled);
 $tabcond[38] = !empty($conf->socialnetworks->enabled);
 $tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[41] = !empty($conf->intracommreport->enabled);
 
 // List of help for fields
 $tabhelp = array();
@@ -525,6 +534,7 @@ $tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"), 'unit_type' => $lang
 $tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->trans('UrlSocialNetworksDesc'), 'icon' => $langs->trans('FafaIconSocialNetworksDesc'));
 $tabhelp[39] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[40] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
+$tabhelp[41] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -568,6 +578,7 @@ $tabfieldcheck[37] = array();
 $tabfieldcheck[38] = array();
 $tabfieldcheck[39] = array();
 $tabfieldcheck[40] = array();
+$tabfieldcheck[41] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);

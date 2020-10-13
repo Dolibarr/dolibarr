@@ -196,6 +196,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
+%_datadir/dolibarr/htdocs/intracommreport
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
 %_datadir/dolibarr/htdocs/livraison
 %_datadir/dolibarr/htdocs/loan

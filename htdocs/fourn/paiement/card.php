@@ -128,7 +128,7 @@ if ($action == 'setdatep' && !empty($_POST['datepday']))
 
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
-// TODO: get the appropriate permisson
+// TODO: get the appropriate permission
 $permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -151,7 +151,7 @@ dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment'
 if ($result > 0)
 {
 	/*
-	 * Confirmation de la suppression du paiement
+	 * Confirmation of payment's delete
 	 */
 	if ($action == 'delete')
 	{
@@ -159,7 +159,7 @@ if ($result > 0)
 	}
 
 	/*
-	 * Confirmation de la validation du paiement
+	 * Confirmation of payment's validation
 	 */
 	if ($action == 'valide')
 	{
@@ -181,7 +181,7 @@ if ($result > 0)
     print $form->showrefnav($object,'id','',1,'rowid','ref');
 	print '</td></tr>';*/
 
-	// Date payment
+	// Date of payment
 	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
 	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
@@ -251,7 +251,7 @@ if ($result > 0)
 	print '<br>';
 
 	/**
-	 *	List of vendor invoices
+	 *	List of seller's invoices
 	 */
 	$sql = 'SELECT f.rowid, f.rowid as facid, f.ref, f.ref_supplier, f.type, f.paye, f.total_ht, f.total_tva, f.total_ttc, f.datef as date, f.fk_statut as status,';
 	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
@@ -332,7 +332,7 @@ if ($result > 0)
 
 
 	/*
-	 * Boutons Actions
+	 * Actions Buttons
 	 */
 
 	print '<div class="tabsAction">';
