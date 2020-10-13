@@ -99,6 +99,7 @@ $sql .= $db->plimit($max);
 $resql = $db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
@@ -126,9 +127,9 @@ if ($resql)
 
 		print '<tr class="oddeven">'."\n";
 
-		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
-		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
 		print '<td class="right">'.$objp->nbcheque.'</td>';
 		print '<td class="right">'.price($objp->amount).'</td>';
 		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
@@ -136,6 +137,7 @@ if ($resql)
 		print '</tr>';
 	}
 	print "</table>";
+	print '</div>';
 
 	$db->free($resql);
 } else {
