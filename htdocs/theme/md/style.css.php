@@ -1288,7 +1288,9 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
-	.clearbothonsmartphone { clear: both; display: block; }
+	div.divphotoref {
+	    padding-right: 10px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -3699,6 +3701,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 @media only screen and (max-width: 767px)
 {
+	.tabBar .arearef .pagination.paginationref {
+	    max-width: calc(50%);
+	}
+
+	.clearbothonsmartphone {
+	    clear: both;
+	    display: block !important;
+	}
+
 	div.tabs {
 		padding-left: 0 !important;
 		margin-left: 0 !important;

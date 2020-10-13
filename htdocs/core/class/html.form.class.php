@@ -7265,7 +7265,7 @@ class Form
 		}
 		if ($morehtml)
 		{
-			$ret .= '<li class="noborder litext">'.$morehtml.'</li>';
+			$ret .= '<li class="noborder litext'.(($shownav && $previous_ref && $next_ref) ? ' clearbothonsmartphone' : '').'">'.$morehtml.'</li>';
 		}
 		if ($shownav && ($previous_ref || $next_ref))
 		{

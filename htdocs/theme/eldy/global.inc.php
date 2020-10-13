@@ -1291,6 +1291,10 @@ table[summary="list_of_modules"] .fa-cog {
     	padding-right: 5px;
     }
 
+	div.divphotoref {
+	    padding-right: 10px !important;
+	}
+
     .hideonsmartphone { display: none; }
     .hideonsmartphoneimp { display: none !important; }
 
@@ -1306,11 +1310,6 @@ table[summary="list_of_modules"] .fa-cog {
 		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
-
-	.clearbothonsmartphone { clear: both; display: block; }
-	/*img.photoref, div.photoref {
-		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
-	}*/
 }
 
 /* Force values for small screen 570 */
@@ -3761,6 +3760,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 @media only screen and (max-width: 767px)
 {
+	.tabBar .arearef .pagination.paginationref {
+	    max-width: calc(50%);
+	}
+
+	.clearbothonsmartphone {
+	    clear: both;
+	    display: block !important;
+	}
+
 	div.tabs {
 		padding-left: 0 !important;
 		padding-right: 0!important;
