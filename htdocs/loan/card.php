@@ -83,7 +83,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
-			header("Location: index.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -156,7 +156,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			header("Location: index.php");
+			header("Location: list.php");
 			exit();
 		}
 	}
