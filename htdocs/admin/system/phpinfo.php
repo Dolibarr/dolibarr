@@ -273,6 +273,11 @@ function getActivatedExtensions()
 
 	$configLines = explode("\r", $content);
 
+	// For compatibility with LF (Line Feed)
+	if (empty($configLines) || count($configLines) < 2) {
+	    $configLines = explode("\n", $content);
+	}
+
 	$extensions = array();
 	$lastLine = "";
 
@@ -281,10 +286,12 @@ function getActivatedExtensions()
 		$line = trim($line);
 
 		// ignore comment lines
-		if (substr($line, 0, 1) === ";")
+		if (substr($line, 0, 1) === ";" || empty($line))
 		{
 			continue;
 		}
+
+		// var_dump($line);
 
 		// extension
 		if (substr($line, 0, 9) === "extension" && substr($line, 0, 10) !== "extension_")
