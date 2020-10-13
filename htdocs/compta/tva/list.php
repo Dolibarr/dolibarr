@@ -361,19 +361,19 @@ while ($i < min($num, $limit)) {
 		print '<td>'.dol_trunc($obj->label, 40).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
-	
+
 	// Date end period
 	if (!empty($arrayfields['t.datev']['checked']))	{
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
-	
+
 	// Date payment
 	if (!empty($arrayfields['t.datep']['checked'])) {
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
-	
+
 	// Type
 	if (!empty($arrayfields['t.fk_typepayment']['checked']))
 	{
@@ -402,10 +402,10 @@ while ($i < min($num, $limit)) {
 			$bankstatic->ref = $obj->bref;
 			$bankstatic->number = $obj->bnumber;
 			$bankstatic->account_number = $obj->account_number;
-			
+
 			$accountingjournal->fetch($obj->fk_accountancy_journal);
 			$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-			
+
 			$bankstatic->label = $obj->blabel;
 			print $bankstatic->getNomUrl(1);
 		}
