@@ -2665,10 +2665,10 @@ if ($action == 'create')
         print '</td><td colspan="2">';
         if ($action == 'editmode')
         {
-            $form->formTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
+            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
         }
         else {
-            $form->formTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
+            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
         }
         print '</td></tr>';
 
