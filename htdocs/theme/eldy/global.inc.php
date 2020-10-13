@@ -1275,6 +1275,10 @@ table[summary="list_of_modules"] .fa-cog {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
 }
+.widthcentpercentminusxx {
+	width: calc(100% - 70px) !important;
+	display: inline-block;
+}
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
@@ -1298,8 +1302,8 @@ table[summary="list_of_modules"] .fa-cog {
 		margin-bottom: 15px !important;
 	}
 
-	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth300 {
-		width: calc(100% - 50px) !important;
+	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
+		width: calc(100% - 40px) !important;
 		display: inline-block;
 	}
 

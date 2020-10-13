@@ -274,34 +274,17 @@ $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 $max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year));
 
 $tmpday = $first_day;
-$picto = 'calendartype';
+$picto = 'calendarweek';
 
 $nav = "<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y")."</span> \n";
 $nav .= "<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
-$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$picto = 'calendarweek';
+if (empty($conf->dol_optimize_smallscreen)) {
+	$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+}
 
-/*$nav .= ' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-$nav .= '<input type="hidden" name="token" value="'.newToken().'">';
-$nav .= '<input type="hidden" name="action" value="'.$action.'">';
-$nav .= '<input type="hidden" name="filtert" value="'.$filtert.'">';
-$nav .= '<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-$nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-$nav .= '<input type="hidden" name="resourceid" value="'.$resourceid.'">';
-$nav .= '<input type="hidden" name="status" value="'.$status.'">';
-$nav .= '<input type="hidden" name="socid" value="'.$socid.'">';
-$nav .= '<input type="hidden" name="projectid" value="'.$projectid.'">';
-$nav .= '<input type="hidden" name="begin_h" value="'.$begin_h.'">';
-$nav .= '<input type="hidden" name="end_h" value="'.$end_h.'">';
-$nav .= '<input type="hidden" name="begin_d" value="'.$begin_d.'">';
-$nav .= '<input type="hidden" name="end_d" value="'.$end_d.'">';
-$nav .= '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
-*/
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
-//$nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav .= ' <button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-//$nav .= '</form>';
 
 // Must be after the nav definition
 $param .= '&year='.urlencode($year).'&month='.urlencode($month).($day ? '&day='.urlencode($day) : '');
