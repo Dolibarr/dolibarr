@@ -47,6 +47,7 @@ CronNbRun=Number of launches
 CronMaxRun=Maximum number of launches
 CronEach=Every
 JobFinished=Job launched and finished
+Scheduled=Scheduled
 #Page card
 CronAdd= Add jobs
 CronEvery=Execute job each
@@ -57,7 +58,7 @@ CronNote=Comment
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
 StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Enable
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Disable
 CronTaskInactive=This job is disabled
 CronId=Id
