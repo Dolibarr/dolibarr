@@ -265,8 +265,8 @@ $db->close();
  */
 function getActivatedExtensions()
 {
-	$file    = getConfigFilePath();
-	$handle  = fopen(GetConfigFilePath(), "r");
+	$file    = trim(getConfigFilePath());
+	$handle  = fopen($file, "r");
 	$content = fread($handle, filesize($file));
 
 	fclose($handle);
