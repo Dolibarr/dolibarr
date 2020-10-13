@@ -42,6 +42,7 @@ $catname = GETPOST('catname', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
+$printer3 = GETPOST('printer3', 'alpha');
 
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
@@ -62,6 +63,14 @@ if ($action == "SavePrinter2") {
 		$printedcategories = $printedcategories.$cat.";";
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_2", $printedcategories, 'chaine', 0, '', $conf->entity);
+}
+
+if ($action == "SavePrinter3") {
+	$printedcategories = ";";
+	if (is_array($printer3)) foreach ($printer3 as $cat) {
+		$printedcategories = $printedcategories.$cat.";";
+	}
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_3", $printedcategories, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -206,6 +215,33 @@ if ($nbofentries > 0)
 	print '</table></td>';
 	print '</tr>';
 }
+
+//Printer3
+print '<table class="liste nohover" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><td class="right">';
+print '</td></tr>';
+$nbofentries = (count($data) - 1);
+print '<form action="orderprinters.php">';
+if ($nbofentries > 0)
+{
+	print '<tr class="pair"><td colspan="3">';
+	print '<input type="hidden" name="action" value="SavePrinter3">';
+	foreach ($data as $row) {
+		if (strpos($conf->global->TAKEPOS_PRINTED_CATEGORIES_3, ';'.$row["rowid"].';') !== false) $checked = 'checked'; else $checked = '';
+		if ($row["fk_menu"] == 0) print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
+	}
+	print '</td></tr>';
+} else {
+	print '<tr class="pair">';
+	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
+	print '<td valign="middle">';
+	print $langs->trans("NoCategoryYet");
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '</table></td>';
+	print '</tr>';
+}
+
 print "</table>";
 print '<input type="submit" value="'.$langs->trans("Save").'"></form>';
 
