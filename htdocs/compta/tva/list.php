@@ -282,7 +282,7 @@ if (!empty($arrayfields['t.num_payment']['checked'])) {
 	print '</td>';
 }
 
-// Filter: Bank transaction number
+// Filter: Bank transaction number (placeholder)
 if (!empty($arrayfields['transaction']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -315,16 +315,16 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST))	print_liste_field_titre('#', 										$_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
-if (!empty($arrayfields['t.rowid']['checked']))				print_liste_field_titre($arrayfields['t.rowid']['label'],			$_SERVER['PHP_SELF'], 't.rowid', '', $param, '', $sortfield, $sortorder);
-if (!empty($arrayfields['t.label']['checked']))				print_liste_field_titre($arrayfields['t.label']['label'],			$_SERVER['PHP_SELF'], 't.label', '', $param, 'align="left"', $sortfield, $sortorder);
-if (!empty($arrayfields['t.datev']['checked']))				print_liste_field_titre($arrayfields['t.datev']['label'],			$_SERVER['PHP_SELF'], 't.datev', '', $param, 'align="center"', $sortfield, $sortorder);
-if (!empty($arrayfields['t.datep']['checked']))				print_liste_field_titre($arrayfields['t.datep']['label'],			$_SERVER['PHP_SELF'], 't.datep', '', $param, 'align="center"', $sortfield, $sortorder);
-if (!empty($arrayfields['t.fk_typepayment']['checked']))	print_liste_field_titre($arrayfields['t.fk_typepayment']['label'],	$_SERVER['PHP_SELF'], 't.fk_typepayment', '', $param, '', $sortfield, $sortorder, 'left ');
-if (!empty($arrayfields['t.num_payment']['checked']))		print_liste_field_titre($arrayfields['t.num_payment']['label'],		$_SERVER['PHP_SELF'], 't.num_payment', '', $param, '', $sortfield, $sortorder, '', $arrayfields['t.num_payment']['tooltip']);
-if (!empty($arrayfields['transaction']['checked']))			print_liste_field_titre($arrayfields['transaction']['label'], 		$_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
-if (!empty($arrayfields['ba.label']['checked']))			print_liste_field_titre($arrayfields['ba.label']['label'],			$_SERVER['PHP_SELF'], 'ba.label', '', $param, '', $sortfield, $sortorder, 'left ');
-if (!empty($arrayfields['t.amount']['checked']))			print_liste_field_titre($arrayfields['t.amount']['label'],			$_SERVER['PHP_SELF'], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST))	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['t.rowid']['checked']))				print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER['PHP_SELF'], 't.rowid', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['t.label']['checked']))				print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER['PHP_SELF'], 't.label', '', $param, 'align="left"', $sortfield, $sortorder);
+if (!empty($arrayfields['t.datev']['checked']))				print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, 'align="center"', $sortfield, $sortorder);
+if (!empty($arrayfields['t.datep']['checked']))				print_liste_field_titre($arrayfields['t.datep']['label'], $_SERVER['PHP_SELF'], 't.datep', '', $param, 'align="center"', $sortfield, $sortorder);
+if (!empty($arrayfields['t.fk_typepayment']['checked']))	print_liste_field_titre($arrayfields['t.fk_typepayment']['label'], $_SERVER['PHP_SELF'], 't.fk_typepayment', '', $param, '', $sortfield, $sortorder, 'left ');
+if (!empty($arrayfields['t.num_payment']['checked']))		print_liste_field_titre($arrayfields['t.num_payment']['label'], $_SERVER['PHP_SELF'], 't.num_payment', '', $param, '', $sortfield, $sortorder, '', $arrayfields['t.num_payment']['tooltip']);
+if (!empty($arrayfields['transaction']['checked']))			print_liste_field_titre($arrayfields['transaction']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['ba.label']['checked']))			print_liste_field_titre($arrayfields['ba.label']['label'], $_SERVER['PHP_SELF'], 'ba.label', '', $param, '', $sortfield, $sortorder, 'left ');
+if (!empty($arrayfields['t.amount']['checked']))			print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER['PHP_SELF'], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
@@ -333,13 +333,6 @@ print $hookmanager->resPrint;
 
 print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print '</tr>';
-
-$checkedCount = 0;
-foreach ($arrayfields as $column) {
-	if ($column['checked']) {
-		$checkedCount++;
-	}
-}
 
 $i = 0;
 $totalarray = array();
