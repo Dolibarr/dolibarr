@@ -1656,12 +1656,12 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$helpbaseurl = '';
 			$helppage = '';
 			$mode = '';
-			$helpresent = '';
+			$helppresent = '';
 
 			if (empty($helppagename)) {
 				$helppagename = 'EN:User_documentation|FR:Documentation_utilisateur|ES:Documentación_usuarios';
 			} else {
-				$helpresent = 'helppresent';
+				$helppresent = 'helppresent';
 			}
 
 			// Get helpbaseurl, helppage and mode from helppagename and langs
@@ -1680,7 +1680,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				if ($mode == 'wiki') $text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text .= sprintf($helpbaseurl, $helppage);
 				$text .= '">';
-				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '')."></span>';
+				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
 				$text .= '</a>';
 				$toprightmenu .= @Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
