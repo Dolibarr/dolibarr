@@ -207,7 +207,7 @@ if (empty($reshook))
 	    {
 	        $action = 'create';
 	    }
-	    // Le reste propre a cette action s'affiche en bas de page.
+	    // The next of this action is displayed at the page's bottom.
 	}
 
 	/*
@@ -249,7 +249,7 @@ if (empty($reshook))
 
 	    if (!empty($conf->banque->enabled))
 	    {
-	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
+	    	// If the bank module is active, an account is required to input a payment
 	    	if (GETPOST('accountid', 'int') <= 0)
 	    	{
 	    		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -503,7 +503,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         }
         print "</tr>\n";
 
-        // Cheque number
+        // Bank check number
         print '<tr><td>'.$langs->trans('Numero');
         print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
         print '</td>';
@@ -793,7 +793,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         }
 
 
-        // Bouton Enregistrer
+        // Save button
         if ($action != 'add_paiement')
         {
         	$checkboxlabel = $langs->trans("ClosePaidInvoicesAutomatically");

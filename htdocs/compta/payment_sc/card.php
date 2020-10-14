@@ -184,7 +184,7 @@ print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("Pa
 // Numero
 print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
 
-// Montant
+// Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
@@ -288,7 +288,7 @@ if ($resql)
 
 
 /*
- * Boutons Actions
+ * Actions Buttons
  */
 print '<div class="tabsAction">';
 
