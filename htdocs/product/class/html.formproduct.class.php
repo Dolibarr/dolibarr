@@ -430,13 +430,15 @@ class FormProduct
 	 *  NAture of product labels are defined in llx_c_product_nature
 	 *
 	 *  @param  string		$name                Name of HTML field
-	 *  @param  string		$default             Preselected value
-	 *  @param  int         $mode                1=Use label as value, 0=Use rowid
+	 *  @param  string		$selected             Preselected value
+	 *  @param  int         $mode                1=Use label as value, 0=Use code
 	 *  @return string
 	 */
-	public function selectProductNature($name = 'finished', $default = '-1', $mode = 0)
+	public function selectProductNature($name = 'finished', $selected = '', $mode = 0)
 	{
 		global $langs, $db;
+
+		$langs->load('products');
 
 		$return = '';
 
@@ -459,18 +461,29 @@ class FormProduct
 			return -1;
 		} else {
 			$return .= '<select class="flat" name="'.$name.'">';
+			$return .= '<option value="-1"';
+			if ($selected=='' || $selected=='-1') {
+				$return .= ' selected';
+			}
+			$return .= '></option>';
+			if (!empty($productNature->records) && is_array($productNature->records)) {
+				foreach ($productNature->records as $lines) {
+					$return .= '<option value="';
+					if ($mode == 1) $return .= $lines->label;
+					else $return .= $lines->code;
 
-			foreach ($productNature->records as $lines)
-			{
-				$return .= '<option value="';
-				if ($mode == 1) $return .= $lines->label;
-				else $return .= $lines->id;
-				$return .= '"';
-				if ($mode == 1 && $lines->label == $default) $return .= ' selected';
-				elseif ($mode == 0 && $lines->code == $default) $return .= ' selected';
-				$return .= '>';
-				else $return .= $langs->trans($lines->label);
-				$return .= '</option>';
+					$return .= '"';
+
+					if ($mode == 1 && $lines->label == $selected) {
+						$return .= ' selected';
+					} elseif ($lines->code == $selected) {
+						$return .= ' selected';
+					}
+
+					$return .= '>';
+					$return .= $langs->trans($lines->label);
+					$return .= '</option>';
+				}
 			}
 			$return .= '</select>';
 		}

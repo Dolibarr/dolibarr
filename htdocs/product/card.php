@@ -321,8 +321,19 @@ if (empty($reshook))
 			$object->surface_units      	 = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
-			$object->finished           	 = GETPOST('finished', 'alpha');
-			$object->fk_unit = GETPOST('units', 'alpha'); // This is the fk_unit of sale
+			$finished               = GETPOST('finished', 'int');
+			if ($finished > 0) {
+				$object->finished = $finished;
+			} else {
+				$object->finished = null;
+			}
+
+			$units = GETPOST('units', 'int');
+			if ($units > 0) {
+				$object->fk_unit = $units;
+			} else {
+				$object->fk_unit = null;
+			}
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -435,10 +446,15 @@ if (empty($reshook))
 				$object->surface_units          = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
 				$object->volume                 = GETPOST('volume');
 				$object->volume_units           = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
-				$object->finished               = GETPOST('finished', 'alpha');
+
+				$finished               = GETPOST('finished', 'int');
+				if ($finished >= 0) {
+					$object->finished = $finished;
+				} else {
+					$object->finished = null;
+				}
 
 				$units = GETPOST('units', 'int');
-
 				if ($units > 0) {
 					$object->fk_unit = $units;
 				} else {
@@ -1547,8 +1563,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				// Nature
 				print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="3">';
-				$statutarray = array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-				print $form->selectarray('finished', $statutarray, $object->finished);
+				print $formproduct->selectProductNature('finished', $object->finished);
 				print '</td></tr>';
 
 				// Brut Weight

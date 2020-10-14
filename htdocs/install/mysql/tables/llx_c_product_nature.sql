@@ -18,7 +18,7 @@
 
 CREATE TABLE llx_c_product_nature (
      rowid integer AUTO_INCREMENT PRIMARY KEY,
-     code varchar(3) NOT NULL,
+     code tinyint NOT NULL,
      label varchar(100),
      active tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;

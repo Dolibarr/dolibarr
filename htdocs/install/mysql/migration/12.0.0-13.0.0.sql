@@ -408,13 +408,16 @@ DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
 
 CREATE TABLE llx_c_product_nature (
       rowid integer AUTO_INCREMENT PRIMARY KEY,
-      code integer NOT NULL,
+      code tinyint NOT NULL,
       label varchar(100),
       active tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code);
 
-INSERT INTO llx_c_product_nature (code, label, active) VALUES (-1, '', 1);
 INSERT INTO llx_c_product_nature (code, label, active) VALUES (0, 'RowMaterial', 1);
 INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1);
+
+ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
+
