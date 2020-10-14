@@ -181,7 +181,12 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			// Creation user
 			$nuser = new User($db);
-			$result = $nuser->create_from_member($object, GETPOST('login', 'alphanohtml'));
+			$tmpuser = dol_clone($object);
+			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
+				$tmpuser->fk_soc = 0;
+			}
+
+			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
 
 			if ($result < 0) {
 				$langs->load("errors");
@@ -1279,11 +1284,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formquestion = array(
 					array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
 			);
-			$text = $langs->trans("ConfirmCreateLogin").'<br>';
-			if (!empty($conf->societe->enabled)) {
-				if ($object->socid > 0) $text .= $langs->trans("UserWillBeExternalUser");
-				else $text .= $langs->trans("UserWillBeInternalUser");
+			if (!empty($conf->societe->enabled) && $object->socid > 0) {
+				$object->fetch_thirdparty();
+				$formquestion[] = array('label' => $langs->trans("UserWillBe"), 'type' => 'radio', 'name' => 'internalorexternal', 'default'=>'external', 'values' => array('external'=>$langs->trans("External").' - '.$langs->trans("LinkedToDolibarrThirdParty").' '.$object->thirdparty->getNomUrl(1, '', 0, 1), 'internal'=>$langs->trans("Internal")));
 			}
+			$text = '';
+			if (!empty($conf->societe->enabled) && $object->socid <= 0) {
+				$text .= $langs->trans("UserWillBeInternalUser").'<br>';
+			}
+			$text .= $langs->trans("ConfirmCreateLogin");
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
 		}
 

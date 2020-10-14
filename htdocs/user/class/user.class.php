@@ -1318,7 +1318,8 @@ class User extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Create a user into database from a member object
+	 *  Create a user into database from a member object.
+	 *  If $member->fk_soc is set, it will be an external user.
 	 *
 	 *  @param	Adherent	$member		Object member source
 	 * 	@param	string		$login		Login to force

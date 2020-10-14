@@ -2358,11 +2358,12 @@ class Societe extends CommonObject
 				$code .= $this->code_fournisseur.' - ';
 			}
 
-			if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
-			{
-				$name = $code.' '.$name;
-			} else {
-				$name = $code;
+			if ($code) {
+				if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1) {
+					$name = $code.' '.$name;
+				} else {
+					$name = $code;
+				}
 			}
 		}
 
