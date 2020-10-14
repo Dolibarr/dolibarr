@@ -277,9 +277,9 @@ class CProductNature // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " code=".(isset($this->code) ? ((int)$this->code) : "null").",";
+		$sql .= " code=".(isset($this->code) ? ((int) $this->code) : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? ((int)$this->active) : "null");
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
         $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
