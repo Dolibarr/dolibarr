@@ -435,7 +435,7 @@ class FormProduct
 	 *  @param  int         $showempty           1=show empty value, 0= no
 	 *  @return string
 	 */
-	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty=1)
+	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty = 1)
 	{
 		global $langs, $db;
 
