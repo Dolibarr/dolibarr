@@ -81,7 +81,7 @@ $dir = $conf->commande->dir_temp;
 if ($mode == 'supplier')
 {
 	$picto = 'supplier_order';
-    $title = $langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
+    $title = $langs->trans("OrdersStatisticsSuppliers");
     $dir = $conf->fournisseur->commande->dir_temp;
 }
 

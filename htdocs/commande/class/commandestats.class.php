@@ -77,7 +77,7 @@ class CommandeStats extends Stats
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
-			$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
+			//$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
 		} elseif ($mode == 'supplier')
 		{
 			$object = new CommandeFournisseur($this->db);
@@ -85,10 +85,10 @@ class CommandeStats extends Stats
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
-			$this->where .= " c.fk_statut > 2"; // Only approved & ordered
+			//$this->where .= " c.fk_statut > 2"; // Only approved & ordered
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where .= ' AND c.entity IN ('.getEntity('commande').')';
+		$this->where .= ($this->where ? ' AND ' : ''). 'c.entity IN ('.getEntity('commande').')';
 
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		if ($this->socid)
