@@ -432,9 +432,10 @@ class FormProduct
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$selected             Preselected value
 	 *  @param  int         $mode                1=Use label as value, 0=Use code
+	 *  @param  int         $showempty           1=show empty value, 0= no
 	 *  @return string
 	 */
-	public function selectProductNature($name = 'finished', $selected = '', $mode = 0)
+	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty=1)
 	{
 		global $langs, $db;
 
@@ -461,11 +462,13 @@ class FormProduct
 			return -1;
 		} else {
 			$return .= '<select class="flat" name="'.$name.'">';
-			$return .= '<option value="-1"';
-			if ($selected=='' || $selected=='-1') {
-				$return .= ' selected';
+			if ($showempty || ($selected == '' || $selected == '-1')) {
+				$return .= '<option value="-1"';
+				if ($selected == '' || $selected == '-1') {
+					$return .= ' selected';
+				}
+				$return .= '></option>';
 			}
-			$return .= '></option>';
 			if (!empty($productNature->records) && is_array($productNature->records)) {
 				foreach ($productNature->records as $lines) {
 					$return .= '<option value="';
