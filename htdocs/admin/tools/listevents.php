@@ -72,7 +72,7 @@ else $date_end = -1;
 if ($date_start > 0 && $date_end > 0 && $date_start > $date_end) $date_end = $date_start + 86400;
 
 $now = dol_now();
-$nowarray = dol_getdate($now);
+$nowarray = getdate($now);
 
 if (empty($date_start)) // We define date_start and date_end
 {
@@ -83,11 +83,11 @@ if (empty($date_end))
     $date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
 }
 // Set $date_startmonth...
-$tmp = dol_getdate($date_start);
+$tmp = getdate($date_start);
 $date_startday = $tmp['mday'];
 $date_startmonth = $tmp['mon'];
 $date_startyear = $tmp['year'];
-$tmp = dol_getdate($date_end);
+$tmp = getdate($date_end);
 $date_endday = $tmp['mday'];
 $date_endmonth = $tmp['mon'];
 $date_endyear = $tmp['year'];

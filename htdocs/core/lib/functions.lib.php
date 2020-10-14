@@ -509,35 +509,35 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			$loopnb++; $newout = '';
 
 			if ($reg[1] == 'DAY') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$newout = $tmp['mday'];
 			} elseif ($reg[1] == 'MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$newout = $tmp['mon'];
 			} elseif ($reg[1] == 'YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$newout = $tmp['year'];
 			} elseif ($reg[1] == 'PREVIOUS_DAY') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 				$newout = $tmp2['day'];
 			} elseif ($reg[1] == 'PREVIOUS_MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$tmp2 = dol_get_prev_month($tmp['mon'], $tmp['year']);
 				$newout = $tmp2['month'];
 			} elseif ($reg[1] == 'PREVIOUS_YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$newout = ($tmp['year'] - 1);
 			} elseif ($reg[1] == 'NEXT_DAY') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$tmp2 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 				$newout = $tmp2['day'];
 			} elseif ($reg[1] == 'NEXT_MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$tmp2 = dol_get_next_month($tmp['mon'], $tmp['year']);
 				$newout = $tmp2['month'];
 			} elseif ($reg[1] == 'NEXT_YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = getdate(dol_now());
 				$newout = ($tmp['year'] + 1);
 			} elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID') {
 				$newout = $mysoc->country_id;
@@ -1898,7 +1898,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
  *
- *  @see        dol_mktime(), dol_stringtotime(), dol_getdate()
+ *  @see        dol_mktime(), dol_stringtotime(), getdate()
  */
 function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlangs = '', $encodetooutput = false)
 {
@@ -2074,6 +2074,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
  *										'yday' => floor($secsInYear/$_day_power),
  *										'leap' => $leaf,
  *										'ndays' => $ndays
+ *  @deprecated							use getdate() instead
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_mktime()
  */
 function dol_getdate($timestamp, $fast = false)
@@ -2111,7 +2112,7 @@ function dol_getdate($timestamp, $fast = false)
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
- * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
+ * 	@see 								dol_print_date(), dol_stringtotime(), getdate()
  */
 function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $check = 1)
 {
@@ -6411,7 +6412,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		$tmp = dol_getdate(dol_now(), true);
+		$tmp = getdate(dol_now());
 		$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 		$tmp3 = dol_get_prev_month($tmp['mon'], $tmp['year']);
 		$tmp4 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);

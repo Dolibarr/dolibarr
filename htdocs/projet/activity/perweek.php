@@ -60,7 +60,7 @@ $socid = 0;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
-$nowtmp = dol_getdate($now);
+$nowtmp = getdate($now);
 $nowday = $nowtmp['mday'];
 $nowmonth = $nowtmp['mon'];
 $nowyear = $nowtmp['year'];
@@ -524,7 +524,7 @@ for ($idw = 0; $idw < 7; $idw++)
 	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
 
 	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
-	//$tmparray = dol_getdate($dayinloop);
+	//$tmparray = getdate($dayinloop);
 	//$dayinloopwithouthours=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
 	//print dol_print_date($dayinloop, 'dayhour').' ';
 	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';

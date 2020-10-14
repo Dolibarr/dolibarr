@@ -176,7 +176,7 @@ class Segment implements IteratorAggregate, Countable
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         global $langs;
 
-        $hoy = dol_getdate(dol_now('tzuser'));
+		$hoy = getdate(dol_now('tzuser'));
         $dateinonemontharray = dol_get_next_month($hoy['mon'], $hoy['year']);
         $nextMonth = $dateinonemontharray['month'];
 

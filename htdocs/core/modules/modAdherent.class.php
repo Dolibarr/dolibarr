@@ -352,8 +352,8 @@ class modAdherent extends DolibarrModules
             'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
         );
 
-        // Cronjobs
-        $arraydate = dol_getdate(dol_now());
+		// Cronjobs
+		$arraydate = getdate(dol_now());
         $datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
         $this->cronjobs = array(
             0=>array(

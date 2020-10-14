@@ -212,17 +212,17 @@ if (empty($reshook))
     $filter = array();
     if (!empty($search_date_start)) {
         $filter['t.doc_date>='] = $search_date_start;
-        $tmp = dol_getdate($search_date_start);
+		$tmp = getdate($search_date_start);
         $param .= '&search_date_startmonth='.urlencode($tmp['mon']).'&search_date_startday='.urlencode($tmp['mday']).'&search_date_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_end)) {
         $filter['t.doc_date<='] = $search_date_end;
-        $tmp = dol_getdate($search_date_end);
+		$tmp = getdate($search_date_end);
         $param .= '&search_date_endmonth='.urlencode($tmp['mon']).'&search_date_endday='.urlencode($tmp['mday']).'&search_date_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_doc_date)) {
         $filter['t.doc_date'] = $search_doc_date;
-        $tmp = dol_getdate($search_doc_date);
+		$tmp = getdate($search_doc_date);
         $param .= '&doc_datemonth='.urlencode($tmp['mon']).'&doc_dateday='.urlencode($tmp['mday']).'&doc_dateyear='.urlencode($tmp['year']);
     }
     if (!empty($search_doc_type)) {
@@ -275,32 +275,32 @@ if (empty($reshook))
     }
     if (!empty($search_date_creation_start)) {
         $filter['t.date_creation>='] = $search_date_creation_start;
-        $tmp = dol_getdate($search_date_creation_start);
+		$tmp = getdate($search_date_creation_start);
         $param .= '&date_creation_startmonth='.urlencode($tmp['mon']).'&date_creation_startday='.urlencode($tmp['mday']).'&date_creation_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_creation_end)) {
         $filter['t.date_creation<='] = $search_date_creation_end;
-        $tmp = dol_getdate($search_date_creation_end);
+		$tmp = getdate($search_date_creation_end);
         $param .= '&date_creation_endmonth='.urlencode($tmp['mon']).'&date_creation_endday='.urlencode($tmp['mday']).'&date_creation_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_modification_start)) {
         $filter['t.tms>='] = $search_date_modification_start;
-        $tmp = dol_getdate($search_date_modification_start);
+		$tmp = getdate($search_date_modification_start);
         $param .= '&date_modification_startmonth='.urlencode($tmp['mon']).'&date_modification_startday='.urlencode($tmp['mday']).'&date_modification_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_modification_end)) {
         $filter['t.tms<='] = $search_date_modification_end;
-        $tmp = dol_getdate($search_date_modification_end);
+		$tmp = getdate($search_date_modification_end);
         $param .= '&date_modification_endmonth='.urlencode($tmp['mon']).'&date_modification_endday='.urlencode($tmp['mday']).'&date_modification_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_export_start)) {
         $filter['t.date_export>='] = $search_date_export_start;
-        $tmp = dol_getdate($search_date_export_start);
+		$tmp = getdate($search_date_export_start);
         $param .= '&date_export_startmonth='.urlencode($tmp['mon']).'&date_export_startday='.urlencode($tmp['mday']).'&date_export_startyear='.urlencode($tmp['year']);
     }
     if (!empty($search_date_export_end)) {
         $filter['t.date_export<='] = $search_date_export_end;
-        $tmp = dol_getdate($search_date_export_end);
+		$tmp = getdate($search_date_export_end);
         $param .= '&date_export_endmonth='.urlencode($tmp['mon']).'&date_export_endday='.urlencode($tmp['mday']).'&date_export_endyear='.urlencode($tmp['year']);
     }
     if (!empty($search_debit)) {

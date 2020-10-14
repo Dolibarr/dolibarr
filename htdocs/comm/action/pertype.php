@@ -194,7 +194,7 @@ $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $now = dol_now();
-$nowarray = dol_getdate($now);
+$nowarray = getdate($now);
 $nowyear = $nowarray['year'];
 $nowmonth = $nowarray['mon'];
 $nowday = $nowarray['mday'];
@@ -396,7 +396,7 @@ $viewmode .= '<span class="marginrightonly"></span>';
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 {
-	$tmpforcreatebutton = dol_getdate(dol_now(), true);
+	$tmpforcreatebutton = getdate(dol_now());
 
 	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
@@ -701,7 +701,7 @@ while ($obj = $db->fetch_object($resql))
 }
 
 // Loop on each user to show calendar
-$todayarray = dol_getdate($now, 'fast');
+$todayarray = getdate($now);
 $sav = $tmpday;
 $showheader = true;
 $var = false;
@@ -724,7 +724,7 @@ foreach ($typeofevents as $typeofevent)
 
         // Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime, 'fast');
+		$tmparray = getdate($curtime);
 		$tmpday = $tmparray['mday'];
 		$tmpmonth = $tmparray['mon'];
 		$tmpyear = $tmparray['year'];
@@ -948,8 +948,8 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 							$cases1[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour');
 		                    if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
 			        		{
-				        		$tmpa = dol_getdate($event->date_start_in_calendar, true);
-				        		$tmpb = dol_getdate($event->date_end_in_calendar, true);
+								$tmpa = getdate($event->date_start_in_calendar);
+								$tmpb = getdate($event->date_end_in_calendar);
 				        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
 				        		else $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
 			        		}
@@ -994,8 +994,8 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 							$cases2[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour');
 							if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
 			        		{
-				        		$tmpa = dol_getdate($event->date_start_in_calendar, true);
-				        		$tmpb = dol_getdate($event->date_end_in_calendar, true);
+								$tmpa = getdate($event->date_start_in_calendar);
+								$tmpb = getdate($event->date_end_in_calendar);
 				        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
 				        		else $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
 			        		}

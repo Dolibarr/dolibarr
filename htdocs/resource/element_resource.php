@@ -109,7 +109,7 @@ if (empty($reshook))
                 $isFullDayEvent = intval($objstat->fulldayevent);
                 if (empty($eventDateEnd)) {
                     if ($isFullDayEvent) {
-                        $eventDateStartArr = dol_getdate($eventDateStart);
+						$eventDateStartArr = getdate($eventDateStart);
                         $eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
                         $eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
                     }
@@ -188,7 +188,7 @@ if (empty($reshook))
                 $isFullDayEvent = intval($objstat->fulldayevent);
                 if (empty($eventDateEnd)) {
                     if ($isFullDayEvent) {
-                        $eventDateStartArr = dol_getdate($eventDateStart);
+						$eventDateStartArr = getdate($eventDateStart);
                         $eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
                         $eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
                     }

@@ -2645,7 +2645,7 @@ class Adherent extends CommonObject
 				break;
 			}
 
-			$tmp = dol_getdate($now);
+			$tmp = getdate($now);
 			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';

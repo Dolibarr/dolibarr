@@ -519,7 +519,7 @@ if ($resql)
 
 	$viewmode .= '<span class="marginrightonly"></span>';
 
-	$tmpforcreatebutton = dol_getdate(dol_now(), true);
+	$tmpforcreatebutton = getdate(dol_now());
 
 	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 

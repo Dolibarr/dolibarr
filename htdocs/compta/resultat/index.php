@@ -88,9 +88,9 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 }
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
-$tmps = dol_getdate($date_start);
+$tmps = getdate($date_start);
 $year_start = $tmps['year'];
-$tmpe = dol_getdate($date_end);
+$tmpe = getdate($date_end);
 $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));

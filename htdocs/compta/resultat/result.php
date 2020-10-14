@@ -105,10 +105,10 @@ if (($date_start < dol_time_plus_duree($date_end, -1, 'y')) || ($date_start > $d
 }
 
 // $date_start and $date_end are defined. We force $start_year and $nbofyear
-$tmps = dol_getdate($date_start);
+$tmps = getdate($date_start);
 $start_year = $tmps['year'];
 $start_month = $tmps['mon'];
-$tmpe = dol_getdate($date_end);
+$tmpe = getdate($date_end);
 $year_end = $tmpe['year'];
 $month_end = $tmpe['mon'];
 $nbofyear = ($year_end - $start_year) + 1;

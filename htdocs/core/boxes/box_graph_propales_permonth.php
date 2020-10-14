@@ -118,7 +118,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$showtot = $tmparray['showtot'];
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
-			$nowarray = dol_getdate(dol_now(), true);
+			$nowarray = getdate(dol_now());
 			if (empty($endyear)) $endyear = $nowarray['year'];
 			$startyear = $endyear - 1;
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';

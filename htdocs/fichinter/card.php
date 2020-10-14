@@ -341,7 +341,7 @@ if (empty($reshook))
 									$desc .= '<br>';
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-									$timearray = dol_getdate(dol_now());
+									$timearray = getdate(dol_now());
 									$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 									if ($product_type == Product::TYPE_PRODUCT) {
@@ -1542,7 +1542,7 @@ if ($action == 'create')
 				// Date intervention
 				print '<td class="center nowrap">';
 				$now = dol_now();
-				$timearray = dol_getdate($now);
+				$timearray = getdate($now);
 				if (!GETPOST('diday', 'int')) {
 					$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 				} else {

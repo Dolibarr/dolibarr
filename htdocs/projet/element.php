@@ -82,7 +82,7 @@ if (empty($datee) && !empty($dateerfc)) $datee = dol_stringtotime($dateerfc);
 if (!isset($_POST['datesrfc']) && !isset($_POST['datesday']) && !empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR))
 {
 	$new = dol_now();
-	$tmp = dol_getdate($new);
+	$tmp = getdate($new);
 	//$datee=$now
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
 	$dates = dol_get_first_day($tmp['year'], 1);

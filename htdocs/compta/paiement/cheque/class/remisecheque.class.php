@@ -947,7 +947,7 @@ class RemiseCheque extends CommonObject
 		global $user, $langs, $conf;
 
 		$now = dol_now();
-		$arraynow = dol_getdate($now);
+		$arraynow = getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
 		// Initialize parameters

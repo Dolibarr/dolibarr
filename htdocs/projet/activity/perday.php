@@ -60,7 +60,7 @@ $socid = 0;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
-$nowtmp = dol_getdate($now);
+$nowtmp = getdate($now);
 $nowday = $nowtmp['mday'];
 $nowmonth = $nowtmp['mon'];
 $nowyear = $nowtmp['year'];
@@ -349,12 +349,12 @@ $taskstatic = new Task($db);
 $thirdpartystatic = new Societe($db);
 $holiday = new Holiday($db);
 
-$prev = dol_getdate($daytoparse - (24 * 3600));
+$prev = getdate($daytoparse - (24 * 3600));
 $prev_year  = $prev['year'];
 $prev_month = $prev['mon'];
 $prev_day   = $prev['mday'];
 
-$next = dol_getdate($daytoparse + (24 * 3600));
+$next = getdate($daytoparse + (24 * 3600));
 $next_year  = $next['year'];
 $next_month = $next['mon'];
 $next_day   = $next['mday'];
@@ -442,7 +442,7 @@ print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-$tmp = dol_getdate($daytoparse);
+$tmp = getdate($daytoparse);
 print '<input type="hidden" name="addtimeyear" value="'.$tmp['year'].'">';
 print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
@@ -616,7 +616,7 @@ $statusofholidaytocheck = '3';
 $isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck); // $daytoparse is a date with hours = 0
 $isavailable[$daytoparse] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-$tmparray = dol_getdate($daytoparse, true); // detail of current day
+$tmparray = getdate($daytoparse); // detail of current day
 $idw = $tmparray['wday'];
 
 $cssweekend = '';
@@ -651,7 +651,7 @@ if ($conf->use_javascript_ajax)
 	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
 
-	$tmparray = dol_getdate($daytoparse, true); // detail of current day
+	$tmparray = getdate($daytoparse); // detail of current day
 	$idw = $tmparray['wday'];
 
 	$cssweekend = '';
@@ -752,7 +752,7 @@ if (count($tasksarray) > 0)
 		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 		print '</td>';
 
-		$tmparray = dol_getdate($daytoparse, true); // detail of current day
+		$tmparray = getdate($daytoparse); // detail of current day
 		$idw = $tmparray['wday'];
 
 		$cssweekend = '';

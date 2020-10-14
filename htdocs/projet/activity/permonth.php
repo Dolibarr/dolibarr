@@ -56,7 +56,7 @@ $socid = 0;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
-$nowtmp = dol_getdate($now);
+$nowtmp = getdate($now);
 $nowday = $nowtmp['mday'];
 $nowmonth = $nowtmp['mon'];
 $nowyear = $nowtmp['year'];

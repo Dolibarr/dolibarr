@@ -1177,8 +1177,8 @@ class Facture extends CommonInvoice
 			// If it's a service with start and end dates
 			if (!empty($line->date_start) && !empty($line->date_end)) {
 				// Get the dates
-				$start = dol_getdate($line->date_start);
-				$end = dol_getdate($line->date_end);
+				$start = getdate($line->date_start);
+				$end = getdate($line->date_end);
 
 				// Get the first and last day of the month
 				$first = dol_get_first_day($start['year'], $start['mon']);
@@ -4103,7 +4103,7 @@ class Facture extends CommonInvoice
 		global $conf, $langs;
 
 		$now = dol_now();
-		$arraynow = dol_getdate($now);
+		$arraynow = getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
 		// Load array of products prodids

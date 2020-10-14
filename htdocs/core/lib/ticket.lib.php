@@ -609,7 +609,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$histo[$key]['id'];
 
-			$tmpa = dol_getdate($histo[$key]['datestart'], false);
+			$tmpa = getdate($histo[$key]['datestart']);
 			if ($actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']) {
 				$actualCycleDate = $tmpa['year'].'-'.$tmpa['yday'];
 				$out .= '<!-- timeline time label -->';
@@ -704,8 +704,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
 			{
-				$tmpa = dol_getdate($histo[$key]['datestart'], true);
-				$tmpb = dol_getdate($histo[$key]['dateend'], true);
+				$tmpa = getdate($histo[$key]['datestart']);
+				$tmpb = getdate($histo[$key]['dateend']);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour');
 				else $out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour');
 			}

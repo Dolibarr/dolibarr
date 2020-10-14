@@ -1318,7 +1318,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				elseif (!$isavailable[$preselectedday]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
 				global $daytoparse;
-				$tmparray = dol_getdate($daytoparse, true); // detail of current day
+				$tmparray = getdate($daytoparse); // detail of current day
 				$idw = $tmparray['wday'];
 
 				global $numstartworkingday, $numendworkingday;
@@ -1692,7 +1692,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					elseif (!$isavailable[$tmpday]['morning'])   $cssonholiday .= 'onholidaymorning ';
 					elseif (!$isavailable[$tmpday]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
 
-					$tmparray = dol_getdate($tmpday);
+					$tmparray = getdate($tmpday);
 					$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
 					$totalforeachday[$tmpday] += $dayWorkLoad;
 

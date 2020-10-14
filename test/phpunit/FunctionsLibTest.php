@@ -1257,18 +1257,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         $conf->global->MAIN_START_WEEK = 0;
 
-        $tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+		$tmp = getdate(1);						// 1/1/1970 and 1 second = thirday
         $this->assertEquals(4, $tmp['wday']);
 
-        $tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+		$tmp = getdate(24 * 60 * 60 + 1);		// 2/1/1970 and 1 second = friday
         $this->assertEquals(5, $tmp['wday']);
 
         $conf->global->MAIN_START_WEEK = 1;
 
-        $tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+		$tmp = getdate(1);						// 1/1/1970 and 1 second = thirday
         $this->assertEquals(4, $tmp['wday']);
 
-        $tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+		$tmp = getdate(24 * 60 * 60 + 1);		// 2/1/1970 and 1 second = friday
         $this->assertEquals(5, $tmp['wday']);
 
         return true;

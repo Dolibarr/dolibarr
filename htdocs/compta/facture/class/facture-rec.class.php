@@ -1192,7 +1192,7 @@ class FactureRec extends CommonInvoice
 		$langs->loadLangs(array("main", "bills"));
 
 		$now = dol_now();
-		$tmparray = dol_getdate($now);
+		$tmparray = getdate($now);
 		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
 		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
@@ -1550,7 +1550,7 @@ class FactureRec extends CommonInvoice
 		global $user, $langs, $conf;
 
 		$now = dol_now();
-		$arraynow = dol_getdate($now);
+		$arraynow = getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
         // Load array of products prodids

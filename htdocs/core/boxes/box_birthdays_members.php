@@ -84,7 +84,7 @@ class box_birthdays_members extends ModeleBoxes
 
 		if ($user->rights->adherent->lire)
 		{
-			$tmparray = dol_getdate(dol_now(), true);
+			$tmparray = getdate(dol_now());
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";

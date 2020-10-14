@@ -103,7 +103,7 @@ if (empty($shownb) && empty($showtot)) {
     $showtot = 1;
 }
 
-$nowarray = dol_getdate(dol_now(), true);
+$nowarray = getdate(dol_now());
 if (empty($endyear)) {
     $endyear = $nowarray['year'];
 }

@@ -115,7 +115,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				$showtot = $tmparray['showtot'];
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
-			$nowarray = dol_getdate(dol_now(), true);
+			$nowarray = getdate(dol_now());
 			if (empty($endyear)) $endyear = $nowarray['year'];
 			$startyear = $endyear - 1;
 			$mode = 'supplier';

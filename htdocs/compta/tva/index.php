@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
 $now = dol_now();
-$current_date = dol_getdate($now);
+$current_date = getdate($now);
 if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
 
 // Date range
@@ -267,10 +267,10 @@ print '<td class="right">'.$langs->trans("Balance").'</td>';
 print '<td>&nbsp;</td>'."\n";
 print '</tr>'."\n";
 
-$tmp = dol_getdate($date_start);
+$tmp = getdate($date_start);
 $y = $tmp['year'];
 $m = $tmp['mon'];
-$tmp = dol_getdate($date_end);
+$tmp = getdate($date_end);
 $yend = $tmp['year'];
 $mend = $tmp['mon'];
 //var_dump($m);

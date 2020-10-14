@@ -272,10 +272,10 @@ print '<td class="right">'.$langs->trans("TotalToPay").'</td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-$tmp = dol_getdate($date_start);
+$tmp = getdate($date_start);
 $y = $tmp['year'];
 $m = $tmp['mon'];
-$tmp = dol_getdate($date_end);
+$tmp = getdate($date_end);
 $yend = $tmp['year'];
 $mend = $tmp['mon'];
 

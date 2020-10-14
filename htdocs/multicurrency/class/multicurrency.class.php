@@ -523,7 +523,7 @@ class MultiCurrency extends CommonObject
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
 		$sql2 = '';
 		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) {	// Use last known rate compared to document date
-			$tmparray = dol_getdate($date_document);
+			$tmparray = getdate($date_document);
 			$sql2 .= " AND mc.date_sync <= '".$db->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
 		}
 		$sql3 = ' ORDER BY mc.date_sync DESC LIMIT 1';

@@ -145,7 +145,7 @@ function displayBox($selectedDate, $month, $year)
 	$thedate = dol_mktime(12, 0, 0, $month, 1, $year);
 	//print "thedate=$thedate";
 	$today = dol_now();
-	$todayArray = dol_getdate($today);
+	$todayArray = getdate($today);
 	if ($selectedDate != "00000000")
 	{
 		$selDate = xyzToUnixTimestamp($selectedDate);
@@ -189,7 +189,7 @@ function displayBox($selectedDate, $month, $year)
 	}
 	print '</tr>';
 	//print "x ".$thedate." y";			// $thedate = first day of month
-	$firstdate = dol_getdate($thedate);
+	$firstdate = getdate($thedate);
 	//var_dump($firstdateofweek);
 	$mydate = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
 
@@ -247,8 +247,10 @@ function displayBox($selectedDate, $month, $year)
 		if ($thedate == '')
 		{
 			$stoploop = 1;
-		} else {
-			$mydate = dol_getdate($thedate);
+		}
+		else
+		{
+			$mydate = getdate($thedate);
 			if ($firstdate["month"] != $mydate["month"]) $stoploop = 1;
 		}
 	}
@@ -263,7 +265,7 @@ function displayBox($selectedDate, $month, $year)
 		<td id="dpExp" class="dpExplanation" colspan="7"><?php
 		if ($selDate)
 		{
-			$tempDate = dol_getdate($selDate);
+			$tempDate = getdate($selDate);
 			print $langs->trans("Month".$selectMonth)." ";
 			print sprintf("%02s", $tempDate["mday"]);
 			print ", ".$selectYear;

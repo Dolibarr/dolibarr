@@ -216,7 +216,7 @@ $companystatic = new Societe($db);
 $contactstatic = new Contact($db);
 
 $now = dol_now();
-$nowarray = dol_getdate($now);
+$nowarray = getdate($now);
 $nowyear = $nowarray['year'];
 $nowmonth = $nowarray['mon'];
 $nowday = $nowarray['mday'];
@@ -456,7 +456,7 @@ $viewmode .= '<span class="marginrightonly"></span>';
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 {
-	$tmpforcreatebutton = dol_getdate(dol_now(), true);
+	$tmpforcreatebutton = getdate(dol_now());
 
 	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
@@ -773,7 +773,7 @@ if ($showbirthday)
 
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
-			$datearray = dol_getdate($datebirth, true);
+			$datearray = getdate($datebirth);
 			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they wont but converted during output
 			$event->datef = $event->datep;
 			$event->type_code = 'BIRTHDAY';
@@ -835,8 +835,8 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$dateStartArray = dol_getdate(dol_stringtotime($obj->date_start, 1), true);
-			$dateEndArray   = dol_getdate(dol_stringtotime($obj->date_end, 1), true);
+			$dateStartArray = getdate(dol_stringtotime($obj->date_start, 1));
+			$dateEndArray   = getdate(dol_stringtotime($obj->date_end, 1));
 
 			$event = new ActionComm($db);
 
@@ -1235,7 +1235,7 @@ if (empty($action) || $action == 'show_month')      // View by month
 	}
 	echo ' </tr>'."\n";
 
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = getdate($now);
 	$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
 	// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
@@ -1331,7 +1331,7 @@ if (empty($action) || $action == 'show_month')      // View by month
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime, true);
+		$tmparray = getdate($curtime);
 		$tmpday = $tmparray['mday'];
 		$tmpmonth = $tmparray['mon'];
 		$tmpyear = $tmparray['year'];
@@ -1339,7 +1339,7 @@ if (empty($action) || $action == 'show_month')      // View by month
 		$style = 'cal_current_month';
 		if ($iter_day == 6) $style .= ' cal_other_month_right';
 		$today = 0;
-		$todayarray = dol_getdate($now, 'fast');
+		$todayarray = getdate($now);
 		if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $tmpmonth && $todayarray['year'] == $tmpyear) $today = 1;
 		if ($today) $style = 'cal_today';
 
@@ -1365,12 +1365,12 @@ if (empty($action) || $action == 'show_month')      // View by month
 	// Code to show just one day
 	$style = 'cal_current_month cal_current_month_oneday';
 	$today = 0;
-	$todayarray = dol_getdate($now, 'fast');
+	$todayarray = getdate($now);
 	if ($todayarray['mday'] == $day && $todayarray['mon'] == $month && $todayarray['year'] == $year) $today = 1;
 	//if ($today) $style='cal_today';
 
 	$timestamp = dol_mktime(12, 0, 0, $month, $day, $year);
-	$arraytimestamp = dol_getdate($timestamp);
+	$arraytimestamp = getdate($timestamp);
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);

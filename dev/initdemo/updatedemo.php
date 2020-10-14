@@ -61,7 +61,7 @@ if (empty($confirm))
 }
 
 
-$tmp=dol_getdate(dol_now());
+$tmp = getdate(dol_now());
 
 
 $tables=array(

@@ -46,7 +46,7 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 		$search_date_end = dol_now();
 	}
 	$datetouseforfilename = $search_date_end;
-	$tmparray = dol_getdate($datetouseforfilename);
+	$tmparray = getdate($datetouseforfilename);
 	$fiscalmonth = empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START;
 	// Define end of month to use
 	if ($tmparray['mon'] <= $fiscalmonth) $tmparray['mon'] = $fiscalmonth;

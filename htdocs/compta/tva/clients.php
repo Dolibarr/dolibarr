@@ -45,7 +45,7 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 
 
 $now = dol_now();
-$current_date = dol_getdate($now);
+$current_date = getdate($now);
 if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
 
 // Date range

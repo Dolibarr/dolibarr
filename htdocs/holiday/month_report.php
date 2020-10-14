@@ -274,8 +274,8 @@ else {
         $date_start = $db->jdate($obj->date_debut, true);
         $date_end = $db->jdate($obj->date_fin, true);
 
-        $tmpstart = dol_getdate($date_start);
-        $tmpend = dol_getdate($date_end);
+		$tmpstart = getdate($date_start);
+		$tmpend = getdate($date_end);
 
         $starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
         $endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';

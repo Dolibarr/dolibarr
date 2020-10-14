@@ -106,7 +106,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (empty($conf->propal->enabled) || empty($user->rights->propale->lire)) $showpropalnb = 0;
 		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) $showordernb = 0;
 
-		$nowarray = dol_getdate(dol_now(), true);
+		$nowarray = getdate(dol_now());
 		if (empty($year)) $year = $nowarray['year'];
 
 		$nbofgraph = 0;

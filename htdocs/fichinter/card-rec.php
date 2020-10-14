@@ -236,7 +236,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 $now = dol_now();
-$tmparray = dol_getdate($now);
+$tmparray = getdate($now);
 $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
 

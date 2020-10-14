@@ -54,7 +54,7 @@ $langs->load("projects");
  */
 
 $now = dol_now();
-$tmp = dol_getdate($now);
+$tmp = getdate($now);
 $day = $tmp['mday'];
 $month = $tmp['mon'];
 $year = $tmp['year'];

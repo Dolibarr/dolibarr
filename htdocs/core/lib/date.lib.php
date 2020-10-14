@@ -314,7 +314,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *		                		19700101020000 -> 7200 with gm=1
  *								19700101000000 -> 0 with gm=1
  *
- *  @see    dol_print_date(), dol_mktime(), dol_getdate()
+ *  @see    dol_print_date(), dol_mktime(), getdate()
  */
 function dol_stringtotime($string, $gm = 1)
 {
@@ -367,7 +367,7 @@ function dol_get_prev_day($day, $month, $year)
 {
 	$time = dol_mktime(12, 0, 0, $month, $day, $year, 1, 0);
 	$time -= 24 * 60 * 60;
-	$tmparray = dol_getdate($time, true);
+	$tmparray = getdate($time);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
@@ -382,7 +382,7 @@ function dol_get_next_day($day, $month, $year)
 {
 	$time = dol_mktime(12, 0, 0, $month, $day, $year, 1, 0);
 	$time += 24 * 60 * 60;
-	$tmparray = dol_getdate($time, true);
+	$tmparray = getdate($time);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
@@ -438,7 +438,7 @@ function dol_get_prev_week($day, $week, $month, $year)
 
 	$time = dol_mktime(12, 0, 0, $month, $tmparray['first_day'], $year, 1, 0);
 	$time -= 24 * 60 * 60 * 7;
-	$tmparray = dol_getdate($time, true);
+	$tmparray = getdate($time);
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
@@ -456,7 +456,7 @@ function dol_get_next_week($day, $week, $month, $year)
 
 	$time = dol_mktime(12, 0, 0, $tmparray['first_month'], $tmparray['first_day'], $tmparray['first_year'], 1, 0);
 	$time += 24 * 60 * 60 * 7;
-	$tmparray = dol_getdate($time, true);
+	$tmparray = getdate($time);
 
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
@@ -509,7 +509,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
  */
 function dol_get_last_hour($date)
 {
-	$tmparray = dol_getdate($date);
+	$tmparray = getdate($date);
 	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
 }
 
@@ -520,7 +520,7 @@ function dol_get_last_hour($date)
  */
 function dol_get_first_hour($date)
 {
-	$tmparray = dol_getdate($date);
+	$tmparray = getdate($date);
 	return dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
 }
 
@@ -542,7 +542,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	//Checking conf of start week
 	$start_week = (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1);
 
-	$tmparray = dol_getdate($date, true); // detail of current day
+	$tmparray = getdate($date); // detail of current day
 
 	//Calculate days = offset from current day
 	$days = $start_week - $tmparray['wday'];
@@ -576,7 +576,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	//Get first day of next week
 	$tmptime = dol_mktime(12, 0, 0, $month, $tmpday, $year, 1, 0);
 	$tmptime -= 24 * 60 * 60 * 7;
-	$tmparray = dol_getdate($tmptime, true);
+	$tmparray = getdate($tmptime);
     $prev_day = $tmparray['mday'];
 
     //Check prev day of week is in same month than first day or not

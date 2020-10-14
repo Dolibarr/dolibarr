@@ -1701,8 +1701,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart'])
 			{
-				$tmpa = dol_getdate($histo[$key]['datestart'], true);
-				$tmpb = dol_getdate($histo[$key]['dateend'], true);
+				$tmpa = getdate($histo[$key]['datestart'], true);
+				$tmpb = getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
 				else $out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 			}
