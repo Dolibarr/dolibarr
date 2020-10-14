@@ -2364,13 +2364,14 @@ class Product extends CommonObject
 	 * @param  int $socid Id societe
 	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
 	 */
-	public function load_stats_mo($socid = 0) {
+	public function load_stats_mo($socid = 0)
+	{
 		// phpcs:enable
 		global $user, $hookmanager;
 
 		$error=0;
 
-		foreach(array('toconsume','consumed','toproduce','produced') as $role) {
+		foreach (array('toconsume','consumed','toproduce','produced') as $role) {
 			$this->stats_mo['customers_'.$role] = 0;
 			$this->stats_mo['nb_'.$role] = 0;
 			$this->stats_mo['qty_'.$role] = 0;
