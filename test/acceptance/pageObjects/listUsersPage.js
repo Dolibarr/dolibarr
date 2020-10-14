@@ -30,7 +30,7 @@ module.exports = {
 
 	elements: {
 		userRow: {
-			selector: '//table[contains(@class,"tagtable liste")]/tbody/tr[position()>2]',
+			selector: '//table[contains(@class,"tagtable")]/tbody/tr[position()>2]',
 			locateStrategy: 'xpath'
 		},
 
@@ -40,7 +40,7 @@ module.exports = {
 		},
 
 		userList: {
-			selector: '//table[contains(@class,"tagtable liste")]/tbody/tr[position()>2]/td/a//span[normalize-space(@class="nopadding usertext")][.="%s"]/../../following-sibling::td[.="%s"]',
+			selector: '//table[contains(@class,"tagtable")]/tbody/tr[position()>2]/td/a//span[normalize-space(@class="nopadding usertext")][.="%s"]/../../following-sibling::td[.="%s"]',
 			locateStrategy: 'xpath'
 		}
 	}

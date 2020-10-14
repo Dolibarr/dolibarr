@@ -346,6 +346,7 @@ function product_lot_admin_prepare_head()
 function show_stats_for_company($product, $socid)
 {
 	global $conf, $langs, $user, $db;
+	$form = new Form($db);
 
 	$nblines = 0;
 
@@ -356,25 +357,7 @@ function show_stats_for_company($product, $socid)
 	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
-	// MO
-	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
-	{
-		$nblines++;
-		//$ret = $product->load_stats_mo($socid);
-		if ($ret < 0) dol_print_error($db);
-		$langs->load("orders");
-		print '<tr><td>';
-		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
-		print '</td><td class="right">';
-		print $product->stats_mo['suppliers'];
-		print '</td><td class="right">';
-		print $product->stats_mo['nb'];
-		print '</td><td class="right">';
-		print $product->stats_mo['qty'];
-		print '</td>';
-		print '</tr>';
-	}
-	// Customer proposals
+		// Customer proposals
 	if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$nblines++;
@@ -498,6 +481,61 @@ function show_stats_for_company($product, $socid)
 		print $product->stats_contrat['nb'];
 		print '</td><td class="right">';
 		print $product->stats_contrat['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// BOM
+	if (!empty($conf->bom->enabled) && $user->rights->bom->read)
+	{
+		$nblines++;
+		$ret = $product->load_stats_bom($socid);
+		if ($ret < 0) {
+			setEventMessage($product->error, 'errors');
+		}
+		$langs->load("mrp");
+
+		print '<tr><td>';
+		print '<a href="bom.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("BOM").'</a>';
+		print '</td><td class="right">';
+
+		print '</td><td class="right">';
+		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("ToConsume"));
+		print '</td><td class="right">';
+		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("ToConsume"));
+		print '</td>';
+		print '</tr>';
+	}
+
+
+	// MO
+	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
+	{
+		$nblines++;
+		$ret = $product->load_stats_mo($socid);
+		if ($ret < 0) {
+			setEventMessage($product->error, 'errors');
+		}
+		$langs->load("mrp");
+		print '<tr><td>';
+		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
+		print '</td><td class="right">';
+		print $form->textwithpicto($product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
+		print '</td><td class="right">';
+		print $form->textwithpicto($product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
+		print '</td><td class="right">';
+		print $form->textwithpicto($product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}
