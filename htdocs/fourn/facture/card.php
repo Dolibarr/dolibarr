@@ -2652,25 +2652,29 @@ if ($action == 'create')
 			print '</td></tr>';
 		}
 
-        // Intracomm report
-        $langs->loadLangs(array("intracommreport"));
-        print '<tr><td class="nowrap">';
-        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-        print $langs->trans('IntracommReportTransportMode');
-        print '</td>';
-        if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
-            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
-        }
-        print '</tr></table>';
-        print '</td><td colspan="2">';
-        if ($action == 'editmode')
-        {
-            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
-        }
-        else {
-            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
-        }
-        print '</td></tr>';
+		// Intracomm report
+		if (!empty($conf->intracommreport->enabled)) {
+	        $langs->loadLangs(array("intracommreport"));
+	        print '<tr><td class="nowrap">';
+	        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	        print $langs->trans('IntracommReportTransportMode');
+	        print '</td>';
+	        if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+	            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	        }
+	        print '</tr></table>';
+	        print '</td>';
+
+	        print '<td>';
+	        if ($action == 'editmode')
+	        {
+	            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
+	        }
+	        else {
+	            $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
+	        }
+	        print '</td></tr>';
+		}
 
 		// Other attributes
 		$cols = 2;
