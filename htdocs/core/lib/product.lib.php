@@ -346,6 +346,7 @@ function product_lot_admin_prepare_head()
 function show_stats_for_company($product, $socid)
 {
 	global $conf, $langs, $user, $db;
+	$form = new Form($db);
 
 	$nblines = 0;
 
@@ -366,11 +367,20 @@ function show_stats_for_company($product, $socid)
 		print '<tr><td>';
 		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
-		print $product->stats_mo['customers'];
+		print $form->textwithpicto($product->stats_mo['customers_toconsume'],$langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['customers_consumed'],$langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['customers_toproduce'],$langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['customers_produced'],$langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $product->stats_mo['nb'];
+		print $form->textwithpicto($product->stats_mo['nb_toconsume'],$langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['nb_consumed'],$langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['nb_toproduce'],$langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['nb_produced'],$langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $product->stats_mo['qty'];
+		print $form->textwithpicto($product->stats_mo['qty_toconsume'],$langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['qty_consumed'],$langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['qty_toproduce'],$langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['qty_produced'],$langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}

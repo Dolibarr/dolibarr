@@ -2366,38 +2366,52 @@ class Product extends CommonObject
 	 */
 	public function load_stats_mo($socid = 0) {
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $user, $hookmanager;
 
-		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
-		$sql .= " SUM(c.qty) as qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
-		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= "INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".$user->id;
+		$error=0;
+
+		foreach(array('toconsume','consumed','toproduce','produced') as $role) {
+			$this->stats_mo['customers_'.$role] = 0;
+			$this->stats_mo['nb_'.$role] = 0;
+			$this->stats_mo['qty_'.$role] = 0;
+
+			$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+			$sql .= " SUM(mp.qty) as qty";
+			$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mrp_production as mp ON mp.fk_mo=c.rowid";
+			if (!$user->rights->societe->client->voir && !$socid) {
+				$sql .= "INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			$sql .= " WHERE ";
+			$sql .= " c.entity IN (".getEntity('mo').")";
+
+			$sql .= " AND mp.fk_product =".$this->id;
+			$sql .= " AND mp.role ='".$role."'";
+			if ($socid > 0) {
+				$sql .= " AND c.fk_soc = ".$socid;
+			}
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				$obj = $this->db->fetch_object($result);
+				$this->stats_mo['customers_'.$role] = $obj->nb_customers ? $obj->nb_customers : 0;
+				$this->stats_mo['nb_'.$role] = $obj->nb ? $obj->nb : 0;
+				$this->stats_mo['qty_'.$role] = $obj->qty ? $obj->qty : 0;
+			} else {
+				$this->error = $this->db->error();
+				$error++;
+			}
 		}
-		$sql .= " WHERE ";
-		$sql .= " c.entity IN (".getEntity('mo').")";
 
-		$sql .= " AND c.fk_product =".$this->id;
-		if ($socid > 0) {
-			$sql .= " AND c.fk_soc = ".$socid;
-		}
-
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
-			$this->stats_mo['customers'] = $obj->nb_customers ? $obj->nb_customers : 0;
-			$this->stats_mo['nb'] = $obj->nb;
-			$this->stats_mo['qty'] = $obj->qty ? $obj->qty : 0;
-
-			$parameters = array('socid' => $socid);
-			$reshook = $hookmanager->executeHooks('loadStatsCustomerProposal', $parameters, $this, $action);
-			if ($reshook > 0) $this->stats_mo = $hookmanager->resArray['stats_mo'];
-
-			return 1;
-		} else {
-			$this->error = $this->db->error();
+		if (!empty($error)) {
 			return -1;
 		}
+
+		$parameters = array('socid' => $socid);
+		$reshook = $hookmanager->executeHooks('loadStatsCustomerMO', $parameters, $this, $action);
+		if ($reshook > 0) $this->stats_mo = $hookmanager->resArray['stats_mo'];
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
