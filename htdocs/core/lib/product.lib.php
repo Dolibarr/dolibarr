@@ -491,7 +491,7 @@ function show_stats_for_company($product, $socid)
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {
-			setEventMessage($product->error,'errors');
+			setEventMessage($product->error, 'errors');
 		}
 		$langs->load("mrp");
 
@@ -500,11 +500,11 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['nb_toproduce'],$langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_bom['nb_toconsume'],$langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("ToConsume"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['qty_toproduce'],$langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_bom['qty_toconsume'],$langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("ToConsume"));
 		print '</td>';
 		print '</tr>';
 	}
@@ -516,26 +516,26 @@ function show_stats_for_company($product, $socid)
 		$nblines++;
 		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) {
-			setEventMessage($product->error,'errors');
+			setEventMessage($product->error, 'errors');
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
 		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['customers_toconsume'],$langs->trans("ToConsume"));
-		print $form->textwithpicto($product->stats_mo['customers_consumed'],$langs->trans("QtyAlreadyConsumed"));
-		print $form->textwithpicto($product->stats_mo['customers_toproduce'],$langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_mo['customers_produced'],$langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto($product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['nb_toconsume'],$langs->trans("ToConsume"));
-		print $form->textwithpicto($product->stats_mo['nb_consumed'],$langs->trans("QtyAlreadyConsumed"));
-		print $form->textwithpicto($product->stats_mo['nb_toproduce'],$langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_mo['nb_produced'],$langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto($product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['qty_toconsume'],$langs->trans("ToConsume"));
-		print $form->textwithpicto($product->stats_mo['qty_consumed'],$langs->trans("QtyAlreadyConsumed"));
-		print $form->textwithpicto($product->stats_mo['qty_toproduce'],$langs->trans("QtyToProduce"));
-		print $form->textwithpicto($product->stats_mo['qty_produced'],$langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto($product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto($product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto($product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto($product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}

@@ -2422,7 +2422,8 @@ class Product extends CommonObject
 	 * @param  int $socid Id societe
 	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
 	 */
-	public function load_stats_bom($socid = 0) {
+	public function load_stats_bom($socid = 0)
+	{
 		// phpcs:enable
 		global $user, $hookmanager;
 
@@ -2446,7 +2447,6 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			$this->stats_bom['nb_toproduce'] = $obj->nb_toproduce ? $obj->nb_toproduce : 0;
 			$this->stats_bom['qty_toproduce'] = $obj->qty_toproduce ? price2num($obj->qty_toproduce) : 0;
-
 		} else {
 			$this->error = $this->db->error();
 			$error++;
@@ -2465,7 +2465,6 @@ class Product extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			$this->stats_bom['nb_toconsume'] = $obj->nb_toconsume ? $obj->nb_toconsume : 0;
 			$this->stats_bom['qty_toconsume'] = $obj->qty_toconsume ? price2num($obj->qty_toconsume) : 0;
-
 		} else {
 			$this->error = $this->db->error();
 			$error++;
