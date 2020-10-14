@@ -351,11 +351,10 @@ class CProductNature // extends CommonObject
 	 */
 	public function getProductNatureFromCode($code, $mode = 'code')
 	{
-
-		if ($mode == 'label'){
-			return dol_getIdFromCode($this->db, $code, $this->table_element, 'label', 'rowid');
+		if ($mode == 'label') {
+			return dol_getIdFromCode($this->db, $code, $this->table_element, 'label', 'code');
 		} elseif ($mode == 'code'){
-			return dol_getIdFromCode($this->db, $code, $this->table_element, 'code', 'rowid');
+			return dol_getIdFromCode($this->db, $code, $this->table_element, 'code', 'code');
 		}
 
 		return $code;

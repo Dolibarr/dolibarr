@@ -2064,3 +2064,4 @@ TemplateUpdated=Template updated
 TemplateDeleted=Template deleted
 MailToSendEventPush=Template for event reminder emails
 SwitchThisForABetterSecurity=Switching this value to %s is recommended for more security
+DictionaryProductNature= Nature of product
