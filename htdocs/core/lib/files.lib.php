@@ -1746,7 +1746,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$ecmfile->description = ''; // indexed content
 		$ecmfile->keyword = ''; // keyword content
 
-        if(! is_null($object) && ! empty($object->id)) {
+        if (is_object($object) && $object->id > 0) {
             $ecmfile->src_object_id = $object->id;
             $ecmfile->src_object_type = $object->element;
         }
