@@ -123,8 +123,8 @@ class pdf_cyan extends ModelePDFPropales
 	 * @var array of document table collumns
 	 */
 	public $cols;
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -170,12 +170,12 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1; // used for notes ans other stuff
-		
+
 
 		$this->tabTitleHeight = 5; // default height
 
 		//  Use new system for position of columns, view  $this->defineColumnField()
-		
+
 		$this->tva = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
@@ -359,7 +359,7 @@ class pdf_cyan extends ModelePDFPropales
 						$this->atleastonediscount++;
 					}
 				}
-				
+
 
 				// New page
 				$pdf->AddPage();
@@ -1178,7 +1178,7 @@ class pdf_cyan extends ModelePDFPropales
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 			$default_font_size--;
 		}
-		
+
 		$tab2_top = $posy;
 		$tab2_hl = 4;
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -1534,7 +1534,7 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
 		$w = 100;
-		
+
 		$posy = $this->marge_haute;
 		$posx = $this->page_largeur - $this->marge_droite - $w;
 
