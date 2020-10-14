@@ -2045,13 +2045,12 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 
 /**
  *  Return an array with locale date info.
- *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *  WARNING: This function always use PHP server timezone to return locale informations !!!
- *  Usage must be avoid.
- *  FIXME: Replace content of this function with PHP date functions and a parameter $gm
+ *  WARNING: This function use PHP server timezone by default to return locale informations.
+ *  Be aware to add the third parameter to "UTC" if you need to work on UTC.
  *
  *	@param	int			$timestamp      Timestamp
- *	@param	boolean		$fast           Fast mode
+ *	@param	boolean		$fast           Fast mode. deprecated.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array						Array of informations
  *										If no fast mode:
  *										'seconds' => $secs,
@@ -2061,34 +2060,40 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
  *										'wday' => $dow,		0=sunday, 6=saturday
  *										'mon' => $month,
  *										'year' => $year,
- *										'yday' => floor($secsInYear/$_day_power),
- *										'weekday' => gmdate('l',$_day_power*(3+$dow)),
- *										'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
- *										If fast mode:
- *										'seconds' => $secs,
- *										'minutes' => $min,
- *										'hours' => $hour,
- *										'mday' => $day,
- *										'mon' => $month,
- *										'year' => $year,
- *										'yday' => floor($secsInYear/$_day_power),
- *										'leap' => $leaf,
- *										'ndays' => $ndays
+ *										'yday' => floor($secsInYear/$_day_power)
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_mktime()
  */
-function dol_getdate($timestamp, $fast = false)
+function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
 	global $conf;
 
-	$usealternatemethod = false;
-	if ($timestamp <= 0) $usealternatemethod = true; // <= 1970
-	if ($timestamp >= 2145913200) $usealternatemethod = true; // >= 2038
-
-	if ($usealternatemethod)
-	{
-		$arrayinfo = adodb_getdate($timestamp, $fast);
+	if (empty($conf->global->MAIN_USE_OLD_FUNCTIONS_FOR_GETDATE)) {
+		//$datetimeobj = new DateTime('@'.$timestamp);
+		$datetimeobj = new DateTime();
+		$datetimeobj->setTimestamp($timestamp);	// Use local PHP server timezone
+		if ($forcetimezone) $datetimeobj->setTimezone(new DateTimeZone($forcetimezone));		//  (add timezone relative to the date entered)
+		$arrayinfo = array(
+			'year'=>((int) date_format($datetimeobj, 'Y')),
+			'mon'=>((int) date_format($datetimeobj, 'm')),
+			'mday'=>((int) date_format($datetimeobj, 'd')),
+			'wday'=>((int) date_format($datetimeobj, 'w')),
+			'yday'=>((int) date_format($datetimeobj, 'z')),
+			'hours'=>((int) date_format($datetimeobj, 'H')),
+			'minutes'=>((int) date_format($datetimeobj, 'i')),
+			'seconds'=>((int) date_format($datetimeobj, 's'))
+		);
 	} else {
-		$arrayinfo = getdate($timestamp);
+		// PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
+		$usealternatemethod = false;
+		if ($timestamp <= 0) $usealternatemethod = true; // <= 1970
+		if ($timestamp >= 2145913200) $usealternatemethod = true; // >= 2038
+
+		if ($usealternatemethod)
+		{
+			$arrayinfo = adodb_getdate($timestamp, $fast);
+		} else {
+			$arrayinfo = getdate($timestamp);
+		}
 	}
 
 	return $arrayinfo;
