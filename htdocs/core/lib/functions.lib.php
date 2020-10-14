@@ -2048,7 +2048,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *  WARNING: This function always use PHP server timezone to return locale informations !!!
  *  Usage must be avoid.
- *  FIXME: Replace this with PHP date function and a parameter $gm
+ *  FIXME: Replace content of this function with PHP date functions and a parameter $gm
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
