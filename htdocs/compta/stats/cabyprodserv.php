@@ -255,9 +255,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.=" AND cp.fk_product is null";
 	}
 	elseif ($selected_cat) {	// Into a specific category
-
-        if ($subcat)
-        {
+        if ($subcat) {
             $TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
 
             $listofcatsql = "";
