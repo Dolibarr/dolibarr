@@ -2416,6 +2416,73 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *  Charge tableau des stats OF pour le produit/service
+	 *
+	 * @param  int $socid Id societe
+	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
+	 */
+	public function load_stats_bom($socid = 0) {
+		// phpcs:enable
+		global $user, $hookmanager;
+
+		$error=0;
+
+		$this->stats_bom['nb_toproduce'] = 0;
+		$this->stats_bom['nb_toconsume'] = 0;
+		$this->stats_bom['qty_toproduce'] = 0;
+		$this->stats_bom['qty_toconsume'] = 0;
+
+		$sql = "SELECT COUNT(DISTINCT b.rowid) as nb_toproduce,";
+		$sql .= " b.qty as qty_toproduce";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
+		$sql .= " WHERE ";
+		$sql .= " b.entity IN (".getEntity('bom').")";
+		$sql .= " AND b.fk_product =".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_bom['nb_toproduce'] = $obj->nb_toproduce ? $obj->nb_toproduce : 0;
+			$this->stats_bom['qty_toproduce'] = $obj->qty_toproduce ? price2num($obj->qty_toproduce) : 0;
+
+		} else {
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		$sql = "SELECT COUNT(DISTINCT bl.rowid) as nb_toconsume,";
+		$sql .= " SUM(bl.qty) as qty_toconsume";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
+		$sql .= " WHERE ";
+		$sql .= " b.entity IN (".getEntity('bom').")";
+		$sql .= " AND bl.fk_product =".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_bom['nb_toconsume'] = $obj->nb_toconsume ? $obj->nb_toconsume : 0;
+			$this->stats_bom['qty_toconsume'] = $obj->qty_toconsume ? price2num($obj->qty_toconsume) : 0;
+
+		} else {
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		if (!empty($error)) {
+			return -1;
+		}
+
+		$parameters = array('socid' => $socid);
+		$reshook = $hookmanager->executeHooks('loadStatsCustomerMO', $parameters, $this, $action);
+		if ($reshook > 0) $this->stats_bom = $hookmanager->resArray['stats_bom'];
+
+		return 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *  Charge tableau des stats propale pour le produit/service
 	 *
 	 * @param  int $socid Id societe
