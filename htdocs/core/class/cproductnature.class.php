@@ -99,10 +99,10 @@ class CProductNature // extends CommonObject
 		$sql .= "label,";
 		$sql .= "active";
         $sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : $this->db->escape($this->id)).",";
-		$sql .= " ".(!isset($this->code) ? 'NULL' : $this->db->escape($this->code)).",";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)) .",";
+		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : $this->db->escape($this->active)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->db->escape($this->active))).",";
 		$sql .= ")";
 
 		$this->db->begin();
@@ -152,7 +152,7 @@ class CProductNature // extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
         $sql_where = array();
         if ($id)   $sql_where[] = " t.rowid = ".$id;
-        if ($code) $sql_where[] = " t.code = ".$this->db->escape($code);
+        if ($code>=0) $sql_where[] = " t.code = ". ((int) $code);
         if (count($sql_where) > 0) {
         	$sql .= ' WHERE '.implode(' AND ', $sql_where);
         }
@@ -277,9 +277,9 @@ class CProductNature // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " code=".(isset($this->code) ? $this->db->escape($this->code) : "null").",";
+		$sql .= " code=".(isset($this->code) ? ((int)$this->code) : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null");
+		$sql .= " active=".(isset($this->active) ? ((int)$this->active) : "null");
         $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
