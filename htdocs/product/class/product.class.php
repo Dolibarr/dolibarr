@@ -2387,7 +2387,7 @@ class Product extends CommonObject
 			$sql .= " c.entity IN (".getEntity('mo').")";
 
 			$sql .= " AND mp.fk_product =".$this->id;
-			$sql .= " AND mp.role ='".$role."'";
+			$sql .= " AND mp.role ='".$this->db->escape($role)."'";
 			if ($socid > 0) {
 				$sql .= " AND c.fk_soc = ".$socid;
 			}
