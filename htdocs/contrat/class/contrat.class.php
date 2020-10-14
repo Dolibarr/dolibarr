@@ -2028,7 +2028,7 @@ class Contrat extends CommonObject
 		$sql .= " c.tms as date_modification,";
 		$sql .= " fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result)

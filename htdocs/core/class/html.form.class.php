@@ -1848,7 +1848,7 @@ class Form
 				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid)))
 				{
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("Availability").':</span>  <input id="transparency" class="marginleftonly marginrightonly" '.($action == 'view' ? 'disabled' : '').' type="checkbox" name="transparency"'.($listofuserid[$ownerid]['transparency'] ? ' checked' : '').'>'.$langs->trans("Busy");
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("Availability").':</span>  </span><input id="transparency" class="paddingrightonly" '.($action == 'view' ? 'disabled' : '').' type="checkbox" name="transparency"'.($listofuserid[$ownerid]['transparency'] ? ' checked' : '').'><label for="transparency">'.$langs->trans("Busy").'</label>';
 					$out .= '</div>';
 				}
 			}
@@ -5578,7 +5578,6 @@ class Form
 			}
 			// Show date with combo selects
 			else {
-				//$retstring.='<div class="inline-block">';
 				// Day
 				$retstring .= '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
 
@@ -5622,11 +5621,13 @@ class Form
 					}
 					$retstring .= "</select>\n";
 				}
-				//$retstring.='</div>';
 			}
 		}
 
-		if ($d && $h) $retstring .= ($h == 2 ? '<br>' : ' ');
+		if ($d && $h) {
+			$retstring .= ($h == 2 ? '<br>' : ' ');
+			$retstring.='<span class="nowraponall">';
+		}
 
 		if ($h)
 		{
@@ -5644,10 +5645,13 @@ class Form
 			for ($hour = $hourstart; $hour < $hourend; $hour++)
 			{
 				if (strlen($hour) < 2) $hour = "0".$hour;
-				$retstring .= '<option value="'.$hour.'"'.(($hour == $shour) ? ' selected' : '').'>'.$hour.(empty($conf->dol_optimize_smallscreen) ? '' : 'H').'</option>';
+				$retstring .= '<option value="'.$hour.'"'.(($hour == $shour) ? ' selected' : '').'>'.$hour;
+				//$retstring .= (empty($conf->dol_optimize_smallscreen) ? '' : 'H');
+				$retstring .= '</option>';
 			}
 			$retstring .= '</select>';
-			if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+			//if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+			if ($m) $retstring .= ":";
 		}
 
 		if ($m)
@@ -5663,6 +5667,10 @@ class Form
 			$retstring .= '</select>';
 
 			$retstring .= '<input type="hidden" name="'.$prefix.'sec" value="'.$ssec.'">';
+		}
+
+		if ($d && $h) {
+			$retstring .= '</span>';
 		}
 
 		// Add a "Now" link
@@ -7257,7 +7265,7 @@ class Form
 		}
 		if ($morehtml)
 		{
-			$ret .= '<li class="noborder litext">'.$morehtml.'</li>';
+			$ret .= '<li class="noborder litext'.(($shownav && $previous_ref && $next_ref) ? ' clearbothonsmartphone' : '').'">'.$morehtml.'</li>';
 		}
 		if ($shownav && ($previous_ref || $next_ref))
 		{

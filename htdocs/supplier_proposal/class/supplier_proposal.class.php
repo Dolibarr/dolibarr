@@ -2103,7 +2103,7 @@ class SupplierProposal extends CommonObject
 		$sql .= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 

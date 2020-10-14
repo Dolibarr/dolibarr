@@ -173,8 +173,8 @@ class pdf_azur extends ModelePDFPropales
 			$this->posxqty = 135;
 			$this->posxunit = 151;
 		} else {
-			$this->posxtva = 110;
-			$this->posxup = 126;
+			$this->posxtva = 106;
+			$this->posxup = 122;
 			$this->posxqty = 145;
 			$this->posxunit = 162;
 		}

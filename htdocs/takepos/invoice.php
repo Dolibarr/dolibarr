@@ -532,8 +532,10 @@ if ($action == "order" and $placeid != 0)
 	$footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
 	$order_receipt_printer1 = "";
 	$order_receipt_printer2 = "";
+	$order_receipt_printer3 = "";
 	$catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
 	$catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
+	$catsprinter3 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_3);
 	foreach ($invoice->lines as $line)
 	{
 		if ($line->special_code == "4") {
@@ -586,6 +588,34 @@ if ($action == "order" and $placeid != 0)
 		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
 	}
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
+	$db->query($sql);
+	$invoice->fetch($placeid); //Reload object after set lines as printed
+	$linestoprint = 0;
+
+	foreach ($invoice->lines as $line)
+	{
+		if ($line->special_code == "4") {
+			continue;
+		}
+		$c = new Categorie($db);
+		$existing = $c->containing($line->fk_product, Categorie::TYPE_PRODUCT, 'id');
+		$result = array_intersect($catsprinter3, $existing);
+		$count = count($result);
+		if ($count > 0) {
+			$linestoprint++;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid=".$line->id; //Set to print on printer 3
+			$db->query($sql);
+			$order_receipt_printer3 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
+			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer3 .= "<br>(".$line->array_options['options_order_notes'].")";
+			$order_receipt_printer3 .= '</td></tr>';
+		}
+	}
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" && $linestoprint > 0) {
+		$invoice->fetch($placeid); //Reload object before send to printer
+		$printer->orderprinter = 3;
+		$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 3
+	}
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
 	$db->query($sql);
 	$invoice->fetch($placeid); //Reload object after set lines as printed
 }
@@ -863,7 +893,7 @@ if (!empty($conf->use_javascript_ajax))
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.$mobilepage.' $_SESSION["basiclayout"]='.$_SESSION["basiclayout"].' conf->global->TAKEPOS_BAR_RESTAURANT='.$conf->global->TAKEPOS_BAR_RESTAURANT.' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
-if ($mobilepage == "invoice" || $mobilepage == "") {
+if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
 	print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
 }
 print '<tr class="liste_titre nodrag nodrop">';

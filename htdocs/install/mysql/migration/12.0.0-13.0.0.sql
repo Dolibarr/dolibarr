@@ -139,7 +139,7 @@ CREATE TABLE llx_intracommreport
   content_xml		text,
   type_export		varchar(10),
   datec             datetime,
-  tms               timestamp
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
