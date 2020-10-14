@@ -157,7 +157,7 @@ if ($id > 0 || !empty($ref))
 					$bom_data_result[$objp->rowid]['qty_toproduce']+=($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
 					$bom_data_result[$objp->rowid]['qty_toconsume']=0;
 					$bom_data_result[$objp->rowid]['date_valid']=dol_print_date($db->jdate($objp->date_valid), 'dayhour');
-					$bom_data_result[$objp->rowid]['status']=$bomtmp->LibStatut($objp->status,5);
+					$bom_data_result[$objp->rowid]['status']=$bomtmp->LibStatut($objp->status, 5);
 					$i++;
 				}
 			}
@@ -204,12 +204,12 @@ if ($id > 0 || !empty($ref))
 					$bomtmp->id = $objp->rowid;
 					$bomtmp->ref = $objp->ref;
 
-					if (!array_key_exists($objp->rowid,$bom_data_result)) {
+					if (!array_key_exists($objp->rowid, $bom_data_result)) {
 						$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
 						$bom_data_result[$objp->rowid]['qty_toproduce']=0;
 						$bom_data_result[$objp->rowid]['qty_toconsume']+=($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
 						$bom_data_result[$objp->rowid]['date_valid']=dol_print_date($db->jdate($objp->date_valid), 'dayhour');
-						$bom_data_result[$objp->rowid]['status']=$bomtmp->LibStatut($objp->status,5);
+						$bom_data_result[$objp->rowid]['status']=$bomtmp->LibStatut($objp->status, 5);
 					} else {
 						$bom_data_result[$objp->rowid]['qty_toconsume']+=($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
 					}
@@ -249,7 +249,6 @@ if ($id > 0 || !empty($ref))
 		print "</tr>\n";
 
 		if (!empty($bom_data_result)) {
-
 			foreach ($bom_data_result as $data)
 			{
 				print '<tr class="oddeven">';
