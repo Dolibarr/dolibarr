@@ -1625,7 +1625,7 @@ if ($id)
 								$valuetoshow = ($obj->label && $key != strtoupper($obj->label) ? $key : $obj->{$fieldlist[$field]});
 							} elseif ($fieldlist[$field] == 'code' && $id == 3) {
 								$valuetoshow = $obj->state_code;
-							} elseif ($fieldlist[$field] == 'label' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX.'c_product_nature') {
+							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_product_nature') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							}
