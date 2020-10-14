@@ -248,8 +248,7 @@ function displayBox($selectedDate, $month, $year)
 		{
 			$stoploop = 1;
 		}
-		else
-		{
+		else {
 			$mydate = getdate($thedate);
 			if ($firstdate["month"] != $mydate["month"]) $stoploop = 1;
 		}
