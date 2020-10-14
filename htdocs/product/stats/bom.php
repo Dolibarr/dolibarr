@@ -234,7 +234,7 @@ if ($id > 0 || !empty($ref))
 		if (!empty($sortorder))
 			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
-		print_barre_liste($langs->trans("BOMs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($langs->trans("BOMs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', count($bom_data_result), count($bom_data_result), '', 0, '', '', $limit, 0, 0, 1);
 
 		if (!empty($page)) $option .= '&page='.urlencode($page);
 
