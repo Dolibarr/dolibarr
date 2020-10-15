@@ -361,32 +361,18 @@ class pdf_standard extends ModeleExpenseReport
                     $curY = $nexY;
                     $pdf->startTransaction();
                     $this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-                    $pageposafter=$pdf->getPage();
+					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore) {
                         // There is a pagebreak
 						$pdf->rollbackTransaction(true);
-						$pageposafter = $pageposbefore;
-						//print $pageposafter.'-'.$pageposbefore;exit;
+
+						$pdf->AddPage('', '', true);
+						$pdf->setPage($pageposbefore+1);
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-						$pageposafter = $pdf->getPage();
-						$posyafter = $pdf->GetY();
-						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))) {
-                            // There is no space left for total+free text
-							if ($i == ($nblignes-1)) {
-                                // No more lines, and no space left to show total, so we create a new page
-								$pdf->AddPage('', '', true);
-								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pageposafter+1);
-							}
-						}
-						else
-						{
-							// We found a page break
-							$showpricebeforepagebreak=0;
-						}
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+
+						$this->printLine($pdf, $object, $i, $tab_top_newpage, $default_font_size, $outputlangs, $hidedetails);
 					}
 					else	// No pagebreak
 					{
@@ -554,7 +540,7 @@ class pdf_standard extends ModeleExpenseReport
 	{
         global $conf;
         $pdf->SetFont('', '', $default_font_size - 1);
-
+		$pdf->SetTextColor(0, 0, 0);
         // Accountancy piece
         $pdf->SetXY($this->posxpiece, $curY);
         $pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $linenumber + 1, 0, 1);
