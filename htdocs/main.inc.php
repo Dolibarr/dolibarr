@@ -58,12 +58,16 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
  */
 function testSqlAndScriptInject($val, $type)
 {
-	$val = html_entity_decode($val, ENT_QUOTES);	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	// Decode string first
+	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
+	$val = html_entity_decode($val, ENT_QUOTES|ENT_HTML5);
+
 	// TODO loop to decode until no more thing to decode ?
 
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
-	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val);	// We should use dol_string_nounprintableascii but function is not yet loaded/available
-	//var_dump($val);
+	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val);	// /u operator makes UTF8 valid characters being ignored so are not included into the replace
 
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)

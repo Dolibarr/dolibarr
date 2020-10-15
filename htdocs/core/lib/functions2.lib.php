@@ -66,7 +66,7 @@ function jsUnEscape($source)
 			$pos++;
 		}
 	}
-	return dol_html_entity_decode($decodedStr, ENT_COMPAT);
+	return dol_html_entity_decode($decodedStr, ENT_COMPAT|ENT_HTML5);
 }
 
 

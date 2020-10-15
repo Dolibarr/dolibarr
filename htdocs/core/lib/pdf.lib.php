@@ -1260,7 +1260,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasmodified = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
-				$textwasmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML401), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML401)) !== false);
+				$textwasmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES|ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES|ENT_HTML5)) !== false);
 			} else {
 				$textwasmodified = ($desc == $prodser->description);
 			}

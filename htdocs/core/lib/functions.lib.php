@@ -664,8 +664,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
-			$out = dol_string_onlythesehtmltags($out, 0);
-			// TODO We can also remove all javascripts reference
+			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -1001,17 +1000,25 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 
 
 /**
- *	Clean a string from all non printable ascii chars (0x00-0x1F and 0x7F). It removes also CR-LF
+ *	Clean a string from all non printable ASCII chars (0x00-0x1F and 0x7F). It can also removes also Tab-CR-LF. UTF8 chars remains.
  *  This can be used to sanitize a string and view its real content. Some hacks try to obfuscate attacks by inserting non printable chars.
- *
+ *  Note, for information: UTF8 on 1 byte are: \x00-\7F
+ *                                 2 bytes are: byte 1 \xc0-\xdf, byte 2 = \x80-\xbf
+ *                                 3 bytes are: byte 1 \xe0-\xef, byte 2 = \x80-\xbf, byte 3 = \x80-\xbf
+ *                                 4 bytes are: byte 1 \xf0-\xf7, byte 2 = \x80-\xbf, byte 3 = \x80-\xbf, byte 4 = \x80-\xbf
  *	@param	string	$str            	String to clean
+ *  @param	int		$removetabcrlf		Remove also CR-LF
  * 	@return string          			Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nospecial()
  */
-function dol_string_nounprintableascii($str)
+function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 {
-	return preg_replace('/[\x00-\x1F\x7F]/u', '', $str);
+	if ($removetabcrlf) {
+		return preg_replace('/[\x00-\x1F\x7F]/u', '', $str);	// /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	} else {
+		return preg_replace('/[\x00-\x08\x11-\x12\x14-\x1F\x7F]/u', '', $str);	// /u operator should make UTF8 valid characters being ignored so are not included into the replace
+	}
 }
 
 
@@ -5617,7 +5624,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
 	// We remove entities BEFORE stripping (in case of a separator char is encoded and not the other, the strip will fails)
-	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
+	$temp = dol_html_entity_decode($temp, ENT_COMPAT|ENT_HTML5, $pagecodeto);
 
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
@@ -5652,7 +5659,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0)
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
@@ -5662,22 +5669,29 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$allowed_tags_string = join("><", $allowed_tags);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
-	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
-	}
-	if ($removeclassattribute) {
-		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $stringtoclean);
-	}
-	// TODO Remove '/href=("|\'|)javascript/' string ?
+	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
+	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
+
+	if ($cleanalsosomestyles) {	// Clean for remaining html tags
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+	}
+	if ($removeclassattribute) {	// Clean for remaining html tags
+		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $temp);
+	}
+
+	// Remove 'javascript:' that we should not find into a text with
+	if ($cleanalsojavascript) {
+		$temp = preg_replace('/javascript\s*:/i', '', $temp);
+	}
 
 	return $temp;
 }
 
 /**
  *	Clean a string from some undesirable HTML tags.
- *  Note. Not enough secured as dol_string_onlythesehtmltags().
+ *  Note. Not as secured as dol_string_onlythesehtmltags().
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	array	$disallowed_tags		Array of tags not allowed
@@ -5821,7 +5835,7 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
  */
 function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
 {
-	$ret = dol_html_entity_decode($stringtodecode, ENT_COMPAT, $pagecodeto);
+	$ret = dol_html_entity_decode($stringtodecode, ENT_COMPAT|ENT_HTML5, $pagecodeto);
 	$ret = preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i', "<br>", $ret);
 	$ret = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i', "\r\n", $ret);
 	$ret = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i', "\n", $ret);
@@ -5845,7 +5859,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a					Operand a
- * @param   string	$b					Operand b (ENT_QUOTES=convert simple and double quotes)
+ * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
  * @param	string	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded

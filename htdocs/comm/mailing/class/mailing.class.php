@@ -224,8 +224,8 @@ class Mailing extends CommonObject
 				$this->title = $obj->title;
 
 				$this->sujet = $obj->sujet;
-				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
-					$this->body = dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401);
+				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT|ENT_HTML5))) {
+					$this->body = dol_html_entity_decode($obj->body, ENT_COMPAT|ENT_HTML5);
 				} else {
 					$this->body = $obj->body;
 				}

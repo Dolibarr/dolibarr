@@ -482,15 +482,18 @@ if (empty($reshook)) {
 			}
 
 			if ($action == 'setsubject' && empty($object->subject)) {
-				$mesg .= ($mesg ? '<br>' : '').$langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			}
 
-			if (!$mesg) {
+			if (!$error) {
 				if ($object->update($user) >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?track_id=".$object->track_id);
 					exit;
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
-				$mesg = $object->error;
 			}
 		}
 	}
@@ -507,6 +510,9 @@ if (empty($reshook)) {
 					$url = 'card.php?action=view&track_id='.$object->track_id;
 					header("Location: ".$url);
 					exit();
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -543,6 +549,9 @@ if (empty($reshook)) {
 				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
 				setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -560,6 +569,9 @@ if (empty($reshook)) {
 				$url = 'card.php?action=view&track_id='.$object->track_id;
 				header("Location: ".$url);
 				exit();
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -597,6 +609,9 @@ if (empty($reshook)) {
 			$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
 
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = 'view';
 	}

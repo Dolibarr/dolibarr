@@ -1471,7 +1471,7 @@ class Project extends CommonObject
 				$clone_project->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES|ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;
@@ -1482,7 +1482,7 @@ class Project extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES), '_private');
+				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES|ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_project->error;

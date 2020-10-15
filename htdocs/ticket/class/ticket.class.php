@@ -1487,7 +1487,7 @@ class Ticket extends CommonObject
 				$message .= $langs->transnoentities('TicketNotificationRecipient').' : '.$recipient."\n";
 				$message .= "\n";
 				$message .= '* '.$langs->transnoentities('TicketNotificationLogMessage').' *'."\n";
-				$message .= dol_html_entity_decode($log_message, ENT_QUOTES)."\n";
+				$message .= dol_html_entity_decode($log_message, ENT_QUOTES|ENT_HTML5)."\n";
 
 				if ($info_sendto['source'] == 'internal') {
 					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;

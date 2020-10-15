@@ -1757,22 +1757,28 @@ if ($action == 'create' || $action == 'adduserldap')
 			{
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
+				$s = '';
 				if (isset($object->socid) && $object->socid > 0)
 				{
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
-					print $societe->getNomUrl(1, '');
+					if ($societe->id > 0){
+						$s .= $societe->getNomUrl(1, '');
+					}
 				} else {
-					print $langs->trans("ThisUserIsNot");
+					$s .= $langs->trans("ThisUserIsNot");
 				}
 				if (!empty($object->contact_id))
 				{
 					$contact = new Contact($db);
 					$contact->fetch($object->contact_id);
-					if ($object->socid > 0) print ' / ';
-					else print '<br>';
-					print $contact->getNomUrl(1, '');
+					if ($contact->id > 0) {
+						if ($object->socid > 0 && $s) $s .= ' / ';
+						else $s .= '<br>';
+						$s .= $contact->getNomUrl(1, '');
+					}
 				}
+				print $s;
 				print '</td>';
 				print '</tr>'."\n";
 			}
