@@ -4,7 +4,7 @@
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2016-2018 	Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -601,7 +601,7 @@ class ExpenseReport extends CommonObject
 					$this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
 				}
 
-				$this->lines = array();
+				$this->fetch_optionals();
 
 				$result = $this->fetch_lines();
 
