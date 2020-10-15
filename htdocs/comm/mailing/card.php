@@ -135,7 +135,7 @@ if (empty($reshook))
 			$from     = $object->email_from;
 			$replyto  = $object->email_replyto;
 			$errorsto = $object->email_errorsto;
-			// Le message est-il en html
+			// Is the message in html
 			$msgishtml = -1; // Unknown by default
 			if (preg_match('/[\s\t]*<html>/i', $message)) $msgishtml = 1;
 
@@ -144,8 +144,8 @@ if (empty($reshook))
 
 			$nbok = 0; $nbko = 0;
 
-			// On choisit les mails non deja envoyes pour ce mailing (statut=0)
-			// ou envoyes en erreur (statut=-1)
+			// We choose mails not already sent for this mailing (statut=0)
+			// or sent in error (statut=-1)
 			$sql = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
@@ -155,7 +155,7 @@ if (empty($reshook))
 			$resql = $db->query($sql);
 			if ($resql)
 			{
-				$num = $db->num_rows($resql); // nb of possible recipients
+				$num = $db->num_rows($resql); // Number of possible recipients
 
 				if ($num)
 				{
@@ -163,7 +163,7 @@ if (empty($reshook))
 
 					$now = dol_now();
 
-					// Positionne date debut envoi
+					// Positioning date of start sending
 					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$object->id;
 					$resql2 = $db->query($sql);
 					if (!$resql2)
@@ -273,7 +273,7 @@ if (empty($reshook))
 							}
 						}
 
-						// Fabrication du mail
+						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, '', 'emailing');
 
@@ -408,15 +408,15 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			// Le message est-il en html
-			$msgishtml = -1; // Inconnu par defaut
+			// Is the message in html
+			$msgishtml = -1; // Unknow by default
 			if (preg_match('/[\s\t]*<html>/i', $object->body)) $msgishtml = 1;
 
 			// other are set at begin of page
 			$object->substitutionarrayfortest['__EMAIL__'] = $object->sendto;
 			$object->substitutionarrayfortest['__MAILTOEMAIL__'] = '<a href="mailto:'.$object->sendto.'">'.$object->sendto.'</a>';
 
-			// Pratique les substitutions sur le sujet et message
+			// Subject and message substitutions
 	        complete_substitutions_array($object->substitutionarrayfortest, $langs);
 			$tmpsujet = make_substitutions($object->sujet, $object->substitutionarrayfortest);
 			$tmpbody = make_substitutions($object->body, $object->substitutionarrayfortest);
@@ -426,7 +426,7 @@ if (empty($reshook))
 			$arr_name = array();
 			$arr_css  = array();
 
-	        // Ajout CSS
+	        // Add CSS
 	        if (!empty($object->bgcolor)) $arr_css['bgcolor'] = (preg_match('/^#/', $object->bgcolor) ? '' : '#').$object->bgcolor;
 	        if (!empty($object->bgimage)) $arr_css['bgimage'] = $object->bgimage;
 
@@ -540,7 +540,7 @@ if (empty($reshook))
 		$action = "edit";
 	}
 
-	// Action remove file
+	// Action of file remove
 	if (!empty($_POST["removedfile"]))
 	{
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
@@ -552,7 +552,7 @@ if (empty($reshook))
 		$action = "edit";
 	}
 
-	// Action update emailing
+	// Action of emailing update
 	if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"]))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -592,7 +592,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Action confirmation validation
+	// Action of validation confirmation
 	if ($action == 'confirm_valid' && $confirm == 'yes')
 	{
 		if ($object->id > 0)
@@ -606,7 +606,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Action confirmation validation
+	// Action of validation confirmation
 	if ($action == 'confirm_settodraft' && $confirm == 'yes')
 	{
 		if ($object->id > 0)
@@ -652,7 +652,7 @@ if (empty($reshook))
 		}
 	}
 
-	// Action confirmation suppression
+	// Action of delete confirmation
 	if ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		if ($object->delete($object->id))
@@ -736,7 +736,7 @@ if ($action == 'create')
 	print '</table>';
 
 	print '<div style="padding-top: 10px">';
-	// Editeur wysiwyg
+	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtml'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
 	$doleditor->Create();
@@ -759,7 +759,7 @@ if ($action == 'create')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("SetToDraft"), $langs->trans("ConfirmUnvalidateEmailing"), "confirm_settodraft", '', '', 1);
 		}
-		// Confirmation validation of mailing
+		// Confirmation of mailing validation
 		if ($action == 'valid')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailing"), $langs->trans("ConfirmValidMailing"), "confirm_valid", '', '', 1);
@@ -779,7 +779,7 @@ if ($action == 'create')
 			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			/*
-			 * Mailing en mode visu
+			 * View mode mailing
 			 */
 			if ($action == 'sendall')
 			{
@@ -883,7 +883,7 @@ if ($action == 'create')
 			}
 			print '</td></tr>';
 
-			// Nb of distinct emails
+			// Number of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
@@ -929,12 +929,12 @@ if ($action == 'create')
 				array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
 				);
-				// Paiement incomplet. On demande si motif = escompte ou autre
+				// Incomplete payment. On demande si motif = escompte ou autre
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
 			}
 
 			/*
-			 * Boutons d'action
+			 * Actions Buttons
 			 */
 
 			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test')))
@@ -1021,7 +1021,7 @@ if ($action == 'create')
 				print '</div>';
 			}
 
-			// Affichage formulaire de TEST
+			// Display of the TEST form
 			if ($action == 'test')
 			{
 			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
@@ -1029,7 +1029,7 @@ if ($action == 'create')
 
 			    dol_fiche_head(null, '', '', -1);
 
-			    // Create l'objet formulaire mail
+			    // Create mail form object
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
@@ -1046,9 +1046,9 @@ if ($action == 'create')
 				$formmail->withbodyreadonly = 1;
 				$formmail->withcancel = 1;
 				$formmail->withdeliveryreceipt = 0;
-				// Tableau des substitutions
+				// Table of substitutions
 				$formmail->substit = $object->substitutionarrayfortest;
-				// Tableau des parametres complementaires du post
+				// Table of post's complementary params
 				$formmail->param["action"] = "send";
 				$formmail->param["models"] = 'none';
 				$formmail->param["mailid"] = $object->id;
@@ -1109,7 +1109,7 @@ if ($action == 'create')
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')	// CKEditor does not apply the color of the div into its content area
 			{
 				$readonly = 1;
-				// Editeur wysiwyg
+				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, empty($conf->global->FCKEDITOR_ENABLE_MAILING) ? 0 : 1, 20, '90%', $readonly);
 				$doleditor->Create();
@@ -1119,7 +1119,7 @@ if ($action == 'create')
 			dol_fiche_end();
 		} else {
 			/*
-			 * Mailing en mode edition (CKeditor or HTML source)
+			 * Edition mode mailing (CKeditor or HTML source)
 			 */
 
 			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
@@ -1150,7 +1150,7 @@ if ($action == 'create')
 			// To
 			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
 
-			// Nb of distinct emails
+			// Number of distinct emails
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
@@ -1267,14 +1267,14 @@ if ($action == 'create')
 
 			if ($action == 'edit')
 			{
-				// Editeur wysiwyg
+				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml')
 			{
-				// Editor HTML source
+				// HTML source editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, 'ace', 20, '90%');
 				$doleditor->Create(0, '', false, 'HTML Source', 'php');

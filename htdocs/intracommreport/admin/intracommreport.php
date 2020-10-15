@@ -102,7 +102,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print_fiche_titre($langs->trans("Parameters").' (DEB)');
+print load_fiche_titre($langs->trans("Parameters").' (DEB)');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -168,7 +168,7 @@ print "</tr>\n";
 print '</table>';
 
 
-print_fiche_titre($langs->trans("Parameters").' (DES)');
+print load_fiche_titre($langs->trans("Parameters").' (DES)');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

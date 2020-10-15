@@ -179,13 +179,13 @@ $head = payment_prepare_head($object);
 
 dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
-// Confirmation de la suppression du paiement
+// Confirmation of payment delete
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-// Confirmation de la validation du paiement
+// Confirmation of payment validation
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
@@ -408,7 +408,7 @@ if ($resql)
 
 
 /*
- * Boutons Actions
+ * Actions Buttons
  */
 
 print '<div class="tabsAction">';

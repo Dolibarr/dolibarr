@@ -54,9 +54,11 @@ function intracommReportAdminPrepareHead()
 /**
  *	Prepare array with list of tabs
  *
+ *  @param   Object	$object		Object related to tabs
+ *
  *	@return	array					Array of tabs to show
  */
-function intracommReportPrepareHead()
+function intracommReportPrepareHead($object)
 {
     global $langs, $conf;
 

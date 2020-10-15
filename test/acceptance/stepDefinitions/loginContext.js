@@ -1,6 +1,12 @@
 const { Given, When, Then } = require('cucumber')
 const { client } = require('nightwatch-api')
 
+Given('the administrator has logged in using the webUI', async function () {
+	await client.page.loginPage().navigate().waitForLoginPage();
+	await client.page.loginPage().userLogsInWithUsernameAndPassword(client.globals.adminUsername, client.globals.adminPassword);
+	return client.page.loginPage().userIsLoggedIn(client.globals.adminUsername);
+});
+
 Given('the user has browsed to the login page', function () {
 	return client.page.loginPage().navigate();
 });
