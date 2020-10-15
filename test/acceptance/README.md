@@ -18,7 +18,7 @@ Now we can run selenium by two ways:
 
 * Start selenium server with a command which usually looks like:
 
-   `java -jar selenium-server-standalone-<selenium version>.jar -port 8080`
+   `java -jar selenium-server-standalone-<selenium version>.jar -port 4444`
 
 
 * Run selenium in docker with
@@ -57,17 +57,17 @@ Now we can run selenium by two ways:
     const launch_url = process.env.LAUNCH_URL || 'http://localhost/dolibarr/htdocs/';
    ```
 
-* You can run test using following commands
+* You can run a test using following commands
 
-   `yarn run test:e2e test/acceptance/features/<feature_file>`
+  `LAUNCH_URL='<launch_url>'; ADMIN_USERNAME='<admin_username>'; ADMIN_PASSWORD='<admin_password>';`
+  
+  `yarn run test:e2e test/acceptance/features/<feature_file>`
    
-  For example: `yarn run test:e2e test/acceptance/features/addUsers.feature`
-   
-  Or:  `LAUNCH_URL='<launch_url>'; ADMIN_USERNAME='<admin_username>'; ADMIN_PASSWORD='<admin_password>'; yarn run test:e2e test/acceptance/features/`
+  For example: `yarn run test:e2e test/acceptance/features/WebUI/addUsers.feature`
  
-  The full script to run the acceptance tests is specified in `scripts` object of `package.json` file inside the project's root directory as :
+  Note: The script to run all the acceptance tests is specified in `scripts` object of `package.json` file inside the project's root directory as :
  
-    `"test:e2e": "node_modules/cucumber/bin/cucumber-js --require test/acceptance/index.js --require test/acceptance/stepDefinitions -f node_modules/cucumber-pretty"`
+  `"test:e2e": "node_modules/cucumber/bin/cucumber-js --require test/acceptance/index.js --require test/acceptance/stepDefinitions -f node_modules/cucumber-pretty"`
      
   After you run the above command you can see the test running. For that : 
   
