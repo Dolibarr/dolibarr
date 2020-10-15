@@ -2052,7 +2052,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
  *	@param	boolean		$fast           Fast mode. deprecated.
  *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array						Array of informations
- *										If no fast mode:
  *										'seconds' => $secs,
  *										'minutes' => $min,
  *										'hours' => $hour,
@@ -2061,6 +2060,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
  *										'mon' => $month,
  *										'year' => $year,
  *										'yday' => floor($secsInYear/$_day_power)
+ *										'0' => original timestamp
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_mktime()
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
@@ -2080,7 +2080,8 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 			'yday'=>((int) date_format($datetimeobj, 'z')),
 			'hours'=>((int) date_format($datetimeobj, 'H')),
 			'minutes'=>((int) date_format($datetimeobj, 'i')),
-			'seconds'=>((int) date_format($datetimeobj, 's'))
+			'seconds'=>((int) date_format($datetimeobj, 's')),
+			'0'=>$timestamp
 		);
 	} else {
 		// PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows

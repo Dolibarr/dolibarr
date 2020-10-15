@@ -124,8 +124,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 * @var array of document table collumns
 	 */
 	public $cols;
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -176,7 +176,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->tabTitleHeight = 5; // default height
 
 		//  Use new system for position of columns, view  $this->defineColumnField()
-		
+
 		$this->tva = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
@@ -364,7 +364,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$this->atleastonediscount++;
 					}
 				}
-				
+
 
 				// New page
 				$pdf->AddPage();
@@ -425,7 +425,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				if ($notetoshow)
 				{
 					$tab_top -= 2;
-					
+
 					$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 				    $pageposbeforenote = $pagenb;
 
@@ -709,7 +709,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
-					
+
 					// Extrafields
                     if (!empty($object->lines[$i]->array_options)) {
                         foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
@@ -1011,7 +1011,7 @@ class pdf_eratosthene extends ModelePDFCommandes
             if (!empty($conf->global->FACTURE_CHQ_NUMBER))
             {
             	$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-            	
+
             	if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 	            {
 	                $account = new Account($this->db);
@@ -1094,7 +1094,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 			$default_font_size--;
 		}
-		
+
 		$tab2_top = $posy;
 		$tab2_hl = 4;
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -1374,7 +1374,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
 			}
-			
+
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
@@ -1433,7 +1433,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
 		$w = 100;
-		
+
 		$posy = $this->marge_haute;
 		$posx = $this->page_largeur - $this->marge_droite - $w;
 
@@ -1844,7 +1844,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	    	),
 	    	'border-left' => true, // add left line separator
 	    );
-	    
+
 	    // Add extrafields cols
         if (!empty($object->lines)) {
             $line = reset($object->lines);

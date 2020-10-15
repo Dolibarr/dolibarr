@@ -86,7 +86,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier')
 {
 	$picto = 'supplier_proposal';
-    $title = $langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
+    $title = $langs->trans("ProposalsStatisticsSuppliers");
     $dir = $conf->supplier_proposal->dir_temp;
     $cat_type = Categorie::TYPE_SUPPLIER;
     $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));

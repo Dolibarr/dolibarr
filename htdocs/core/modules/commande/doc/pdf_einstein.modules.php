@@ -230,7 +230,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 		}
-		
+
 		$nblines = count($object->lines);
 
 		if ($conf->commande->multidir_output[$conf->entity])
@@ -794,7 +794,7 @@ class pdf_einstein extends ModelePDFCommandes
 	        if (!empty($conf->global->FACTURE_CHQ_NUMBER))
 	        {
 	        	$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-	        	
+
 	        	if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 	            {
 	                $account = new Account($this->db);
@@ -879,7 +879,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 			$default_font_size--;
 		}
-		
+
 		$tab2_top = $posy;
 		$tab2_hl = 4;
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -1031,7 +1031,7 @@ class pdf_einstein extends ModelePDFCommandes
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-							
+
 							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -1065,7 +1065,7 @@ class pdf_einstein extends ModelePDFCommandes
 							}
 							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
 							$totalvat .= ' ';
-							
+
 							$totalvat .= vatrate(abs($tvakey), 1).$tvacompl;
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1161,7 +1161,7 @@ class pdf_einstein extends ModelePDFCommandes
 			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
 			}
-			
+
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
@@ -1271,7 +1271,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
 		$w = 100;
-		
+
 		$posy = $this->marge_haute;
 		$posx = $this->page_largeur - $this->marge_droite - $w;
 

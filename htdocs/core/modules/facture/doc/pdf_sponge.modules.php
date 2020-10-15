@@ -394,7 +394,7 @@ class pdf_sponge extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 				}
-				
+
 
 				// Situation invoice handling
 				if ($object->situation_cycle_ref)
@@ -750,7 +750,7 @@ class pdf_sponge extends ModelePDFFactures
 						$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
-					
+
 					// Extrafields
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
@@ -2349,7 +2349,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 			'border-left' => true, // add left line separator
 		);
-		
+
 		// Add extrafields cols
 		if (!empty($object->lines)) {
 			$line = reset($object->lines);

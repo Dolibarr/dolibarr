@@ -79,7 +79,7 @@ class PropaleStats extends Stats
     		$this->field = 'total_ht';
     		$this->field_line = 'total_ht';
 
-    		$this->where .= " p.fk_statut > 0";
+    		//$this->where .= " p.fk_statut > 0";
         }
         if ($mode == 'supplier')
         {
@@ -91,10 +91,10 @@ class PropaleStats extends Stats
     		$this->field = 'total_ht';
     		$this->field_line = 'total_ht';
 
-    		$this->where .= " p.fk_statut > 0"; // Validated, accepted, refused and closed
+    		//$this->where .= " p.fk_statut > 0"; // Validated, accepted, refused and closed
         }
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
-		$this->where .= " AND p.entity IN (".getEntity('propal').")";
+        $this->where .= ($this->where ? ' AND ' : '')."p.entity IN (".getEntity('propal').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		if ($this->socid)
 		{
