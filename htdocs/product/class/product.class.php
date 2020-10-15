@@ -4695,7 +4695,7 @@ class Product extends CommonObject
 				return $label;
 			} else {
 				$this->error = $this->db->error().' sql='.$sql;
-				dol_syslog(get_class($this)."::".__METHOD__.' Error '.$this->error, LOG_ERR);
+				dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
 				return -1;
 			}
 		}
