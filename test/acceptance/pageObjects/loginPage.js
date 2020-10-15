@@ -26,7 +26,8 @@ module.exports = {
 			},
 
 			userIsLoggedIn: async function (login) {
-				await this.useXpath()
+				await this.waitForElementNotPresent('@loginTable')
+					.useXpath()
 					.waitForElementVisible('@userLogin')
 					.expect.element('@userLogin')
 					.text.to.equal(login);

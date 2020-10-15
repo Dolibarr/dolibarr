@@ -20,7 +20,7 @@ module.exports = {
 				chromeOptions : {
 					args : ['disable-gpu', 'window-size=1280,1024'],
 					w3c : false
-				},
+				}
 			}
 		}
 	}
