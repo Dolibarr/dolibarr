@@ -983,7 +983,7 @@ class Product extends CommonObject
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
 			$sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
-			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
+			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
 			$sql .= ", weight = ".($this->weight != '' ? "'".$this->db->escape($this->weight)."'" : 'null');
@@ -4685,10 +4685,21 @@ class Product extends CommonObject
 		global $langs;
 		$langs->load('products');
 
-		if ($this->finished == '0') { return $langs->trans("RowMaterial");
+		if (isset($this->finished) && $this->finished>=0) {
+			$sql = 'SELECT label, code FROM '.MAIN_DB_PREFIX.'c_product_nature where code='.((int) $this->finished).' AND active=1';
+			$resql = $this->db->query($sql);
+			if ($resql && $this->db->num_rows($resql) > 0) {
+				$res = $this->db->fetch_array($resql);
+				$label = $langs->trans($res['label']);
+				$this->db->free($resql);
+				return $label;
+			} else {
+				$this->error = $this->db->error().' sql='.$sql;
+				dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
+				return -1;
+			}
 		}
-		if ($this->finished == '1') { return $langs->trans("Finished");
-		}
+
 		return '';
 	}
 

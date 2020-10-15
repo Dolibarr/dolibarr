@@ -91,7 +91,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 0, 25, 0);
+$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -136,6 +136,7 @@ $tabname[38] = MAIN_DB_PREFIX."c_socialnetworks";
 $tabname[39] = MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabname[40] = MAIN_DB_PREFIX."c_stcommcontact";
 $tabname[41] = MAIN_DB_PREFIX."c_transport_mode";
+$tabname[42] = MAIN_DB_PREFIX."c_product_nature";
 
 // Dictionary labels
 $tablib = array();
@@ -180,6 +181,7 @@ $tablib[38] = "DictionarySocialNetworks";
 $tablib[39] = "DictionaryProspectContactLevel";
 $tablib[40] = "DictionaryProspectContactStatus";
 $tablib[41] = "DictionaryTransportMode";
+$tablib[42] = "DictionaryProductNature";
 
 // Requests to extract data
 $tabsql = array();
@@ -224,6 +226,7 @@ $tabsql[38] = "SELECT rowid, entity, code, label, url, icon, active FROM ".MAIN_
 $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 $tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
+$tabsql[42] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_product_nature";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -268,6 +271,7 @@ $tabsqlsort[38] = "rowid, code ASC";
 $tabsqlsort[39] = "sortorder ASC";
 $tabsqlsort[40] = "code ASC";
 $tabsqlsort[41] = "code ASC";
+$tabsqlsort[42] = "code ASC";
 
 // Field names in select result for dictionary display
 $tabfield = array();
@@ -312,6 +316,7 @@ $tabfield[38] = "code,label,url,icon,entity";
 $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
 $tabfield[41] = "code,label";
+$tabfield[42] = "code,label";
 
 // Edit field names for editing a record
 $tabfieldvalue = array();
@@ -356,6 +361,7 @@ $tabfieldvalue[38] = "code,label,url,icon";
 $tabfieldvalue[39] = "code,libelle,sortorder";
 $tabfieldvalue[40] = "code,libelle,picto";
 $tabfieldvalue[41] = "code,label";
+$tabfieldvalue[42] = "code,label";
 
 // Field names in the table for inserting a record
 $tabfieldinsert = array();
@@ -401,6 +407,7 @@ $tabfieldinsert[38] = "code,label,url,icon,entity";
 $tabfieldinsert[39] = "code,label,sortorder";
 $tabfieldinsert[40] = "code,libelle,picto";
 $tabfieldinsert[41] = "code,label";
+$tabfieldinsert[42] = "code,label";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -447,6 +454,7 @@ $tabrowid[38] = "";
 $tabrowid[39] = "code";
 $tabrowid[40] = "id";
 $tabrowid[41] = "";
+$tabrowid[42] = "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
@@ -491,6 +499,7 @@ $tabcond[38] = !empty($conf->socialnetworks->enabled);
 $tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[41] = !empty($conf->intracommreport->enabled);
+$tabcond[42] = !empty($conf->product->enabled);
 
 // List of help for fields
 $tabhelp = array();
@@ -535,6 +544,7 @@ $tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->tra
 $tabhelp[39] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[40] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
 $tabhelp[41] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[42] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -579,6 +589,7 @@ $tabfieldcheck[38] = array();
 $tabfieldcheck[39] = array();
 $tabfieldcheck[40] = array();
 $tabfieldcheck[41] = array();
+$tabfieldcheck[42] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);
@@ -1614,6 +1625,9 @@ if ($id)
 								$valuetoshow = ($obj->label && $key != strtoupper($obj->label) ? $key : $obj->{$fieldlist[$field]});
 							} elseif ($fieldlist[$field] == 'code' && $id == 3) {
 								$valuetoshow = $obj->state_code;
+							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_product_nature') {
+								$langs->load("products");
+								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							}
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($fieldlist[$field] == 'note' && $id == 10) $class .= ' tdoverflowmax200';
@@ -1631,7 +1645,7 @@ if ($id)
 					$iserasable = 1;
 					$canbedisabled = 1;
 					$canbemodified = 1;
-					if (isset($obj->code) && $id != 10)
+					if (isset($obj->code) && $id != 10 && $id != 42)
 					{
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) { $iserasable = 0; $canbedisabled = 0; } elseif ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; } elseif ($obj->code == 'EF0') { $iserasable = 0; $canbedisabled = 0; }
 					}
@@ -1643,6 +1657,7 @@ if ($id)
 					if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable = 0; }
 					if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled = 0; $canbedisabled = 0; }
 					$canbemodified = $iserasable;
+
 					if ($obj->code == 'RECEP') $canbemodified = 1;
 					if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm") $canbemodified = 1;
 

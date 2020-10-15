@@ -426,6 +426,75 @@ class FormProduct
 	}
 
 	/**
+	 *  Return a combo box with list of units
+	 *  NAture of product labels are defined in llx_c_product_nature
+	 *
+	 *  @param  string		$name                Name of HTML field
+	 *  @param  string		$selected             Preselected value
+	 *  @param  int         $mode                1=Use label as value, 0=Use code
+	 *  @param  int         $showempty           1=show empty value, 0= no
+	 *  @return string
+	 */
+	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty = 1)
+	{
+		global $langs, $db;
+
+		$langs->load('products');
+
+		$return = '';
+
+		// TODO Use a cache
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cproductnature.class.php';
+		$productNature = new CProductNature($db);
+
+		$filter = array();
+		$filter['t.active'] = 1;
+
+		$result = $productNature->fetchAll(
+			'',
+			'',
+			0,
+			0,
+			$filter
+		);
+		if ($result < 0) {
+			dol_print_error($db);
+			return -1;
+		} else {
+			$return .= '<select class="flat" name="'.$name.'">';
+			if ($showempty || ($selected == '' || $selected == '-1')) {
+				$return .= '<option value="-1"';
+				if ($selected == '' || $selected == '-1') {
+					$return .= ' selected';
+				}
+				$return .= '></option>';
+			}
+			if (!empty($productNature->records) && is_array($productNature->records)) {
+				foreach ($productNature->records as $lines) {
+					$return .= '<option value="';
+					if ($mode == 1) $return .= $lines->label;
+					else $return .= $lines->code;
+
+					$return .= '"';
+
+					if ($mode == 1 && $lines->label == $selected) {
+						$return .= ' selected';
+					} elseif ($lines->code == $selected) {
+						$return .= ' selected';
+					}
+
+					$return .= '>';
+					$return .= $langs->trans($lines->label);
+					$return .= '</option>';
+				}
+			}
+			$return .= '</select>';
+		}
+
+		return $return;
+	}
+
+	/**
 	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
 	 *
 	 *  @param	int		$selected		Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
