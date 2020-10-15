@@ -800,7 +800,7 @@ class Contrat extends CommonObject
 				$line->total_ttc		= $objp->total_ttc;
 				$line->fk_product		= (($objp->fk_product > 0)?$objp->fk_product:0);
 				$line->info_bits		= $objp->info_bits;
-				$line->product_type		= $objp->product_type;
+				$line->type				= $objp->type;
 
 				$line->fk_fournprice 	= $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
@@ -813,6 +813,7 @@ class Contrat extends CommonObject
 
 				$line->ref				= $objp->product_ref;	// deprecated
 				$line->product_ref		= $objp->product_ref;   // Product Ref
+				$line->product_type		= $objp->product_type;  // Product Type
 				$line->product_desc		= $objp->product_desc;  // Product Description
 				$line->product_label	= $objp->product_label; // Product Label
 
