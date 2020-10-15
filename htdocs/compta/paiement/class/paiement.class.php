@@ -858,13 +858,25 @@ class Paiement extends CommonObject
         return -1; //no num given or already validated
     }
 
-	/**
+    /**
+     *    Validate payment
+     *
+     *	  @param	User	$user		User making validation
+     *    @return   int     			<0 if KO, >0 if OK
+     *    @deprecated
+     */
+    public function valide(User $user = null)
+    {
+    	return $this->validate($user);
+    }
+
+    /**
 	 *    Validate payment
 	 *
 	 *	  @param	User	$user		User making validation
 	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-    public function valide(User $user = null)
+    public function validate(User $user = null)
     {
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 

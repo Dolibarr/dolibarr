@@ -69,42 +69,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 	}
 }
 
-// Create payment
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->creer)
-{
-	$db->begin();
-
-	$result = $object->valide();
-
-	if ($result > 0)
-	{
-		$db->commit();
-
-		$donations = array(); // TODO Get all id of donation linked to this payment
-		foreach ($donations as $id)
-		{
-			$donation = new Don($db);
-			$donation->fetch($id);
-
-			$outputlangs = $langs;
-			if (!empty(GETPOST('lang_id')))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang(GETPOST('lang_id'));
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$donation->generateDocument($donation->model_pdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$object->id);
-		exit;
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
-	}
-}
-
 
 /*
  * View
@@ -132,14 +96,6 @@ if ($action == 'delete')
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-/*
- * Confirm validation of the payment
- */
-if ($action == 'valide')
-{
-	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
-}
-
 
 dol_banner_tab($object, 'id', '', 1, 'rowid', 'id');
 
@@ -147,13 +103,6 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
-
-// Ref
-/*print '<tr><td class=">'.$langs->trans('Ref').'</td>';
-print '<td colspan="3">';
-print $form->showrefnav($object,'id','',1,'rowid','id');
-print '</td></tr>';
-*/
 
 // Date
 print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep, 'day').'</td></tr>';

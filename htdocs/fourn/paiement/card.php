@@ -82,7 +82,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' &&
+if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
 	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 )
@@ -90,7 +90,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 	$db->begin();
 
 	$object->fetch($id);
-	if ($object->valide() >= 0)
+	if ($object->validate() >= 0)
 	{
 		$db->commit();
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
@@ -161,9 +161,9 @@ if ($result > 0)
 	/*
 	 * Confirmation of payment's validation
 	 */
-	if ($action == 'valide')
+	if ($action == 'validate')
 	{
-		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate');
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -343,7 +343,7 @@ if ($result > 0)
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
 		   	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Valid').'</a>';
 			}
 		}
 	}

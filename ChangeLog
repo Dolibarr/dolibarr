@@ -26,6 +26,8 @@ Following changes may create regressions for some external modules, but were nec
 * If you have links in your code with '&action=delete' as a parameter, you must also add '&token='.newToken() as another parameter to avoid CSRF protection errors.
 * The API addPayment for api_invoice has evolved to accept amount into a foreign currency. You must provide array(amount=>X,mutlicurrency_ammount=>Y) instead of amount.
 * The method select_thirdparty(), deprecated since 3.8, into html.form.class.php has been removed.
+* Depreciate all methods with name valide(). Use instead methods validate().
+
 
 ***** ChangeLog for 12.0.3 compared to 12.0.2 *****
 FIX: 10.0 - when the mime file name is different from the filesystem name, the attachment name should be the mime filename

@@ -376,7 +376,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
 		((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty')))
+		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check')))
 	{
 		if (!GETPOSTISSET('token')) {
 			if (GETPOST('uploadform', 'int')) {

@@ -178,7 +178,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 	}
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->cheque)
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
 	$result = $object->fetch($id);
 	$result = $object->validate($user);
@@ -324,7 +324,7 @@ if ($action == 'new')
 	 */
 	if ($action == 'valide')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide', '', '', 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_validate', '', '', 1);
 	}
 
 	/*

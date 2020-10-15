@@ -70,42 +70,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensere
 	}
 }
 
-// Create payment
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensereport->creer)
-{
-	$db->begin();
-
-	$result = $object->valide();
-
-	if ($result > 0)
-	{
-		$db->commit();
-
-		$factures = array(); // TODO Get all id of invoices linked to this payment
-		foreach ($factures as $invoiceid)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($invoiceid);
-
-			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->model_pdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$object->id);
-		exit;
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
-	}
-}
-
 
 /*
  * View
@@ -125,15 +89,6 @@ dol_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'pay
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
-}
-
-/*
- * Confirm validation of the payment
- */
-if ($action == 'valide')
-{
-	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
 }
 
 $linkback = '';

@@ -272,14 +272,13 @@ if ($action == 'create')
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="line_id" value="'.$line_id.'">';
-	print '<input type="hidden" name="remaindertopay" value="'.($total-$sumpaid).'">';
+	print '<input type="hidden" name="remaindertopay" value="'.($total - $sumpaid).'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-    dol_fiche_head();
+	dol_fiche_head();
 
-	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
-
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Loan").'</td>';
+	/*
+	 print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
     if ($echance > 0)
@@ -295,13 +294,9 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '</table>';
+	*/
 
-	print '<br>';
-
-	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="3">'.$langs->trans("Payment").'</td>';
-	print '</tr>';
+	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
     if (empty($datepaid))
@@ -310,7 +305,6 @@ if ($action == 'create')
     else $datepayment = $datepaid;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
-
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
@@ -321,14 +315,15 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1);  // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1);  // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
+	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td>'."\n";
+	print "</tr>";
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
@@ -343,6 +338,7 @@ if ($action == 'create')
 	print '</table>';
 
 	dol_fiche_end();
+
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

@@ -167,14 +167,14 @@ class Don extends CommonObject
 		{
 			global $langs;
 			$langs->load("donations");
-			$this->labelStatus[-1] = $langs->trans("Canceled");
-			$this->labelStatus[0] = $langs->trans("DonationStatusPromiseNotValidated");
-			$this->labelStatus[1] = $langs->trans("DonationStatusPromiseValidated");
-			$this->labelStatus[2] = $langs->trans("DonationStatusPaid");
-			$this->labelStatusShort[-1] = $langs->trans("Canceled");
-			$this->labelStatusShort[0] = $langs->trans("DonationStatusPromiseNotValidatedShort");
-			$this->labelStatusShort[1] = $langs->trans("DonationStatusPromiseValidatedShort");
-			$this->labelStatusShort[2] = $langs->trans("DonationStatusPaidShort");
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv("Canceled");
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv("DonationStatusPromiseNotValidated");
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv("DonationStatusPromiseValidated");
+			$this->labelStatus[2] = $langs->transnoentitiesnoconv("DonationStatusPaid");
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv("Canceled");
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("DonationStatusPromiseNotValidatedShort");
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("DonationStatusPromiseValidatedShort");
+			$this->labelStatusShort[2] = $langs->transnoentitiesnoconv("DonationStatusPaidShort");
 		}
 
 		$statusType = 'status'.$status;
