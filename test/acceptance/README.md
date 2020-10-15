@@ -4,9 +4,19 @@
 
 Selenium has been used for automating the browser.
 
-We can run selenium by two ways:
+[Download](https://www.selenium.dev/downloads/) the `latest stable version` of the `Selenium standalone server JAR file`.
 
-* Usually, for running tests using selenium we download `selenium standalone server JAR file` and `chrome driver` and start selenium server with a command which usually looks like:
+Also [download](https://chromedriver.chromium.org/downloads) the `latest stable version` of `Chrome Driver`.
+
+Once you have downloaded Chrome Driver, you need to unzip it by running the following command:
+
+  `unzip chromedriver_linux64.zip`
+    
+Once you have unzipped it, you need to move the chromedriver(shared library) and place it inside the same folder where you have placed the Selenium standalone server file.
+
+Now we can run selenium by two ways:
+
+* Start selenium server with a command which usually looks like:
 
    `java -jar selenium-server-standalone-<selenium version>.jar -port 8080`
 
