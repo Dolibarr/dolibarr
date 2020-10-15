@@ -60,8 +60,8 @@ Feature: Add user
     Then the response status code should be "200"
     And user with login "<login>" should exist
     Examples:
-      | last name                  | login                  |
-      | swi@                       | s$5^2       |
-      | g!!@%ui                    | नेपाली                 |
-      | swikriti@h                 | सिमप्ले $%#?&@name.txt |
-      | !@#$%^&*()-_+              | España§àôœ€            |
+      | last name     | login                  |
+      | swi@          | s$5^2                  |
+      | g!!@%ui       | नेपाली                 |
+      | swikriti@h    | सिमप्ले $%#?&@name.txt |
+      | !@#$%^&*()-_+ | España§àôœ€            |
