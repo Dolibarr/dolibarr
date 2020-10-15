@@ -43,7 +43,7 @@ $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
 $parameter = GETPOST('parameter', 'alpha');
 
-$template = GETPOST('template', 'alpha');
+$template = GETPOST('template', 'nohtml');
 $templatename = GETPOST('templatename', 'alpha');
 $templateid = GETPOST('templateid', 'int');
 
@@ -473,7 +473,7 @@ if ($mode == 'template' && $user->admin) {
 	$langs->loadLangs(array("bills", "companies"));
 	foreach ($printer->tags as $key => $val) {
 		print '<tr class="oddeven">';
-		print '<td>&lt;'.$key.'&gt;</td><td>'.$langs->trans($val).'</td>';
+		print '<td>{'.$key.'}</td><td>'.$langs->trans($val).'</td>';
 		print '</tr>';
 	}
 	print '</table>';
