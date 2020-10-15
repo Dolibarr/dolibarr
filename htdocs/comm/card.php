@@ -639,7 +639,7 @@ if ($object->id > 0)
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		// Box factures
-		$tmp = $object->getOutstandingBills('customer',0);
+		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
 		$outstandingTotalIncTax = $tmp['total_ttc'];
@@ -670,7 +670,7 @@ if ($object->id > 0)
 		$boxstat .= '</div>';
 		if ($link) $boxstat .= '</a>';
 
-		$tmp = $object->getOutstandingBills('customer',1);
+		$tmp = $object->getOutstandingBills('customer', 1);
 		$outstandingOpenedLate = $tmp['opened'];
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$warn = '';
@@ -687,7 +687,6 @@ if ($object->id > 0)
 			$boxstat .= '</div>';
 			if ($link) $boxstat .= '</a>';
 		}
-
 	}
 
 	$parameters = array();

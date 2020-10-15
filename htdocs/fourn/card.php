@@ -418,7 +418,7 @@ if ($object->id > 0)
 	    $boxstat .= '</div>';
 	    if ($link) $boxstat .= '</a>';
 
-		$tmp = $object->getOutstandingBills('supplier',1);
+		$tmp = $object->getOutstandingBills('supplier', 1);
 		$outstandingOpenedLate = $tmp['opened'];
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$text = $langs->trans("CurrentOutstandingBillLate");
@@ -431,7 +431,6 @@ if ($object->id > 0)
 			$boxstat .= '</div>';
 			if ($link) $boxstat .= '</a>';
 		}
-
 	}
 
 	$boxstat .= '</td></tr>';
