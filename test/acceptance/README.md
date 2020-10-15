@@ -37,6 +37,15 @@ Now we can run selenium by two ways:
    apt install yarnpkg
    ```
 
+* Install *nodejs* libraries. For example on Ubuntu:
+
+   ```
+   apt install npm
+   npm install cucumber
+   npm install nightwatch-api
+   npm install nightwatch
+   npm update
+   ```
 
 * In *nightwatch.conf.js* file inside the root directory of the project and inside the configuration file following environment variable has been specified. We can change the default values according to our local configuration.
 
