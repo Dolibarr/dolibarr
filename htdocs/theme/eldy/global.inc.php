@@ -22,6 +22,7 @@
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
+	--colortexttitlelink: rgb(<?php print $colortexttitlelink; ?>);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
 	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
@@ -2407,7 +2408,8 @@ div.login_block a {
 	display: inline-block;
 }
 div.login_block span.aversion {
-	color: <?php echo colorAgressiveness($colortextbackhmenu, -40); ?>;
+	color: var(--colortextbackhmenu);
+	filter: contrast(0.7);
 }
 div.login_block table {
 	display: inline;
@@ -2453,7 +2455,7 @@ div.login_block_other {
 	height: 25px;
 }
 .atoplogin, .atoplogin:hover {
-	color: #<?php echo $colortextbackhmenu; ?> !important;
+	color: var(--colortextbackhmenu) !important;
 }
 .login_block_getinfo {
 	text-align: center;
@@ -2887,7 +2889,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
-	/* border-top: <?php echo 2; ?>px solid rgb(<?php echo $colortopbordertitle1; ?>) !important; */
 	border-top: <?php echo 2; ?>px solid var(--colorbackhmenu1) !important;
 }
 a.tab:hover
@@ -3535,7 +3536,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
-	color: rgb(<?php echo $colortexttitlelink ?>);
+	color: var(--colortexttitlelink);
 }
 tr.liste_titre_topborder td {
 	border-top-width: <?php echo $borderwidth; ?>px;
@@ -3605,9 +3606,6 @@ table.tableforservicepart1 tr td {
 }
 
 .paymenttable, .margintable {
-	/*border-top-width: <?php echo $borderwidth ?>px !important;
-	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
-	border-top-style: solid !important;*/
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
@@ -5293,7 +5291,7 @@ span#select2-taskid-container[title^='--'] {
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
-    color: #<?php echo $colortextbackhmenu; ?>;
+    color: var(--colortextbackhmenu);
 }
 .select2-container--default .select2-results__option--highlighted[aria-selected] span {
     color: #fff !important;
@@ -5331,6 +5329,9 @@ input.select2-input {
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
     background-color: var(--colorbackvmenu1);
+}
+#blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--colortextbackvmenu);
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--colortext);

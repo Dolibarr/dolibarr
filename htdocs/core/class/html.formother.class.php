@@ -703,10 +703,11 @@ class FormOther
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
 	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss		Add css style into input field
+	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -727,39 +728,46 @@ class FormOther
 				$out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
-	                window: {
-	                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
-	                  effects:
-	                    {
-	                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
-	                    speed:
-	                    {
-	                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
-	                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
-	                    }
-	                    },
-	                  position:
-	                    {
-	                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
-	                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
-	                    },
-	                },
-	                images: {
-	                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
-	                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
-	          		},
-	                localization: // alter these to change the text presented by the picker (e.g. different language)
-	                  {
-	                    text:
-	                    {
-	                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
-	                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
-	                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-	                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
-	                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
-	                    }
-	                  }
-			        } ); });
+		                window: {
+		                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
+		                  effects:
+		                    {
+		                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
+		                    speed:
+		                    {
+		                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
+		                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
+		                    }
+		                    },
+		                  position:
+		                    {
+		                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
+		                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
+		                    },
+		                },
+		                images: {
+		                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
+		                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
+		          		},
+		                localization: // alter these to change the text presented by the picker (e.g. different language)
+		                  {
+		                    text:
+		                    {
+		                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
+		                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
+		                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
+		                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+		                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
+		                    }
+		                  }
+				        },
+						function(color, context) { console.log("close"); },
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex);';
+						if ($setpropertyonselect) { $out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.$setpropertyonselect.'\', \'#\'+hex);'; }
+						$out .= '},
+						function(color, context) { console.log("cancel"); }
+					);
+				 });
 	             </script>';
 			}
 			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
