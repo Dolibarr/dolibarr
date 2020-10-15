@@ -5,12 +5,6 @@ const assert = require('assert');
 let response;
 let Login = {};
 
-Given('the administrator has logged in using the webUI', async function () {
-    await client.page.loginPage().navigate().waitForLoginPage();
-    await client.page.loginPage().userLogsInWithUsernameAndPassword(client.globals.adminUsername, client.globals.adminPassword);
-    return client.page.loginPage().userIsLoggedIn(client.globals.adminUsername);
-});
-
 Given('the administrator has browsed to the new users page', function () {
     return client.page.homePage().browsedToNewUserPage();
 });

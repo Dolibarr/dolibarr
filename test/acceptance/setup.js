@@ -30,7 +30,7 @@ Before(async function getDolApiKey() {
 	const params = new URLSearchParams()
 	params.set('login', adminUsername)
 	params.set('password', adminPassword)
-	const apiKey = `http://localhost/dolibarr/htdocs/api/index.php/login?${params.toString()}`;
+	const apiKey = client.globals.backend_url + `api/index.php/login?${params.toString()}`;
 	header['Accept'] = 'application/json'
 	await fetch(apiKey, {
 		method: 'GET',

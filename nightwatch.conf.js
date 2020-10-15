@@ -18,7 +18,7 @@ module.exports = {
 				browserName : 'chrome',
 				javascriptEnabled : true,
 				chromeOptions : {
-					args : ['disable-gpu'],
+					args : ['disable-gpu', 'window-size=1280,1024'],
 					w3c : false
 				}
 			}
