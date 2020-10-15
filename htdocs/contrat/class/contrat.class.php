@@ -2565,7 +2565,7 @@ class ContratLigne extends CommonObjectLine
 	public $fk_product;
 
 	public $statut;					// 0 inactive, 4 active, 5 closed
-	public $product_type;			// 0 for product, 1 for service
+	public $type;					// 0 for product, 1 for service
 
 	/**
 	 * @var string
@@ -2584,6 +2584,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
+	public $product_type;			// 0 for product, 1 for service
 	public $product_ref;
 	public $product_label;
 
