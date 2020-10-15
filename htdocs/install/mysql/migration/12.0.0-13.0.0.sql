@@ -134,12 +134,12 @@ CREATE TABLE llx_intracommreport
   ref				varchar(30)        NOT NULL,			-- report reference number
   entity			integer  DEFAULT 1 NOT NULL,			-- multi company id
   type_declaration	varchar(32),
-  period			varchar(32),
+  periods			varchar(32),
   mode				varchar(32),
   content_xml		text,
   type_export		varchar(10),
   datec             datetime,
-  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
