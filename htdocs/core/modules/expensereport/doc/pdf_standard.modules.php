@@ -367,10 +367,11 @@ class pdf_standard extends ModeleExpenseReport
                     $curY = $nexY;
                     $pdf->startTransaction();
                     $this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-                    $pageposafter=$pdf->getPage();
+					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore) {
                         // There is a pagebreak
 						$pdf->rollbackTransaction(true);
+
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						if (empty($showpricebeforepagebreak)) {
@@ -587,7 +588,7 @@ class pdf_standard extends ModeleExpenseReport
 	{
         global $conf;
         $pdf->SetFont('', '', $default_font_size - 1);
-
+		$pdf->SetTextColor(0, 0, 0);
         // Accountancy piece
         $pdf->SetXY($this->posxpiece, $curY);
         $pdf->writeHTMLCell($this->posxcomment - $this->posxpiece - 0.8, 4, $this->posxpiece - 1, $curY, $linenumber + 1, 0, 1);
