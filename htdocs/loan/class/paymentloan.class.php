@@ -428,6 +428,7 @@ class PaymentLoan extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -437,7 +438,7 @@ class PaymentLoan extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-		//
+		// phpcs:enable
 		return '';
 	}
 

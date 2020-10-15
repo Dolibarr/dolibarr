@@ -5653,8 +5653,9 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *	Clean a string to keep only desirable HTML tags.
  *
  *	@param	string	$stringtoclean			String to clean
- *  @param	boolean	$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	boolean	$removeclassattribute	Remove the class attribute from tags
+ *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
+ *  @param	int		$removeclassattribute	Remove the class attribute from tags
+ *  @param	int		$cleanalsojavascript	Remove also occurence of (javascript:'
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
