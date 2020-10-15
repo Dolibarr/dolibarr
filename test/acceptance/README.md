@@ -12,7 +12,7 @@ Once you have downloaded Chrome Driver, you need to unzip it by running the foll
 
   `unzip chromedriver_linux64.zip`
     
-Once you have unzipped it, you need to move the chromedriver(shared library) and place it inside the same folder where you have placed the Selenium standalone server file.
+Once you have unzipped it, you need to move the *chromedriver* file (shared library) and place it inside the same folder where you have placed the Selenium standalone server file.
 
 Now we can run selenium by two ways:
 
@@ -34,7 +34,7 @@ Now we can run selenium by two ways:
 * Install *yarn*. For example on Ubuntu:
 
    ```
-   apt install yanpkg
+   apt install yarnpkg
    ```
 
 
