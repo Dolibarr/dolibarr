@@ -1,6 +1,6 @@
-#Run End-to-End Tests
+# Run End-to-End Tests
 
-###Run Selenium
+### Run Selenium
 
 Selenium has been used for automating the browser.
 
@@ -8,26 +8,30 @@ We can run selenium by two ways:
 
 * Usually, for running tests using selenium we download `selenium standalone server JAR file` and `chrome driver` and start selenium server with a command which usually looks like:
 
-   `java -jar selenium-server-standalone-<selenium version>.jar -port <port-no>`
+   `java -jar selenium-server-standalone-<selenium version>.jar -port 8080`
+
 
 * Run selenium in docker with
 
    `docker run -d -p 4444:4444 -p 5900:5900 -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
+   
+   or `docker run -d --network="host" -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
 
-                                       OR
-     
-   `docker run -d --network="host" -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
+   or `docker run -d --network host -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
 
-                                       OR
+### Run the acceptance tests 
 
-   `docker run -d --network host -v /dev/shm:/dev/shm selenium/standalone-chrome-debug`
-
-###Run the acceptance tests 
-
-* In `nightwatch.conf.js` file inside the root directory of the project and inside the configuration file following environment variable has been specified. We can change the default values according to our local configuration.
+* Install *yarn*. For example on Ubuntu:
 
    ```
-    const admin_username = process.env.ADMIN_USERNAME || 'dolibarr';
+   apt install yanpkg
+   ```
+
+
+* In *nightwatch.conf.js* file inside the root directory of the project and inside the configuration file following environment variable has been specified. We can change the default values according to our local configuration.
+
+   ```
+    const admin_username = process.env.ADMIN_USERNAME || 'admin';
 
     const admin_password = process.env.ADMIN_PASSWORD || 'password';
 
