@@ -753,6 +753,7 @@ class Contrat extends CommonObject
 		$sql.= " d.total_localtax1,";
 		$sql.= " d.total_localtax2,";
 		$sql.= " d.total_ttc,";
+		$sql .= " d.product_type,";
 		$sql.= " d.info_bits, d.fk_product,";
 		$sql.= " d.date_ouverture_prevue, d.date_ouverture,";
 		$sql.= " d.date_fin_validite, d.date_cloture,";
@@ -799,6 +800,7 @@ class Contrat extends CommonObject
 				$line->total_ttc		= $objp->total_ttc;
 				$line->fk_product		= (($objp->fk_product > 0)?$objp->fk_product:0);
 				$line->info_bits		= $objp->info_bits;
+				$line->type				= $objp->type;
 
 				$line->fk_fournprice 	= $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
@@ -811,6 +813,7 @@ class Contrat extends CommonObject
 
 				$line->ref				= $objp->product_ref;	// deprecated
 				$line->product_ref		= $objp->product_ref;   // Product Ref
+				$line->product_type		= $objp->product_type;  // Product Type
 				$line->product_desc		= $objp->product_desc;  // Product Description
 				$line->product_label	= $objp->product_label; // Product Label
 
@@ -2563,7 +2566,7 @@ class ContratLigne extends CommonObjectLine
 	public $fk_product;
 
 	public $statut;					// 0 inactive, 4 active, 5 closed
-	public $type;						// 0 for product, 1 for service
+	public $type;					// 0 for product, 1 for service
 
 	/**
 	 * @var string
@@ -2582,6 +2585,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
+	public $product_type;			// 0 for product, 1 for service
 	public $product_ref;
 	public $product_label;
 
