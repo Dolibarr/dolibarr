@@ -413,7 +413,7 @@ CREATE TABLE llx_c_product_nature (
       active tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code);
+ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code, active);
 
 INSERT INTO llx_c_product_nature (code, label, active) VALUES (0, 'RowMaterial', 1);
 INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1);
