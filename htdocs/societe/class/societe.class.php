@@ -4092,9 +4092,10 @@ class Societe extends CommonObject
 	 *  Return amount of bill not paid and total
 	 *
 	 *  @param     string      $mode    'customer' or 'supplier'
+	 *  @param     int      $late    	0 => all invoice, 1=> only late
 	 *  @return		array				array('opened'=>Amount, 'total'=>Total amount)
 	 */
-    public function getOutstandingBills($mode = 'customer')
+    public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
 		$table = 'facture';
 		if ($mode == 'supplier') $table = 'facture_fourn';
@@ -4109,6 +4110,9 @@ class Societe extends CommonObject
 		if ($mode == 'supplier') $sql = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		else $sql = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
+		if (!empty($late)) {
+			$sql .= " AND date_lim_reglement < '".$this->db->idate(dol_now())."'";
+		}
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";
 		} else {
