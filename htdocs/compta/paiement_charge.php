@@ -109,7 +109,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$paiement = new PaymentSocialContribution($db);
     		$paiement->chid         = $chid;
     		$paiement->datepaye     = $datepaye;
-    		$paiement->amounts      = $amounts; // Tableau de montant
+    		$paiement->amounts      = $amounts; // Amount list
     		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
     		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
     		$paiement->note         = GETPOST("note", 'restricthtml');
@@ -160,7 +160,7 @@ llxHeader();
 $form = new Form($db);
 
 
-// Formulaire de creation d'un paiement de charge
+// Form of charge payment creation
 if ($action == 'create')
 {
 	$charge->fetch($chid);
@@ -255,7 +255,7 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	/*
- 	 * Autres charges impayees
+ 	 * Other unpaid charges
 	 */
 	$num = 1;
 	$i = 0;
@@ -327,7 +327,7 @@ if ($action == 'create')
 
 	print "</table>";
 
-	// Bouton Save payment
+	// Save payment button
 	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
