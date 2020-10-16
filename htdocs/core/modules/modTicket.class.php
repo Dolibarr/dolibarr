@@ -129,9 +129,9 @@ class modTicket extends DolibarrModules
         		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
         	),
         	'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
-        	'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-        	'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-        	'tabfieldinsert' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+        	'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default"),
+        	'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default"),
+        	'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default"),
             'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
         	'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
         	'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),

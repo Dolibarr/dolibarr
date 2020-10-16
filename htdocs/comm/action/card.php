@@ -1158,7 +1158,7 @@ if ($action == 'create')
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container" >';
 		print img_picto('', 'project', 'class="paddingrightonly"');
-		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500 widthcentpercentminusxx');
+		print $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
@@ -1183,7 +1183,7 @@ if ($action == 'create')
 		print img_picto('', 'projecttask', 'class="paddingrightonly"');
 		$projectsListId = false;
 		if (!empty($projectid)) { $projectsListId = $projectid; }
-		$tid = GETPOST("projecttaskid") ?GETPOST("projecttaskid") : '';
+		$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1194,10 +1194,10 @@ if ($action == 'create')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
 		print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
-		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
-		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="originid" size="10" value="'.GETPOST('originid').'">';
-		print '<input type="hidden" name="origin" size="10" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
+		print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
+		print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	}
 
 	$reg = array();

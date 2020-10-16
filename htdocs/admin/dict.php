@@ -534,7 +534,7 @@ $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$la
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 //$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
-$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"), 'dayrule'=>"Keep empty for a date defined with month and day (most common case).<br>Use a keyword like 'easter', 'eastermonday', ... for a date predefined by complex rules.", 'country'=>$langs->trans("EnterACountryOnlyIfSpecificToOneCountry"), 'year'=>$langs->trans("ZeroMeansEveryYear"));
+$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"), 'dayrule'=>"Keep empty for a date defined with month and day (most common case).<br>Use a keyword like 'easter', 'eastermonday', ... for a date predefined by complex rules.", 'country'=>$langs->trans("CountryIfSpecificToOneCountry"), 'year'=>$langs->trans("ZeroMeansEveryYear"));
 $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35] = array();
@@ -1066,11 +1066,7 @@ if ($id)
 	{
 		// If sort order is "country", we use country_code instead
 		if ($sortfield == 'country') $sortfield = 'country_code';
-		$sql .= " ORDER BY ".$db->escape($sortfield);
-		if ($sortorder)
-		{
-			$sql .= " ".strtoupper($db->escape($sortorder));
-		}
+		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= ", ";
 		// Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
 		$tabsqlsort[$id] = preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i', '', $tabsqlsort[$id]);
@@ -1111,7 +1107,7 @@ if ($id)
 		print '<table class="noborder centpercent">';
 
 		// Line for title
-		print '<tr class="liste_titre">';
+		$tdsoffields = '<tr class="liste_titre">';
 		foreach ($fieldlist as $field => $value)
 		{
 			if ($fieldlist[$field] == 'entity') {
@@ -1192,7 +1188,8 @@ if ($id)
 			if ($fieldlist[$field] == 'range_ik') { $valuetoshow = $langs->trans("RangeIk"); }
 			if ($fieldlist[$field] == 'fk_c_exp_tax_cat') { $valuetoshow = $langs->trans("CarCategory"); }
 			if ($fieldlist[$field] == 'revenuestamp_type') { $valuetoshow = $langs->trans('TypeOfRevenueStamp'); }
-			if ($fieldlist[$field] == 'use_default') { $valuetoshow = $langs->trans('Default'); }
+			if ($fieldlist[$field] == 'use_default') { $valuetoshow = $langs->trans('Default'); $class = 'center'; }
+			if ($fieldlist[$field] == 'unit_type') { $valuetoshow = $langs->trans('TypeOfUnit'); }
 
 			if ($id == 2)	// Special case for state page
 			{
@@ -1202,28 +1199,27 @@ if ($id)
 
 			if ($valuetoshow != '')
 			{
-				print '<td'.($class ? ' class="'.$class.'"' : '').'>';
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				elseif (!empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-				else print $valuetoshow;
-				print '</td>';
+				$tdsoffields .= '<td'.($class ? ' class="'.$class.'"' : '').'>';
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) $tdsoffields .= '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				elseif (!empty($tabhelp[$id][$value])) $tdsoffields .= $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				else $tdsoffields .= $valuetoshow;
+				$tdsoffields .= '</td>';
 			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
-		if ($id == 4) print '<td></td>';
-		print '<td>';
-		print '<input type="hidden" name="id" value="'.$id.'">';
+		if ($id == 4) $tdsoffields .= '<td></td>';
+		$tdsoffields .= '<td>';
+		$tdsoffields .= '<input type="hidden" name="id" value="'.$id.'">';
 		if (!is_null($withentity))
-			print '<input type="hidden" name="entity" value="'.$withentity.'">';
-		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '</tr>';
+			$tdsoffields .= '<input type="hidden" name="entity" value="'.$withentity.'">';
+		$tdsoffields .= '</td>';
+		$tdsoffields .= '<td style="min-width: 26px;"></td>';
+		$tdsoffields .= '<td style="min-width: 26px;"></td>';
+		$tdsoffields .= '</tr>';
 
-		// Line to enter new values
-		print '<!-- line to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
+		print $tdsoffields;
+
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -1243,6 +1239,10 @@ if ($id)
 
 		if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 
+		// Line to enter new values
+		print '<!-- line to add new entry -->';
+		print '<tr class="oddeven nodrag nodrop nohover">';
+
 		if (empty($reshook))
 		{
 	   		fieldList($fieldlist, $obj, $tabname[$id], 'add');
@@ -1255,10 +1255,8 @@ if ($id)
 			print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		}
 		print '</td>';
-		print "</tr>";
 
-		$colspan = count($fieldlist) + 3;
-		if ($id == 4) $colspan++;
+		print "</tr>";
 
 		print '</table>';
 		print '</div>';
@@ -1341,6 +1339,10 @@ if ($id)
 		{
 			if ($fieldlist[$field] == 'entity') continue;
 
+			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabhelp[$id][$value])) {
+				$tabhelp[$id][$value] = $langs->trans('LabelUsedByDefault');
+			}
+
 			// Determines the name of the field in relation to the possible names
 			// in data dictionaries
 			$showfield = 1; // By defaut
@@ -1365,7 +1367,8 @@ if ($id)
 			if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
 			if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
 			if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
-			if ($fieldlist[$field] == 'position') { $cssprefix = 'right '; }
+			if ($fieldlist[$field] == 'pos') { $cssprefix = 'right '; $valuetoshow = $langs->trans("Position"); }
+			if ($fieldlist[$field] == 'position') { $cssprefix = 'right '; $valuetoshow = $langs->trans("Position"); }
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') { $valuetoshow = $langs->trans("Label"); }
 			if ($fieldlist[$field] == 'libelle_facture') { $valuetoshow = $langs->trans("LabelOnDocuments"); }
 			if ($fieldlist[$field] == 'country') { $valuetoshow = $langs->trans("Country"); }
@@ -1406,14 +1409,19 @@ if ($id)
 			if ($fieldlist[$field] == 'range_ik') { $valuetoshow = $langs->trans("RangeIk"); }
 			if ($fieldlist[$field] == 'fk_c_exp_tax_cat') { $valuetoshow = $langs->trans("CarCategory"); }
 			if ($fieldlist[$field] == 'revenuestamp_type') { $valuetoshow = $langs->trans('TypeOfRevenueStamp'); }
-			if ($fieldlist[$field] == 'use_default') { $valuetoshow = $langs->trans('Default'); }
+			if ($fieldlist[$field] == 'use_default') { $valuetoshow = $langs->trans('Default'); $cssprefix = 'center '; }
+			if ($fieldlist[$field] == 'unit_type') { $valuetoshow = $langs->trans('TypeOfUnit'); }
 
 			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') { $showfield = 0; }
 
 			// Show field title
 			if ($showfield)
 			{
-				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $cssprefix);
+				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) $newvaluetoshow = '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				elseif (!empty($tabhelp[$id][$value])) $newvaluetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				else $newvaluetoshow = $valuetoshow;
+
+				print getTitleFieldOfList($newvaluetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $cssprefix);
 			}
 		}
 		// Favorite - Only activated on country dictionary
@@ -1635,6 +1643,8 @@ if ($id)
 							if ($fieldlist[$field] == 'position') $class .= ' right';
 							if ($fieldlist[$field] == 'localtax1_type') $class .= ' nowrap';
 							if ($fieldlist[$field] == 'localtax2_type') $class .= ' nowrap';
+							if ($fieldlist[$field] == 'pos') $class .= ' right';
+							if ($fieldlist[$field] == 'use_default') $class .= ' center';
 							// Show value for field
 							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
 						}
@@ -1981,7 +1991,12 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 			$classtd = ''; $class = '';
 			if ($fieldlist[$field] == 'code') $class = 'maxwidth100';
-			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) $class = 'maxwidth50';
+			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) {
+				$class = 'maxwidth50 center';
+			}
+			if (in_array($fieldlist[$field], array('use_default'))) {
+				$classtd = 'center';
+			}
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class = 'quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
 			$transfound = 0;
