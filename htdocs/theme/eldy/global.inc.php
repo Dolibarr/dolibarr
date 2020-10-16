@@ -6391,6 +6391,9 @@ div.tabsElem a.tab {
 /* CSS style for debugbar                                                         */
 /* ============================================================================== */
 
+div.phpdebugbar * {
+	font-weight: unset;
+}
 span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-tooltip.phpdebugbar-tooltip-wide {
     width: 250px !important;
 }
@@ -6400,7 +6403,15 @@ span.phpdebugbar-tooltip.phpdebugbar-tooltip-extra-wide, span.phpdebugbar-toolti
 a.phpdebugbar-tab.phpdebugbar-active {
 	background-image: unset !important;
 }
-.phpdebugbar-indicator .fa {
+.phpdebugbar-fa-tags:before {
+    content: "\f121";
+    font-weight: 600 !important;
+}
+.phpdebugbar-fa-tasks:before {
+    content: "\f550";
+    font-weight: 600 !important;
+}
+.phpdebugbar-fa-tags, .phpdebugbar-fa-tasks, .phpdebugbar-indicator .fa {
 	font-family: "Font Awesome 5 Free";
 	font-weight: 600;
 }
