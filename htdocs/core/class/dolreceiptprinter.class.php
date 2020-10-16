@@ -25,32 +25,32 @@
 /*
  * Tags for ticket template
  *
- * <dol_align_left>                                 Left align text
- * <dol_align_center>                               Center text
- * <dol_align_right>                                Right align text
- * <dol_use_font_a>                                 Use font A of printer
- * <dol_use_font_b>                                 Use font B of printer
- * <dol_use_font_c>                                 Use font C of printer
- * <dol_bold>                                       Text Bold
- * <dol_bold_disabled>                              Disable Text Bold
- * <dol_double_height>                              Text double height
- * <dol_double_width>                               Text double width
- * <dol_default_height_width>                       Text default height and width
- * <dol_underline>                                  Underline text
- * <dol_underline_disabled>                         Disable underline text
- * <dol_cut_paper_full>                             Cut ticket completely
- * <dol_cut_paper_partial>                          Cut ticket partially
- * <dol_open_drawer>                                Open cash drawer
- * <dol_beep>                                       Activate buzzer
- * <dol_print_barcode>                              Print barcode
- * <dol_print_logo>                                 Print logo stored on printer. Example : <print_logo>32|32
- * <dol_print_logo_old>                             Print logo stored on printer. Must be followed by logo code. For old printers.
- * <dol_print_object_lines>                         Print object lines
- * <dol_print_object_tax>                           Print object total tax
- * <dol_print_object_local_tax>                     Print object local tax
- * <dol_print_object_total>                         Print object total
- * <dol_print_order_lines>                          Print order lines for Printer
- * <dol_print_payment>                              Print payment method
+ * {dol_align_left}                                 Left align text
+ * {dol_align_center}                               Center text
+ * {dol_align_right}                                Right align text
+ * {dol_use_font_a}                                 Use font A of printer
+ * {dol_use_font_b}                                 Use font B of printer
+ * {dol_use_font_c}                                 Use font C of printer
+ * {dol_bold}                                       Text Bold
+ * {dol_bold_disabled}                              Disable Text Bold
+ * {dol_double_height}                              Text double height
+ * {dol_double_width}                               Text double width
+ * {dol_default_height_width}                       Text default height and width
+ * {dol_underline}                                  Underline text
+ * {dol_underline_disabled}                         Disable underline text
+ * {dol_cut_paper_full}                             Cut ticket completely
+ * {dol_cut_paper_partial}                          Cut ticket partially
+ * {dol_open_drawer}                                Open cash drawer
+ * {dol_beep}                                       Activate buzzer
+ * {dol_print_barcode}                              Print barcode
+ * {dol_print_logo}                                 Print logo stored on printer. Example : <print_logo>32|32
+ * {dol_print_logo_old}                             Print logo stored on printer. Must be followed by logo code. For old printers.
+ * {dol_print_object_lines}                         Print object lines
+ * {dol_print_object_tax}                           Print object total tax
+ * {dol_print_object_local_tax}                     Print object local tax
+ * {dol_print_object_total}                         Print object total
+ * {dol_print_order_lines}                          Print order lines for Printer
+ * {dol_print_payment}                              Print payment method
  *
  * Code which can be placed everywhere
  * <dol_value_date>                                 Replaced by date AAAA-MM-DD
@@ -569,45 +569,47 @@ class dolReceiptPrinter extends Printer
         $ret = $this->loadTemplate($templateid);
 
         // tags a remplacer par leur valeur avant de parser (dol_value_xxx)
-        $this->template = str_replace('<dol_value_object_id>', $object->id, $this->template);
-        $this->template = str_replace('<dol_value_object_ref>', $object->ref, $this->template);
+        $this->template = str_replace('{dol_value_object_id}', $object->id, $this->template);
+        $this->template = str_replace('{dol_value_object_ref}', $object->ref, $this->template);
         //$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
-        $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
-        $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
-        $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
-        $this->template = str_replace('<dol_value_month_letters>', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
-        $this->template = str_replace('<dol_value_month>', dol_print_date($object->date, '%m'), $this->template);
-        $this->template = str_replace('<dol_value_day>', dol_print_date($object->date, '%d'), $this->template);
-        $this->template = str_replace('<dol_value_day_letters>', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
+        $this->template = str_replace('{dol_value_date}', dol_print_date($object->date, 'day'), $this->template);
+        $this->template = str_replace('{dol_value_date_time}', dol_print_date($object->date, 'dayhour'), $this->template);
+        $this->template = str_replace('{dol_value_year}', dol_print_date($object->date, '%Y'), $this->template);
+        $this->template = str_replace('{dol_value_month_letters}', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
+        $this->template = str_replace('{dol_value_month}', dol_print_date($object->date, '%m'), $this->template);
+        $this->template = str_replace('{dol_value_day}', dol_print_date($object->date, '%d'), $this->template);
+        $this->template = str_replace('{dol_value_day_letters}', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
 
-        $this->template = str_replace('<dol_value_customer_firstname>', $object->thirdparty->firstname, $this->template);
-        $this->template = str_replace('<dol_value_customer_lastname>', $object->thirdparty->lastname, $this->template);
-        $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->email, $this->template);
-        $this->template = str_replace('<dol_value_customer_phone>', $object->thirdparty->phone, $this->template);
+        $this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
+        $this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);
+        $this->template = str_replace('{dol_value_customer_mail}', $object->thirdparty->email, $this->template);
+        $this->template = str_replace('{dol_value_customer_phone}', $object->thirdparty->phone, $this->template);
         //$this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
-        $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->tva_intra, $this->template);
+        $this->template = str_replace('{dol_value_customer_tax_number}', $object->thirdparty->tva_intra, $this->template);
         //$this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
         //$this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
 
-        $this->template = str_replace('<dol_value_mysoc_name>', $mysoc->name, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_address>', $mysoc->address, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_zip>', $mysoc->zip, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_town>', $mysoc->town, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_country>', $mysoc->country, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_idprof1>', $mysoc->idprof1, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_idprof2>', $mysoc->idprof2, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_idprof3>', $mysoc->idprof3, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_idprof4>', $mysoc->idprof4, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_idprof5>', $mysoc->idprof5, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_idprof6>', $mysoc->idprof6, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_tva_intra>', $mysoc->tva_intra, $this->template);
-        $this->template = str_replace('<dol_value_mysoc_capital>', $mysoc->capital, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_name}', $mysoc->name, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_address}', $mysoc->address, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_zip}', $mysoc->zip, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_town}', $mysoc->town, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_country}', $mysoc->country, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_idprof1}', $mysoc->idprof1, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_idprof2}', $mysoc->idprof2, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_idprof3}', $mysoc->idprof3, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_idprof4}', $mysoc->idprof4, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_idprof5}', $mysoc->idprof5, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
+        $this->template = str_replace('{dol_value_mysoc_capital}', $mysoc->capital, $this->template);
 
-        $this->template = str_replace('<dol_value_vendor_firstname>', $user->firstname, $this->template);
-        $this->template = str_replace('<dol_value_vendor_lastname>', $user->lastname, $this->template);
-        $this->template = str_replace('<dol_value_vendor_mail>', $user->email, $this->template);
+        $this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
+        $this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
+        $this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
 
         // parse template
+		$this->template = str_replace("{", "<", $this->template);
+		$this->template = str_replace("}", ">", $this->template);
         $p = xml_parser_create();
         xml_parse_into_struct($p, $this->template, $vals, $index);
         xml_parser_free($p);
