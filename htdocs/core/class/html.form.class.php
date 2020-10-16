@@ -3893,6 +3893,7 @@ class Form
 					$i++;
 				}
 				print "</select>";
+				print ajax_combobox('select'.$htmlname);
 			} else {
 				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
@@ -7109,9 +7110,10 @@ class Form
 	 *	@param	int			$option			0 return yes/no, 1 return 1/0
 	 *	@param	bool		$disabled		true or false
 	 *  @param	int      	$useempty		1=Add empty line
+	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
 	 *	@return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0)
 	{
 		global $langs;
 
@@ -7136,6 +7138,11 @@ class Form
 			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
 		}
 		$resultyesno .= '</select>'."\n";
+
+		if ($addjscombo) {
+			$resultyesno .= ajax_combobox($htmlname);
+		}
+
 		return $resultyesno;
 	}
 

@@ -217,24 +217,21 @@ if ($resql)
 
 
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+
 llxHeader('', $title, $help_url);
 
-$link = '';
-
-
-$num_rows = count($accounts);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($search_ref != '')      $param .= '&search_ref='.$search_ref;
-if ($search_label != '')    $param .= '&search_label='.$search_label;
-if ($search_number != '')   $param .= '&search_number='.$search_number;
-if ($search_status != '')   $param .= '&search_status='.$search_status;
-if ($show_files)            $param .= '&show_files='.$show_files;
-if ($optioncss != '')       $param .= '&optioncss='.$optioncss;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($search_ref != '')      $param .= '&search_ref='.urlencode($search_ref);
+if ($search_label != '')    $param .= '&search_label='.urlencode($search_label);
+if ($search_number != '')   $param .= '&search_number='.urlencode($search_number);
+if ($search_status != '')   $param .= '&search_status='.urlencode($search_status);
+if ($show_files)            $param .= '&show_files='.urlencode($show_files);
+if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -380,7 +377,7 @@ if (!empty($arrayfields['b.clos']['checked']))
         'opened'=>$langs->trans("Opened"),
         'closed'=>$langs->trans("Closed")
     );
-    print $form->selectarray("search_status", $array, $search_status, 1);
+    print $form->selectarray("search_status", $array, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
     print '</td>';
 }
 // Balance
@@ -419,7 +416,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print "</tr>\n";
 
 
-$total = array(); $found = 0; $i = 0; $lastcurrencycode = '';
+$totalarray = array(); $found = 0; $i = 0; $lastcurrencycode = '';
 
 foreach ($accounts as $key=>$type)
 {

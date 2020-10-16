@@ -62,7 +62,7 @@ class FormOrder extends Form
 		    $options[$value] = $tmpsupplierorder->getLibStatut($short);
 	    }
 
-	    print Form::selectarray($hmlname, $options, $selected, 1);
+	    print Form::selectarray($hmlname, $options, $selected, 1, 0, 0, '', 0, 0, 0, '', '', 1);
     }
 
 	/**

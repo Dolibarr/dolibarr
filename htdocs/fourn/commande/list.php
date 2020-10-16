@@ -977,7 +977,7 @@ if ($resql)
 	if (!empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
 	// Action column

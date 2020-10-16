@@ -839,7 +839,7 @@ if ($resql)
 			$moreforfilter .= '<div class="divsearchfield">';
 			$moreforfilter .= $langs->trans('RubriquesTransactions').' : ';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
-			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1);
+			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}
 	}
@@ -940,7 +940,7 @@ if ($resql)
 	if (!empty($arrayfields['b.conciliated']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
 	print '<td class="liste_titre" align="middle">';

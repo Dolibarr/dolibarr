@@ -109,7 +109,7 @@ if ($search_status == '') $search_status = -1; // -1 or 1
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
