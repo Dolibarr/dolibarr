@@ -807,14 +807,14 @@ if (!empty($arrayfields['country.code_iso']['checked']))
 if (!empty($arrayfields['typent.code']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth75', 1);
 	print '</td>';
 }
 // Staff
 if (!empty($arrayfields['staff.code']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_staff", $formcompany->effectif_array(0), $search_staff, 0, 0, 0, '', 0, 0, 0, $sort, 'maxwidth100');
+	print $form->selectarray("search_staff", $formcompany->effectif_array(0), $search_staff, 0, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['s.email']['checked']))
@@ -919,7 +919,7 @@ if (!empty($arrayfields['s.fk_stcomm']['checked']))
 	{
 		$arraystcomm[$val['id']] = ($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
 	}
-	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
+	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['s2.nom']['checked']))
@@ -951,7 +951,7 @@ if (!empty($arrayfields['s.tms']['checked']))
 if (!empty($arrayfields['s.status']['checked']))
 {
 	print '<td class="liste_titre center minwidth75imp">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status, 1);
+	print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['s.import_key']['checked']))

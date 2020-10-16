@@ -811,7 +811,7 @@ class Form
 					$out .= '<option value="special_eec"'.($selected == 'special_eec' ? ' selected' : '').'>'.$langs->trans("CountriesInEEC").'</option>';
 					if ($mysoc->isInEEC()) $out .= '<option value="special_eecnotme"'.($selected == 'special_eecnotme' ? ' selected' : '').'>'.$langs->trans("CountriesInEECExceptMe", $langs->transnoentitiesnoconv("Country".$mysoc->country_code)).'</option>';
 					$out .= '<option value="special_noteec"'.($selected == 'special_noteec' ? ' selected' : '').'>'.$langs->trans("CountriesNotInEEC").'</option>';
-					$out .= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+					$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
 				}
 
 				foreach ($countryArray as $row)
@@ -824,7 +824,7 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite = 0;
-						$out .= '<option value="" disabled class="selectoptiondisabledwhite">--------------</option>';
+						$out .= '<option value="" disabled class="selectoptiondisabledwhite">------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']))
 					{

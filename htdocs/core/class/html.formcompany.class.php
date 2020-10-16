@@ -1003,6 +1003,7 @@ class FormCompany extends Form
 			}
 		}
 		$out .= '</select>';
+		$out .= ajax_combobox($htmlidname);
 
 		return $out;
 	}

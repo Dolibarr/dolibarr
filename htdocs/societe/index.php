@@ -289,26 +289,24 @@ if ($result)
 			print "</td>\n";
 			// Type
 			print '<td class="center">';
-			if ($thirdparty_static->client == 1 || $thirdparty_static->client == 3)
+			$obj = $thirdparty_static;
+			$s = '';
+			if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 			{
-				$thirdparty_static->name = $langs->trans("Customer");
-				print $thirdparty_static->getNomUrl(0, 'customer', 0, 1);
+				$s .= '<a class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</a>';
 			}
-			if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
-			if (($thirdparty_static->client == 2 || $thirdparty_static->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+			if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 			{
-				$thirdparty_static->name = $langs->trans("Prospect");
-				print $thirdparty_static->getNomUrl(0, 'prospect', 0, 1);
+				$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 			}
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $thirdparty_static->fournisseur)
+			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $obj->fournisseur)
 			{
-				if ($thirdparty_static->client) print " / ";
-				$thirdparty_static->name = $langs->trans("Supplier");
-				print $thirdparty_static->getNomUrl(0, 'supplier', 0, 1);
+				$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 			}
+			print $s;
 			print '</td>';
 			// Last modified date
-			print '<td class="right">';
+			print '<td class="right tddate">';
 			print dol_print_date($thirdparty_static->date_modification, 'day');
 			print "</td>";
 			print '<td class="right nowrap">';

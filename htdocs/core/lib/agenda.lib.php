@@ -223,7 +223,7 @@ function show_array_actions_to_do($max = 5)
             $datep2 = $db->jdate($obj->dp2);
 
             // Date
-			print '<td width="100" class="right">'.dol_print_date($datep, 'day').'&nbsp;';
+			print '<td width="100" class="right tddate">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late = 0;
 			if ($obj->percent == 0 && $datep && $datep < time()) $late = 1;
 			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < time()) $late = 1;
@@ -315,11 +315,11 @@ function show_array_last_actions_done($max = 5)
 			print '</td>';
 
 			// Date
-			print '<td width="100" class="right">'.dol_print_date($db->jdate($obj->da2), 'day');
+			print '<td width="100" class="right tddate">'.dol_print_date($db->jdate($obj->da2), 'day');
 			print "</td>";
 
-			// Statut
-			print "<td class=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+			// Status
+			print '<td class="right" width="14">'.$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;
