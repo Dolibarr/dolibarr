@@ -218,6 +218,8 @@ if (empty($reshook))
 				// Move links
 				if (!$error)
 				{
+					// This list is also into the api_thirdparties.class.php
+					// TODO Mutualise the list into object societe.class.php
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
 						'Societe' => '/societe/class/societe.class.php',
@@ -228,6 +230,7 @@ if (empty($reshook))
 						'Facture' => '/compta/facture/class/facture.class.php',
 						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
 						'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
+						'Mo' => '/mrp/class/mo.class.php'
 						'Contact' => '/contact/class/contact.class.php',
 						'Contrat' => '/contrat/class/contrat.class.php',
 						'Expedition' => '/expedition/class/expedition.class.php',
@@ -239,7 +242,8 @@ if (empty($reshook))
 						'Livraison' => '/livraison/class/livraison.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
-						'User' => '/user/class/user.class.php',
+						'Ticket' => '/ticket/class/ticket.class.php',
+						'User' => '/user/class/user.class.php'
 					);
 
 					//First, all core objects must update their tables

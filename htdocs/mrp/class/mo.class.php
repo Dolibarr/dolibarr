@@ -1328,6 +1328,21 @@ class Mo extends CommonObject
 		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 		$res = include $tpl;
 	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty($db, $origin_id, $dest_id)
+	{
+		$tables = array('mrp_production');
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 /**

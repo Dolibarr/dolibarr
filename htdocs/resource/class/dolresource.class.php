@@ -97,7 +97,6 @@ class Dolresource extends CommonObject
 
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-
     	$sql .= "entity,";
     	$sql .= "ref,";
     	$sql .= "description,";
@@ -105,9 +104,7 @@ class Dolresource extends CommonObject
     	$sql .= "fk_code_type_resource,";
     	$sql .= "note_public,";
     	$sql .= "note_private";
-
     	$sql .= ") VALUES (";
-
     	$sql .= $conf->entity.", ";
     	$sql .= " ".(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").",";
     	$sql .= " ".(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
@@ -115,7 +112,6 @@ class Dolresource extends CommonObject
     	$sql .= " ".(!isset($this->fk_code_type_resource) ? 'NULL' : "'".$this->db->escape($this->fk_code_type_resource)."'").",";
     	$sql .= " ".(!isset($this->note_public) ? 'NULL' : "'".$this->db->escape($this->note_public)."'").",";
     	$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'");
-
     	$sql .= ")";
 
     	$this->db->begin();
