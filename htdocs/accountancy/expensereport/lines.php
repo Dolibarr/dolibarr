@@ -166,7 +166,7 @@ print '<script type="text/javascript">
 $sql = "SELECT er.ref, er.rowid as erid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.vat_src_code, erd.date,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label,";
-$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
+$sql .= " u.rowid as userid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
 $sql .= " aa.label, aa.labelshort, aa.account_number";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
@@ -311,7 +311,7 @@ if ($result) {
 		$expensereportstatic->ref = $objp->ref;
 		$expensereportstatic->id = $objp->erid;
 
-		$userstatic->id = $objp->rowid;
+		$userstatic->id = $objp->userid;
 		$userstatic->ref = $objp->label;
 		$userstatic->login = $objp->login;
 		$userstatic->statut = $objp->statut;
