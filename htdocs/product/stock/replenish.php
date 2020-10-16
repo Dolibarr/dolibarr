@@ -322,7 +322,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product '.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) ? ' AND s.fk_entrepot = '.$fk_entrepot : '');
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
 if ($fk_supplier > 0) {
 	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
@@ -655,7 +655,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock('warehouseopen, warehouseinternal', $draftchecked);
+		$prod->load_stock('warehouseopen, warehouseinternal', $draftchecked, $fk_entrepot);
 
 		// Multilangs
 		if (!empty($conf->global->MAIN_MULTILANGS))

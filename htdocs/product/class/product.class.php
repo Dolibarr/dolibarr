@@ -4812,10 +4812,13 @@ class Product extends CommonObject
      *
      * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
      * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+     * @param	int		$warehouseId    filter on the warehouse ID
+     *
      * @return 	int                  				< 0 if KO, > 0 if OK
+     * s
      * @see    	load_virtual_stock(), loadBatchInfo()
      */
-    public function load_stock($option = '', $includedraftpoforvirtual = null)
+    public function load_stock($option = '', $includedraftpoforvirtual = null, $warehouseId = 0)
     {
         // phpcs:enable
         global $conf;
@@ -4841,6 +4844,9 @@ class Product extends CommonObject
         $sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
         $sql .= " WHERE w.entity IN (".getEntity('stock').")";
         $sql .= " AND w.rowid = ps.fk_entrepot";
+        if($warehouseId > 0){
+            $sql .= " AND w.rowid = ".$warehouseId;
+        }
         $sql .= " AND ps.fk_product = ".$this->id;
         if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
 			$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
