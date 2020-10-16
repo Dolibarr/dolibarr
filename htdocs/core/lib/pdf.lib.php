@@ -1983,9 +1983,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
     {
 	    if ($object->lines[$i]->special_code == 3)
     	{
-    		return $outputlangs->transnoentities("Option");
+    		$result .= $outputlangs->transnoentities("Option");
     	}
-        if (empty($hidedetails) || $hidedetails > 1)
+        elseif (empty($hidedetails) || $hidedetails > 1)
         {
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
         	if ($object->lines[$i]->situation_percent > 0)
@@ -2044,7 +2044,24 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
     	{
     		$result .= $outputlangs->transnoentities("Option");
     	}
-		elseif (empty($hidedetails) || $hidedetails > 1) $result .= price($sign * ($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht) * ($object->lines[$i]->tva_tx) / 100, 0, $outputlangs);
+    	elseif (empty($hidedetails) || $hidedetails > 1)
+    	{
+    		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
+    		if ($object->lines[$i]->situation_percent > 0)
+    		{
+    			// TODO Remove this. The total should be saved correctly in database instead of being modified here.
+    			$prev_progress = 0;
+    			$progress = 1;
+    			if (method_exists($object->lines[$i], 'get_prev_progress'))
+    			{
+    				$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+    				$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
+    			}
+    			$result .= price($sign * ($total_ttc / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
+    		} else {
+    			$result .= price($sign * $total_ttc, 0, $outputlangs);
+    		}
+    	}
 	}
 	return $result;
 }
