@@ -230,7 +230,7 @@ if (empty($reshook))
 						'Facture' => '/compta/facture/class/facture.class.php',
 						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
 						'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
-						'Mo' => '/mrp/class/mo.class.php'
+						'Mo' => '/mrp/class/mo.class.php',
 						'Contact' => '/contact/class/contact.class.php',
 						'Contrat' => '/contrat/class/contrat.class.php',
 						'Expedition' => '/expedition/class/expedition.class.php',
