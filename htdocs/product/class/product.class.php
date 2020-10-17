@@ -4844,7 +4844,7 @@ class Product extends CommonObject
         $sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
         $sql .= " WHERE w.entity IN (".getEntity('stock').")";
         $sql .= " AND w.rowid = ps.fk_entrepot";
-        if($warehouseId > 0){
+        if ($warehouseId > 0) {
             $sql .= " AND w.rowid = ".$warehouseId;
         }
         $sql .= " AND ps.fk_product = ".$this->id;
