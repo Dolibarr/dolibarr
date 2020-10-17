@@ -296,6 +296,7 @@ class FormMail extends Form
 	 *	@param	string	$addfileaction		Name of action when posting file attachments
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return	void
+	 *  @deprecated
 	 */
 	public function show_form($addfileaction = 'addfile', $removefileaction = 'removefile')
 	{
@@ -434,18 +435,20 @@ class FormMail extends Form
 				{
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
+				$langs->trans("members");
 				foreach ($this->lines_model as $line)
 				{
-					$langs->trans("members");
-					if (preg_match('/\((.*)\)/', $line->label, $reg))
-					{
-						$modelmail_array[$line->id] = $langs->trans($reg[1]); // langs->trans when label is __(xxx)__
+					$reg = array();
+					if (preg_match('/\((.*)\)/', $line->label, $reg)) {
+						$labeltouse = $langs->trans($reg[1]); // langs->trans when label is __(xxx)__
 					} else {
-						$modelmail_array[$line->id] = $line->label;
+						$labeltouse = $line->label;
 					}
-					if ($line->lang) $modelmail_array[$line->id] .= ' ('.$line->lang.')';
-					if ($line->private) $modelmail_array[$line->id] .= ' - '.$langs->trans("Private");
-					//if ($line->fk_user != $user->id) $modelmail_array[$line->id].=' - '.$langs->trans("By").' ';
+
+					// We escape the $labeltouse to store it into $modelmail_array.
+					$modelmail_array[$line->id] = dol_escape_htmltag($labeltouse);
+					if ($line->lang) $modelmail_array[$line->id] .= ' '.picto_from_langcode($line->lang);
+					if ($line->private) $modelmail_array[$line->id] .= ' - <span class="opacitymedium">'.dol_escape_htmltag($langs->trans("Private")).'</span>';
 				}
 			}
 
@@ -454,7 +457,8 @@ class FormMail extends Form
 			{
 				// If list of template is filled
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-				$out .= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$out .= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> ';
+				$out .= $this->selectarray('modelmailselected', $modelmail_array, 0, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1, '', 0, 1);
 				if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				$out .= ' &nbsp; ';
 				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
