@@ -1122,8 +1122,7 @@ if ($action == 'create')
 	{
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
-		if (GETPOST('socid', 'int') > 0)
-		{
+		if (GETPOST('socid', 'int') > 0) {
 			$societe = new Societe($db);
 			$societe->fetch(GETPOST('socid', 'int'));
 			print $societe->getNomUrl(1);

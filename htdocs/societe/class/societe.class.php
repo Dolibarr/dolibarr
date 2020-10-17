@@ -764,7 +764,7 @@ class Societe extends CommonObject
 		$this->tva_assuj = 1;
 		$this->status = 1;
 
-		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+		if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$this->fields['address']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 			$this->fields['zip']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;

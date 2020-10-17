@@ -1249,7 +1249,7 @@ class Form
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			}
-			if ($showempty) $out .= '<option value="-1">'.$textifempty.'</option>'."\n";
+			if ($showempty) $out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.$textifempty.'</span>').'">'.$textifempty.'</option>'."\n";
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1284,10 +1284,10 @@ class Form
 						if ($obj->client || $obj->fournisseur) $label .= ')';
 					}
 
-					if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
-						$label .= '-'.$obj->address.'-'.$obj->zip.' '.$obj->town;
+					if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+						$label .= ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
 						if (!empty($obj->country_code)) {
-							$label .= ' '.$langs->trans('Country'.$obj->country_code);
+							$label .= ', '.$langs->trans('Country'.$obj->country_code);
 						}
 					}
 
@@ -3274,6 +3274,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox($htmlname);
 	}
 
 	/**
@@ -3357,6 +3358,7 @@ class Form
 		}
 		print '</select>';
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print ajax_combobox('select_'.$htmlname);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3706,6 +3708,8 @@ class Form
 				}
 				print "</select>";
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+				print ajax_combobox('select'.$htmlname);
 			} else {
 				print $langs->trans("NoShippingMethodDefined");
 			}
