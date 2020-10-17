@@ -78,7 +78,7 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) $page = $pageplusone - 1;

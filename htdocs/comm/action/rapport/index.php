@@ -40,7 +40,7 @@ $year=GETPOST('year');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOST("page", 'int');
 if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;

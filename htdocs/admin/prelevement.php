@@ -36,7 +36,7 @@ $langs->loadLangs(array("admin","withdrawals"));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $type = 'paymentorder';
 
 

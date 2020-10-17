@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 $langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield=GETPOST('sortfield', 'alpha');
-$sortorder=GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page=GETPOST('page', 'int');
 
 $statut=GETPOST('statut')?GETPOST('statut'):1;

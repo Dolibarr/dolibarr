@@ -38,7 +38,7 @@ $langs->loadLangs(array("bills", "cashdesk"));
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 
 $idline = GETPOST('idline', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

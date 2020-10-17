@@ -40,7 +40,7 @@ $langs->loadLangs(array("accountancy"));
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
@@ -64,7 +64,7 @@ $search_credit = GETPOST('search_credit', 'alpha');
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOST('page', 'int');
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;

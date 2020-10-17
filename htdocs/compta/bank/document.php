@@ -36,7 +36,7 @@ $langs->loadLangs(array('banks', 'companies', 'other'));
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $mesg = '';
@@ -57,7 +57,7 @@ $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '',
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;

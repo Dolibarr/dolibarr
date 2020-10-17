@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Bar or Restaurant
 
@@ -62,8 +62,8 @@ $placeid = 0;	// $placeid is id of invoice
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
-$desc = GETPOST('desc', 'alpha');
-$pay = GETPOST('pay', 'alpha');
+$desc = GETPOST('desc', 'alphanohtml');
+$pay = GETPOST('pay', 'aZ09');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
 $invoiceid = GETPOST('invoiceid', 'int');

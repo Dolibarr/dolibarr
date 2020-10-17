@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $massaction=GETPOST('massaction', 'alpha');
 $show_files=GETPOST('show_files', 'int');
 $confirm=GETPOST('confirm', 'alpha');

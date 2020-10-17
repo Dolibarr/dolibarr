@@ -41,7 +41,7 @@ if (! $user->admin) accessforbidden();
 
 $oldtypetonewone=array('texte'=>'text','chaine'=>'string');	// old type to new ones
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $error = 0;
 

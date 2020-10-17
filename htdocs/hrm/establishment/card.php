@@ -33,7 +33,7 @@ if (! $user->admin) accessforbidden();
 
 $error=0;
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');

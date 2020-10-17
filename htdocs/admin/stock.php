@@ -34,7 +34,7 @@ $langs->loadLangs(array("admin", "stocks"));
 // Securit check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*

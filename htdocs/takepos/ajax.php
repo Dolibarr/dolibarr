@@ -34,7 +34,7 @@ require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $category = GETPOST('category', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
 
 

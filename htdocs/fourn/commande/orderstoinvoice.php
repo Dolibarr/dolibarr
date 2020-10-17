@@ -49,7 +49,7 @@ if (! $user->rights->fournisseur->facture->creer)
 
 $id = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST("facid")); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $sref = GETPOST('sref');
 $sref_client = GETPOST('sref_client');
@@ -57,7 +57,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'a
 $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $viewstatut = GETPOST('viewstatut');
 
 if (! $sortfield)
