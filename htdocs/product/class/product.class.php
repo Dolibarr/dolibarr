@@ -4812,10 +4812,8 @@ class Product extends CommonObject
      *
      * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
      * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
-     * @param	int		$warehouseId    filter on the warehouse ID
-     *
+     * @param	int		$warehouseId    			filter on the warehouse ID
      * @return 	int                  				< 0 if KO, > 0 if OK
-     * s
      * @see    	load_virtual_stock(), loadBatchInfo()
      */
     public function load_stock($option = '', $includedraftpoforvirtual = null, $warehouseId = 0)
