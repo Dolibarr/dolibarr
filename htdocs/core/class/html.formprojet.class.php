@@ -349,7 +349,7 @@ class FormProjets
 		if ($resql)
 		{
 			// Use select2 selector
-			if (!empty($conf->use_javascript_ajax))
+			if (empty($option_only) && !empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			   	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);

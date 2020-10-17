@@ -389,7 +389,7 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-                //Create reminders
+				// Create reminders
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
@@ -1166,10 +1166,11 @@ if ($action == 'create')
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 	               $("#projectid").change(function () {
-                        var url = "'.$url.'&projectid="+$("#projectid").val();
+                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#projectid").val()+"&projectid="+$("#projectid").val();
+						console.log("Call url to get new list of tasks: "+url);
                         $.get(url, function(data) {
-                            console.log($( data ).find("#taskid").html());
-                            if (data) $("#taskid").html( $( data ).find("#taskid").html() ).select2();
+                            console.log(data);
+                            if (data) $("#taskid").html(data).select2();
                         })
                   });
                })';
@@ -1345,7 +1346,7 @@ if ($id > 0)
 		$object->contact_id   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
-		$object_private = GETPOST("note", 'restricthtml');
+		$object->note_private = GETPOST("note", 'restricthtml');
 	}
 
 	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
