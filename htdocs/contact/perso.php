@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,9 +66,9 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact-
 		if ($file_OK)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 			if (GETPOST('deletephoto'))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				$fileimg = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/'.$object->photo;
 				$dirthumbs = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/thumbs';
 				dol_delete_file($fileimg);
@@ -134,7 +134,7 @@ if ($action == 'edit')
 	 * Fiche en mode edition
 	 */
 
-    print '<form name="perso" method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+    print '<form name="perso" method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
