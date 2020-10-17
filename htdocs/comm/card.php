@@ -491,10 +491,10 @@ if ($object->id > 0)
     {
         // Transport mode by default
         print '<tr><td class="nowrap">';
-        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
         print $langs->trans('IntracommReportTransportMode');
         print '<td>';
-        if (($action != 'edittransportmode') && $user->rights->societe->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+        if (($action != 'edittransportmode') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
         print '</tr></table>';
         print '</td><td>';
         if ($action == 'edittransportmode')
