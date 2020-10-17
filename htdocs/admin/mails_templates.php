@@ -640,7 +640,7 @@ if ($resql)
 			print '</td>';
 		} elseif ($value == 'fk_user') {
 			print '<td class="liste_titre">';
-			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, 'hierarchyme', null, 0, 0, 1, '', 0, '', 'maxwidth150');
+			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth150');
 			print '</td>';
 		} elseif ($value == 'topic') {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -959,9 +959,8 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		if ($fieldlist[$field] == 'fk_user')
 		{
 			print '<td>';
-			if ($user->admin)
-			{
-				print $form->select_dolusers($obj->{$fieldlist[$field]}, 'fk_user', 1, null, 0, '', null, 0, 0, 1, '', 0, '', 'maxwidth200');
+			if ($user->admin) {
+				print $form->select_dolusers($obj->{$fieldlist[$field]}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth200');
 			} else {
 				if ($context == 'add')	// I am not admin and we show the add form
 				{

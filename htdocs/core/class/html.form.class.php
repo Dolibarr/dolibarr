@@ -1646,7 +1646,7 @@ class Form
 		$outarray = array();
 
 		// Forge request to select users
-		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut as status, u.login, u.admin, u.entity, u.photo";
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
 			$sql .= ", e.label";
@@ -1710,6 +1710,10 @@ class Form
 					$userstatic->id = $obj->rowid;
 					$userstatic->lastname = $obj->lastname;
 					$userstatic->firstname = $obj->firstname;
+					$userstatic->photo = $obj->photo;
+					$userstatic->statut = $obj->status;
+					$userstatic->entity = $obj->entity;
+					$userstatic->admin = $obj->admin;
 
 					$disableline = '';
 					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) $disableline = ($enableonlytext ? $enableonlytext : '1');
@@ -1732,11 +1736,11 @@ class Form
 					}
 					if ($showstatus >= 0)
 					{
-						if ($obj->statut == 1 && $showstatus == 1)
+						if ($obj->status == 1 && $showstatus == 1)
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						}
-						if ($obj->statut == 0 && $showstatus == 1)
+						if ($obj->status == 0 && $showstatus == 1)
 						{
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
@@ -1762,10 +1766,17 @@ class Form
 					if ((is_object($selected) && $selected->id == $obj->rowid) || (!is_object($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
-					if ($showstatus >= 0 && $obj->statut == 0) {
-						$out .= ' data-html="'.dol_escape_htmltag('<strike class="opacitymediumxxx">'.$labeltoshow.'</strike>').'"';
+					$out .= ' data-html="';
+					$outhtml = '';
+					if (!empty($obj->photo))
+					{
+						$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
 					}
-					$out .= '>';
+					if ($showstatus >= 0 && $obj->status == 0) $outhtml .= '<strike class="opacitymediumxxx">';
+					$outhtml .= $labeltoshow;
+					if ($showstatus >= 0 && $obj->status == 0) $outhtml .= '</strike>';
+					$out .= dol_escape_htmltag($outhtml);
+					$out .= '">';
 					$out .= $labeltoshow;
 					$out .= '</option>';
 
