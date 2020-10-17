@@ -6571,6 +6571,7 @@ abstract class CommonObject
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
+								showOptions(child_list, parent_list);
 					    	});
 						}
 

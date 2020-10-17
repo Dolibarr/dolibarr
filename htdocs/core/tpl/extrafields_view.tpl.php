@@ -199,6 +199,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
+								showOptions(child_list, parent_list);
 					    	});
 						}
 						setListDependencies();
