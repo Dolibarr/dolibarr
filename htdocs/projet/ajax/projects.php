@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/product/ajax/products.php
+ *       \file       htdocs/projet/ajax/projects.php
  *       \brief      File to return Ajax response on product list request
  */
 
