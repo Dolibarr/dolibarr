@@ -496,7 +496,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
             if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
             print '<td>';
-            $form->select_comptes($accountid, 'accountid', 0, '', 2);
+            $form->select_comptes($accountid, 'accountid', 0, '');
             print '</td>';
         } else {
             print '<td>&nbsp;</td>';

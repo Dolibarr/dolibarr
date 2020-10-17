@@ -178,7 +178,7 @@ if ($action == 'create')
     if (!empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-        $form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 1); // Affiche liste des comptes courant
+        $form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1"); // Affiche liste des comptes courant
         print '</td></tr>';
 
 	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';

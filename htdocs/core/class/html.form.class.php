@@ -3880,7 +3880,7 @@ class Form
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || ($num === 1  && empty($selected)))
+					if ($selected == $obj->rowid || (empty($useempty) && $num === 1  && empty($selected)))
 					{
 						print '<option value="'.$obj->rowid.'" selected>';
 					} else {

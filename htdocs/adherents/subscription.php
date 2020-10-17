@@ -927,7 +927,7 @@ if ($rowid > 0) {
 
                 // Bank account
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-                $form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 1);
+                $form->select_comptes(GETPOST('accountid'), 'accountid');
                 print "</td></tr>\n";
 
                 // Payment mode

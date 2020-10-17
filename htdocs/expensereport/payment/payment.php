@@ -262,7 +262,7 @@ if ($action == 'create' || empty($action))
     	print '<tr>';
     	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
     	print '<td colspan="2">';
-    	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : $expensereport->accountid, "accountid", 0, '', 1); // Show open bank account list
+    	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", "int") : $expensereport->accountid, "accountid"); // Show open bank account list
     	print '</td></tr>';
 	}
 
