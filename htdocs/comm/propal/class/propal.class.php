@@ -193,8 +193,12 @@ class Propal extends CommonObject
 
 	public $address_type;
 	public $address;
+
 	public $availability_id;
 	public $availability_code;
+
+	public $duree_validite;
+
 	public $demand_reason_id;
 	public $demand_reason_code;
 

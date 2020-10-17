@@ -372,13 +372,13 @@ if (empty($reshook))
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date_livraison = $date_delivery;
-				$object->availability_id = GETPOST('availability_id');
-				$object->demand_reason_id = GETPOST('demand_reason_id');
-				$object->fk_delivery_address = GETPOST('fk_address');
+				$object->availability_id = GETPOST('availability_id', 'int');
+				$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
+				$object->fk_delivery_address = GETPOST('fk_address', 'int');
 				$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->duree_validite = GETPOST('duree_validite');
-				$object->cond_reglement_id = GETPOST('cond_reglement_id');
-				$object->mode_reglement_id = GETPOST('mode_reglement_id');
+				$object->duree_validite = price2num(GETPOST('duree_validite', 'alpha'));
+				$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->contact_id = GETPOST('contactid', 'int');
 				$object->fk_project = GETPOST('projectid', 'int');
@@ -1550,7 +1550,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Validaty duration
-	print '<tr><td class="fieldrequired">'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" class="width50" value="'.(GETPOST('duree_validite', 'int') ? GETPOST('duree_validite', 'int') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("ValidityDuration").'</td><td><input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
 
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
