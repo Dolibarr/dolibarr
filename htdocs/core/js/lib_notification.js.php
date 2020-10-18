@@ -77,10 +77,10 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                 data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: 'notrequired' },
                 dataType: "json",
                 success: function (result) {
-                	console.log(result);
+                	//console.log(result);
                     var arrayofpastreminders = Object.values(result.pastreminders);
-                    console.log("arrayofpastreminders.length"+arrayofpastreminders.length);
                     if (arrayofpastreminders && arrayofpastreminders.length > 0) {
+	                    console.log("Retreived "+arrayofpastreminders.length+" reminders to do.");
                     	var audio = null;
                         <?php
 						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
@@ -145,7 +145,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 			                data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
 			            });
                     } else {
-                    	console.log("No past reminder found, next try at "+time_js_next_test);
+                    	console.log("No reminder to do found, next search at "+time_js_next_test);
                     }
                 }
             });

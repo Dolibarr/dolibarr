@@ -1099,3 +1099,4 @@ DateOfBirth=Date of birth
 SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry=Security token has expired, so action has been canceled. Please try again.
 UpToDate=Up-to-date
 OutOfDate=Out-of-date
+EventReminder=Event Reminder
