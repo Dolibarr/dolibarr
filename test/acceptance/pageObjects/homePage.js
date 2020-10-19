@@ -21,6 +21,13 @@ module.exports = {
 					.waitForElementVisible('@listOfUsers')
 					.click('@listOfUsers')
 					.useCss();
+			},
+
+			browseToModulesApplicationsPage: function () {
+				return this.useXpath()
+					.waitForElementVisible('@modulesApplications')
+					.click('@modulesApplications')
+					.useCss();
 			}
 		}
 	],
@@ -38,6 +45,11 @@ module.exports = {
 
 		listOfUsers: {
 			selector: '//a[@class="vsmenu"][@title="List of users"]',
+			locateStrategy: 'xpath'
+		},
+
+		modulesApplications: {
+			selector: '//div[contains(@class,"menu_contenu")]/a[@title="Modules/Applications"]',
 			locateStrategy: 'xpath'
 		}
 	}
