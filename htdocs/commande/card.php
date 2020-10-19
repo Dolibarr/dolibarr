@@ -1282,13 +1282,13 @@ if (empty($reshook))
 		exit();
 	}
 
-	//Used to not reclass as billed a command which is already billed by refreshing the page 
-	if(strpos( $_SERVER["REQUEST_URI"],'action=classifybilled') && $object->billed){
+	//Used to not reclass as billed a command which is already billed by refreshing the page
+	if (strpos( $_SERVER["REQUEST_URI"],'action=classifybilled') && $object->billed){
 		header("Location: $_SERVER[PHP_SELF]?id=$object->id");
 		exit();
 	}
-	//Used to not reclass as closed command which is already closed by refreshing the page 
-	if(strpos( $_SERVER["REQUEST_URI"],'action=confirm_shipped') && Commande::STATUS_CLOSED){
+	//Used to not reclass as closed command which is already closed by refreshing the page
+	if (strpos( $_SERVER["REQUEST_URI"],'action=confirm_shipped') && Commande::STATUS_CLOSED){
 		header("Location: $_SERVER[PHP_SELF]?id=$object->id");
 		exit();
 	}
@@ -2501,7 +2501,7 @@ if ($action == 'create' && $usercancreate)
 				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
-				
+
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
@@ -2510,7 +2510,7 @@ if ($action == 'create' && $usercancreate)
 						} else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 					}
 				}
-				
+
 				// Valid
 				if ($object->statut == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || !empty($conf->global->ORDER_ENABLE_NEGATIVE)) && $numlines > 0 && $usercanvalidate)
 				{
@@ -2528,7 +2528,7 @@ if ($action == 'create' && $usercancreate)
 					// page.
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}*/
-				
+
 				// Create a purchase order
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_SALE_ORDER))
 				{
@@ -2538,11 +2538,11 @@ if ($action == 'create' && $usercancreate)
 						}
 					}
 				}
-				
+
 				// Create intervention
 				if ($conf->ficheinter->enabled) {
 					$langs->load("interventions");
-					
+
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
 						if ($user->rights->ficheinter->creer) {
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddIntervention').'</a>';
@@ -2551,21 +2551,21 @@ if ($action == 'create' && $usercancreate)
 						}
 					}
 				}
-				
+
 				// Create contract
 				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
-					
+
 					if ($user->rights->contrat->creer) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
 					}
 				}
-				
+
 				// Ship
 				$numshipping = 0;
 				if (!empty($conf->expedition->enabled)) {
 					$numshipping = $object->nb_expedition();
-					
+
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)) {
 							if ($user->rights->expedition->creer) {
@@ -2579,7 +2579,7 @@ if ($action == 'create' && $usercancreate)
 						}
 					}
 				}
-				
+
 				// Set to shipped
 				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS) && $usercanclose) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=shipped">'.$langs->trans('ClassifyShipped').'</a></div>';
@@ -2603,13 +2603,13 @@ if ($action == 'create' && $usercancreate)
 				if ($usercancreate) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a></div>';
 				}
-				
+
 				// Cancel order
 				if ($object->statut == Commande::STATUS_VALIDATED && (!empty($usercanclose) || !empty($usercancancel)))
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans('Cancel').'</a></div>';
 				}
-				
+
 				// Delete order
 				if ($usercandelete) {
 					if ($numshipping == 0) {
@@ -2621,7 +2621,7 @@ if ($action == 'create' && $usercancreate)
 			}
 			print '</div>';
 		}
-		
+
 		// Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
