@@ -1580,14 +1580,14 @@ class Facture extends CommonInvoice
 						$this->fetch_thirdparty();
 					}
 				}
-				
+
 				if ($this->fk_project != $obj->fk_project) {
 					$this->fk_project = $obj->fk_project;
 					if (isset($this->project)) {
 						$this->fetch_projet();
 					}
 				}
-				
+
 				$this->statut = $obj->fk_statut;
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
