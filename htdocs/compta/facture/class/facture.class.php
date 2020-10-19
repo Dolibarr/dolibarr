@@ -1574,12 +1574,20 @@ class Facture extends CommonInvoice
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 
-				$this->socid = $obj->fk_soc;
-				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
-
-				$this->fk_project = $obj->fk_project;
-				$this->project = null; // Clear if another value was already set by fetch_projet
-
+				if ($this->socid != $obj->fk_soc) {
+					$this->socid = $obj->fk_soc;
+					if (isset($this->thirdparty)) {
+						$this->fetch_thirdparty();
+					}
+				}
+				
+				if ($this->fk_project != $obj->fk_project) {
+					$this->fk_project = $obj->fk_project;
+					if (isset($this->project)) {
+						$this->fetch_projet();
+					}
+				}
+				
 				$this->statut = $obj->fk_statut;
 				$this->date_lim_reglement = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
