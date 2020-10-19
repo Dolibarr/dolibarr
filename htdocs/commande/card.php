@@ -1283,8 +1283,8 @@ if (empty($reshook))
 	}
 
 	//Used to not reclass as a billed or closed command which is already billed by refreshing the page
-	if (strpos($_SERVER["REQUEST_URI"], 'action=classifybilled') && $object->billed 
-		|| strpos($_SERVER["REQUEST_URI"], 'action=confirm_shipped') && Commande::STATUS_CLOSED 
+	if (strpos($_SERVER["REQUEST_URI"], 'action=classifybilled') && $object->billed
+		|| strpos($_SERVER["REQUEST_URI"], 'action=confirm_shipped') && Commande::STATUS_CLOSED
 	  )
 	{
 		header("Location: $_SERVER[PHP_SELF]?id=$object->id");
