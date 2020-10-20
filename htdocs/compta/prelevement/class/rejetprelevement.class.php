@@ -39,6 +39,8 @@ class RejetPrelevement
      * @var DoliDB Database handler.
      */
     public $db;
+    
+    public $type; //prelevement or bank transfer. v20
 
 
 	/**
@@ -47,12 +49,13 @@ class RejetPrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	public function __construct($db, $user)
+	public function __construct($db, $user, $type)
 	{
 		global $langs;
 
 		$this->db = $db;
 		$this->user = $user;
+		$this->type = $type;//v20
 
 		$this->motifs = array();
 		$this->facturer = array();
@@ -92,7 +95,7 @@ class RejetPrelevement
 		$now = dol_now();
 
 		dol_syslog("RejetPrelevement::Create id $id");
-		$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+		$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); //V20
 		$facs = $this->getListInvoices(1);
 
 		$this->db->begin();
@@ -137,11 +140,19 @@ class RejetPrelevement
 		$num = count($facs);
 		for ($i = 0; $i < $num; $i++)
 		{
-			$fac = new Facture($this->db);
+			if($this->type == 'bank-transfer'){
+				$fac = new FactureFournisseur($this->db);	//v20
+				$pai = new PaiementFourn($this->db);
+			}
+			else{
+				$fac = new Facture($this->db);
+				$pai = new Paiement($this->db);
+			}
+			
 			$fac->fetch($facs[$i][0]);
 
 			// Make a negative payment
-			$pai = new Paiement($this->db);
+			//$pai = new Paiement($this->db);
 
 			$pai->amounts = array();
 
@@ -150,7 +161,7 @@ class RejetPrelevement
 			 * PHP installs sends only the part integer negative
 			*/
 
-			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * -1);
+			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * ($this->type == 'bank-transfer' ? 1:  -1));//v20
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
 			$pai->num_paiement = $fac->ref;
@@ -216,7 +227,7 @@ class RejetPrelevement
 		$sql = "SELECT fk_user_demande";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		$sql .= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
-		$sql .= " AND pfd.fk_facture = ".$fac->id;
+		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn=': '=').$fac->id;//v20
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -293,7 +304,10 @@ class RejetPrelevement
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";//v20
+		if($this->type == 'bank-transfer')	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
+		else 								$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
+		
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
 		$sql .= " AND f.entity IN  (".getEntity('invoice').")";
