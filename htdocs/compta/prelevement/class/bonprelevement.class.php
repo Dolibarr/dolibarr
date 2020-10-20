@@ -469,7 +469,7 @@ class BonPrelevement extends CommonObject
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
 				//Add payment of withdrawal into bank
-				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); //V20
+				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); 
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
@@ -1766,7 +1766,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
-				fputs($this->file, '						<Id>'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'</Id>'.$CrLf);//v20
+				fputs($this->file, '						<Id>'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'</Id>'.$CrLf);
 				fputs($this->file, '					</Othr>'.$CrLf);
 				fputs($this->file, '				    </PrvtId>'.$CrLf);
 				fputs($this->file, '				</Id>'.$CrLf);
@@ -2186,7 +2186,7 @@ class BonPrelevement extends CommonObject
 
 		// Get data of bank account
 		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$id=($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); //V20
+		$id=($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); 
 		$account = new Account($this->db);
 		if ($account->fetch($id) > 0)
 		{
