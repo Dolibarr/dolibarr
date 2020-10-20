@@ -1278,12 +1278,11 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	// Description short of product line
 	$libelleproduitservice = $label;
-        if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL))
-        {
-            $libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
-        }
+	if (!empty($libelleproduitservice) && !empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) {
+		$libelleproduitservice = '<b>' . $libelleproduitservice . '</b>';
+	}
 
-        // Description long of product line
+	// Description long of product line
 	if (!empty($desc) && ($desc != $label))
 	{
 		if ($libelleproduitservice && empty($hidedesc))
