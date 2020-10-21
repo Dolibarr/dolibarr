@@ -18,3 +18,21 @@ MulticurrencyReceived=Reçu, devise originale
 MulticurrencyRemainderToTake=Montant restant, devise d'origine
 MulticurrencyPaymentAmount=Montant du règlement (devise d'origine)
 AmountToOthercurrency=Montant destination (en devise du compte de réception)
+TabTitleMulticurrencyRate = liste des Taux
+No_record_on_multicurrency_rate=Pas d'enregistrement dans la table multicurrency_rate
+ListCurrencyRate=liste des taux de change pour la devise
+CreateRate=créer un taux
+FormCreateRate=formulaire de création de taux
+FormUpdateRate=Modification de taux
+successRateCreate=Taux pour la devise %s a été ajouté à la base de donnée
+ConfirmDeleteLineRate=Êtes-vous sûr de vouloir supprimer le taux %s pour la devise %s à la date du %s ?
+DeleteLineRate=Effacer Taux
+successRateDelete= Taux supprimé
+errorRateDelete= Erreur lors de la suppression du taux
+successUpdateRate=Modification effectuée
+ErrorUpdateRate=Erreur lors de la modification du taux
+Codemulticurrency=code devise
+UpdateRate=modifier le taux
+CancelUpdate=annuler
+
+
