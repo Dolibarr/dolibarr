@@ -90,6 +90,8 @@ class modMyModule extends DolibarrModules
 			'barcode' => 0,
 			// Set this to 1 if module has its own models directory (core/modules/xxx)
 			'models' => 0,
+            // Set this to 1 if module has its own printing directory (core/modules/printing)
+            'printing' => 0,
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
