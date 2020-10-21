@@ -2298,8 +2298,7 @@ class CommandeFournisseur extends CommonOrder
 
             // TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
-
-            if (!$error)
+            if (empty($error))
             {
                 $this->db->begin();
 
@@ -2312,7 +2311,7 @@ class CommandeFournisseur extends CommonOrder
                 $resql = $this->db->query($sql);
                 if ($resql)
                 {
-                    $result = 0;
+					$result = 0;
                     $old_statut = $this->statut;
                     $this->statut = $statut;
 					$this->actionmsg2 = $comment;
@@ -2320,9 +2319,10 @@ class CommandeFournisseur extends CommonOrder
                     // Call trigger
                     $result = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
                     if ($result < 0) $error++;
+                    else $result = 1;
                     // End call triggers
 
-                    if (!$error)
+                    if (empty($error))
                     {
                         $this->db->commit();
                     }
