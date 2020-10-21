@@ -2311,15 +2311,14 @@ class CommandeFournisseur extends CommonOrder
                 $resql = $this->db->query($sql);
                 if ($resql)
                 {
-					$result = 0;
+					$result = 1;
                     $old_statut = $this->statut;
                     $this->statut = $statut;
 					$this->actionmsg2 = $comment;
 
                     // Call trigger
-                    $result = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
+                    $result += $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
                     if ($result < 0) $error++;
-                    else $result = 1;
                     // End call triggers
 
                     if (empty($error))
