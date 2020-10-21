@@ -3497,7 +3497,7 @@ if ($action == 'create')
 				}
 			});
 
-			$("[name=\'type\']").trigger("change");
+			$("[name=\'type\']:checked").trigger("change");
 		});
 		</script>';
 	}
