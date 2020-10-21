@@ -2,6 +2,7 @@ const {Given, When, Then} = require('cucumber');
 const {client} = require('nightwatch-api');
 const fetch = require('node-fetch');
 const assert = require('assert');
+const {getDolApiKey} = require('../setup');
 let Login = {};
 
 Given('the administrator has browsed to the new users page', function () {
@@ -56,11 +57,20 @@ Then('the response message should be {string}', function (expectedResponseMessag
     return getResponseMessage(expectedResponseMessage);
 });
 
-const createUserRequest = function (login, lastname, password, api_key = null) {
+When('the non-admin user {string} with password {string} creates user with following details using API', async function (login, password, dataTable) {
+    const userDolApikey = await getDolApiKey(login, password);
+    return userCreatesUserWithApi(dataTable, userDolApikey);
+});
+
+const createUserRequest = function (login, lastname, password, api_key = null, dolApiKey = null) {
     const header = {};
     const url = client.globals.backend_url + 'api/index.php/users';
     header['Accept'] = 'application/json';
-    header['DOLAPIKEY'] = client.globals.dolApiKey;
+    if (dolApiKey === null) {
+        header['DOLAPIKEY'] = client.globals.dolApiKey;
+    } else {
+        header['DOLAPIKEY'] = dolApiKey;
+    }
     header['Content-Type'] = 'application/json';
     return fetch(url, {
         method: 'POST',
@@ -79,6 +89,14 @@ const createUserRequest = function (login, lastname, password, api_key = null) {
 const adminCreatesUserWithAPI = function (dataTable) {
     const userDetails = dataTable.rowsHash();
     return createUserRequest(userDetails['login'], userDetails['last name'], userDetails['password'])
+        .then((res) => {
+            client.globals.response = res;
+        });
+};
+
+const userCreatesUserWithApi = function (dataTable, dolApiKey) {
+    const userDetails = dataTable.rowsHash();
+    return createUserRequest(userDetails['login'], userDetails['last name'], userDetails['password'], null, dolApiKey)
         .then((res) => {
             client.globals.response = res;
         });
