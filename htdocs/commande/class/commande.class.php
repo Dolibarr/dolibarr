@@ -3531,6 +3531,8 @@ class Commande extends CommonOrder
 		$billedtext = '';
 		if (empty($donotshowbilled)) $billedtext .= ($billed ? ' - '.$langs->trans("Billed") : '');
 
+		$labelTooltip = '';
+
 		if ($status == self::STATUS_CANCELED) {
 			$labelStatus = $langs->trans('StatusOrderCanceled');
 			$labelStatusShort = $langs->trans('StatusOrderCanceledShort');
@@ -3544,8 +3546,9 @@ class Commande extends CommonOrder
 			$labelStatusShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
 			$statusType = 'status1';
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
-			$labelStatus = $langs->trans('StatusOrderSentShort').$billedtext;
+			$labelStatus = $langs->trans('StatusOrderSent').$billedtext;
 			$labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
+			$labelTooltip = $langs->trans("StatusOrderSent").' - '.$langs->trans("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->trans('StatusOrderToBill');
@@ -3553,11 +3556,11 @@ class Commande extends CommonOrder
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->trans('StatusOrderProcessed').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderProcessed').$billedtext;
+			$labelStatusShort = $langs->trans('StatusOrderProcessedShort').$billedtext;
 			$statusType = 'status6';
 		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->trans('StatusOrderDelivered');
-			$labelStatusShort = $langs->trans('StatusOrderDelivered');
+			$labelStatusShort = $langs->trans('StatusOrderDeliveredShort');
 			$statusType = 'status6';
 		} else {
 			$labelStatus = $langs->trans('Unknown');
@@ -3566,7 +3569,7 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
 	}
 
 
@@ -3991,11 +3994,6 @@ class OrderLine extends CommonOrderLine
 	public $fk_parent_line;
 	public $fk_facture;
 
-	/**
-	 * @var string Order lines label
-	 */
-	public $label;
-
 	public $ref_ext;
 
 	public $fk_remise_except;
@@ -4046,7 +4044,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc, p.tobatch as product_tobatch,';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
 		$sql .= ' cd.date_start, cd.date_end';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -4090,9 +4088,9 @@ class OrderLine extends CommonOrderLine
 			$this->rang = $objp->rang;
 
 			$this->ref = $objp->product_ref; // deprecated
-			$this->product_ref = $objp->product_ref;
-			$this->libelle = $objp->product_libelle; // deprecated
-			$this->product_label = $objp->product_libelle;
+
+			$this->product_ref      = $objp->product_ref;
+			$this->product_label    = $objp->product_label;
 			$this->product_desc     = $objp->product_desc;
 			$this->product_tobatch  = $objp->product_tobatch;
 			$this->fk_unit          = $objp->fk_unit;

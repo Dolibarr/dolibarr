@@ -65,7 +65,7 @@ class FormExpenseReport
 
     	$tmpep = new ExpenseReport($this->db);
 
-    	print '<select class="flat" name="'.$htmlname.'">';
+    	print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
     	if ($useempty) print '<option value="-1">&nbsp;</option>';
     	$arrayoflabels = $tmpep->statuts;
     	if ($useshortlabel) $arrayoflabels = $tmpep->statuts_short;
@@ -81,6 +81,7 @@ class FormExpenseReport
     		print '</option>';
     	}
     	print '</select>';
+    	print ajax_combobox($htmlname);
     }
 
     /**

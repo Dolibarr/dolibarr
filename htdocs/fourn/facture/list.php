@@ -67,7 +67,7 @@ if ($user->socid > 0)
 	$socid = $user->socid;
 }
 
-$mode = GETPOST("mode");
+$mode = GETPOST("mode", 'aZ09');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_label = GETPOST("search_label", "alpha");
@@ -92,6 +92,7 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 $search_paymentmode = GETPOST('search_paymentmode', 'int');
+$search_paymentcond = GETPOST('search_paymentcond', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
@@ -165,7 +166,8 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
+	'f.fk_cond_reglement'=>array('label'=>$langs->trans("PaymentTerm"), 'checked'=>1, 'position'=>50),
+	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1, 'position'=>52),
 	'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1, 'position'=>105),
 	'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0, 'position'=>110),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1", 'position'=>95),
@@ -240,6 +242,7 @@ if (empty($reshook))
 		$search_multicurrency_montant_ttc = '';
 		$search_status = '';
 		$search_paymentmode = '';
+		$search_paymentcond = '';
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -367,7 +370,8 @@ if ($search_multicurrency_montant_vat != '') $sql .= natural_search('f.multicurr
 if ($search_multicurrency_montant_ttc != '') $sql .= natural_search('f.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 if ($search_login) $sql .= natural_search('u.login', $search_login);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND f.fk_statut = ".$db->escape($search_status);
-if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
+if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
+if ($search_paymentcond > 0) $sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentcond);
 $sql .= dolSqlDateFilter("f.datef", $day, $month, $year);
 $sql .= dolSqlDateFilter("f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
 if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
@@ -385,7 +389,7 @@ if ($filter && $filter != -1)
 		$sql .= ' AND '.$db->escape(trim($filt[0])).' = '.$db->escape(trim($filt[1]));
 	}
 }
-if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
+if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 if ($search_user > 0)
 {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='invoice_supplier' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
@@ -595,7 +599,7 @@ if ($resql)
 	 	$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -720,11 +724,18 @@ if ($resql)
 		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
 		print '</td>';
 	}
+	// Condition of payment
+	if (!empty($arrayfields['f.fk_cond_reglement']['checked']))
+	{
+		print '<td class="liste_titre left">';
+		$form->select_conditions_paiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
+		print '</td>';
+	}
 	// Payment mode
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
 		print '<td class="liste_titre left">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10);
+		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 20, 1, 'maxwidth100');
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ht']['checked']))
@@ -848,7 +859,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus = array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-		print $form->selectarray('search_status', $liststatus, $search_status, 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td>';
 	}
 	// Action column
@@ -873,6 +884,7 @@ if ($resql)
 	if (!empty($arrayfields['state.nom']['checked']))            print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['country.code_iso']['checked']))     print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['typent.code']['checked']))          print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['f.fk_cond_reglement']['checked']))  print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_cond_reglement", "", $param, "", $sortfield, $sortorder);
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked']))  print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_mode_reglement", "", $param, "", $sortfield, $sortorder);
 	if (!empty($arrayfields['f.total_ht']['checked']))           print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['f.total_vat']['checked']))          print_liste_field_titre($arrayfields['f.total_vat']['label'], $_SERVER['PHP_SELF'], 'f.tva', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1096,6 +1108,14 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 			}
 
+			// Payment condition
+			if (!empty($arrayfields['f.fk_cond_reglement']['checked']))
+			{
+				print '<td>';
+				$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', '', -1);
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked']))
 			{

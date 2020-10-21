@@ -663,7 +663,7 @@ foreach ($object->fields as $key => $val)
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 		} else {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+			if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			elseif (strpos($val['type'], 'integer:') === 0) {
 				print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
 			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
@@ -765,8 +765,18 @@ while ($i < min($num, $limit))
 				print $s;
 				print '</span>';
 			}
-			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
-			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+			elseif ($key == 'category_code') {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+				print '<span title="'.$s.'">';
+				print $s;
+				print '</span>';
+			}
+			elseif ($key == 'severity_code') {
+				$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+				print '<span title="'.$s.'">';
+				print $s;
+				print '</span>';
+			}
 			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif ($key == 'fk_user_create') {
 				if ($object->fk_user_create > 0) {

@@ -169,7 +169,7 @@ if (empty($reshook))
 		$supplier_description = GETPOST('supplier_description', 'alpha');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
-		$packaging = GETPOST('packaging', 'int');
+		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
 
 		if ($tva_tx == '')
 		{
@@ -230,12 +230,6 @@ if (empty($reshook))
             }
         }
 
-		if (empty($packaging)) $packaging = 1;
-
-		if ($packaging < $quantity) $packaging = $quantity;
-
-		$object->packaging = $packaging;
-
 		if (!$error)
 		{
 			$db->begin();
@@ -295,6 +289,10 @@ if (empty($reshook))
                 }
 
 				$newprice = price2num(GETPOST("price", "alpha"));
+
+				if (empty($packaging)) $packaging = 1;
+				if ($packaging < $quantity) $packaging = $quantity;
+				$object->packaging = $packaging;
 
                 if ($conf->multicurrency->enabled)
                 {
@@ -529,6 +527,23 @@ if ($id > 0 || $ref)
                 }
 				print '</td></tr>';
 
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+					// Packaging
+					print '<tr>';
+
+					print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+					print '<td>';
+					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'nohtml'), 'MS') : ((empty($rowid))?"1":price2num($object->packaging, 'MS'));
+					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
+
+					// Units
+					if ($conf->global->PRODUCT_USE_UNITS) {
+						$unit = $object->getLabelOfUnit();
+						if ($unit !== '') {
+							print '&nbsp;&nbsp;'.$langs->trans($unit);
+						}
+					}
+				}
 				// Vat rate
 				$default_vat = '';
 

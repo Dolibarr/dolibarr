@@ -147,29 +147,30 @@ $tabfieldcheck = array();
 $tabfieldcheck[25] = array();
 
 
-// Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
-$sourceList = array();
 
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
-if ($conf->propal->enabled && $user->rights->propal->lire)     $elementList['propal_send'] = $langs->trans('MailToSendProposal');
-if ($conf->commande->enabled && $user->rights->commande->lire) $elementList['order_send'] = $langs->trans('MailToSendOrder');
-if ($conf->facture->enabled && $user->rights->facture->lire)   $elementList['facture_send'] = $langs->trans('MailToSendInvoice');
-if ($conf->expedition->enabled)        $elementList['shipping_send'] = $langs->trans('MailToSendShipment');
-if ($conf->reception->enabled) 		   $elementList['reception_send'] = $langs->trans('MailToSendReception');
-if ($conf->ficheinter->enabled)        $elementList['fichinter_send'] = $langs->trans('MailToSendIntervention');
-if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send'] = $langs->trans('MailToSendSupplierRequestForQuotation');
-if (($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_order->enabled && $user->rights->supplier_order->lire))	$elementList['order_supplier_send'] = $langs->trans('MailToSendSupplierOrder');
-if (($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_invoice->enabled && $user->rights->supplier_invoice->lire))	$elementList['invoice_supplier_send'] = $langs->trans('MailToSendSupplierInvoice');
-if ($conf->societe->enabled && $user->rights->societe->lire)           $elementList['thirdparty'] = $langs->trans('MailToThirdparty');
-if ($conf->adherent->enabled && $user->rights->adherent->lire)          $elementList['member'] = $langs->trans('MailToMember');
-if ($conf->contrat->enabled && $user->rights->contrat->lire)           $elementList['contract'] = $langs->trans('MailToSendContract');
-if ($conf->projet->enabled)            $elementList['project'] = $langs->trans('MailToProject');
-if ($conf->ticket->enabled && $user->rights->ticket->read)            $elementList['ticket_send'] = $langs->trans('MailToTicket');
-if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read)            $elementList['recruitmentcandidature_send'] = $langs->trans('RecruitmentCandidatures');
-if ($conf->agenda->enabled)            $elementList['actioncomm_send'] = $langs->trans('MailToSendEventPush');
-$elementList['user'] = $langs->trans('MailToUser');
+// Add all and none after the sort
+$elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
+$elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
+$elementList['user'] = img_picto('', 'user', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToUser'));
+if ($conf->adherent->enabled && $user->rights->adherent->lire)          $elementList['member'] = img_picto('', 'object_member', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToMember'));
+if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read)            $elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="paddingright"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
+if ($conf->societe->enabled && $user->rights->societe->lire)           $elementList['thirdparty'] = img_picto('', 'company', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
+if ($conf->projet->enabled)            $elementList['project'] = img_picto('', 'project', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToProject'));
+if ($conf->propal->enabled && $user->rights->propal->lire)     $elementList['propal_send'] = dol_escape_htmltag($langs->trans('MailToSendProposal'));
+if ($conf->commande->enabled && $user->rights->commande->lire) $elementList['order_send'] = dol_escape_htmltag($langs->trans('MailToSendOrder'));
+if ($conf->facture->enabled && $user->rights->facture->lire)   $elementList['facture_send'] = dol_escape_htmltag($langs->trans('MailToSendInvoice'));
+if ($conf->expedition->enabled)        $elementList['shipping_send'] = dol_escape_htmltag($langs->trans('MailToSendShipment'));
+if ($conf->reception->enabled) 		   $elementList['reception_send'] = dol_escape_htmltag($langs->trans('MailToSendReception'));
+if ($conf->ficheinter->enabled)        $elementList['fichinter_send'] = dol_escape_htmltag($langs->trans('MailToSendIntervention'));
+if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send'] = dol_escape_htmltag($langs->trans('MailToSendSupplierRequestForQuotation'));
+if (($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_order->enabled && $user->rights->supplier_order->lire))	$elementList['order_supplier_send'] = dol_escape_htmltag($langs->trans('MailToSendSupplierOrder'));
+if (($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ($conf->supplier_invoice->enabled && $user->rights->supplier_invoice->lire))	$elementList['invoice_supplier_send'] = dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
+if ($conf->contrat->enabled && $user->rights->contrat->lire)           $elementList['contract'] = img_picto('', 'contract', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendContract'));
+if ($conf->ticket->enabled && $user->rights->ticket->read)            $elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
+if ($conf->agenda->enabled)            $elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 
 $parameters = array('elementList'=>$elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -179,11 +180,7 @@ if ($reshook == 0) {
 	}
 }
 
-// Add all and none after the sort
-$elementList['all'] = '-- '.$langs->trans("All").' -- ('.$langs->trans('VisibleEverywhere').')';
-$elementList['none'] = '-- '.$langs->trans("None").' -- ('.$langs->trans('VisibleNowhere').')';
-
-asort($elementList);
+//asort($elementList);
 
 $id = 25;
 
@@ -303,7 +300,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Si verif ok et action modify, on modifie la ligne
+		// We modify the line
 		if ($ok && GETPOST('actionmodify'))
 		{
 			$rowidcol = "rowid";
@@ -414,7 +411,7 @@ $formadmin = new FormAdmin($db);
 $help_url = '';
 $title = $langs->trans("EMailsSetup");
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 $linkback = '';
 $titlepicto = 'title_setup';
@@ -430,10 +427,9 @@ if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
 
-$sql = "SELECT rowid as rowid, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, enabled, active";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, enabled, active";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin)
@@ -481,7 +477,7 @@ if ($action == 'view') {
 		if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
 		if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
 		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') { $valuetoshow = $langs->trans("Code"); }
-		if ($fieldlist[$field] == 'type_template') { $valuetoshow = $langs->trans("TypeOfTemplate"); }
+		if ($fieldlist[$field] == 'type_template') { $valuetoshow = $langs->trans("TypeOfTemplate"); $align="center"; }
 		if ($fieldlist[$field] == 'private') { $align = 'center'; }
 		if ($fieldlist[$field] == 'position') { $align = 'center'; }
 
@@ -492,7 +488,7 @@ if ($action == 'view') {
 
 		if ($valuetoshow != '')
 		{
-			print '<td align="'.$align.'">';
+			print '<td class="'.$align.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			elseif (!empty($tabhelp[$id][$value]))
 			{
@@ -570,14 +566,12 @@ if ($action == 'view') {
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="'.(isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1').'">';
 		} else {
-			if ($context != 'hide') {
-				// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
-				$okforextended = true;
-				if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
-				$okforextended = false;
-				$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
-				print $doleditor->Create(1);
-			} else print '&nbsp;';
+			// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
+			$okforextended = true;
+			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
+			$okforextended = false;
+			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
+			print $doleditor->Create(1);
 		}
 		print '</td>';
 		if ($tmpfieldlist == 'topic') {
@@ -590,11 +584,6 @@ if ($action == 'view') {
 		// else print '<td></td>';
 		print '</tr>';
 	}
-
-
-
-	$colspan = count($fieldlist) + 1;
-	//print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';  // Keep &nbsp; to have a line with enough height
 
 	print '</table>';
 	print '</div>';
@@ -641,26 +630,24 @@ if ($resql)
 	// Title line with search boxes
 	print '<tr class="liste_titre">';
 
-	$filterfound = 0;
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($value == 'label') {
 			print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth200" value="'.dol_escape_htmltag($search_label).'"></td>';
 		} elseif ($value == 'lang') {
 			print '<td class="liste_titre">';
-			print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth100');
+			print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth150');
 			print '</td>';
 		} elseif ($value == 'fk_user') {
 			print '<td class="liste_titre">';
-			$restrictid = array();
-			if (!$user->admin) $restrictid = array($user->id);
-			//var_dump($restrictid);
-			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, 'hierarchyme', null, 0, 0, 1, '', 0, '', 'maxwidth100');
+			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth150');
 			print '</td>';
 		} elseif ($value == 'topic') {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 		} elseif ($value == 'type_template') {
-			print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 maxwidth100onsmartphone').'</td>';
+			print '<td class="liste_titre center">';
+			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1, '', 0, 1);
+			print '</td>';
 		} elseif (!in_array($value, array('content', 'content_lines'))) {
 			print '<td class="liste_titre"></td>';
 		}
@@ -792,6 +779,13 @@ if ($resql)
 
 				print "</tr>\n";
 			} else {
+			    if ($obj->module) {
+			        $tempmodulekey = $obj->module;
+			        if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+			            $i++;
+			            continue;
+			        }
+			    }
 				$keyforobj = 'type_template';
 				if (!in_array($obj->$keyforobj, array_keys($elementList)))
 				{
@@ -819,22 +813,26 @@ if ($resql)
 					{
 						if (in_array($fieldlist[$field], array('content', 'content_lines'))) continue;
 						$showfield = 1;
-						$align = "left";
+						$align = "";
+						$class = "tddict";
 						$valuetoshow = $obj->{$fieldlist[$field]};
-						if ($value == 'label' || $value == 'topic')
-						{
+						if ($value == 'label' || $value == 'topic') {
 							$valuetoshow = dol_escape_htmltag($valuetoshow);
 						}
-						if ($value == 'type_template')
-						{
-							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
+						if ($value == 'label') {
+							$class .= ' tdoverflowmax100';
 						}
-						if ($value == 'lang' && $valuetoshow)
-						{
+						/*if ($value == 'topic') {
+							$class .= ' tdoverflowmax300';
+						}*/
+						if ($value == 'type_template') {
+							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
+							$align = "center";
+						}
+						if ($value == 'lang' && $valuetoshow) {
 							$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
 						}
-						if ($value == 'fk_user')
-						{
+						if ($value == 'fk_user') {
 							if ($valuetoshow > 0)
 							{
 								$fuser = new User($db);
@@ -842,29 +840,25 @@ if ($resql)
 								$valuetoshow = $fuser->getNomUrl(1);
 							}
 						}
-						if ($value == 'private')
-						{
+						if ($value == 'private') {
 							$align = "center";
 							if ($valuetoshow) $valuetoshow = yn($valuetoshow);
 							else $valuetoshow = '';
 						}
-						if ($value == 'position')
-						{
+						if ($value == 'position') {
 							$align = "center";
 						}
-						if ($value == 'joinfiles')
-						{
+						if ($value == 'joinfiles') {
 							$align = "center";
 							if ($valuetoshow) $valuetoshow = 1;
 							else $valuetoshow = '';
 						}
+						if ($align) $class .= ' '.$align;
 
-						$class = 'tddict';
 						// Show value for field
-						if ($showfield)
-						{
+						if ($showfield) {
 						   	print '<!-- '.$fieldlist[$field].' -->';
-						   	print '<td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+						   	print '<td class="'.$class.'">'.$valuetoshow.'</td>';
 						}
 					}
 				}
@@ -963,7 +957,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf, $langs, $user, $db;
 	global $form;
-	global $elementList, $sourceList;
+	global $elementList;
 
 	$formadmin = new FormAdmin($db);
 
@@ -972,9 +966,8 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		if ($fieldlist[$field] == 'fk_user')
 		{
 			print '<td>';
-			if ($user->admin)
-			{
-				print $form->select_dolusers($obj->{$fieldlist[$field]}, 'fk_user', 1, null, 0, '', null, 0, 0, 1, '', 0, '', 'maxwidth200');
+			if ($user->admin) {
+				print $form->select_dolusers($obj->{$fieldlist[$field]}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth200');
 			} else {
 				if ($context == 'add')	// I am not admin and we show the add form
 				{
@@ -1017,14 +1010,14 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		// Le type de template
 		elseif ($fieldlist[$field] == 'type_template')
 		{
-			print '<td>';
+			print '<td class="center">';
 			if ($context == 'edit' && !empty($obj->{$fieldlist[$field]}) && !in_array($obj->{$fieldlist[$field]}, array_keys($elementList)))
 			{
 				// Current tempalte type is an unknown type, so we must keep it as it is.
 				print '<input type="hidden" name="type_template" value="'.$obj->{$fieldlist[$field]}.'">';
 				print $obj->{$fieldlist[$field]};
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150 maxwidth100onsmartphone');
+				print $form->selectarray('type_template', $elementList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;

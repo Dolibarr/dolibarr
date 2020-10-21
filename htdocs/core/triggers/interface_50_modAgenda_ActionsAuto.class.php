@@ -809,7 +809,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		$object->actionmsg = $langs->transnoentities("Author").': '.$user->login."\n".$object->actionmsg;
+		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 

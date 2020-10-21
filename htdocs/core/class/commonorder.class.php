@@ -39,6 +39,12 @@ abstract class CommonOrder extends CommonObject
 abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
+	 * Custom label of line. Not used by default.
+	 * @deprecated
+	 */
+	public $label;
+
+	/**
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
@@ -47,18 +53,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
 	 * @see $product_label
 	 */
 	public $libelle;
+
+	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
 
 	/**
 	 * Product label

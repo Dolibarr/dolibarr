@@ -341,7 +341,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $ok=true;
             $matches=array();
             // Check string   name="token" value="'.$_SESSINON
-            preg_match_all('/name="token" value="\'\.\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/name="token" value="\'\s*\.\s*\$_SESSION/', $filecontent, $matches, PREG_SET_ORDER);
             foreach ($matches as $key => $val)
             {
             	if ($file['name'] != 'excludefile.php')

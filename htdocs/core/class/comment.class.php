@@ -186,7 +186,7 @@ class Comment extends CommonObject
 		$sql .= " c.entity,";
 		$sql .= " c.import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

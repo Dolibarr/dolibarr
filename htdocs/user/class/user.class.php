@@ -170,7 +170,7 @@ class User extends CommonObject
 
 	public $users = array(); // To store all tree of users hierarchy
 	public $parentof; // To store an array of all parents for all ids.
-	private $cache_childids;	// Cache array of already loaded childs
+	private $cache_childids; // Cache array of already loaded childs
 
 	public $accountancy_code; // Accountancy code in prevision of the complete accountancy module
 
@@ -704,10 +704,10 @@ class User extends CommonObject
 			// avoid admin can remove his own important rights
 			if ($this->admin == 1)
 			{
-				$sql .= " AND id NOT IN (251, 252, 253, 254, 255, 256)";	// other users rights
-				$sql .= " AND id NOT IN (341, 342, 343, 344)";				// own rights
-				$sql .= " AND id NOT IN (351, 352, 353, 354)";				// groups rights
-				$sql .= " AND id NOT IN (358)";								// user export
+				$sql .= " AND id NOT IN (251, 252, 253, 254, 255, 256)"; // other users rights
+				$sql .= " AND id NOT IN (341, 342, 343, 344)"; // own rights
+				$sql .= " AND id NOT IN (351, 352, 353, 354)"; // groups rights
+				$sql .= " AND id NOT IN (358)"; // user export
 			}
 
 			$result = $this->db->query($sql);
@@ -1186,7 +1186,7 @@ class User extends CommonObject
 						return -5;
 					}
 
-					if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE))
+					if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE))
 					{
 						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 						$langs->load("stocks");
@@ -1318,7 +1318,8 @@ class User extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Create a user into database from a member object
+	 *  Create a user into database from a member object.
+	 *  If $member->fk_soc is set, it will be an external user.
 	 *
 	 *  @param	Adherent	$member		Object member source
 	 * 	@param	string		$login		Login to force

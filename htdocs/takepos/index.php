@@ -58,7 +58,7 @@ if ($setterminal > 0)
 	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, false, true); // Permanent takeposterminal var in a cookie
 }
 
-if ($setcurrency!="")
+if ($setcurrency != "")
 {
 	$_SESSION["takeposcustomercurrency"] = $setcurrency;
 }
@@ -812,7 +812,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			?>
 			</a>
 			<?php
-			if (!empty($conf->multicurrency->enabled)){
+			if (!empty($conf->multicurrency->enabled)) {
 				print '<a class="valignmiddle tdoverflowmax100 minwidth75" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>'.$langs->trans("Currency").'</a>';
 			}
 			?>
@@ -850,10 +850,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-content">
 		<div class="modal-header">
 		<span class="close" href="#" onclick="document.getElementById('ModalTerminal').style.display = 'none';">&times;</span>
-		<h3><?php print $langs->trans("TerminalSelect");?></h3>
+		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal");?> 1</button>
+		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
 		<?php
 		for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
 		{
@@ -865,12 +865,12 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
-if (!empty($conf->multicurrency->enabled)){
+<?php if (!empty($conf->multicurrency->enabled)) { ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
 			<span class="close" href="#" onclick="document.getElementById('ModalCurrency').style.display = 'none';">&times;</span>
-			<h3><?php print $langs->trans("SetMultiCurrencyCode");?></h3>
+			<h3><?php print $langs->trans("SetMultiCurrencyCode"); ?></h3>
 		</div>
 		<div class="modal-body">
 			<?php
@@ -882,12 +882,11 @@ if (!empty($conf->multicurrency->enabled)){
 				while ($obj = $db->fetch_object($resql))
 				print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
 			}
-
 			?>
 		</div>
 	</div>
 </div>
-}
+<?php } ?>
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 

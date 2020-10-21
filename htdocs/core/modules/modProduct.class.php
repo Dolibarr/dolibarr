@@ -477,7 +477,14 @@ class modProduct extends DolibarrModules
 					'class' => 'Ccountry',
 					'method' => 'fetch',
 					'dict' => 'DictionaryCountry'
-				)
+				),
+				'p.finished'=> array(
+					'rule' => 'fetchidfromcodeorlabel',
+					'classfile' => '/core/class/cproductnature.class.php',
+					'class' => 'CProductNature',
+					'method' => 'fetch',
+					'dict' => 'DictionaryProductNature'
+					),
 		);
 
 		$this->import_regex_array[$r] = array(
@@ -488,7 +495,6 @@ class modProduct extends DolibarrModules
 			'p.fk_product_type' => '^[0|1]$',
 			'p.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
 			'p.recuperableonly' => '^[0|1]$',
-			'p.finished' => '^[0|1]$'
 		);
 
 		if (!empty($conf->stock->enabled)) {//if Stock module enabled
@@ -578,7 +584,7 @@ class modProduct extends DolibarrModules
 			'p.surface_units' => 'm2', // Use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.volume' => "",
 			'p.volume_units' => 'm3', //Use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
-			'p.finished' => '0 (raw material) / 1 (finished goods)'
+			'p.finished' => '0 (raw material) / 1 (finished goods), matches field "code" in dictionary table "'.MAIN_DB_PREFIX.'c_product_nature"'
 		);
 		//clauses copied from import_fields_array
 		if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
@@ -654,6 +660,10 @@ class modProduct extends DolibarrModules
 				));
 			}
 
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
+			}
+
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
@@ -690,6 +700,11 @@ class modProduct extends DolibarrModules
 					'sp.multicurrency_unitprice'=>'',
 					// TODO Make this field not required and calculate it from price and qty
 					'sp.multicurrency_price'=>''
+				));
+			}
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
+					'sp.packagning'=>'1',
 				));
 			}
 

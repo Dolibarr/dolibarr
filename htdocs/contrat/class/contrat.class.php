@@ -804,7 +804,7 @@ class Contrat extends CommonObject
         $pos = 0;
 
 		// Selects contract lines related to a product
-		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
+		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
 		$sql .= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
@@ -817,7 +817,8 @@ class Contrat extends CommonObject
 		$sql .= " d.fk_user_author,";
 		$sql .= " d.fk_user_ouverture,";
 		$sql .= " d.fk_user_cloture,";
-		$sql .= " d.fk_unit";
+		$sql .= " d.fk_unit,";
+		$sql .= " d.product_type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as d LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 		$sql .= " WHERE d.fk_contrat = ".$this->id;
 		$sql .= " ORDER by d.rowid ASC";
@@ -857,6 +858,7 @@ class Contrat extends CommonObject
 				$line->total_ttc		= $objp->total_ttc;
 				$line->fk_product = (($objp->fk_product > 0) ? $objp->fk_product : 0);
 				$line->info_bits		= $objp->info_bits;
+				$line->type				= $objp->type;
 
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
@@ -869,7 +871,8 @@ class Contrat extends CommonObject
 
 				$line->ref = $objp->product_ref; // deprecated
 				$line->product_ref = $objp->product_ref; // Product Ref
-				$line->product_desc		= $objp->product_desc; // Product Description
+				$line->product_type		= $objp->product_type;  // Product Type
+				$line->product_desc		= $objp->product_desc;  // Product Description
 				$line->product_label	= $objp->product_label; // Product Label
 
 				$line->description = $objp->description;
@@ -2028,7 +2031,7 @@ class Contrat extends CommonObject
 		$sql .= " c.tms as date_modification,";
 		$sql .= " fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -2604,6 +2607,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
+	public $product_type;			// 0 for product, 1 for service
 	public $product_ref;
 	public $product_label;
 

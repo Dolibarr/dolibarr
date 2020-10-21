@@ -573,13 +573,13 @@ class Orders extends DolibarrApi
 		 $contacts = $this->commande->liste_contact();
 
 		foreach ($contacts as $contact) {
-            if ($contact['id'] == $contactid && $contact['code'] == $type) {
-		        $result = $this->commande->delete_contact($contact['rowid']);
+			if ($contact['id'] == $contactid && $contact['code'] == $type) {
+				$result = $this->commande->delete_contact($contact['rowid']);
 
-		        if (!$result) {
-                    throw new RestException(500, 'Error when deleted the contact');
-                }
-		    }
+				if (!$result) {
+					throw new RestException(500, 'Error when deleted the contact');
+				}
+			}
 		}
 
 		return array(

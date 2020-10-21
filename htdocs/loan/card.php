@@ -52,6 +52,8 @@ $object = new Loan($db);
 
 $hookmanager->initHooks(array('loancard', 'globalcard'));
 
+$error = 0;
+
 
 /*
  * Actions
@@ -62,7 +64,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes')
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->loan->write)
 	{
 		$object->fetch($id);
 		$result = $object->set_paid($user);
@@ -75,7 +77,7 @@ if (empty($reshook))
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes')
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->write)
 	{
 		$object->fetch($id);
 		$result = $object->delete($user);
@@ -146,12 +148,12 @@ if (empty($reshook))
 				if ($id <= 0)
 				{
 					$error++;
-					setEventMessages($object->db->lastqueryerror, $object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'create';
 				}
 			}
 		} else {
-			header("Location: index.php");
+			header("Location: list.php");
 			exit();
 		}
 	}

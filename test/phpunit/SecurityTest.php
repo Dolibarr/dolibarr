@@ -295,6 +295,46 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testDolStringOnlyTheseHtmlTags
+     *
+     * @return number
+     */
+    public function testDolHTMLEntityDecode()
+    {
+    	$stringtotest = 'a &colon; b &quot; c &#039; d &apos; e &eacute;';
+    	$decodedstring = dol_html_entity_decode($stringtotest, ENT_QUOTES);
+    	$this->assertEquals('a &colon; b " c \' d &apos; e é', $decodedstring, 'Function did not sanitize correclty');
+
+    	$stringtotest = 'a &colon; b &quot; c &#039; d &apos; e &eacute;';
+    	$decodedstring = dol_html_entity_decode($stringtotest, ENT_QUOTES|ENT_HTML5);
+    	$this->assertEquals('a : b " c \' d \' e é', $decodedstring, 'Function did not sanitize correclty');
+
+    	return 0;
+    }
+
+    /**
+     * testDolStringOnlyTheseHtmlTags
+     *
+     * @return number
+     */
+    public function testDolStringOnlyTheseHtmlTags()
+    {
+    	$stringtotest = '<a href="javascript:aaa">bbbڴ';
+    	$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 1');
+
+        $stringtotest = '<a href="java'.chr(0).'script:aaa">bbbڴ';
+        $decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 2');
+
+        $stringtotest = '<a href="javascript&colon;aaa">bbbڴ';
+        $decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
+        $this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
+
+        return 0;
+    }
+
+    /**
      * testGetRandomPassword
      *
      * @return number

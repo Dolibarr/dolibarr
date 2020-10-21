@@ -632,7 +632,7 @@ form {
     padding:0px;
     margin:0px;
 }
-div.float
+div.float, span.floatleft
 {
     float:<?php print $left; ?>;
 }
@@ -795,7 +795,7 @@ textarea.centpercent {
 .longmessagecut {
     max-height: 250px;
     max-width: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .text-warning{
@@ -1269,6 +1269,15 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+.widthcentpercentminusx {
+	width: calc(100% - 50px) !important;
+	display: inline-block;
+}
+.widthcentpercentminusxx {
+	width: calc(100% - 70px) !important;
+	display: inline-block;
+}
+
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -1279,7 +1288,9 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
-	.clearbothonsmartphone { clear: both; display: block; }
+	div.divphotoref {
+	    padding-right: 10px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -3690,6 +3701,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 @media only screen and (max-width: 767px)
 {
+	.tabBar .arearef .pagination.paginationref {
+	    max-width: calc(50%);
+	}
+
+	.clearbothonsmartphone {
+	    clear: both;
+	    display: block !important;
+	}
+
 	div.tabs {
 		padding-left: 0 !important;
 		margin-left: 0 !important;
@@ -4885,9 +4905,14 @@ div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth']) ?max($_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
-.gtaskname div, .gtaskname {
+div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
+    line-height: 2;
+}
+
+.gtaskname div, .gtaskname, .gstartdate div, .gstartdate, .genddate div, .genddate {
 	font-size: unset !important;
 }
+
 div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
 	font-size: unset !important;
 	font-weight: normal !important;
@@ -5326,6 +5351,9 @@ a span.select2-chosen
 }
 .select2-results {
 	max-height:	400px;
+}
+.select2-results__option {
+	word-break: break-word;
 }
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
@@ -6451,11 +6479,11 @@ if (is_object($db)) $db->close();
 ::-webkit-scrollbar {
 	width: 12px;
 }
-::-webkit-scrollbar-button {
-	background: #aaa;
-}
+/*::-webkit-scrollbar-button {
+	background: #bbb;
+}*/
 ::-webkit-scrollbar-track-piece {
-	background: #fff;
+	background: #f4f4f4;
 }
 ::-webkit-scrollbar-thumb {
 	background: #ddd;

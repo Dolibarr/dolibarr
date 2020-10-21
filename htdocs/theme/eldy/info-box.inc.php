@@ -315,14 +315,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .infobox-action{
 	color: #b06080 !important;
 }
-.infobox-propal,
-.infobox-facture,
-.infobox-commande{
+.infobox-propal:not(.pictotitle),
+.infobox-facture:not(.pictotitle),
+.infobox-commande:not(.pictotitle) {
 	color: #65955d !important;
 }
-.infobox-supplier_proposal,
-.infobox-invoice_supplier,
-.infobox-order_supplier{
+.infobox-supplier_proposal:not(.pictotitle),
+.infobox-invoice_supplier:not(.pictotitle),
+.infobox-order_supplier:not(.pictotitle){
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{

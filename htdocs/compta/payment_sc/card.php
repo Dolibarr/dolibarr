@@ -72,46 +72,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	}
 }
 
-// Validate social contribution
-/*
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
-{
-	$db->begin();
-
-	$result=$object->valide();
-
-	if ($result > 0)
-	{
-		$db->commit();
-
-		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
-
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$object->id);
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
-	}
-}
-*/
-
 
 /*
  * View
@@ -146,19 +106,6 @@ if ($action == 'delete')
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-/*
- * Validation confirmation of payment
- */
-/*
-if ($action == 'valide')
-{
-	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
-}
-*/
-
-
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/payments.php">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
@@ -184,7 +131,7 @@ print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("Pa
 // Numero
 print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
 
-// Montant
+// Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
@@ -288,7 +235,7 @@ if ($resql)
 
 
 /*
- * Boutons Actions
+ * Actions Buttons
  */
 print '<div class="tabsAction">';
 

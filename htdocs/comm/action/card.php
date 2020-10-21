@@ -71,8 +71,6 @@ $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
 $modelmail = GETPOST('actioncommsendmodel_mail', 'int');
 
-//var_dump($_POST); exit;
-
 $datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
 $datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
 
@@ -111,8 +109,6 @@ if ($id > 0 && $action != 'add') {
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-//var_dump($_POST);
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
@@ -144,7 +140,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 	{
 		if ($val['id'] == $idtoremove || $val['id'] == -1) unset($tmpassigneduserids[$key]);
 	}
-	//var_dump($_POST['removedassigned']);exit;
+
 	$_SESSION['assignedtouser'] = json_encode($tmpassigneduserids);
 	$donotclearsession = 1;
 	if ($action == 'add') $action = 'create';
@@ -393,7 +389,7 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-                //Create reminders
+				// Create reminders
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
@@ -1068,49 +1064,48 @@ if ($action == 'create')
     // Location
     if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     {
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth300" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
     }
 
 	// Assigned to
 	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$listofuserid = array();
+	$listofcontactid = array();
+	$listofotherid = array();
+
 	if (empty($donotclearsession))
 	{
 		$assignedtouser = GETPOST("assignedtouser") ?GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
 		if ($assignedtouser) $listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>$object->transparency); // Owner first
-		$listofuserid[$user->id]['transparency'] = GETPOSTISSET('transparency') ?GETPOST('transparency', 'alpha') : 1; // 1 by default at first init
+		//$listofuserid[$user->id] = array('id'=>$user->id, 'mandatory'=>0, 'transparency'=>(GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1)); // 1 by default at first init
+		$listofuserid[$assignedtouser]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1); // 1 by default at first init
 		$_SESSION['assignedtouser'] = json_encode($listofuserid);
 	} else {
 		if (!empty($_SESSION['assignedtouser']))
 		{
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
 		}
-		$listofuserid[$user->id]['transparency'] = GETPOSTISSET('transparency') ?GETPOST('transparency', 'alpha') : 0; // 0 by default when refreshing
+		$firstelem = reset($listofuserid);
+		if (isset($listofuserid[$firstelem['id']])) $listofuserid[$firstelem['id']]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 0); // 0 by default when refreshing
 	}
 	print '<div class="assignedtouser">';
 	print $form->select_dolusers_forevent(($action == 'create' ? 'add' : 'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0', 1, $listofuserid, $listofcontactid, $listofotherid);
 	print '</div>';
-	/*if (in_array($user->id,array_keys($listofuserid)))
-	{
-		print '<div class="myavailability">';
-		print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked':'').'> '.$langs->trans("Busy");
-		print '</div>';
-	}*/
 	print '</td></tr>';
 
 	// Done by
 	if (!empty($conf->global->AGENDA_ENABLE_DONEBY))
 	{
 		print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $form->select_dolusers(GETPOST("doneby") ?GETPOST("doneby") : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
+		print $form->select_dolusers(GETPOSTISSET("doneby") ? GETPOST("doneby", 'int') : (!empty($object->userdoneid) && $percent == 100 ? $object->userdoneid : 0), 'doneby', 1);
 		print '</td></tr>';
 	}
 
 	if ($conf->categorie->enabled) {
 		// Categories
-		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'minwidth300 quatrevingtpercent', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -1126,8 +1121,7 @@ if ($action == 'create')
 	{
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
-		if (GETPOST('socid', 'int') > 0)
-		{
+		if (GETPOST('socid', 'int') > 0) {
 			$societe = new Societe($db);
 			$societe->fetch(GETPOST('socid', 'int'));
 			print $societe->getNomUrl(1);
@@ -1148,7 +1142,8 @@ if ($action == 'create')
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 		$preselectedids = GETPOST('socpeopleassigned', 'array');
 		if (GETPOST('contactid', 'int')) $preselectedids[GETPOST('contactid', 'int')] = GETPOST('contactid', 'int');
-		print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
+		print img_picto('', 'contact', 'class="paddingrightonly"');
+		print $form->selectcontacts(GETPOST('socid', 'int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
@@ -1161,7 +1156,7 @@ if ($action == 'create')
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container" >';
 		print img_picto('', 'project', 'class="paddingrightonly"');
-		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
@@ -1171,10 +1166,11 @@ if ($action == 'create')
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 	               $("#projectid").change(function () {
-                        var url = "'.$url.'&projectid="+$("#projectid").val();
+                        var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#projectid").val()+"&projectid="+$("#projectid").val();
+						console.log("Call url to get new list of tasks: "+url);
                         $.get(url, function(data) {
-                            console.log($( data ).find("#taskid").html());
-                            if (data) $("#taskid").html( $( data ).find("#taskid").html() ).select2();
+                            console.log(data);
+                            if (data) $("#taskid").html(data).select2();
                         })
                   });
                })';
@@ -1186,7 +1182,7 @@ if ($action == 'create')
 		print img_picto('', 'projecttask', 'class="paddingrightonly"');
 		$projectsListId = false;
 		if (!empty($projectid)) { $projectsListId = $projectid; }
-		$tid = GETPOST("projecttaskid") ?GETPOST("projecttaskid") : '';
+		$tid = GETPOST("projecttaskid") ? GETPOST("projecttaskid") : '';
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1197,10 +1193,10 @@ if ($action == 'create')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("LinkedObject").'</td>';
 		print '<td colspan="3">'.dolGetElementUrl($originid, $origin, 1).'</td></tr>';
-		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
-		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
-		print '<input type="hidden" name="originid" size="10" value="'.GETPOST('originid').'">';
-		print '<input type="hidden" name="origin" size="10" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="fk_element" value="'.GETPOST('originid', 'int').'">';
+		print '<input type="hidden" name="elementtype" value="'.GETPOST('origin').'">';
+		print '<input type="hidden" name="originid" value="'.GETPOST('originid', 'int').'">';
+		print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	}
 
 	$reg = array();
@@ -1350,7 +1346,7 @@ if ($id > 0)
 		$object->contact_id   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
-		$object_private = GETPOST("note", 'restricthtml');
+		$object->note_private = GETPOST("note", 'restricthtml');
 	}
 
 	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
@@ -1954,8 +1950,6 @@ if ($id > 0)
 		/*
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
 		{
-			//var_dump($object->userassigned);
-			//var_dump($listofuserid);
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 			print '</div>';

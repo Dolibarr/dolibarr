@@ -47,7 +47,7 @@ ALTER TABLE llx_bom_bom_extrafields ADD INDEX idx_bom_bom_extrafields_fk_object 
 create table llx_mrp_mo_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
@@ -103,9 +103,46 @@ ALTER TABLE llx_user DROP COLUMN whatsapp;
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 
+-- Intracomm Report
+CREATE TABLE llx_c_transport_mode (
+  rowid     integer AUTO_INCREMENT PRIMARY KEY,
+  entity    integer	DEFAULT 1 NOT NULL,	-- multi company id
+  code      varchar(3) NOT NULL,
+  label     varchar(255) NOT NULL,
+  active    tinyint DEFAULT 1  NOT NULL
+) ENGINE=innodb;
+
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('ROU', 'Transport par route', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('AIR', 'Transport par air', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('POS', 'Envois postaux', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('OLE', 'Installations de transport fixe (oléoduc)', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('NAV', 'Transport par navigation intérieure', 1);
+INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('PRO', 'Propulsion propre', 1);
+
+ALTER TABLE llx_facture ADD COLUMN fk_transport_mode integer after location_incoterms;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_transport_mode integer after location_incoterms;
+
+ALTER TABLE llx_societe ADD COLUMN transport_mode tinyint after cond_reglement;
+ALTER TABLE llx_societe ADD COLUMN transport_mode_supplier tinyint after cond_reglement_supplier;
+
+CREATE TABLE llx_intracommreport
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+
+  ref				varchar(30)        NOT NULL,			-- report reference number
+  entity			integer  DEFAULT 1 NOT NULL,			-- multi company id
+  type_declaration	varchar(32),
+  periods			varchar(32),
+  mode				varchar(32),
+  content_xml		text,
+  type_export		varchar(10),
+  datec             datetime,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+
 ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
-
-
 
 CREATE TABLE llx_recruitment_recruitmentjobposition(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -124,7 +161,7 @@ CREATE TABLE llx_recruitment_recruitmentjobposition(
 	note_public text,
 	note_private text,
 	date_creation datetime NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	last_main_doc varchar(255),
@@ -150,7 +187,7 @@ ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN remuneration_sugge
 create table llx_recruitment_recruitmentjobposition_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -169,7 +206,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	note_public text,
 	note_private text,
 	date_creation datetime NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14),
@@ -200,7 +237,7 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_rec
 create table llx_recruitment_recruitmentcandidature_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -275,6 +312,7 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitme
 
 ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
+
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float;
 
@@ -290,8 +328,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
 
-ALTER TABLE llx_ecm_directories CHANGE COLUMN date_m tms timestamp;
-ALTER TABLE llx_ecm_files CHANGE COLUMN date_m tms timestamp;
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_m tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_m tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'recruitment','recruitmentcandidature_send','',0,null,null,'(AnswerCandidature)'                    ,100,'$conf->recruitment->enabled',1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourCandidature)__',       '__(Hello)__ __CANDIDATE_FULLNAME__,<br><br>\n\n__(YourCandidatureAnswer)__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
 
@@ -324,6 +362,8 @@ ALTER TABLE llx_facturedet ADD COLUMN ref_ext varchar(255) AFTER multicurrency_t
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL;
 ALTER TABLE llx_c_ticket_category ADD COLUMN force_severity varchar(32) NULL;
 
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_creat integer NULL;
+
 ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset double DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_paiement ADD COLUMN ref_ext varchar(255) AFTER ref;
@@ -337,7 +377,7 @@ ALTER TABLE llx_menu MODIFY COLUMN enabled text;
 CREATE TABLE llx_ecm_files_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                             -- import key
 ) ENGINE=innodb;
@@ -347,7 +387,7 @@ ALTER TABLE llx_ecm_files_extrafields ADD INDEX idx_ecm_files_extrafields (fk_ob
 CREATE TABLE llx_ecm_directories_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                             -- import key
 ) ENGINE=innodb;
@@ -355,3 +395,29 @@ CREATE TABLE llx_ecm_directories_extrafields
 ALTER TABLE llx_ecm_directories_extrafields ADD INDEX idx_ecm_directories_extrafields (fk_object);
 ALTER TABLE llx_website_page ADD COLUMN object_type varchar(255);
 ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
+
+DELETE FROM llx_const WHERE name in ('MAIN_INCLUDE_ZERO_VAT_IN_REPORTS');
+
+UPDATE llx_projet_task_time SET tms = null WHERE tms = 0;
+ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
+
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
+DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
+
+CREATE TABLE llx_c_product_nature (
+      rowid integer AUTO_INCREMENT PRIMARY KEY,
+      code tinyint NOT NULL,
+      label varchar(100),
+      active tinyint DEFAULT 1  NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code, active);
+
+INSERT INTO llx_c_product_nature (code, label, active) VALUES (0, 'RowMaterial', 1);
+INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1);
+
+ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
+

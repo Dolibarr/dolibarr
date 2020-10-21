@@ -71,42 +71,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	}
 }
 
-// Create payment
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->write)
-{
-	$db->begin();
-
-	$result = $payment->valide();
-
-	if ($result > 0)
-	{
-		$db->commit();
-
-		$factures = array(); // TODO Get all id of invoices linked to this payment
-		foreach ($factures as $id)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($id);
-
-			$outputlangs = $langs;
-			if (!empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->model_pdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$payment->id);
-		exit;
-	} else {
-		setEventMessages($payment->error, $payment->errors, 'errors');
-		$db->rollback();
-	}
-}
-
 
 /*
  * View
@@ -124,7 +88,7 @@ $head[$h][1] = $langs->trans("PaymentLoan");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), 0, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'payment');
 
 /*
  * Confirm deletion of the payment
@@ -134,23 +98,16 @@ if ($action == 'delete')
 	print $form->formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-/*
- * Confirm validation of the payment
- */
-if ($action == 'valide')
-{
-	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
-}
+$linkback = '';
+$morehtmlref = '';
+$morehtmlright = '';
 
+dol_banner_tab($payment, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
-
-// Ref
-print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
-print '<td>';
-print $form->showrefnav($payment, 'id', '', 1, 'rowid', 'id');
-print '</td></tr>';
 
 // Date
 print '<tr><td>'.$langs->trans('Date').'</td><td>'.dol_print_date($payment->datep, 'day').'</td></tr>';
@@ -187,6 +144,8 @@ if (!empty($conf->banque->enabled))
 }
 
 print '</table>';
+
+print '</div>';
 
 
 /*
@@ -262,20 +221,8 @@ print '</div>';
 /*
  * Actions buttons
  */
-print '<div class="tabsAction">';
 
-/*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->socid == 0 && $payment->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->rights->facture->paiement)
-		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
-}
-*/
+print '<div class="tabsAction">';
 
 if (empty($action) && !empty($user->rights->loan->delete))
 {

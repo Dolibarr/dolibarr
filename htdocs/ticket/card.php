@@ -170,8 +170,12 @@ if (empty($reshook)) {
 			$object->message = GETPOST("message", 'restricthtml');
 
 			$object->type_code = GETPOST("type_code", 'alpha');
+			$object->type_label = $langs->trans($langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label'));
 			$object->category_code = GETPOST("category_code", 'alpha');
+			$object->category_label = $langs->trans($langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label'));
 			$object->severity_code = GETPOST("severity_code", 'alpha');
+			$object->severity_label = $langs->trans($langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label'));
+			$object->email_from = $user->email;
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
@@ -478,15 +482,18 @@ if (empty($reshook)) {
 			}
 
 			if ($action == 'setsubject' && empty($object->subject)) {
-				$mesg .= ($mesg ? '<br>' : '').$langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			}
 
-			if (!$mesg) {
+			if (!$error) {
 				if ($object->update($user) >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?track_id=".$object->track_id);
 					exit;
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
-				$mesg = $object->error;
 			}
 		}
 	}
@@ -503,6 +510,9 @@ if (empty($reshook)) {
 					$url = 'card.php?action=view&track_id='.$object->track_id;
 					header("Location: ".$url);
 					exit();
+				} else {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -539,6 +549,9 @@ if (empty($reshook)) {
 				$log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
 				setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -556,6 +569,9 @@ if (empty($reshook)) {
 				$url = 'card.php?action=view&track_id='.$object->track_id;
 				header("Location: ".$url);
 				exit();
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	}
@@ -593,6 +609,9 @@ if (empty($reshook)) {
 			$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
 
 			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		$action = 'view';
 	}

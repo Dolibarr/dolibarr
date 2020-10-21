@@ -20,7 +20,7 @@
 /**
  * \file 		htdocs/accountancy/admin/subaccount.php
  * \ingroup     Accountancy (Double entries)
- * \brief		List accounting sub-account
+ * \brief		List of accounting sub-account (auxiliary accounts)
  */
 
 require '../../main.inc.php';
@@ -59,10 +59,10 @@ if (!$sortfield) $sortfield = "label";
 if (!$sortorder) $sortorder = "ASC";
 
 $arrayfields = array(
-    'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-    'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-    'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-    'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
+	'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
+	'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
 );
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) unset($arrayfields['reconcilable']);
@@ -80,17 +80,17 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (!empty($cancel)) $action = '';
+	if (!empty($cancel)) $action = '';
 
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-    {
-    	$search_subaccount = "";
-    	$search_label = "";
-    	$search_type = "";
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+	{
+		$search_subaccount = "";
+		$search_label = "";
+		$search_type = "";
 		$search_array_options = array();
-    }
+	}
 }
 
 
@@ -100,13 +100,15 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ReportThirdParty"));
+$title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
+
+llxHeader('', $title);
 
 // Customer
 $sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '0' as type, sa.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
-$sql .= ' WHERE sa.entity IN ('.getEntity('societe').')';
-$sql .= ' AND sa.code_compta <> ""';
+$sql .= " WHERE sa.entity IN (".getEntity('societe').")";
+$sql .= " AND sa.code_compta <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
@@ -142,13 +144,13 @@ if (strlen(trim($search_subaccount))) {
 	}
 }
 if (strlen(trim($search_label)))				$sql .= natural_search("sa.nom", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$search_type."'";
+if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 
 // Supplier
 $sql .= " UNION ";
 $sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '1' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
-$sql .= ' WHERE sa.entity IN ('.getEntity('societe').')';
-$sql .= ' AND sa.code_compta_fournisseur <> ""';
+$sql .= " WHERE sa.entity IN (".getEntity('societe').")";
+$sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
@@ -184,13 +186,13 @@ if (strlen(trim($search_subaccount))) {
 	}
 }
 if (strlen(trim($search_label)))				$sql .= natural_search("sa.nom", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$search_type."'";
+if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 
 // User
 $sql .= " UNION ";
 $sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '2' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
-$sql .= ' WHERE u.entity IN ('.getEntity('user').')';
-$sql .= ' AND u.accountancy_code <> ""';
+$sql .= " WHERE u.entity IN (".getEntity('user').")";
+$sql .= " AND u.accountancy_code <> ''";
 //print $sql;
 if (strlen(trim($search_subaccount))) {
 	$lengthpaddingaccount = 0;
@@ -226,7 +228,7 @@ if (strlen(trim($search_subaccount))) {
 	}
 }
 if (strlen(trim($search_label)))				$sql .= natural_search("u.lastname", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$search_type."'";
+if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -268,18 +270,18 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans('ReportThirdParty'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
 	print '<div class="warning">'.$langs->trans("WarningCreateSubAccounts").'</div>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-    $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-    $moreforfilter = '';
-    $massactionbutton = '';
+	$moreforfilter = '';
+	$massactionbutton = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Line for search fields
 	print '<tr class="liste_titre_filter">';
@@ -293,7 +295,7 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['subaccount']['checked']))	print_liste_field_titre($arrayfields['subaccount']['label'], $_SERVER["PHP_SELF"], "subaccount", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['label']['checked']))		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], "label", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['type']['checked']))		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -335,17 +337,17 @@ if ($resql)
 			// Customer
 			if ($obj->type == 0)
 			{
-				$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
+				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
 			}
 			// Supplier
 			elseif ($obj->type == 1)
 			{
-				$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
+				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 			}
 			// User
 			elseif ($obj->type == 2)
 			{
-				$s .= '<a class="user-back" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->id.'">'.$langs->trans("Employee").'</a>';
+				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->id.'">'.$langs->trans("Employee").'</a>';
 			}
 			print $s;
 			print '</td>';

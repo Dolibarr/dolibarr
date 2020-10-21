@@ -213,11 +213,11 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td class="nowrap">';
+				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
 				print $facturestatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td class="nowrap">';
-				print $companystatic->getNomUrl(1, 'customer', 16);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $companystatic->getNomUrl(1, 'customer');
 				print '</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -305,11 +305,11 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td class="nowrap">';
-				print $facturesupplierstatic->getNomUrl(1, '', 16);
+				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
+				print $facturesupplierstatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td>';
-				print $companystatic->getNomUrl(1, 'supplier', 16);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $companystatic->getNomUrl(1, 'supplier');
 				print '</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -550,11 +550,11 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$thirdpartystatic->code_compta = '';
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven nowraponall"><td>';
+				print '<tr class="oddeven nowraponall tdoverflowmax100"><td>';
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td>';
-				print $thirdpartystatic->getNomUrl(1, 'supplier', 44);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $thirdpartystatic->getNomUrl(1, 'supplier');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -647,7 +647,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				$label = $donationstatic->getFullName($langs);
 				if ($objp->societe) $label .= ($label ? ' - ' : '').$objp->societe;
 
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven tdoverflowmax100">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
 				print '<td class="nowrap right">'.price($objp->amount).'</td>';
@@ -734,7 +734,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$chargestatic->paye = $obj->paye;
 
 					print '<tr class="oddeven">';
-					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
+					print '<td class="nowraponall">'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="nowrap right">'.price($obj->amount).'</td>';
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
@@ -875,8 +875,8 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
 				print '</td>';
 
-				print '<td class="left">';
-                print $societestatic->getNomUrl(1, 'customer', 44);
+				print '<td class="nowrap tdoverflowmax100">';
+                print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -1022,8 +1022,8 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td></tr></table>';
 
 				print '</td>';
-				print '<td class="left">';
-				print $societestatic->getNomUrl(1, 'customer', 44);
+				print '<td class="nowrap tdoverflowmax100">';
+				print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
@@ -1040,8 +1040,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			}
 
 			if ($othernb) {
+				$colspan = 6;
+				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap" colspan="5">';
+				print '<td class="nowrap" colspan="'.$colspan.'">';
 				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
 				print '</td>';
 				print "</tr>\n";
@@ -1157,10 +1159,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$societestatic->code_compta = $obj->code_compta;
 				$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-				print '<tr class="oddeven"><td>';
+				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
-				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
+				print '<td class="nowrap tdoverflowmax100">'.$societestatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
@@ -1174,8 +1176,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			}
 
 			if ($othernb) {
+				$colspan = 6;
+				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap" colspan="5">';
+				print '<td class="nowrap" colspan="'.$colspan.'">';
 				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
 				print '</td>';
 				print "</tr>\n";

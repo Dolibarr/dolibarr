@@ -239,7 +239,7 @@ $linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt 
 $linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly btnTitleSelected'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
+print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'projecttask');
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
@@ -262,14 +262,14 @@ if (count($tasksarray) > 0)
 	$tasks = array();
 	$task_dependencies = array();
 	$taskcursor = 0;
-	foreach ($tasksarray as $key => $val)	// Task array are sorted by "project, position, dateo"
+	foreach ($tasksarray as $key => $val)	// Task array are sorted by "project, position, date"
 	{
 		$task->fetch($val->id, '');
 
 		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project); // If start with -, id is a project id
 
 		$tasks[$taskcursor]['task_id'] = $val->id;
-		$tasks[$taskcursor]['task_alternate_id'] = ($taskcursor + 1); // An id that has same order than position (requird by ganttchart)
+		$tasks[$taskcursor]['task_alternate_id'] = ($taskcursor + 1); // An id that has same order than position (required by ganttchart)
 		$tasks[$taskcursor]['task_project_id'] = $val->fk_project;
 		$tasks[$taskcursor]['task_parent'] = $idparent;
 

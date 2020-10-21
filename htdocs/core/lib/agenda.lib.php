@@ -157,7 +157,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
  */
 function show_array_actions_to_do($max = 5)
 {
-	global $langs, $conf, $user, $db, $bc, $socid;
+	global $langs, $conf, $user, $db, $socid;
 
 	$now = dol_now();
 
@@ -171,7 +171,7 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE a.entity = ".$conf->entity;
+	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
     $sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
@@ -223,7 +223,7 @@ function show_array_actions_to_do($max = 5)
             $datep2 = $db->jdate($obj->dp2);
 
             // Date
-			print '<td width="100" class="right">'.dol_print_date($datep, 'day').'&nbsp;';
+			print '<td width="100" class="right tddate">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late = 0;
 			if ($obj->percent == 0 && $datep && $datep < time()) $late = 1;
 			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < time()) $late = 1;
@@ -256,7 +256,7 @@ function show_array_actions_to_do($max = 5)
  */
 function show_array_last_actions_done($max = 5)
 {
-	global $langs, $conf, $user, $db, $bc, $socid;
+	global $langs, $conf, $user, $db, $socid;
 
 	$now = dol_now();
 
@@ -267,7 +267,7 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE a.entity = ".$conf->entity;
+	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
     $sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
     if ($socid) $sql .= " AND s.rowid = ".$socid;
@@ -315,11 +315,11 @@ function show_array_last_actions_done($max = 5)
 			print '</td>';
 
 			// Date
-			print '<td width="100" class="right">'.dol_print_date($db->jdate($obj->da2), 'day');
+			print '<td width="100" class="right tddate">'.dol_print_date($db->jdate($obj->da2), 'day');
 			print "</td>";
 
-			// Statut
-			print "<td class=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+			// Status
+			print '<td class="right" width="14">'.$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;

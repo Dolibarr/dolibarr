@@ -42,7 +42,7 @@ switch ($action)
 	    $redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
-	case 'valide_achat':
+	case 'validate_sell':
 	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 
 		$company = new Societe($db);
@@ -112,7 +112,7 @@ switch ($action)
 		break;
 
 
-	case 'valide_facture':
+	case 'validate_invoice':
 		$now = dol_now();
 
 		// Recuperation de la date et de l'heure
@@ -344,7 +344,7 @@ switch ($action)
 		}
 		break;
 
-		// End of case: valide_facture
+		// End of case: validate_invoice
 }
 
 unset($_SESSION['serObjFacturation']);

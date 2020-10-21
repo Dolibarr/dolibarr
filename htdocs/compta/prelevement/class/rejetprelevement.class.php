@@ -168,7 +168,7 @@ class RejetPrelevement
 				}
 
 				// Payment validation
-				if ($pai->valide() < 0)
+				if ($pai->validate($user) < 0)
 				{
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");

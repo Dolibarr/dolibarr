@@ -590,21 +590,19 @@ $showdatefilter = 0;
 if (!$showdatefilter)
 {
 	print '<div class="center centpercent">';
-    print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
-	print '<table class="center"><tr>';
-	print '<td>'.$langs->trans("From").' ';
-	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0);
-	print '</td>';
-	print '<td>'.$langs->trans("to").' ';
-	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0);
-	print '</td>';
-	print '<td>';
+	print '<div class="inline-block">';
+	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '</div>';
+	print '<div class="inline-block">';
+	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print '</div>';
+	print '<div class="inline-block">';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
-	print '</td>';
-	print '</tr></table>';
+	print '</div>';
 	print '</form>';
 	print '</div>';
 
@@ -729,7 +727,7 @@ foreach ($listofreferent as $key => $value)
                                     || !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
                                     || empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
                                 ) {
-                                    $total_ht_by_line = -$loanSchedule->amount_capital;
+                                    $total_ht_by_line -= $loanSchedule->amount_capital;
                                 }
                             }
                         }

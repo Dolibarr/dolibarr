@@ -674,7 +674,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->table_element_line))
 	{
     	// Show object lines
-    	//$result = $object->getLinesArray();
     	$object->fetchLines();
 
     	print '<div class="fichecenter">';
@@ -721,6 +720,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '</tr>';
     	}
 
+    	// Lines to consume
+
     	if (!empty($object->lines))
     	{
     		$nblinetoconsume = 0;
@@ -745,7 +746,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    		}
 
     	    		print '<tr>';
-    	    		print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
+    	    		print '<td>'.$tmpproduct->getNomUrl(1);
+    	    		print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
+    	    		print '</td>';
     	    		print '<td class="right nowraponall">';
     	    		$help = '';
     	    		if ($line->qty_frozen) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
@@ -850,6 +853,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
    	    print '</table>';
     	print '</div>';
 
+    	// Lines to produce
+
 		print '</div>';
     	print '<div class="fichehalfright">';
     	print '<div class="clearboth"></div>';
@@ -906,7 +911,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyproduced.'">';
 
     				print '<tr>';
-    				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
+    				print '<td>'.$tmpproduct->getNomUrl(1);
+    				print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
+    				print '</td>';
     				print '<td class="right">'.$line->qty.'</td>';
     				print '<td class="right nowraponall">';
     				if ($alreadyproduced) {

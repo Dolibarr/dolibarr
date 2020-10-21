@@ -48,7 +48,10 @@ $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
 
-$search_ref   = GETPOST('search_ref', 'alpha');
+$search_ref         = GETPOST('search_ref', 'alphanohtml');
+$search_employee    = GETPOST('search_employee', 'int');
+$search_type        = GETPOST('search_type', 'int');
+$search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
@@ -82,6 +85,9 @@ if (empty($reshook))
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $search_ref = '';
+        $search_employee = '';
+        $search_type = '';
+        $search_description = '';
         $toselect = '';
         $search_array_options = array();
     }
@@ -135,7 +141,10 @@ $sql.= " WHERE cp.rowid > 0";
 $sql.= " AND cp.statut = 3"; // 3 = Approved
 $sql.= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
 
-if ($search_ref != '') $sql.= natural_search('cp.ref', $search_ref, 0);
+if (!empty($search_ref))            $sql .= natural_search('cp.ref', $search_ref);
+if (!empty($search_employee))       $sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'";
+if (!empty($search_type))           $sql .= ' AND cp.fk_type IN ('.$db->escape($search_type).')';
+if (!empty($search_description))    $sql.= natural_search('cp.description', $search_description);
 
 $sql.= $db->order($sortfield, $sortorder);
 
@@ -149,9 +158,12 @@ if (empty($resql))
 $num = $db->num_rows($resql);
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.= '&limit='.urlencode($limit);
-if ($search_ref) $param = '&search_ref='.urlencode($search_ref);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"])   $param.= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit)                     $param .= '&limit='.urlencode($limit);
+if (!empty($search_ref))                                            $param .= '&search_ref='.urlencode($search_ref);
+if (!empty($search_employee))                                       $param .= '&search_employee='.urlencode($search_employee);
+if (!empty($search_type))                                           $param .= '&search_type='.urlencode($search_type);
+if (!empty($search_description))                                    $param .= '&search_description='.urlencode($search_description);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -184,16 +196,50 @@ print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-if (!empty($arrayfields['cp.ref']['checked'])) print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.$search_ref.'"></td>';
-if (!empty($arrayfields['cp.fk_user']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['ct.label']['checked'])) print '<td class="liste_titre"></td>';
+
+// Filter: Ref
+if (!empty($arrayfields['cp.ref']['checked'])) {
+    print '<td class="liste_titre">';
+    print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+    print '</td>';
+}
+
+// Filter: Employee
+if (!empty($arrayfields['cp.fk_user']['checked'])) {
+    print '<td class="liste_titre">';
+    print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+    print '</td>';
+}
+
+// Filter: Type
+if (!empty($arrayfields['ct.label']['checked'])) {
+    $typeleaves = $holidaystatic->getTypes(1, -1);
+    $arraytypeleaves = array();
+    foreach ($typeleaves as $key => $val)
+    {
+        $labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
+        $arraytypeleaves[$val['rowid']] = $labeltoshow;
+    }
+
+    print '<td class="liste_titre">';
+    print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+    print '</td>';
+}
+
 if (!empty($arrayfields['cp.date_debut']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['cp.date_fin']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['used_days']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['date_start_month']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['date_end_month']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['used_days_month']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['cp.description']['checked'])) print '<td class="liste_titre"></td>';
+
+// Filter: Description
+if (!empty($arrayfields['cp.description']['checked'])) {
+    print '<td class="liste_titre">';
+    print '<input type="text" class="maxwidth100" name="search_description" value="'.$search_description.'">';
+    print '</td>';
+}
+
 // Action column
 print '<td class="liste_titre maxwidthsearch">';
 $searchpicto = $form->showFilterButtons();

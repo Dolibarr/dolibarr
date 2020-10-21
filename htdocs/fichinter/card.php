@@ -202,16 +202,16 @@ if (empty($reshook))
 		}
 	} elseif ($action == 'add' && $user->rights->ficheinter->creer)
 	{
-	    $object->socid = $socid;
-	    $object->duration = GETPOST('duration', 'int');
-	    $object->fk_project		= GETPOST('projectid', 'int');
-	    $object->fk_contrat		= GETPOST('contratid', 'int');
-	    $object->author = $user->id;
-	    $object->description	= GETPOST('description', 'restricthtml');
-	    $object->ref = $ref;
-	    $object->model_pdf = GETPOST('model', 'alpha');
-	    $object->note_private = GETPOST('note_private', 'restricthtml');
-	    $object->note_public = GETPOST('note_public', 'restricthtml');
+		$object->socid = $socid;
+		$object->duration = GETPOST('duration', 'int');
+		$object->fk_project		= GETPOST('projectid', 'int');
+		$object->fk_contrat		= GETPOST('contratid', 'int');
+		$object->author = $user->id;
+		$object->description	= GETPOST('description', 'restricthtml');
+		$object->ref = $ref;
+		$object->model_pdf = GETPOST('model', 'alpha');
+		$object->note_private = GETPOST('note_private', 'restricthtml');
+		$object->note_public = GETPOST('note_public', 'restricthtml');
 
 		if ($object->socid > 0)
 		{
@@ -251,7 +251,7 @@ if (empty($reshook))
 				$extrafields = new ExtraFields($db);
 				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
-		        $object->array_options = $array_options;
+				$object->array_options = $array_options;
 
 				$id = $object->create($user);
 
@@ -356,12 +356,12 @@ if (empty($reshook))
 
 									$result = $object->addline(
 										$user,
-				                        $id,
-				                        $desc,
-							            $date_intervention,
-		                 				$duration,
-		                 				$array_options
-				                    );
+										$id,
+										$desc,
+										$date_intervention,
+						 				$duration,
+						 				$array_options
+									);
 
 									if ($result < 0)
 									{
@@ -371,44 +371,44 @@ if (empty($reshook))
 								}
 							}
 						}
-		            } else {
+					} else {
 						$mesg = $srcobject->error;
-		                $error++;
-		            }
-		        } else {
+						$error++;
+					}
+				} else {
 					$mesg = $object->error;
-		            $error++;
-		        }
-		    } else {
-		    	// Fill array 'array_options' with data from add form
-		    	$ret = $extrafields->setOptionalsFromPost(null, $object);
-		    	if ($ret < 0) {
-		    		$error++;
-		    		$action = 'create';
-		    	}
+					$error++;
+				}
+			} else {
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				if ($ret < 0) {
+					$error++;
+					$action = 'create';
+				}
 
-		    	if (!$error)
-		    	{
-		    		// Extrafields
-		    		$array_options = $extrafields->getOptionalsFromPost($object->table_element);
+				if (!$error)
+				{
+					// Extrafields
+					$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
-		    		$object->array_options = $array_options;
+					$object->array_options = $array_options;
 
-		    		$result = $object->create($user);
-		    		if ($result > 0)
-		    		{
-		    			$id = $result; // Force raffraichissement sur fiche venant d'etre cree
-		    		} else {
-		    			$langs->load("errors");
-		    			setEventMessages($object->error, $object->errors, 'errors');
-		    			$action = 'create';
-		    		}
-		    	}
-	        }
-	    } else {
+					$result = $object->create($user);
+					if ($result > 0)
+					{
+						$id = $result; // Force raffraichissement sur fiche venant d'etre cree
+					} else {
+						$langs->load("errors");
+						setEventMessages($object->error, $object->errors, 'errors');
+						$action = 'create';
+					}
+				}
+			}
+		} else {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
-	        $action = 'create';
-	    }
+			$action = 'create';
+		}
 	} elseif ($action == 'update' && $user->rights->ficheinter->creer)
 	{
 		$object->socid = $socid;
@@ -482,14 +482,14 @@ if (empty($reshook))
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
-        	$result = $object->addline(
+			$result = $object->addline(
 				$user,
-	            $id,
-	            $desc,
-	            $date_intervention,
-	            $duration,
-	            $array_options
-	        );
+				$id,
+				$desc,
+				$date_intervention,
+				$duration,
+				$array_options
+			);
 
 			// Define output language
 			$outputlangs = $langs;
@@ -545,14 +545,14 @@ if (empty($reshook))
 	// Classify Done
 	elseif ($action == 'classifydone' && $user->rights->ficheinter->creer)
 	{
-	    $result = $object->setStatut(3);
-	    if ($result > 0)
-	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-	        exit;
-	    } else {
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
+		$result = $object->setStatut(3);
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Reopen
@@ -591,9 +591,9 @@ if (empty($reshook))
 		$date_inter = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int'));
 
-	    $objectline->datei = $date_inter;
-	    $objectline->desc = $desc;
-	    $objectline->duration = $duration;
+		$objectline->datei = $date_inter;
+		$objectline->desc = $desc;
+		$objectline->duration = $duration;
 
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -601,11 +601,11 @@ if (empty($reshook))
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
-	    if ($result < 0)
-	    {
-	        dol_print_error($db);
-	        exit;
-	    }
+		if ($result < 0)
+		{
+			dol_print_error($db);
+			exit;
+		}
 
 		// Define output language
 		$outputlangs = $langs;
@@ -817,11 +817,11 @@ if ($action == 'create')
 			$subelement = $regs[2];
 		}
 
-        if ($element == 'project')
-        {
-            $projectid = GETPOST('originid', 'int');
-        } else {
-            // For compatibility
+		if ($element == 'project')
+		{
+			$projectid = GETPOST('originid', 'int');
+		} else {
+			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
 				$element = $subelement = 'commande';
 			}
@@ -904,20 +904,20 @@ if ($action == 'create')
 
 			$langs->load("project");
 
-            print '<tr><td>'.$langs->trans("Project").'</td><td>';
-            /* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
+			print '<tr><td>'.$langs->trans("Project").'</td><td>';
+			/* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
             if ($societe->fournisseur==1)
             	$numprojet=select_projects(-1,$_POST["projectid"],'projectid');
             else
             	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
             	*/
-            $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
-            if ($numprojet == 0)
-            {
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
-            }
-            print '</td></tr>';
-        }
+			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
+			if ($numprojet == 0)
+			{
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+			}
+			print '</td></tr>';
+		}
 
 		// Contract
 		if ($conf->contrat->enabled)
@@ -932,53 +932,53 @@ if ($action == 'create')
 			print '</td></tr>';
 		}
 
-        // Model
-        print '<tr>';
-        print '<td>'.$langs->trans("DefaultModel").'</td>';
-        print '<td>';
-        $liste = ModelePDFFicheinter::liste_modeles($db);
-        print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
-        print "</td></tr>";
+		// Model
+		print '<tr>';
+		print '<td>'.$langs->trans("DefaultModel").'</td>';
+		print '<td>';
+		$liste = ModelePDFFicheinter::liste_modeles($db);
+		print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
+		print "</td></tr>";
 
-        // Public note
-        print '<tr>';
-        print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
-        print '<td>';
-        $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
-        print $doleditor->Create(1);
-        //print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
-        print '</td></tr>';
+		// Public note
+		print '<tr>';
+		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
+		print '<td>';
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		print $doleditor->Create(1);
+		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
+		print '</td></tr>';
 
-        // Private note
-        if (empty($user->socid))
-        {
-        	print '<tr>';
-        	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
-        	print '<td>';
-        	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
-        	print $doleditor->Create(1);
-        	//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
-        	print '</td></tr>';
-        }
+		// Private note
+		if (empty($user->socid))
+		{
+			print '<tr>';
+			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
+			print '<td>';
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			print $doleditor->Create(1);
+			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
+			print '</td></tr>';
+		}
 
-        // Other attributes
-        $parameters = array();
-        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-        if (empty($reshook))
+		// Other attributes
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields, 'edit');
 		}
 
-        // Show link to origin object
-        if (!empty($origin) && !empty($originid) && is_object($objectsrc))
-        {
-        	$newclassname = $classname;
-        	if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
-        	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+		// Show link to origin object
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc))
+		{
+			$newclassname = $classname;
+			if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
 
-        	// Amount
-        	/* Hide amount because we only copy services so amount may differ than source
+			// Amount
+			/* Hide amount because we only copy services so amount may differ than source
         	print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
         	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
         	if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
@@ -1000,14 +1000,14 @@ if ($action == 'create')
         		print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
         	}
         	*/
-        }
+		}
 
-        print '</table>';
+		print '</table>';
 
-	    if (is_object($objectsrc))
-	    {
-	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		if (is_object($objectsrc))
+		{
+			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		} elseif ($origin == 'project' && !empty($projectid)) {
 			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 		}
@@ -1016,8 +1016,8 @@ if ($action == 'create')
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-    	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1058,8 +1058,8 @@ if ($action == 'create')
 		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-    	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1172,46 +1172,46 @@ if ($action == 'create')
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
-	    $langs->load("projects");
-	    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	    if ($user->rights->ficheinter->creer)
-	    {
-            if ($action != 'classify') {
-                $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-            }
-            if ($action == 'classify') {
-                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                $morehtmlref .= '</form>';
-            } else {
-                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-            }
-	    } else {
-	        if (!empty($object->fk_project)) {
-	            $proj = new Project($db);
-	            $proj->fetch($object->fk_project);
-	            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-	            $morehtmlref .= $proj->ref;
-	            $morehtmlref .= '</a>';
-	        } else {
-	            $morehtmlref .= '';
-	        }
-	    }
+		$langs->load("projects");
+		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		if ($user->rights->ficheinter->creer)
+		{
+			if ($action != 'classify') {
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			}
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+				$morehtmlref .= $proj->ref;
+				$morehtmlref .= '</a>';
+			} else {
+				$morehtmlref .= '';
+			}
+		}
 	}
 	$morehtmlref .= '</div>';
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-    print '<div class="fichecenter">';
-    print '<div class="fichehalfleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	if (!empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
@@ -1269,47 +1269,47 @@ if ($action == 'create')
 			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
 		} else {
 			if ($object->fk_contrat)
-            {
-                $contratstatic = new Contrat($db);
-                $contratstatic->fetch($object->fk_contrat);
-                //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $contratstatic->getNomUrl(0, '', 1);
-            } else {
-                print "&nbsp;";
-            }
+			{
+				$contratstatic = new Contrat($db);
+				$contratstatic->fetch($object->fk_contrat);
+				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+				print $contratstatic->getNomUrl(0, '', 1);
+			} else {
+				print "&nbsp;";
+			}
 		}
 		print '</td>';
 		print '</tr>';
 	}
 
-    // Other attributes
-    $cols = 2;
-    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	// Other attributes
+	$cols = 2;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
-    print '<div class="fichehalfright">';
-    print '<div class="ficheaddleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
-    {
-        // Duration
-        print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-        print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-        print '</tr>';
-    }
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		// Duration
+		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+	}
 
 	print "</table>";
 
 	print '</div>';
-    print '</div>';
-    print '</div>';
+	print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br>';
 
 
 	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
@@ -1464,25 +1464,25 @@ if ($action == 'create')
 
 					// Date d'intervention
 					print '<td class="center nowrap">';
-                    if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
-                        print $form->selectDate($db->jdate($objp->date_intervention), 'di', 0, 0, 0, "date_intervention");
-                    } else {
-                        print $form->selectDate($db->jdate($objp->date_intervention), 'di', 1, 1, 0, "date_intervention");
-                    }
+					if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 0, 0, 0, "date_intervention");
+					} else {
+						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 1, 1, 0, "date_intervention");
+					}
 					print '</td>';
 
-                    // Duration
-                    print '<td class="right">';
-                    if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
-                        $selectmode = 'select';
-                        if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
-                            $selectmode = 'text';
-                        $form->select_duration('duration', $objp->duree, 0, $selectmode);
-                    }
-                    print '</td>';
+					// Duration
+					print '<td class="right">';
+					if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
+						$selectmode = 'select';
+						if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
+							$selectmode = 'text';
+						$form->select_duration('duration', $objp->duree, 0, $selectmode);
+					}
+					print '</td>';
 
-                    print '<td class="center" colspan="5" valign="center">';
-                    print '<input type="submit" class="button buttongen marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
+					print '<td class="center" colspan="5" valign="center">';
+					print '<input type="submit" class="button buttongen marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
 					print '<input type="submit" class="button buttongen marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>'."\n";
 
@@ -1514,13 +1514,13 @@ if ($action == 'create')
 						print '<td width="5" class="center linecolnum"></td>';
 					}
 
-    				print '<td>';
-    				print '<a name="add"></a>'; // ancre
-    				print $langs->trans('Description').'</td>';
-    				print '<td class="center">'.$langs->trans('Date').'</td>';
-    				print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
-      				print '<td colspan="3">&nbsp;</td>';
-    				print "</tr>\n";
+					print '<td>';
+					print '<a name="add"></a>'; // ancre
+					print $langs->trans('Description').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
+					print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
+	  				print '<td colspan="3">&nbsp;</td>';
+					print "</tr>\n";
 				}
 
 				print '<tr class="oddeven nohover">'."\n";
@@ -1530,43 +1530,43 @@ if ($action == 'create')
 					print '<td class="center linecolnum">'.($i + 1).'</td>';
 				}
 
-                print '<td>';
-                // editeur wysiwyg
-                if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
-                    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-                    $doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
-                    $doleditor->Create();
-                }
-                print '</td>';
+				print '<td>';
+				// editeur wysiwyg
+				if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
+					$doleditor->Create();
+				}
+				print '</td>';
 
-                // Date intervention
-                print '<td class="center nowrap">';
+				// Date intervention
+				print '<td class="center nowrap">';
 				$now = dol_now();
 				$timearray = dol_getdate($now);
 				if (!GETPOST('diday', 'int')) {
-                    $timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
-                } else {
-                    $timewithnohour = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-                }
-                if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
-                    print $form->selectDate($timewithnohour, 'di', 0, 0, 0, "addinter");
-                } else {
-                    print $form->selectDate($timewithnohour, 'di', 1, 1, 0, "addinter");
-                }
+					$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+				} else {
+					$timewithnohour = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
+				}
+				if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+					print $form->selectDate($timewithnohour, 'di', 0, 0, 0, "addinter");
+				} else {
+					print $form->selectDate($timewithnohour, 'di', 1, 1, 0, "addinter");
+				}
 				print '</td>';
 
-                // Duration
-                print '<td class="right">';
-                if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
-                    $selectmode = 'select';
-                    if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
-                        $selectmode = 'text';
-                    }
-                    $form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
-                }
-                print '</td>';
+				// Duration
+				print '<td class="right">';
+				if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
+					$selectmode = 'select';
+					if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
+						$selectmode = 'text';
+					}
+					$form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
+				}
+				print '</td>';
 
-                print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
+				print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
 
 				//Line extrafield
@@ -1601,22 +1601,22 @@ if ($action == 'create')
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		                                                                                          // modified by hook
+																								  // modified by hook
 	if (empty($reshook))
 	{
 		if ($user->socid == 0)
 		{
-            if ($action != 'editdescription' && ($action != 'presend')) {
-                // Validate
-                if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || !empty($conf->global->FICHINTER_DISABLE_DETAILS))) {
-                    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->validate)) {
-                        print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate"';
-                        print '>'.$langs->trans("Validate").'</a></div>';
-                    }
-                }
+			if ($action != 'editdescription' && ($action != 'presend')) {
+				// Validate
+				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || !empty($conf->global->FICHINTER_DISABLE_DETAILS))) {
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->validate)) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate"';
+						print '>'.$langs->trans("Validate").'</a></div>';
+					}
+				}
 
-                // Modify
-                if ($object->statut == Fichinter::STATUS_VALIDATED && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->unvalidate)))
+				// Modify
+				if ($object->statut == Fichinter::STATUS_VALIDATED && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->unvalidate)))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
 					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
@@ -1625,7 +1625,7 @@ if ($action == 'create')
 				}
 
 				// Reopen
-				if ($object->statut > Fichinter::STATUS_CLOSED)
+				if ($object->statut >= Fichinter::STATUS_CLOSED)
 				{
 					if ($user->rights->ficheinter->creer)
 					{
@@ -1645,7 +1645,7 @@ if ($action == 'create')
 				}
 
 				// create intervention model
-				if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
+				if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
@@ -1684,7 +1684,7 @@ if ($action == 'create')
 				}
 
 				// Done
-            	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED) && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED)
+				if (empty($conf->global->FICHINTER_CLASSIFY_BILLED) && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifydone">'.$langs->trans("InterventionClassifyDone").'</a></div>';
 				}

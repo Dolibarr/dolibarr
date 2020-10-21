@@ -437,7 +437,7 @@ if ($id > 0 || !empty($ref))
 			}
 		}
 
-		// Liste des contacts lies
+		// List of contact line
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -491,6 +491,9 @@ if ($id > 0 || !empty($ref))
                     $userstatic->firstname = $tab[$i]['firstname'];
     				$userstatic->photo = $tab[$i]['photo'];
     				$userstatic->login = $tab[$i]['login'];
+    				$userstatic->email = $tab[$i]['email'];
+    				$userstatic->statut = $tab[$i]['statucontact'];
+
                     print $userstatic->getNomUrl(-1);
                 }
                 if ($tab[$i]['source'] == 'external')
@@ -498,6 +501,9 @@ if ($id > 0 || !empty($ref))
                     $contactstatic->id = $tab[$i]['id'];
                     $contactstatic->lastname = $tab[$i]['lastname'];
                     $contactstatic->firstname = $tab[$i]['firstname'];
+                    $contactstatic->email = $tab[$i]['email'];
+                    $contactstatic->statut = $tab[$i]['statucontact'];
+
                     print $contactstatic->getNomUrl(1);
                 }
 				print '</td>';

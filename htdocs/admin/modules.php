@@ -28,6 +28,8 @@
  *  \brief      Page to activate/disable all modules
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -662,9 +664,9 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		// Version (with picto warning or not)
 		$version = $objMod->getVersion(0);
 		$versiontrans = '';
-		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), 'style="float: left"');
-		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), 'style="float: left"');
-		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), 'style="float: left"');
+		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), '', 'floatleft paddingright');
+		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), '', 'floatleft paddingright');
+		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), '', 'floatleft paddingright');
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
 		}
@@ -701,11 +703,11 @@ if ($mode == 'common' || $mode == 'commonkanban')
 				if (!empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
 			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				} else {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				}
@@ -1151,8 +1153,6 @@ if ($mode == 'develop')
 
 	print '<tr class="oddeven" height="80">'."\n";
 	print '<td class="left">';
-	//span class="fa fa-bug"></span>
-	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';

@@ -113,7 +113,7 @@ $utils = new Utils($db);
 if ($compression == 'zip')
 {
 	$file .= '.zip';
-    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.log|\/temp\/|documents\/admin\/documents\/)/');
+    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.back|\.old|\.log|[\\\/]temp[\\\/]|documents[\\\/]admin[\\\/]documents[\\\/])/i');
     if ($ret < 0)
     {
     	if ($ret == -2) {

@@ -983,7 +983,7 @@ class Product extends CommonObject
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
 			$sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
-			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
+			$sql .= ", finished = ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? "null" : (int) $this->finished);
 			$sql .= ", net_measure = ".($this->net_measure != '' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
 			$sql .= ", net_measure_units = ".($this->net_measure_units != '' ? "'".$this->db->escape($this->net_measure_units)."'" : 'null');
 			$sql .= ", weight = ".($this->weight != '' ? "'".$this->db->escape($this->weight)."'" : 'null');
@@ -2357,6 +2357,129 @@ class Product extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Charge tableau des stats OF pour le produit/service
+	 *
+	 * @param  int $socid Id societe
+	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
+	 */
+	public function load_stats_mo($socid = 0)
+	{
+		// phpcs:enable
+		global $user, $hookmanager;
+
+		$error=0;
+
+		foreach (array('toconsume','consumed','toproduce','produced') as $role) {
+			$this->stats_mo['customers_'.$role] = 0;
+			$this->stats_mo['nb_'.$role] = 0;
+			$this->stats_mo['qty_'.$role] = 0;
+
+			$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+			$sql .= " SUM(mp.qty) as qty";
+			$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mrp_production as mp ON mp.fk_mo=c.rowid";
+			if (!$user->rights->societe->client->voir && !$socid) {
+				$sql .= "INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			$sql .= " WHERE ";
+			$sql .= " c.entity IN (".getEntity('mo').")";
+
+			$sql .= " AND mp.fk_product =".$this->id;
+			$sql .= " AND mp.role ='".$this->db->escape($role)."'";
+			if ($socid > 0) {
+				$sql .= " AND c.fk_soc = ".$socid;
+			}
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				$obj = $this->db->fetch_object($result);
+				$this->stats_mo['customers_'.$role] = $obj->nb_customers ? $obj->nb_customers : 0;
+				$this->stats_mo['nb_'.$role] = $obj->nb ? $obj->nb : 0;
+				$this->stats_mo['qty_'.$role] = $obj->qty ? $obj->qty : 0;
+			} else {
+				$this->error = $this->db->error();
+				$error++;
+			}
+		}
+
+		if (!empty($error)) {
+			return -1;
+		}
+
+		$parameters = array('socid' => $socid);
+		$reshook = $hookmanager->executeHooks('loadStatsCustomerMO', $parameters, $this, $action);
+		if ($reshook > 0) $this->stats_mo = $hookmanager->resArray['stats_mo'];
+
+		return 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Charge tableau des stats OF pour le produit/service
+	 *
+	 * @param  int $socid Id societe
+	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
+	 */
+	public function load_stats_bom($socid = 0)
+	{
+		// phpcs:enable
+		global $user, $hookmanager;
+
+		$error=0;
+
+		$this->stats_bom['nb_toproduce'] = 0;
+		$this->stats_bom['nb_toconsume'] = 0;
+		$this->stats_bom['qty_toproduce'] = 0;
+		$this->stats_bom['qty_toconsume'] = 0;
+
+		$sql = "SELECT COUNT(DISTINCT b.rowid) as nb_toproduce,";
+		$sql .= " b.qty as qty_toproduce";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
+		$sql .= " WHERE ";
+		$sql .= " b.entity IN (".getEntity('bom').")";
+		$sql .= " AND b.fk_product =".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_bom['nb_toproduce'] = $obj->nb_toproduce ? $obj->nb_toproduce : 0;
+			$this->stats_bom['qty_toproduce'] = $obj->qty_toproduce ? price2num($obj->qty_toproduce) : 0;
+		} else {
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		$sql = "SELECT COUNT(DISTINCT bl.rowid) as nb_toconsume,";
+		$sql .= " SUM(bl.qty) as qty_toconsume";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
+		$sql .= " WHERE ";
+		$sql .= " b.entity IN (".getEntity('bom').")";
+		$sql .= " AND bl.fk_product =".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_bom['nb_toconsume'] = $obj->nb_toconsume ? $obj->nb_toconsume : 0;
+			$this->stats_bom['qty_toconsume'] = $obj->qty_toconsume ? price2num($obj->qty_toconsume) : 0;
+		} else {
+			$this->error = $this->db->error();
+			$error++;
+		}
+
+		if (!empty($error)) {
+			return -1;
+		}
+
+		$parameters = array('socid' => $socid);
+		$reshook = $hookmanager->executeHooks('loadStatsCustomerMO', $parameters, $this, $action);
+		if ($reshook > 0) $this->stats_bom = $hookmanager->resArray['stats_bom'];
+
+		return 1;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -4562,10 +4685,21 @@ class Product extends CommonObject
 		global $langs;
 		$langs->load('products');
 
-		if ($this->finished == '0') { return $langs->trans("RowMaterial");
+		if (isset($this->finished) && $this->finished>=0) {
+			$sql = 'SELECT label, code FROM '.MAIN_DB_PREFIX.'c_product_nature where code='.((int) $this->finished).' AND active=1';
+			$resql = $this->db->query($sql);
+			if ($resql && $this->db->num_rows($resql) > 0) {
+				$res = $this->db->fetch_array($resql);
+				$label = $langs->trans($res['label']);
+				$this->db->free($resql);
+				return $label;
+			} else {
+				$this->error = $this->db->error().' sql='.$sql;
+				dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
+				return -1;
+			}
 		}
-		if ($this->finished == '1') { return $langs->trans("Finished");
-		}
+
 		return '';
 	}
 

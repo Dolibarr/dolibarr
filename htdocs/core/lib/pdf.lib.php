@@ -122,7 +122,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		define('K_SMALL_RATIO', 2 / 3);
 		define('K_THAI_TOPCHARS', true);
 		define('K_TCPDF_CALLS_IN_HTML', true);
-		if (! empty($conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE)) {
+		if (!empty($conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE)) {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 		} else {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
@@ -1260,7 +1260,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasmodified = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
-				$textwasmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML401), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML401)) !== false);
+				$textwasmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES|ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES|ENT_HTML5)) !== false);
 			} else {
 				$textwasmodified = ($desc == $prodser->description);
 			}
@@ -1959,9 +1959,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
     {
 	    if ($object->lines[$i]->special_code == 3)
     	{
-    		return $outputlangs->transnoentities("Option");
+    		$result .= $outputlangs->transnoentities("Option");
     	}
-        if (empty($hidedetails) || $hidedetails > 1)
+        elseif (empty($hidedetails) || $hidedetails > 1)
         {
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
         	if ($object->lines[$i]->situation_percent > 0)
@@ -2017,7 +2017,25 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		if ($object->lines[$i]->special_code == 3)
     	{
     		$result .= $outputlangs->transnoentities("Option");
-    	} elseif (empty($hidedetails) || $hidedetails > 1) $result .= price($sign * ($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht) * ($object->lines[$i]->tva_tx) / 100, 0, $outputlangs);
+    	}
+    	elseif (empty($hidedetails) || $hidedetails > 1)
+    	{
+    		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
+    		if ($object->lines[$i]->situation_percent > 0)
+    		{
+    			// TODO Remove this. The total should be saved correctly in database instead of being modified here.
+    			$prev_progress = 0;
+    			$progress = 1;
+    			if (method_exists($object->lines[$i], 'get_prev_progress'))
+    			{
+    				$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+    				$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
+    			}
+    			$result .= price($sign * ($total_ttc / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
+    		} else {
+    			$result .= price($sign * $total_ttc, 0, $outputlangs);
+    		}
+    	}
 	}
 	return $result;
 }
@@ -2140,11 +2158,11 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			    if (empty($object->linkedObjects['commande']) && $object->element != 'commande')	// There is not already a link to order and object is not the order, so we show also info with order
 			    {
 			        $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-			        if (! empty($elementobject->linkedObjectsIds['commande'])){
+			        if (!empty($elementobject->linkedObjectsIds['commande'])) {
 						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 						$order = new Commande($db);
 						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
-						if ($ret < 1) { $order=null; }
+						if ($ret < 1) { $order = null; }
 					}
 			    }
 			    if (!is_object($order))

@@ -165,7 +165,7 @@ foreach ($object->fields as $key => $val)
 }
 
 // Add none object fields for "search in all"
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))	{
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$fieldstosearchall['s.nom'] = "ThirdParty";
 }
 
@@ -186,7 +186,7 @@ foreach ($object->fields as $key => $val) {
 
 // Add none object fields to fields for list
 $arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>22, 'checked'=>0);
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))	{
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
 }
 
@@ -571,7 +571,7 @@ if ($search_firstlast_only)
 }
 
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -594,20 +594,19 @@ if (!empty($conf->categorie->enabled))
 		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
 		$moreforfilter .= '</div>';
 	}
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Roles').': ';
-	$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
-	$moreforfilter .= '</div>';
 }
-if ($moreforfilter)
-{
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print $moreforfilter;
-	$parameters = array('type'=>$type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	print '</div>';
-}
+
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('Roles').': ';
+$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+$moreforfilter .= '</div>';
+
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+$parameters = array('type'=>$type);
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+print '</div>';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields

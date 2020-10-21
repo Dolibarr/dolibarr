@@ -368,7 +368,7 @@ class Productcustomerprice extends CommonObject
 				} elseif ($key == 'prod.ref' || $key == 'prod.label') {
 					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.price' || $key == 't.price_ttc') {
-					$sql .= ' AND ' . $key . ' LIKE \'%' . price2num($value) . '%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.price2num($value).'%\'';
 				} else {
 					$sql .= ' AND '.$key.' = '.((int) $value);
 				}

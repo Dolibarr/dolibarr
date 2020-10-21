@@ -102,7 +102,7 @@ class FormPropal
             }
         }
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
         if ($showempty) print '<option value="-1">&nbsp;</option>';
 
         foreach ($listofstatus as $key => $obj)
@@ -135,5 +135,7 @@ class FormPropal
             $i++;
         }
         print '</select>';
+
+        print ajax_combobox($htmlname);
     }
 }

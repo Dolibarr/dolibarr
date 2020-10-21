@@ -289,7 +289,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		//if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
-		if ($conf->facture->dir_output)
+		if ($conf->facture->multidir_output[$conf->entity])
 		{
 			$object->fetch_thirdparty();
 
@@ -300,11 +300,11 @@ class pdf_sponge extends ModelePDFFactures
 			// Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->facture->dir_output;
+				$dir = $conf->facture->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->facture->dir_output."/".$objectref;
+				$dir = $conf->facture->multidir_output[$conf->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir))
@@ -386,11 +386,12 @@ class pdf_sponge extends ModelePDFFactures
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
-				// Does we have at least one line with discount $this->atleastonediscount
-				foreach ($object->lines as $line) {
-					if ($line->remise_percent) {
-						$this->atleastonediscount = true;
-						break;
+				// Set $this->atleastonediscount if you have at least one discount
+				for ($i = 0; $i < $nblines; $i++)
+				{
+					if ($object->lines[$i]->remise_percent)
+					{
+						$this->atleastonediscount++;
 					}
 				}
 
@@ -458,8 +459,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-				if (!empty($extranote))
-				{
+				if (!empty($extranote)) {
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
 
@@ -735,11 +735,19 @@ class pdf_sponge extends ModelePDFFactures
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
-					// Total HT line
+					// Total excl tax line (HT)
 					if ($this->getColumnStatus('totalexcltax'))
 					{
 						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						$nexY = max($pdf->GetY(), $nexY);
+					}
+
+					// Total with tax line (TTC)
+					if ($this->getColumnStatus('totalincltax'))
+					{
+						$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
+						$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -2216,7 +2224,7 @@ class pdf_sponge extends ModelePDFFactures
 			),
 		);
 
-		// PHOTO
+		// Image of product
 		$rank = $rank + 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
@@ -2324,9 +2332,20 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => true,
+			'status' => empty($conf->global->PDF_PROPAL_HIDE_PRICE_EXCL_TAX) ? true : false,
 			'title' => array(
 				'textkey' => 'TotalHT'
+			),
+			'border-left' => true, // add left line separator
+		);
+
+		$rank = $rank + 1010; // add a big offset to be sure is the last col because default extrafield rank is 100
+		$this->cols['totalincltax'] = array(
+			'rank' => $rank,
+			'width' => 26, // in mm
+			'status' => empty($conf->global->PDF_PROPAL_SHOW_PRICE_INCL_TAX) ? false : true,
+			'title' => array(
+				'textkey' => 'TotalTTC'
 			),
 			'border-left' => true, // add left line separator
 		);

@@ -193,8 +193,12 @@ class Propal extends CommonObject
 
 	public $address_type;
 	public $address;
+
 	public $availability_id;
 	public $availability_code;
+
+	public $duree_validite;
+
 	public $demand_reason_id;
 	public $demand_reason_code;
 
@@ -3153,7 +3157,7 @@ class Propal extends CommonObject
 		$sql .= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 

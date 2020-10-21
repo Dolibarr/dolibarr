@@ -178,7 +178,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 	}
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->cheque)
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
 	$result = $object->fetch($id);
 	$result = $object->validate($user);
@@ -312,7 +312,7 @@ if ($action == 'new')
 	dol_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'payment');
 
 	/*
-	 * Confirmation de la suppression du bordereau
+	 * Confirmation of slip's delete
 	 */
 	if ($action == 'delete')
 	{
@@ -320,11 +320,11 @@ if ($action == 'new')
 	}
 
 	/*
-	 * Confirmation de la validation du bordereau
+	 * Confirmation of slip's validation
 	 */
 	if ($action == 'valide')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide', '', '', 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_validate', '', '', 1);
 	}
 
 	/*
@@ -595,7 +595,7 @@ if ($action == 'new')
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
 
-	// Nb of cheques
+	// Number of bank checks
 	print '<tr><td>'.$langs->trans('NbOfCheques').'</td><td colspan="2">';
 	print $object->nbcheque;
 	print '</td></tr>';
@@ -613,7 +613,7 @@ if ($action == 'new')
 	print '</div>';
 
 
-	// List of cheques
+	// List of bank checks
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql .= " b.dateo as date, b.datec as datec, b.banque,";
 	$sql .= " p.rowid as pid, ba.rowid as bid, p.statut";
@@ -654,7 +654,7 @@ if ($action == 'new')
     		{
     			print '<tr class="oddeven">';
     			print '<td class="center">'.$i.'</td>';
-    			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>'; // Date operation
+    			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>'; // Operation date
     			print '<td class="center">'.($objp->num_chq ? $objp->num_chq : '&nbsp;').'</td>';
     			print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
     			print '<td>'.dol_trunc($objp->banque, 24).'</td>';
@@ -707,7 +707,7 @@ if ($action == 'new')
 
 		print "</table>";
 
-		// Cheque denormalized data nbcheque is similar to real number of cheque
+		// Cheque denormalized data nbcheque is similar to real number of bank check
 		if ($num > 0 && $i < ($object->nbcheque + 1)) {
 			// Show warning that some records were removed.
 			$langs->load("errors");
@@ -727,7 +727,7 @@ if ($action == 'new')
 
 
 /*
- * Boutons Actions
+ * Actions Buttons
  */
 
 print '<div class="tabsAction">';

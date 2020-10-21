@@ -375,7 +375,7 @@ class FormCompany extends Form
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
+			print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -407,6 +407,7 @@ class FormCompany extends Form
 				}
 			}
 			print '</select>';
+			print ajax_combobox($htmlname);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -1003,6 +1004,7 @@ class FormCompany extends Form
 			}
 		}
 		$out .= '</select>';
+		$out .= ajax_combobox($htmlidname);
 
 		return $out;
 	}

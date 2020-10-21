@@ -12,6 +12,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
+ * Copyright (C) 2020       Charlene Benke         <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,12 +58,16 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
  */
 function testSqlAndScriptInject($val, $type)
 {
-	$val = html_entity_decode($val, ENT_QUOTES);	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	// Decode string first
+	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
+	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
+	$val = html_entity_decode($val, ENT_QUOTES|ENT_HTML5);
+
 	// TODO loop to decode until no more thing to decode ?
 
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
-	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val);	// We should use dol_string_nounprintableascii but function is not yet loaded/available
-	//var_dump($val);
+	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val);	// /u operator makes UTF8 valid characters being ignored so are not included into the replace
 
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
@@ -221,24 +226,24 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"]))
 }
 
 
-// Init session. Name of session is specific to Dolibarr instance.
-// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
-$prefix = dol_getprefix('');
+// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
+require_once 'master.inc.php';
 
+// Init session. Name of session is specific to Dolibarr instance.
+// Must be done after the include of master.inc.php so $conf file is loaded and vars like $dolibarr_main_force_https are set.
+// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
+$prefix = dol_getprefix('');		// This uses the $conf file
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 session_name($sessionname);
-// This create lock, released when session_write_close() or end of page.
+// This create lock, released by session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION'))
 {
 	session_start();
 }
-
-// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
-require_once 'master.inc.php';
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
@@ -375,10 +380,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
 		((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment')))
+		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check')))
 	{
 		if (!GETPOSTISSET('token')) {
-			if (GETPOST('uploadform')) {
+			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused. File size too large.");
 				$langs->loadLangs(array("errors", "install"));
 				print $langs->trans("ErrorFileSizeTooLarge").' ';
@@ -1655,8 +1660,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$helpbaseurl = '';
 			$helppage = '';
 			$mode = '';
+			$helppresent = '';
 
-			if (empty($helppagename)) $helppagename = 'EN:User_documentation|FR:Documentation_utilisateur|ES:Documentación_usuarios';
+			if (empty($helppagename)) {
+				$helppagename = 'EN:User_documentation|FR:Documentation_utilisateur|ES:Documentación_usuarios';
+			} else {
+				$helppresent = 'helppresent';
+			}
 
 			// Get helpbaseurl, helppage and mode from helppagename and langs
 			$arrayres = getHelpParamFor($helppagename, $langs);
@@ -1674,7 +1684,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				if ($mode == 'wiki') $text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text .= sprintf($helpbaseurl, $helppage);
 				$text .= '">';
-				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle"></span>';
+				$text .= '<span class="fa fa-question-circle atoplogin valignmiddle'.($helppresent ? ' '.$helppresent : '').'"></span>';
 				$text .= '</a>';
 				$toprightmenu .= @Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
