@@ -2317,8 +2317,9 @@ class CommandeFournisseur extends CommonOrder
 					$this->actionmsg2 = $comment;
 
                     // Call trigger
-                    $result += $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
-                    if ($result < 0) $error++;
+                    $result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
+                    if ($result_trigger < 0) $error++;
+					else $result += (int) $result_trigger;
                     // End call triggers
 
                     if (empty($error))
