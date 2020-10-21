@@ -35,16 +35,39 @@ use OAuth\OAuth2\Service\Google;
  */
 class printing_printgcp extends PrintingDriver
 {
+    /**
+     * @var string module name
+     */
 	public $name = 'printgcp';
+
+    /**
+     * @var string module description
+     */
 	public $desc = 'PrintGCPDesc';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'printer';
+
+    /**
+     * @var string module description
+     */
 	public $active = 'PRINTING_PRINTGCP';
+
+    /**
+     * @var array module parameters
+     */
 	public $conf = array();
+
+    /**
+     * @var string google id
+     */
 	public $google_id = '';
+
+    /**
+     * @var string google secret
+     */
 	public $google_secret = '';
 
 	/**
