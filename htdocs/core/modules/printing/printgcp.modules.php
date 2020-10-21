@@ -304,7 +304,7 @@ class printing_printgcp extends PrintingDriver
 		$responsedata = json_decode($response, true);
 		$printers = $responsedata['printers'];
 		// Check if we have printers?
-		if (count($printers) == 0) {
+		if (is_array($printers) && count($printers) == 0) {
 			// We dont have printers so return blank array
 			$ret['available'] = array();
 		} else {
