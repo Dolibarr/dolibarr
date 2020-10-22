@@ -253,14 +253,10 @@ class MouvementStock extends CommonObject
                                     $this->db->rollback();
                                     return -3;
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 $eatby = $obj->eatby; // If found and eatby/sellby defined into table and not provided, we take value from table
                             }
-                        }
-                        else
-                        {
+                        } else {
                             if ($eatby) // If found and eatby/sellby not defined into table and provided, we update table
                             {
                                 $productlot = new Productlot($this->db);
@@ -290,9 +286,7 @@ class MouvementStock extends CommonObject
             						$this->db->rollback();
                         			return -3;
                         		}
-                            }
-                            else
-                            {
+                            } else {
                                 $sellby = $obj->sellby; // If found and eatby/sellby defined into table and not provided, we take value from table
                             }
                         }
@@ -396,9 +390,9 @@ class MouvementStock extends CommonObject
 			if (!empty($this->origin)) {			// This is set by caller for tracking reason
 				$origintype = empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type;
 				$fk_origin = $this->origin->id;
-				if ($origintype == 'project') $fk_project = $fk_origin;
-				else
-				{
+				if ($origintype == 'project') {
+					$fk_project = $fk_origin;
+				} else {
 					$res = $this->origin->fetch($fk_origin);
 					if ($res > 0)
 					{
@@ -471,9 +465,7 @@ class MouvementStock extends CommonObject
 						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
-				}
-				else
-				{
+				} else {
 					$this->errors[] = $this->db->lasterror();
 					$error = -2;
 				}
@@ -491,9 +483,9 @@ class MouvementStock extends CommonObject
 					if ($price > 0 || (! empty($conf->global->STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL) && $price ==0)) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0) $newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-						else
-						{
+						if ($oldpmp > 0) {
+							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
+						} else {
 							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
 						}
 						//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
@@ -502,14 +494,10 @@ class MouvementStock extends CommonObject
 					} else {
 						$newpmp = $oldpmp;
 					}
-				}
-				elseif ($type == 1 || $type == 2)
-				{
+				} elseif ($type == 1 || $type == 2) {
 					// After a stock decrease, we don't change value of the AWP/PMP of a product.
 					$newpmp = $oldpmp;
-				}
-				else
-				{
+				} else {
 					// Type of movement unknown
 					$newpmp = $oldpmp;
 				}
@@ -521,9 +509,7 @@ class MouvementStock extends CommonObject
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
 					$sql .= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
-				}
-				else
-				{
+				} else {
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
 					$sql .= " (reel, fk_entrepot, fk_product) VALUES ";
 					$sql .= " (".$qty.", ".$entrepot_id.", ".$fk_product.")";
@@ -548,9 +534,7 @@ class MouvementStock extends CommonObject
 				if ($id_product_batch > 0)
 				{
 				    $result = $this->createBatch($id_product_batch, $qty);
-				}
-				else
-				{
+				} else {
 			        $param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
 				    $result = $this->createBatch($param_batch, $qty);
 				}
@@ -751,7 +735,7 @@ class MouvementStock extends CommonObject
 		{
 			if (!$error)
 			{
-				$tmpmove = clone $this;
+				$tmpmove = dol_clone($this, 1);
 				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
 				if ($result < 0)
 				{
@@ -868,9 +852,7 @@ class MouvementStock extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) $nb = $obj->nb;
 			return (empty($nb) ? 0 : $nb);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -904,24 +886,18 @@ class MouvementStock extends CommonObject
 				$this->errors[] = $this->error;
 				$result = -2;
 			}
-		}
-		elseif (is_array($dluo))
-		{
+		} elseif (is_array($dluo)) {
 			if (isset($dluo['fk_product_stock']))
 			{
 				$vfk_product_stock = $dluo['fk_product_stock'];
 				$vbatchnumber = $dluo['batchnumber'];
 
 				$result = $pdluo->find($vfk_product_stock, '', '', $vbatchnumber); // Search on batch number only (eatby and sellby are deprecated here)
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock", LOG_ERR);
 				$result = -1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::createBatch error invalid param dluo", LOG_ERR);
 			$result = -1;
 		}
@@ -929,19 +905,15 @@ class MouvementStock extends CommonObject
 		if ($result >= 0)
 		{
 			// No error
-			if ($pdluo->id > 0)		// product_batch record found
-			{
+			if ($pdluo->id > 0)	{	// product_batch record found
 				//print "Avant ".$pdluo->qty." Apres ".($pdluo->qty + $qty)."<br>";
 				$pdluo->qty += $qty;
-				if ($pdluo->qty == 0)
-				{
+				if ($pdluo->qty == 0) {
 					$result = $pdluo->delete($user, 1);
 				} else {
 					$result = $pdluo->update($user, 1);
 				}
-			}
-			else					// product_batch record not found
-			{
+			} else {					// product_batch record not found
 				$pdluo->fk_product_stock = $vfk_product_stock;
 				$pdluo->qty = $qty;
 				$pdluo->eatby = $veatby;
@@ -1139,20 +1111,15 @@ class MouvementStock extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if ($mode == 0 || $mode == 1)
-		{
+		if ($mode == 0 || $mode == 1) {
 			return $langs->trans('StatusNotApplicable');
-		} elseif ($mode == 2)
-		{
+		} elseif ($mode == 2) {
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		} elseif ($mode == 3)
-		{
+		} elseif ($mode == 3) {
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-		} elseif ($mode == 4)
-		{
+		} elseif ($mode == 4) {
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		} elseif ($mode == 5)
-		{
+		} elseif ($mode == 5) {
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
 	}

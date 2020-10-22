@@ -868,7 +868,7 @@ function dol_clone($object, $native = 0)
 	{
 		$myclone = unserialize(serialize($object));
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
+		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
 
 	return $myclone;
