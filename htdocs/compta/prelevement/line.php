@@ -97,11 +97,11 @@ if ($action == 'confirm_rejet')
 			if ($lipre->fetch($id) == 0)
 
 			{
-				$rej = new RejetPrelevement($db, $user);
+				$rej = new RejetPrelevement($db, $user,$type);
 
 				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
 
-				header("Location: line.php?id=".$id);
+				header("Location: line.php?id=".$id.'&type='.$type);
 				exit;
 			}
 		}
@@ -112,7 +112,7 @@ if ($action == 'confirm_rejet')
 	}
 	else
 	{
-		header("Location: line.php?id=".$id);
+		header("Location: line.php?id=".$id.'&type='.$type);
 		exit;
 	}
 }
@@ -134,7 +134,7 @@ llxHeader('', $title);
 $head = array();
 
 $h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id;
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id.'&type='.$type;
 $head[$h][1] = $title;
 $hselected = $h;
 $h++;
@@ -203,11 +203,12 @@ if ($id)
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
 
-		$rej = new RejetPrelevement($db, $user);
+		$rej = new RejetPrelevement($db, $user, $type);
 
 		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
+		print '<input type="hidden" name="type" value="'.$type.'">';	
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -258,7 +259,7 @@ if ($id)
 			if ($lipre->statut == 2) {
 				if ($user->rights->prelevement->bons->credit)
 				{
-					print '<a class="butActionDelete" href="line.php?action=rejet&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
+					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
 				else
 				{

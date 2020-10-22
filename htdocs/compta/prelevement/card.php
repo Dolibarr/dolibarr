@@ -225,7 +225,7 @@ if ($id > 0 || $ref)
 	print '<table class="border centpercent tableforfield">';
 
 	$acc = new Account($db);
-	$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
 
 	print '<tr><td class="titlefield">';
 	$labelofbankfield = "BankToReceiveWithdraw";
@@ -404,7 +404,7 @@ if ($id > 0 || $ref)
 			print "<td>";
 			print $ligne->LibStatut($obj->statut, 2);
 			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'">';
 			print sprintf("%06s", $obj->rowid);
 			print '</a></td>';
 
@@ -430,7 +430,7 @@ if ($id > 0 || $ref)
 						if ($user->rights->prelevement->bons->credit)
 						{
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
 						}
 						else
 						{
