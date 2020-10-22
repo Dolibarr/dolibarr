@@ -123,9 +123,9 @@ if ($action == 'update'){
 	if ( $result > 0){
 		$currency_static  = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db,$multicurrency_code);
-		$currencyRate->date_sync = GETPOST('dateinput');
+		$currencyRate->date_sync = $db->escape(GETPOST('dateinput'));
 		$currencyRate->fk_multicurrency = $fk_currency;
-		$currencyRate->rate = GETPOST('rateinput');
+		$currencyRate->rate = $db->escape(GETPOST('rateinput'));
 		$res = $currencyRate->update();
 		if ($res){
 			setEventMessage($langs->trans('successUpdateRate'));
