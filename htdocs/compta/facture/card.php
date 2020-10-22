@@ -356,27 +356,35 @@ if (empty($reshook))
 		$object->cond_reglement_code = 0; // To clean property
 		$object->cond_reglement_id = 0; // To clean property
 
+		$error = 0;
+		
 		$db->begin();
 
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-		if ($result < 0) {
-		    $db->rollback();
-		    dol_print_error($db, $object->error);
-		    exit;
+		if (! $error) {
+			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			if ($result < 0) {
+			    $error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
-
-		$old_date_lim_reglement = $object->date_lim_reglement;
-		$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
-		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
-		$result = $object->update($user);
-		if ($result < 0) {
-		    $db->rollback();
-		    dol_print_error($db, $object->error);
-		    exit;
+		
+		if (! $error) {
+			$old_date_lim_reglement = $object->date_lim_reglement;
+			$new_date_lim_reglement = $object->calculate_date_lim_reglement();
+			if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+			if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
+			$result = $object->update($user);
+			if ($result < 0) {
+			    $error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
-
-		$db->commit();
+		
+		if ($error) {
+			$db->rollback();	
+		} else {
+			$db->commit();
+		}
 	}
 
 	elseif ($action == 'setpaymentterm' && $usercancreate)
