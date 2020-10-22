@@ -161,7 +161,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 }
 
-if ($elemid && $action == 'addintocategory' && 
+if ($elemid && $action == 'addintocategory' &&
     (($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
      ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) ||
      ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
@@ -177,7 +177,7 @@ if ($elemid && $action == 'addintocategory' &&
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$newobject = new Societe($db);
 		$elementtype = 'customer';
-	} elseif ($type == Categorie::TYPE_SUPPLIER) 
+	} elseif ($type == Categorie::TYPE_SUPPLIER)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$newobject = new Societe($db);
