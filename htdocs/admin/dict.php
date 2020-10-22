@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2019	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -746,8 +746,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 		}
 	}
-	if ($id == 3 && !is_numeric($_POST["code"]))
-	{
+	if (($id == 3 || $id == 42) && !is_numeric($_POST["code"])) {
 	   	$ok = 0;
 	   	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 	}
