@@ -39,25 +39,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('multicurrency'));
 
-$action				= GETPOST('action','alpha');
-$massaction			= GETPOST('massaction','alpha');
-$show_files			= GETPOST('show_files','int');
-$confirm			= GETPOST('confirm','alpha');
+$action				= GETPOST('action', 'alpha');
+$massaction			= GETPOST('massaction', 'alpha');
+$show_files			= GETPOST('show_files', 'int');
+$confirm			= GETPOST('confirm', 'alpha');
 $toselect 			= GETPOST('toselect', 'array');
-$id_rate_selected 	= GETPOST('id_rate');
+$id_rate_selected 	= GETPOST('id_rate','int');
 $sall				= trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_date_sync	= GETPOST("search_date_sync",'alpha');
-$search_rate		= GETPOST("search_rate",'alpha');
-$search_code		= GETPOST("search_code",'alpha');
-$multicurrency_code = GETPOST('multicurrency_code');
-$dateinput 			= GETPOST('dateinput','alpha');
-$rateinput 			= GETPOST('rateinput','int');
-$search_tobatch 	= GETPOST("search_tobatch",'int');
-$optioncss 			= GETPOST('optioncss','alpha');
-$limit 				= GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield 			= GETPOST("sortfield",'alpha');
-$sortorder 			= GETPOST("sortorder",'alpha');
-$page 				= (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+$search_date_sync	= GETPOST('search_date_sync', 'alpha');
+$search_rate		= GETPOST('search_rate', 'alpha');
+$search_code		= GETPOST('search_code', 'alpha');
+$multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+$dateinput 			= GETPOST('dateinput', 'alpha');
+$rateinput 			= GETPOST('rateinput', 'int');
+$search_tobatch 	= GETPOST('search_tobatch', 'int');
+$optioncss 			= GETPOST('optioncss', 'alpha');
+$limit 				= GETPOST('limit', 'int')?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield 			= GETPOST("sortfield", 'alpha');
+$sortorder 			= GETPOST("sortorder", 'alpha');
+$page 				= (GETPOST("page", 'int')?GETPOST("page", 'int'):0);
 
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -101,7 +101,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if ($action == "create"){
 	$currencyRate_static = new CurrencyRate($db);
 	$currency_static  = new MultiCurrency($db);
-	$fk_currency = $currency_static->getIdFromCode($db,$multicurrency_code);
+	$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
 
 	$currencyRate_static->fk_multicurrency = $fk_currency;
 	$currencyRate_static->entity = $conf->entity;
@@ -110,9 +110,9 @@ if ($action == "create"){
 
 	$result = $currencyRate_static->create(intval($fk_currency));
 	if ($result){
-		setEventMessage($langs->trans('successRateCreate',$multicurrency_code));
+		setEventMessage($langs->trans('successRateCreate', $multicurrency_code));
 	}else{
-		dol_syslog("currencyRate:createRate",LOG_WARNING);
+		dol_syslog("currencyRate:createRate", LOG_WARNING);
 		setEventMessage($langs->trans('successRateCreate'));
 	}
 }
@@ -122,7 +122,7 @@ if ($action == 'update'){
 	$result = $currencyRate->fetch($id_rate_selected);
 	if ( $result > 0){
 		$currency_static  = new MultiCurrency($db);
-		$fk_currency = $currency_static->getIdFromCode($db,$multicurrency_code);
+		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
 		$currencyRate->date_sync = $db->escape(GETPOST('dateinput'));
 		$currencyRate->fk_multicurrency = $fk_currency;
 		$currencyRate->rate = $db->escape(GETPOST('rateinput'));
@@ -130,10 +130,10 @@ if ($action == 'update'){
 		if ($res){
 			setEventMessage($langs->trans('successUpdateRate'));
 		}else{
-			setEventMessage($langs->trans('errorUpdateRate'),"errors");
+			setEventMessage($langs->trans('errorUpdateRate'), "errors");
 		}
 	}else{
-		setEventMessage($langs->trans(''),"warnings");
+		setEventMessage($langs->trans(''), "warnings");
 	}
 }
 
@@ -149,19 +149,18 @@ if ($action == "deleteRate"){
 			$delayedhtmlcontent .= $form->formconfirm(
 				$_SERVER["PHP_SELF"].'?id_rate='.$id_rate_selected,
 				$langs->trans('DeleteLineRate'),
-				$langs->trans('ConfirmDeleteLineRate',$current_rate->rate, $current_currency->name,$current_rate->date_sync),
+				$langs->trans('ConfirmDeleteLineRate', $current_rate->rate, $current_currency->name, $current_rate->date_sync),
 				'confirm_delete',
 				'',
 				0,
 				1
 			);
 		}else{
-			dol_syslog("Multicurrency::fetch",LOG_WARNING);
+			dol_syslog("Multicurrency::fetch", LOG_WARNING);
 		}
 	}else{
-		setEventMessage($langs->trans('NoCurrencyRateSelected'),"warnings");
+		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
 	}
-
 }
 
 if ($action == "confirm_delete"){
@@ -177,14 +176,13 @@ if ($action == "confirm_delete"){
 		}
 	}else{
 		setEventMessage($langs->trans('NoCurrencyRateSelected'),"warnings");
-		dol_syslog($langs->trans('NoCurrencyRateSelected'),LOG_WARNING);
+		dol_syslog($langs->trans('NoCurrencyRateSelected'), LOG_WARNING);
 	}
-
 }
 
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -195,7 +193,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
 		$sall="";
 		$search_date_sync="";
@@ -221,7 +219,7 @@ $htmlother=new FormOther($db);
 $title=$langs->trans("CurrencyRate");
 $page_name = "ListCurrencyRate";
 
-llxHeader('',$title,$helpurl,'');
+llxHeader('', $title, $helpurl, '');
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans($page_name), $linkback);
@@ -246,7 +244,7 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print ' <td><input class="minwidth200" name="dateinput" value="' . dol_escape_htmltag($dateinput) . '" type="date"></td>';
 
 	print ' <td>' . $langs->trans('Codemulticurrency') . '</td>';
-	print '<td>' . $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code',0," code != '".$conf->currency."'",true) . '</td>';
+	print '<td>' . $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
 
 	print ' <td>' . $langs->trans('rate') . '</td>';
 	print ' <td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($rateinput) . '" type="text"></td>';
@@ -258,11 +256,9 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 
 	print '</tr></table>';
 	print '</form>';
-
 }
 
 if ($action == "updateRate"){
-
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 
@@ -288,7 +284,7 @@ if ($action == "updateRate"){
 		print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($current_rate->date_sync)) .'" type="date"></td>';
 
 		print '<td>' . $langs->trans('Codemulticurrency') . '</td>';
-		print '<td>' . $form->selectMultiCurrency($currency_code,'multicurrency_code',0," code != '".$conf->currency."'",true) . '</td>';
+		print '<td>' . $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
 
 		print '<td>' . $langs->trans('rate') . '</td>';
 		print '<td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($current_rate->rate) . '" type="text"></td>';
@@ -304,7 +300,7 @@ if ($action == "updateRate"){
 		print '</form>';
 
 	}else{
-		dol_syslog("currency_rate:list:update",LOG_WARNING);
+		dol_syslog("currency_rate:list:update", LOG_WARNING);
 	}
 }
 
@@ -313,7 +309,7 @@ $sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
 
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
@@ -325,20 +321,20 @@ if ($search_date_sync)     $sql .= natural_search('cr.date_sync', $search_date_s
 if ($search_rate)   $sql .= natural_search('cr.rate', $search_rate);
 if ($search_code) $sql .= natural_search('m.code', $search_code);
 
-$sql.= ' WHERE m.code != '. '\''.$conf->currency. '\'';
+$sql.= ' WHERE m.code != \''.$conf->currency. '\'';
 
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY cr.rowid, cr.date_sync, cr.rate, m.code, cr.entity ";
 
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 
 $nbtotalofrecords = '';
@@ -354,7 +350,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 			$offset = 0;
 		}
 	}else{
-		setEventMessage($langs->trans('No_record_on_multicurrency_rate'),'warnings');
+		setEventMessage($langs->trans('No_record_on_multicurrency_rate'), 'warnings');
 	}
 
 }
@@ -401,7 +397,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
 	}
 
 	// Filter on categories
@@ -409,7 +405,7 @@ if ($resql)
 
 
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
 	else $moreforfilter=$hookmanager->resPrint;
 
@@ -454,7 +450,7 @@ if ($resql)
 
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '<td class="liste_titre" align="middle">';
@@ -465,21 +461,21 @@ if ($resql)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['cr.date_sync']['checked']))  print_liste_field_titre($arrayfields['cr.date_sync']['label'], $_SERVER["PHP_SELF"],"cr.date_sync","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['m.code']['checked']))  print_liste_field_titre($arrayfields['m.code']['label'], $_SERVER["PHP_SELF"],"m.code","",$param,"",$sortfield,$sortorder);
-	if (! empty($arrayfields['cr.rate']['checked']))  print_liste_field_titre($arrayfields['cr.rate']['label'], $_SERVER["PHP_SELF"],"cr.rate","",$param,"",$sortfield,$sortorder);
+	if (! empty($arrayfields['cr.date_sync']['checked']))  print_liste_field_titre($arrayfields['cr.date_sync']['label'], $_SERVER["PHP_SELF"], "cr.date_sync", "", $param, "", $sortfield, $sortorder);
+	if (! empty($arrayfields['m.code']['checked']))  print_liste_field_titre($arrayfields['m.code']['label'], $_SERVER["PHP_SELF"], "m.code", "", $param, "", $sortfield, $sortorder);
+	if (! empty($arrayfields['cr.rate']['checked']))  print_liste_field_titre($arrayfields['cr.rate']['label'], $_SERVER["PHP_SELF"], "cr.rate", "", $param, "", $sortfield, $sortorder);
 
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$parameters=array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
 	$i = 0;
 	$totalarray=array();
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 
@@ -515,7 +511,7 @@ if ($resql)
 
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		// Action
