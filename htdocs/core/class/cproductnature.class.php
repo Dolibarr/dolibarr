@@ -279,7 +279,7 @@ class CProductNature // extends CommonObject
         // Commit or rollback
 		if (!$resql) {
 	        dol_syslog(get_class($this)."::update Error ".$this->db->lasterror(), LOG_ERR);
-	        $this->error = "Error ".$this->db->lasterror(); 
+	        $this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		} else {
