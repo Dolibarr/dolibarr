@@ -610,6 +610,10 @@ if (!empty($type))
 	if ($type == 'f') $label = 'NewSupplier';
 }
 
+if ($contextpage = 'poslist' && ( !empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+	print get_htmloutput_mesg(img_warning('default') . ' ' . $langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), '', 'warning', 1);
+}
+
 // Show the new button only when this page is not opend from the Extended POS (pop-up window)
 // but allow it too, when a user has the rights to create a new customer
 if ($contextpage != 'poslist')
