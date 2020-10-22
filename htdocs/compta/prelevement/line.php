@@ -95,7 +95,7 @@ if ($action == 'confirm_rejet')
 			if ($lipre->fetch($id) == 0)
 
 			{
-				$rej = new RejetPrelevement($db, $user,$type);
+				$rej = new RejetPrelevement($db, $user, $type);
 
 				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
 
