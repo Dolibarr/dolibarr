@@ -1656,7 +1656,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->type == 2) $title = $outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title = $outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title = $outputlangs->transnoentities("InvoiceProForma");
-		if ($this->situationinvoice) $title = $outputlangs->transnoentities("InvoiceSituation");
+		if ($this->situationinvoice) $title = $outputlangs->transnoentities("PDFInvoiceSituation");
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);
