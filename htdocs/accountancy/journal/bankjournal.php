@@ -222,12 +222,12 @@ if ($result) {
 		// Set accountancy code for bank
 		$compta_bank = $obj->account_number;
 
-		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
+		// Set accountancy code for thirdparty (example: '411CU...' / '401SU...' or '' if no subledger account defined on third party)
 		$compta_soc = 'NotDefined';
 		if ($lineisapurchase > 0)
-			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
+			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : '');
 		if ($lineisasale > 0)
-			$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+			$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : '');
 
 		$tabcompany[$obj->rowid] = array(
 				'id' => $obj->socid,
