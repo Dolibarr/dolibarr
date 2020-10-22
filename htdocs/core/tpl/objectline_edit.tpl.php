@@ -430,7 +430,7 @@ jQuery(document).ready(function()
 		});
 
 		/* Init field buying_price and fournprice */
-		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>}, function(data) {
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': '<?php echo newToken(); ?>'}, function(data) {
           if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;
