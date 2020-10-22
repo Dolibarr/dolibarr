@@ -82,7 +82,7 @@ if (!empty($conf->mrp->enabled) && $user->rights->mrp->read && empty($conf->glob
 
 if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->rights->projet->lire)
 {
-	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_projectpub', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_project', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->rights->projet->lire)
 {
