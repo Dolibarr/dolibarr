@@ -20,7 +20,7 @@
  *	\ingroup    core
  *	\brief      File of class of generic business class
  */
-require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -36,6 +36,6 @@ class GenericObject extends CommonObject
      */
     public function __construct($db)
     {
-        $this->db=$db;
+        $this->db = $db;
     }
 }

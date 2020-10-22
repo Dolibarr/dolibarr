@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2014	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2005		Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2011	Laurent Destailleur	  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2014	Regis Houssin		  <regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Juanjo Menent		  <jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel	  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2015		Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,9 +149,7 @@ class ProductFournisseur extends Product
         {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -273,6 +272,7 @@ class ProductFournisseur extends Product
 		$charges = price2num($charges, 'MU');
         $qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
+		$packaging = price2num((($this->packaging < $qty) ? $qty : $this->packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();
@@ -285,8 +285,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		}
-		else     // old method. deprecated because ot can't retreive type
+		} else // old method. deprecated because ot can't retreive type
 		{
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
@@ -350,8 +349,8 @@ class ProductFournisseur extends Product
 			// TODO Add localtax1 and localtax2
 			//$sql.= " localtax1_tx=".($localtax1>=0?$localtax1:'NULL').",";
 			//$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
-			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
-			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
+			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$this->db->escape($localtaxtype1)."'":"'0'").",";
+			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$this->db->escape($localtaxtype2)."'":"'0'").",";
 			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " info_bits = ".$newnpr.",";
 			$sql .= " charges = ".$charges.","; // deprecated
@@ -359,6 +358,7 @@ class ProductFournisseur extends Product
 			$sql .= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
             $sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
             $sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
+			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -381,23 +381,16 @@ class ProductFournisseur extends Product
 				{
 					$this->db->commit();
 					return $this->product_fourn_price_id;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -2;
 			}
-        }
-
-        else
-        {
+        } else {
             dol_syslog(get_class($this).'::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
 
             // Delete price for this quantity
@@ -409,6 +402,7 @@ class ProductFournisseur extends Product
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
                 $sql .= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
                 $sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type)";
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", packaging";
                 $sql .= " values(";
                 $sql .= (isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
                 $sql .= (isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
@@ -432,25 +426,26 @@ class ProductFournisseur extends Product
                 $sql .= " ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
                 $sql .= " ".$newnpr.",";
                 $sql .= $conf->entity.",";
-                $sql .= $delivery_time_days.",";
+                $sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null').",";
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
                 $sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", ".(empty($this->packaging) ? 1 : $this->db->escape($this->packaging));
                 $sql .= ")";
 
-                $idinserted = 0;
+				$this->product_fourn_price_id = 0;
 
                 $resql = $this->db->query($sql);
                 if ($resql) {
-                    $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
-                }
-                else {
+                    $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
+                } else {
                     $error++;
                 }
 
                 if (!$error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
                     // Add record into log table
-                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrenc, $multicurrency_code);
+					// $this->product_fourn_price_id must be set
+                    $result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
                     if ($result < 0) {
                         $error++;
                     }
@@ -465,7 +460,6 @@ class ProductFournisseur extends Product
 
                     if (empty($error)) {
                         $this->db->commit();
-						$this->product_fourn_price_id = $idinserted;
                         return $this->product_fourn_price_id;
                     } else {
                         $this->db->rollback();
@@ -502,6 +496,7 @@ class ProductFournisseur extends Product
         $sql .= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
         $sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
         $sql .= "  pfp.barcode, pfp.fk_barcode_type";
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
         $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql .= " WHERE pfp.rowid = ".(int) $rowid;
 
@@ -545,6 +540,12 @@ class ProductFournisseur extends Product
                     $this->fourn_barcode = $obj->barcode;
                     $this->fourn_fk_barcode_type = $obj->fk_barcode_type;
                 }
+
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+					$this->packaging = $obj->packaging;
+					if ($this->packaging < $this->fourn_qty) $this->packaging = $this->fourn_qty;
+				}
+
                 if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression))
                 {
                     $priceparser = new PriceParser($this->db);
@@ -555,23 +556,17 @@ class ProductFournisseur extends Product
 	                    if ($this->fourn_qty != 0)
 	                    {
 	                        $this->fourn_unitprice = price2num($this->fourn_price / $this->fourn_qty, 'MU');
-	                    }
-	                    else
-	                    {
+	                    } else {
 	                        $this->fourn_unitprice = "";
 	                    }
                     }
                 }
 
             	return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -595,11 +590,12 @@ class ProductFournisseur extends Product
         global $conf;
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
-        $sql .= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
+        $sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
         $sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
         $sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
         $sql .= " pfp.barcode, pfp.fk_barcode_type";
-        $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."societe as s";
+		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) $sql .= ", pfp.packaging";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
         $sql .= " AND pfp.fk_soc = s.rowid";
         $sql .= " AND s.status=1"; // only enabled company selected
@@ -621,6 +617,7 @@ class ProductFournisseur extends Product
 
                 $prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
                 $prodfourn->product_fourn_id = $record["product_fourn_id"];
+                $prodfourn->product_fourn_entity = $record["entity"];
                 $prodfourn->fourn_ref = $record["ref_fourn"];
                 $prodfourn->ref_supplier			= $record["ref_fourn"];
                 $prodfourn->desc_supplier = $record["desc_fourn"];
@@ -648,6 +645,11 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_multicurrency_id          = $record["fk_multicurrency"];
                 $prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
 
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+					$prodfourn->packaging = $record["packaging"];
+					if ($prodfourn->packaging < $prodfourn->fourn_qty) $prodfourn->packaging = $prodfourn->fourn_qty;
+				}
+
                 if ($conf->barcode->enabled) {
                     $prodfourn->barcode = $record["barcode"];
                     $prodfourn->fk_barcode_type = $record["fk_barcode_type"];
@@ -667,9 +669,7 @@ class ProductFournisseur extends Product
                     if ($prodfourn->fourn_qty != 0)
                     {
                         $prodfourn->fourn_unitprice = price2num($prodfourn->fourn_price / $prodfourn->fourn_qty, 'MU');
-                    }
-                    else
-                    {
+                    } else {
                         $prodfourn->fourn_unitprice = "";
                     }
                 }
@@ -679,9 +679,7 @@ class ProductFournisseur extends Product
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -757,9 +755,7 @@ class ProductFournisseur extends Product
             {
                 $this->db->free($resql);
                 return 0;
-            }
-            else
-            {
+            } else {
                 $min = -1;
                 foreach ($record_array as $record)
                 {
@@ -780,9 +776,7 @@ class ProductFournisseur extends Product
                             if ($record["quantity"] != 0)
                             {
                                 $fourn_unitprice = price2num($fourn_price / $record["quantity"], 'MU');
-                            }
-                            else
-                            {
+                            } else {
                                 $fourn_unitprice = $fourn_price;
                             }
                         }
@@ -817,9 +811,7 @@ class ProductFournisseur extends Product
 
             $this->db->free($resql);
             return 1;
-        }
-        else
-		{
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -850,9 +842,7 @@ class ProductFournisseur extends Product
         {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error()." sql=".$sql;
             $this->db->rollback();
             return -1;
@@ -944,8 +934,6 @@ class ProductFournisseur extends Product
      */
     public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
-        global $conf;
-
         $sql = "SELECT";
         $sql .= " pfpl.rowid, pfp.ref_fourn as supplier_ref, pfpl.datec, u.lastname,";
         $sql .= " pfpl.price, pfpl.quantity";
@@ -966,16 +954,22 @@ class ProductFournisseur extends Product
         {
             $retarray = array();
 
-            while ($record = $this->db->fetch_array($resql))
+            while ($obj = $this->db->fetch_object($resql))
             {
-                $retarray[] = $record;
+                $tmparray = array();
+                $tmparray['rowid'] = $obj->rowid;
+                $tmparray['supplier_ref'] = $obj->supplier_ref;
+                $tmparray['datec'] = $this->db->jdate($obj->datec);
+                $tmparray['lastname'] = $obj->lastname;
+                $tmparray['price'] = $obj->price;
+                $tmparray['quantity'] = $obj->quantity;
+
+            	$retarray[] = $tmparray;
             }
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -996,12 +990,12 @@ class ProductFournisseur extends Product
         $langs->load("suppliers");
         if (count($productFournLogList) > 0) {
             $out .= '<table class="nobordernopadding" width="100%">';
-            $out .= '<tr><td class="liste_titre">'.$langs->trans("Date").'</td>';
+            $out .= '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Date").'</td>';
             $out .= '<td class="liste_titre right">'.$langs->trans("Price").'</td>';
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
             foreach ($productFournLogList as $productFournLog) {
-                $out .= '<tr><td class="right">'.dol_print_date($this->db->jdate($productFournLog['datec']), 'dayhour', 'tzuser').'</td>';
+                $out .= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
                 $out .= '<td class="right">'.price($productFournLog['price']).'</td>';
                 //$out.= '<td class="right">'.$productFournLog['quantity'].'</td>';
                 $out .= '<td>'.$productFournLog['lastname'].'</td></tr>';
@@ -1033,11 +1027,12 @@ class ProductFournisseur extends Product
 
         $label = '<u>'.$langs->trans("SupplierRef").'</u>';
         $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref_supplier;
+        $label .= '<b>'.$langs->trans('Product').':</b> '.$this->ref;
+        $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
-            $label .= '<br>';
+            $label .= '<br><br>';
             $label .= '<u>'.$langs->trans("History").'</u>';
             $label .= $this->displayPriceProductFournisseurLog($logPrices);
         }
@@ -1062,8 +1057,7 @@ class ProductFournisseur extends Product
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
@@ -1071,7 +1065,7 @@ class ProductFournisseur extends Product
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-        if ($withpicto != 2) $result .= $this->fourn_ref;
+        if ($withpicto != 2) $result .= $this->ref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
         $result .= $linkend;
         //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 

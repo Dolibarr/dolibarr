@@ -146,6 +146,7 @@ class MenuManager
 
 		    $this->menu->add('/index.php', $langs->trans("Home"), 0, $showmode, $this->atarget, 'home', '', 10, $id, $idsel, $classname);
 
+		    $substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
 		    // $this->menu->liste is top menu
 		    //var_dump($this->menu->liste);exit;
@@ -156,8 +157,6 @@ class MenuManager
 		        print '<ul class="ulmenu" data-inset="true">';
 		        print '<li class="lilevel0">';
 
-		        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-		        $substitarray['__USERID__'] = $user->id; // For backward compatibility
 		        $val['url'] = make_substitutions($val['url'], $substitarray);
 
 		        if ($val['enabled'] == 1)
@@ -216,8 +215,7 @@ class MenuManager
 		                {
 		                    if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) print $langs->trans("Access");
 		                    else print $langs->trans("Dashboard");
-		                }
-		                else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+		                } else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
 		                print '</a>';
 		                print '</li>'."\n";
 		            }
@@ -227,13 +225,10 @@ class MenuManager
 		                if ($val['enabled'])
 		                {
 		                    $lastlevel[0] = 'enabled';
-		                }
-		                elseif ($showmenu)                 // Not enabled but visible (so greyed)
+		                } elseif ($showmenu)                 // Not enabled but visible (so greyed)
 		                {
 		                    $lastlevel[0] = 'greyed';
-		                }
-		                else
-		                {
+		                } else {
 		                    $lastlevel[0] = 'hidden';
 		                }
 		            }
@@ -257,8 +252,6 @@ class MenuManager
 
 		                if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
 		                {
-		                	$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-		                	$substitarray['__USERID__'] = $user->id; // For backward compatibility
 		                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
 
 		                    $relurl2 = dol_buildpath($val2['url'], 1);
@@ -284,21 +277,16 @@ class MenuManager
 		                            //print ' data-ajax="false"';
 		                            print '>';
 		                            $lastlevel2[$val2['level']] = 'enabled';
-		                        }
-		                        else					// Not allowed but visible (greyed)
+		                        } else // Not allowed but visible (greyed)
 		                        {
 		                            print '<a href="#" class="vsmenudisabled">';
 		                            $lastlevel2[$val2['level']] = 'greyed';
 		                        }
-		                    }
-		                    else
-		                    {
+		                    } else {
 		                        if ($val2['enabled'])	// Allowed
 		                        {
 		                            $lastlevel2[$val2['level']] = 'enabled';
-		                        }
-		                        else
-		                        {
+		                        } else {
 		                            $lastlevel2[$val2['level']] = 'greyed';
 		                        }
 		                    }
@@ -378,9 +366,7 @@ class MenuManager
 						if (($alt % 2 == 0))
 						{
 							print '<div class="blockvmenub lockvmenuimpair blockvmenuunique'.($lastopened ? ' blockvmenulast' : '').($alt == 1 ? ' blockvmenufirst' : '').'">'."\n";
-						}
-						else
-						{
+						} else {
 							print '<div class="blockvmenu blockvmenupair blockvmenuunique'.($lastopened ? ' blockvmenulast' : '').($alt == 1 ? ' blockvmenufirst' : '').'">'."\n";
 						}
 					}
@@ -400,9 +386,7 @@ class MenuManager
 						if ($this->menu->liste[$i]['enabled'])
 						{
 							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
-						}
-						else
-						{
+						} else {
 							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu->liste[$i]['titre'].'</font></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
@@ -418,13 +402,11 @@ class MenuManager
 						if ($this->menu->liste[$i]['enabled'])
 						{
 							print $tabstring;
-							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>';
-							else print '<span class="vsmenu">';
+							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu"  itle="'.dol_escape_htmltag($this->menu->liste[$i]['titre']).'" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>';
+							else print '<span class="vsmenu" title="'.dol_escape_htmltag($this->menu->liste[$i]['titre']).'">';
 							if ($this->menu->liste[$i]['url']) print $this->menu->liste[$i]['titre'].'</a>';
 							else print '</span>';
-						}
-						else
-						{
+						} else {
 							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$this->menu->liste[$i]['titre'].'</font>';
 						}
 
@@ -453,13 +435,13 @@ class MenuManager
         /*
 		if ($mode == 'jmobile')
 		{
+			$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
+
 			foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 			{
 				print '<ul class="ulmenu" data-inset="true">';
 				print '<li class="lilevel0">';
 
-		        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-		        $substitarray['__USERID__'] = $user->id;	// For backward compatibility
 		        $val['url'] = make_substitutions($val['url'], $substitarray);
 
 				if ($val['enabled'] == 1)
@@ -487,8 +469,6 @@ class MenuManager
 					}
 					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 					{
-	                	$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
-	                	$substitarray['__USERID__'] = $user->id;	// For backward compatibility
 	                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
 
 						$relurl2=dol_buildpath($val2['url'],1);

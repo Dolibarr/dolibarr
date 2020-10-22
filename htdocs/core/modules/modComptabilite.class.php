@@ -26,7 +26,7 @@
  * \brief      Fichier de description et activation du module Comptabilite
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -57,13 +57,13 @@ class modComptabilite extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->picto='accounting';
+        $this->picto = 'accounting';
 
 		// Config pages
 		$this->config_page_url = array("compta.php");
 
 		// Dependencies
-		$this->depends = array("modFacture","modBanque");
+		$this->depends = array("modFacture", "modBanque");
 		$this->requiredby = array();
 		$this->conflictwith = array("modAccounting");
 		$this->langfiles = array("compta");
@@ -85,7 +85,7 @@ class modComptabilite extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'compta';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 95;
@@ -98,7 +98,7 @@ class modComptabilite extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 
 

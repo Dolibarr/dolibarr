@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
+$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT);
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');
@@ -91,6 +91,7 @@ if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || !empty($conf->global->MAIN_AL
 $enableremotecheck = true;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
 print '<!-- for a local check target=local&xmlshortfile=... -->'."\n";
 if (dol_is_file($xmlfile))
@@ -98,9 +99,7 @@ if (dol_is_file($xmlfile))
     print '<input type="radio" name="target" value="local"'.((!GETPOST('target') || GETPOST('target') == 'local') ? 'checked="checked"' : '').'"> '.$langs->trans("LocalSignature").' = ';
     print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print '<br>';
-}
-else
-{
+} else {
     print '<input type="radio" name="target" value="local"> '.$langs->trans("LocalSignature").' = ';
     print '<input name="xmlshortfile" class="flat minwidth400" value="'.dol_escape_htmltag($xmlshortfile).'">';
     print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span>';
@@ -111,9 +110,7 @@ if ($enableremotecheck)
 {
     print '<input type="radio" name="target" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"' : '').'> '.$langs->trans("RemoteSignature").' = ';
     print '<input name="xmlremote" class="flat minwidth400" value="'.dol_escape_htmltag($xmlremote).'"><br>';
-}
-else
-{
+} else {
     print '<input type="radio" name="target" value="remote" disabled="disabled"> '.$langs->trans("RemoteSignature").' = '.$xmlremote;
     if (!GETPOST('xmlremote')) print ' <span class="warning">('.$langs->trans("FeatureAvailableOnlyOnStable").')</span>';
     print '<br>';
@@ -127,10 +124,20 @@ if (GETPOST('target') == 'local')
 {
     if (dol_is_file($xmlfile))
     {
+    	// If file is a zip file (.../filelist-x.y.z.xml.zip), we uncompress it before
+    	if (preg_match('/\.zip$/i', $xmlfile)) {
+    		dol_mkdir($conf->admin->dir_temp);
+    		$xmlfilenew = preg_replace('/\.zip$/i', '', $xmlfile);
+    		$result = dol_uncompress($xmlfile, $conf->admin->dir_temp);
+    		if (empty($result['error'])) {
+    			$xmlfile = $conf->admin->dir_temp.'/'.basename($xmlfilenew);
+    		} else {
+    			print $langs->trans('FailedToUncompressFile').': '.$xmlfile;
+    			$error++;
+    		}
+    	}
         $xml = simplexml_load_file($xmlfile);
-    }
-    else
-    {
+    } else {
         print $langs->trans('XmlNotFound').': '.$xmlfile;
         $error++;
     }
@@ -145,9 +152,7 @@ if (GETPOST('target') == 'remote')
         $xmlfile = $xmlarray['content'];
         //print "xmlfilestart".$xmlfile."xmlfileend";
         $xml = simplexml_load_string($xmlfile);
-    }
-    else
-    {
+    } else {
         $errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
         setEventMessages($errormsg, null, 'errors');
         $error++;
@@ -191,9 +196,9 @@ if (!$error && $xml)
             $i++;
             $out .= '<tr class="oddeven">';
             $out .= '<td>'.$i.'</td>'."\n";
-            $out .= '<td>'.$constname.'</td>'."\n";
-            $out .= '<td class="center">'.$constvalue.'</td>'."\n";
-            $out .= '<td class="center">'.$valueforchecksum.'</td>'."\n";
+            $out .= '<td>'.dol_escape_htmltag($constname).'</td>'."\n";
+            $out .= '<td class="center">'.dol_escape_htmltag($constvalue).'</td>'."\n";
+            $out .= '<td class="center">'.dol_escape_htmltag($valueforchecksum).'</td>'."\n";
             $out .= "</tr>\n";
         }
 
@@ -214,7 +219,7 @@ if (!$error && $xml)
         $includecustom = (empty($xml->dolibarr_htdocs_dir[0]['includecustom']) ? 0 : $xml->dolibarr_htdocs_dir[0]['includecustom']);
 
         // Defined qualified files (must be same than into generate_filelist_xml.php)
-        $regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
+        $regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
         $regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$'; // Exclude dirs
         $scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
@@ -251,16 +256,14 @@ if (!$error && $xml)
 	            $i++;
 	            $out .= '<tr class="oddeven">';
 	            $out .= '<td>'.$i.'</td>'."\n";
-	            $out .= '<td>'.$file['filename'].'</td>'."\n";
+	            $out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
 	            $out .= '<td class="right">';
 	            if (!empty($file['expectedsize'])) $out .= dol_print_size($file['expectedsize']);
 	            $out .= '</td>'."\n";
-	            $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+	            $out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
 	            $out .= "</tr>\n";
 	        }
-        }
-        else
-        {
+        } else {
             $out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out .= '</table>';
@@ -292,9 +295,9 @@ if (!$error && $xml)
 	            $i++;
 	            $out .= '<tr class="oddeven">';
 	            $out .= '<td>'.$i.'</td>'."\n";
-	            $out .= '<td>'.$file['filename'].'</td>'."\n";
-	            $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
-	            $out .= '<td class="center">'.$file['md5'].'</td>'."\n";
+	            $out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
+	            $out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+	            $out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
 	            $out .= '<td class="right">';
 	            if ($file['expectedsize']) $out .= dol_print_size($file['expectedsize']);
 	            $out .= '</td>'."\n";
@@ -313,9 +316,7 @@ if (!$error && $xml)
             $out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
             $out .= '<td class="right"></td>'."\n";
             $out .= "</tr>\n";
-        }
-        else
-        {
+        } else {
             $out .= '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out .= '</table>';
@@ -346,14 +347,14 @@ if (!$error && $xml)
                 $i++;
                 $out .= '<tr class="oddeven">';
                 $out .= '<td>'.$i.'</td>'."\n";
-                $out .= '<td>'.$file['filename'];
+                $out .= '<td>'.dol_escape_htmltag($file['filename']);
                 if (!preg_match('/^win/i', PHP_OS)) {
                 	$htmltext = $langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']); // The slash is included int file['filename']
                 	$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
                 }
                 $out .= '</td>'."\n";
-                $out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
-                $out .= '<td class="center">'.$file['md5'].'</td>'."\n";
+                $out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+                $out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
                 $totalsize += $size;
                 $out .= '<td class="right">'.dol_print_size($size).'</td>'."\n";
@@ -368,9 +369,7 @@ if (!$error && $xml)
             $out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
             $out .= '<td class="right"></td>'."\n";
             $out .= "</tr>\n";
-        }
-        else
-        {
+        } else {
             $out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out .= '</table>';
@@ -381,14 +380,10 @@ if (!$error && $xml)
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
             setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-        }
-        else
-        {
+        } else {
             setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
-    }
-    else
-    {
+    } else {
         print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
         $error++;
     }
@@ -421,16 +416,12 @@ if (!$error && $xml)
     		$resultcode = 'warning';
     		$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
     		$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
-    	}
-    	else
-    	{
+    	} else {
     		$resultcode = 'ok';
     		$resultcomment = 'Success';
     		$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     	}
-    }
-    else
-    {
+    } else {
     	$resultcode = 'error';
     	$resultcomment = 'Error';
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';

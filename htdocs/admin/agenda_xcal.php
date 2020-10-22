@@ -54,9 +54,7 @@ if ($actionsave)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
         setEventMessages($langs->trans("SaveFailed"), null, 'errors');
     }
@@ -78,7 +76,7 @@ print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = agenda_prepare_head();
 
@@ -156,17 +154,20 @@ print "<br>";
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
+$getentity = ($conf->entity > 1 ? "&entity=".$conf->entity : "");
 
 // Show message
 $message = '';
-$urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
+$urlvcal .= $urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
 $message .= '<br>';
-$urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
+$urlical .=$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
 $message .= '<br>';
-$urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
+$urlrss .= $urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'rss', $urlrss);
 $message .= '<br>';
 $message .= '<br>';
@@ -178,6 +179,7 @@ $message .= $langs->trans("AgendaUrlOptionsNotAdmin", $user->login, $user->login
 $message .= $langs->trans("AgendaUrlOptions4", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsProject", $user->login, $user->login).'<br>';
 $message .= $langs->trans("AgendaUrlOptionsNotAutoEvent", 'systemauto', 'systemauto').'<br>';
+$message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 
 print info_admin($message);
 

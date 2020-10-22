@@ -11,7 +11,7 @@ CloseEtablishment=Close establishment
 # Dictionary
 DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Employees
 Employee=Employee

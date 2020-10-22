@@ -39,7 +39,7 @@ create table llx_adherent
   pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
-  societe          varchar(128),			-- company name (should be same lenght than societe.name)
+  societe          varchar(128),			-- company name (should be same length than societe.name). No more used.
   fk_soc           integer NULL,		-- Link to third party linked to member
   address          text,
   zip              varchar(30),
@@ -72,7 +72,7 @@ create table llx_adherent
   model_pdf		   varchar(255),
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
-  tms              timestamp, -- date de modification
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- last modification date
   fk_user_author   integer,   -- can be null because member can be create by a guest
   fk_user_mod      integer,
   fk_user_valid    integer,

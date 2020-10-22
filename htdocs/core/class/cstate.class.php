@@ -50,7 +50,7 @@ class Cstate // extends CommonObject
 	public $id;
 
 	public $code_departement;
-
+	public $code;
 	/**
 	 * @var string
 	 * @deprecated
@@ -120,18 +120,6 @@ class Cstate // extends CommonObject
 
         if (!$error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_departements");
-
-            //if (! $notrigger) {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action call a trigger.
-
-                //// Call triggers
-                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                //$interface=new Interfaces($this->db);
-                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                //// End call triggers
-            //}
         }
 
         // Commit or rollback
@@ -144,9 +132,7 @@ class Cstate // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -181,16 +167,16 @@ class Cstate // extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
-				$this->code_departement = $obj->code_departement;
-				$this->nom = $obj->nom;
+				$this->code_departement = $obj->code_departement;    //deprecated
+				$this->code = $obj->code_departement;
+				$this->nom = $obj->nom;   //deprecated
+				$this->name = $obj->nom;
 				$this->active = $obj->active;
             }
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -231,27 +217,11 @@ class Cstate // extends CommonObject
         $resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//    if (! $notrigger)
-		//    {
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    //    }
-        //}
-
 	    // Commit or rollback
 	    if ($error) {
 		    foreach ($this->errors as $errmsg) {
-			    dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
-			    $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			    dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+			    $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 		    }
 		    $this->db->rollback();
 		    return -1 * $error;
@@ -282,22 +252,6 @@ class Cstate // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-		//	}
-		//}
-
         // Commit or rollback
 		if ($error)
 		{
@@ -308,9 +262,7 @@ class Cstate // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}

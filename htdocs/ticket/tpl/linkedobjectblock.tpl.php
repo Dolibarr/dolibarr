@@ -50,8 +50,8 @@ foreach ($linkedObjectBlock as $key => $objectlink)
         <?php if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a'; ?>
         </td>
         <td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
-    	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
-    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
+    	<td class="linkedcol-ref center"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 	    <?php
 	    //$objectlink->socid = $objectlink->fk_soc;
 	    //$objectlink->fetch_thirdparty();
@@ -77,8 +77,8 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
     	<td class="right"><?php echo price($total); ?></td>
     	<td class="right"></td>
     	<td class="right"></td>

@@ -35,7 +35,7 @@ function stock_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/stock/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Warehouse");
 	$head[$h][2] = 'card';
 	$h++;
 

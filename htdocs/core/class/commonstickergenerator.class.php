@@ -61,7 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
  */
 abstract class CommonStickerGenerator
 {
-    public $code;   // Code of format
+    public $code; // Code of format
 
     /**
      * @var array format Array with informations
@@ -127,7 +127,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   PDF         $pdf            PDF reference
+	 * @param   TCPDF         $pdf            PDF reference
 	 * @param   Translate  	$outputlangs    Output langs
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
@@ -139,7 +139,7 @@ abstract class CommonStickerGenerator
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
 	 *
-	 * @param    PDF        $pdf   PDF reference
+	 * @param    TCPDF        $pdf   PDF reference
 	 * @param    int        $pt    point
 	 * @return   void
 	 */
@@ -158,7 +158,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * protected Print dot line
 	 *
-	 * @param	PDF     $pdf                PDF reference
+	 * @param	TCPDF   $pdf                PDF reference
 	 * @param 	int		$x1					X1
 	 * @param 	int		$y1					Y1
 	 * @param 	int		$x2					X2
@@ -171,27 +171,26 @@ abstract class CommonStickerGenerator
     {
         // phpcs:enable
 		$pdf->SetLineWidth($epaisseur);
-		$length=abs($x1-$x2);
-		$hauteur=abs($y1-$y2);
-		if($length>$hauteur) {
-			$Pointilles=($length/$nbPointilles)/2; // taille des pointilles
+		$length = abs($x1 - $x2);
+		$hauteur = abs($y1 - $y2);
+		if ($length > $hauteur) {
+			$Pointilles = ($length / $nbPointilles) / 2; // taille des pointilles
+		} else {
+			$Pointilles = ($hauteur / $nbPointilles) / 2;
 		}
-		else {
-			$Pointilles=($hauteur/$nbPointilles)/2;
-		}
-		for($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
-			for($j=$i;$j<=($i+$Pointilles);$j++) {
-				if($j<=($x2-1)) {
-		            $pdf->Line($j, $y1, $j+1, $y1); // on trace le pointill? du haut, point par point
-		            $pdf->Line($j, $y2, $j+1, $y2); // on trace le pointill? du bas, point par point
+		for ($i = $x1; $i <= $x2; $i += $Pointilles + $Pointilles) {
+			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
+				if ($j <= ($x2 - 1)) {
+		            $pdf->Line($j, $y1, $j + 1, $y1); // on trace le pointill? du haut, point par point
+		            $pdf->Line($j, $y2, $j + 1, $y2); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
-		for($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
-			for($j=$i;$j<=($i+$Pointilles);$j++) {
-				if($j<=($y2-1)) {
-		            $pdf->Line($x1, $j, $x1, $j+1); // on trace le pointill? du haut, point par point
-		            $pdf->Line($x2, $j, $x2, $j+1); // on trace le pointill? du bas, point par point
+		for ($i = $y1; $i <= $y2; $i += $Pointilles + $Pointilles) {
+			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
+				if ($j <= ($y2 - 1)) {
+		            $pdf->Line($x1, $j, $x1, $j + 1); // on trace le pointill? du haut, point par point
+		            $pdf->Line($x2, $j, $x2, $j + 1); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
@@ -202,7 +201,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * protected Function realisant une croix aux 4 coins des cartes
 	 *
-	 * @param PDF   $pdf                PDF reference
+	 * @param TCPDF $pdf                PDF reference
 	 * @param int   $x1					X1
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
@@ -217,19 +216,19 @@ abstract class CommonStickerGenerator
 		$pdf->SetDrawColor(192, 192, 192);
 
 		$pdf->SetLineWidth($epaisseur);
-		$lg=$taille/2;
+		$lg = $taille / 2;
 		// croix haut gauche
-		$pdf->Line($x1, $y1-$lg, $x1, $y1+$lg);
-		$pdf->Line($x1-$lg, $y1, $x1+$lg, $y1);
+		$pdf->Line($x1, $y1 - $lg, $x1, $y1 + $lg);
+		$pdf->Line($x1 - $lg, $y1, $x1 + $lg, $y1);
 		// croix bas gauche
-		$pdf->Line($x1, $y2-$lg, $x1, $y2+$lg);
-		$pdf->Line($x1-$lg, $y2, $x1+$lg, $y2);
+		$pdf->Line($x1, $y2 - $lg, $x1, $y2 + $lg);
+		$pdf->Line($x1 - $lg, $y2, $x1 + $lg, $y2);
 		// croix haut droit
-		$pdf->Line($x2, $y1-$lg, $x2, $y1+$lg);
-		$pdf->Line($x2-$lg, $y1, $x2+$lg, $y1);
+		$pdf->Line($x2, $y1 - $lg, $x2, $y1 + $lg);
+		$pdf->Line($x2 - $lg, $y1, $x2 + $lg, $y1);
 		// croix bas droit
-		$pdf->Line($x2, $y2-$lg, $x2, $y2+$lg);
-		$pdf->Line($x2-$lg, $y2, $x2+$lg, $y2);
+		$pdf->Line($x2, $y2 - $lg, $x2, $y2 + $lg);
+		$pdf->Line($x2 - $lg, $y2, $x2 + $lg, $y2);
 
 		$pdf->SetDrawColor(0, 0, 0);
 	}
@@ -281,7 +280,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * protected Set format
 	 *
-	 * @param    PDF       $pdf     PDF reference
+	 * @param    TCPDF     $pdf     PDF reference
 	 * @param    string    $format  Format
 	 * @return   void
 	 */
@@ -291,7 +290,7 @@ abstract class CommonStickerGenerator
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
 		$this->_Avery_Code = $format['code'];
-		$this->_Margin_Left	= $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
+		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Y_Space = $this->convertMetric($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);

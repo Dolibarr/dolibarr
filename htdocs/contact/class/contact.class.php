@@ -9,7 +9,8 @@
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
+ * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,25 +60,70 @@ class Contact extends CommonObject
 	 */
 	public $picto = 'contact';
 
+	/**
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'         =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'firstname'     =>array('type'=>'varchar(128)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>11, 'searchall'=>1),
-		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'note_public'   =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>60),
-		'note_private'  =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>61),
-		'datec'         =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1, 'position'=>1000),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>25, 'searchall'=>1),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>30, 'index'=>1),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>3, 'position'=>35),
+		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>3, 'position'=>40),
+		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'showoncombobox'=>1, 'searchall'=>1),
+		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
+		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>1, 'position'=>65),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
+		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
+		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
+		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>1, 'position'=>95, 'searchall'=>1),
+		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
+		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>1, 'position'=>105, 'searchall'=>1),
+		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>1, 'position'=>110, 'searchall'=>1),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>3, 'position'=>115),
+		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
+		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
+		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'Fk stcommcontact', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
+		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
+		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>185),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'position'=>190),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>3, 'position'=>205),
+		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>3, 'position'=>210),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
 	);
 
 	public $civility_id; // In fact we store civility_code
@@ -161,6 +207,10 @@ class Contact extends CommonObject
 	public $phone_mobile;
 	public $fax;
 
+	/**
+	 * Private or public
+	 * @var int
+	 */
 	public $priv;
 
 	public $birthday;
@@ -185,6 +235,11 @@ class Contact extends CommonObject
 
 	public $roles = array();
 
+	public $cacheprospectstatus = array();
+	public $fk_prospectlevel;
+	public $stcomm_id;
+	public $statut_commercial;
+	public $stcomm_picto;
 
 	/**
 	 *	Constructor
@@ -193,8 +248,48 @@ class Contact extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf, $langs;
+
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID))		$this->fields['rowid']['visible'] = 0;
+		if (empty($conf->mailing->enabled))						$this->fields['no_email']['enabled'] = 0;
+
+		// typical ['s.nom'] is used for third-parties
+		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+			$this->fields['fk_soc']['enabled'] = 0;
+			$this->fields['fk_soc']['searchall'] = 0;
+		}
+
+		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+			$this->field['fk_stcommcontact']['enabled'] = 0;
+			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+		}
+
+		// Unset fields that are disabled
+		foreach ($this->fields as $key => $val)
+		{
+			if (isset($val['enabled']) && empty($val['enabled']))
+			{
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		/*if (is_object($langs))
+		{
+			foreach($this->fields as $key => $val)
+			{
+				if (is_array($val['arrayofkeyval']))
+				{
+					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					{
+						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+					}
+				}
+			}
+		}*/
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -233,9 +328,7 @@ class Contact extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -260,8 +353,9 @@ class Contact extends CommonObject
 		// Clean parameters
 		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
         $this->firstname = trim($this->firstname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(strtolower($this->lastname));
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(strtolower($this->firstname));
         if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
@@ -275,6 +369,7 @@ class Contact extends CommonObject
         $sql .= ", firstname";
         $sql .= ", fk_user_creat";
 		$sql .= ", priv";
+		$sql.= ", fk_stcommcontact";
 		$sql .= ", statut";
 		$sql .= ", canvas";
 		$sql .= ", entity";
@@ -288,6 +383,7 @@ class Contact extends CommonObject
         $sql .= "'".$this->db->escape($this->firstname)."',";
         $sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
 		$sql .= " ".$this->db->escape($this->priv).",";
+		$sql.= " 0,";
 		$sql .= " ".$this->db->escape($this->statut).",";
         $sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
         $sql .= " ".$this->db->escape($this->entity).",";
@@ -303,7 +399,7 @@ class Contact extends CommonObject
 
 			if (!$error)
 			{
-                $result = $this->update($this->id, $user, 1, 'add');
+                $result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
                 if ($result < 0)
                 {
                     $error++;
@@ -333,16 +429,12 @@ class Contact extends CommonObject
             {
                 $this->db->commit();
                 return $this->id;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
                 return -2;
             }
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 
 			$this->db->rollback();
@@ -372,6 +464,10 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(strtolower($this->lastname));
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(strtolower($this->firstname));
+
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
@@ -412,6 +508,11 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "null");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
+		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
+		if (isset($this->stcomm_id))
+		{
+			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
+		}
 		$sql .= ", statut = ".$this->db->escape($this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
@@ -430,7 +531,7 @@ class Contact extends CommonObject
 		    $action = 'update';
 
 		    // Actions on extra fields
-		    if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+		    if (!$error)
 		    {
 		    	$result = $this->insertExtraFields();
 		    	if ($result < 0)
@@ -537,16 +638,12 @@ class Contact extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
             $this->db->rollback();
 			return -1;
@@ -702,14 +799,10 @@ class Contact extends CommonObject
                     $error++;
                     $this->error = $this->db->lasterror();
 				}
-			}
-			else
-			{
+			} else {
 				$result = true;
 			}
-		}
-		else
-		{
+		} else {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
 			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
@@ -732,9 +825,7 @@ class Contact extends CommonObject
 		{
 		    $this->db->commit();
 		    return 1;
-		}
-		else
-		{
+		} else {
 		    dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 		    $this->db->rollback();
 		    return -$error;
@@ -743,19 +834,18 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Load object contact
+	 *  Load object contact.
 	 *
-	 *  @param      int		$id         id du contact
-	 *  @param      User	$user       Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-     *  @param      string  $ref_ext    External reference, not given by Dolibarr
-     *  @param		string	$email		Email
-	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
+	 *  @param      int		$id         	Id of contact
+	 *  @param      User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
+     *  @param      string  $ref_ext    	External reference, not given by Dolibarr
+     *  @param		string	$email			Email
+     *  @param		int		$loadalsoroles	Load also roles
+	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($id, $user = null, $ref_ext = '', $email = '')
+	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0)
 	{
 		global $langs;
-
-        $langs->load("dict");
 
 		dol_syslog(get_class($this)."::fetch id=".$id." ref_ext=".$ref_ext." email=".$email, LOG_DEBUG);
 
@@ -765,7 +855,7 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->load("companies");
+		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut, c.zip, c.town,";
@@ -776,6 +866,7 @@ class Contact extends CommonObject
 		$sql .= " c.socialnetworks,";
         $sql .= " c.photo,";
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
+		$sql.= " c.fk_prospectcontactlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
 		$sql .= " c.datec as date_creation, c.tms as date_modification,";
 		$sql .= " co.label as country, co.code as country_code,";
@@ -787,9 +878,9 @@ class Contact extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if ($id) $sql .= " WHERE c.rowid = ".$id;
-		else
-		{
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcommcontact as st ON c.fk_stcommcontact = st.id';
+		if ($id) $sql .= " WHERE c.rowid = ".((int) $id);
+		else {
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
 			if ($ref_ext) {
 				$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -802,7 +893,14 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($this->db->num_rows($resql))
+			$num = $this->db->num_rows($resql);
+			if ($num > 1)
+			{
+				$this->error = 'Fetch found several records. Rename one of contact to avoid duplicate.';
+				dol_syslog($this->error, LOG_ERR);
+
+				return 2;
+			} elseif ($num)   // $num = 1
 			{
 				$obj = $this->db->fetch_object($resql);
 
@@ -835,6 +933,14 @@ class Contact extends CommonObject
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
+
+				$this->fk_prospectlevel = $obj->fk_prospectcontactlevel;
+
+				$transcode=$langs->trans('StatusProspect'.$obj->fk_stcommcontact);
+				$libelle=($transcode!='StatusProspect'.$obj->fk_stcommcontact?$transcode:$obj->stcomm);
+				$this->stcomm_id = $obj->fk_stcommcontact;  // id statut commercial
+				$this->statut_commercial = $libelle;    	// libelle statut commercial
+				$this->stcomm_picto = $obj->stcomm_picto; 	// Picto statut commercial
 
 				$this->phone_pro = trim($obj->phone);
 				$this->fax = trim($obj->fax);
@@ -876,14 +982,16 @@ class Contact extends CommonObject
 						$this->user_id = $uobj->rowid;
 					}
 					$this->db->free($resql);
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->error();
 					return -1;
 				}
 
-				// Charge alertes du user
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+
+				// Load also alerts of this user
 				if ($user)
 				{
 					$sql = "SELECT fk_user";
@@ -900,52 +1008,50 @@ class Contact extends CommonObject
 							$this->birthday_alert = 1;
 						}
 						$this->db->free($resql);
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->error();
 						return -1;
 					}
 				}
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-				$resultRole = $this->fetchRoles();
-				if ($resultRole < 0) {
-					return $resultRole;
+				// Load also roles of this address
+				if ($loadalsoroles) {
+					$resultRole = $this->fetchRoles();
+					if ($resultRole < 0) {
+						return $resultRole;
+					}
 				}
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
 	}
 
 
+
 	/**
-	 * Set property ->gender from property ->civility_id
+	 * Set the property "gender" of this class, based on the property "civility_id"
+	 * or use property "civility_code" as fallback, when "civility_id" is not available.
 	 *
 	 * @return void
 	 */
 	public function setGenderFromCivility()
 	{
-	    unset($this->gender);
-    	if (in_array($this->civility_id, array('MR'))) {
-    	    $this->gender = 'man';
-    	} elseif (in_array($this->civility_id, array('MME', 'MLE'))) {
-    	    $this->gender = 'woman';
-    	}
+		unset($this->gender);
+
+		if (in_array($this->civility_id, array('MR')) || in_array($this->civility_code, array('MR')))
+		{
+			$this->gender = 'man';
+		} elseif (in_array($this->civility_id, array('MME', 'MLE')) || in_array($this->civility_code, array('MME', 'MLE')))
+		{
+			$this->gender = 'woman';
+		}
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -986,9 +1092,7 @@ class Contact extends CommonObject
 			}
 			$this->db->free($resql);
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1006,9 +1110,6 @@ class Contact extends CommonObject
 
 		$error = 0;
 
-		//$this->old_lastname = $obj->lastname;
-		//$this->old_firstname = $obj->firstname;
-
 		$this->db->begin();
 
 		if (!$error)
@@ -1020,7 +1121,7 @@ class Contact extends CommonObject
 			$sql .= " WHERE ec.fk_socpeople=".$this->id;
 			$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql .= " AND tc.source='external'";
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1033,7 +1134,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel .= " WHERE rowid = ".$obj->rowid;
-					dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+					dol_syslog(__METHOD__, LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (!$result)
 					{
@@ -1043,9 +1144,7 @@ class Contact extends CommonObject
 
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = $this->db->error().' sql='.$sql;
 			}
@@ -1055,7 +1154,7 @@ class Contact extends CommonObject
 		{
 			// Remove Roles
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1069,7 +1168,7 @@ class Contact extends CommonObject
 		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1083,7 +1182,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result)
 			{
@@ -1093,7 +1192,7 @@ class Contact extends CommonObject
 		}
 
 		// Removed extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
+        if (!$error) {
             // For avoid conflicts if trigger used
 			$result = $this->deleteExtraFields();
 			if ($result < 0) $error++;
@@ -1111,9 +1210,7 @@ class Contact extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			dol_syslog("Error ".$this->error, LOG_ERR);
 			return -1;
@@ -1160,9 +1257,7 @@ class Contact extends CommonObject
 			}
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 	}
@@ -1187,9 +1282,7 @@ class Contact extends CommonObject
 
 			$this->db->free($resql);
 			return $nb;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1211,9 +1304,16 @@ class Contact extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		$result = '';
+		$result = ''; $label = '';
 
-        $label = '<u>'.$langs->trans("ShowContact").'</u>';
+		if (!empty($this->photo) && class_exists('Form'))
+		{
+			$label .= '<div class="photointooltip">';
+			$label .= Form::showphoto('contact', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= '</div><div style="clear: both;"></div>';
+		}
+
+		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Contact").'</u>';
         $label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
@@ -1266,7 +1366,7 @@ class Contact extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs));
 		$result .= $linkend;
 
@@ -1443,9 +1543,7 @@ class Contact extends CommonObject
 		{
 			$this->db->rollback();
 			return -$error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1508,14 +1606,14 @@ class Contact extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'socpeople'
+			'socpeople', 'societe_contacts'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
 	/**
-	 * Fetch Role for a contact
+	 * Fetch Roles for a contact
 	 *
 	 * @return float|int
 	 * @throws Exception
@@ -1527,14 +1625,14 @@ class Contact extends CommonObject
 		$num = 0;
 
 		$sql = "SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle, sc.rowid as contactroleid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql .= " ON tc.rowid = sc.fk_c_type_contact";
 		$sql .= " AND sc.fk_socpeople = ".$this->id;
 		$sql .= " AND tc.source = 'external' AND tc.active=1";
 		$sql .= " AND sc.entity IN (".getEntity('societe').')';
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$this->roles = array();
 		$resql = $this->db->query($sql);
@@ -1571,15 +1669,19 @@ class Contact extends CommonObject
 	{
 		$tab = array();
 
+		if ($element == 'action') {
+			$element = 'agenda';
+		}
+
 		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
 		$sql .= " WHERE sc.fk_soc =".$this->socid;
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
-		$sql .= " AND tc.element='".$element."'";
+		$sql .= " AND tc.element='".$this->db->escape($element)."'";
 		$sql .= " AND tc.active=1";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1594,9 +1696,7 @@ class Contact extends CommonObject
 			}
 
 			return $tab;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			dol_print_error($this->db);
 			return -1;
@@ -1619,7 +1719,7 @@ class Contact extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->errors[] = $this->db->lasterror().' sql='.$sql;
@@ -1639,7 +1739,7 @@ class Contact extends CommonObject
 					$sql .= $valRoles." , ";
 					$sql .= $this->id;
 					$sql .= ")";
-					dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+					dol_syslog(__METHOD__, LOG_DEBUG);
 
 					$result = $this->db->query($sql);
 					if (!$result)
@@ -1658,5 +1758,138 @@ class Contact extends CommonObject
 			$this->db->rollback();
 			return $error * -1;
 		}
+	}
+
+	/**
+	 *  Load array of prospect status
+	 *
+	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
+	 *  @return int					<0 if KO, >0 if OK
+	 */
+	public function loadCacheOfProspStatus($active = 1)
+	{
+		global $langs;
+
+		$sql = "SELECT id, code, libelle as label, picto FROM " . MAIN_DB_PREFIX . "c_stcommcontact";
+		if ($active >= 0) $sql .= " WHERE active = " . $active;
+		$resql = $this->db->query($sql);
+		$num = $this->db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$this->cacheprospectstatus[$obj->id] = array('id' => $obj->id, 'code' => $obj->code, 'label' => ($langs->trans("ST_" . strtoupper($obj->code)) == "ST_" . strtoupper($obj->code)) ? $obj->label : $langs->trans("ST_" . strtoupper($obj->code)), 'picto' => $obj->picto);
+			$i++;
+		}
+		return 1;
+	}
+
+	/**
+	 *	Return prostect level
+	 *
+	 *  @return     string        Libelle
+	 */
+	public function getLibProspLevel()
+	{
+		return $this->libProspLevel($this->fk_prospectlevel);
+	}
+
+	/**
+	 *  Return label of prospect level
+	 *
+	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @return string        					label of level
+	 */
+	public function libProspLevel($fk_prospectlevel)
+	{
+		global $langs;
+
+		$lib = $langs->trans("ProspectLevel" . $fk_prospectlevel);
+		// If lib not found in language file, we get label from cache/databse
+		if ($lib == $langs->trans("ProspectLevel" . $fk_prospectlevel))
+		{
+			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
+		}
+		return $lib;
+	}
+
+
+	/**
+	 *  Set prospect level
+	 *
+	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *	@return	int					<0 if KO, >0 if OK
+	 * @deprecated Use update function instead
+	 */
+	public function setProspectLevel(User $user)
+	{
+		return $this->update($this->id, $user);
+	}
+
+	/**
+	 *  Return status of prospect
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param	string	$label		Label to use for status for added status
+	 *  @return string        		Libelle
+	 */
+	public function getLibProspCommStatut($mode = 0, $label = '')
+	{
+		return $this->libProspCommStatut($this->stcomm_id, $mode, $label, $this->stcomm_picto);
+	}
+
+	/**
+	 *  Return label of a given status
+	 *
+	 *  @param	int|string	$statut        	Id or code for prospection status
+	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @param	string		$label			Label to use for status for added status
+	 *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
+	 *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+	 *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+	 *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
+	 *  @return string       	 			Libelle du statut
+	 */
+	public function libProspCommStatut($statut, $mode = 0, $label = '', $picto = '')
+	{
+		global $langs;
+		$langs->load('customers');
+
+		if ($mode == 2)
+		{
+			if ($statut == '-1' || $statut == 'ST_NO') return img_action($langs->trans("StatusProspect-1"), -1, $picto) . ' ' . $langs->trans("StatusProspect-1");
+			elseif ($statut == '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto) . ' ' . $langs->trans("StatusProspect0");
+			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto) . ' ' . $langs->trans("StatusProspect1");
+			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto) . ' ' . $langs->trans("StatusProspect2");
+			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto) . ' ' . $langs->trans("StatusProspect3");
+			else {
+				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto) . ' ' . (($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label);
+			}
+		}
+		if ($mode == 3)
+		{
+			if ($statut == '-1' || $statut == 'ST_NO') return img_action($langs->trans("StatusProspect-1"), -1, $picto);
+			elseif ($statut == '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto);
+			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto);
+			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto);
+			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto);
+			else {
+				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto);
+			}
+		}
+		if ($mode == 4)
+		{
+			if ($statut == '-1' || $statut == 'ST_NO') return img_action($langs->trans("StatusProspect-1"), -1, $picto) . ' ' . $langs->trans("StatusProspect-1");
+			elseif ($statut == '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto) . ' ' . $langs->trans("StatusProspect0");
+			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto) . ' ' . $langs->trans("StatusProspect1");
+			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto) . ' ' . $langs->trans("StatusProspect2");
+			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto) . ' ' . $langs->trans("StatusProspect3");
+			else {
+				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto) . ' ' . (($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label);
+			}
+		}
+
+		return "Error, mode/status not found";
 	}
 }

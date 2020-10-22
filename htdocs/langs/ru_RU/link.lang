@@ -8,3 +8,4 @@ LinkRemoved=Ссылка на файл %s удалена
 ErrorFailedToDeleteLink= При удалении ссылки на файл '<b>%s</b>' возникла ошибка
 ErrorFailedToUpdateLink= При обновлении ссылки на файл '<b>%s</b>' возникла ошибка
 URLToLink=URL to link
+OverwriteIfExists=Overwrite file if exists

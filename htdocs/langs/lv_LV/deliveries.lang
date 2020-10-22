@@ -2,7 +2,7 @@
 Delivery=Piegāde
 DeliveryRef=Art piegādei
 DeliveryCard=Čeka kartiņa
-DeliveryOrder=Piegādes pasūtījums
+DeliveryOrder=Piegādes kvīts
 DeliveryDate=Piegādes datums
 CreateDeliveryOrder=Izveidot piegādes kvīti
 DeliveryStateSaved=Piegādes stāvoklis saglabāts
@@ -18,7 +18,7 @@ StatusDeliveryCanceled=Atcelts
 StatusDeliveryDraft=Melnraksts
 StatusDeliveryValidated=Saņemts
 # merou PDF model
-NameAndSignature=Vārds, uzvārds un paraksts:
+NameAndSignature=Vārds un paraksts:
 ToAndDate=Kam___________________________________ uz ____ / _____ / __________
 GoodStatusDeclaration=Ir saņēmuši iepriekš minētās preces labā stāvoklī,
 Deliverer=Piegādātājs:
@@ -28,4 +28,4 @@ ErrorStockIsNotEnough=Nav pietiekami daudz krājumu
 Shippable=Shippable
 NonShippable=Nav nosūtāms
 ShowReceiving=Rādīt piegādes kvīti
-NonExistentOrder=Pasūtījums neeksistē
+NonExistentOrder=Neeksistējošs pasūtījums

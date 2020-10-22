@@ -74,7 +74,11 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -86,7 +90,11 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -139,7 +147,7 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
     	$result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+        $this->assertGreaterThan(0, $result);
 
     	return $result;
     }
@@ -241,25 +249,5 @@ class EntrepotTest extends PHPUnit\Framework\TestCase
     	$this->assertLessThan($result, 0, $localobject->errorsToString());
 
     	return $result;
-    }
-
-    /**
-     * testEntrepotStatic
-     *
-     * @return	void
-     */
-    public function testEntrepotStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Entrepot($db);
-
-        //$this->assertLessThan(1, 0);
-
-        return;
     }
 }

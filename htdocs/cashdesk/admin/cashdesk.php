@@ -68,9 +68,7 @@ if (GETPOST('action', 'alpha') == 'set')
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -92,7 +90,7 @@ print '<br>';
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 if (!empty($conf->service->enabled))
@@ -149,9 +147,7 @@ if (!empty($conf->stock->enabled))
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {
 	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK', $conf->global->CASHDESK_NO_DECREASE_STOCK, 1);
-	}
-	else
-	{
+	} else {
 	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
 	        $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
 	    }
@@ -169,9 +165,7 @@ if (!empty($conf->stock->enabled))
 	{
 		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE, 'CASHDESK_ID_WAREHOUSE', '', 1, $disabled);
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
-	}
-	else
-	{
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';

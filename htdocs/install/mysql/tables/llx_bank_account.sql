@@ -26,7 +26,7 @@ create table llx_bank_account
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   datec						datetime,
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref						varchar(12) NOT NULL,
   label						varchar(30) NOT NULL,
   entity					integer DEFAULT 1 NOT NULL,	-- multi company id

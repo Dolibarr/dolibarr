@@ -85,48 +85,15 @@ class DolEditor
 		if ($okforextendededitor === 'ace') $this->tool = 'ace';
         //if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
 
-        // Define content and some properties
-        if ($this->tool == 'ckeditor')
-        {
-            $content = dol_htmlentitiesbr($content); // If content is not HTML, we convert to HTML.
-        }
-        if ($this->tool == 'fckeditor')
-    	{
-        	require_once DOL_DOCUMENT_ROOT.'/includes/fckeditor/fckeditor.php';
-
-    		$content = dol_htmlentitiesbr($content); // If content is not HTML, we convert to HTML.
-
-        	$this->editor = new FCKeditor($htmlname);
-        	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/';
-        	$this->editor->Value = $content;
-        	$this->editor->Height   = $height;
-        	if (!empty($width)) $this->editor->Width = $width;
-        	$this->editor->ToolbarSet = $shorttoolbarname; // Profile of this toolbar set is deinfed into theme/mytheme/ckeditor/config.js
-        	$this->editor->Config['AutoDetectLanguage'] = 'true'; // Language of user (browser)
-        	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
-        	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
-
-    		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
-    		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
-    		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
-        	$modulepart = 'fckeditor';
-    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file=';
-    		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/';
-
-        	$this->editor->Config['LinkBrowser'] = ($uselocalbrowser ? 'true' : 'false');
-        	$this->editor->Config['ImageBrowser'] = ($uselocalbrowser ? 'true' : 'false');
-
-        	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
-        	{
-        		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
-        		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
-    		}
-    	}
-
     	// Define some properties
         if (in_array($this->tool, array('textarea', 'ckeditor', 'ace')))
         {
-    	    $this->content = $content;
+        	if ($this->tool == 'ckeditor' && ! dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
+        		$this->content = dol_nl2br($content);
+        	}
+        	else {
+    	    	$this->content = $content;
+        	}
     	    $this->htmlname 			= $htmlname;
     	    $this->toolbarname = $shorttoolbarname;
     	    $this->toolbarstartexpanded = $toolbarstartexpanded;
@@ -134,7 +101,7 @@ class DolEditor
             $this->cols					= (preg_match('/%/', $cols) ? $cols : max(40, $cols)); // If $cols is a percent, we keep it, otherwise, we take max
             $this->height = $height;
             $this->width				= $width;
-    	}
+        }
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -163,16 +130,12 @@ class DolEditor
     	$found = 0;
 		$out = '';
 
-        if ($this->tool == 'fckeditor') // not used anymore
-        {
-			$found = 1;
-            $this->editor->Create();
-        }
         if (in_array($this->tool, array('textarea', 'ckeditor')))
         {
             $found = 1;
             //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
-            // TODO We do not put the disabled tag because on a read form, it change style with grey.
+            // TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
+            //print $this->content;
             $out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"').' class="flat">';
             $out .= htmlspecialchars($this->content);
             $out .= '</textarea>';
@@ -225,7 +188,8 @@ class DolEditor
                                                             breakAfterClose : true
                                                         });
                                                 }
-                                            }';
+                                            },
+											disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
 
             	if ($this->uselocalbrowser)
             	{

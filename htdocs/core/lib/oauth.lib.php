@@ -24,20 +24,20 @@
 
 
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
-$supportedoauth2array=array(
+$supportedoauth2array = array(
     'OAUTH_GOOGLE_NAME'=>'google',
 );
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME']='stripetest';
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME']='stripelive';
+	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = 'stripetest';
+	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = 'stripelive';
 }
-$supportedoauth2array['OAUTH_GITHUB_NAME']='github';
+$supportedoauth2array['OAUTH_GITHUB_NAME'] = 'github';
 
 
 
 // API access parameters OAUTH
-$list = array (
+$list = array(
     array(
         'OAUTH_AMAZON_NAME',
         'OAUTH_AMAZON_ID',

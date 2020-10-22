@@ -43,19 +43,19 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	dol_syslog("Paybox.lib::print_paybox_redirect", LOG_DEBUG);
 
 	// Clean parameters
-	$PBX_IDENTIFIANT="2";	// Identifiant pour v2 test
-	if (! empty($conf->global->PAYBOX_PBX_IDENTIFIANT)) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
-	$IBS_SITE="1999888";    // Site test
-	if (! empty($conf->global->PAYBOX_IBS_SITE)) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
-	$IBS_RANG="99";         // Rang test
-	if (! empty($conf->global->PAYBOX_IBS_RANG)) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
-	$IBS_DEVISE="840";		// Currency (Dollar US by default)
-	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
-	if ($CURRENCY == 'USD') $IBS_DEVISE="840";
+	$PBX_IDENTIFIANT = "2"; // Identifiant pour v2 test
+	if (!empty($conf->global->PAYBOX_PBX_IDENTIFIANT)) $PBX_IDENTIFIANT = $conf->global->PAYBOX_PBX_IDENTIFIANT;
+	$IBS_SITE = "1999888"; // Site test
+	if (!empty($conf->global->PAYBOX_IBS_SITE)) $IBS_SITE = $conf->global->PAYBOX_IBS_SITE;
+	$IBS_RANG = "99"; // Rang test
+	if (!empty($conf->global->PAYBOX_IBS_RANG)) $IBS_RANG = $conf->global->PAYBOX_IBS_RANG;
+	$IBS_DEVISE = "840"; // Currency (Dollar US by default)
+	if ($CURRENCY == 'EUR') $IBS_DEVISE = "978";
+	if ($CURRENCY == 'USD') $IBS_DEVISE = "840";
 
-	$URLPAYBOX="";
-	if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V1;
-	if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX=$conf->global->PAYBOX_CGI_URL_V2;
+	$URLPAYBOX = "";
+	if ($conf->global->PAYBOX_CGI_URL_V1) $URLPAYBOX = $conf->global->PAYBOX_CGI_URL_V1;
+	if ($conf->global->PAYBOX_CGI_URL_V2) $URLPAYBOX = $conf->global->PAYBOX_CGI_URL_V2;
 
 	if (empty($IBS_DEVISE))
 	{
@@ -81,27 +81,27 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	$conf->global->PAYBOX_HASH = 'sha512';
 
 	// Definition des parametres vente produit pour paybox
-	$IBS_CMD=$TAG;
-    $IBS_TOTAL=$PRICE*100;     	// En centimes
-    $IBS_MODE=1;            	// Mode formulaire
-    $IBS_PORTEUR=$EMAIL;
-	$IBS_RETOUR="montant:M;ref:R;auto:A;trans:T";   // Format des parametres du get de validation en reponse (url a definir sous paybox)
-    $IBS_TXT=' ';	// Use a space
-    $IBS_EFFECTUE=$urlok;
-    $IBS_ANNULE=$urlko;
-    $IBS_REFUSE=$urlko;
-    $IBS_BKGD="#FFFFFF";
-    $IBS_WAIT="2000";
-    $IBS_LANG="GBR"; 	// By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
-    if (preg_match('/^FR/i', $langs->defaultlang)) $IBS_LANG="FRA";
-    if (preg_match('/^ES/i', $langs->defaultlang)) $IBS_LANG="ESP";
-    if (preg_match('/^IT/i', $langs->defaultlang)) $IBS_LANG="ITA";
-    if (preg_match('/^DE/i', $langs->defaultlang)) $IBS_LANG="DEU";
-    if (preg_match('/^NL/i', $langs->defaultlang)) $IBS_LANG="NLD";
-    if (preg_match('/^SE/i', $langs->defaultlang)) $IBS_LANG="SWE";
-    $IBS_OUTPUT='E';
-    $PBX_SOURCE='HTML';
-    $PBX_TYPEPAIEMENT='CARTE';
+	$IBS_CMD = $TAG;
+    $IBS_TOTAL = $PRICE * 100; // En centimes
+    $IBS_MODE = 1; // Mode formulaire
+    $IBS_PORTEUR = $EMAIL;
+	$IBS_RETOUR = "montant:M;ref:R;auto:A;trans:T"; // Format des parametres du get de validation en reponse (url a definir sous paybox)
+    $IBS_TXT = ' '; // Use a space
+    $IBS_EFFECTUE = $urlok;
+    $IBS_ANNULE = $urlko;
+    $IBS_REFUSE = $urlko;
+    $IBS_BKGD = "#FFFFFF";
+    $IBS_WAIT = "2000";
+    $IBS_LANG = "GBR"; // By default GBR=english (FRA, GBR, ESP, ITA et DEU...)
+    if (preg_match('/^FR/i', $langs->defaultlang)) $IBS_LANG = "FRA";
+    if (preg_match('/^ES/i', $langs->defaultlang)) $IBS_LANG = "ESP";
+    if (preg_match('/^IT/i', $langs->defaultlang)) $IBS_LANG = "ITA";
+    if (preg_match('/^DE/i', $langs->defaultlang)) $IBS_LANG = "DEU";
+    if (preg_match('/^NL/i', $langs->defaultlang)) $IBS_LANG = "NLD";
+    if (preg_match('/^SE/i', $langs->defaultlang)) $IBS_LANG = "SWE";
+    $IBS_OUTPUT = 'E';
+    $PBX_SOURCE = 'HTML';
+    $PBX_TYPEPAIEMENT = 'CARTE';
     $PBX_HASH = $conf->global->PAYBOX_HASH;
     $PBX_TIME = dol_print_date(dol_now(), 'dayhourrfc', 'gmt');
 

@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_boms extends ModeleBoxes
 {
-    public $boxcode="lastboms";
-    public $boximg="object_bom";
-    public $boxlabel="BoxTitleLatestModifiedBoms";
+    public $boxcode = "lastboms";
+    public $boximg = "object_bom";
+    public $boxlabel = "BoxTitleLatestModifiedBoms";
     public $depends = array("bom");
 
 	/**
@@ -60,7 +60,7 @@ class box_boms extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->bom->read);
+        $this->hidden = !($user->rights->bom->read);
     }
 
     /**
@@ -86,19 +86,19 @@ class box_boms extends ModeleBoxes
 
         if ($user->rights->bom->read)
         {
-            $sql = "SELECT p.ref as product_ref";
-            $sql.= ", c.rowid";
-            $sql.= ", c.date_creation";
-            $sql.= ", c.tms";
-            $sql.= ", c.ref";
-            $sql.= ", c.status";
-            $sql.= ", c.fk_user_valid";
-            $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-            $sql.= ", ".MAIN_DB_PREFIX."bom_bom as c";
-            $sql.= " WHERE c.fk_product = p.rowid";
-            $sql.= " AND c.entity = ".$conf->entity;
-            $sql.= " ORDER BY c.tms DESC, c.ref DESC";
-            $sql.= " ".$this->db->plimit($max, 0);
+            $sql = "SELECT p.ref as product_ref, p.tobuy, p.tosell";
+            $sql .= ", c.rowid";
+            $sql .= ", c.date_creation";
+            $sql .= ", c.tms";
+            $sql .= ", c.ref";
+            $sql .= ", c.status";
+            $sql .= ", c.fk_user_valid";
+            $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+            $sql .= ", ".MAIN_DB_PREFIX."bom_bom as c";
+            $sql .= " WHERE c.fk_product = p.rowid";
+            $sql .= " AND c.entity = ".$conf->entity;
+            $sql .= " ORDER BY c.tms DESC, c.ref DESC";
+            $sql .= " ".$this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
             if ($result) {
@@ -108,12 +108,16 @@ class box_boms extends ModeleBoxes
 
                 while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
-                    $datem=$this->db->jdate($objp->tms);
+                    $datem = $this->db->jdate($objp->tms);
+
                     $bomstatic->id = $objp->rowid;
                     $bomstatic->ref = $objp->ref;
                     $bomstatic->id = $objp->socid;
                     $bomstatic->status = $objp->status;
+
                     $productstatic->ref = $objp->product_ref;
+                    $productstatic->status = $objp->tobuy;
+                    $productstatic->status_buy = $objp->tosell;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowraponall"',
@@ -127,11 +131,11 @@ class box_boms extends ModeleBoxes
                         'asis' => 1,
                     );
 
-                    if (! empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
+                    if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
                         if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
                         $this->info_box_contents[$line][] = array(
                             'td' => 'class="right"',
-                            'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
+                            'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
                             'asis' => 1,
                         );
                     }
@@ -149,7 +153,10 @@ class box_boms extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedOrders")
+                );
 
                 $this->db->free($result);
             } else {

@@ -218,13 +218,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		{
 			$field = 'code_client';
 			//$where = ' AND client in (1,2)';
-		}
-		elseif ($type == 1)
+		} elseif ($type == 1)
 		{
 			$field = 'code_fournisseur';
 			//$where = ' AND fournisseur = 1';
-		}
-		else return -1;
+		} else return -1;
 
 		$now = dol_now();
 
@@ -281,13 +279,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
 		{
 			$result = -2;
-		}
-		else
-		{
+		} else {
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
@@ -325,8 +320,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$code."'";
-		else $sql .= " WHERE code_client = '".$code."'";
+		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
 		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
 
 		$resql = $db->query($sql);
@@ -335,14 +330,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if ($db->num_rows($resql) == 0)
 			{
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}

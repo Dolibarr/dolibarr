@@ -29,7 +29,7 @@
  *  \ingroup    salaries
  *  \brief      File to activate module salaries
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -62,7 +62,7 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='bill';
+		$this->picto = 'payment';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
@@ -71,12 +71,12 @@ class modSalaries extends DolibarrModules
 		$this->config_page_url = array('salaries.php@salaries');
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->langfiles = array("salaries","bills");
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->langfiles = array("salaries", "bills");
 
 		// Constants
 		$this->const = array();
@@ -97,7 +97,7 @@ class modSalaries extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'salaries';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 511;
@@ -134,26 +134,26 @@ class modSalaries extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
 		//--------
-		$r=0;
+		$r = 0;
 
 		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='SalariesAndPayments';
-		$this->export_permission[$r]=array(array("salaries","export"));
-		$this->export_fields_array[$r]=array('u.firstname'=>"Firstname",'u.lastname'=>"Lastname",'u.login'=>"Login",'u.salary'=>'CurrentSalary','p.datep'=>'DatePayment','p.datesp'=>'DateStartPeriod','p.dateep'=>'DateEndPeriod','p.amount'=>'AmountPayment','p.num_payment'=>'Numero','p.label'=>'Label','p.note'=>'Note');
-		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Numeric",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Numeric','p.num_payment'=>'Numeric','p.label'=>'Text');
-		$this->export_entities_array[$r]=array('u.firstname'=>'user','u.lastname'=>'user','u.login'=>'user','u.salary'=>'user','p.datep'=>'payment','p.datesp'=>'payment','p.dateep'=>'payment','p.amount'=>'payment','p.label'=>'payment','p.note'=>'payment','p.num_payment'=>'payment');
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'SalariesAndPayments';
+		$this->export_permission[$r] = array(array("salaries", "export"));
+		$this->export_fields_array[$r] = array('u.firstname'=>"Firstname", 'u.lastname'=>"Lastname", 'u.login'=>"Login", 'u.salary'=>'CurrentSalary', 'p.datep'=>'DatePayment', 'p.datesp'=>'DateStartPeriod', 'p.dateep'=>'DateEndPeriod', 'p.amount'=>'AmountPayment', 'p.num_payment'=>'Numero', 'p.label'=>'Label', 'p.note'=>'Note');
+		$this->export_TypeFields_array[$r] = array('u.firstname'=>"Text", 'u.lastname'=>"Text", 'u.login'=>'Text', 'u.salary'=>"Numeric", 'p.datep'=>'Date', 'p.datesp'=>'Date', 'p.dateep'=>'Date', 'p.amount'=>'Numeric', 'p.num_payment'=>'Numeric', 'p.label'=>'Text');
+		$this->export_entities_array[$r] = array('u.firstname'=>'user', 'u.lastname'=>'user', 'u.login'=>'user', 'u.salary'=>'user', 'p.datep'=>'payment', 'p.datesp'=>'payment', 'p.dateep'=>'payment', 'p.amount'=>'payment', 'p.label'=>'payment', 'p.note'=>'payment', 'p.num_payment'=>'payment');
 
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
-		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('user').')';
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
+		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('user').')';
 	}
 
 

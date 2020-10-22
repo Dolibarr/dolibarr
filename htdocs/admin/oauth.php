@@ -40,7 +40,7 @@ $langs->loadLangs(array('admin', 'oauth'));
 if (!$user->admin)
     accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -80,7 +80,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
@@ -88,7 +88,7 @@ $head = oauthadmin_prepare_head();
 dol_fiche_head($head, 'services', '', -1, 'technic');
 
 
-print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
 print '<table class="noborder centpercent">';
 
@@ -119,9 +119,7 @@ foreach ($list as $key)
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
         print '</td></tr>';
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';

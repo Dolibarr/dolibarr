@@ -51,14 +51,14 @@ if ($action == 'setvalue' && $user->admin)
 	$error = 0;
 	$db->begin();
 
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
 
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
-	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers"), 'chaine', 0, '', $conf->entity)) $error++;
-    if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',GETPOST("fieldname", 'alphanohtml'),'chaine',0,'',$conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
     $valkey = '';
@@ -70,9 +70,7 @@ if ($action == 'setvalue' && $user->admin)
     {
     	$db->commit();
     	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
     	$db->rollback();
     	dol_print_error($db);
     }
@@ -105,7 +103,7 @@ print '<br>';
 
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $form = new Form($db);
 
@@ -233,9 +231,7 @@ if (function_exists("ldap_connect"))
 			{
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else
-			{
+			} else {
 				print img_picto('', 'error').' ';
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
@@ -247,9 +243,7 @@ if (function_exists("ldap_connect"))
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn, $info));
 			print "\n<br>";
-		}
-		else
-		{
+		} else {
 			print img_picto('', 'error').' ';
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;

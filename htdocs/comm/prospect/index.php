@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020      Open-Dsi        		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ if (!empty($conf->propal->enabled))
 {
 	$var = false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/card.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr class="oddeven"><td>';
@@ -71,7 +72,7 @@ if (!empty($conf->propal->enabled))
  *
  */
 
-$sql = "SELECT count(*) as cc, st.libelle, st.id";
+$sql = "SELECT count(*) as cc, st.libelle, st.picto, st.id";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -98,7 +99,7 @@ if ($resql)
 
 			print '<tr class="oddeven"><td>';
 			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
-			print img_action($langs->trans("Show"), $obj->id).' ';
+			print img_action($langs->trans("Show"), $obj->id, $obj->picto).' ';
 			print $langs->trans("StatusProspect".$obj->id);
 			print '</a></td><td class="right">'.$obj->cc.'</td></tr>';
 			$i++;
@@ -223,9 +224,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			}
 			print "</table><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

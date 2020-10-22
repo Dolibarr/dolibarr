@@ -1824,10 +1824,15 @@ function parseDCC(source,start,domBuilder,errorHandler){//sure start with '<!'
 	default:
 		if(source.substr(start+3,6) == 'CDATA['){
 			var end = source.indexOf(']]>',start+9);
-			domBuilder.startCDATA();
-			domBuilder.characters(source,start+9,end-start-9);
-			domBuilder.endCDATA() 
-			return end+3;
+			if (end > start) {
+				domBuilder.startCDATA();
+				domBuilder.characters(source,start+9,end-start-9);
+				domBuilder.endCDATA() 
+				return end+3;
+			} else {
+				errorHandler.error("Unclosed CDATA");
+				return -1;
+			}
 		}
 		var matchs = split(source,start);
 		var len = matchs.length;
@@ -3825,10 +3830,10 @@ if (!Date.now) {
         return new Date().getTime();
     };
 }
-var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
+var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u2000\u2001\u2002\u2003" +
     "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
     "\u2029\uFEFF";
-if (!String.prototype.trim || ws.trim()) {
+if (!String.prototype.trim) {
     ws = "[" + ws + "]";
     var trimBeginRegexp = new RegExp("^" + ws + ws + "*"),
         trimEndRegexp = new RegExp(ws + ws + "*$");

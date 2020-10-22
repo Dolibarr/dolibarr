@@ -20,7 +20,6 @@
  */
 abstract class DolibarrTriggers
 {
-
 	/**
 	 * Database handler
 	 * @var DoliDB

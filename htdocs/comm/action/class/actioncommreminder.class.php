@@ -22,7 +22,7 @@
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -50,6 +50,9 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $picto = 'generic';
 
+	const STATUS_TODO = 0;
+	const STATUS_DONE = 1;
+
 
 	/**
 	 *  'type' if the field format.
@@ -72,20 +75,28 @@ class ActionCommReminder extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'dateremind' => array('type'=>'datetime', 'label'=>'DateRemind', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'index'=>1,),
+        'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
+        'dateremind' => array('type'=>'datetime', 'label'=>'DateRemind', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'index'=>1,),
 		'typeremind' => array('type'=>'varchar(32)', 'label'=>'TypeRemind', 'visible'=>-1, 'enabled'=>1, 'position'=>55, 'notnull'=>1, 'comment'=>"email, browser, sms",),
 		'fk_user' => array('type'=>'integer', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>65, 'notnull'=>1, 'index'=>1,),
 		'offsetvalue' => array('type'=>'integer', 'label'=>'OffsetValue', 'visible'=>1, 'enabled'=>1, 'position'=>56, 'notnull'=>1,),
-		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"m, h, d, w",),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
+		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"y, m, d, w, h, i",),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>58, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
+		'fk_actioncomm' => array('type'=>'integer', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>59, 'notnull'=>1, 'index'=>1,),
+		'fk_email_template' => array('type'=>'integer', 'label'=>'EmailTemplate', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>0),
 	);
 
 	/**
 	 * @var int ID
 	 */
 	public $rowid;
+
+    /**
+     * @var int Entity
+     */
+    public $entity;
 
 	public $dateremind;
 	public $typeremind;
@@ -103,6 +114,16 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var int Project
+	 */
+	public $fk_actioncomm;
+
+	/**
+	 * @var int Template Mail
+	 */
+	public $fk_email_template;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -118,8 +139,8 @@ class ActionCommReminder extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
 	}
 
 	/**
@@ -200,28 +221,23 @@ class ActionCommReminder extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Done');
 			elseif ($status == 0) return $langs->trans('ToDo');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
 			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4');
 			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
 			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
 			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
-		}
-		elseif ($mode == 6)
+		} elseif ($mode == 6)
 		{
 			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
 			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');

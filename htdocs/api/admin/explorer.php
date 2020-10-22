@@ -25,6 +25,8 @@
  *  \file       htdocs/api/admin/explorer.php
  */
 
+use Luracast\Restler\Routes;
+
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
@@ -132,24 +134,21 @@ foreach ($modulesdir as $dir)
                                 $classname = ucfirst($classname);
                                 require_once $dir_part.$file_searched;
 
-                                if (class_exists($classname))
-                                {
-                                    dol_syslog("Found API classname=".$classname);
-                                    $api->r->addAPIClass($classname,'');
+                                // if (class_exists($classname))
+                                // {
+                                //     dol_syslog("Found API classname=".$classname);
+                                //     $api->r->addAPIClass($classname,'');
 
+                                //     require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Routes.php';
+                                //     $tmpclass = new ReflectionClass($classname);
+                                //     try {
+                                //         $classMetadata = CommentParser::parse($tmpclass->getDocComment());
+                                //     } catch (Exception $e) {
+                                //         throw new RestException(500, "Error while parsing comments of `$classname` class. " . $e->getMessage());
+                                //     }
 
-                                    /*
-                                    require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Routes.php';
-                                    $tmpclass = new ReflectionClass($classname);
-                                    try {
-                                        $classMetadata = CommentParser::parse($tmpclass->getDocComment());
-                                    } catch (Exception $e) {
-                                        throw new RestException(500, "Error while parsing comments of `$classname` class. " . $e->getMessage());
-                                    }*/
-
-                                    //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
-                            /*     }
-
+                                //     //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
+                                // }
                             }*/
                         }
                     }
@@ -160,7 +159,7 @@ foreach ($modulesdir as $dir)
 }
 
 //var_dump($listofapis);
-$listofapis = Routes::toArray(); // TODO api for "status" is lost here
+$listofapis = Routes::toArray(); // @todo api for "status" is lost here
 //var_dump($listofapis);
 
 

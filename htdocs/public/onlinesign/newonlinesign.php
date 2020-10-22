@@ -15,19 +15,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * For paypal test: https://developer.paypal.com/
- * For paybox test: ???
  */
 
 /**
- *     	\file       htdocs/public/onlinesign/newsign.php
+ *     	\file       htdocs/public/onlinesign/newonlinesign.php
  *		\ingroup    core
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -41,12 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
+
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
-
-$action = GETPOST('action', 'alpha');
+// Get parameters
+$action = GETPOST('action', 'aZ09');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -55,7 +55,7 @@ $action = GETPOST('action', 'alpha');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix = GETPOST("suffix", 'alpha');
+$suffix = GETPOST("suffix", 'aZ09');
 $source = GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 
@@ -69,12 +69,6 @@ if (!$action)
     	exit;
     }
 }
-
-
-$paymentmethod = '';
-$validpaymentmethod = array();
-
-
 
 
 // Define $urlwithroot
@@ -133,9 +127,10 @@ if (!empty($conf->global->MAIN_SIGN_CSS_URL)) $head = '<link rel="stylesheet" ty
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-// Check link validity
+// Check link validity for param 'source'
 if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
     $langs->load("errors");
@@ -149,7 +144,7 @@ if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'i
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosign">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
@@ -161,7 +156,6 @@ print '<!-- Form to sign -->'."\n";
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
-$width = 0;
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
@@ -171,23 +165,28 @@ elseif (!empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall = $conf->global->ONL
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo = '';
+$urllogofull = '';
 if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-}
-elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-	$width = 96;
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
 }
 // Output html code for logo
 if ($urllogo)
 {
-	print '<tr>';
-	print '<td align="center"><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
-	print '></td>';
-	print '</tr>'."\n";
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+	print '>';
+	print '</div>';
+	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+	}
+	print '</div>';
 }
 
 // Output introduction text
@@ -195,6 +194,7 @@ $text = '';
 if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 {
     $langs->load("members");
+    $reg = array();
     if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
     else $text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
     $text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
@@ -209,7 +209,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnDocumentToSign").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign").' :</td></tr>'."\n";
 
 $found = false;
 $error = 0;
@@ -229,9 +229,7 @@ if ($source == 'proposal')
 	{
 		$mesg = $proposal->error;
 		$error++;
-	}
-	else
-	{
+	} else {
 		$result = $proposal->fetch_thirdparty($proposal->socid);
 	}
 
@@ -259,9 +257,9 @@ if ($source == 'proposal')
 
 
 
-if (!$found && !$mesg) $mesg = $langs->trans("ErrorBadParameters");
+if (!$found && !$mesg) $mesg = $langs->transonentitiesnoconv("ErrorBadParameters");
 
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
+if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
 
 print '</table>'."\n";
 print "\n";
@@ -270,14 +268,10 @@ if ($action != 'dosign')
 {
     if ($found && !$error)	// We are in a management option and no error
     {
-    }
-    else
-    {
+    } else {
     	dol_print_error_email('ERRORNEWONLINESIGN');
     }
-}
-else
-{
+} else {
     // Print
 }
 

@@ -39,7 +39,6 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario diverso
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta de contabilidad por defecto para los productos comprados (Usados sin no están en la hoja de producto)
 Sens=Significado
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero

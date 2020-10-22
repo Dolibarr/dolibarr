@@ -29,14 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
+$langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 
@@ -54,15 +54,15 @@ $head = salaries_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
+$morehtmlref = '<div class="refidno">';
 
-$userstatic=new User($db);
+$userstatic = new User($db);
 $userstatic->fetch($object->fk_user);
 
-$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
-$morehtmlref.='</div>';
+$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+$morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

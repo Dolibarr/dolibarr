@@ -2,6 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +43,16 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
      */
     public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+    /**
+     * Prefix customer accountancy code
+     * @var string
+     */
     public $prefixcustomeraccountancycode;
 
+    /**
+     * Prefix supplier accountancy code
+     * @var string
+     */
     public $prefixsupplieraccountancycode;
 
     public $position = 30;
@@ -117,7 +126,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
-	    global $mysoc;
+	    global $conf, $mysoc;
 
         $s = $langs->trans("ThirdPartyName").": ".$mysoc->name;
         $s .= "<br>\n";
@@ -142,6 +151,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	public function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
+        global $conf;
         $i = 0;
         $this->code = '';
 
@@ -153,15 +163,12 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
                 $codetouse = $societe->name;
                 $prefix = $this->prefixsupplieraccountancycode;
                 $width = $this->supplieraccountancycodecharacternumber;
-			}
-			elseif ($type == 'customer')
+			} elseif ($type == 'customer')
             {
                 $codetouse = $societe->name;
                 $prefix = $this->prefixcustomeraccountancycode;
                 $width = $this->customeraccountancycodecharacternumber;
-            }
-            else
-            {
+            } else {
                 $this->error = 'Bad value for parameter type';
                 return -1;
             }
@@ -210,9 +217,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         if ($disponibility == 0)
         {
             return 0; // return ok
-        }
-        else
-        {
+        } else {
             return -1; // return ko
         }
 	}
@@ -230,19 +235,16 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         if ($type == 'supplier')
         {
             $typethirdparty = 'code_compta_fournisseur';
-        }
-        elseif ($type == 'customer')
+        } elseif ($type == 'customer')
         {
             $typethirdparty = 'code_compta';
-        }
-        else
-        {
+        } else {
             $this->error = 'Bad value for parameter type';
             return -1;
         }
 
         $sql = "SELECT ".$typethirdparty." FROM ".MAIN_DB_PREFIX."societe";
-        $sql .= " WHERE ".$typethirdparty." = '".$code."'";
+        $sql .= " WHERE ".$typethirdparty." = '".$db->escape($code)."'";
 
         $resql = $db->query($sql);
         if ($resql)
@@ -251,15 +253,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
             {
                 dol_syslog("mod_codecompta_digitaria::checkIfAccountancyCodeIsAlreadyUsed '".$code."' available");
                 return 0; // Available
-            }
-            else
-            {
+            } else {
                 dol_syslog("mod_codecompta_digitaria::checkIfAccountancyCodeIsAlreadyUsed '".$code."' not available");
                 return -1; // Not available
             }
-        }
-        else
-        {
+        } else {
             $this->error = $db->error()." sql=".$sql;
             return -2; // Error
         }

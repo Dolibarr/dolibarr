@@ -41,7 +41,7 @@ abstract class ModelePDFUser extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -57,11 +57,11 @@ abstract class ModelePDFUser extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='user';
-		$liste=array();
+		$type = 'user';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 		return $liste;
 	}
 }

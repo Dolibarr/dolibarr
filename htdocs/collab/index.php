@@ -39,7 +39,7 @@ $error = 0;
 $website = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
 $pageid = GETPOST('pageid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (GETPOST('delete')) { $action = 'delete'; }
 if (GETPOST('preview')) $action = 'preview';
@@ -94,9 +94,7 @@ if ($action == 'add')
 		$db->commit();
 		setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 
@@ -129,14 +127,10 @@ if ($action == 'delete')
 
 			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -154,7 +148,7 @@ $help_url = '';
 llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($action == 'create')
 {
 	print '<input type="hidden" name="action" value="add">';

@@ -10,7 +10,5 @@ ConfirmValidateSending=Weet u zeker dat u deze verzending met referentie <b>%s</
 DateDeliveryPlanned=Verwachte leveringsdatum
 RefDeliveryReceipt=Referentie ontvangstbevestiging
 ActionsOnShipping=Events i.v.m. verzending
-ProductQtyInSuppliersShipmentAlreadyRecevied=Ontvangen hoeveelheid producten uit geopende leveranciersbestelling
-NoProductToShipFoundIntoStock=Geen product om te verzenden gevonden in magazijn <b>%s</b>. Werk stock bij of ga terug en kies een ander magazijn.
 WeightVolShort=Gewicht/Volume
 ValidateOrderFirstBeforeShipment=U moet eerst de bestelling valideren voor u een verzending kan aanmaken.

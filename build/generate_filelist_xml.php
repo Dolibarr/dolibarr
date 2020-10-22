@@ -110,7 +110,7 @@ print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         print $constname.'='.$constvalue." ";
     }
 }
@@ -130,7 +130,7 @@ fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now
 
 foreach ($includeconstants as $countrycode => $tmp) {
     fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         $valueforchecksum=(empty($constvalue)?'0':$constvalue);
         $checksumconcat[]=$valueforchecksum;
         fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
@@ -145,8 +145,8 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 // Need to ignore document custom etc. Note: this also ignore natively symbolic links.
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
-$regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+$regextoinclude='\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;

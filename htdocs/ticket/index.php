@@ -110,7 +110,7 @@ if (empty($endyear)) {
 
 $startyear = $endyear - 1;
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
-$HEIGHT = '228';
+$HEIGHT = '200';
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -142,11 +142,11 @@ if (!$user->rights->societe->client->voir && !$socid) {
 
 // External users restriction
 if ($user->socid > 0) {
-    $sql .= " AND t.fk_soc='".$user->socid."'";
+    $sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
     // For internals users,
     if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-        $sql .= " AND t.fk_user_assign=".$user->id;
+        $sql .= " AND t.fk_user_assign = ".$user->id;
     }
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -181,15 +181,27 @@ if ($result) {
         }
     }
 
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     $dataseries = array();
+    $colorseries = array();
+
     $dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
+    $colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
     $dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
-    $dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
+    $colorseries[Ticket::STATUS_READ] = $badgeStatus1;
     $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
+    $colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
     $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
-    $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
-    $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+    $colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
+    $dataseries[] = array('label' => $langs->trans("Suspended"), 'data' => round($tick['waiting']));
+    $colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus3;
+    $dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
+    $colorseries[Ticket::STATUS_NEED_MORE_INFO] = $badgeStatus9;
     $dataseries[] = array('label' => $langs->trans("Canceled"), 'data' => round($tick['canceled']));
+    $colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
+    $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+    $colorseries[Ticket::STATUS_CLOSED] = $badgeStatus6;
 } else {
     dol_print_error($db);
 }
@@ -203,7 +215,8 @@ $stringtoshow = '<script type="text/javascript" language="javascript">
     </script>';
 $stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_by_status">'; // hideobject is to start hidden
 $stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
+$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
+$stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
 $stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
 $stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
@@ -212,7 +225,7 @@ $stringtoshow .= '</div>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
+print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
 
 print '<tr><td class="center">';
 print $stringtoshow;
@@ -232,6 +245,8 @@ if (!empty($dataseries) && count($dataseries) > 1) {
     $mesg = $px1->isGraphKo();
     if (!$mesg) {
         $px1->SetData($data);
+        $px1->SetDataColor(array_values($colorseries));
+
         unset($data1);
         $i = $startyear;
         $legend = array();
@@ -239,10 +254,11 @@ if (!empty($dataseries) && count($dataseries) > 1) {
             $legend[] = $i;
             $i++;
         }
+        $px1->setShowLegend(2);
         $px1->SetType(array('pie'));
         $px1->SetLegend($legend);
         $px1->SetMaxValue($px1->GetCeilMaxValue());
-        $px1->SetWidth($WIDTH);
+        //$px1->SetWidth($WIDTH);
         $px1->SetHeight($HEIGHT);
         $px1->SetYLabel($langs->trans("TicketStatByStatus"));
         $px1->SetShading(3);
@@ -273,7 +289,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 $max = 10;
 
 $sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut, t.progress,";
-$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
+$sql .= " type.code as type_code, type.label as type_label,";
+$sql .= " category.code as category_code, category.label as category_label,";
+$sql .= " severity.code as severity_code, severity.label as severity_label";
 $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
@@ -289,7 +307,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 
 if ($user->socid > 0) {
-    $sql .= " AND t.fk_soc='".$user->socid."'";
+    $sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
     // Restricted to assigned user only
     if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
@@ -327,7 +345,7 @@ if ($result) {
             print '<tr class="oddeven">';
 
             // Ref
-            print '<td class="nowrap">';
+            print '<td class="nowraponall">';
             print $tickesupstatic->getNomUrl(1);
             print "</td>\n";
 
@@ -342,21 +360,26 @@ if ($result) {
             print "</td>\n";
 
             // Type
-            print '<td class="nowrap">';
-            print $objp->type_label;
+            print '<td class="nowrap tdoverflowmax100">';
+            $s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$objp->type_code, 'c_ticket_type', 'code', 'label', $objp->type_code);
+            print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
             print '</td>';
 
             // Category
             print '<td class="nowrap">';
-            print $objp->category_label;
+            $s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+            print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+            //print $objp->category_label;
             print "</td>";
 
             // Severity
             print '<td class="nowrap">';
-            print $objp->severity_label;
+            $s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
+            print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+            //print $objp->severity_label;
             print "</td>";
 
-            print '<td class="nowrap right">';
+            print '<td class="nowraponall right">';
             print $tickesupstatic->getLibStatut(5);
             print "</td>";
 

@@ -43,23 +43,23 @@ function blockedlogadmin_prepare_head()
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-	$b=new BlockedLog($db);
+	$b = new BlockedLog($db);
 	if ($b->alreadyUsed())
 	{
-		$head[$h][1].='<span class="badge marginleftonlyshort">...</span>';
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
 
-	$object=new stdClass();
+	$object = new stdClass();
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog', 'remove');
 
-    return $head;
+	return $head;
 }
