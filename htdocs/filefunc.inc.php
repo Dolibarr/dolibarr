@@ -286,13 +286,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 //print memory_get_usage();
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
-{
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
-	{
+if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+	} else {
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
-	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
