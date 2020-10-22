@@ -76,7 +76,8 @@ if ($action == 'add' && !empty($permissiontoadd))
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = (GETPOST($key) == '1' ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
-			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
+			$tmparraykey = array_keys($object->param_list);
+			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alphanohtml');
 		}
