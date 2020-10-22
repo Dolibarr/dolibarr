@@ -8,6 +8,7 @@
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+ * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,8 +144,9 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
     $sql .= ", s.nom as name";
     $sql .= ", s.rowid as socid, s.email";
     $sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+    $sql .= ", cc.rowid as country_id, cc.code as country_code";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
@@ -161,6 +163,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
 	$sql .= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+    $sql .= ", cc.rowid as country_id, cc.code as country_code";
 
 	// Add Group from hooks
 	$parameters = array();
@@ -207,6 +210,8 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$companystatic->email = $obj->email;
+				$companystatic->country_id = $obj->country_id;
+				$companystatic->country_code = $obj->country_code;
 				$companystatic->client = 1;
 				$companystatic->code_client = $obj->code_client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;
