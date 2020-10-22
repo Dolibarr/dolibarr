@@ -180,6 +180,9 @@ if ($action == 'presend')
 	}
 	else
 	{
+		if (!empty($object->socid) && empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
