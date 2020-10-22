@@ -144,7 +144,7 @@ if ($action == 'getProducts') {
     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
     $printer = new dolReceiptPrinter($db);
     // check printer for terminal
-    if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0 && $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term} > 0) {
+    if (($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0 || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term} > 0) {
         $object = new Facture($db);
         $object->fetch($id);
         $ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
