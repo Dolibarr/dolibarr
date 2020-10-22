@@ -428,7 +428,7 @@ script:
 
 after_script:
 - |
-  echo "After script - Output lines of dolibarr.log"
+  echo "After script - Output last lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
   #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
