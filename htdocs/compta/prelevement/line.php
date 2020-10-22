@@ -158,7 +158,7 @@ if ($id)
 
 		if ($lipre->statut == 3)
 		{
-			$rej = new RejetPrelevement($db, $user);
+			$rej = new RejetPrelevement($db, $user, $type);
 			$resf = $rej->fetch($lipre->id);
 			if ($resf == 0)
 			{
