@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ if ($action == 'new')
 
 	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as transactionid, ";
 	$sql .= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque,";
-	$sql .= " p.rowid as paymentid";
+	$sql .= " p.rowid as paymentid, p.ref as paymentref";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (b.fk_account = ba.rowid)";
@@ -411,6 +411,7 @@ if ($action == 'new')
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
 			$lines[$obj->bid][$i]["id"] = $obj->transactionid;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
+			$lines[$obj->bid][$i]["paymentref"] = $obj->paymentref;
 			$i++;
 		}
 
@@ -482,7 +483,7 @@ if ($action == 'new')
 				// Link to payment
 				print '<td class="center">';
 				$paymentstatic->id = $value["paymentid"];
-				$paymentstatic->ref = $value["paymentid"];
+				$paymentstatic->ref = $value["paymentref"];
 				if ($paymentstatic->id)
 				{
 					print $paymentstatic->getNomUrl(1);
@@ -616,7 +617,7 @@ if ($action == 'new')
 	// List of bank checks
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql .= " b.dateo as date, b.datec as datec, b.banque,";
-	$sql .= " p.rowid as pid, ba.rowid as bid, p.statut";
+	$sql .= " p.rowid as pid, p.ref as pref, ba.rowid as bid, p.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
@@ -662,9 +663,8 @@ if ($action == 'new')
     			// Link to payment
     			print '<td class="center">';
     			$paymentstatic->id = $objp->pid;
-    			$paymentstatic->ref = $objp->pid;
-    			if ($paymentstatic->id)
-    			{
+    			$paymentstatic->ref = $objp->pref;
+    			if ($paymentstatic->id) {
     				print $paymentstatic->getNomUrl(1);
     			} else {
     				print '&nbsp;';
@@ -673,8 +673,7 @@ if ($action == 'new')
     			// Link to bank transaction
     			print '<td class="center">';
     			$accountlinestatic->rowid = $objp->rowid;
-    			if ($accountlinestatic->rowid)
-    			{
+    			if ($accountlinestatic->rowid) {
     				print $accountlinestatic->getNomUrl(1);
     			} else {
     				print '&nbsp;';
