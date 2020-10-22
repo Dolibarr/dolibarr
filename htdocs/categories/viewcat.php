@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2020		Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,12 +161,29 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 }
 
-if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' && ($user->rights->produit->creer || $user->rights->service->creer))
+if ($elemid && $action == 'addintocategory' &&
+    (($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
+     ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) ||
+     ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
+   ))
 {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-	$newobject = new Product($db);
+	if ($type == Categorie::TYPE_PRODUCT)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$newobject = new Product($db);
+		$elementtype = 'product';
+	} elseif ($type == Categorie::TYPE_CUSTOMER)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$newobject = new Societe($db);
+		$elementtype = 'customer';
+	} elseif ($type == Categorie::TYPE_SUPPLIER)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$newobject = new Societe($db);
+		$elementtype = 'supplier';
+	}
 	$result = $newobject->fetch($elemid);
-	$elementtype = 'product';
 
 	// TODO Add into categ
 	$result = $object->add_type($newobject, $elementtype);
@@ -513,6 +531,27 @@ if ($type == Categorie::TYPE_SUPPLIER)
 	{
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform)
+		{
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddSupplierIntoCategory").' &nbsp;';
+			print $form->select_company('', 'elemid', 's.fournisseur = 1');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -570,6 +609,27 @@ if ($type == Categorie::TYPE_CUSTOMER)
 	{
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform)
+		{
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddCustomerIntoCategory").' &nbsp;';
+			print $form->select_company('', 'elemid', 's.client IN (1,3)');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
