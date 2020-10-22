@@ -100,7 +100,7 @@ if ($id > 0) {
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
+		print dol_get_fiche_head($head, 'document', $langs->trans("Member"), -1, 'user');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

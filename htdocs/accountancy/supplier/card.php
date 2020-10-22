@@ -121,7 +121,7 @@ if (!empty($id)) {
 
 			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_accountancy');
 
-			dol_fiche_head();
+			print dol_get_fiche_head();
 
 			print '<table class="border centpercent">';
 

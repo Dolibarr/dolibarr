@@ -134,7 +134,7 @@ $head = societe_prepare_head($object);
 
 dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-dol_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
