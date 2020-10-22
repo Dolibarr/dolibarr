@@ -290,6 +290,8 @@ if (!function_exists('dol_loginfunction'))
 		// Include login page template
 		include $template_dir.'login.tpl.php';
 
+		// Global html output events ($mesgs, $errors, $warnings)
+		dol_htmloutput_events(0);
 
 		$_SESSION["dol_loginmesg"] = '';
 	}

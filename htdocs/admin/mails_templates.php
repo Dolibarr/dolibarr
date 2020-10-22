@@ -445,7 +445,7 @@ if ($action == 'delete')
 }
 
 
-$sql = "SELECT rowid as rowid, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, enabled, active";
+$sql = "SELECT rowid as rowid, module, label, type_template, lang, fk_user, private, position, topic, joinfiles, content_lines, content, enabled, active";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
 $sql .= " WHERE entity IN (".getEntity('email_template').")";
 if (!$user->admin)
@@ -795,6 +795,13 @@ if ($resql)
 
 				print "</tr>\n";
 			} else {
+			    if ($obj->module) {
+			        $tempmodulekey = $obj->module;
+			        if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+			            $i++;
+			            continue;
+			        }
+			    }
 				$keyforobj = 'type_template';
 				if (!in_array($obj->$keyforobj, array_keys($elementList)))
 				{

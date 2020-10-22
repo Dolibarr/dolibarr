@@ -774,7 +774,7 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
-			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// Default is to record miscellaneous direct entries using miscellaneous payments
 			{
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments
