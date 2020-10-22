@@ -163,7 +163,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
 	$sql .= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
-    $sql .= ", cc.rowid as country_id, cc.code as country_code";
+    $sql .= ", cc.rowid, cc.code";
 
 	// Add Group from hooks
 	$parameters = array();

@@ -151,7 +151,7 @@ if ($prev_id > 0 || $ref)
 }
 
 
-$rej = new RejetPrelevement($db, $user);
+$rej = new RejetPrelevement($db, $user, $type);
 
 /*
  * List errors
