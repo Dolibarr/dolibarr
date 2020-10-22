@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2012-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -833,7 +833,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 		print '<tbody>';
@@ -1058,7 +1058,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 		print '<table class="border centpercent">';
 
@@ -1268,7 +1268,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 */
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
+		print dol_get_fiche_head($head, 'general', $langs->trans("Member"), -1, 'user');
 
 		// Confirm create user
 		if ($action == 'create_user') {

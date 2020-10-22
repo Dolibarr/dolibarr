@@ -982,6 +982,45 @@ class Invoices extends DolibarrApi
     }
 
     /**
+     * Get discount from invoice
+     *
+     * @param int   $id             Id of invoice
+     *
+     * @url	GET {id}/discount
+     *
+     * @return mixed
+     */
+    public function getDiscount($id)
+    {
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+    	if (!DolibarrApiAccess::$user->rights->facture->lire) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->invoice->fetch($id);
+    	if (!$result) {
+    		throw new RestException(404, 'Invoice not found');
+    	}
+
+    	if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $discountcheck = new DiscountAbsolute($this->db);
+        $result = $discountcheck->fetch(0, $this->invoice->id);
+
+        if ($result == 0){
+            throw new RestException(404, 'Discount not found');
+        }
+        if ($result < 0){
+            throw new RestException(500, $discountcheck->error);
+        }
+
+        return parent::_cleanObjectDatas($discountcheck);
+    }
+
+    /**
      * Create a discount (credit available) for a credit note or a deposit.
      *
      * @param   int 	$id            Invoice ID

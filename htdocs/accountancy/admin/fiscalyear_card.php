@@ -159,7 +159,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -202,7 +202,7 @@ if ($action == 'create')
 		$head = fiscalyear_prepare_head($object);
 
 		if ($action == 'edit') {
-			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -257,7 +257,7 @@ if ($action == 'create')
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
 			}
 
-			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
 			print '<table class="border centpercent">';
 

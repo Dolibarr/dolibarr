@@ -4390,7 +4390,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle right">';
-	print '<input type="hidden" name="pageplusoneold" value="'.($page+1).'">';
+	print '<input type="hidden" name="pageplusoneold" value="'.((int) $page + 1).'">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar

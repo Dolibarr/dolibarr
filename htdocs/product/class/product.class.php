@@ -2627,7 +2627,7 @@ class Product extends CommonObject
 		}
 		$sql .= " WHERE c.rowid = cd.fk_commande";
 		$sql .= " AND c.fk_soc = s.rowid";
-		$sql .= " AND c.entity IN (".getEntity('commande').")";
+		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'commande').")";
 		$sql .= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -2727,7 +2727,7 @@ class Product extends CommonObject
 		}
 		$sql .= " WHERE c.rowid = cd.fk_commande";
 		$sql .= " AND c.fk_soc = s.rowid";
-		$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
+		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 		$sql .= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -2786,7 +2786,7 @@ class Product extends CommonObject
 		$sql .= " WHERE e.rowid = ed.fk_expedition";
 		$sql .= " AND c.rowid = cd.fk_commande";
 		$sql .= " AND e.fk_soc = s.rowid";
-		$sql .= " AND e.entity IN (".getEntity('expedition').")";
+		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'expedition').")";
 		$sql .= " AND ed.fk_origin_line = cd.rowid";
 		$sql .= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
@@ -2863,7 +2863,7 @@ class Product extends CommonObject
 		}
 		$sql .= " WHERE cf.rowid = fd.fk_commande";
 		$sql .= " AND cf.fk_soc = s.rowid";
-		$sql .= " AND cf.entity IN (".getEntity('supplier_order').")";
+		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) { $sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
@@ -2914,7 +2914,7 @@ class Product extends CommonObject
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE m.rowid = mp.fk_mo";
-		$sql .= " AND m.entity IN (".getEntity('mrp').")";
+		$sql .= " AND m.entity IN (".getEntity($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mrp').")";
 		$sql .= " AND mp.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid && !$forVirtualStock) {
 			$sql .= " AND m.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;

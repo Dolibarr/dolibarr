@@ -351,7 +351,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -415,7 +415,7 @@ if ($action == 'create')
 		$head[$h][2] = 'transaction';
 		$h++;
 
-		dol_fiche_head($head, 'transaction', '', -1);
+		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		//dol_banner_tab($object, '', $backlink);
 

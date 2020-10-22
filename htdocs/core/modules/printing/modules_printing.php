@@ -66,12 +66,17 @@ class PrintingDriver
         $type = 'printing';
         $list = array();
 
-        $moduledir = DOL_DOCUMENT_ROOT."/core/modules/printing/";
-        $tmpfiles = dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
-        foreach ($tmpfiles as $record) {
+		$listoffiles = array();
+		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		foreach ($dirmodels as $dir) {
+			$tmpfiles = dol_dir_list(dol_buildpath($dir, 0), 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
+			if (!empty($tmpfiles)) {
+				$listoffiles = array_merge($listoffiles, $tmpfiles);
+			}
+		}
+		foreach ($listoffiles as $record) {
             $list[$record['fullname']] = str_replace('.modules.php', '', $record['name']);
-        }
-
+		}
         return $list;
     }
 

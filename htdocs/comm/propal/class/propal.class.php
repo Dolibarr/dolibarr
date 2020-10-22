@@ -1634,6 +1634,7 @@ class Propal extends CommonObject
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
+		$sql .= " fk_input_reason=".(isset($this->demand_reason_id) ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";

@@ -531,6 +531,7 @@ TypeContact_invoice_supplier_external_SERVICE=Vendor service contact
 InvoiceFirstSituationAsk=First situation invoice
 InvoiceFirstSituationDesc=The <b>situation invoices</b> are tied to situations related to a progression, for example the progression of a construction. Each situation is tied to an invoice.
 InvoiceSituation=Situation invoice
+PDFInvoiceSituation=Situation invoice
 InvoiceSituationAsk=Invoice following the situation
 InvoiceSituationDesc=Create a new situation following an already existing one
 SituationAmount=Situation invoice amount(net)

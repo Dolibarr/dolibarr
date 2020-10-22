@@ -1899,11 +1899,11 @@ class pdf_sponge extends ModelePDFFactures
 		if ($object->type == 2) $title = $outputlangs->transnoentities("InvoiceAvoir");
 		if ($object->type == 3) $title = $outputlangs->transnoentities("InvoiceDeposit");
 		if ($object->type == 4) $title = $outputlangs->transnoentities("InvoiceProForma");
-		if ($this->situationinvoice) $title = $outputlangs->transnoentities("InvoiceSituation");
+		if ($this->situationinvoice) $title = $outputlangs->transnoentities("PDFInvoiceSituation");
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - ';
 			if ($object->type == 0) {
-				if ($this->situationinvoice) $title .= $outputlangsbis->transnoentities("InvoiceSituation");
+				if ($this->situationinvoice) $title .= $outputlangsbis->transnoentities("PDFInvoiceSituation");
 				$title .= $outputlangsbis->transnoentities("PdfInvoiceTitle");
 			} elseif ($object->type == 1) $title .= $outputlangsbis->transnoentities("InvoiceReplacement");
 			elseif ($object->type == 2) $title .= $outputlangsbis->transnoentities("InvoiceAvoir");
