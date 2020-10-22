@@ -355,15 +355,28 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->cond_reglement_code = 0; // To clean property
 		$object->cond_reglement_id = 0; // To clean property
+
+		$db->begin();
+
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+		    $db->rollback();
+		    dol_print_error($db, $object->error);
+		    exit;
+		}
 
 		$old_date_lim_reglement = $object->date_lim_reglement;
 		$new_date_lim_reglement = $object->calculate_date_lim_reglement();
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+		    $db->rollback();
+		    dol_print_error($db, $object->error);
+		    exit;
+		}
+
+		$db->commit();
 	}
 
 	elseif ($action == 'setpaymentterm' && $usercancreate)
