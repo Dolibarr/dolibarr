@@ -1895,6 +1895,12 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'fourn/class';
 		$module='fournisseur';
 	}
+	elseif ($objecttype == 'supplier_proposal') {
+		$classfile = 'supplier_proposal';
+		$classname = 'SupplierProposal';
+		$classpath = 'supplier_proposal/class';
+		$module = 'supplier_proposal';
+	}
 	elseif ($objecttype == 'stock')   {
 		$classpath = 'product/stock/class';
 		$classfile='entrepot';
