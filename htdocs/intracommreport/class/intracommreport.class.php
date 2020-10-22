@@ -92,7 +92,7 @@ class IntracommReport extends CommonObject
 		/**************Construction de quelques variables********************/
 		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
-		$id_declaration = self::getNumeroDeclaration($this->numero_declaration);
+		$id_declaration = $this->getDeclarationNumber($this->numero_declaration);
 		/********************************************************************/
 
 		/**************Construction du fichier XML***************************/
@@ -153,7 +153,7 @@ class IntracommReport extends CommonObject
 		$declaration_des->addChild('an_des', $period_year);
 
 		/**************Ajout des lignes de factures**************************/
-		$res = self::addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
+		$res = $this->addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
 		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
@@ -317,11 +317,11 @@ class IntracommReport extends CommonObject
 	/**
 	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
 	 *
-	 * 	@param      int		$declaration		Reference declaration
-	 * 	@param      int		$TLinesFraisDePort	Data of shipping costs line
-	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 *  @param      int		$categ_fraisdeport	Id of category of shipping costs
-	 *  @param      int		$i					Line Id
+	 * 	@param      int		    $declaration		Reference declaration
+	 * 	@param      int		    $TLinesFraisDePort	Data of shipping costs line
+	 *  @param      string	    $type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param      Categorie	$categ_fraisdeport	category of shipping costs
+	 *  @param      int		    $i					Line Id
 	 *  @return     void
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
