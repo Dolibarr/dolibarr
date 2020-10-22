@@ -438,7 +438,7 @@ class Contracts extends DolibarrApi
      *
      * @url	DELETE {id}/lines/{lineid}
      *
-     * @return int
+     * @return array|mixed
      *
      * @throws RestException 401
      * @throws RestException 404
@@ -474,7 +474,7 @@ class Contracts extends DolibarrApi
      * @param int   $id             Id of contract to update
      * @param array $request_data   Datas
      *
-     * @return int
+     * @return array|mixed
      */
     public function put($id, $request_data = null)
     {
@@ -495,8 +495,7 @@ class Contracts extends DolibarrApi
             $this->contract->$field = $value;
         }
 
-        if ($this->contract->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->contract->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
         } else {
             throw new RestException(500, $this->contract->error);
