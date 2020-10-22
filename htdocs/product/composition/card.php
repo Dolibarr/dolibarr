@@ -366,11 +366,12 @@ if ($id > 0 || !empty($ref))
 					$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent) ? $product_fourn->fourn_remise_percent : 0);
 					$fourn_remise = (!empty($product_fourn->fourn_remise) ? $product_fourn->fourn_remise : 0);
 
-					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent / 100) - $fourn_remise), 'MT');
+					$unitline = price2num(($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MU');
+					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MT');
 					$total += $totalline;
 
 					print '<td class="right">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : '').price($fourn_unitprice, '', '', 0, 0, -1, $conf->currency));
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : '').price($unitline, '', '', 0, 0, -1, $conf->currency));
 					print '</td>';
 
 					// Best selling price

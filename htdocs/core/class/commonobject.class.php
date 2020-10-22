@@ -7261,6 +7261,9 @@ abstract class CommonObject
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
+								showOptions(child_list, parent_list);
+
+								/* Activate the handler to call showOptions on each future change */
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
 								});
