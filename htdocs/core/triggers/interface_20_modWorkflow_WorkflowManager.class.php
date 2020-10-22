@@ -299,6 +299,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		//Build array of quantity ordered by product
         		if (is_array($order->lines) && count($order->lines)>0) {
         			foreach($order->lines as $orderline) {
+					if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) continue;
         				$qtyordred[$orderline->fk_product]+=$orderline->qty;
         			}
         		}
