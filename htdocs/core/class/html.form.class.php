@@ -5117,7 +5117,7 @@ class Form
 	 * @param bool $excludeConfCurrency false  = If company current currency not in table, we add it into list. Should always be available.  true = we are in currency_rate update , we don't want to see conf->currency in select
 	 * @return    string
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '',$excludeConfCurrency = false)
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false)
 	{
 		global $db, $conf, $langs, $user;
 
@@ -5137,8 +5137,8 @@ class Form
 		$out = '';
 		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) $out .= '<option value="">&nbsp;</option>';
-		// If company current currency not in table, we add it into list. Should always be available.
-		if (!in_array($conf->currency, $TCurrency))
+		// If company current currency not in table, we add it into list. Should always be available. except if we are in currency_rate update
+		if (!in_array($conf->currency, $TCurrency) && !$excludeConfCurrency)
 		{
 			$TCurrency[$conf->currency] = $conf->currency;
 		}

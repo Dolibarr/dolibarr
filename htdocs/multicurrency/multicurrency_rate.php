@@ -44,7 +44,7 @@ $massaction			= GETPOST('massaction', 'alpha');
 $show_files			= GETPOST('show_files', 'int');
 $confirm			= GETPOST('confirm', 'alpha');
 $toselect 			= GETPOST('toselect', 'array');
-$id_rate_selected 	= GETPOST('id_rate','int');
+$id_rate_selected 	= GETPOST('id_rate', 'int');
 $sall				= trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_date_sync	= GETPOST('search_date_sync', 'alpha');
 $search_rate		= GETPOST('search_rate', 'alpha');
@@ -138,7 +138,6 @@ if ($action == 'update'){
 }
 
 if ($action == "deleteRate"){
-
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 
@@ -172,10 +171,9 @@ if ($action == "confirm_delete"){
 			setEventMessage($langs->trans('successRateDelete'));
 		}else{
 			setEventMessage($langs->trans('errorRateDelete'));
-
 		}
 	}else{
-		setEventMessage($langs->trans('NoCurrencyRateSelected'),"warnings");
+		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
 		dol_syslog($langs->trans('NoCurrencyRateSelected'), LOG_WARNING);
 	}
 }
@@ -185,7 +183,7 @@ if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if (empty($reshook))
 {
@@ -298,7 +296,6 @@ if ($action == "updateRate"){
 		print '</td>';
 		print '</tr></table>';
 		print '</form>';
-
 	}else{
 		dol_syslog("currency_rate:list:update", LOG_WARNING);
 	}
@@ -352,7 +349,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}else{
 		setEventMessage($langs->trans('No_record_on_multicurrency_rate'), 'warnings');
 	}
-
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
