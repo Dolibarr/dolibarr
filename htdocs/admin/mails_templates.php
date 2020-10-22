@@ -67,7 +67,6 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
 
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'alpha') > 0 ?GETPOST('listlimit', 'alpha') : 1000;
-$active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -274,9 +273,15 @@ if (empty($reshook))
 				if ($i) $sql .= ", ";
 				if (GETPOST($keycode) == '' && $keycode != 'langcode')      $sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
-				elseif ($keycode == 'content') {
+				elseif ($keycode == 'fk_user') {
+					if (! $user->admin) {	// A non admin user can only edit its own template
+						$sql .= " ".((int) $user->id);
+					} else {
+						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
+					}
+				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -327,9 +332,15 @@ if (empty($reshook))
 
 				if (GETPOST($keycode) == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && !GETPOST($keycode))) $sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 				elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
-				elseif ($keycode == 'content') {
+				elseif ($keycode == 'fk_user') {
+					if (! $user->admin) {	// A non admin user can only edit its own template
+						$sql .= " ".((int) $user->id);
+					} else {
+						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
+					}
+				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfile', 'private', 'position', 'scale'))) {
+				} elseif (in_array($keycode, array('joinfile', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
@@ -339,6 +350,9 @@ if (empty($reshook))
 			}
 
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+			if (! $user->admin) {	// A non admin user can only edit its own template
+				$sql .= " AND fk_user  = ".$user->id;
+			}
 			//print $sql;exit;
 			dol_syslog("actionmodify", LOG_DEBUG);
 			//print $sql;
@@ -357,7 +371,9 @@ if (empty($reshook))
 		$rowidcol = "rowid";
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
-
+		if (! $user->admin) {	// A non admin user can only edit its own template
+			$sql .= " AND fk_user  = ".$user->id;
+		}
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
 		if (!$result)
