@@ -325,7 +325,31 @@ if (empty($reshook))
 	// payments conditions
 	if ($action == 'setconditions' && $user->rights->fournisseur->facture->creer)
 	{
-		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+	    $object->fetch($id);
+	    $object->cond_reglement_code = 0; // To clean property
+	    $object->cond_reglement_id = 0; // To clean property
+
+	    $db->begin();
+
+	    $result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+	    if ($result < 0) {
+	        $db->rollback();
+	        dol_print_error($db, $object->error);
+	        exit;
+	    }
+
+	    $old_date_echeance = $object->date_echeance;
+	    $new_date_echeance = $object->calculate_date_lim_reglement();
+	    if ($new_date_echeance > $old_date_echeance) $object->date_echeance = $new_date_echeance;
+	    if ($object->date_echeance < $object->date) $object->date_echeance = $object->date;
+	    $result = $object->update($user);
+	    if ($result < 0) {
+	        $db->rollback();
+	        dol_print_error($db, $object->error);
+	        exit;
+	    }
+
+	    $db->commit();
 	}
 
 	// Set incoterm
