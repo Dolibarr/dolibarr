@@ -14,7 +14,7 @@
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2441,6 +2441,7 @@ class Product extends CommonObject
 		$sql .= " WHERE ";
 		$sql .= " b.entity IN (".getEntity('bom').")";
 		$sql .= " AND b.fk_product =".$this->id;
+        $sql .= " GROUP BY b.rowid";
 
 		$result = $this->db->query($sql);
 		if ($result) {
