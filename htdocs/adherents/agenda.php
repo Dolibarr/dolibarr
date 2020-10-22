@@ -118,7 +118,7 @@ if ($object->id > 0) {
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("Member"), -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
