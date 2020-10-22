@@ -2185,20 +2185,22 @@ class ExpenseReport extends CommonObject
 
 		$langs->load("trips");
 
-		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+	    if (!dol_strlen($modele)) {
+		    if ($this->modelpdf) {
+			    $modele = $this->modelpdf;
+		    } elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+			    $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+		    }
+	    }
+	    
+		if (!empty($modele)) {
+			$modelpath = "core/modules/expensereport/doc/";
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
-				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
-			}
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		} else {
+			return 0;
 		}
-
-		$modelpath = "core/modules/expensereport/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-	}
+    }
 
 	/**
 	 * List of types

@@ -167,6 +167,9 @@ if ($action == 'presend')
 	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} else {
+		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
