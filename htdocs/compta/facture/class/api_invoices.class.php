@@ -1006,14 +1006,14 @@ class Invoices extends DolibarrApi
     	if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
     		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        
+
         $discountcheck = new DiscountAbsolute($this->db);
         $result = $discountcheck->fetch(0, $this->invoice->id);
 
-        if($result == 0){
+        if ($result == 0){
             throw new RestException(404, 'Discount not found');
         }
-        else if($result < 0){
+        if ($result < 0){
             throw new RestException(500, $discountcheck->error);
         }
 
