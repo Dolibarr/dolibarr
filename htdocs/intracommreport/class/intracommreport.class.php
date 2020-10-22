@@ -44,6 +44,11 @@ class IntracommReport extends CommonObject
      */
     public $fk_element='fk_intracommreport';
 
+	/**
+	 * @var string declaration number
+	 */
+	public $declaration_number;
+
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
@@ -92,7 +97,7 @@ class IntracommReport extends CommonObject
 		/**************Construction de quelques variables********************/
 		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
-		$id_declaration = $this->getDeclarationNumber($this->numero_declaration);
+		$id_declaration = self::getDeclarationNumber($this->numero_declaration);
 		/********************************************************************/
 
 		/**************Construction du fichier XML***************************/
@@ -380,17 +385,17 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
+		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
 		if ($resql) $res = $this->db->fetch_object($resql);
 
-		return ($res->max_numero_declaration + 1);
+		return ($res->max_declaration_number + 1);
 	}
 
 	/**
 	 *	Verify declaration number. Positive integer of a maximum of 6 characters recommended by the documentation
 	 *
-	 *	@param     	int		$number		Number to verify / convert
-	 *	@return		int 				Number
+	 *	@param     	string		$number		Number to verify / convert
+	 *	@return		string 				Number
 	 */
 	public static function getDeclarationNumber($number)
 	{
