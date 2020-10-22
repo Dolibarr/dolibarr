@@ -2186,7 +2186,7 @@ class BonPrelevement extends CommonObject
 
 		// Get data of bank account
 		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$id=($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); 
+		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); 
 		$account = new Account($this->db);
 		if ($account->fetch($id) > 0)
 		{
