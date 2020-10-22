@@ -129,7 +129,7 @@ $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
 $head = loan_prepare_head($object);
-dol_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
+print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

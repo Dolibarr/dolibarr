@@ -154,7 +154,7 @@ if (!empty($id) || !empty($ref)) {
 		$head = product_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+		print dol_get_fiche_head($head, 'combinations', $titre, 0, $picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 		$object->next_prev_filter = " fk_product_type = ".$object->type;

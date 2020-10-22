@@ -86,7 +86,7 @@ $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment');
 
 /*
  * Confirm deleting of the payment

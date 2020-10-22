@@ -155,7 +155,7 @@ if ($id > 0 || !empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = reception_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'dollyrevert');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'dollyrevert');
 
 
 	// Reception card

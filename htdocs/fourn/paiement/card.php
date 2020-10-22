@@ -146,7 +146,7 @@ $formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
 
 if ($result > 0)
 {

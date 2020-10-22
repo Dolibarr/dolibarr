@@ -105,7 +105,7 @@ if ($object->id)
 
 	$form = new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
 	// Build file list

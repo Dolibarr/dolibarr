@@ -119,7 +119,7 @@ print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 // Tool bar
 $head = ecm_prepare_head_fm($ecmdir, $module, $section);
-//dol_fiche_head($head, 'search_form', '', 1);
+//print dol_get_fiche_head($head, 'search_form', '', 1);
 
 
 print '<table class="border centpercent"><tr><td width="40%" valign="top">';

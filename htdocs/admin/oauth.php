@@ -85,7 +85,7 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
 
-dol_fiche_head($head, 'services', '', -1, 'technic');
+print dol_get_fiche_head($head, 'services', '', -1, 'technic');
 
 
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';

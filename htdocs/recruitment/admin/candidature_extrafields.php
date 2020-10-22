@@ -65,7 +65,7 @@ print load_fiche_titre($langs->trans("RecruitmentSetup"), $linkback, 'title_setu
 
 $head = recruitmentAdminPrepareHead();
 
-dol_fiche_head($head, 'candidature_extrafields', '', -1, '');
+print dol_get_fiche_head($head, 'candidature_extrafields', '', -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

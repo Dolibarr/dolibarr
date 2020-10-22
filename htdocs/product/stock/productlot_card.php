@@ -269,7 +269,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
@@ -298,7 +298,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     //print load_fiche_titre($langs->trans("Batch"));
 
     $head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Batch"), -1, 'barcode');
+	print dol_get_fiche_head($head, 'card', $langs->trans("Batch"), -1, 'barcode');
 
 
 	if ($action == 'delete') {

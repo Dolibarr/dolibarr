@@ -326,7 +326,7 @@ $head[1][2] = 'stockatdatefuture';
 
 print load_fiche_titre($langs->trans('StockAtDate'), '', 'stock');
 
-dol_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
+print dol_get_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
 
 $desc = $langs->trans("StockAtDatePastDesc");
 if ($mode == 'future') $desc = $langs->trans("StockAtDateFutureDesc");

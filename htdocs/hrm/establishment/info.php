@@ -118,7 +118,7 @@ if ($object->id > 0)
 	$head = establishment_prepare_head($object);
 
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
 	// Object card
 	// ------------------------------------------------------------

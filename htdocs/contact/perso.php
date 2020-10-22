@@ -139,7 +139,7 @@ if ($action == 'edit')
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-    dol_fiche_head($head, 'perso', $title, 0, 'contact');
+    print dol_get_fiche_head($head, 'perso', $title, 0, 'contact');
 
     print '<table class="border centpercent">';
 
@@ -216,7 +216,7 @@ if ($action == 'edit')
 } else {
     // View mode
 
-    dol_fiche_head($head, 'perso', $title, -1, 'contact');
+    print dol_get_fiche_head($head, 'perso', $title, -1, 'contact');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

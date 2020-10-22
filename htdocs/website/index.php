@@ -3006,7 +3006,7 @@ if ($action == 'editcss')
 		//$readmecontent.="";
 	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<!-- Edit CSS -->'."\n";
 	print '<table class="border centpercent">';
@@ -3172,7 +3172,7 @@ if ($action == 'createsite')
    	$head[$h][2] = 'card';
 	$h++;
 
-    dol_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
+    print dol_get_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
     */
 	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddSite"));
 
@@ -3255,7 +3255,7 @@ if ($action == 'importsite')
 
 	print load_fiche_titre($langs->trans("ImportSite"));
 
-	dol_fiche_head(array(), '0', '', -1);
+	print dol_get_fiche_head(array(), '0', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
@@ -3292,7 +3292,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
    	$head[$h][2] = 'card';
 	$h++;
 
-    dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
+    print dol_get_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
     */
 	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddPage"));
 

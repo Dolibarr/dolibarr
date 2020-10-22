@@ -156,7 +156,7 @@ if ($action == 'create')
     print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
     print '<input type="hidden" name="action" value="add">';
 
-    dol_fiche_head();
+    print dol_get_fiche_head();
 
     print '<table class="border centpercent">';
 
@@ -219,7 +219,7 @@ if ($id)
 	$head[$h][2] = 'card';
 	$h++;
 
-	dol_fiche_head($head, 'card', $langs->transcountry("LT".$object->ltt, $mysoc->country_code), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->transcountry("LT".$object->ltt, $mysoc->country_code), -1, 'payment');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/localtax/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

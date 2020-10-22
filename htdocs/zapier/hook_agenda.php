@@ -122,7 +122,7 @@ if ($object->id > 0) {
 	$head = myobjectPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 	// Object card
 	// ------------------------------------------------------------

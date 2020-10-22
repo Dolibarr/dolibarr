@@ -92,7 +92,7 @@ print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup')
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'shipment');
+print dol_get_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'shipment');
 
 // Miscellaneous parameters
 

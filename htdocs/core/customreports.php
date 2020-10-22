@@ -188,7 +188,7 @@ $formother = new FormOther($db);
 if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
-	dol_fiche_head($head, 'customreports', $title, -1, $picto);
+	print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
 }
 
 // Check parameters

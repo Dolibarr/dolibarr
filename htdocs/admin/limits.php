@@ -125,7 +125,7 @@ if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY
 	if (!empty($aCurrencies) && count($aCurrencies) > 1)
 	{
 		$head = multicurrencyLimitPrepareHead($aCurrencies);
-		dol_fiche_head($head, $currencycode, '', -1, "multicurrency");
+		print dol_get_fiche_head($head, $currencycode, '', -1, "multicurrency");
 	}
 }
 

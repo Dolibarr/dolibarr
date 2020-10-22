@@ -89,7 +89,7 @@ $h++;
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
-dol_fiche_head($head, 'setup', '', 0, 'user');
+print dol_get_fiche_head($head, 'setup', '', 0, 'user');
 
 print '<br>';
 

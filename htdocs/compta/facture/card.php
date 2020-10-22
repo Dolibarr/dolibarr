@@ -2879,7 +2879,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="originentity" value="'.GETPOST('originentity').'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -3687,7 +3687,7 @@ if ($action == 'create')
 
 	$head = facture_prepare_head($object);
 
-	dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
+	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
 	$formconfirm = '';
 

@@ -165,7 +165,7 @@ print load_fiche_titre($langs->trans("SupplierPaymentSetup"), $linkback, 'title_
 print "<br>";
 
 $head = supplierorder_admin_prepare_head();
-dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -1, 'company');
+print dol_get_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -1, 'company');
 
 /*
  *  Numbering module

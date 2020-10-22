@@ -109,7 +109,7 @@ if ($object->id > 0)
 		// Tabs for project
 		$tab = 'tasks';
 		$head = project_prepare_head($projectstatic);
-		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 		$param = ($mode == 'mine' ? '&mode=mine' : '');
 		// Project card
@@ -229,7 +229,7 @@ if ($object->id > 0)
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
+	print dol_get_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
 
 
 	$param = (GETPOST('withproject') ? '&withproject=1' : '');

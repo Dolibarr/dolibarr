@@ -177,7 +177,7 @@ print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
 $head = holiday_admin_prepare_head();
 
-dol_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
+print dol_get_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
 
 /*
  * Holiday Numbering model

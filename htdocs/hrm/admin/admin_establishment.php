@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
 $head = hrm_admin_prepare_head();
-dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
+print dol_get_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.label, e.address, e.zip, e.town, e.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";

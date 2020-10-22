@@ -291,7 +291,7 @@ if ($action == 'create')
 	{
 		$head = trip_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
+		print dol_get_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
 		if ($action == 'edit' && $user->rights->deplacement->creer)
 		{

@@ -882,7 +882,7 @@ if ($action == 'create')
 				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
 			}
 
-			dol_fiche_head('');
+			print dol_get_fiche_head('');
 
 			print '<table class="border centpercent">';
 
@@ -1584,7 +1584,7 @@ if ($action == 'create')
 		$res = $object->fetch_optionals();
 
 		$head = shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
+		print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
 
 		$formconfirm = '';
 

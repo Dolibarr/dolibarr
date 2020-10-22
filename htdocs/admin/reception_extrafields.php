@@ -79,7 +79,7 @@ print "<br>\n";
 
 $head = reception_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_reception', $langs->trans("Receptions"), -1, 'sending');
+print dol_get_fiche_head($head, 'attributes_reception', $langs->trans("Receptions"), -1, 'sending');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

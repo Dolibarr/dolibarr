@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("MyModuleSetup"), $linkback, 'title_setup')
 
 $head = mymoduleAdminPrepareHead();
 
-dol_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

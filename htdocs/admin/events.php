@@ -102,7 +102,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'audit', '', -1);
+print dol_get_fiche_head($head, 'audit', '', -1);
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";

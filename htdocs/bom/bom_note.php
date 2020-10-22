@@ -83,7 +83,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = bomPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'note', $langs->trans("BillOfMaterials"), -1, 'bom');
 
 	// Object card
 	// ------------------------------------------------------------

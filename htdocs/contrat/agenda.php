@@ -132,7 +132,7 @@ if ($id > 0)
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = contract_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Contract"), -1, 'contract');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("Contract"), -1, 'contract');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

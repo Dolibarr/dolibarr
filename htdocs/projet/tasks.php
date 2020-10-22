@@ -348,7 +348,7 @@ if ($id > 0 || !empty($ref))
 	$tab = GETPOST('tab') ?GETPOST('tab') : 'tasks';
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 	$param = '&id='.$object->id;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
@@ -512,7 +512,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 

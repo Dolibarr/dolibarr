@@ -408,7 +408,7 @@ if ($rowid > 0) {
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-    dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
+    print dol_get_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -802,7 +802,7 @@ if ($rowid > 0) {
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->company).'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print "<table class=\"border\" width=\"100%\">\n";
         print '<tbody>';

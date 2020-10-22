@@ -182,7 +182,7 @@ print load_fiche_titre($langs->trans("MrpSetupPage"), $linkback, 'title_setup');
 
 $head = mrpAdminPrepareHead();
 
-dol_fiche_head($head, 'settings', $langs->trans("MOs"), -1, 'mrp');
+print dol_get_fiche_head($head, 'settings', $langs->trans("MOs"), -1, 'mrp');
 
 /*
  * MOs Numbering model

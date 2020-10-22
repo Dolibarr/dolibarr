@@ -64,7 +64,7 @@ $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
 
-dol_fiche_head($head, 'info', $langs->trans($title), -1, 'category');
+print dol_get_fiche_head($head, 'info', $langs->trans($title), -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$type;

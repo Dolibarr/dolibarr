@@ -78,7 +78,7 @@ if ($id > 0 || !empty($ref))
 		if ($societe->fetch($object->socid))
 		{
 			$head = supplier_proposal_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('CommRequest'), -1, 'supplier_proposal');
+			print dol_get_fiche_head($head, 'note', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 
 			// Supplier proposal card

@@ -187,7 +187,7 @@ print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_s
 
 $head = expensereport_admin_prepare_head();
 
-dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
+print dol_get_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
 
 /*
  * Expense report numbering model

@@ -87,7 +87,7 @@ $head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -119,7 +119,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 ?>
 	<table class="border" style="width: 100%">

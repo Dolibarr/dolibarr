@@ -452,7 +452,7 @@ if ($resql)
 	if ($showbirthday)    $nav .= '<input type="hidden" name="search_showbirthday" value="1">';
 	print $nav;
 
-    //dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+    //print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
     //print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     //dol_fiche_end();
 

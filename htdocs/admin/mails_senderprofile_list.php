@@ -205,7 +205,7 @@ print load_fiche_titre($title, $linkback, $titlepicto);
 
 $head = email_admin_prepare_head();
 
-dol_fiche_head($head, 'senderprofiles', '', -1);
+print dol_get_fiche_head($head, 'senderprofiles', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("EMailsSenderProfileDesc")."</span><br>\n";
 print "<br>\n";

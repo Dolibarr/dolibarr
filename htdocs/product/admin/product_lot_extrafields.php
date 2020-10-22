@@ -73,7 +73,7 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = product_lot_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $textobject, -1, 'stock');
+print dol_get_fiche_head($head, 'attributes', $textobject, -1, 'stock');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -594,7 +594,7 @@ if (empty($action) || $action == "view" || $action == "close")
     	$head[0][1] = $langs->trans("CashControl");
     	$head[0][2] = 'cashcontrol';
 
-	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
+	    print dol_get_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

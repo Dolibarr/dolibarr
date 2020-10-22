@@ -142,7 +142,7 @@ if ($id)
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
-		dol_fiche_head($head, $hselected, $title);
+		print dol_get_fiche_head($head, $hselected, $title);
 
 		print '<table class="border centpercent tableforfield">';
 

@@ -727,7 +727,7 @@ if ($action == 'create')
                 print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
             }
 
-            dol_fiche_head('');
+            print dol_get_fiche_head('');
 
             print '<table class="border centpercent">';
 
@@ -1203,7 +1203,7 @@ if ($action == 'create')
 		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
-		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
+		print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
 
 		$formconfirm = '';
 
@@ -2103,7 +2103,7 @@ if ($action == 'create')
 		print '<div class="clearboth"></div>';
 		print '<br>';
 		print load_fiche_titre($langs->trans('SendReceptionByEMail'));
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);

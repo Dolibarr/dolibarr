@@ -62,7 +62,7 @@ $object->info($id);
 
 $head = asset_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
+print dol_get_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

@@ -882,7 +882,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<input type="hidden" name="action" value="add">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 
@@ -1037,7 +1037,7 @@ if ($action == 'create')
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		if (is_object($objectsrc))
 		{
@@ -1084,7 +1084,7 @@ if ($action == 'create')
 
 	$head = fichinter_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
 
 	$formconfirm = '';
 

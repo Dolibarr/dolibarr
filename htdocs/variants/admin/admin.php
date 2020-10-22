@@ -48,7 +48,7 @@ llxHeader('', $title);
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
-dol_fiche_head(array(), 'general', $tab, 0, 'product');
+print dol_get_fiche_head(array(), 'general', $tab, 0, 'product');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

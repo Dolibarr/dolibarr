@@ -96,7 +96,7 @@ if ($id > 0 || !empty($ref)) {
 
         // Onglets
         $head = bank_prepare_head($object);
-        dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
+        print dol_get_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 
         // Build file list

@@ -69,7 +69,7 @@ if ($massaction == 'presend')
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
-	dol_fiche_head(null, '', '');
+	print dol_get_fiche_head(null, '', '');
 
 	// Cree l'objet formulaire mail
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

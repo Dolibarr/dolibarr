@@ -146,7 +146,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
-<?php dol_fiche_head(); ?>
+<?php print dol_get_fiche_head(); ?>
 
 <table summary="listofattributes" class="border centpercent">
 

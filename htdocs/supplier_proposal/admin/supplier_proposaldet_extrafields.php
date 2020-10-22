@@ -69,7 +69,7 @@ print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title
 
 $head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), -1, 'supplier_proposal');
+print dol_get_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), -1, 'supplier_proposal');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

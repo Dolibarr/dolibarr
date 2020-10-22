@@ -707,7 +707,7 @@ if ($action == 'create')
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
@@ -775,7 +775,7 @@ if ($action == 'create')
 
 		if ($action != 'edit' && $action != 'edithtml')
 		{
-			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			/*
 			 * View mode mailing
@@ -1033,7 +1033,7 @@ if ($action == 'create')
 			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			    print load_fiche_titre($langs->trans("TestMailing"));
 
-			    dol_fiche_head(null, '', '', -1);
+			    print dol_get_fiche_head(null, '', '', -1);
 
 			    // Create mail form object
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1080,7 +1080,7 @@ if ($action == 'create')
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
-			dol_fiche_head('', '', '', -1);
+			print dol_get_fiche_head('', '', '', -1);
 
 			print '<table class="bordernooddeven" width="100%">';
 
@@ -1128,7 +1128,7 @@ if ($action == 'create')
 			 * Edition mode mailing (CKeditor or HTML source)
 			 */
 
-			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1216,7 +1216,7 @@ if ($action == 'create')
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
-			dol_fiche_head(null, '', '', -1);
+			print dol_get_fiche_head(null, '', '', -1);
 
 			print '<table class="bordernooddeven" width="100%">';
 

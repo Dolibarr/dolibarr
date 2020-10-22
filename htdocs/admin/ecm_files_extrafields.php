@@ -80,7 +80,7 @@ print "<br>\n";
 
 $head = ecm_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_ecm_files', $langs->trans("ECM"), -1, 'ecm');
+print dol_get_fiche_head($head, 'attributes_ecm_files', $langs->trans("ECM"), -1, 'ecm');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

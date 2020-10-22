@@ -793,7 +793,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	if (!empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
-	dol_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head('', '', '', 0, '');
 
 	print dol_set_focus('#lastname');
 
@@ -1395,7 +1395,7 @@ if ($action == 'create' || $action == 'adduserldap')
          */
 		if ($action != 'edit')
 		{
-			dol_fiche_head($head, 'user', $title, -1, 'user');
+			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
 			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -2032,7 +2032,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="entity" value="'.$object->entity.'">';
 
-			dol_fiche_head($head, 'user', $title, 0, 'user');
+			print dol_get_fiche_head($head, 'user', $title, 0, 'user');
 
 			print '<table class="border centpercent">';
 
