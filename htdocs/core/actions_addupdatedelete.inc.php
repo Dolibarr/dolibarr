@@ -75,6 +75,9 @@ if ($action == 'add' && !empty($permissiontoadd))
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key) == '1' || GETPOST($key) == 'on') ? 1 : 0);
+		} elseif ($object->fields[$key]['type'] == 'reference') {
+			$tmparraykey = array_keys($object->param_list);
+			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alphanohtml');
 		}
@@ -162,6 +165,8 @@ if ($action == 'update' && !empty($permissiontoadd))
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
+		} elseif ($object->fields[$key]['type'] == 'reference') {
+			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
