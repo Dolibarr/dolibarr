@@ -462,9 +462,9 @@ if (empty($reshook))
 	{
 		$mesgs = array();
 
-		$object->email_from     = GETPOST("from");
-		$object->email_replyto  = GETPOST("replyto");
-		$object->email_errorsto = GETPOST("errorsto");
+		$object->email_from     = GETPOST("from", "none");			// Must allow 'name <email>'
+		$object->email_replyto  = GETPOST("replyto", "none");		// Must allow 'name <email>'
+		$object->email_errorsto = GETPOST("errorsto", "none");		// Must allow 'name <email>'
 		$object->title          = GETPOST("title");
 		$object->sujet          = GETPOST("sujet");
 		$object->body           = GETPOST("bodyemail", 'restricthtml');
@@ -491,7 +491,7 @@ if (empty($reshook))
 			$mesgs[] = $object->error;
 		}
 
-		setEventMessages($mesg, $mesgs, 'errors');
+		setEventMessages(null, $mesgs, 'errors');
 		$action = "create";
 	}
 
@@ -501,11 +501,10 @@ if (empty($reshook))
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') $object->title = trim(GETPOST('title', 'alpha'));
-		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'alpha'));
-		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'alpha'));
-		elseif ($action == 'setemail_errorsto') {
-            $object->email_errorsto = trim(GETPOST('email_errorsto', 'alpha'));
-        } elseif ($action == 'settitle' && empty($object->title)) {
+		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'none'));				// Must allow 'name <email>'
+		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'none'));		// Must allow 'name <email>'
+		elseif ($action == 'setemail_errorsto') $object->email_errorsto = trim(GETPOST('email_errorsto', 'none'));	// Must allow 'name <email>'
+        elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
@@ -711,7 +710,7 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO) ? $conf->global->MAILING_EMAIL_ERRORSTO : $conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
@@ -868,7 +867,11 @@ if ($action == 'create')
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadEMail", $email));
+			} elseif ($email && !isValidMailDomain($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadMXDomain", $email));
 			}
+
 			print '</td></tr>';
 
 			// Errors to
@@ -880,6 +883,9 @@ if ($action == 'create')
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadEMail", $email));
+			} elseif ($email && !isValidMailDomain($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadMXDomain", $email));
 			}
 			print '</td></tr>';
 

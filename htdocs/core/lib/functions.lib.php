@@ -629,6 +629,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'san_alpha':
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
+		case 'email':
+			$out = filter_var($out, FILTER_SANITIZE_EMAIL);
+			break;
 		case 'aZ':
 			if (!is_array($out))
 			{
@@ -2284,7 +2287,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 }
 
 /**
- * Show EMail link
+ * Show EMail link formatted for HTML output.
  *
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
  * @param 	int			$cid 			Id of contact if known
@@ -2299,7 +2302,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 {
 	global $conf, $user, $langs, $hookmanager;
 
-	$newemail = $email;
+	$newemail = dol_escape_htmltag($email);
 
 	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
 
@@ -2936,11 +2939,12 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 
 
 /**
- *	Return true if email syntax is ok
+ *	Return true if email syntax is ok.
  *
  *	@param	    string		$address    			email (Ex: "toto@examle.com", "John Do <johndo@example.com>")
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
+ *  @see isValidMXRecord()
  */
 function isValidEmail($address, $acceptsupervisorkey = 0)
 {
@@ -2956,6 +2960,7 @@ function isValidEmail($address, $acceptsupervisorkey = 0)
  *
  *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
  *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
+ *  @see isValidEmail()
  */
 function isValidMXRecord($domain)
 {
