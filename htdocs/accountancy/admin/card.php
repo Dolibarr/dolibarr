@@ -272,7 +272,7 @@ if ($action == 'create') {
 		// Edit mode
 		if ($action == 'update')
 		{
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
