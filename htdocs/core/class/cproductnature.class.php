@@ -44,7 +44,14 @@ class CProductNature // extends CommonObject
 	public $errors = array();
 	public $records = array();
 
+    /**
+     * @var string element
+     */
 	public $element='cproductnbature';
+
+    /**
+     * @var string table element
+     */
 	public $table_element='c_product_nature';
 
     /**
@@ -52,11 +59,20 @@ class CProductNature // extends CommonObject
 	 */
 	public $id;
 
+    /**
+     * @var string code
+     */
 	public $code;
+
+    /**
+     * @var string label
+     */
 	public $label;
+
+    /**
+     * @var int active
+     */
 	public $active;
-
-
 
 
     /**
@@ -87,7 +103,7 @@ class CProductNature // extends CommonObject
 		if (isset($this->id)) $this->id = (int) $this->id;
 		if (isset($this->code)) $this->code = trim($this->code);
 		if (isset($this->label)) $this->libelle = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->active)) $this->active = (int) ($this->active);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -102,31 +118,28 @@ class CProductNature // extends CommonObject
 		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)) .",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->db->escape($this->active))).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
 		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		if (!$error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+    	if (!$resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
         }
 
         // Commit or rollback
-        if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+        if ($error) {
+			foreach ($this->errors as $errmsg) {
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->db->commit();
             return $this->id;
 		}
