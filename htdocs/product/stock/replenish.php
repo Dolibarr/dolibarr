@@ -366,7 +366,7 @@ if ($usevirtualstock)
 	if (!empty($conf->commande->enabled)) {
 		$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd1.qty) IS NULL", "0", "SUM(cd1.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlCommandesCli .= " FROM ".MAIN_DB_PREFIX."commandedet as cd1, ".MAIN_DB_PREFIX."commande as c1";
-		$sqlCommandesCli .= " WHERE c1.rowid = cd1.fk_commande AND c1.entity IN (".getEntity('commande').")";
+		$sqlCommandesCli .= " WHERE c1.rowid = cd1.fk_commande AND c1.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'commande').")";
 		$sqlCommandesCli .= " AND cd1.fk_product = p.rowid";
 		$sqlCommandesCli .= " AND c1.fk_statut IN (1,2))";
 	} else {
@@ -379,7 +379,7 @@ if ($usevirtualstock)
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
                 $sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commande as c2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
-		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity('expedition').")";
+		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'expedition').")";
                 $sqlExpeditionsCli .= " AND cd2.fk_commande = c2.rowid";
                 $sqlExpeditionsCli .= " AND c2.fk_statut IN (1,2)";
 		$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";
@@ -393,14 +393,14 @@ if ($usevirtualstock)
 		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
 		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
 		$sqlCommandesFourn .= " WHERE c3.rowid = cd3.fk_commande";
-		$sqlCommandesFourn .= " AND c3.entity IN (".getEntity('supplier_order').")";
+		$sqlCommandesFourn .= " AND c3.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 		$sqlCommandesFourn .= " AND cd3.fk_product = p.rowid";
 		$sqlCommandesFourn .= " AND c3.fk_statut IN (3,4))";
 
 		$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlReceptionFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf4,";
 		$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd4";
-		$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity('supplier_order').")";
+		$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 		$sqlReceptionFourn .= " AND fd4.fk_product = p.rowid";
 		$sqlReceptionFourn .= " AND cf4.fk_statut IN (3,4))";
 	} else {
@@ -412,7 +412,7 @@ if ($usevirtualstock)
 		$sqlProductionToConsume = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlProductionToConsume .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
 		$sqlProductionToConsume .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
-		$sqlProductionToConsume .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity('mo').")";
+		$sqlProductionToConsume .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mo').")";
 		$sqlProductionToConsume .= " AND mp5.fk_product = p.rowid";
 		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
 		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
@@ -420,7 +420,7 @@ if ($usevirtualstock)
 		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlProductionToProduce .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
 		$sqlProductionToProduce .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
-		$sqlProductionToProduce .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity('mo').")";
+		$sqlProductionToProduce .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mo').")";
 		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
 		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
 		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
