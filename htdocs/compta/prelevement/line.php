@@ -203,7 +203,7 @@ if ($id)
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
 
-		$rej = new RejetPrelevement($db, $user,$type);
+		$rej = new RejetPrelevement($db, $user, $type);
 
 		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
