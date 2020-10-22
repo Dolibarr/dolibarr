@@ -698,15 +698,18 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				// Show the span for the total of record
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
-					$openedDashBoard .= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";
+					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>';
 				}
 
-				$openedDashBoard .= '		</span>'."\n";
-				$openedDashBoard .= '		<div class="info-box-content">'."\n";
+				$openedDashBoard .= '</span>'."\n";
+				$openedDashBoard .= '<div class="info-box-content">'."\n";
 
-				$openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>'."\n";
+				$openedDashBoard .= '<div class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</div>'."\n";
+				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
+					$openedDashBoard .= '<div class="info-box-line">';
+
 					if (!empty($board->labelShort)) {
 						$infoName = '<span title="'.$board->label.'">'.$board->labelShort.'</span>';
 					} else {
@@ -722,8 +725,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}
-
-					$openedDashBoard .= '<div class="info-box-line">';
 
 					$nbtodClass = '';
 					if ($board->nbtodo > 0) {
@@ -745,11 +746,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
 						$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total).'</a>';
 					}
-
-					$openedDashBoard .= '</div>';
+					$openedDashBoard .= '</div>'."\n";
 				}
 
-				$openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
+				// TODO Add hook here to add more "info-box-line"
+
+				$openedDashBoard .= '		</div><!-- /.info-box-lines --></div><!-- /.info-box-content -->'."\n";
 				$openedDashBoard .= '	</div><!-- /.info-box -->'."\n";
 				$openedDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
 				$openedDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
@@ -776,7 +778,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$weatherDashBoard .= img_weather('', $weather->level, '', 0, 'valignmiddle width50');
 			$weatherDashBoard .= '       </span>'."\n";
 			$weatherDashBoard .= '		<div class="info-box-content">'."\n";
-			$weatherDashBoard .= '			<span class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</span>'."\n";
+			$weatherDashBoard .= '			<div class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</div>'."\n";
 
 			if ($totallatePercentage > 0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
 				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate",

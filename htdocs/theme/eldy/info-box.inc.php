@@ -87,12 +87,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .info-box-sm .info-box-icon {
     height: 80px;
-    width: 80px;
+    width: 78px;
     font-size: 25px;
     line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
-    border-radius: 0 20px 0 20px;
+    border-radius: 0 0 0 20px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
