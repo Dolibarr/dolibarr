@@ -2362,7 +2362,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats OF pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
+	 * @return int                     Array of stats in $this->stats_mo, <0 if ko or >0 if ok
 	 */
 	public function load_stats_mo($socid = 0)
 	{
@@ -2420,7 +2420,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats OF pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return integer      Tableau des stats dans $this->stats_mo, <0 if ko >0 if ok
+	 * @return int                     Array of stats in $this->stats_bom, <0 if ko or >0 if ok
 	 */
 	public function load_stats_bom($socid = 0)
 	{
@@ -2487,7 +2487,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats propale pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return integer      Tableau des stats dans $this->stats_propale, <0 if ko >0 if ok
+	 * @return int                     Array of stats in $this->stats_propale, <0 if ko or >0 if ok
 	 */
 	public function load_stats_propale($socid = 0)
 	{
@@ -2560,7 +2560,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats propale pour le produit/service
 	 *
 	 * @param  int $socid Id thirdparty
-	 * @return array               Tableau des stats
+	 * @return int                     Array of stats in $this->stats_proposal_supplier, <0 if ko or >0 if ok
 	 */
 	public function load_stats_proposal_supplier($socid = 0)
 	{
@@ -2711,7 +2711,7 @@ class Product extends CommonObject
 	 * @param  int    $socid           Id societe pour filtrer sur une societe
 	 * @param  string $filtrestatut    Id des statuts pour filtrer sur des statuts
 	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
-	 * @return array                     Tableau des stats
+	 * @return int                     Array of stats in $this->stats_commande_fournisseur, <0 if ko or >0 if ok
 	 */
 	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
 	{
@@ -2767,7 +2767,7 @@ class Product extends CommonObject
 	 * @param   string      $filtrestatut           [=''] Ids order status separated by comma
 	 * @param   int         $forVirtualStock        Ignore rights filter for virtual stock calculation.
 	 * @param   string      $filterShipmentStatus   [=''] Ids shipment status separated by comma
-	 * @return  int         <0 if KO, >0 if OK (Tableau des stats)
+	 * @return  int                                 Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
 	public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $filterShipmentStatus = '')
 	{
@@ -2848,7 +2848,7 @@ class Product extends CommonObject
 	 * @param  int    $socid           Id societe pour filtrer sur une societe
 	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
 	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
-	 * @return array                   Tableau des stats
+	 * @return int                     Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
 	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
 	{
@@ -2894,12 +2894,12 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge tableau des stats commande client pour le produit/service
+	 *  Charge tableau des stats production pour le produit/service
 	 *
 	 * @param  int    $socid           Id societe pour filtrer sur une societe
 	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
 	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
-	 * @return integer                 Array of stats in $this->stats_commande (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
+	 * @return integer                 Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
 	{
@@ -2986,7 +2986,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats contrat pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return array               Tableau des stats
+	 * @return int                     Array of stats in $this->stats_contrat, <0 if ko or >0 if ok
 	 */
 	public function load_stats_contrat($socid = 0)
 	{
@@ -3058,7 +3058,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats facture pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return array                   Tableau des stats
+	 * @return int                     Array of stats in $this->stats_facture, <0 if ko or >0 if ok
 	 */
 	public function load_stats_facture($socid = 0)
 	{
@@ -3130,7 +3130,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats facture pour le produit/service
 	 *
 	 * @param  int $socid Id societe
-	 * @return array                   Tableau des stats
+	 * @return int                     Array of stats in $this->stats_facture_fournisseur, <0 if ko or >0 if ok
 	 */
 	public function load_stats_facture_fournisseur($socid = 0)
 	{
