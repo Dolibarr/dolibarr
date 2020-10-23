@@ -47,7 +47,7 @@ class RejetPrelevement
 	 *
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
-     *  @param  string  $type       type
+	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */
 	public function __construct($db, $user, $type)
 	{
@@ -288,13 +288,8 @@ class RejetPrelevement
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
-		if ($this->type == 'bank-transfer')	{
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
-        } else {
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
-        }
-
+		if ($this->type == 'bank-transfer')	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
+		else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
 		$sql .= " AND f.entity IN  (".getEntity('invoice').")";

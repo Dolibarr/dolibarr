@@ -2192,7 +2192,7 @@ class ExpenseReport extends CommonObject
 			    $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
 		    }
 	    }
-	    
+
 		if (!empty($modele)) {
 			$modelpath = "core/modules/expensereport/doc/";
 
