@@ -5023,9 +5023,11 @@ class Form
 	 *  @param	string	$selected    preselected currency code
 	 *  @param  string	$htmlname    name of HTML select list
 	 *  @param  integer	$useempty    1=Add empty line
+	 *  @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 *  @param bool $excludeConfCurrency false  = If company current currency not in table, we add it into list. Should always be available.  true = we are in currency_rate update , we don't want to see conf->currency in select
 	 * 	@return	string
 	 */
-    public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0)
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter= '',$excludeConfCurrency = false)
 	{
 		global $db, $conf, $langs, $user;
 
@@ -5035,6 +5037,7 @@ class Form
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
 		$sql .= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
+		if ($filter) $sql .= " AND ".$filter;
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -5045,7 +5048,7 @@ class Form
 		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) $out .= '<option value="">&nbsp;</option>';
 		// If company current currency not in table, we add it into list. Should always be available.
-		if (!in_array($conf->currency, $TCurrency))
+		if (!in_array($conf->currency, $TCurrency) && !$excludeConfCurrency)
 		{
 			$TCurrency[$conf->currency] = $conf->currency;
 		}
