@@ -89,7 +89,7 @@ print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLo
 if (GETPOST('withtab', 'alpha'))
 {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'blockedlog', '', -1);
+	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
 

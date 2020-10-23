@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref))
 		$soc->fetch($object->socid);
 
 		$head = societe_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

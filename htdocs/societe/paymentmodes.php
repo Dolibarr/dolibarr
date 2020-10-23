@@ -773,7 +773,7 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights-
 // View
 if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' && $action != 'createcard')
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	// Confirm delete ban
 	if ($action == 'delete')
@@ -1581,7 +1581,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 // Edit BAN
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1698,7 +1698,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 // Edit Card
 if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1746,7 +1746,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 // Create BAN
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1861,7 +1861,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // Create Card
 if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

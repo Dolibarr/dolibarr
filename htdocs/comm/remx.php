@@ -250,7 +250,7 @@ if ($socid > 0)
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), -1, 'company');
 
     dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -354,7 +354,7 @@ if ($socid > 0)
     		print '<input type="hidden" name="discount_type" value="1" />';
     	}
 
-    	dol_fiche_head();
+    	print dol_get_fiche_head();
 
     	print '<table class="border centpercent">';
 		if ($isCustomer && $isSupplier) {

@@ -448,7 +448,7 @@ print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'projecttask');
+print dol_get_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';

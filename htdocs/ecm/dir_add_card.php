@@ -228,7 +228,7 @@ if ($action == 'create')
 	$title = $langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 

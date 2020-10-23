@@ -83,7 +83,7 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = product_admin_prepare_head();
 
-dol_fiche_head($head, 'supplierAttributes', $textobject, -1, 'product');
+print dol_get_fiche_head($head, 'supplierAttributes', $textobject, -1, 'product');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

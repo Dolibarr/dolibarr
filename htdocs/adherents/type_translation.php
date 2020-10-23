@@ -160,7 +160,7 @@ if (!empty($object->multilangs)) {
 }
 
 
-dol_fiche_head($head, 'translation', $titre, 0, 'group');
+print dol_get_fiche_head($head, 'translation', $titre, 0, 'group');
 
 $linkback = '<a href="'.dol_buildpath('/adherents/type.php', 1).'">'.$langs->trans("BackToList").'</a>';
 
@@ -258,7 +258,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="rowid" value="'.GETPOST("rowid", 'int').'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';

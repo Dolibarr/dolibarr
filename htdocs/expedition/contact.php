@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
 
 
 	// Shipment card

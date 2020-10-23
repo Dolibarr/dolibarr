@@ -311,7 +311,7 @@ print load_fiche_titre($langs->trans("CompanySetup"), $linkback, 'title_setup');
 
 $head = societe_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), -1, 'company');
+print dol_get_fiche_head($head, 'general', $langs->trans("ThirdParties"), -1, 'company');
 
 $dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 foreach ($conf->modules_parts['models'] as $mo)		$dirsociete[] = $mo.'core/modules/societe/'; //Add more models

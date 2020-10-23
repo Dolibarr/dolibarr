@@ -191,7 +191,7 @@ if ($object->id)
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	dol_fiche_head($head, 'documents', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'documents', $titre, -1, $picto);
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

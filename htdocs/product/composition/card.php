@@ -187,7 +187,7 @@ llxHeader('', $title, $helpurl);
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-dol_fiche_head($head, 'subproduct', $titre, -1, $picto);
+print dol_get_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 
 if ($id > 0 || !empty($ref))

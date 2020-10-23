@@ -132,7 +132,7 @@ if ($result && (!empty($id) || !empty($ref)))
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	dol_fiche_head($head, 'stats', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'stats', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -163,7 +163,7 @@ if (empty($id) & empty($ref))
     $head[$h][2] = 'popularity';
     $h++;
 
-    dol_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
+    print dol_get_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
 }
 
 

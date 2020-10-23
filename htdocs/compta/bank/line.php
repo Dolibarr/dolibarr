@@ -288,7 +288,7 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        dol_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
+        print dol_get_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

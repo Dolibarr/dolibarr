@@ -98,7 +98,7 @@ if ($object->id)
 	 */
 	$head = bomPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
 
 
 	// Build file list

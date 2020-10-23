@@ -286,7 +286,7 @@ print load_fiche_titre($title, $linkback);
 if (GETPOST('withtab', 'alpha'))
 {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'fingerprints', '', -1);
+	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";

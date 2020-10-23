@@ -964,7 +964,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
-			dol_fiche_head('', '', '', -1);
+			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
 			$typeleaves = $object->getTypes(1, 1);
@@ -985,7 +985,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 		}
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
@@ -1177,7 +1177,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

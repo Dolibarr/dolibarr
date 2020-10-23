@@ -137,7 +137,7 @@ if ($object->id > 0)
 	$head = recruitmentjobpositionPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

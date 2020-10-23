@@ -423,7 +423,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
         $head = societe_prepare_head($socstat);
 		$object = $tmpobject;
 
-        dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
+        print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
 
         dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -479,7 +479,7 @@ if ($projectid > 0 || $project_ref) {
         //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
         $head = project_prepare_head($projectstat);
-        dol_fiche_head($head, 'ticket', $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
+        print dol_get_fiche_head($head, 'ticket', $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
 
         // Project card
 

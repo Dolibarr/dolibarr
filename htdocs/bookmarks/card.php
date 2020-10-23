@@ -149,7 +149,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -215,7 +215,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	}
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

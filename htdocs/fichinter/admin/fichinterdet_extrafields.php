@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("InterventionsSetup"), $linkback, 'title_se
 
 $head = fichinter_admin_prepare_head();
 
-dol_fiche_head($head, 'attributesdet', $langs->trans("Interventions"), -1, 'intervention');
+print dol_get_fiche_head($head, 'attributesdet', $langs->trans("Interventions"), -1, 'intervention');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

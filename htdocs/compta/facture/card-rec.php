@@ -945,7 +945,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
 
-		dol_fiche_head(null, '', '', 0);
+		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
 		if (!empty($conf->projet->enabled)) $rowspan++;
@@ -1063,7 +1063,7 @@ if ($action == 'create')
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$title, '', '');
 
-		dol_fiche_head(null, '', '', 0);
+		print dol_get_fiche_head(null, '', '', 0);
 
 		print '<table class="border centpercent">';
 
@@ -1176,7 +1176,7 @@ if ($action == 'create')
 
 		$head = invoice_rec_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
+		print dol_get_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"), -1, 'bill'); // Add a div
 
 		// Recurring invoice content
 

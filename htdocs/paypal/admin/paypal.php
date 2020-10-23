@@ -121,7 +121,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
-dol_fiche_head($head, 'paypalaccount', '', -1);
+print dol_get_fiche_head($head, 'paypalaccount', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("PaypalDesc")."</span><br>\n";
 

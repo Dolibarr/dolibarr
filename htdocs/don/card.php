@@ -317,7 +317,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -491,7 +491,7 @@ if (!empty($id) && $action == 'edit')
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'donation');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'donation');
 
 	print '<table class="border centpercent">';
 
@@ -618,7 +618,7 @@ if (!empty($id) && $action != 'edit')
 	$hselected = 'card';
 
 	$head = donation_prepare_head($object);
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation');
 
 	// Print form confirm
 	print $formconfirm;

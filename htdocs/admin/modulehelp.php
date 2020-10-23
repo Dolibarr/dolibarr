@@ -265,7 +265,7 @@ $picto = 'object_'.$objMod->picto;
 print load_fiche_titre(($modulename ? $modulename : $moduledesc), $moreinfo, $picto, 0, '', 'titlemodulehelp');
 print '<br>';
 
-dol_fiche_head($head, $mode, '', -1);
+print dol_get_fiche_head($head, $mode, '', -1);
 
 if (!$modulename)
 {

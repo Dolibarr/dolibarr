@@ -330,7 +330,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 
@@ -491,7 +491,7 @@ if ($id)
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 	}
 
-	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project

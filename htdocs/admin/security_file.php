@@ -100,7 +100,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'file', '', -1);
+print dol_get_fiche_head($head, 'file', '', -1);
 
 
 // Upload options

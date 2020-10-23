@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("BOMsSetup"), $linkback, 'title_setup');
 
 $head = bomAdminPrepareHead();
 
-dol_fiche_head($head, 'bom_extrafields', $langs->trans("ExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'bom_extrafields', $langs->trans("ExtraFields"), -1, 'account');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -119,7 +119,7 @@ print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
+print dol_get_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
 // TODO Use global form
 //print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

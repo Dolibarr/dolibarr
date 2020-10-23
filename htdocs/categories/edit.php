@@ -139,7 +139,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
-dol_fiche_head('');
+print dol_get_fiche_head('');
 
 print '<table class="border centpercent">';
 

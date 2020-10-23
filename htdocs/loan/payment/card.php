@@ -88,7 +88,7 @@ $head[$h][1] = $langs->trans("PaymentLoan");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'payment');
 
 /*
  * Confirm deletion of the payment

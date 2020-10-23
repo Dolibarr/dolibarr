@@ -250,7 +250,7 @@ if ($id > 0 || !empty($ref))
 		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
 
 
 		$formconfirm = '';

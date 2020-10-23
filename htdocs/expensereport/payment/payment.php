@@ -206,7 +206,7 @@ if ($action == 'create' || empty($action))
 	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-    dol_fiche_head(null, '0', '', -1);
+    print dol_get_fiche_head(null, '0', '', -1);
 
     $linkback = '';
     // $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -241,7 +241,7 @@ if ($action == 'create' || empty($action))
 
     dol_fiche_end();
 
-    dol_fiche_head();
+    print dol_get_fiche_head();
 
     print '<table class="border centpercent">'."\n";
 

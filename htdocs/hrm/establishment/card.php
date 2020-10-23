@@ -167,7 +167,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -262,7 +262,7 @@ if (($id || $ref) && $action == 'edit')
 
 		if ($action == 'edit')
 		{
-			dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -342,7 +342,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = establishment_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
+	print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
 
 	// Confirmation to delete
 	if ($action == 'delete')

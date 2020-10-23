@@ -88,7 +88,7 @@ if ($id)
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'note', $title, -1, 'user');
 
 	$linkback = '';
 

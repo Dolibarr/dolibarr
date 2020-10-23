@@ -284,7 +284,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
-			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'sending');
+			print dol_get_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'sending');
 
 			/*
 			 * Confirmation de la suppression

@@ -56,7 +56,7 @@ $object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = facture_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
+print dol_get_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
 $totalpaye = $object->getSommePaiement();
 

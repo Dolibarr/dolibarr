@@ -341,7 +341,7 @@ if (!empty($id) || !empty($ref))
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	dol_fiche_head($head, 'combinations', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = " fk_product_type = ".$object->type;
@@ -414,7 +414,7 @@ if (!empty($id) || !empty($ref))
 	if ($action == 'add' || ($action == 'edit')) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
-			// dol_fiche_head();
+			// print dol_get_fiche_head();
 			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
@@ -539,7 +539,7 @@ if (!empty($id) || !empty($ref))
 			print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
 		}
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 
 		if ($action == 'add') {

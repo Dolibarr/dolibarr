@@ -79,7 +79,7 @@ if ($id > 0 || !empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public ? 'projectpub' : 'project'));
 
 
 	// Project card

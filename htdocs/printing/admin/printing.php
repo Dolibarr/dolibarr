@@ -116,7 +116,7 @@ if ($mode == 'setup' && $user->admin)
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setconst">';
 
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
@@ -236,7 +236,7 @@ if ($mode == 'setup' && $user->admin)
 }
 if ($mode == 'config' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("PrintingDesc")."<br><br>\n";
 
@@ -289,7 +289,7 @@ if ($mode == 'config' && $user->admin)
 
 if ($mode == 'test' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
@@ -327,7 +327,7 @@ if ($mode == 'test' && $user->admin)
 
 if ($mode == 'userconf' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 

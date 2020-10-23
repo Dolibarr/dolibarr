@@ -76,7 +76,7 @@ if ($id > 0 || !empty($ref))
 		if ($object->fetch_thirdparty() > 0)
 		{
 		    $head = propal_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('Proposal'), -1, 'propal');
+			print dol_get_fiche_head($head, 'note', $langs->trans('Proposal'), -1, 'propal');
 
 			$cssclass = 'titlefield';
 			//if ($action == 'editnote_public') $cssclass='titlefieldcreate';

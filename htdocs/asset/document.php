@@ -103,7 +103,7 @@ if ($object->id)
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = asset_prepare_head($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
+	print dol_get_fiche_head($head, 'document', $langs->trans("Asset"), -1, 'generic');
 
 
 	// Build file list

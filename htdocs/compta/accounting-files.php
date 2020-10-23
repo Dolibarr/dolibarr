@@ -519,7 +519,7 @@ $head[$h][0] = $_SERVER["PHP_SELF"];
 $head[$h][1] = $langs->trans("AccountantFiles");
 $head[$h][2] = 'AccountancyFiles';
 
-dol_fiche_head($head, 'AccountancyFiles');
+print dol_get_fiche_head($head, 'AccountancyFiles');
 
 
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";

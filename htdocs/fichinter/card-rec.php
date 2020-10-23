@@ -256,7 +256,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
 
-		dol_fiche_head();
+		print dol_get_fiche_head();
 
 		$rowspan = 4;
 		if (!empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
@@ -429,7 +429,7 @@ if ($action == 'create') {
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'intervention');
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<table class="border centpercent">';
@@ -461,7 +461,7 @@ if ($action == 'create') {
 
 			$head = fichinter_rec_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, 'intervention');
+			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="card-rec.php">'.$langs->trans("BackToList").'</a>';

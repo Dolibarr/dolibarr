@@ -132,7 +132,7 @@ $param .= '&search_event='.urlencode($search_event);
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";

@@ -128,7 +128,7 @@ if ($object->id)
 
 	$form = new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
 	$linkback = '';
 	if ($user->rights->user->user->lire || $user->admin) {

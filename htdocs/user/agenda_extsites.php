@@ -150,7 +150,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = user_prepare_head($object);
 
-dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
+print dol_get_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 
 $linkback = '';
 

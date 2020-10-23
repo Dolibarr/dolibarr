@@ -131,7 +131,7 @@ if ($result > 0)
 
 	$head = user_prepare_head($object);
 
-	dol_fiche_head($head, 'notify', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'notify', $langs->trans("User"), -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

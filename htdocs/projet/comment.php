@@ -89,7 +89,7 @@ $formfile = new FormFile($db);
 // Tabs for project
 $tab = 'project_comment';
 $head = project_prepare_head($object);
-dol_fiche_head($head, $tab, $langs->trans("Project"), - 1, ($object->public ? 'projectpub' : 'project'));
+print dol_get_fiche_head($head, $tab, $langs->trans("Project"), - 1, ($object->public ? 'projectpub' : 'project'));
 
 $param = ($mode == 'mine' ? '&mode=mine' : '');
 

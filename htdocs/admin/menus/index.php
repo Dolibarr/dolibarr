@@ -229,7 +229,7 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'editor', '', -1);
+print dol_get_fiche_head($head, 'editor', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
 print "<br>\n";

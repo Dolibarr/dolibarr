@@ -80,7 +80,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaSetupOtherDesc")."</span><br>\n";
 print "<br>\n";

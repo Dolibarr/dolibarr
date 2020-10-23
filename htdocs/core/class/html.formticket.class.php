@@ -150,7 +150,7 @@ class FormTicket
 
 		print "\n<!-- Begin form TICKET -->\n";
 
-		if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
+		if ($withdolfichehead) print dol_get_fiche_head(null, 'card', '', 0, '');
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

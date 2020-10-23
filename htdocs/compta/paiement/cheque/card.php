@@ -309,7 +309,7 @@ if ($action == 'new')
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'payment');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Cheques"), -1, 'payment');
 
 	/*
 	 * Confirmation of slip's delete
@@ -357,7 +357,7 @@ if ($action == 'new')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="new">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';

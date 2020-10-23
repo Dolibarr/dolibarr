@@ -196,7 +196,7 @@ llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
 // List of asset type
 if (!$rowid && $action != 'create' && $action != 'edit')
 {
-	//dol_fiche_head('');
+	//print dol_get_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense, d.note";
 	$sql .= " FROM ".MAIN_DB_PREFIX."asset_type as d";
@@ -324,7 +324,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -416,7 +416,7 @@ if ($rowid > 0)
 
 		$head = asset_type_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'setup');
+		print dol_get_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'setup');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -533,7 +533,7 @@ if ($rowid > 0)
 		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 
-		dol_fiche_head($head, 'card', $langs->trans("AssetsType"), -1, 'setup');
+		print dol_get_fiche_head($head, 'card', $langs->trans("AssetsType"), -1, 'setup');
 
 		print '<table class="border centpercent">';
 

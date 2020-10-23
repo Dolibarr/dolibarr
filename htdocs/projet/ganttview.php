@@ -99,7 +99,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
     $tab = 'tasks';
 
     $head = project_prepare_head($object);
-    dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+    print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
     $param = ($mode == 'mine' ? '&mode=mine' : '');
 

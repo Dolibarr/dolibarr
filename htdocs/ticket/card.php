@@ -681,7 +681,7 @@ if ($action == 'create' || $action == 'presend')
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="tack_id" value="'.$object->track_id.'">';
 
-	dol_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
+	print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
 
 	print '<div class="fichecenter2">';
 	print '<table class="border" width="100%">';
@@ -772,7 +772,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 				//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 				$head = project_prepare_head($projectstat);
-				dol_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
+				print dol_get_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
 
 				/*
                  *   Projet synthese pour rappel
@@ -828,7 +828,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			$object->fetch_thirdparty();
 			$head = societe_prepare_head($object->thirdparty);
 
-			dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+			print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
 
 			dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
@@ -843,7 +843,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 		$head = ticket_prepare_head($object);
 
-		dol_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
+		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
 
 		$morehtmlref = '<div class="refidno">';
 		$morehtmlref .= $object->subject;

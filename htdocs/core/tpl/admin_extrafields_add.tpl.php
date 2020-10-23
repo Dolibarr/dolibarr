@@ -144,7 +144,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
 
-<?php dol_fiche_head(); ?>
+<?php print dol_get_fiche_head(); ?>
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->

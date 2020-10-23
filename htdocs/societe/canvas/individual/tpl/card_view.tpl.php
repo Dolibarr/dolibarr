@@ -30,7 +30,7 @@ print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->\n";
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 if ($this->control->tpl['error']) echo $this->control->tpl['error'];
 if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>

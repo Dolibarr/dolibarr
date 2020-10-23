@@ -131,7 +131,7 @@ if ($id > 0 || !empty($ref))
 		$object->fetch_thirdparty();
 
 		$head = ordersupplier_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');
 
 		// Supplier order card
 

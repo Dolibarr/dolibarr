@@ -1778,7 +1778,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -2274,7 +2274,7 @@ if ($action == 'create')
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
-		dol_fiche_head($head, 'card', $titre, -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $titre, -1, 'bill');
 
 		$formconfirm = '';
 

@@ -171,7 +171,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 // Configuration header
 $head = ticketAdminPrepareHead();
 
-dol_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, "ticket");
+print dol_get_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, "ticket");
 
 print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.dol_buildpath('/public/ticket/index.php', 1).'" target="_blank" >'.dol_buildpath('/public/ticket/index.php', 2).'</a>';
 

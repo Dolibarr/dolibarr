@@ -99,7 +99,7 @@ llxHeader();
 
 $head = group_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
+print dol_get_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

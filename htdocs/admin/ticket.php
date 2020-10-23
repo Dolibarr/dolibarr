@@ -182,7 +182,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 // Configuration header
 $head = ticketAdminPrepareHead();
 
-dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
+print dol_get_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
 print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries").'</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 

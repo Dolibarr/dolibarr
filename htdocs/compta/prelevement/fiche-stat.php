@@ -77,7 +77,7 @@ if ($prev_id > 0 || $ref)
 	if ($object->fetch($prev_id, $ref) >= 0)
 	{
 		$head = prelevement_prepare_head($object);
-		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+		print dol_get_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 

@@ -80,7 +80,7 @@ if ($_socid > 0)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setpricelevel">';
 
-	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
 	print '<table class="border centpercent tableforfield">';
 

@@ -1172,7 +1172,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
-        dol_fiche_head(null, 'card', '', 0, '');
+        print dol_get_fiche_head(null, 'card', '', 0, '');
 
         print '<table class="border centpercent">';
 
@@ -1768,7 +1768,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 
-            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+            print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
             print '<div class="fichecenter2">';
             print '<table class="border centpercent">';
@@ -2203,7 +2203,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
+        print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
 
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))

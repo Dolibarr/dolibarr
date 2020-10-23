@@ -74,7 +74,7 @@ if ($object->id > 0)
 
     $head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
+    print dol_get_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

@@ -296,7 +296,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -440,7 +440,7 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer

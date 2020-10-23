@@ -96,7 +96,7 @@ if ($object->id)
 
 	$head = holiday_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 
 	// Build file list

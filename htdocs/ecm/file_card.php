@@ -259,7 +259,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 }
 
-dol_fiche_head($head, 'card', $langs->trans("File"), -1, 'generic');
+print dol_get_fiche_head($head, 'card', $langs->trans("File"), -1, 'generic');
 
 
 $s = '';

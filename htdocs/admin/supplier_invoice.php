@@ -199,7 +199,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'company');
+print dol_get_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier invoice numbering module

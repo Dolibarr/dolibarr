@@ -473,7 +473,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
-            dol_fiche_head(null);
+            print dol_get_fiche_head(null);
 
             print '<table class="border centpercent">';
 

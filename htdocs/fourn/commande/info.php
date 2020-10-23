@@ -111,7 +111,7 @@ $now = dol_now();
 $head = ordersupplier_prepare_head($object);
 
 
-dol_fiche_head($head, 'info', $langs->trans("SupplierOrder"), -1, 'order');
+print dol_get_fiche_head($head, 'info', $langs->trans("SupplierOrder"), -1, 'order');
 
 
 // Supplier order card

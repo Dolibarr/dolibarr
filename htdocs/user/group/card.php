@@ -258,7 +258,7 @@ if ($action == 'create')
     print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-    dol_fiche_head('', '', '', 0, '');
+    print dol_get_fiche_head('', '', '', 0, '');
 
     print '<table class="border centpercent tableforfieldcreate">';
 
@@ -322,7 +322,7 @@ else {
 
 		if ($action != 'edit')
 		{
-			dol_fiche_head($head, 'group', $title, -1, 'group');
+			print dol_get_fiche_head($head, 'group', $title, -1, 'group');
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -521,7 +521,7 @@ else {
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-            dol_fiche_head($head, 'group', $title, 0, 'group');
+            print dol_get_fiche_head($head, 'group', $title, 0, 'group');
 
 			print '<table class="border centpercent tableforfieldedit">'."\n";
 

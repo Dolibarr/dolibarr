@@ -142,7 +142,7 @@ llxHeader('', $langs->trans("Permissions"));
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'rights', $title, -1, 'user');
+print dol_get_fiche_head($head, 'rights', $title, -1, 'user');
 
 
 $db->begin();

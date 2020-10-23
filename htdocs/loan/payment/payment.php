@@ -275,7 +275,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="remaindertopay" value="'.($total - $sumpaid).'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	/*
 	 print '<table class="border centpercent">';

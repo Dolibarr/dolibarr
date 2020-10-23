@@ -260,7 +260,7 @@ print load_fiche_titre($langs->trans("ProjectsSetup"), $linkback, 'title_setup')
 
 $head = project_admin_prepare_head();
 
-dol_fiche_head($head, 'project', $langs->trans("Projects"), -1, 'project');
+print dol_get_fiche_head($head, 'project', $langs->trans("Projects"), -1, 'project');
 
 
 

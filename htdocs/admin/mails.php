@@ -273,7 +273,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'common', '', -1);
+	print dol_get_fiche_head($head, 'common', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
@@ -516,7 +516,7 @@ if ($action == 'edit')
 
 	print '</form>';
 } else {
-	dol_fiche_head($head, 'common', '', -1);
+	print dol_get_fiche_head($head, 'common', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
@@ -843,7 +843,7 @@ if ($action == 'edit')
 		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml' ? $langs->trans("DoTestSendHTML") : $langs->trans("DoTestSend"));
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

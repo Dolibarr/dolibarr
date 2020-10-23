@@ -189,7 +189,7 @@ print load_fiche_titre($langs->trans("ReceptionsSetup"), $linkback, 'title_setup
 print '<br>';
 $head = reception_admin_prepare_head();
 
-dol_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
+print dol_get_fiche_head($head, 'reception', $langs->trans("Receptions"), -1, 'sending');
 
 // Reception numbering model
 
