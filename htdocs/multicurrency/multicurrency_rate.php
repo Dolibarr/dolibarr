@@ -116,7 +116,7 @@ if ($action == "create"){
 			dol_syslog("currencyRate:createRate", LOG_WARNING);
 			setEventMessage($langs->trans('successRateCreate'));
 		}
-	}else{
+	} else {
 		setEventMessage($langs->trans('NoEmptyRate'), "errors");
 	}
 }
@@ -133,10 +133,10 @@ if ($action == 'update'){
 		$res = $currencyRate->update();
 		if ($res){
 			setEventMessage($langs->trans('successUpdateRate'));
-		}else{
+		}else {
 			setEventMessage($langs->trans('errorUpdateRate'), "errors");
 		}
-	}else{
+	}else {
 		setEventMessage($langs->trans(''), "warnings");
 	}
 }
@@ -158,10 +158,10 @@ if ($action == "deleteRate"){
 				0,
 				1
 			);
-		}else{
+		}else {
 			dol_syslog("Multicurrency::fetch", LOG_WARNING);
 		}
-	}else{
+	}else {
 		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
 	}
 }
@@ -173,10 +173,10 @@ if ($action == "confirm_delete"){
 		$result  = $current_rate->delete();
 		if ($result){
 			setEventMessage($langs->trans('successRateDelete'));
-		}else{
+		}else {
 			setEventMessage($langs->trans('errorRateDelete'));
 		}
-	}else{
+	}else {
 		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
 		dol_syslog($langs->trans('NoCurrencyRateSelected'), LOG_WARNING);
 	}
@@ -270,7 +270,7 @@ if ($action == "updateRate"){
 
 		if ($resultcurrentCurrency){
 			$currency_code = $curr->code;
-		}else{
+		}else {
 			$currency_code = '';
 		}
 
@@ -300,7 +300,7 @@ if ($action == "updateRate"){
 		print '</td>';
 		print '</tr></table>';
 		print '</form>';
-	}else{
+	}else {
 		dol_syslog("currency_rate:list:update", LOG_WARNING);
 	}
 }
@@ -350,7 +350,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 			$page = 0;
 			$offset = 0;
 		}
-	}else{
+	}else {
 		setEventMessage($langs->trans('No_record_on_multicurrency_rate'), 'warnings');
 	}
 }
@@ -396,7 +396,7 @@ if ($resql)
 
 	if ($sall)
 	{
-		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
 	}
 
@@ -538,8 +538,7 @@ if ($resql)
 
 	print '</form>';
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
