@@ -61,12 +61,12 @@ class mod_task_universal extends ModeleNumRefTask
      */
     public function info()
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $db;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("projects", "admin"));
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -109,8 +109,7 @@ class mod_task_universal extends ModeleNumRefTask
     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -132,8 +131,7 @@ class mod_task_universal extends ModeleNumRefTask
 		// On defini critere recherche compteur
 		$mask = $conf->global->PROJECT_TASK_UNIVERSAL_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
