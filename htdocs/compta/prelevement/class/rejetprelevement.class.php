@@ -138,13 +138,11 @@ class RejetPrelevement
 		}
 
 		$num = count($facs);
-		for ($i = 0; $i < $num; $i++)
-		{
-			if($this->type == 'bank-transfer'){
+		for ($i = 0; $i < $num; $i++) {
+			if ($this->type == 'bank-transfer') {
 				$fac = new FactureFournisseur($this->db);
 				$pai = new PaiementFourn($this->db);
-			}
-			else{
+			} else {
 				$fac = new Facture($this->db);
 				$pai = new Paiement($this->db);
 			}
@@ -293,10 +291,8 @@ class RejetPrelevement
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		if ($this->type == 'bank-transfer')	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
-		else 								$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
-
+		else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
 		$sql .= " AND f.entity IN  (".getEntity('invoice').")";
