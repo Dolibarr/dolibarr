@@ -745,6 +745,10 @@ class Commande extends CommonOrder
 		if ($usercanclose)
 		{
 			$this->db->begin();
+			if ($this->statut == self::STATUS_CLOSED)
+			{
+				return 0;
+			}
 
 			$now = dol_now();
 
@@ -2882,6 +2886,10 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		$this->db->begin();
+		if ($this->billed)
+		{
+			return 0;
+		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;

@@ -164,21 +164,19 @@ class RejetPrelevement
 			$pai->paiementid = 3; // type of payment: withdrawal
 			$pai->num_payment = $fac->ref;
 
-			if ($pai->create($this->user) < 0)  // we call with no_commit
-			{
+			if ($pai->create($this->user) < 0) {
+                // we call with no_commit
 				$error++;
 				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
 			} else {
 				$result = $pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
 					$error++;
 				}
 
 				// Payment validation
-				if ($pai->validate($user) < 0)
-				{
+				if ($pai->validate($user) < 0) {
 					$error++;
 					dol_syslog("RejetPrelevement::Create Error payment validation");
 				}
@@ -264,8 +262,7 @@ class RejetPrelevement
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email, '', $trackid);
 
 			$result = $mailfile->sendfile();
-			if ($result)
-			{
+			if ($result) {
 				dol_syslog("RejetPrelevement::_send_email email envoye");
 			} else {
 				dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
@@ -308,8 +305,9 @@ class RejetPrelevement
 				while ($i < $num)
 				{
 					$row = $this->db->fetch_row($resql);
-					if (!$amounts) $arr[$i] = $row[0];
-					else {
+					if (!$amounts) {
+                        $arr[$i] = $row[0];
+                    } else {
 						$arr[$i] = array(
 							$row[0],
 							$row[1]
@@ -346,9 +344,9 @@ class RejetPrelevement
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id             = $rowid;
-				$this->date_rejet     = $this->db->jdate($obj->dr);
-				$this->motif          = $this->motifs[$obj->motif];
+				$this->id = $rowid;
+				$this->date_rejet = $this->db->jdate($obj->dr);
+				$this->motif = $this->motifs[$obj->motif];
 				$this->invoicing = $this->facturer[$obj->afacturer];
 
 				$this->db->free($resql);
