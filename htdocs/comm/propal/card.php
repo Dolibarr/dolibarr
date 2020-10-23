@@ -1321,7 +1321,7 @@ if (empty($reshook))
 		if ($ret < 0) $error++;
 		if (!$error)
 		{
-			$result = $object->insertExtraFields('PROPAL_MODIFY');
+			$result = $object->updateExtraField(GETPOST('attribute', 'restricthtml'), 'PROPAL_MODIFY', $user);
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
