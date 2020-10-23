@@ -5213,7 +5213,8 @@ abstract class CommonObject
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 
-			   	if ($attributeRequired)
+				// Similar code than into insertExtraFields
+				if ($attributeRequired)
 			   	{
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
@@ -5241,7 +5242,7 @@ abstract class CommonObject
 					}
 				}
 
-			   	switch ($attributeType)
+				switch ($attributeType)
 			   	{
 			   		case 'int':
 			  			if (!is_numeric($value) && $value != '')
@@ -5584,9 +5585,36 @@ abstract class CommonObject
 			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$key];
+
+			// Similar code than into insertExtraFields
+			if ($attributeRequired)
+			{
+				$mandatorypb = false;
+				if ($attributeType == 'link' && $this->array_options["options_".$key] == '-1') $mandatorypb = true;
+				if ($this->array_options["options_".$key] === '') $mandatorypb = true;
+				if ($mandatorypb)
+				{
+					dol_syslog("Mandatory extra field options_".$key." is empty");
+					$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
+					return -1;
+				}
+			}
 
 			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
+			if (!empty($attrfieldcomputed))
+			{
+				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
+				{
+					$value = dol_eval($attrfieldcomputed, 1, 0);
+					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
+					$this->array_options["options_".$key] = $value;
+				} else {
+					$this->array_options["options_".$key] = null;
+				}
+			}
 
 			switch ($attributeType)
 			{
