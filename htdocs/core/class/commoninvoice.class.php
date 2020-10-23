@@ -98,18 +98,18 @@ abstract class CommonInvoice extends CommonObject
 	 *  This does not include open direct debit requests.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		double					Remain of amount to pay
+	 *	@return		float					Remain of amount to pay
 	 */
 	public function getRemainToPay($multicurrency = 0)
 	{
-	    $alreadypaid = 0;
+	    $alreadypaid = 0.0;
 	    $alreadypaid += $this->getSommePaiement($multicurrency);
 	    $alreadypaid += $this->getSumDepositsUsed($multicurrency);
 	    $alreadypaid += $this->getSumCreditNotesUsed($multicurrency);
 
 	    $remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
 	    if ($this->statut == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
-	    	$remaintopay = 0;
+	    	$remaintopay = 0.0;
 	    }
 	    return $remaintopay;
 	}
@@ -119,7 +119,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		int						Amount of payment already done, <0 if KO
+	 *	@return		float						Amount of payment already done, <0 if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -154,22 +154,21 @@ abstract class CommonInvoice extends CommonObject
      *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
+	 *		@return		float						<0 if KO, Sum of deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
 	        // TODO
-	        return 0;
+	        return 0.0;
 	    }
 
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 	    $discountstatic = new DiscountAbsolute($this->db);
 	    $result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
-	    if ($result >= 0)
-	    {
+	    if ($result >= 0) {
 	        return $result;
 	    } else {
 	        $this->error = $discountstatic->error;
@@ -181,7 +180,7 @@ abstract class CommonInvoice extends CommonObject
 	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *		@return		float						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
 	{
@@ -189,8 +188,7 @@ abstract class CommonInvoice extends CommonObject
 
 	    $discountstatic = new DiscountAbsolute($this->db);
 	    $result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
-	    if ($result >= 0)
-	    {
+	    if ($result >= 0) {
 	        return $result;
 	    } else {
 	        $this->error = $discountstatic->error;
@@ -202,7 +200,7 @@ abstract class CommonInvoice extends CommonObject
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *		@return		float						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
@@ -210,8 +208,7 @@ abstract class CommonInvoice extends CommonObject
 
 	    $discountstatic = new DiscountAbsolute($this->db);
 	    $result = $discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
-	    if ($result >= 0)
-	    {
+	    if ($result >= 0) {
 	        return $result;
 	    } else {
 	        $this->error = $discountstatic->error;
