@@ -42,9 +42,20 @@ class CProductNature // extends CommonObject
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
+
+	/**
+	 * @var array record
+	 */
 	public $records = array();
 
+    /**
+     * @var string element
+     */
 	public $element='cproductnbature';
+
+    /**
+     * @var string table element
+     */
 	public $table_element='c_product_nature';
 
     /**
@@ -52,11 +63,20 @@ class CProductNature // extends CommonObject
 	 */
 	public $id;
 
+    /**
+     * @var int code
+     */
 	public $code;
+
+    /**
+     * @var string label
+     */
 	public $label;
+
+    /**
+     * @var int active
+     */
 	public $active;
-
-
 
 
     /**
@@ -80,17 +100,6 @@ class CProductNature // extends CommonObject
     public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error = 0;
-
-		// Clean parameters
-
-		if (isset($this->id)) $this->id = (int) $this->id;
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->label)) $this->libelle = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
-
-		// Check parameters
-		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
@@ -101,32 +110,22 @@ class CProductNature // extends CommonObject
         $sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)) .",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->db->escape($this->active))).",";
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
 		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		if (!$error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-        }
-
         // Commit or rollback
-        if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
+        if (!$resql) {
+			dol_syslog(get_class($this)."::create ".$this->db->lasterror(), LOG_ERR);
+	        $this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		} else {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->db->commit();
             return $this->id;
 		}
@@ -265,39 +264,24 @@ class CProductNature // extends CommonObject
     public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error = 0;
-
-		// Clean parameters
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->label)) $this->label = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
-
-		// Check parameters
-		// Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " code=".(isset($this->code) ? ((int) $this->code) : "null").",";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape(trim($this->label))."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
-        $sql .= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
         // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
+		if (!$resql) {
+	        dol_syslog(get_class($this)."::update Error ".$this->db->lasterror(), LOG_ERR);
+	        $this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		} else {
 			$this->db->commit();
 			return 1;
@@ -318,24 +302,18 @@ class CProductNature // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
         // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
+		if (!$resql) {
+	        dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
+	        $this->error = "Error ".$this->db->lasterror();
 			$this->db->rollback();
-			return -1 * $error;
+			return -1;
 		} else {
 			$this->db->commit();
 			return 1;
@@ -345,7 +323,7 @@ class CProductNature // extends CommonObject
 
 	/**
 	 * Get unit from code
-	 * @param string $code code of unit
+	 * @param int $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
 	 * @return int            <0 if KO, Id of code if OK
 	 */
