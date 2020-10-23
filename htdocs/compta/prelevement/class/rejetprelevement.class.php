@@ -47,6 +47,7 @@ class RejetPrelevement
 	 *
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
+	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */
 	public function __construct($db, $user, $type)
 	{
