@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,11 @@ class IntracommReport extends CommonObject
      * @var int Field with ID of parent key if this field has a parent
      */
     public $fk_element='fk_intracommreport';
+
+	/**
+	 * @var string declaration number
+	 */
+	public $declaration_number;
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -91,7 +97,7 @@ class IntracommReport extends CommonObject
 		/**************Construction de quelques variables********************/
 		$party_id = substr(strtr($mysoc->tva_intra, array(' '=>'')), 0, 4).$mysoc->idprof2;
 		$declarant = substr($mysoc->managers, 0, 14);
-		$id_declaration = self::getNumeroDeclaration($this->numero_declaration);
+		$id_declaration = self::getDeclarationNumber($this->numero_declaration);
 		/********************************************************************/
 
 		/**************Construction du fichier XML***************************/
@@ -152,7 +158,7 @@ class IntracommReport extends CommonObject
 		$declaration_des->addChild('an_des', $period_year);
 
 		/**************Ajout des lignes de factures**************************/
-		$res = self::addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
+		$res = $this->addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
 		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
@@ -189,7 +195,7 @@ class IntracommReport extends CommonObject
 			}
 
 			if ($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
-				$categ_fraisdeport = new Categorie();
+				$categ_fraisdeport = new Categorie($this->db);
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
 			}
@@ -316,11 +322,11 @@ class IntracommReport extends CommonObject
 	/**
 	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
 	 *
-	 * 	@param      int		$declaration		Reference declaration
-	 * 	@param      int		$TLinesFraisDePort	Data of shipping costs line
-	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
-	 *  @param      int		$categ_fraisdeport	Id of category of shipping costs
-	 *  @param      int		$i					Line Id
+	 * 	@param      int		    $declaration		Reference declaration
+	 * 	@param      int		    $TLinesFraisDePort	Data of shipping costs line
+	 *  @param      string	    $type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param      Categorie	$categ_fraisdeport	category of shipping costs
+	 *  @param      int		    $i					Line Id
 	 *  @return     void
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
@@ -379,17 +385,17 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
+		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
 		if ($resql) $res = $this->db->fetch_object($resql);
 
-		return ($res->max_numero_declaration + 1);
+		return ($res->max_declaration_number + 1);
 	}
 
 	/**
 	 *	Verify declaration number. Positive integer of a maximum of 6 characters recommended by the documentation
 	 *
-	 *	@param     	int		$number		Number to verify / convert
-	 *	@return		int 				Number
+	 *	@param     	string		$number		Number to verify / convert
+	 *	@return		string 				Number
 	 */
 	public static function getDeclarationNumber($number)
 	{
