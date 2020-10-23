@@ -64,7 +64,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier@zapi
 
 // Configuration header
 $head = zapierAdminPrepareHead();
-dol_fiche_head($head, 'about', '', 0, 'zapier@zapier');
+print dol_get_fiche_head($head, 'about', '', 0, 'zapier@zapier');
 
 dol_include_once('/zapier/core/modules/modZapier.class.php');
 $tmpmodule = new modZapier($db);

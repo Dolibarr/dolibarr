@@ -60,7 +60,7 @@ print load_fiche_titre($langs->trans("AssetsSetup"), $linkback, 'title_setup');
 
 $head = asset_admin_prepare_head();
 
-dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
+print dol_get_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 
 
 if ($action == 'edit')

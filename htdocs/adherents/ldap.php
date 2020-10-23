@@ -84,7 +84,7 @@ llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacu
 
 $head = member_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
+print dol_get_fiche_head($head, 'ldap', $langs->trans("Member"), 0, 'user');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

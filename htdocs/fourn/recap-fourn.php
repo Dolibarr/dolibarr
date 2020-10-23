@@ -61,7 +61,7 @@ if ($socid > 0)
      */
     $head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
+    print dol_get_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	dol_fiche_end();
 

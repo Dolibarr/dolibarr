@@ -402,7 +402,7 @@ if ($resql)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
-		dol_fiche_head($head, 'paidholidays', $title, -1, 'user');
+		print dol_get_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
 	    dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 

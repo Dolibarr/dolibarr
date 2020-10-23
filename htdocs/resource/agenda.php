@@ -131,7 +131,7 @@ if ($object->id > 0)
 	$head = resource_prepare_head($object);
 
 	$titre = $langs->trans("ResourceSingular");
-	dol_fiche_head($head, 'agenda', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'agenda', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

@@ -524,7 +524,7 @@ if ($id > 0 || $ref)
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-		dol_fiche_head($head, 'stock', $titre, -1, $picto);
+		print dol_get_fiche_head($head, 'stock', $titre, -1, $picto);
 
 		dol_htmloutput_events();
 

@@ -94,7 +94,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
+print dol_get_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax) {
     print "\n".'<script type="text/javascript" language="javascript">';

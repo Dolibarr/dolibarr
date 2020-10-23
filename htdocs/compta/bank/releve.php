@@ -243,7 +243,7 @@ if (empty($numref))
 
 		// Onglets
 		$head = bank_prepare_head($object);
-		dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+		print dol_get_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -361,7 +361,7 @@ if (empty($numref))
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
-	dol_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');
+	print dol_get_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');
 
 
 	$morehtmlright = '';

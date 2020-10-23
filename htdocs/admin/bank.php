@@ -215,7 +215,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
+print dol_get_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');

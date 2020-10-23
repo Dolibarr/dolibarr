@@ -67,7 +67,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier@zapi
 
 // Configuration header
 $head = zapierAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "zapier@zapier");
+print dol_get_fiche_head($head, 'settings', '', -1, "zapier@zapier");
 
 // Setup page goes here
 echo $langs->trans("ZapierSetupPage").'<br><br>';

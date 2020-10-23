@@ -197,7 +197,7 @@ print "<br>\n";
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'passwords', '', -1);
+print dol_get_fiche_head($head, 'passwords', '', -1);
 
 
 // Choix du gestionnaire du generateur de mot de passe

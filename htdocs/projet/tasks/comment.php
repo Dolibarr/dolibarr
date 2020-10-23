@@ -115,7 +115,7 @@ if ($id > 0 || !empty($ref))
 			// Tabs for project
 			$tab = 'tasks';
 			$head = project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 			$param = ($mode == 'mine' ? '&mode=mine' : '');
 
@@ -267,7 +267,7 @@ if ($id > 0 || !empty($ref))
 		$param = ($withproject ? '&withproject=1' : '');
 		$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>' : '';
 
-		dol_fiche_head($head, 'task_comment', $langs->trans("Task"), -1, 'projecttask');
+		print dol_get_fiche_head($head, 'task_comment', $langs->trans("Task"), -1, 'projecttask');
 
 		if ($action == 'delete')
 		{

@@ -401,7 +401,7 @@ $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
 
-dol_fiche_head($head, 'website', '', -1);
+print dol_get_fiche_head($head, 'website', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><br>';

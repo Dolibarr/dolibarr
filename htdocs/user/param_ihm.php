@@ -198,7 +198,7 @@ if ($action == 'edit')
 
 if ($action == 'edit')
 {
-	dol_fiche_head($head, 'guisetup', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -325,7 +325,7 @@ if ($action == 'edit')
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 } else {
-	dol_fiche_head($head, 'guisetup', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

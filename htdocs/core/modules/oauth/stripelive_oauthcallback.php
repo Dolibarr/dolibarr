@@ -117,7 +117,7 @@ if (!empty($_GET['code']))     // We are coming from oauth provider page
     //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
     //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
-    //dol_fiche_head();
+    //print dol_get_fiche_head();
     // retrieve the CSRF state parameter
     $state = isset($_GET['state']) ? $_GET['state'] : null;
     //print '<table>';

@@ -82,7 +82,7 @@ if ($object->id > 0)
 
 	$head = facturefourn_prepare_head($object);
 	$titre = $langs->trans('SupplierInvoice');
-	dol_fiche_head($head, 'note', $titre, -1, 'bill');
+	print dol_get_fiche_head($head, 'note', $titre, -1, 'bill');
 
 
 	// Supplier invoice card

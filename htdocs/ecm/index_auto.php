@@ -330,7 +330,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
 }
 
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
+print dol_get_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
 
 

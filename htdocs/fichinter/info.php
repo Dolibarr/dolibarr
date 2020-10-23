@@ -64,7 +64,7 @@ $object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = fichinter_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('InterventionCard'), -1, 'intervention');
+print dol_get_fiche_head($head, 'info', $langs->trans('InterventionCard'), -1, 'intervention');
 
 // Intervention card
 $linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';

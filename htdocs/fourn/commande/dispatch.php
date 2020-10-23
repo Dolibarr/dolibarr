@@ -532,7 +532,7 @@ if ($id > 0 || !empty($ref)) {
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	dol_fiche_head($head, 'dispatch', $title, -1, 'order');
+	print dol_get_fiche_head($head, 'dispatch', $title, -1, 'order');
 
 	$formconfirm='';
 

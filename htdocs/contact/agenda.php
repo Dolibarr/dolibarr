@@ -200,7 +200,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         dol_htmloutput_errors($error, $errors);
 
-        dol_fiche_head($head, 'agenda', $title, -1, 'contact');
+        print dol_get_fiche_head($head, 'agenda', $title, -1, 'contact');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

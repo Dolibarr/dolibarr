@@ -132,7 +132,7 @@ if ($id > 0 || !empty($ref))
 		$object->fetch_thirdparty();
 
 		$head = supplier_proposal_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("CommRequest"), -1, 'supplier_proposal');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("CommRequest"), -1, 'supplier_proposal');
 
 		// Supplier order card
 

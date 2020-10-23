@@ -110,7 +110,7 @@ if ($socid > 0)
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
 
     dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 

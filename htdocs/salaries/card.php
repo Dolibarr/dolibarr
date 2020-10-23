@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 
@@ -375,7 +375,7 @@ if ($id)
 {
 	$head = salaries_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

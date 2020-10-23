@@ -90,7 +90,7 @@ llxHeader('', $title, $helpurl);
 if ($object->id > 0)
 {
 	$head = facturefourn_prepare_head($object);
-	dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'bill');
 
 	$totalpaye = $object->getSommePaiement();
 

@@ -106,7 +106,7 @@ if (empty($id))
 }
 
 $head = contact_prepare_head($object);
-dol_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"), -1, 'contact');
+print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"), -1, 'contact');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

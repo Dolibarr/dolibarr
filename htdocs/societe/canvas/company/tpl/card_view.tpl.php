@@ -30,7 +30,7 @@ print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->\n";
 
 $head = societe_prepare_head($soc);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 ?>
 

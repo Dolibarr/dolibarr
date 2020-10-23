@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
 $head = holiday_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Holidays"), -1, 'holiday');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Holidays"), -1, 'holiday');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

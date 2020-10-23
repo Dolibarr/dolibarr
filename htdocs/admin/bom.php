@@ -181,7 +181,7 @@ print load_fiche_titre($langs->trans("BOMsSetup"), $linkback, 'title_setup');
 
 $head = bomAdminPrepareHead();
 
-dol_fiche_head($head, 'settings', $langs->trans("BOMs"), -1, 'bom');
+print dol_get_fiche_head($head, 'settings', $langs->trans("BOMs"), -1, 'bom');
 
 /*
  * BOMs Numbering model

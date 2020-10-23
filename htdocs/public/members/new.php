@@ -507,7 +507,7 @@ print '<br>';
 print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-dol_fiche_head('');
+print dol_get_fiche_head('');
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {

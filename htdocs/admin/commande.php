@@ -246,7 +246,7 @@ print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
+print dol_get_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
 
 /*
  * Orders Numbering model

@@ -132,7 +132,7 @@ print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 $head = user_admin_prepare_head();
 
-dol_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
+print dol_get_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

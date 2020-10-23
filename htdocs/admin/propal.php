@@ -206,7 +206,7 @@ print load_fiche_titre($langs->trans("PropalSetup"), $linkback, 'title_setup');
 
 $head = propal_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'propal');
+print dol_get_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'propal');
 
 /*
  *  Module numerotation

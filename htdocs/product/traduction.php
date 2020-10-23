@@ -187,7 +187,7 @@ if (!empty($object->multilangs))
 }
 
 
-dol_fiche_head($head, 'translation', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'translation', $titre, 0, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -307,7 +307,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';

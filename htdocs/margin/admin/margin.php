@@ -109,7 +109,7 @@ print load_fiche_titre($langs->trans("margesSetup"), $linkback, 'title_setup');
 
 $head = marges_admin_prepare_head();
 
-dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
+print dol_get_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

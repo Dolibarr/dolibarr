@@ -94,7 +94,7 @@ if ($object->id)
     if ($socid > 0) {
         $object->fetch_thirdparty();
         $head = societe_prepare_head($object->thirdparty);
-        dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+        print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
         dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
         dol_fiche_end();
     }
@@ -107,7 +107,7 @@ if ($object->id)
 
     $head = ticket_prepare_head($object);
 
-    dol_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticket');
+    print dol_get_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticket');
 
     $morehtmlref = '<div class="refidno">';
     $morehtmlref .= $object->subject;

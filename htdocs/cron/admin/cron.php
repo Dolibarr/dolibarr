@@ -73,7 +73,7 @@ $head = cronadmin_prepare_head();
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
+print dol_get_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
 
 print "<br>\n";
 

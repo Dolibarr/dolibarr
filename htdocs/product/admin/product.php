@@ -293,7 +293,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = product_admin_prepare_head();
-dol_fiche_head($head, 'general', $tab, -1, 'product');
+print dol_get_fiche_head($head, 'general', $tab, -1, 'product');
 
 $form = new Form($db);
 

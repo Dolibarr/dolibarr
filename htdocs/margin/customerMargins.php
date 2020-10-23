@@ -88,7 +88,7 @@ $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
-dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 

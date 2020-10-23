@@ -86,7 +86,7 @@ $form = new Form($db);
 
 $head = member_type_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $langs->trans("MemberType"), -1, 'group');
+print dol_get_fiche_head($head, 'ldap', $langs->trans("MemberType"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

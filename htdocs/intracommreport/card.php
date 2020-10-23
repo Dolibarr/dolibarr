@@ -123,7 +123,7 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="export" />';
 
-    dol_fiche_head();
+    print dol_get_fiche_head();
 
     print '<table class="border" width="100%">';
 
@@ -183,7 +183,7 @@ if ($id > 0 && $action != 'edit') {
      */
     $head = intracommreport_prepare_head($object);
 
-    dol_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, 'user');
+    print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, 'user');
 
     // Confirm remove report
     if ($action == 'delete') {
@@ -255,7 +255,7 @@ if ($id > 0 && $action != 'edit') {
         llxHeader("", $title);
         print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
 
-        dol_fiche_head();
+        print dol_get_fiche_head();
 
         print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
         print '<input type="hidden" name="token" value="'.newToken().'">';

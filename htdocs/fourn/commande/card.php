@@ -1587,7 +1587,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -1804,7 +1804,7 @@ if ($action == 'create')
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	dol_fiche_head($head, 'card', $title, -1, 'order');
+	print dol_get_fiche_head($head, 'card', $title, -1, 'order');
 
 
 	$formconfirm = '';

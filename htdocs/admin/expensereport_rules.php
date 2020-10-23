@@ -151,7 +151,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
-dol_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
+print dol_get_fiche_head($head, 'expenserules', $langs->trans("ExpenseReportsRules"), -1, 'trip');
 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportRulesDesc').'</span>';
 print '<br><br>';

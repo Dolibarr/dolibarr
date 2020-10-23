@@ -224,7 +224,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 
 $head = defaultvalues_prepare_head();
 
-dol_fiche_head($head, $mode, '', -1, '');
+print dol_get_fiche_head($head, $mode, '', -1, '');
 
 if ($mode == 'sortorder')
 {

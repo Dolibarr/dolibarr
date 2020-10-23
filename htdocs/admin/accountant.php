@@ -82,7 +82,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-dol_fiche_head($head, 'accountant', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'accountant', $langs->trans("Company"), -1, 'company');
 
 $form = new Form($db);
 $formother = new FormOther($db);

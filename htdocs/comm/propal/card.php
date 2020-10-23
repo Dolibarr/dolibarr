@@ -1484,7 +1484,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1805,7 +1805,7 @@ if ($action == 'create')
 	$soc->fetch($object->socid);
 
 	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
+	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
 
 	$formconfirm = '';
 

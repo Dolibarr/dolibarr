@@ -1092,7 +1092,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="remise_percent" value="0">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1252,7 +1252,7 @@ if ($action == 'create')
         $hselected = 0;
         $formconfirm = '';
 
-        dol_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+        print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
 
         if ($action == 'delete') {

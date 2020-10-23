@@ -119,7 +119,7 @@ if ($object->id > 0)
 
 	$head = group_prepare_head($object);
 	$title = $langs->trans("Group");
-	dol_fiche_head($head, 'rights', $title, -1, 'group');
+	print dol_get_fiche_head($head, 'rights', $title, -1, 'group');
 
 	// Charge les modules soumis a permissions
 	$modules = array();

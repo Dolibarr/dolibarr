@@ -197,7 +197,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 

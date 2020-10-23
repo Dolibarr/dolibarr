@@ -373,7 +373,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'projecttask');
+print dol_get_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';

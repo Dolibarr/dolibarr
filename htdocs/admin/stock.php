@@ -184,7 +184,7 @@ print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
+print dol_get_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);

@@ -114,7 +114,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-dol_fiche_head($head, 'payboxaccount', '', -1);
+print dol_get_fiche_head($head, 'payboxaccount', '', -1);
 
 print $langs->trans("PayBoxDesc")."<br>\n";
 print '<br>';

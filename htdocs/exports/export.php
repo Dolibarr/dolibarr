@@ -428,7 +428,7 @@ if ($step == 1 || !$datatoexport)
     $hselected = $h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
+    print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
 
     print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
@@ -489,7 +489,7 @@ if ($step == 2 && $datatoexport)
     $hselected = $h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+    print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -687,7 +687,7 @@ if ($step == 3 && $datatoexport)
 	$hselected = $h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+	print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -875,7 +875,7 @@ if ($step == 4 && $datatoexport)
     $hselected = $h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+    print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -1133,7 +1133,7 @@ if ($step == 5 && $datatoexport)
     $hselected = $h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
+    print dol_get_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     /*
      * Confirmation suppression fichier

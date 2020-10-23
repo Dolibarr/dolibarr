@@ -247,7 +247,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -352,7 +352,7 @@ if ($action == 'create')
 		{
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
 
 			$formconfirm = '';
 
@@ -683,7 +683,7 @@ if ($action == 'create')
 
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
 			print '<table class="border centpercent">';
 

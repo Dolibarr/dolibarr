@@ -128,7 +128,7 @@ print load_fiche_titre($title, $linkback, 'title_setup');
 print '<form method="POST">';
 
 $head = product_admin_prepare_head();
-dol_fiche_head($head, 'generator', $tab, 0, 'product');
+print dol_get_fiche_head($head, 'generator', $tab, 0, 'product');
 
 print $langs->trans("MultiPriceRuleDesc").'<br><br>';
 

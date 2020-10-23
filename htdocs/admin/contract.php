@@ -178,7 +178,7 @@ print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup'
 
 $head = contract_admin_prepare_head();
 
-dol_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
+print dol_get_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'contract');
 
 /*
  * Contracts Numbering model

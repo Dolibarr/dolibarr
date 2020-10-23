@@ -95,7 +95,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = recruitmentCandidaturePrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

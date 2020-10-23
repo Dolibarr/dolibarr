@@ -207,7 +207,7 @@ llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Modul
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
-	//dol_fiche_head('');
+	//print dol_get_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -308,7 +308,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 	print '<tbody>';
@@ -389,7 +389,7 @@ if ($rowid > 0) {
 
 		$head = member_type_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
+		print dol_get_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -710,7 +710,7 @@ if ($rowid > 0) {
 		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
+		print dol_get_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
 
 		print '<table class="border centpercent">';
 
