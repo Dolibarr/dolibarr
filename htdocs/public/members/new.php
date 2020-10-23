@@ -73,6 +73,9 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
     exit;
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
+
 $extrafields = new ExtraFields($db);
 
 $object = new Adherent($db);
@@ -152,10 +155,15 @@ function llxFooterVierge()
 /*
  * Actions
  */
+$parameters = array('');
+// Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // Action called when page is submitted
-if ($action == 'add')
-{
+if (empty($reshook) && $action == 'add') {
 	$error = 0;
 	$urlback = '';
 
@@ -454,8 +462,7 @@ if ($action == 'add')
 // Action called after a submitted was send and member created successfully
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
-if ($action == 'added')
-{
+if (empty($reshook) && $action == 'added') {
     llxHeaderVierge($langs->trans("NewMemberForm"));
 
     // Si on a pas ete redirige
