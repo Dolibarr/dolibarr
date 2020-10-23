@@ -1186,14 +1186,14 @@ class Form
 			}
 		}
 
-		// On recherche les societes
+		// We search companies
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+		if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= ", s.address, s.zip, s.town";
 			$sql .= ", dictp.code as country_code";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+		if (! empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
