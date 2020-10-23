@@ -378,7 +378,7 @@ class pdf_crabe extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))    // retreive space not used by discount
+				if (empty($this->atleastonediscount))    // retrieve space not used by discount
 				{
 					$delta = ($this->posxprogress - $this->posxdiscount);
 					$this->posxpicture += $delta;

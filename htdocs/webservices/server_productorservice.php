@@ -134,7 +134,7 @@ $productorservice_fields = array(
 $elementtype = 'product';
 
 
-//Retreive all extrafield for product
+//Retrieve all extrafield for product
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -429,7 +429,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
             	$elementtype = 'product';
 
-                //Retreive all extrafield for thirdsparty
+                //Retrieve all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields = new ExtraFields($db);
             	$extrafields->fetch_name_optionals_label($elementtype, true);
@@ -1098,7 +1098,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 							$elementtype = 'product';
 
-							//Retreive all extrafield for thirdsparty
+							//Retrieve all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields = new ExtraFields($db);
 							$extrafields->fetch_name_optionals_label($elementtype, true);

@@ -984,7 +984,7 @@ class Account extends CommonObject
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_update    = $this->db->jdate($obj->date_update);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

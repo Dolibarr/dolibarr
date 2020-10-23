@@ -891,7 +891,7 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retreive all extrafields for contract
+				// Retrieve all extrafields for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 

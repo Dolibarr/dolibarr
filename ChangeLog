@@ -13,15 +13,15 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Properties ->contactid have been renamed into ->contact_id
-* Properties ->titre have been renamed into ->title 
+* Properties ->titre have been renamed into ->title
 * Property $paiementid in API 'api_supplier_invoices.php' has been renamed into into $payment_mode_id (english)
 * The deprecated subsitution key __SIGNATURE__ has been removed. Replace with __USER_SIGNATURE__ if you used the old syntax in
-  your email templates. 
+  your email templates.
 * The hidden option HOLIDAY_MORE_PUBLIC_HOLIDAYS has been removed. Use instead the dictionary table if you need to define custom
   days of holiday.
 * Property 'num_paiement' has been renamed 'num_payment' everywhere for better code consistency.
 * If you build a class that implement CommonObject to use the incoterm properties or methods (->fk_incoterm, ->label_incoterm, ->location_incoterm),
-  you must now also include declaration of the Trait 'CommonIncoterm' in your class. All incoterm functions were moved into this Trait. 
+  you must now also include declaration of the Trait 'CommonIncoterm' in your class. All incoterm functions were moved into this Trait.
 * The GETPOST(..., 'alpha') has now the same behaviour than GETPOST(..., 'alphanohtml') so no html will be allowed. Use GETPOST(..., 'restricthtml') to accept HTML.
 * If you have links in your code with '&action=delete' as a parameter, you must also add '&token='.newToken() as another parameter to avoid CSRF protection errors.
 * The API addPayment for api_invoice has evolved to accept amount into a foreign currency. You must provide array(amount=>X,mutlicurrency_ammount=>Y) instead of amount.
@@ -385,28 +385,28 @@ Following changes may create regressions for some external modules, but were nec
 * Default mode for GETPOST function is now 'alphanohtml' instead of 'none'. So check when you make POST or GET requests with
   HTML content that you make a GETPOST('myparam', 'restricthtml') or GETPOST('myparam', 'none') if you really need posted content without sanitizing
   the HTML code of content (in such a case, sanitize data later)
-* Removed hidden constant MAIN_EXTRAFIELDS_IN_ONE_TD that was useless. 
-* Reference of object including a "/" are no more allowed. It is never used by default but to support setup that introduced it, the "/" will be replaced 
-  by a "_" automatically when a reference (with a custom numbering mask that use it) is generated.  
+* Removed hidden constant MAIN_EXTRAFIELDS_IN_ONE_TD that was useless.
+* Reference of object including a "/" are no more allowed. It is never used by default but to support setup that introduced it, the "/" will be replaced
+  by a "_" automatically when a reference (with a custom numbering mask that use it) is generated.
 * Library jflot (replace with chartjs) was removed.
-* Library geoip (replaced with geoip2) was removed.  
+* Library geoip (replaced with geoip2) was removed.
 * Hidden constant COMMANDE_VALID_AFTER_CLOSE_PROPAL was renamed into ORDER_VALID_AFTER_CLOSE_PROPAL.
 * Object field ref_int is deprecated and set to 'not used', method to fetch object by only ref_int is not supported anymore.
 * UserGroup class has been refactored with new architecture. Triggers of class UserGroup are now USERGROUP_CREATE, USERGROUP_MODIFY, USERGROUP_DELETE
 * A new way to navigate between pages in list is available. To use it (not mandatory), you must:
-  - replace line $page = GETPOST('page', 'int') with $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int'); 
+  - replace line $page = GETPOST('page', 'int') with $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
   - remove input field in form '<input type="hidden" name="page" value="'.$page.'">';'
   - add parameter $pagenavastextinput to value 1 when calling print_barre_liste()
 
 WARNING FOR DOLIWAMP USERS ONLY:
 
 Only people that installed Dolibarr using the all-in-one auto-installer for Windows called "DoliWAMP" are concerned by the following warnings:
- 
+
 * DoliWAMP auto-installer for Windows is no more available on 32 bits systems. Use standard package if you need to use such architecture.
-* It is not possible to migrate from an installation done with the old DoliWAMP auto-installer for Windows by using this new one. 
-  You must make a backup of your database, make a fresh installation using the new installer and reload your backup. 
-  Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but is not recommended as a production 
-  solution on a local desktop since a local desktop computer has often no backup and security policy, or not as good as on a server (when there is one). 
+* It is not possible to migrate from an installation done with the old DoliWAMP auto-installer for Windows by using this new one.
+  You must make a backup of your database, make a fresh installation using the new installer and reload your backup.
+  Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but is not recommended as a production
+  solution on a local desktop since a local desktop computer has often no backup and security policy, or not as good as on a server (when there is one).
   DoliWAMP remains a solution for fast test or demo purposes. Prefer using standard packages for production.
 
 
@@ -570,7 +570,7 @@ FIX: #13118
 FIX: #13124
 FIX: #13131
 FIX: #13135
-FIX: #13146 
+FIX: #13146
 FIX: #13198
 FIX: #13175
 FIX: #13182
@@ -637,7 +637,7 @@ FIX: Confusion between 'bank reconciled' and 'accounted'. Show both data.
 FIX: Count of Stripe payment mode must take test/live into account
 FIX: Creation of Stripe card from backoffice must return a clean message
 FIX: CVE-2019–17223
-FIX: CVE-2019–17223 
+FIX: CVE-2019–17223
 FIX: CVE-2020-7994
 FIX: CVE Need permission to be able to develop modules
 FIX: #13053
@@ -837,7 +837,7 @@ NEW: #4301
 
 For Developers or integrators:
 
-NEW: Compatible with PHP 7.4 
+NEW: Compatible with PHP 7.4
 NEW: Code for extrafields uses the new array $extrafields->attributes
 NEW: Can set a filter on object linked in modulebuilder.
 NEW: Can defined a position of numbering submodules for thirdparties
@@ -904,9 +904,9 @@ Following changes may create regressions for some external modules, but were nec
 * Removed function dol_micro_time. Use native PHP microtime instead.
 * The trigger BON_PRELEVEMENT_CREATE has been renamed into DIRECT_DEBIT_ORDER_CREATE.
 * The constant INVOICE_SHOW_POS_IN_EXPORT has been renamed into INVOICE_SHOW_POS.
-* If your logo is no more visible on the menu bar, you must upload a new logo into 'Home-Setup-Company/Organization' to have it visible again. 
-* All properties 'libstatut', 'labelstatut', 'labelstatus' were renamed into 'labelStatus'. 
-* All properties 'labelstatusshort' and 'labelstatut_short' were renamed into 'labelStatusShort'. 
+* If your logo is no more visible on the menu bar, you must upload a new logo into 'Home-Setup-Company/Organization' to have it visible again.
+* All properties 'libstatut', 'labelstatut', 'labelstatus' were renamed into 'labelStatus'.
+* All properties 'labelstatusshort' and 'labelstatut_short' were renamed into 'labelStatusShort'.
 * All properties 'type_libelle' were renamed into 'type_label'.
 * Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
 * The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
@@ -1056,11 +1056,11 @@ FIX: wrong invoice id for fetchObjetctLinked
 
 ***** ChangeLog for 10.0.3 compared to 10.0.2 *****
 IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
-The unit were not saved correctly in database making calculation on shipments wrong. 
+The unit were not saved correctly in database making calculation on shipments wrong.
 Update to this version must be done if you use them and have installed version 10.0.0, 10.0.1 or 10.0.2 and set some products after installing or upgrading to one of this version.
 Once update is done you must then edit (manually) the product that has bad unit to set the correct unit to have features restored.
 
-FIX: #11702 
+FIX: #11702
 FIX: #11861 No consistent code to manage measuring units
 FIX: #11942
 FIX: #12026
@@ -1122,7 +1122,7 @@ FIX: wrong test
 FIX: XSS
 FIX: Payment from POS ware not recorded.
 FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
-     VAT that includes a deposit without vat. 
+     VAT that includes a deposit without vat.
 
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****
 FIX: #10460 compatibility with MariaDB 10.4
@@ -1225,14 +1225,14 @@ FIX: Wrong variable. Must be PROJECT_HIDE_UNSELECTABLES
 
 ***** ChangeLog for 10.0.1 compared to 10.0.0 *****
 FIX: #10930
-FIX: #10984 
+FIX: #10984
 FIX: reposition on "Build backup" button
 FIX: #11400
 FIX: #11412
-FIX: #11460 
+FIX: #11460
 FIX: #11463
 FIX: #11466
-FIX: #11492 
+FIX: #11492
 FIX: #11498
 FIX: #11505
 FIX: #11506
@@ -1241,7 +1241,7 @@ FIX: #11509
 FIX: #11537
 FIX: #11543
 FIX: #11553
-FIX: #11576 
+FIX: #11576
 FIX: #11584
 FIX: #11590
 FIX: accounting mode must be taken from global conf, because there's no way to choose a mode with interface
@@ -1334,14 +1334,14 @@ FIX: wrong path sociales/index.php doesnt exist anymore
 
 ***** ChangeLog for 10.0.1 compared to 10.0.0 *****
 FIX: #10930
-FIX: #10984 
+FIX: #10984
 FIX: reposition on "Build backup" button
 FIX: #11400
 FIX: #11412
-FIX: #11460 
+FIX: #11460
 FIX: #11463
 FIX: #11466
-FIX: #11492 
+FIX: #11492
 FIX: #11498
 FIX: #11505
 FIX: #11506
@@ -1350,7 +1350,7 @@ FIX: #11509
 FIX: #11537
 FIX: #11543
 FIX: #11553
-FIX: #11576 
+FIX: #11576
 FIX: #11584
 FIX: #11590
 FIX: accounting mode must be taken from global conf, because there's no way to choose a mode with interface
@@ -1519,7 +1519,7 @@ NEW: Manage account sell_intra & sell_export in page accoutancy admin default pr
 NEW: Manage loan schedule.
 NEW: Manage status of member types.
 NEW: Mass action "create bills" for validated reception
-NEW: Measuring unit are now defined into an editable dictionary. Add product size/unit into product import. 
+NEW: Measuring unit are now defined into an editable dictionary. Add product size/unit into product import.
 NEW: Template pdf 'canelle_reception' displays linked reception lines.
 NEW: Moral/physic status can be defined at member type level
 NEW: Pagination into list of time spent.
@@ -1582,7 +1582,7 @@ NEW: Enhance management of webhooks
 NEW: Generation of doc by modulebuilder can include README and CHANGELOG
 NEW: massfilesarea feature is possible for external modules
 NEW: Show list of enabled modules in dol_print_error().
-NEW: Simplification of CSS styles of default themes. 
+NEW: Simplification of CSS styles of default themes.
 NEW: Clean code of a lot of deprecated code.
 NEW: Add hidden option to set a search entry to the top
 NEW: add hidden option DISPLAY_DISCOUNTED_SUPPLIER_PRICE
@@ -1602,8 +1602,8 @@ Following changes may create regressions for some external modules, but were nec
 * The PHP extension php-intl is not mandatory and must be installed to have new features working correctly.
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
-* Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.; 
-* Files for variables of themes were renamed from graph-color.php into theme_vars.inc.php to match naming 
+* Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.;
+* Files for variables of themes were renamed from graph-color.php into theme_vars.inc.php to match naming
   convention of extension .inc.php for files to be included.
 * All methods set_draft() were renamed into setDraft().
 * Signatures of methods createFromClone() has been standardized. All methods requires the object User as first parameter.
@@ -1615,7 +1615,7 @@ Following changes may create regressions for some external modules, but were nec
 * Deprecated property ->fk_departement is now ->state_id everywhere.
 * Removed the method 4 of GETPOST (to get $_COOKIE). It was not used and not recommanded to use in Dolibarr.
 * Column llx_facture.facnumber change to llx_facture.ref
-* Variable $dolibarr_main_cookie_cryptkey is no more created at install (it was not used by Dolibarr). A new variable 
+* Variable $dolibarr_main_cookie_cryptkey is no more created at install (it was not used by Dolibarr). A new variable
   called $dolibarr_main_instance_unique_id is now generated at each installation. It will be used by some future features.
 
 
@@ -3387,7 +3387,7 @@ Following changes may create regression for some external modules, but were nece
   entities and to review completely the rights of the groups and the users.
 * Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
 * Some other change were done in the way we read permission of a user when module multicompany is enabled. You can
-  retreive the old behavior by adding constant MULTICOMPANY_BACKWARD_COMPATIBILITY to 1.
+  retrieve the old behavior by adding constant MULTICOMPANY_BACKWARD_COMPATIBILITY to 1.
 * The hook formObjectOptions was not implemented correctly in previous version. Sometimes, you had to return output
 content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
 hook specifications so you must return output into "resprint".
@@ -6133,7 +6133,7 @@ For users:
 - Fix: [Bug #958] LocalTax2 for Spain fails on Suppliers
 - Fix: [ bug #972 ] Auto completion contact field do not take account the min caract number before search
 - Fix: [ bug #971 ] html.form.class.php select_contact with autocomplete do not exclude id from exclude array
-- Fix: Expedition creation, can retreive product from other expedition
+- Fix: Expedition creation, can retrieve product from other expedition
 
 For translators:
 - Update language files.

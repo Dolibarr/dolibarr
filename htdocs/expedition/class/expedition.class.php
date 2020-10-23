@@ -624,7 +624,7 @@ class Expedition extends CommonObject
 				 */
 				$result = $this->fetch_thirdparty();
 
-				// Retreive extrafields
+				// Retrieve extrafields
 				$this->fetch_optionals();
 
 				// Fix Get multicurrency param for transmited

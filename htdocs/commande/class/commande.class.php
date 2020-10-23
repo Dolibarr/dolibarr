@@ -1889,7 +1889,7 @@ class Commande extends CommonOrder
 
 				if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

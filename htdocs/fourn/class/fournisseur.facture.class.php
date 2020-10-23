@@ -732,7 +732,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->socid  = $obj->socid;
 				$this->socnom = $obj->socnom;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

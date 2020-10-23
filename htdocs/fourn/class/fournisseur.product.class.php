@@ -285,7 +285,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		} else // old method. deprecated because ot can't retreive type
+		} else // old method. deprecated because ot can't retrieve type
 		{
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);

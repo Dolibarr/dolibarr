@@ -162,7 +162,7 @@ if (empty($reshook))
 		if ($error)
 		{
 			//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
-			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retreive them.
+			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
 			$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
 		}
 

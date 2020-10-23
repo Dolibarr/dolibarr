@@ -332,7 +332,7 @@ class Livraison extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				// Retreive all extrafields
+				// Retrieve all extrafields
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

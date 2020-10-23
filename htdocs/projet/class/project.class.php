@@ -586,7 +586,7 @@ class Project extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

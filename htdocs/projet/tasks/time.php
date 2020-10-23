@@ -293,7 +293,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->l
 	}
 }
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch(0, $project_ref) > 0)

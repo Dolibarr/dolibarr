@@ -161,7 +161,7 @@ $project_fields = array(
 
 $elementtype = 'project';
 
-//Retreive all extrafield for thirdsparty
+//Retrieve all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);

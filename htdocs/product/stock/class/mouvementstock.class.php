@@ -662,7 +662,7 @@ class MouvementStock extends CommonObject
 	            $this->fk_project = $obj->fk_project;
 	        }
 
-	        // Retreive all extrafield
+	        // Retrieve all extrafield
 	        // fetch optionals attributes and labels
 	        $this->fetch_optionals();
 

@@ -1289,7 +1289,7 @@ class SupplierProposal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1379,7 +1379,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
