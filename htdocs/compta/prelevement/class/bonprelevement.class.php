@@ -449,7 +449,7 @@ class BonPrelevement extends CommonObject
 				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
 
 				//Add payment of withdrawal into bank
-				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); 
+				$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 				$facs = array();
 				$amounts = array();
 				$amountsperthirdparty = array();
@@ -2115,7 +2115,7 @@ class BonPrelevement extends CommonObject
 
 		// Get data of bank account
 		//$id = $configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT); 
+		$id = ($type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		$account = new Account($this->db);
 		if ($account->fetch($id) > 0)
 		{

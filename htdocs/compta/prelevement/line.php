@@ -99,14 +99,14 @@ if ($action == 'confirm_rejet')
 
 				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
 
-				header("Location: line.php?id=".$id.'&type='.$type);
+				header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
 				exit;
 			}
 		} else {
 			$action = "rejet";
 		}
 	} else {
-		header("Location: line.php?id=".$id.'&type='.$type);
+		header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
 		exit;
 	}
 }
