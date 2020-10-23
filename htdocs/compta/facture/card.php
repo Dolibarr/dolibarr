@@ -357,7 +357,7 @@ if (empty($reshook))
 		$object->cond_reglement_id = 0; // To clean property
 
 		$error = 0;
-		
+
 		$db->begin();
 
 		if (! $error) {
@@ -367,7 +367,7 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-		
+
 		if (! $error) {
 			$old_date_lim_reglement = $object->date_lim_reglement;
 			$new_date_lim_reglement = $object->calculate_date_lim_reglement();
@@ -379,9 +379,9 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-		
+
 		if ($error) {
-			$db->rollback();	
+			$db->rollback();
 		} else {
 			$db->commit();
 		}
