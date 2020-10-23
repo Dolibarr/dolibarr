@@ -756,7 +756,7 @@ class CurrencyRate extends CommonObjectLine
 		$error = 0;
 		$this->rate = price2num($this->rate);
 		if (empty($this->entity) || $this->entity <= 0) $this->entity = $conf->entity;
-		$now = date('Y-m-d H:i:s');
+		$now = !empty($this->date_sync) ? $this->date_sync : date('Y-m-d H:i:s');
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
@@ -866,7 +866,11 @@ class CurrencyRate extends CommonObjectLine
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 		$sql .= ' rate='.$this->rate;
-		$sql .= ' WHERE rowid='.$this->id;
+		if (!empty($this->date_sync))
+		$sql .= ', date_sync=\''.$this->date_sync.'\'';
+		if (!empty($this->fk_multicurrency))
+		$sql .= ', fk_multicurrency='.$this->fk_multicurrency;
+		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
 
