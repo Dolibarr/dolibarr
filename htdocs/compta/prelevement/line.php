@@ -97,11 +97,11 @@ if ($action == 'confirm_rejet')
 			if ($lipre->fetch($id) == 0)
 
 			{
-				$rej = new RejetPrelevement($db, $user,$type);
+				$rej = new RejetPrelevement($db, $user, $type);
 
 				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
 
-				header("Location: line.php?id=".$id.'&type='.$type);
+				header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
 				exit;
 			}
 		}
@@ -112,7 +112,7 @@ if ($action == 'confirm_rejet')
 	}
 	else
 	{
-		header("Location: line.php?id=".$id.'&type='.$type);
+		header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
 		exit;
 	}
 }
@@ -208,7 +208,7 @@ if ($id)
 		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
-		print '<input type="hidden" name="type" value="'.$type.'">';	
+		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';

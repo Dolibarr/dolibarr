@@ -2264,7 +2264,6 @@ class ExpenseReport extends CommonObject
         $langs->load("trips");
 
 	    if (!dol_strlen($modele)) {
-
 		    if ($this->modelpdf) {
 			    $modele = $this->modelpdf;
 		    } elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
@@ -2278,7 +2277,6 @@ class ExpenseReport extends CommonObject
 		} else {
 			return 0;
 		}
-
     }
 
     /**
