@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020	Tobias Sekan	<tobias.sekan@startmail.com>
+ * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,7 +180,7 @@ function getPieChart($socid = 0)
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		$dataseries[] = [html_entity_decode($objectstatic->getLibStatut(1)), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
 		if (!$conf->use_javascript_ajax)
 		{
 			$result .= '<tr class="oddeven">';
