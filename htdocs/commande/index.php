@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+	// This is useless due to the global search combo
     // Search customer orders
     print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -134,7 +134,7 @@ if ($resql)
     $listofstatus = array(0, 1, 2, 3, -1);
     foreach ($listofstatus as $status)
     {
-    	$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+    	$dataseries[] = array(html_entity_decode($commandestatic->LibStatut($status, 0, 1, 1)), (isset($vals[$status]) ? (int) $vals[$status] : 0));
     	if ($status == Commande::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
     	if ($status == Commande::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
     	if ($status == Commande::STATUS_SHIPMENTONPROCESS) $colorseries[$status] = $badgeStatus4;
