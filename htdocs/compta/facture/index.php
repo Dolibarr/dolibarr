@@ -178,9 +178,8 @@ function getPieChart($socid = 0)
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
-		if (!$conf->use_javascript_ajax)
-		{
+		$dataseries[] = [html_entity_ecode($objectstatic->getLibStatut(1)), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		if (!$conf->use_javascript_ajax) {
 			$result .= '<tr class="oddeven">';
 			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
 			$result .= '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
