@@ -78,11 +78,10 @@ print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     // Search contract
-    if (!empty($conf->contrat->enabled))
-    {
+    if (!empty($conf->contrat->enabled)) {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
     	print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -191,7 +190,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' -
 $listofstatus = array(0, 4, 4, 5); $bool = false;
 foreach ($listofstatus as $status)
 {
-    $dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
+    $dataseries[] = array(html_entity_decode($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0))), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
     if ($status == ContratLigne::STATUS_INITIAL) $colorseries[$status.$bool] = '-'.$badgeStatus0;
     if ($status == ContratLigne::STATUS_OPEN && !$bool) $colorseries[$status.$bool] = $badgeStatus4;
     if ($status == ContratLigne::STATUS_OPEN && $bool) $colorseries[$status.$bool] = $badgeStatus1;
