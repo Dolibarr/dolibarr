@@ -1567,7 +1567,7 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
- * 	@return	mixed			    			0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@return	array|int			    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
@@ -1640,8 +1640,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					{
 						$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
 					}
-				} else // Common usage
-				{
+				} else {
+                    // Common usage
 					$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
