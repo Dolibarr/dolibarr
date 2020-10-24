@@ -3951,9 +3951,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  This function must be called when a blocking technical error is encountered.
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
- *	@param	 	DoliDB	$db      	Database handler
- *	@param  	mixed	$error		String or array of errors strings to show
- *  @param		array	$errors		Array of errors
+ *	@param	 	DoliDB          $db      	Database handler
+ *	@param  	string|[string] $error		String or array of errors strings to show
+ *  @param		array           $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
  */
@@ -6691,19 +6691,19 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	mixed	$mesgs			Message string or array
- *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|[string] $mesgs			Message string or array
+ *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
 function setEventMessage($mesgs, $style = 'mesgs')
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
-	if (!is_array($mesgs))		// If mesgs is a string
-	{
+	if (!is_array($mesgs)) {
+        // If mesgs is a string
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
-	} else // If mesgs is an array
-	{
+	} else {
+        // If mesgs is an array
 		foreach ($mesgs as $mesg)
 		{
 			if ($mesg) $_SESSION['dol_events'][$style][] = $mesg;
