@@ -49,6 +49,9 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('publicnewticketcard', 'globalcard'));
+
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 
@@ -58,9 +61,16 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 /*
  * Actions
  */
-
+$parameters = array(
+	'id' => $id,
+);
+// Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 // Add file in email form
-if (GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
 	////$res = $object->fetch('','',GETPOST('track_id'));
 	////if($res > 0)
 	////{
@@ -79,7 +89,7 @@ if (GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
 }
 
 // Remove file
-if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp directory
@@ -91,7 +101,7 @@ if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
 	$action = 'create_ticket';
 }
 
-if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
+if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 	$error = 0;
 	$origin_email = GETPOST('email', 'alpha');
 	if (empty($origin_email)) {
@@ -176,8 +186,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$object->db->commit();
 			$action = "infos_success";
 		} else {
@@ -186,8 +195,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 			$action = 'create_ticket';
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$res = $object->fetch($id);
 			if ($res) {
 				// Create form object
@@ -242,8 +250,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
 				// Send email to TICKET_NOTIFICATION_EMAIL_TO
 				$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-				if ($sendto)
-				{
+				if ($sendto) {
 					$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref, $object->track_id);
 					$message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id).'<br><br>';
 					$message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
@@ -317,8 +324,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)
-{
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
 	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
 	$db->close();
 	exit();
