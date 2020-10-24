@@ -66,10 +66,9 @@ print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
+    // This is useless due to the global search combo
     // Search ficheinter
-    $var = false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<div class="div-table-responsive-no-min">';
@@ -133,7 +132,7 @@ if ($resql)
     $bool = false;
     foreach ($listofstatus as $status)
     {
-        $dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
+        $dataseries[] = array(html_entity_decode($fichinterstatic->LibStatut($status, $bool, 1)), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
         if ($status == 3 && !$bool) $bool = true;
         else $bool = false;
 
