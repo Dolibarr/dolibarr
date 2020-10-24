@@ -610,7 +610,7 @@ if (!empty($type))
 	if ($type == 'f') $label = 'NewSupplier';
 }
 
-if ($contextpage = 'poslist' && ( !empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+if ($contextpage = 'poslist' && $type == 't' && ( !empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
 	print get_htmloutput_mesg(img_warning('default') . ' ' . $langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), '', 'warning', 1);
 }
 
