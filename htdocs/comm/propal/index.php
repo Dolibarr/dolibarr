@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +140,7 @@ if ($resql)
 	print '</tr>';
 
 	foreach ($listofstatus as $status) {
-		$dataseries[] = array($propalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+		$dataseries[] = array(html_entity_decode($propalstatic->LibStatut($status, 1)), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 		if ($status == Propal::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
 		if ($status == Propal::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
 		if ($status == Propal::STATUS_SIGNED) $colorseries[$status] = $badgeStatus4;
