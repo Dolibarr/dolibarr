@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric FRANCE      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ print "</tr>\n";
 $listoftype = $tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
-    $dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
+    $dataseries[] = array(html_entity_decode($label), (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }
 
 if ($conf->use_javascript_ajax)
