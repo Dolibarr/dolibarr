@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        class/recruitmentjobposition.class.php
+ * \file        htdocs/recruitment/class/recruitmentjobposition.class.php
  * \ingroup     recruitment
  * \brief       This file is a CRUD class file for RecruitmentJobPosition (Create/Read/Update/Delete)
  */
@@ -57,7 +57,17 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public $isextrafieldmanaged = 1;
 
-	/**
+    /**
+     * @var string recruiter email
+     */
+    public $email_recruiter;
+
+    /**
+     * @var string suggested remuneration
+     */
+    public $remuneration_suggested;
+
+    /**
 	 * @var string String with name of icon for recruitmentjobposition. Must be the part after the 'object_' into object_recruitmentjobposition.png
 	 */
 	public $picto = 'recruitmentjobposition';
