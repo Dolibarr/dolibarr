@@ -271,7 +271,7 @@ if ($action == 'create')
     if (!empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
-		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1"); // List of bank account available
+		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 2); // List of bank account available
         print '</td></tr>';
     }
 

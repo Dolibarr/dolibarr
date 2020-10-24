@@ -370,7 +370,7 @@ if ($action == 'create')
 	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$form->select_comptes($fk_account, 'fk_account', 0, '');
+		$form->select_comptes($fk_account, 'fk_account', 0, '', 2);
 		print '</td></tr>';
 	}
 
