@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2019	Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ if ($conf->use_javascript_ajax)
     	$listofstatus = array(0, 1, 2, 3, 9);
     	foreach ($listofstatus as $status)
     	{
-    		$dataseries[] = array($staticmo->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+    		$dataseries[] = array(html_entity_decode($staticmo->LibStatut($status, 1)), (isset($vals[$status]) ? (int) $vals[$status] : 0));
     		if ($status == Mo::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
     		if ($status == Mo::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
     		if ($status == Mo::STATUS_INPROGRESS) $colorseries[$status] = $badgeStatus4;
