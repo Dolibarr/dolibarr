@@ -58,16 +58,6 @@ class RecruitmentJobPosition extends CommonObject
 	public $isextrafieldmanaged = 1;
 
     /**
-     * @var string recruiter email
-     */
-    public $email_recruiter;
-
-    /**
-     * @var string suggested remuneration
-     */
-    public $remuneration_suggested;
-
-    /**
 	 * @var string String with name of icon for recruitmentjobposition. Must be the part after the 'object_' into object_recruitmentjobposition.png
 	 */
 	public $picto = 'recruitmentjobposition';
@@ -135,14 +125,32 @@ class RecruitmentJobPosition extends CommonObject
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
 	);
 	public $rowid;
+
+    /**
+     * @var string ref
+     */
 	public $ref;
 	public $entity;
+
+    /**
+     * @var string label
+     */
 	public $label;
 	public $qty;
 	public $fk_soc;
 	public $fk_project;
 	public $fk_user_recruiter;
-	public $email_recruiter;
+
+    /**
+     * @var string recruiter email
+     */
+    public $email_recruiter;
+
+    /**
+     * @var string suggested remuneration
+     */
+    public $remuneration_suggested;
+
 	public $fk_user_supervisor;
 	public $fk_establishment;
 	public $date_planned;
