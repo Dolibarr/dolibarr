@@ -488,7 +488,7 @@ class Entrepot extends CommonObject
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

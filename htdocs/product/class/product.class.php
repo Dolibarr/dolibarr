@@ -1903,7 +1903,7 @@ class Product extends CommonObject
 				$localtax1 = $localtaxes_array['1'];
 				$localtaxtype2 = $localtaxes_array['2'];
 				$localtax2 = $localtaxes_array['3'];
-			} else // old method. deprecated because ot can't retreive type
+			} else // old method. deprecated because ot can't retrieve type
 			{
 				$localtaxtype1 = '0';
 				$localtax1 = get_localtax($newvat, 1);
@@ -2145,7 +2145,7 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

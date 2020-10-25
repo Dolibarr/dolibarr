@@ -585,7 +585,7 @@ class FactureRec extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -635,7 +635,7 @@ class FactureRec extends CommonInvoice
         // phpcs:enable
 		$this->lines = array();
 
-		// Retreive all extrafield for line
+		// Retrieve all extrafield for line
 		// fetch optionals attributes and labels
 		if (!is_object($extrafields))
 		{

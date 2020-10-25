@@ -656,7 +656,7 @@ if (!defined('NOLOGIN'))
 			exit;
 		}
 
-		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));	// login was retreived previously when checking password.
+		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));	// login was retrieved previously when checking password.
 		if ($resultFetchUser <= 0)
 		{
 			dol_syslog('User not found, connexion refused');
@@ -1122,7 +1122,7 @@ if (!function_exists("llxHeader"))
 
 		if (empty($conf->dol_hide_leftmenu))
 		{
-			left_menu('', $help_url, '', '', 1, $title, 1); // $menumanager is retreived with a global $menumanager inside this function
+			left_menu('', $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
 		// main area

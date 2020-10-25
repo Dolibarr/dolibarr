@@ -7788,7 +7788,7 @@ abstract class CommonObject
 			{
 				$this->setVarsFromFetchObj($obj);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

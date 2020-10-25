@@ -119,7 +119,7 @@ $contact_fields = array(
 $elementtype = 'socpeople';
 
 
-//Retreive all extrafield for contact
+//Retrieve all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -312,7 +312,7 @@ function getContact($authentication, $id, $ref_ext)
 
             	$elementtype = 'socpeople';
 
-            	//Retreive all extrafield for thirdsparty
+            	//Retrieve all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields = new ExtraFields($db);
             	$extrafields->fetch_name_optionals_label($elementtype, true);
@@ -420,7 +420,7 @@ function createContact($authentication, $contact)
 
 		$elementtype = 'socpeople';
 
-		//Retreive all extrafield for thirdsparty
+		//Retrieve all extrafield for thirdsparty
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
@@ -667,7 +667,7 @@ function updateContact($authentication, $contact)
 
 			$elementtype = 'socpeople';
 
-			//Retreive all extrafield for contact
+			//Retrieve all extrafield for contact
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);

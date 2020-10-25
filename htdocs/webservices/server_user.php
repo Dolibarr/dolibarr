@@ -185,7 +185,7 @@ $thirdpartywithuser_fields = array(
 
 $elementtype = 'socpeople';
 
-//Retreive all extrafield for contact
+//Retrieve all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -595,7 +595,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 						$elementtype = 'socpeople';
 
-						//Retreive all extrafield for thirdsparty
+						//Retrieve all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields = new ExtraFields($db);
 						$extrafields->fetch_name_optionals_label($elementtype, true);

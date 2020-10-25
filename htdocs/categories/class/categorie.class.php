@@ -347,7 +347,7 @@ class Categorie extends CommonObject
 				$this->user_creation = $res['fk_user_creat'];
 				$this->user_modification = $res['fk_user_modif'];
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

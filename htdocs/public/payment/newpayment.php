@@ -649,7 +649,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         } catch (Exception $e)
         {
             $error++;
-            $errormessage = "CantRetreivePaymentIntent ".$e->getMessage();
+            $errormessage = "CantRetrievePaymentIntent ".$e->getMessage();
             dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
             setEventMessages($e->getMessage(), null, 'errors');
             $action = '';
@@ -658,7 +658,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
         if ($paymentintent->status != 'succeeded')
         {
             $error++;
-            $errormessage = "StatusOfRetreivedIntent is not succeeded: ".$paymentintent->status;
+            $errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
             dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
             setEventMessages($paymentintent->status, null, 'errors');
             $action = '';

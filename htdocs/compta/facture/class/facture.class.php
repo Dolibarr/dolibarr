@@ -1026,7 +1026,7 @@ class Facture extends CommonInvoice
 		// Charge facture source
 		$facture = new Facture($this->db);
 
-		// Retreive all extrafield
+		// Retrieve all extrafield
 		// fetch optionals attributes and labels
 		$this->fetch_optionals();
 
@@ -1625,7 +1625,7 @@ class Facture extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

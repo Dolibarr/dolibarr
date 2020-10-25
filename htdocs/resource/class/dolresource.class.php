@@ -210,7 +210,7 @@ class Dolresource extends CommonObject
     			$this->note_private = $obj->note_private;
     			$this->type_label = $obj->type_label;
 
-    			// Retreive all extrafield
+    			// Retrieve all extrafield
     			// fetch optionals attributes and labels
     			$this->fetch_optionals();
     		}

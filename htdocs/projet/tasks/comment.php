@@ -65,7 +65,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // include comment actions
 include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch('', $project_ref) > 0)

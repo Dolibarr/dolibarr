@@ -317,7 +317,7 @@ class Task extends CommonObject
 					$this->task_parent_position = $obj->task_parent_position;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				$this->fetch_optionals();
 			}
 
@@ -1702,7 +1702,7 @@ class Task extends CommonObject
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				//retreive project origin ref to know folder to copy
+				//retrieve project origin ref to know folder to copy
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($ori_project_id);
 				$ori_project_ref = $projectstatic->ref;

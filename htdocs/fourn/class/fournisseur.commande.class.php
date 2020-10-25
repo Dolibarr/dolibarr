@@ -407,7 +407,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->free($resql);
 
-			// Retreive all extrafield
+			// Retrieve all extrafield
 			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
@@ -530,7 +530,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$line->rang                = $objp->rang;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 

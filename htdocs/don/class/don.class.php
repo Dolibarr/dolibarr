@@ -689,7 +689,7 @@ class Don extends CommonObject
 				$this->model_pdf          = $obj->model_pdf;
 				$this->modelpdf           = $obj->model_pdf;	// deprecated
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}
