@@ -28,10 +28,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once __DIR__.'/class/hook.class.php';
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mymodule@mymodule", "other"));
+$langs->loadLangs(array("zapier", "other"));
 
 // The action 'add', 'create', 'edit', 'update', 'view', ...
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
@@ -51,7 +51,7 @@ $id = GETPOST('id', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : (int) GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
     $page = 0;
@@ -65,9 +65,9 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new Hook($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->zapier->dir_output.'/temp/massgeneration/'.$user->id;
 // Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('hooklist'));
+$hookmanager->initHooks(array('zapierhooklist'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -90,7 +90,7 @@ if ($user->socid > 0) {
     //$socid = $user->socid;
     accessforbidden();
 }
-//$result = restrictedArea($user, 'mymodule', $id, '');
+//$result = restrictedArea($user, 'zapier', $id, '');
 
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
@@ -160,9 +160,9 @@ if (empty($reshook)) {
     // Mass actions
     $objectclass = 'Hook';
     $objectlabel = 'Hook';
-    $permissiontoread = $user->rights->mymodule->read;
-    $permissiontodelete = $user->rights->mymodule->delete;
-    $uploaddir = $conf->mymodule->dir_output;
+    $permissiontoread = $user->rights->zapier->read;
+    $permissiontodelete = $user->rights->zapier->delete;
+    $uploaddir = $conf->zapier->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -283,19 +283,19 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-    function init_myfunc()
-    {
-        jQuery("#myid").removeAttr(\'disabled\');
-        jQuery("#myid").attr(\'disabled\',\'disabled\');
-    }
-    init_myfunc();
-    jQuery("#mybutton").click(function() {
-        init_myfunc();
-    });
-});
-</script>';
+// print '<script type="text/javascript" language="javascript">
+// jQuery(document).ready(function() {
+//     function init_myfunc()
+//     {
+//         jQuery("#myid").removeAttr(\'disabled\');
+//         jQuery("#myid").attr(\'disabled\',\'disabled\');
+//     }
+//     init_myfunc();
+//     jQuery("#mybutton").click(function() {
+//         init_myfunc();
+//     });
+// });
+// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -320,7 +320,7 @@ $arrayofmassactions = array(
     //'presend'=>$langs->trans("SendByMail"),
     //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if ($user->rights->zapier->delete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -335,7 +335,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = '';
-//if ($user->rights->mymodule->creer)
+//if ($user->rights->zapier->creer)
 //{
     $newcardbutton = '<a class="butActionNew" href="hook_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
     $newcardbutton .= '<span class="fa fa-plus-circle valignmiddle"></span>';
@@ -581,10 +581,10 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
     $urlsource .= str_replace('&amp;', '&', $param);
 
     $filedir = $diroutputmassaction;
-    $genallowed = $user->rights->mymodule->read;
-    $delallowed = $user->rights->mymodule->create;
+    $genallowed = $user->rights->zapier->read;
+    $delallowed = $user->rights->zapier->create;
 
-    print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+    print $formfile->showdocuments('massfilesarea_zapier', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page
