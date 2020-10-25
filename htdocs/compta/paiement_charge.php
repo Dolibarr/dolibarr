@@ -236,7 +236,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $charge->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $charge->accountid, "accountid", 0, '', 2); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
