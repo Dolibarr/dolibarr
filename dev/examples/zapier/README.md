@@ -17,7 +17,7 @@ After installation, confirm that Node.js is ready to use:
 
 Next let's install the Zapier CLI tools. The CLI will allow you to build your app, deploy it to the Zapier platform, do local testing, manage users and testers, view remote logs, collaborate with your team, and more:
 
-  `cd /dev/exemples/zapier`
+  `cd dev/exemples/zapier`
 
   `npm install -g zapier-platform-cli` to install the CLI globally
 
