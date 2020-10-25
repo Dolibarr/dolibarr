@@ -395,8 +395,10 @@ class Asset extends CommonObject
 		global $langs;
 
 		$langs->load("contracts");
+        $labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
 		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+        $labelStatusShort = array();
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
 		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 
@@ -407,7 +409,7 @@ class Asset extends CommonObject
 	}
 
 	/**
-	 *	Charge les informations d'ordre info dans l'objet commande
+	 *	Load info into asset object
 	 *
 	 *	@param  int		$id       Id of order
 	 *	@return	void
