@@ -78,20 +78,17 @@ $form = new Form($db);
 $htmlother = new FormOther($db);
 $object = new Product($db);
 
-if (!$id && empty($ref))
-{
+if (!$id && empty($ref)) {
     llxHeader("", $langs->trans("ProductStatistics"));
 
     $type = GETPOST('type', 'int');
 
    	$helpurl = '';
-    if ($type == '0')
-    {
+    if ($type == '0') {
         $helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
         //$title=$langs->trans("StatisticsOfProducts");
         $title = $langs->trans("Statistics");
-    } elseif ($type == '1')
-    {
+    } elseif ($type == '1') {
         $helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
         //$title=$langs->trans("StatisticsOfServices");
         $title = $langs->trans("Statistics");
@@ -111,13 +108,11 @@ if (!$id && empty($ref))
 	$title = $langs->trans('ProductServiceCard');
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->label, 16);
-	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
-	{
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Statistics');
 		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 	}
-	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
-	{
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Statistics');
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
@@ -126,8 +121,7 @@ if (!$id && empty($ref))
 }
 
 
-if ($result && (!empty($id) || !empty($ref)))
-{
+if ($result && (!empty($id) || !empty($ref))) {
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -140,8 +134,7 @@ if ($result && (!empty($id) || !empty($ref)))
 
     dol_fiche_end();
 }
-if (empty($id) & empty($ref))
-{
+if (empty($id) && empty($ref)) {
     $h = 0;
     $head = array();
 
@@ -167,16 +160,14 @@ if (empty($id) & empty($ref))
 }
 
 
-if ($result || empty($id))
-{
+if ($result || empty($id)) {
     print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 
-	if (empty($id))
-	{
+	if (empty($id)) {
     	// Type
 		print '<tr><td class="titlefield">'.$langs->trans("ProductsAndServices").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
@@ -184,8 +175,7 @@ if ($result || empty($id))
 		print '</td></tr>';
 
 		// Tag
-		if ($conf->categorie->enabled)
-		{
+		if ($conf->categorie->enabled) {
     		print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
     		//$moreforfilter.='<div class="divsearchfield">';
     		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
@@ -198,8 +188,7 @@ if ($result || empty($id))
 	// Year
 	print '<tr><td class="titlefield">'.$langs->trans("Year").'</td><td>';
 	$arrayyears = array();
-	for ($year = $currentyear - 10; $year < $currentyear + 10; $year++)
-	{
+	for ($year = $currentyear - 10; $year < $currentyear + 10; $year++) {
 	    $arrayyears[$year] = $year;
 	}
 	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
@@ -240,12 +229,9 @@ if ($result || empty($id))
 
 	// Generation des graphs
 	$dir = (!empty($conf->product->multidir_temp[$object->entity]) ? $conf->product->multidir_temp[$object->entity] : $conf->service->multidir_temp[$object->entity]);
-	if ($object->id > 0)  // We are on statistics for a dedicated product
-	{
-		if (!file_exists($dir.'/'.$object->id))
-		{
-			if (dol_mkdir($dir.'/'.$object->id) < 0)
-			{
+	if ($object->id > 0) {  // We are on statistics for a dedicated product
+		if (!file_exists($dir.'/'.$object->id)) {
+			if (dol_mkdir($dir.'/'.$object->id) < 0) {
 				$mesg = $langs->trans("ErrorCanNotCreateDir", $dir);
 				$error++;
 			}
@@ -302,31 +288,25 @@ if ($result || empty($id))
 
 	$px = new DolGraph();
 
-	if (!$error && count($graphfiles) > 0)
-	{
+	if (!$error && count($graphfiles) > 0) {
 		$mesg = $px->isGraphKo();
-		if (!$mesg)
-		{
-			foreach ($graphfiles as $key => $val)
-			{
+		if (!$mesg) {
+			foreach ($graphfiles as $key => $val) {
 				if (!$graphfiles[$key]['file']) continue;
 
 				$graph_data = array();
 
-				if (dol_is_file($dir.'/'.$graphfiles[$key]['file']))
-				{
+				if (dol_is_file($dir.'/'.$graphfiles[$key]['file'])) {
 					// TODO Load cachefile $graphfiles[$key]['file']
 				} else {
 				    $morefilters = '';
-				    if ($search_categ > 0)
-				    {
+				    if ($search_categ > 0) {
 				        $categ = new Categorie($db);
 				        $categ->fetch($search_categ);
 				        $listofprodids = $categ->getObjectsInCateg('product', 1);
 				        $morefilters = ' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
 				    }
-				    if ($search_categ == -2)
-				    {
+				    if ($search_categ == -2) {
 				        $morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
 				    }
 
@@ -342,8 +322,7 @@ if ($result || empty($id))
 					// TODO Save cachefile $graphfiles[$key]['file']
 				}
 
-				if (is_array($graph_data))
-				{
+				if (is_array($graph_data)) {
 					$px->SetData($graph_data);
 					$px->SetYLabel($graphfiles[$key]['label']);
 					$px->SetMaxValue($px->GetCeilMaxValue() < 0 ? 0 : $px->GetCeilMaxValue());
@@ -371,10 +350,8 @@ if ($result || empty($id))
 
 	// Show graphs
 	$i = 0;
-	if (count($graphfiles) > 0)
-	{
-		foreach ($graphfiles as $key => $val)
-		{
+	if (count($graphfiles) > 0) {
+		foreach ($graphfiles as $key => $val) {
 			if (!$graphfiles[$key]['file']) continue;
 
 			if ($graphfiles == 'propal' && !$user->rights->propale->lire) continue;
@@ -386,16 +363,14 @@ if ($result || empty($id))
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) continue;
 
 
-			if ($i % 2 == 0)
-			{
+			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
 				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
 			}
 
 			// Date generation
-			if ($graphfiles[$key]['output'] && !$px->isGraphKo())
-			{
+			if ($graphfiles[$key]['output'] && !$px->isGraphKo()) {
 			    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) $dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
 			    else $dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 			} else {
@@ -417,8 +392,7 @@ if ($result || empty($id))
 			print '</td></tr>';
 			print '</table>';
 
-			if ($i % 2 == 0)
-			{
+			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
 				print "\n".'</div></div></div>';
@@ -429,16 +403,14 @@ if ($result || empty($id))
 		}
 	}
 	// div not closed
-	if ($i % 2 == 1)
-	{
+	if ($i % 2 == 1) {
 		print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
 		print "\n".'</div></div></div>';
 		print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 	}
 }
 
-if (!$id)
-{
+if (!$id) {
     dol_fiche_end();
 }
 
