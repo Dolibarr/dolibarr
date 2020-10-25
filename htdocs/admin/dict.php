@@ -878,7 +878,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".(int) $db->escape($rowid);
+		if (in_array($rowidcol, array('code', 'code_iso'))) {
+			$sql .= " WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
+		} else {
+        	$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		}
 		if (in_array('entity', $listfieldmodify)) $sql .= " AND entity = '".getEntity($tabname[$id])."'";
 
 		dol_syslog("actionmodify", LOG_DEBUG);
