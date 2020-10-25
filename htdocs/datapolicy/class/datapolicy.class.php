@@ -167,6 +167,7 @@ class DataPolicy
         } else {
             $l = $langs->defaultlang;
         }
+        // TODO Use a dolibarr email template
         $s = "DATAPOLICIESSUBJECT_".$l;
         $ma = "DATAPOLICIESCONTENT_".$l;
         $la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
@@ -242,6 +243,7 @@ class DataPolicy
         } else {
             $l = $langs->defaultlang;
         }
+        // TODO Use a dolibarr email template
         $s = "DATAPOLICIESSUBJECT_".$l;
         $ma = "DATAPOLICIESCONTENT_".$l;
         $la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
@@ -310,9 +312,6 @@ class DataPolicy
 
         $sendto = $adherent->email;
 
-        // TODO Use a dolibarr email template
-        $s = 'TXTLINKDATAPOLICIESSUBJECT_'.$l;
-        $ma = 'TXTLINKDATAPOLICIESMESSAGE_'.$l;
 
         $code = md5($adherent->email);
         if (!empty($adherent->default_lang)) {
@@ -320,6 +319,9 @@ class DataPolicy
         } else {
             $l = $langs->defaultlang;
         }
+        // TODO Use a dolibarr email template
+        $s = 'TXTLINKDATAPOLICIESSUBJECT_'.$l;
+        $ma = 'TXTLINKDATAPOLICIESMESSAGE_'.$l;
         $la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
         $lr = 'TXTLINKDATAPOLICIESREFUSE_'.$l;
 
