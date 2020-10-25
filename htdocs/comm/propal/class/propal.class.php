@@ -3228,16 +3228,16 @@ class Propal extends CommonObject
 		{
 			global $langs;
 			$langs->load("propal");
-			$this->labelStatus[0] = $langs->trans("PropalStatusDraft");
-			$this->labelStatus[1] = $langs->trans("PropalStatusValidated");
-			$this->labelStatus[2] = $langs->trans("PropalStatusSigned");
-			$this->labelStatus[3] = $langs->trans("PropalStatusNotSigned");
-			$this->labelStatus[4] = $langs->trans("PropalStatusBilled");
-			$this->labelStatusShort[0] = $langs->trans("PropalStatusDraftShort");
-			$this->labelStatusShort[1] = $langs->trans("PropalStatusValidatedShort");
-			$this->labelStatusShort[2] = $langs->trans("PropalStatusSignedShort");
-			$this->labelStatusShort[3] = $langs->trans("PropalStatusNotSignedShort");
-			$this->labelStatusShort[4] = $langs->trans("PropalStatusBilledShort");
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv("PropalStatusDraft");
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv("PropalStatusValidated");
+			$this->labelStatus[2] = $langs->transnoentitiesnoconv("PropalStatusSigned");
+			$this->labelStatus[3] = $langs->transnoentitiesnoconv("PropalStatusNotSigned");
+			$this->labelStatus[4] = $langs->transnoentitiesnoconv("PropalStatusBilled");
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("PropalStatusDraftShort");
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("PropalStatusValidatedShort");
+			$this->labelStatusShort[2] = $langs->transnoentitiesnoconv("PropalStatusSignedShort");
+			$this->labelStatusShort[3] = $langs->transnoentitiesnoconv("PropalStatusNotSignedShort");
+			$this->labelStatusShort[4] = $langs->transnoentitiesnoconv("PropalStatusBilledShort");
 		}
 
 		$statusType = '';
@@ -3291,8 +3291,8 @@ class Propal extends CommonObject
 			if ($mode == 'opened') {
 				$delay_warning = $conf->propal->cloture->warning_delay;
 				$status = self::STATUS_VALIDATED;
-				$label = $langs->trans("PropalsToClose");
-				$labelShort = $langs->trans("ToAcceptRefuse");
+				$label = $langs->transnoentitiesnoconv("PropalsToClose");
+				$labelShort = $langs->transnoentitiesnoconv("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
 				$delay_warning = $conf->propal->facturation->warning_delay;

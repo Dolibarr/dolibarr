@@ -3537,41 +3537,41 @@ class Commande extends CommonOrder
 		global $langs, $conf;
 
 		$billedtext = '';
-		if (empty($donotshowbilled)) $billedtext .= ($billed ? ' - '.$langs->trans("Billed") : '');
+		if (empty($donotshowbilled)) $billedtext .= ($billed ? ' - '.$langs->transnoentitiesnoconv("Billed") : '');
 
 		$labelTooltip = '';
 
 		if ($status == self::STATUS_CANCELED) {
-			$labelStatus = $langs->trans('StatusOrderCanceled');
-			$labelStatusShort = $langs->trans('StatusOrderCanceledShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderCanceled');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderCanceledShort');
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_DRAFT) {
-			$labelStatus = $langs->trans('StatusOrderDraft');
-			$labelStatusShort = $langs->trans('StatusOrderDraftShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDraft');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDraftShort');
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
-			$labelStatus = $langs->trans('StatusOrderValidated').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderValidated').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderValidatedShort').$billedtext;
 			$statusType = 'status1';
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
-			$labelStatus = $langs->trans('StatusOrderSent').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
-			$labelTooltip = $langs->trans("StatusOrderSent").' - '.$langs->trans("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderSent').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderSentShort').$billedtext;
+			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent").' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->trans('StatusOrderToBill');
-			$labelStatusShort = $langs->trans('StatusOrderToBillShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderToBillShort');
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->trans('StatusOrderProcessed').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderProcessedShort').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderProcessed').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderProcessedShort').$billedtext;
 			$statusType = 'status6';
 		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->trans('StatusOrderDelivered');
-			$labelStatusShort = $langs->trans('StatusOrderDeliveredShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort');
 			$statusType = 'status6';
 		} else {
-			$labelStatus = $langs->trans('Unknown');
+			$labelStatus = $langs->transnoentitiesnoconv('Unknown');
 			$labelStatusShort = '';
 			$statusType = '';
 			$mode = 0;

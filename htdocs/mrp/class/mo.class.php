@@ -1063,17 +1063,17 @@ class Mo extends CommonObject
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ValidatedToProduce');
-			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
-			$this->labelStatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ValidatedToProduce');
+			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->transnoentitiesnoconv('InProgress');
+			$this->labelStatus[self::STATUS_PRODUCED] = $langs->transnoentitiesnoconv('StatusMOProduced');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
-			$this->labelStatusShort[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_INPROGRESS] = $langs->transnoentitiesnoconv('InProgress');
+			$this->labelStatusShort[self::STATUS_PRODUCED] = $langs->transnoentitiesnoconv('StatusMOProduced');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;

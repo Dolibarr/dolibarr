@@ -534,37 +534,37 @@ abstract class CommonInvoice extends CommonObject
 		$prefix = 'Short';
 		if (!$paye) {
 		    if ($status == 0) {
-		        $labelStatus = $langs->trans('BillStatusDraft');
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusDraft');
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusDraft');
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusDraft');
 		    } elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
-		        $labelStatus = $langs->trans('BillStatusClosedUnpaid');
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedUnpaid');
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedUnpaid');
 		        $statusType = 'status5';
 		    } elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
-		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedPaidPartially');
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType = 'status9';
 		    } elseif ($alreadypaid == 0) {
-		        $labelStatus = $langs->trans('BillStatusNotPaid');
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusNotPaid');
 		        $statusType = 'status1';
 		    } else {
-		        $labelStatus = $langs->trans('BillStatusStarted');
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusStarted');
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusStarted');
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusStarted');
 		        $statusType = 'status3';
 		    }
 		} else {
 		    $statusType = 'status6';
 
 		    if ($type == self::TYPE_CREDIT_NOTE) {
-		        $labelStatus = $langs->trans('BillStatusPaidBackOrConverted'); // credit note
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted'); // credit note
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusPaidBackOrConverted'); // credit note
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusPaidBackOrConverted'); // credit note
 		    } elseif ($type == self::TYPE_DEPOSIT) {
-		        $labelStatus = $langs->trans('BillStatusConverted'); // deposit invoice
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusConverted'); // deposit invoice
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusConverted'); // deposit invoice
+		        $labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusConverted'); // deposit invoice
 		    } else {
-		        $labelStatus = $langs->trans('BillStatusPaid');
-		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaid');
+		    	$labelStatus = $langs->transnoentitiesnoconv('BillStatusPaid');
+		    	$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusPaid');
 		    }
 		}
 

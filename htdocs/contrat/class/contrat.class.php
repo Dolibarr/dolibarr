@@ -1905,12 +1905,12 @@ class Contrat extends CommonObject
 		{
 			global $langs;
 			$langs->load("contracts");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('ContractStatusDraft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ContractStatusValidated');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('ContractStatusClosed');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('ContractStatusDraft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('ContractStatusValidated');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('ContractStatusClosed');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ContractStatusDraft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ContractStatusValidated');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('ContractStatusClosed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ContractStatusDraft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ContractStatusValidated');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('ContractStatusClosed');
 		}
 
 		$statusType = 'status'.$status;

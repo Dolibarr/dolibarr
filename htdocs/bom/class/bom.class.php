@@ -827,9 +827,9 @@ class BOM extends CommonObject
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
