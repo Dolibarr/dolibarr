@@ -323,7 +323,7 @@ class Categorie extends CommonObject
 			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
 		} else {
 			$sql .= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
-			if (!is_null($type)) $sql .= " AND type = ".$this->db->escape($type);
+			if (!is_null($type)) $sql .= " AND type = ".(int) $type;
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -518,8 +518,8 @@ class Categorie extends CommonObject
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
-		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
-		$sql .= ", fk_parent = ".$this->fk_parent;
+		$sql .= ", visible = ".(int) $this->visible;
+		$sql .= ", fk_parent = ".(int) $this->fk_parent;
 		$sql .= ", fk_user_modif = ".(int) $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -1203,7 +1203,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE entity IN (".getEntity('category').")";
 		if (!is_null($type))
-			$sql .= " AND type = ".$type;
+			$sql .= " AND type = ".(int) $type;
 		if ($parent)
 			$sql .= " AND fk_parent = 0";
 
