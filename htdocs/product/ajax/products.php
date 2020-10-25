@@ -85,6 +85,11 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		if ($socid > 0) {
 			$thirdpartytemp = new Societe($db);
 			$thirdpartytemp->fetch($socid);
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				$price_level = $thirdpartytemp->price_level;
+			}
+
 			//Load translation description and label
 			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$newlang = $thirdpartytemp->default_lang;
@@ -95,10 +100,6 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
 					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
 				}
-			}
-
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$price_level = $thirdpartytemp->price_level;
 			}
 		}
 
