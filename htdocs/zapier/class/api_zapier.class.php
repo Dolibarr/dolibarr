@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 use Luracast\Restler\RestException;
 
-dol_include_once('/zapier/class/hook.class.php');
-
-
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
@@ -91,7 +89,6 @@ class ZapierApi extends DolibarrApi
         return $this->_cleanObjectDatas($this->hook);
     }
 
-
     /**
      * Get list of possibles choices for module
      *
@@ -126,16 +123,15 @@ class ZapierApi extends DolibarrApi
         return $arraychoices;
     }
 
-
     /**
      * List hooks
      *
      * Get a list of hooks
      *
-     * @param string	       $sortfield	        Sort field
-     * @param string	       $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
+     * @param string           $sortfield           Sort field
+     * @param string           $sortorder           Sort order
+     * @param int              $limit               Limit for list
+     * @param int              $page                Page number
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of order objects
      *
@@ -211,12 +207,12 @@ class ZapierApi extends DolibarrApi
         }
 
         $result = $this->db->query($sql);
-		$i = 0;
+        $i = 0;
         if ($result) {
-        	$num = $this->db->num_rows($result);
+            $num = $this->db->num_rows($result);
             while ($i < $num) {
-            	$obj = $this->db->fetch_object($result);
-            	$hook_static = new Hook($this->db);
+                $obj = $this->db->fetch_object($result);
+                $hook_static = new Hook($this->db);
                 if ($hook_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($hook_static);
                 }
