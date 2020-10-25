@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -399,7 +399,7 @@ class ChargeSociales extends CommonObject
         $sql .= " AND paye = 0";
 
         if ($year) {
-            $sql .= " AND f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
+            $sql .= " AND f.datev >= '".((int) $year)."-01-01' AND f.datev <= '".((int) $year)."-12-31' ";
         }
 
         $result = $this->db->query($sql);
