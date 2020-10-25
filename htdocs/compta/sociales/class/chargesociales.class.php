@@ -399,7 +399,7 @@ class ChargeSociales extends CommonObject
         $sql .= " AND paye = 0";
 
         if ($year) {
-            $sql .= " AND f.datev >= '".(int) $year."-01-01' AND f.datev <= '".(int) $year."-12-31' ";
+            $sql .= " AND f.datev >= '".((int) $year)."-01-01' AND f.datev <= '".((int) $year)."-12-31' ";
         }
 
         $result = $this->db->query($sql);
