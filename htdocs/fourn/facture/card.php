@@ -1294,6 +1294,11 @@ if (empty($reshook))
 					$desc = $productsupplier->desc_supplier;
 				} else $desc = $productsupplier->description;
 
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc) {
+					$product_desc='';
+				}
+
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;

@@ -514,13 +514,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	<?php
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
 		$("input[name='np_marginRate']:first").blur(function(e) {
-		return checkFreeLine(e, "np_marginRate");
+			return checkFreeLine(e, "np_marginRate");
 		});
 		<?php
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES)) { ?>
 		$("input[name='np_markRate']:first").blur(function(e) {
-		return checkFreeLine(e, "np_markRate");
+			return checkFreeLine(e, "np_markRate");
 		});
 		<?php
 	}
@@ -535,21 +535,21 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 	var rate = $("input[name='"+npRate+"']:first");
 	if (rate.val() == '')
-	return true;
+		return true;
 
 	if (! $.isNumeric(rate.val().replace(',','.')))
 	{
-	alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
-	e.stopPropagation();
-	setTimeout(function () { rate.focus() }, 50);
-	return false;
+		alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
 	}
 	if (npRate == "np_markRate" && rate.val() >= 100)
 	{
-	alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
-	e.stopPropagation();
-	setTimeout(function () { rate.focus() }, 50);
-	return false;
+		alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
 	}
 
 	var price = 0;
@@ -659,7 +659,6 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			?>
 			var pbq = parseInt($('option:selected', this).attr('data-pbq'));	/* If product was selected with a HTML select */
 			if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq'); } 		/* If product was selected with a HTML input with autocomplete */
-			//console.log(pbq);
 
 			if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
 			{
@@ -675,6 +674,23 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
 						jQuery("#price_ht").val(data.price_ht);
+						<?php if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
+						var proddesc = data.desc_trans;
+						<?php } else { ?>
+						var proddesc = data.desc;
+						<?php } ?>
+						console.log("Load desciption into text area : "+proddesc);
+						<?php if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+						{
+							var editor = CKEDITOR.instances['dp_desc'];
+							if (editor) {
+								editor.setData(proddesc);
+							}
+						}
+						<?php } else { ?>
+						jQuery('#dp_desc').text(proddesc);
+						<?php } ?>
 					},
 					'json'
 				);
