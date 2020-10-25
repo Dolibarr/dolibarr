@@ -456,9 +456,12 @@ ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
 
-ALTER TABLE llx_deliverydet CHANGE COLUMN fk_livraison fk_delivery integer; 
+ALTER TABLE llx_deliverydet DROP CONSTRAINT fk_livraisondet_fk_livraison;
+ALTER TABLE llx_deliverydet DROP INDEX idx_livraisondet_fk_expedition;
+ALTER TABLE llx_deliverydet CHANGE COLUMN fk_livraison fk_delivery integer;
+ALTER TABLE llx_deliverydet ADD INDEX idx_deliverydet_fk_delivery (fk_delivery);
+ALTER TABLE llx_deliverydet ADD CONSTRAINT fk_deliverydet_fk_delivery FOREIGN KEY (fk_delivery) REFERENCES llx_delivery (rowid);
 
--- update llx_extrafields
 UPDATE llx_extrafields SET elementtype = 'delivery' WHERE elementtype = 'livraison';
 UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE elementtype = 'livraisondet';
 
