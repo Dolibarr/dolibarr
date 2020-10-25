@@ -890,13 +890,15 @@ if ($action == 'create')
 			print '<tr><td class="titlefieldcreate fieldrequired">';
 			if ($origin == 'commande' && !empty($conf->commande->enabled))
 			{
-				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$object->ref;
+				print $langs->trans("RefOrder");
 			}
 			if ($origin == 'propal' && !empty($conf->propal->enabled))
 			{
-				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowProposal"), 'propal').' '.$object->ref;
+				print $langs->trans("RefProposal");
 			}
-			print '</a></td>';
+			print '</td><td colspan="3">';
+			print $object->getNomUrl(1);
+			print '</td>';
 			print "</tr>\n";
 
 			// Ref client

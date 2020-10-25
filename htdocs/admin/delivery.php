@@ -208,8 +208,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle)) !== false)
             {
-                if (substr($file, 0, 14) == 'mod_delivery_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-                {
+            	if (preg_match('/^mod_delivery_([a-z0-9_]*)\.php$/', $file)) {
                     $file = substr($file, 0, dol_strlen($file) - 4);
 
                     require_once $dir.$file.'.php';
@@ -222,8 +221,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-
-                        print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+                        print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
                         print $module->info();
                         print '</td>';
 

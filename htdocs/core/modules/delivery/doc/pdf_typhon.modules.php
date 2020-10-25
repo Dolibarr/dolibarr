@@ -124,7 +124,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$langs->loadLangs(array("main", "bills", "sendings", "companies"));
 
 		$this->db = $db;
-		$this->name = "typhon";
+		$this->name = "Typhon";
 		$this->description = $langs->trans("DocumentModelTyphon");
 
 		// Page size for A4 format

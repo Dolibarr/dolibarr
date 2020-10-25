@@ -425,6 +425,11 @@ ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished
 
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
+-- drop constraint
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_soc;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_author;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_valid;
+
 -- rename Table
 ALTER TABLE llx_livraison RENAME TO llx_delivery;
 ALTER TABLE llx_livraison_extrafields RENAME TO llx_delivery_extrafields;
@@ -442,14 +447,16 @@ ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_valid;
 ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_user_valid (fk_user_valid);
 
 -- drop constraint
-ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_soc;
-ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_author;
-ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_valid;
+ALTER TABLE llx_delivery DROP CONSTRAINT fk_livraison_fk_soc;
+ALTER TABLE llx_delivery DROP CONSTRAINT fk_livraison_fk_user_author;
+ALTER TABLE llx_delivery DROP CONSTRAINT fk_livraison_fk_user_valid;
 
 -- add constraint
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_deliverydet CHANGE COLUMN fk_livraison fk_delivery integer; 
 
 -- update llx_extrafields
 UPDATE llx_extrafields SET elementtype = 'delivery' WHERE elementtype = 'livraison';
@@ -479,4 +486,13 @@ UPDATE llx_element_element SET targettype = 'delivery' WHERE targettype = 'livra
 
 -- update llx_actioncomm
 UPDATE llx_actioncomm SET element_type = 'delivery' WHERE element_type = 'livraison';
+
+-- update llx_const
+UPDATE llx_const set name = 'DELIVERY_ADDON_NUMBER' WHERE name = 'LIVRAISON_ADDON_NUMBER';
+UPDATE llx_const set value = 'mod_delivery_jade' WHERE value = 'mod_livraison_jade' AND name = 'DELIVERY_ADDON_NUMBER';
+UPDATE llx_const set value = 'mod_delivery_saphir' WHERE value = 'mod_livraison_saphir' AND name = 'DELIVERY_ADDON_NUMBER';
+
+-- update llx_rights_def
+UPDATE llx_rights_def set perms = 'delivery' WHERE perms = 'livraison' and module = 'expedition';
+UPDATE llx_rights_def set perms = 'delivery_advance' WHERE perms = 'livraison_advance' and module = 'expedition';
 

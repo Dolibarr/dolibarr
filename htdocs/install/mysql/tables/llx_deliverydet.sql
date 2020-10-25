@@ -20,7 +20,7 @@
 create table llx_deliverydet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_delivery      integer,
+  fk_delivery       integer,
   fk_origin_line    integer,                         -- Correspondance de la ligne avec le document d'origine (propal, commande)
   fk_product        integer,
   description       text,
