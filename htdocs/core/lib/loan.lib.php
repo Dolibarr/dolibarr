@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015		Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2015-2020	Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,8 +64,7 @@ function loan_prepare_head($object)
 	$head[$tab][2] = 'documents';
 	$tab++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
@@ -96,17 +95,16 @@ function loan_prepare_head($object)
  */
 function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
 {
-    global $conf;
+    global $conf, $db;
     require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
     $object = new LoanSchedule($db);
+    $output = array();
 
     // If mensuality is 0 we don't pay interests and remaining capital not modified
-    if ($mens == 0)
-    {
+    if ($mens == 0) {
         $int = 0;
         $cap_rest = $capital;
-    }
-    else {
+    } else {
         $int = ($capital * ($rate / 12));
         $int = round($int, 2, PHP_ROUND_HALF_UP);
         $cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
@@ -122,7 +120,13 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
         $int = round($int, 2, PHP_ROUND_HALF_UP);
         $cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
 
-        $output[$echance] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
+        $output[$echance] = array(
+            'cap_rest' => $cap_rest,
+            'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency),
+            'interet' => $int,
+            'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency),
+            'mens' => $mens,
+        );
 
         $capital = $cap_rest;
         $echance++;
