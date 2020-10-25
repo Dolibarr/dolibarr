@@ -47,7 +47,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire)
+	if ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)
 	{
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
@@ -56,7 +56,7 @@ function shipping_prepare_head($object)
 		    // Take first one element of array
 		    $tmp = reset($object->linkedObjectsIds['delivery']);
 
-			$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$tmp;
+			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$tmp;
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
 			$h++;
@@ -135,7 +135,7 @@ function delivery_prepare_head($object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("DeliveryCard");
 	$head[$h][2] = 'delivery';
 	$h++;
@@ -213,13 +213,13 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
 	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
-	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
+	//if ($conf->delivery_note->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
 	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 	$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
 	$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-	//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+	//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -260,7 +260,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			    print '<td>';
 			    print '</td>';
 			}*/
-			if (!empty($conf->livraison_bon->enabled))
+			if (!empty($conf->delivery_note->enabled))
 			{
 				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
 				//print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
@@ -403,9 +403,9 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				}*/
 
 				// Informations on receipt
-				if (!empty($conf->livraison_bon->enabled))
+				if (!empty($conf->delivery_note->enabled))
 				{
-					include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 					$expedition->id = $objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
 					//var_dump($expedition->linkedObjects);
@@ -423,7 +423,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 						// Ref
 						print '<td>';
 						print $receiving->getNomUrl($db);
-						//print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
+						//print '<a href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
 						//print '<td class="center">';

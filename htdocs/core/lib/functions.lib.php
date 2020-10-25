@@ -8723,9 +8723,9 @@ function getElementProperties($element_type)
 		$module = 'expedition_bon';
 	}
 	if ($element_type == 'delivery') {
-		$classpath = 'livraison/class';
-		$subelement = 'livraison';
-		$module = 'livraison_bon';
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'delivery_note';
 	}
 	if ($element_type == 'contract') {
 		$classpath = 'contrat/class';

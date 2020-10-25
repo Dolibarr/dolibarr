@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2008 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,4 +18,5 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_livraison_extrafields ADD INDEX idx_livraison_extrafields (fk_object);
+ALTER TABLE llx_deliverydet ADD INDEX idx_deliverydet_fk_expedition (fk_delivery);
+ALTER TABLE llx_deliverydet ADD CONSTRAINT fk_deliverydet_fk_delivery FOREIGN KEY (fk_delivery) REFERENCES llx_delivery (rowid);

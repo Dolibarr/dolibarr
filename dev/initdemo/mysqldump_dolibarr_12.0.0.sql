@@ -7522,13 +7522,13 @@ INSERT INTO `llx_links` VALUES (1,1,'2018-01-16 16:45:35','http://www.dolicloud.
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_livraison`
+-- Table structure for table `llx_delivery`
 --
 
-DROP TABLE IF EXISTS `llx_livraison`;
+DROP TABLE IF EXISTS `llx_delivery`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_livraison` (
+CREATE TABLE `llx_delivery` (
   `rowid` int(11) NOT NULL AUTO_INCREMENT,
   `tms` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ref` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
@@ -7554,61 +7554,61 @@ CREATE TABLE `llx_livraison` (
   `import_key` varchar(14) COLLATE utf8_unicode_ci DEFAULT NULL,
   `extraparams` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`rowid`),
-  UNIQUE KEY `idx_livraison_uk_ref` (`ref`,`entity`),
-  KEY `idx_livraison_fk_soc` (`fk_soc`),
-  KEY `idx_livraison_fk_user_author` (`fk_user_author`),
-  KEY `idx_livraison_fk_user_valid` (`fk_user_valid`),
-  CONSTRAINT `fk_livraison_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
-  CONSTRAINT `fk_livraison_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`),
-  CONSTRAINT `fk_livraison_fk_user_valid` FOREIGN KEY (`fk_user_valid`) REFERENCES `llx_user` (`rowid`)
+  UNIQUE KEY `idx_delivery_uk_ref` (`ref`,`entity`),
+  KEY `idx_delivery_fk_soc` (`fk_soc`),
+  KEY `idx_delivery_fk_user_author` (`fk_user_author`),
+  KEY `idx_delivery_fk_user_valid` (`fk_user_valid`),
+  CONSTRAINT `fk_delivery_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
+  CONSTRAINT `fk_delivery_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`),
+  CONSTRAINT `fk_delivery_fk_user_valid` FOREIGN KEY (`fk_user_valid`) REFERENCES `llx_user` (`rowid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `llx_livraison`
+-- Dumping data for table `llx_delivery`
 --
 
-LOCK TABLES `llx_livraison` WRITE;
-/*!40000 ALTER TABLE `llx_livraison` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_livraison` ENABLE KEYS */;
+LOCK TABLES `llx_delivery` WRITE;
+/*!40000 ALTER TABLE `llx_delivery` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_delivery` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_livraison_extrafields`
+-- Table structure for table `llx_delivery_extrafields`
 --
 
-DROP TABLE IF EXISTS `llx_livraison_extrafields`;
+DROP TABLE IF EXISTS `llx_delivery_extrafields`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_livraison_extrafields` (
+CREATE TABLE `llx_delivery_extrafields` (
   `rowid` int(11) NOT NULL AUTO_INCREMENT,
   `tms` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `fk_object` int(11) NOT NULL,
   `import_key` varchar(14) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`rowid`),
-  KEY `idx_livraison_extrafields` (`fk_object`)
+  KEY `idx_delivery_extrafields` (`fk_object`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `llx_livraison_extrafields`
+-- Dumping data for table `llx_delivery_extrafields`
 --
 
-LOCK TABLES `llx_livraison_extrafields` WRITE;
-/*!40000 ALTER TABLE `llx_livraison_extrafields` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_livraison_extrafields` ENABLE KEYS */;
+LOCK TABLES `llx_delivery_extrafields` WRITE;
+/*!40000 ALTER TABLE `llx_delivery_extrafields` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_delivery_extrafields` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_livraisondet`
+-- Table structure for table `llx_deliverydet`
 --
 
-DROP TABLE IF EXISTS `llx_livraisondet`;
+DROP TABLE IF EXISTS `llx_deliverydet`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_livraisondet` (
+CREATE TABLE `llx_deliverydet` (
   `rowid` int(11) NOT NULL AUTO_INCREMENT,
-  `fk_livraison` int(11) DEFAULT NULL,
+  `fk_delivery` int(11) DEFAULT NULL,
   `fk_origin_line` int(11) DEFAULT NULL,
   `fk_product` int(11) DEFAULT NULL,
   `description` text COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -7617,44 +7617,44 @@ CREATE TABLE `llx_livraisondet` (
   `total_ht` double(24,8) DEFAULT 0.00000000,
   `rang` int(11) DEFAULT 0,
   PRIMARY KEY (`rowid`),
-  KEY `idx_livraisondet_fk_expedition` (`fk_livraison`),
-  CONSTRAINT `fk_livraisondet_fk_livraison` FOREIGN KEY (`fk_livraison`) REFERENCES `llx_livraison` (`rowid`)
+  KEY `idx_deliverydet_fk_expedition` (`fk_delivery`),
+  CONSTRAINT `fk_deliverydet_fk_delivery` FOREIGN KEY (`fk_delivery`) REFERENCES `llx_delivery` (`rowid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `llx_livraisondet`
+-- Dumping data for table `llx_deliverydet`
 --
 
-LOCK TABLES `llx_livraisondet` WRITE;
-/*!40000 ALTER TABLE `llx_livraisondet` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_livraisondet` ENABLE KEYS */;
+LOCK TABLES `llx_deliverydet` WRITE;
+/*!40000 ALTER TABLE `llx_deliverydet` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_deliverydet` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `llx_livraisondet_extrafields`
+-- Table structure for table `llx_deliverydet_extrafields`
 --
 
-DROP TABLE IF EXISTS `llx_livraisondet_extrafields`;
+DROP TABLE IF EXISTS `llx_deliverydet_extrafields`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `llx_livraisondet_extrafields` (
+CREATE TABLE `llx_deliverydet_extrafields` (
   `rowid` int(11) NOT NULL AUTO_INCREMENT,
   `tms` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `fk_object` int(11) NOT NULL,
   `import_key` varchar(14) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`rowid`),
-  KEY `idx_livraisondet_extrafields` (`fk_object`)
+  KEY `idx_deliverydet_extrafields` (`fk_object`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `llx_livraisondet_extrafields`
+-- Dumping data for table `llx_deliverydet_extrafields`
 --
 
-LOCK TABLES `llx_livraisondet_extrafields` WRITE;
-/*!40000 ALTER TABLE `llx_livraisondet_extrafields` DISABLE KEYS */;
-/*!40000 ALTER TABLE `llx_livraisondet_extrafields` ENABLE KEYS */;
+LOCK TABLES `llx_deliverydet_extrafields` WRITE;
+/*!40000 ALTER TABLE `llx_deliverydet_extrafields` DISABLE KEYS */;
+/*!40000 ALTER TABLE `llx_deliverydet_extrafields` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

@@ -22,9 +22,9 @@
  */
 
 /**
- *      \file       htdocs/admin/livraison_extrafields.php
- *		\ingroup    livraison
- *		\brief      Page to setup extra fields of livraison
+ *      \file       htdocs/admin/delivery_extrafields.php
+ *		\ingroup    delivery
+ *		\brief      Page to setup extra fields of delivery
  */
 
 require '../main.inc.php';
@@ -49,7 +49,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoenti
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'livraison'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'delivery'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 

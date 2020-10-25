@@ -287,7 +287,7 @@ if (empty($reshook))
 			dol_print_error($db, $object->error);
 	} elseif ($action == 'setdate_livraison' && $usercancreate)
 	{
-		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
+		$result = $object->set_delivery_date($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	} // Positionne ref client

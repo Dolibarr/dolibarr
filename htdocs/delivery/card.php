@@ -22,14 +22,14 @@
  */
 
 /**
- *	\file       htdocs/livraison/card.php
+ *	\file       htdocs/delivery/card.php
  *	\ingroup    livraison
  *	\brief      Page to describe a delivery receipt
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -57,9 +57,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 // Security check
 $id = GETPOST('id', 'int');
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+$result = restrictedArea($user, 'expedition', $id, 'delivery', 'livraison');
 
-$object = new Livraison($db);
+$object = new Delivery($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -126,8 +126,8 @@ if ($action == 'add')
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
-    || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
+    || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
 )
 {
 	$result = $object->valid($user);
@@ -151,7 +151,7 @@ if ($action == 'add')
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->livraison->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->delivery->supprimer)
 {
 	$db->begin();
 	$result = $object->delete();
@@ -167,10 +167,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->creer)
+if ($action == 'setdate_livraison' && $user->rights->expedition->delivery->creer)
 {
     $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-    $result = $object->set_date_livraison($user, $datedelivery);
+    $result = $object->set_delivery_date($user, $datedelivery);
     if ($result < 0)
     {
         $mesg = '<div class="error">'.$object->error.'</div>';
@@ -306,7 +306,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 
 			/*
-			 *   Livraison
+			 *   Delivery
 			 */
 
 			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled))
@@ -458,7 +458,7 @@ if ($action == 'create')    // Create. Seems to no be used
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
 		        print '<td><td class="right">';
-		        if ($user->rights->expedition->livraison->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        if ($user->rights->expedition->delivery->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
 		        print '</td>';
@@ -647,14 +647,14 @@ if ($action == 'create')    // Create. Seems to no be used
 
 				if ($object->statut == 0 && $num_prod > 0)
 				{
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
-						|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
+						|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 					}
 				}
 
-				if ($user->rights->expedition->livraison->supprimer)
+				if ($user->rights->expedition->delivery->supprimer)
 				{
 					if ($conf->expedition_bon->enabled)
 					{
@@ -678,10 +678,10 @@ if ($action == 'create')    // Create. Seems to no be used
 			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$genallowed = $user->rights->expedition->livraison->lire;
-			$delallowed = $user->rights->expedition->livraison->creer;
+			$genallowed = $user->rights->expedition->delivery->lire;
+			$delallowed = $user->rights->expedition->delivery->creer;
 
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

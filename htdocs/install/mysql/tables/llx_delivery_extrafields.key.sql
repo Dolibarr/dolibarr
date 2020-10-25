@@ -1,4 +1,4 @@
--- ========================================================================
+-- ===================================================================
 -- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -14,13 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===================================================================
 
-create table llx_livraison_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
 
+ALTER TABLE llx_delivery_extrafields ADD INDEX idx_delivery_extrafields (fk_object);

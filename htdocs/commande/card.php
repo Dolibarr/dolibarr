@@ -541,7 +541,7 @@ if (empty($reshook))
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
-	    $result = $object->set_date_livraison($user, $datedelivery);
+	    $result = $object->set_delivery_date($user, $datedelivery);
 	    if ($result < 0) {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
@@ -2556,7 +2556,7 @@ if ($action == 'create' && $usercancreate)
 					$numshipping = $object->nb_expedition();
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)) {
+						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->delivery_note->enabled && $user->rights->expedition->delivery->creer)) {
 							if ($user->rights->expedition->creer) {
 								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('CreateShipment').'</a>';
 							} else {

@@ -6898,7 +6898,7 @@ class Form
 					$tplpath = 'reception';
 					if (empty($conf->reception->enabled)) continue; // Do not show if module disabled
 				} elseif ($objecttype == 'delivery') {
-					$tplpath = 'livraison';
+					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) continue; // Do not show if module disabled
 				} elseif ($objecttype == 'invoice_supplier') {
 					$tplpath = 'fourn/facture';

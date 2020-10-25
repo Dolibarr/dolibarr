@@ -203,7 +203,7 @@ if (empty($reshook))
 	// date of delivery
 	if ($action == 'setdate_livraison' && $usercancreate)
 	{
-		$result = $object->set_date_livraison($user, $datelivraison);
+		$result = $object->set_delivery_date($user, $datelivraison);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -1199,7 +1199,7 @@ if (empty($reshook))
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
-							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$object->set_delivery_date($user, $srcobject->date_livraison);
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;

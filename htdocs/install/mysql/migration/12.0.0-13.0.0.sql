@@ -403,6 +403,7 @@ ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIM
 
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
+
 DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous'); 
 DELETE FROM llx_rights_def where module = 'holiday' and perms = 'lire_tous';
 
@@ -420,4 +421,62 @@ INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1)
 
 ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
+
+
+-- MIGRATION TO DO AFTER RENAMING AN OBJECT
+
+-- rename Table
+ALTER TABLE llx_livraison RENAME TO llx_delivery;
+ALTER TABLE llx_livraison_extrafields RENAME TO llx_delivery_extrafields;
+ALTER TABLE llx_livraisondet RENAME TO llx_deliverydet;
+ALTER TABLE llx_livraisondet_extrafields RENAME TO llx_deliverydet_extrafields;
+
+-- rename index
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_uk_ref;
+ALTER TABLE llx_delivery ADD UNIQUE INDEX idx_delivery_uk_ref (ref, entity);
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_soc;
+ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_soc (fk_soc);
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_author;
+ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_user_author (fk_user_author);
+ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_valid;
+ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_user_valid (fk_user_valid);
+
+-- drop constraint
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_soc;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_author;
+ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_valid;
+
+-- add constraint
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
+
+-- update llx_extrafields
+UPDATE llx_extrafields SET elementtype = 'delivery' WHERE elementtype = 'livraison';
+UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE elementtype = 'livraisondet';
+
+-- update llx_ecm_files
+UPDATE llx_ecm_files SET src_object_type = 'delivery' WHERE src_object_type = 'livraison';
+
+-- update llx_links
+UPDATE llx_links SET objecttype = 'delivery' WHERE objecttype = 'livraison';
+
+-- update llx_document_model
+UPDATE llx_document_model SET type = 'delivery' WHERE type = 'livraison';
+
+-- update llx_object_lang
+UPDATE llx_object_lang SET type_object = 'delivery' WHERE type_object = 'livraison';
+
+-- update llx_c_type_contact
+UPDATE llx_c_type_contact SET element = 'delivery' WHERE element = 'livraison';
+
+-- update llx_c_email_template
+UPDATE llx_c_email_template SET type_template = 'delivery' WHERE type_template = 'livraison';
+
+-- update llx_element_element
+UPDATE llx_element_element SET sourcetype = 'delivery' WHERE sourcetype = 'livraison';
+UPDATE llx_element_element SET targettype = 'delivery' WHERE targettype = 'livraison';
+
+-- update llx_actioncomm
+UPDATE llx_actioncomm SET element_type = 'delivery' WHERE element_type = 'livraison';
 

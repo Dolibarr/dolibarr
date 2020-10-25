@@ -91,8 +91,8 @@ delete from llx_commandedet where fk_commande in (select rowid from llx_commande
 delete from llx_commande where ref = '';
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');
 delete from llx_propal where ref = '';
-delete from llx_livraisondet where fk_livraison in (select rowid from llx_livraison where ref = '');
-delete from llx_livraison where ref = '';
+delete from llx_deliverydet where fk_delivery in (select rowid from llx_delivery where ref = '');
+delete from llx_delivery where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
@@ -187,8 +187,8 @@ delete from llx_categorie_project where fk_categorie not in (select rowid from l
 delete from llx_ecm_files where src_object_type = 'expensereport' and src_object_id NOT IN (select rowid from llx_expensereport);
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
-delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
-delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_deliverydet where fk_delivery not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_delivery not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_delivery    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 
 
 -- Fix delete element_element orphelins (right side)
