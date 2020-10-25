@@ -152,7 +152,7 @@ class DataPolicy
      * @param 	mixed		$contact		Contact
      * @return	void
      */
-    public function sendMailDataPolicyContact($contact)
+    public static function sendMailDataPolicyContact($contact)
     {
         global $langs, $conf, $db, $user;
 
@@ -227,7 +227,7 @@ class DataPolicy
      * @param Societe	$societe	Object societe
      * @return	void
      */
-    public function sendMailDataPolicyCompany($societe)
+    public static function sendMailDataPolicyCompany($societe)
     {
         global $langs, $conf, $db, $user;
 
@@ -266,10 +266,8 @@ class DataPolicy
 
         $actiontypecode = 'AC_EMAIL';
         $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-        if ($message)
-        {
-            if ($sendtocc)
-            {
+        if ($message) {
+            if ($sendtocc) {
                  $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
             }
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
@@ -302,7 +300,7 @@ class DataPolicy
      * @param Adherent	$adherent		Member
      * @return void
      */
-    public function sendMailDataPolicyAdherent($adherent)
+    public static function sendMailDataPolicyAdherent($adherent)
     {
         global $langs, $conf, $db, $user;
 
