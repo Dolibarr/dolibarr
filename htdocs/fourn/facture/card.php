@@ -2346,7 +2346,6 @@ else
 			}
 			else
 			{
-
 				$text = $langs->trans('ConfirmValidateBill', $numref);
 				/*if (! empty($conf->notification->enabled))
 				{
