@@ -51,7 +51,6 @@ function shipping_prepare_head($object)
 	{
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
-		var_dump($object->id);
 		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0)        // If there is a delivery
 		{
 		    // Take first one element of array
@@ -158,11 +157,21 @@ function delivery_prepare_head($object)
 		$tmpobject = $object;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$tmpobject->id;
-	$head[$h][1] = $langs->trans("ContactsAddresses");
-	$head[$h][2] = 'contact';
-	$h++;
-
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$objectsrc = $tmpobject;
+		if ($tmpobject->origin == 'commande' && $tmpobject->origin_id > 0)
+		{
+			$objectsrc = new Commande($db);
+			$objectsrc->fetch($tmpobject->origin_id);
+		}
+		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$tmpobject->id;
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
