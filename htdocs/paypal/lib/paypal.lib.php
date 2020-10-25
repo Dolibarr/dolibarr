@@ -477,7 +477,7 @@ function getDetails($token)
  *	@param	string	$ipaddress			IP Address
  *	@param	string	$FinalPaymentAmt	Amount
  *	@param	string	$tag				Full tag
- *	@return	void
+ *	@return	array
  */
 function confirmPayment($token, $paymentType, $currencyCodeType, $payerID, $ipaddress, $FinalPaymentAmt, $tag)
 {
@@ -657,8 +657,7 @@ function hash_call($methodName, $nvpStr)
     dol_syslog("Paypal API hash_call Response nvpresp=".$response);
     $nvpResArray = deformatNVP($response);
 
-    if (curl_errno($ch))
-    {
+    if (curl_errno($ch)) {
         // moving to display page to display curl errors
         $_SESSION['curl_error_no'] = curl_errno($ch);
         $_SESSION['curl_error_msg'] = curl_error($ch);
