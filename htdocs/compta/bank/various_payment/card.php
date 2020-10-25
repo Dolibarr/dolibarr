@@ -370,7 +370,7 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 2); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
