@@ -281,7 +281,7 @@ if ($action == 'creditnote')
 	$creditnote->remise_absolue = $invoice->remise_absolue;
 	$creditnote->remise_percent = $invoice->remise_percent;
 	$creditnote->create($user);
-	
+
 	foreach ($invoice->lines as $line)
 	{
 		// Extrafields
@@ -400,7 +400,7 @@ if ($action == 'creditnote')
 		}
 	}
 	$creditnote->update_price(1);
-	
+
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
