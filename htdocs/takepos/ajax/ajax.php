@@ -30,6 +30,7 @@ if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
 if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

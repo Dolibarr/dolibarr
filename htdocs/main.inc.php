@@ -1462,8 +1462,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '</script>'."\n";
             }
 
-            // Browser notifications
-            if (!defined('DISABLE_BROWSER_NOTIF'))
+            // Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).
+            if (!defined('NOBROWSERNOTIF') && !defined('NOREQUIREMENU') && !defined('NOLOGIN'))
             {
                 $enablebrowsernotif = false;
                 if (!empty($conf->agenda->enabled) && !empty($conf->global->AGENDA_REMINDER_BROWSER)) $enablebrowsernotif = true;
