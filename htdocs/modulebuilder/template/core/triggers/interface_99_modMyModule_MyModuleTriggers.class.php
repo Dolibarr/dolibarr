@@ -41,11 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceMyModuleTriggers extends DolibarrTriggers
 {
 	/**
-	 * @var DoliDB Database handler
-	 */
-	protected $db;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -106,7 +101,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		// For example : COMPANY_CREATE => public function companyCreate($action, $object, User $user, Translate $langs, Conf $conf)
 		$methodName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($action)))));
 		$callback = array($this, $methodName);
-		if (is_callable($callback)){
+		if (is_callable($callback)) {
 			dol_syslog(
 				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 			);

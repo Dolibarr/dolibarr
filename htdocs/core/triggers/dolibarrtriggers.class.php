@@ -70,8 +70,19 @@ abstract class DolibarrTriggers
 	 */
 	public $errors = array();
 
+	/**
+	 * @var string module is in development
+	 */
 	const VERSION_DEVELOPMENT = 'development';
+
+	/**
+	 * @var string module is experimental
+	 */
 	const VERSION_EXPERIMENTAL = 'experimental';
+
+	/**
+	 * @var string module is dolibarr ready
+	 */
 	const VERSION_DOLIBARR = 'dolibarr';
 
 	/**
@@ -84,8 +95,7 @@ abstract class DolibarrTriggers
 
 		$this->db = $db;
 
-		if (empty($this->name))
-		{
+		if (empty($this->name)) {
 			$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		}
 	}
