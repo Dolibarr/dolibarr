@@ -1510,11 +1510,25 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Set delivery date
 	 *
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
+	 */
+    public function set_date_livraison($user, $delivery_date, $notrigger = 0)
+	{
+		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
+	}
+
+	/**
+	 *	Set delivery date
+	 *
 	 *	@param      User 		$user        		Object user that modify
 	 *	@param      int			$delivery_date     Delivery date
 	 *	@return     int         					<0 if ko, >0 if ok
 	 */
-	public function set_delivery_date($user, $delivery_date)
+	public function setDeliveryDate($user, $delivery_date)
 	{
 		// phpcs:enable
 		if (!empty($user->rights->supplier_proposal->creer))
@@ -1529,7 +1543,7 @@ class SupplierProposal extends CommonObject
 				return 1;
 			} else {
 				$this->error = $this->db->error();
-				dol_syslog(get_class($this)."::set_delivery_date Erreur SQL");
+				dol_syslog(get_class($this)."::setDeliveryDate Erreur SQL");
 				return -1;
 			}
 		}

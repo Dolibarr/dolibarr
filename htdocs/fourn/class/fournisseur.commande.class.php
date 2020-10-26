@@ -2259,6 +2259,20 @@ class CommandeFournisseur extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *	Set delivery date
+	 *  
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
+	 */
+    public function set_date_livraison($user, $delivery_date, $notrigger = 0)
+	{
+		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
+	}
+
+	/**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet user making change
@@ -2266,7 +2280,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-	public function set_delivery_date($user, $delivery_date, $notrigger = 0)
+	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
 		// phpcs:enable
 		if ($user->rights->fournisseur->commande->creer)

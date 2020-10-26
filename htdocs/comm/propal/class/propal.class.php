@@ -2060,8 +2060,22 @@ class Propal extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *	Set delivery date
+	 *
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
+	 */
+    public function set_date_livraison($user, $delivery_date, $notrigger = 0)
+	{
+		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
+	}
+
+    /**
 	 *	Set delivery date
 	 *
 	 *	@param      User 	$user        		Object user that modify
@@ -2069,7 +2083,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if ko, >0 if ok
 	 */
-    public function set_delivery_date($user, $delivery_date, $notrigger = 0)
+    public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
         // phpcs:enable
 		if (!empty($user->rights->propal->creer))
