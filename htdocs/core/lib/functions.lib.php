@@ -3952,7 +3952,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
  *	@param	 	DoliDB          $db      	Database handler
- *	@param  	string|[string] $error		String or array of errors strings to show
+ *	@param  	string|string[] $error		String or array of errors strings to show
  *  @param		array           $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
@@ -6691,7 +6691,7 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	string|[string] $mesgs			Message string or array
+ *	@param	string|string[] $mesgs			Message string or array
  *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @return	void
  *  @see	dol_htmloutput_events()
