@@ -53,11 +53,12 @@ $arrayofjs = array(
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
-// we display application title instead Login term
-if (!empty($conf->global->MAIN_APPLICATION_TITLE))
+// We display application title instead Login term
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$titleofloginpage = $conf->global->MAIN_APPLICATION_TITLE;
-else
+} else {
 	$titleofloginpage = $langs->trans('Login');
+}
 $titleofloginpage.= ' @ '.$titletruedolibarrversion; // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
 $disablenofollow = 1;
