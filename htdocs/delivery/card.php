@@ -171,7 +171,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 if ($action == 'setdate_livraison' && $user->rights->expedition->delivery->creer)
 {
     $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-    $result = $object->set_delivery_date($user, $datedelivery);
+    $result = $object->setDeliveryDate($user, $datedelivery);
     if ($result < 0)
     {
         $mesg = '<div class="error">'.$object->error.'</div>';
