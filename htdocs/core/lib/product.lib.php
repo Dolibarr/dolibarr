@@ -364,7 +364,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
+		print '<a href="mo.php?id=' . $product->id . '">' . img_object('', 'mrp') . ' ' . $langs->trans("ManufacturingOrder") . '</a>';
 		print '</td><td class="right">';
 		print $product->stats_mo['suppliers'];
 		print '</td><td class="right">';
