@@ -287,7 +287,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * Function to try to calculate height of a HTML Content
  *
  * @param 	TCPDF     $pdf				PDF initialized object
- * @param 	string    $htmlcontent		HTML Contect
+ * @param 	string    $htmlcontent		HTML Content
  * @return 	int							Height
  * @see getStringHeight()
  */
