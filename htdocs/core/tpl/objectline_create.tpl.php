@@ -695,7 +695,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					'json'
 				);
 			}
-		<?php
+			<?php
 		}
 
 		if (!empty($usemargins) && $user->rights->margins->creer)
@@ -835,7 +835,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 				jQuery("#remise_percent").val(pbqpercent);
 			}
 		}
-		<?php
+			<?php
 		}
 		?>
 		//Deal with supplier
