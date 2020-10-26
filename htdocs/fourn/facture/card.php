@@ -2300,24 +2300,20 @@ if ($action == 'create')
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 		}
 
-		// Confirmation de la validation
+		// Confirmation of validation
 		if ($action == 'valid')
 		{
 			// We check if number is temporary number
-			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) // empty should not happened, but when it occurs, the test save life
-			{
+			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
 				$numref = $object->ref;
 			}
 
-			if ($numref < 0)
-			{
+			if ($numref < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
-			}
-			else
-			{
+			} else {
 				$text = $langs->trans('ConfirmValidateBill', $numref);
 				/*if (! empty($conf->notification->enabled))
 				 {
