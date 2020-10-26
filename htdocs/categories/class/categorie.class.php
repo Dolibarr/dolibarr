@@ -323,7 +323,7 @@ class Categorie extends CommonObject
 			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
 		} else {
 			$sql .= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
-			if (!is_null($type)) $sql .= " AND type = ".(int) $type;
+			if (!is_null($type)) $sql .= " AND type = ".((int) $type);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
