@@ -166,7 +166,7 @@ if (empty($reshook))
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
-		$supplier_description = GETPOST('supplier_description', 'alpha');
+		$supplier_description = GETPOST('supplier_description', 'restricthtml');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
 		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');

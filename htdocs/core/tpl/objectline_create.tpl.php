@@ -602,39 +602,39 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	});
 
 	$("#prod_entry_mode_free").on( "click", function() {
-	setforfree();
+		setforfree();
 	});
 	$("#select_type").change(function()
 	{
-	setforfree();
+		setforfree();
 	if (jQuery('#select_type').val() >= 0)
 	{
 	/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-	jQuery('#dp_desc').focus();
-	/* focus if CKEDITOR */
-	if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-	{
-	var editor = CKEDITOR.instances['dp_desc'];
-	if (editor) { editor.focus(); }
-	}
+		jQuery('#dp_desc').focus();
+		/* focus if CKEDITOR */
+		if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+		{
+			var editor = CKEDITOR.instances['dp_desc'];
+			if (editor) { editor.focus(); }
+		}
 	}
 	console.log("Hide/show date according to product type");
 	if (jQuery('#select_type').val() == '0')
 	{
-	jQuery('#trlinefordates').hide();
-	jQuery('.divlinefordates').hide();
+		jQuery('#trlinefordates').hide();
+		jQuery('.divlinefordates').hide();
 	}
 	else
 	{
-	jQuery('#trlinefordates').show();
-	jQuery('.divlinefordates').show();
+		jQuery('#trlinefordates').show();
+		jQuery('.divlinefordates').show();
 	}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
-	console.log("click prod_entry_mode_predef");
-	setforpredef();
-	jQuery('#trlinefordates').show();
+		console.log("click prod_entry_mode_predef");
+		setforpredef();
+		jQuery('#trlinefordates').show();
 	});
 
 	<?php
@@ -695,7 +695,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					'json'
 				);
 			}
-			<?php
+		<?php
 		}
 
 		if (!empty($usemargins) && $user->rights->margins->creer)
@@ -804,7 +804,10 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		}
 		?>
 
-		/* To process customer price per quantity (CUSTOMER_PRICE_PER_QTY works only if combo product is not an ajax after x key pressed) */
+		<?php
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		{?>
+		/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
 		var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
 		if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
 		var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
@@ -816,7 +819,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
 		if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
 
-		if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
+		if ((jQuery('#idprod').val() > 0) && ! isNaN(pbq) && pbq > 0)
 		{
 			var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
 
@@ -831,6 +834,48 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			{
 				jQuery("#remise_percent").val(pbqpercent);
 			}
+		}
+		<?php
+		}
+		?>
+		//Deal with supplier
+		if (jQuery('#idprodfournprice').val() >0)
+		{
+			var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
+			if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with autocomplete
+
+			var qty = parseFloat($('option:selected', this).attr('data-qty'));
+			if (isNaN(qty)) { qty = parseFloat(jQuery('#idprodfournprice').attr('data-qty'));}
+
+			var discount = parseFloat($('option:selected', this).attr('data-discount'));
+			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
+
+			var description = $('option:selected', this).attr('data-description');
+			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+			console.log("We find supplier price :"+up+" qty: "+qty+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
+
+			jQuery("#price_ht").val(up);
+			if (jQuery("#qty").val() < qty)
+			{
+				jQuery("#qty").val(qty);
+			}
+			if (jQuery("#remise_percent").val() < discount)
+			{
+				jQuery("#remise_percent").val(discount);
+			}
+
+			console.log("Load desciption into text area : "+description);
+		<?php if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+				if (editor) {
+				editor.setData(description);
+				}
+			}
+		<?php } else { ?>
+			jQuery('#dp_desc').text(description);
+		<?php } ?>
 		}
 		else
 		{

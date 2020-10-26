@@ -2737,6 +2737,12 @@ class Form
 		$sql .= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql .= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql .= " pfp.supplier_reputation";
+		// if we use supplier description of the products
+		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+			$sql .= " ,pfp.desc_fourn as description";
+		} else {
+			$sql .= " ,p.description";
+		}
 		// Units
 		if ($conf->global->PRODUCT_USE_UNITS) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
@@ -2766,7 +2772,11 @@ class Form
 			foreach ($scrit as $crit)
 			{
 				if ($i > 0) $sql .= " AND ";
-				$sql .= "(pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%' OR p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%')";
+				$sql .= "(pfp.ref_fourn LIKE '".$this->db->escape($prefix.$crit)."%' OR p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
+				if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+					$sql .= " OR pfp.desc_fourn LIKE '".$this->db->escape($prefix.$crit)."%'";
+				}
+				$sql .= ")";
 				$i++;
 			}
 			if (count($scrit) > 1) $sql .= ")";
@@ -2956,8 +2966,9 @@ class Form
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt .= ' disabled';
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
 				{
-					$opt .= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqup="'.$objp->unitprice.'" data-pbqpercent="'.$objp->remise_percent.'"';
+					$opt .= ' data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'"';
 				}
+				$opt .= ' data-description="'.dol_escape_htmltag($objp->description).'"';
 				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
 				$opt .= '>';
 
@@ -2971,7 +2982,20 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
-				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'up'=>$objp->unitprice, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
+				array_push($outarray,
+					array('key'=>$outkey,
+						'value'=>$outref,
+						'label'=>$outval,
+						'qty'=>$outqty,
+						'up'=>$objp->unitprice,
+						'discount'=>$outdiscount,
+						'type'=>$outtype,
+						'duration_value'=>$outdurationvalue,
+						'duration_unit'=>$outdurationunit,
+						'disabled'=>(empty($objp->idprodfournprice) ?true:false),
+						'description'=>$objp->description
+					)
+				);
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
