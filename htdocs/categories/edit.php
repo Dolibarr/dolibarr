@@ -34,7 +34,7 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
-$type = GETPOST('type', 'alphanohtml');
+$type = (int) GETPOST('type', 'int');
 $action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
@@ -43,11 +43,10 @@ $socid = GETPOST('socid', 'int');
 $label = GETPOST('label', 'alphanohtml');
 $description = GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', GETPOST('color', 'alphanohtml'));
-$visible = GETPOST('visible');
-$parent = GETPOST('parent');
+$visible = (int) GETPOST('visible', 'int');
+$parent = (int) GETPOST('parent', 'int');
 
-if ($id == "")
-{
+if ($id == "") {
 	dol_print_error('', 'Missing parameter id');
 	exit();
 }
@@ -56,8 +55,7 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-if ($id > 0)
-{
+if ($id > 0) {
     $result = $object->fetch($id);
 }
 
@@ -72,40 +70,32 @@ $hookmanager->initHooks(array('categorycard'));
  * Actions
  */
 
-if ($cancel)
-{
+if ($cancel) {
     header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
     exit;
 }
 
 // Action mise a jour d'une categorie
-if ($action == 'update' && $user->rights->categorie->creer)
-{
+if ($action == 'update' && $user->rights->categorie->creer) {
     $object->oldcopy = dol_clone($object);
 	$object->label          = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
 	$object->socid          = ($socid ? $socid : 'null');
 	$object->visible        = $visible;
-
-	if ($parent != "-1")
-		$object->fk_parent = $parent;
-	else $object->fk_parent = "";
+    $object->fk_parent = $parent != -1 ? $parent : 0;
 
 
-	if (empty($object->label))
-	{
+	if (empty($object->label)) {
 	    $error++;
 		$action = 'edit';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
-	if (!$error && empty($object->error))
-	{
+	if (!$error && empty($object->error)) {
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		if (!$error && $object->update($user) > 0)
-		{
+		if (!$error && $object->update($user) > 0) {
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
 			exit;
 		} else {
@@ -173,8 +163,7 @@ print '</td></tr>';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	print $object->showOptionals($extrafields, 'edit', $parameters);
 }
 
