@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
@@ -1589,6 +1589,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 		$logouttext = '';
+		$logouthtmltext = '';
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		{
 			//$logouthtmltext=$appli.'<br>';
