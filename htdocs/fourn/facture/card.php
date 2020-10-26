@@ -2304,7 +2304,8 @@ if ($action == 'create')
 		if ($action == 'valid')
 		{
 			// We check if number is temporary number
-			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
+			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) {
+                // empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
 				$numref = $object->ref;
