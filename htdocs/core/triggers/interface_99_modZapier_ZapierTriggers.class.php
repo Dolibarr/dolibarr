@@ -57,30 +57,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         $this->family = "technic";
         $this->description = "Zapier triggers.";
         // 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'development';
+        $this->version = self::VERSION_DEVELOPMENT;
         $this->picto = 'zapier';
     }
-
-    /**
-     * Trigger name
-     *
-     * @return string Name of trigger file
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Trigger description
-     *
-     * @return string Description of trigger file
-     */
-    public function getDesc()
-    {
-        return $this->description;
-    }
-
 
     /**
      * Function called when a Dolibarrr business event is done.
@@ -96,7 +75,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
      */
     public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
-        global $db;
         if (empty($conf->zapier->enabled)) {
             // Module not active, we do nothing
             return 0;
