@@ -1379,7 +1379,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			        $productCustomerPrice = $productCustomerPriceStatic->lines[0];
 
 			        if (! empty($productCustomerPrice->ref_customer)) {
-			            switch($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
+			            switch ($conf->global->PRODUIT_CUSTOMER_PRICES_PDF_REF_MODE) {
 			                case 1:
 			                    $ref_prodserv = $productCustomerPrice->ref_customer;
 			                    break;
