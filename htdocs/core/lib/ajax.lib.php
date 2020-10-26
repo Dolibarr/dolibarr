@@ -150,7 +150,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log(ui.item);
+							//console.log(ui.item);
 							//For supplier price
 							$("#'.$htmlname.'").attr("data-up", ui.item.up);
 							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
