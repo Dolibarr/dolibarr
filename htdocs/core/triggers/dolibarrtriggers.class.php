@@ -81,7 +81,7 @@ abstract class DolibarrTriggers
 	const VERSION_EXPERIMENTAL = 'experimental';
 
 	/**
-	 * @var string module is dolibarr
+	 * @var string module is dolibarr ready
 	 */
 	const VERSION_DOLIBARR = 'dolibarr';
 

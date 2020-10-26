@@ -32,11 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceLogevents extends DolibarrTriggers
 {
     /**
-     * @var DoliDB Database handler
-     */
-    protected $db;
-
-    /**
      * Constructor
      *
      * @param DoliDB $db Database handler
