@@ -57,7 +57,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 // Security check
 $id = GETPOST('id', 'int');
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'expedition', $id, 'delivery', 'livraison');
+$result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
 
 $object = new Delivery($db);
 $extrafields = new ExtraFields($db);
@@ -87,13 +87,14 @@ if ($action == 'add')
 	$db->begin();
 
 	$object->date_livraison   = time();
-	$object->note             = $_POST["note"];
-	$object->commande_id      = $_POST["commande_id"];
+	$object->note             = GETPOST("note", 'restricthtml');
+	$object->note_private     = GETPOST("note", 'restricthtml');
+	$object->commande_id      = GETPOST("commande_id", 'int');
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 
 	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled))
 	{
-		$expedition->entrepot_id = $_POST["entrepot_id"];
+		$expedition->entrepot_id = GETPOST('entrepot_id');
 	}
 
 	// On boucle sur chaque ligne de commande pour completer objet livraison
@@ -276,7 +277,6 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			$head = delivery_prepare_head($object);
 
-
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
@@ -364,7 +364,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			}
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br>';
+			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br><br class="small">';
 
 			dol_banner_tab($expedition, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
