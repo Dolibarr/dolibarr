@@ -7947,6 +7947,18 @@ abstract class CommonObject
 			}
 		}
 
+		// Delete llx_ecm_files
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				$error++;
+			}
+		}
+
 		if (!$error && !empty($this->isextrafieldmanaged))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";

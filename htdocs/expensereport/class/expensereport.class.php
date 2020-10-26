@@ -1106,30 +1106,47 @@ class ExpenseReport extends CommonObject
 
         if (!$rowid) $rowid = $this->id;
 
+        $error = 0;
+
+        // Delete lines
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
-        if ($this->db->query($sql))
+        if (!$error && !$this->db->query($sql))
         {
+        	$this->error = $this->db->error()." sql=".$sql;
+        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+        	$error++;
+        }
+
+        // Delete llx_ecm_files
+        if (!$error) {
+        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+        	$resql = $this->db->query($sql);
+        	if (!$resql)
+        	{
+        		$this->error = $this->db->lasterror();
+        		$this->errors[] = $this->error;
+        		$error++;
+        	}
+        }
+
+        // Delete main record
+        if (!$error) {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
             $resql = $this->db->query($sql);
-            if ($resql)
-            {
-                $this->db->commit();
-                return 1;
-            }
-            else
+            if (!$resql)
             {
                 $this->error = $this->db->error()." sql=".$sql;
                 dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-                $this->db->rollback();
-                return -6;
             }
         }
-        else
-        {
-            $this->error = $this->db->error()." sql=".$sql;
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -4;
+
+        // Commit or rollback
+        if ($error) {
+        	$this->db->rollback();
+        	return -1;
+        } else {
+        	$this->db->commit();
+        	return 1;
         }
     }
 
