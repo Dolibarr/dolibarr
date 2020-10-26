@@ -656,6 +656,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->datefin = $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
+	$memberstatic->email = $obj->email;
 	$memberstatic->morphy = $obj->morphy;
 	$memberstatic->note_public = $obj->note_public;
 	$memberstatic->note_private = $obj->note_private;
@@ -725,12 +726,10 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['d.morphy']['checked'])) {
 		print '<td class="center">';
 		$s = '';
-		if ($obj->morphy == 'phy')
-		{
+		if ($obj->morphy == 'phy') {
 			$s .= '<span class="customer-back" title="'.$langs->trans("Physical").'">'.dol_substr($langs->trans("Physical"), 0, 1).'</span>';
 		}
-		if ($obj->morphy == 'mor')
-		{
+		if ($obj->morphy == 'mor') {
 			$s .= '<span class="vendor-back" title="'.$langs->trans("Moral").'">'.dol_substr($langs->trans("Moral"), 0, 1).'</span>';
 		}
 		print $s;
