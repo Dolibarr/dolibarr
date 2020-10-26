@@ -999,8 +999,7 @@ class Delivery extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    /**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
@@ -1009,7 +1008,6 @@ class Delivery extends CommonObject
 	 */
     public function setDeliveryDate($user, $delivery_date)
 	{
-        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
