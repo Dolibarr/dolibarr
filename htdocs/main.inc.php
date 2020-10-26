@@ -1591,6 +1591,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 		$logouttext='';
+		$logouthtmltext = '';
 		if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		{
 			//$logouthtmltext=$appli.'<br>';
