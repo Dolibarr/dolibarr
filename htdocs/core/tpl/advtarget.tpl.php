@@ -312,14 +312,11 @@ print '<script type="text/javascript" language="javascript">
 						print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
 					} else {
-						print '<table class="nobordernopadding"><tr>';
-						print '<td></td><td>';
 						if (is_array($array_query['options_' . $key])) {
 							print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key]));
 						} else {
 							print $extrafields->showInputField($key, $array_query['options_' . $key]);
 						}
-						print '</td></tr></table>';
 
 						print '</td><td>' . "\n";
 					}
