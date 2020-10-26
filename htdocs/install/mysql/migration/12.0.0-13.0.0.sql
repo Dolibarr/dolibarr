@@ -423,6 +423,9 @@ ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
 
 
+ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
+ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
+
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
 -- drop constraint
