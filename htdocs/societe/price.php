@@ -461,6 +461,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Product").'</td>';
+			print '<td>' . $langs->trans('RefCustomer') . '</td>';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 			print '<td class="right">'.$langs->trans("VAT").'</td>';
@@ -478,6 +479,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				$staticprod->fetch($line->fk_product);
 
 				print "<td>".$staticprod->getNomUrl(1)."</td>";
+				print '<td>' . $line->ref_customer . '</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -547,6 +549,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<tr class="liste_titre">';
 		print '<td>' . $langs->trans("Ref") . '</td>';
 		print '<td>' . $langs->trans("Product") . '</td>';
+		print '<td>' . $langs->trans('RefCustomer') . '</td>';
 		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 		print '<td class="right">'.$langs->trans("VAT").'</td>';
@@ -563,7 +566,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
 			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="' . $search_label . '" size="20"></td>';
-			print '<td class="liste_titre" colspan="3">&nbsp;</td>';
+			print '<td class="liste_titre" colspan="4">&nbsp;</td>';
 			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price" value="' . $search_price . '" size="10"></td>';
 			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price_ttc" value="' . $search_price_ttc . '" size="10"></td>';
 			print '<td class="liste_titre" colspan="3">&nbsp;</td>';
@@ -586,6 +589,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				print "<td>".$staticprod->getNomUrl(1)."</td>";
 				print "<td>" . $staticprod->label ."</td>";
+				print '<td>' . $line->ref_customer .'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
@@ -623,7 +627,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print "</tr>\n";
 			}
 		} else {
-			$colspan = 9;
+			$colspan = 10;
 			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan += 1;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';
 		}

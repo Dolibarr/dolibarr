@@ -1854,6 +1854,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
+			print '<td>'.$langs->trans('RefCustomer').'</td>';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 			print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
@@ -1901,6 +1902,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td>' . $line->ref_customer . '</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				print '<td class="right">';
@@ -1969,7 +1971,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
-			$colspan = 8;
+			$colspan = 9;
 			//if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") $colspan++;
 
 			print '<tr class="liste_titre">';
@@ -1985,6 +1987,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
+		print '<td>' . $langs->trans('RefCustomer') . '</td>';
 		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 		print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
@@ -2023,8 +2026,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$total_ttc = $resultarray[2];
 
 		print '<tr class="oddeven">';
-		print "<td>".$langs->trans("Default")."</td>";
-		print "<td></td>";
+		print '<td colspan="3">' . $langs->trans('Default') . '</td>';
 
 		print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 		print '<td class="right">';
@@ -2102,6 +2104,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td>' . $line->ref_customer . '</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
