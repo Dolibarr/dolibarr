@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
-// Hook added by Payzen.
+// Hook to be used by external payment modules (ie Payzen, ...)
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
@@ -206,7 +206,7 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->strip
 // Initialize $validpaymentmethod
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
-// This hook is used to push to $validpaymentmethod the Payzen payment method as valid.
+// This hook is used to push to $validpaymentmethod by external payment modules (ie Payzen, ...)
 $parameters = [
 	'paymentmethod' => $paymentmethod,
 	'validpaymentmethod' => &$validpaymentmethod
@@ -1651,7 +1651,7 @@ if ($action != 'dopayment')
 {
 	if ($found && !$error)	// We are in a management option and no error
 	{
-		// Check status of the object (Invoice) to verify if it is paid in Payzen.
+		// Check status of the object (Invoice) to verify if it is paid by external payment modules (ie Payzen, ...)
 		$parameters = [
 			'source' => $source,
 			'object' => $object
@@ -1677,7 +1677,7 @@ if ($action != 'dopayment')
 
 			// Buttons for all payments registration methods
 
-			// This hook is used to add Payzen Button to newpayment.php.
+		    // This hook is used to add Button to newpayment.php for external payment modules (ie Payzen, ...)
             $parameters = [
             	'paymentmethod' => $paymentmethod
             ];
@@ -2270,7 +2270,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		print '</script>';
 		}
 	}
-	// This hook is used to show the embedded form to make payments with Payzen.
+	// This hook is used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
     $parameters = [
     	'paymentmethod' => $paymentmethod,
     	'amount' => price2num(GETPOST("newamount"), 'MT'),
