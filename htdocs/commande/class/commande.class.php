@@ -2557,7 +2557,7 @@ class Commande extends CommonOrder
 	 *	@return     int         				<0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
-    public function set_date_livraison($user, $delivery_date, $notrigger = 0)
+	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
 	{
 		// phpcs:enable
 		return $this->setDeliveryDate($user, $delivery_date, $notrigger);

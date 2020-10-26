@@ -1515,7 +1515,7 @@ class SupplierProposal extends CommonObject
 	 *	@return     int         				<0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
-    public function set_date_livraison($user, $delivery_date)
+	public function set_date_livraison($user, $delivery_date)
 	{
 		// phpcs:enable
 		return $this->setDeliveryDate($user, $delivery_date);
