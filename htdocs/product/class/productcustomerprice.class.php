@@ -217,6 +217,13 @@ class Productcustomerprice extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_customer_price");
+
+			if (!$notrigger) {
+			    $result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_CREATE', $user);
+			    if ($result < 0) {
+			        $error++;
+			    }
+			}
 		}
 
 		if (!$error) {
@@ -833,6 +840,13 @@ class Productcustomerprice extends CommonObject
 		$error = 0;
 
 		$this->db->begin();
+
+		if (!$error && !$notrigger) {
+		    $result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_DELETE', $user);
+		    if ($result < 0) {
+		        $error++;
+		    }
+		}
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_customer_price";
