@@ -75,7 +75,7 @@ print '<script type="text/javascript" language="javascript">
 		print '<input type="button" name="savefilter" id="savefilter" value="' . $langs->trans('AdvTgtSaveFilter') . '" class="butAction"/>';
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
-		
+
 		print '<tr><td>' . $langs->trans('AdvTgtOrCreateNewFilter') . '</td><td>';
 		print '<input type="text" name="template_name" id="template_name" value=""/>';
 		print '<input type="button" name="createfilter" id="createfilter" value="' . $langs->trans('AdvTgtCreateFilter') . '" class="butAction"/>';
@@ -312,14 +312,11 @@ print '<script type="text/javascript" language="javascript">
 						print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
 					} else {
-						print '<table class="nobordernopadding"><tr>';
-						print '<td></td><td>';
 						if (is_array($array_query['options_' . $key])) {
 							print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key]));
 						} else {
 							print $extrafields->showInputField($key, $array_query['options_' . $key]);
 						}
-						print '</td></tr></table>';
 
 						print '</td><td>' . "\n";
 					}
@@ -512,16 +509,11 @@ print '<script type="text/javascript" language="javascript">
 					print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
 					print '</td><td>' . "\n";
 				} else {
-
-					print '<table class="nobordernopadding"><tr>';
-					print '<td></td><td>';
 					if (is_array($array_query['options_' . $key . '_cnct'])) {
 						print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key . '_cnct']), '', '_cnct');
 					} else {
 						print $extrafields->showInputField($key, $array_query['options_' . $key . '_cnct'], '', '_cnct');
 					}
-					print '</td></tr></table>';
-
 					print '</td><td>' . "\n";
 				}
 				print '</td></tr>' . "\n";
