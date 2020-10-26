@@ -499,6 +499,7 @@ if (empty($reshook))
 
 		// add price by customer
 		$prodcustprice->fk_soc = GETPOST('socid', 'int');
+		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
 		$prodcustprice->fk_product = $object->id;
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
@@ -600,6 +601,7 @@ if (empty($reshook))
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		// update price by customer
+		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
@@ -1662,6 +1664,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td>';
 		print '</tr>';
 
+		// Ref. Customer
+		print '<tr><td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<td><input name="ref_customer" size="12"></td></tr>';
+
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
@@ -1747,6 +1753,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$staticsoc->fetch($prodcustprice->fk_soc);
 		print "<td colspan='2'>".$staticsoc->getNomUrl(1)."</td>";
 		print '</tr>';
+
+		// Ref. Customer
+		print '<tr><td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
 
 		// VAT
 		print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td colspan="2">';
