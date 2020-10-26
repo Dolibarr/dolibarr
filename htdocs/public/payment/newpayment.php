@@ -50,6 +50,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+// Hook added by Payzen.
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('newpayment'));
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -202,6 +206,12 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->strip
 // Initialize $validpaymentmethod
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
+// This hook is used to push to $validpaymentmethod the Payzen payment method as valid.
+$parameters = [
+	'paymentmethod' => $paymentmethod,
+	'validpaymentmethod' => &$validpaymentmethod
+];
+$reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
 
 // Check security token
 $valid = true;
@@ -1641,6 +1651,12 @@ if ($action != 'dopayment')
 {
 	if ($found && !$error)	// We are in a management option and no error
 	{
+		// Check status of the object (Invoice) to verify if it is paid in Payzen.
+		$parameters = [
+			'source' => $source,
+			'object' => $object
+		];
+		$reshook = $hookmanager->executeHooks('doCheckStatus', $parameters, $object, $action);
 		if ($source == 'order' && $object->billed)
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("OrderBilled").'</span>';
@@ -1661,6 +1677,11 @@ if ($action != 'dopayment')
 
 			// Buttons for all payments registration methods
 
+			// This hook is used to add Payzen Button to newpayment.php.
+            $parameters = [
+            	'paymentmethod' => $paymentmethod
+            ];
+            $reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 			{
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
@@ -2249,6 +2270,14 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		print '</script>';
 		}
 	}
+	// This hook is used to show the embedded form to make payments with Payzen.
+    $parameters = [
+    	'paymentmethod' => $paymentmethod,
+    	'amount' => price2num(GETPOST("newamount"), 'MT'),
+    	'tag' => GETPOST("tag", 'alpha'),
+    	'dopayment' => GETPOST('dopayment', 'alpha')
+    ];
+    $reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
 }
 
 
