@@ -1517,6 +1517,7 @@ class SupplierProposal extends CommonObject
 	 */
     public function set_date_livraison($user, $delivery_date)
 	{
+		// phpcs:enable
 		return $this->setDeliveryDate($user, $delivery_date);
 	}
 
@@ -1529,7 +1530,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-		// phpcs:enable
 		if (!empty($user->rights->supplier_proposal->creer))
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";

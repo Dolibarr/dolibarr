@@ -1968,6 +1968,7 @@ class Expedition extends CommonObject
 	 */
     public function set_date_livraison($user, $delivery_date)
 	{
+		// phpcs:enable
 		return $this->setDeliveryDate($user, $delivery_date);
 	}
 
@@ -1980,7 +1981,6 @@ class Expedition extends CommonObject
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
-        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";

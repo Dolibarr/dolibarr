@@ -2559,6 +2559,7 @@ class Commande extends CommonOrder
 	 */
     public function set_date_livraison($user, $delivery_date, $notrigger = 0)
 	{
+		// phpcs:enable
 		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
 	}
 
@@ -2572,7 +2573,6 @@ class Commande extends CommonOrder
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		// phpcs:enable
 		if ($user->rights->commande->creer)
 		{
 			$error = 0;

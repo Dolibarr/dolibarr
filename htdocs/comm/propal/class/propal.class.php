@@ -2072,6 +2072,7 @@ class Propal extends CommonObject
 	 */
     public function set_date_livraison($user, $delivery_date, $notrigger = 0)
 	{
+		// phpcs:enable
 		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
 	}
 
@@ -2085,7 +2086,6 @@ class Propal extends CommonObject
 	 */
     public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-        // phpcs:enable
 		if (!empty($user->rights->propal->creer))
 		{
 			$error = 0;
