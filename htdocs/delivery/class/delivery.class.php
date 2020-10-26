@@ -67,8 +67,19 @@ class Delivery extends CommonObject
 	 */
 	public $picto = 'sending';
 
-	public $draft;
-	public $socid;
+    /**
+     * @var int draft status
+     */
+    public $draft;
+
+    /**
+     * @var int thirdparty id
+     */
+    public $socid;
+
+    /**
+     * @var string ref custome
+     */
 	public $ref_customer;
 
 	/**
@@ -86,7 +97,9 @@ class Delivery extends CommonObject
 	 */
 	public $date_valid;
 
-
+    /**
+     * @var string model pdf
+     */
 	public $model_pdf;
 
 
