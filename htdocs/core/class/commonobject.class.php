@@ -2785,9 +2785,9 @@ abstract class CommonObject
 	 */
 	public function line_max($fk_parent_line = 0)
 	{
-		// phpcs:enable
-		$positionfield = 'rang';
-		if ($this->table_element == 'bom') $positionfield = 'position';
+        // phpcs:enable
+        $positionfield = 'rang';
+		if ($this->table_element == 'bom_bom') $positionfield = 'position';
 
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
