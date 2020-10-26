@@ -1,5 +1,5 @@
 Mrp=Comandes de Fabricació
-MO=Comanda de fabricació
+ManufacturingOrder=Comanda de fabricació
 MRPDescription=Mòdul per gestionar ordres de producció i fabricació (MO).
 MRPArea=Àrea MRP
 MrpSetupPage=Configuració del mòdul MRP
