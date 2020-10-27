@@ -2150,7 +2150,9 @@ class Form
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
 			$sql .= ", pl.label as label_translated";
+			$sql .= ", pl.description as description_translated";
 			$selectFields .= ", label_translated";
+			$selectFields .= ", description_translated";
 		}
 		// Price by quantity
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
@@ -2190,7 +2192,18 @@ class Form
 		// Multilang : we add translation
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid ";
+			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
+				$soc = new Societe($db);
+				$result = $soc->fetch($socid);
+				if ($result > 0 && !empty($soc->default_lang)) {
+					$sql .= " AND pl.lang='" . $this->db->escape($soc->default_lang) . "'";
+				} else {
+					$sql .= " AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+				}
+			} else {
+				$sql .= " AND pl.lang='".$this->db->escape($langs->getDefaultLang())."'";
+			}
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -2403,7 +2416,9 @@ class Form
 		$outval = '';
 		$outref = '';
 		$outlabel = '';
+		$outlabel_translated = '';
 		$outdesc = '';
+		$outdesc_translated = '';
 		$outbarcode = '';
 		$outorigin = '';
 		$outtype = '';
@@ -2424,6 +2439,11 @@ class Form
 		$outref = $objp->ref;
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
+		if (!empty($conf->global->MAIN_MULTILANGS))
+		{
+			$outlabel_translated = $objp->label_translated;
+			$outdesc_translated = $objp->description_translated;
+		}
 		$outbarcode = $objp->barcode;
 		$outorigin = $objp->fk_country;
 		$outpbq = empty($objp->price_by_qty_rowid) ? '' : $objp->price_by_qty_rowid;
@@ -2484,6 +2504,10 @@ class Form
 				if ($objp->stock > 0) $opt .= ' class="product_line_stock_ok"';
 		   		elseif ($objp->stock <= 0) $opt .= ' class="product_line_stock_too_low"';
 			}
+		}
+		if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			$opt .= ' data-labeltrans="'.$outlabel_translated.'"';
+			$opt .= ' data-desctrans="'.dol_escape_htmltag($outdesc_translated).'"';
 		}
 		$opt .= '>';
 		$opt .= $objp->ref;
@@ -2655,7 +2679,24 @@ class Form
 		}
 
 		$opt .= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>price2num($outprice_ht), 'price_ttc'=>price2num($outprice_ttc), 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'pbq'=>$outpbq);
+		$optJson = array(
+			'key'=>$outkey,
+			'value'=>$outref,
+			'label'=>$outval,
+			'label2'=>$outlabel,
+			'desc'=>$outdesc,
+			'type'=>$outtype,
+			'price_ht'=>price2num($outprice_ht),
+			'price_ttc'=>price2num($outprice_ttc),
+			'pricebasetype'=>$outpricebasetype,
+			'tva_tx'=>$outtva_tx, 'qty'=>$outqty,
+			'discount'=>$outdiscount,
+			'duration_value'=>$outdurationvalue,
+			'duration_unit'=>$outdurationunit,
+			'pbq'=>$outpbq,
+			'labeltrans'=>$outlabel_translated,
+			'desctrans'=>$outdesc_translated
+		);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
