@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
-$langs->load("bills");
+$langs->loadLangs(array("bills", "banks"));
 
 $id = GETPOST('id', 'int');
 
