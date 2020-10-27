@@ -18,11 +18,13 @@
 
 /**
  *	\file			htdocs/core/lib/geturl.lib.php
- *	\brief			This file contains functions dedicated to get URL.
+ *	\brief			This file contains functions dedicated to get URLs.
  */
 
 /**
- * Function to get a content from an URL (use proxy if proxy defined)
+ * Function to get a content from an URL (use proxy if proxy defined).
+ * Support Dolibarr setup for timeout and proxy.
+ * Enhancement of CURL to add an anti SSRF protection.
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
@@ -125,6 +127,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     $newUrl = $url;
     $maxRedirection = 5;
     $info = array();
+    $response = '';
 
     do
     {
@@ -132,8 +135,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	    curl_setopt($ch, CURLOPT_URL, $newUrl);
 
-	    // TODO Test for $localurl on $newUrl
-	    // Parse $newUrl, check server address, then set parsed value with CURLOPT_CONNECT_TO
+	    // Parse $newUrl
+		$newUrlArray = parse_url($newUrl);
+		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck);	// Remove brackets of IPv6
+
+		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
+			$iptocheck = '127.0.0.1';
+		} else {
+			// TODO Resolve $iptocheck to get an IP and set CURLOPT_CONNECT_TO to use this ip
+			$iptocheck = $hosttocheck;
+		}
+
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
+			$iptocheck = 0;	//
+		}
+
+		if ($iptocheck) {
+			if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
+				if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
+					break;
+				}
+				if (in_array($iptocheck, array('100.100.100.200'))) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
+					break;
+				}
+			}
+			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname. Must be a local URL.';
+					break;
+				}
+			}
+    	}
 
 	    // Getting response from server
 	    $response = curl_exec($ch);
