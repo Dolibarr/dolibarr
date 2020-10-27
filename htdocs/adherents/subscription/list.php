@@ -142,6 +142,7 @@ $now = dol_now();
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut,";
+$sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql .= " c.fk_bank as bank, c.note,";
@@ -151,8 +152,7 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-if (isset($date_select) && $date_select != '')
-{
+if (isset($date_select) && $date_select != '') {
     $sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
     $sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
 }
@@ -403,6 +403,9 @@ while ($i < min($num, $limit)) {
 	$adherent->statut = $obj->statut;
 	$adherent->login = $obj->login;
 	$adherent->photo = $obj->photo;
+	$adherent->gender = $obj->gender;
+	$adherent->morphy = $obj->morphy;
+	$adherent->email = $obj->email;
 	$adherent->typeid = $obj->type;
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);

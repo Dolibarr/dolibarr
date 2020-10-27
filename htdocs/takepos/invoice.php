@@ -271,6 +271,154 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	}
 }
 
+if ($action == 'creditnote')
+{
+	$creditnote = new Facture($db);
+	$creditnote->socid = $invoice->socid;
+	$creditnote->date = dol_now();
+	$creditnote->type = Facture::TYPE_CREDIT_NOTE;
+	$creditnote->fk_facture_source = $placeid;
+	$creditnote->remise_absolue = $invoice->remise_absolue;
+	$creditnote->remise_percent = $invoice->remise_percent;
+	$creditnote->create($user);
+
+	foreach ($invoice->lines as $line)
+	{
+		// Extrafields
+		if (method_exists($line, 'fetch_optionals')) {
+			// load extrafields
+			$line->fetch_optionals();
+		}
+		// Reset fk_parent_line for no child products and special product
+		if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+			$fk_parent_line = 0;
+		}
+		if ($invoice->type == Facture::TYPE_SITUATION)
+		{
+			$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
+			$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+			if (!empty($invoice->tab_previous_situation_invoice))
+			{
+				// search the last standard invoice in cycle and the possible credit note between this last and invoice
+				// TODO Move this out of loop of $invoice->lines
+				$tab_jumped_credit_notes = array();
+				$lineIndex = count($invoice->tab_previous_situation_invoice) - 1;
+				$searchPreviousInvoice = true;
+				while ($searchPreviousInvoice)
+				{
+					if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1)
+					{
+						$searchPreviousInvoice = false; // find, exit;
+						break;
+					} else {
+						if ($invoice->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
+							$tab_jumped_credit_notes[$lineIndex] = $invoice->tab_previous_situation_invoice[$lineIndex]->id;
+						}
+						$lineIndex--; // go to previous invoice in cycle
+					}
+				}
+
+				$maxPrevSituationPercent = 0;
+				foreach ($invoice->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
+				{
+					if ($prevLine->id == $source_fk_prev_id)
+					{
+						$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
+
+						//$line->subprice  = $line->subprice - $prevLine->subprice;
+						$line->total_ht  = $line->total_ht - $prevLine->total_ht;
+						$line->total_tva = $line->total_tva - $prevLine->total_tva;
+						$line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
+						$line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
+						$line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+
+						$line->multicurrency_subprice  = $line->multicurrency_subprice - $prevLine->multicurrency_subprice;
+						$line->multicurrency_total_ht  = $line->multicurrency_total_ht - $prevLine->multicurrency_total_ht;
+						$line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
+						$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+					}
+				}
+
+				// prorata
+				$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+				//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+
+				// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
+				$maxPrevSituationPercent = 0;
+				foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
+					foreach ($invoice->tab_previous_situation_invoice[$index]->lines as $prevLine)
+					{
+						if ($prevLine->fk_prev_id == $source_fk_prev_id)
+						{
+							$maxPrevSituationPercent = $prevLine->situation_percent;
+
+							$line->total_ht  -= $prevLine->total_ht;
+							$line->total_tva -= $prevLine->total_tva;
+							$line->total_ttc -= $prevLine->total_ttc;
+							$line->total_localtax1 -= $prevLine->total_localtax1;
+							$line->total_localtax2 -= $prevLine->total_localtax2;
+
+							$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+							$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+							$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+							$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+						}
+					}
+				}
+
+				// prorata
+				$line->situation_percent += $maxPrevSituationPercent;
+
+				//print 'New line based on invoice id '.$invoice->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+			}
+		}
+
+		$line->fk_facture = $creditnote->id;
+		$line->fk_parent_line = $fk_parent_line;
+
+		$line->subprice = -$line->subprice; // invert price for object
+		$line->pa_ht = $line->pa_ht; // we choosed to have buy/cost price always positive, so no revert of sign here
+		$line->total_ht = -$line->total_ht;
+		$line->total_tva = -$line->total_tva;
+		$line->total_ttc = -$line->total_ttc;
+		$line->total_localtax1 = -$line->total_localtax1;
+		$line->total_localtax2 = -$line->total_localtax2;
+
+		$line->multicurrency_subprice = -$line->multicurrency_subprice;
+		$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+		$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+		$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
+
+		$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
+
+		$creditnote->lines[] = $line; // insert new line in current object
+
+		// Defined the new fk_parent_line
+		if ($result > 0 && $line->product_type == 9) {
+			$fk_parent_line = $result;
+		}
+	}
+	$creditnote->update_price(1);
+
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
+		$batch_rule = 0;
+		if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+			$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
+		}
+		$res = $creditnote->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
+		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+	} else {
+		$res = $creditnote->validate($user);
+	}
+}
+
 if ($action == 'history')
 {
 	$placeid = (int) GETPOST('placeid', 'int');
@@ -785,6 +933,11 @@ function DolibarrTakeposPrinting(id) {
     });
 }
 
+function CreditNote() {
+	$("#poslines").load("invoice.php?action=creditnote&invoiceid="+placeid, function() {
+	});
+}
+
 
 $( document ).ready(function() {
 	console.log("Set customer info and sales in header");
@@ -1161,6 +1314,10 @@ if ($placeid > 0)
 }
 
 print '</table>';
+
+if ($action == "valid" || $action == "history"){
+	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
+}
 
 
 if ($action == "search")

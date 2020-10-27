@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2017-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceZapierTriggers extends DolibarrTriggers
 {
-    /**
-     * @var DoliDB Database handler
-     */
-    protected $db;
-
     /**
      * Constructor
      *
