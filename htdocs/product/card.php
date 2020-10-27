@@ -1386,7 +1386,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -1771,7 +1771,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			}
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -2169,7 +2169,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</div></div>';
 			print '<div style="clear:both"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	} elseif ($action != 'create')
 	{
@@ -2384,7 +2384,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '</form>';
 	}

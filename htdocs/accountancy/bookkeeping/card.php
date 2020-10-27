@@ -386,7 +386,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -573,7 +573,7 @@ if ($action == 'create')
 
 		print '</div></div><!-ee-->';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div style="clear:both"></div>';
 
@@ -719,7 +719,7 @@ if ($action == 'create')
 	}
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

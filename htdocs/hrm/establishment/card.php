@@ -241,7 +241,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -324,7 +324,7 @@ if (($id || $ref) && $action == 'edit')
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -418,7 +418,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div><br>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
      * Barre d'actions

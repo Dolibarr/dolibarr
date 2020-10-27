@@ -629,7 +629,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			print "</table>\n";
 
-            dol_fiche_end();
+            print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
 			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';

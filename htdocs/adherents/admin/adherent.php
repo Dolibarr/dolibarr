@@ -246,7 +246,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
 form_constantes($constantes, 0, $helptext);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

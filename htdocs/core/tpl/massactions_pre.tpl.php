@@ -160,7 +160,7 @@ if ($massaction == 'presend')
 		print $formmail->get_form();
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(

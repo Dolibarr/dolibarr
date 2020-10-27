@@ -547,7 +547,7 @@ if ($mode == 'searchkey')
 	print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print "</form>\n";
 

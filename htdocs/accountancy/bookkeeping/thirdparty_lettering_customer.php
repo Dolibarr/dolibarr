@@ -141,7 +141,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_value
 
 dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";

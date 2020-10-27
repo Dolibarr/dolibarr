@@ -555,7 +555,7 @@ if ($rowid > 0) {
 	print "</div></div></div>\n";
     print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '</form>';
 
@@ -1020,7 +1020,7 @@ if ($rowid > 0) {
         print '</tbody>';
         print '</table>';
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
 
         print '<div class="center">';
         print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';

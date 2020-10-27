@@ -223,7 +223,7 @@ if ($mode == 'setup' && $user->admin)
 
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     if (!empty($driver))
     {
@@ -284,7 +284,7 @@ if ($mode == 'config' && $user->admin)
 
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 if ($mode == 'test' && $user->admin)
@@ -322,7 +322,7 @@ if ($mode == 'test' && $user->admin)
     }
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 if ($mode == 'userconf' && $user->admin)
@@ -358,7 +358,7 @@ if ($mode == 'userconf' && $user->admin)
     }
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

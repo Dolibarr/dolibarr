@@ -166,7 +166,7 @@ if (!empty($id))
 	print $langs->trans("AllAccounts");
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Affiche tableau

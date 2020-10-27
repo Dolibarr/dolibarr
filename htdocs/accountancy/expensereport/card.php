@@ -146,7 +146,7 @@ if (!empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';

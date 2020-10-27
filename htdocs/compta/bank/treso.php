@@ -96,7 +96,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
     print '<br>';
 

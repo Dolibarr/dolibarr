@@ -132,7 +132,7 @@ if ($result && (!empty($id) || !empty($ref))) {
 
     dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 if (empty($id) && empty($ref)) {
     $h = 0;
@@ -411,7 +411,7 @@ if ($result || empty($id)) {
 }
 
 if (!$id) {
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

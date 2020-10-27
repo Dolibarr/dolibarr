@@ -89,7 +89,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	</table>
 
 <?php
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 

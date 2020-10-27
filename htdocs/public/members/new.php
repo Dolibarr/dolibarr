@@ -676,7 +676,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 }
 print "</table>\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // Save
 print '<div class="center">';

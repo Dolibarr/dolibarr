@@ -201,7 +201,7 @@ if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY
 {
 	if (!empty($aCurrencies) && count($aCurrencies) > 1)
 	{
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 }
 

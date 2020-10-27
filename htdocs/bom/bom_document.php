@@ -130,7 +130,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'bom';
 	$permission = $user->rights->bom->write;

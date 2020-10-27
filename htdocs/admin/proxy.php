@@ -197,7 +197,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';

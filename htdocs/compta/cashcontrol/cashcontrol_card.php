@@ -660,7 +660,7 @@ if (empty($action) || $action == "view" || $action == "close")
 	    print '</div></div>';
 	    print '<div style="clear:both"></div>';
 
-	    dol_fiche_end();
+	    print dol_get_fiche_end();
 
 	    if ($action != 'close') {
 			print '<div class="tabsAction">';

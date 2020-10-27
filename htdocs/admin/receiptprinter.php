@@ -354,7 +354,7 @@ if ($mode == 'config' && $user->admin) {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</form>';
 
@@ -460,7 +460,7 @@ if ($mode == 'template' && $user->admin) {
 	}
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

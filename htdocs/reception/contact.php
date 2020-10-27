@@ -252,7 +252,7 @@ if ($id > 0 || !empty($ref))
 	print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Lines of contacts
 	echo '<br>';

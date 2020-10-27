@@ -433,7 +433,7 @@ if ($id > 0 || $ref)
             print '</div>';
             print '<div style="clear:both"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			// Form to add or update a price
@@ -825,7 +825,7 @@ SCRIPT;
 
 				print '</table>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<div class="center">';
 				print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';

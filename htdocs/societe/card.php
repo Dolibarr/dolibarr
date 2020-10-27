@@ -1537,7 +1537,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         print '</table>'."\n";
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
 
         print '<div class="center">';
         print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
@@ -2182,7 +2182,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             print '</table>';
             print '</div>';
 
-	          dol_fiche_end();
+	          print dol_get_fiche_end();
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -2599,7 +2599,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/*

@@ -373,7 +373,7 @@ if ($step == 1 || !$datatoimport)
 	print '</table>';
     print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 
@@ -417,7 +417,7 @@ if ($step == 2 && $datatoimport)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
@@ -526,7 +526,7 @@ if ($step == 3 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	if ($format == 'xlsx' && !class_exists('XMLWriter')) {
@@ -837,7 +837,7 @@ if ($step == 4 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>'."\n";
 
@@ -1421,7 +1421,7 @@ if ($step == 5 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 
     if ($action != 'launchsimu')
@@ -1879,7 +1879,7 @@ if ($step == 6 && $datatoimport)
 	    else $db->rollback();
 	}
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 
 	// Show result

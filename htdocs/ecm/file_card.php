@@ -388,7 +388,7 @@ print '</div>';
 print ajax_autoselect('downloadinternallink');
 print ajax_autoselect('downloadlink');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if ($action == 'edit')
 {

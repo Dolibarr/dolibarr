@@ -506,7 +506,7 @@ if ($action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br><div class="center">';
 	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
@@ -737,7 +737,7 @@ if ($action == 'edit')
 		print '</table>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Actions button
@@ -892,7 +892,7 @@ if ($action == 'edit')
 
 		print $formmail->get_form('addfile', 'removefile');
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// References
 		print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';

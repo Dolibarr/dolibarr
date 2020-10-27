@@ -265,7 +265,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
@@ -340,7 +340,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '<div class="clearboth"></div><br>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 

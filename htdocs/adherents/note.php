@@ -112,7 +112,7 @@ if ($id) {
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

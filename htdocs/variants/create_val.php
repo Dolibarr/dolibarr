@@ -106,7 +106,7 @@ print '<div class="underbanner clearboth"></div>';
 <?php
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 
@@ -134,7 +134,7 @@ print dol_get_fiche_head();
 	</table>
 <?php
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';

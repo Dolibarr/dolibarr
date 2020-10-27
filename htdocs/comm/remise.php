@@ -121,7 +121,7 @@ if ($socid > 0)
     if (!$isCustomer && !$isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
-    	dol_fiche_end();
+    	print dol_get_fiche_end();
 
     	print '</form>';
 
@@ -189,7 +189,7 @@ if ($socid > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

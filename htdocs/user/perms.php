@@ -458,7 +458,7 @@ $reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object,
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

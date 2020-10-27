@@ -187,7 +187,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -248,7 +248,7 @@ if ($action == 'create')
 
 			print '</form>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} else {
 			/*
 			 * Confirm delete
@@ -296,7 +296,7 @@ if ($action == 'create')
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			if (!empty($user->rights->accounting->fiscalyear->write))
 			{

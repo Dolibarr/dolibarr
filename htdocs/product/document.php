@@ -234,7 +234,7 @@ if ($object->id)
     print '</div>';
     print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

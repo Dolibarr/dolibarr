@@ -762,7 +762,7 @@ if ($account)
 	print $langs->trans("AllAccounts");
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 print '<table class="notopnoleftnoright" width="100%">';

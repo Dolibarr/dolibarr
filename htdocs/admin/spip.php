@@ -146,7 +146,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
 
 	form_constantes($constantes, 2);
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
@@ -160,7 +160,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
     $link .= '</a>';
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

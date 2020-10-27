@@ -63,7 +63,7 @@ if ($socid > 0)
 
     print dol_get_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
     if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->facture->lire)
     {

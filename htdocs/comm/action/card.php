@@ -1291,7 +1291,7 @@ if ($action == 'create')
         print '</script>'."\n";
     }
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
@@ -1782,7 +1782,7 @@ if ($id > 0)
 			print '</script>'."\n";
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
@@ -2095,7 +2095,7 @@ if ($id > 0)
 		print '</div>';
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 

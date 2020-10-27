@@ -177,7 +177,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
@@ -295,7 +295,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit')
 	{
