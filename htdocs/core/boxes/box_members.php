@@ -86,10 +86,10 @@ class box_members extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
-		if ($user->rights->adherent->lire)
-		{
+		if ($user->rights->adherent->lire) {
 			$sql = "SELECT a.rowid, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
+			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
 			$sql .= " t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE a.entity IN (".getEntity('member').")";
@@ -98,13 +98,11 @@ class box_members extends ModeleBoxes
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
@@ -113,6 +111,10 @@ class box_members extends ModeleBoxes
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->id = $objp->rowid;
                     $memberstatic->ref = $objp->rowid;
+                    $memberstatic->photo = $objp->photo;
+                    $memberstatic->gender = $objp->gender;
+                    $memberstatic->email = $objp->email;
+                    $memberstatic->morphy = $objp->morphy;
                     $memberstatic->company = $objp->company;
 
 					if (!empty($objp->fk_soc)) {
@@ -125,7 +127,7 @@ class box_members extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $memberstatic->getNomUrl(1),
+                        'text' => $memberstatic->getNomUrl(-1),
                         'asis' => 1,
                     );
 
