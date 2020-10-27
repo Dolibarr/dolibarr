@@ -1,5 +1,5 @@
 Mrp=Výrobní zakázky
-MO=Výrobní zakázka
+ManufacturingOrder=Výrobní zakázka
 MRPDescription=Modul pro správu výrobních a výrobních objednávek (MO).
 MRPArea=Oblast MRP
 MrpSetupPage=Nastavení modulu MRP

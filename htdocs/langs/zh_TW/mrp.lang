@@ -1,5 +1,5 @@
 Mrp=製造訂單
-MO=製造訂單
+ManufacturingOrder=製造訂單
 MRPDescription=管理生產和製造訂單（MO）的模組。
 MRPArea=MRP區域
 MrpSetupPage=MRP模組設定

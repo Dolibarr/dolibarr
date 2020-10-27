@@ -1,5 +1,5 @@
 Mrp=Fremstillingsordrer
-MO=Fremstillingsordre
+ManufacturingOrder=Fremstillingsordre
 MRPDescription=Modul til styring af produktions- og produktionsordrer (MO).
 MRPArea=MRP-område
 MrpSetupPage=Opsætning af modul MRP

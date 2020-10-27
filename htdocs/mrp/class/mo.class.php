@@ -1000,7 +1000,7 @@ class Mo extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("MO").'</u>';
+		$label = '<u>' . $langs->trans("ManufacturingOrder") . '</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {

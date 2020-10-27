@@ -87,7 +87,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = moPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("MO"), -1, $object->picto);
+	dol_fiche_head($head, 'note', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

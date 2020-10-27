@@ -1,5 +1,5 @@
 Mrp=Manufacturing Orders
-MO=Manufacturing Order
+ManufacturingOrder=Manufacturing Order
 MRPDescription=Module to manage production and Manufacturing Orders (MO).
 MRPArea=MRP-område
 MrpSetupPage=Setup of module MRP

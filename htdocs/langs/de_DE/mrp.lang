@@ -1,5 +1,5 @@
 Mrp=Fertigungsaufträge
-MO=Fertigungsauftrag
+ManufacturingOrder=Fertigungsauftrag
 MRPDescription=Modul zur Verwaltung von Produktions- und Fertigungsaufträgen (MO).
 MRPArea=MRP Bereich
 MrpSetupPage=Einrichtung des Moduls MRP
