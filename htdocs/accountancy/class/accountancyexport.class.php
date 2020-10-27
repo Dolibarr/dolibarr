@@ -1490,15 +1490,15 @@ class AccountancyExport
      *
      * @return void
      */
-    public function exportGestimumV3($objectLines) {
+    public function exportGestimumV3($objectLines)
+	{
         global $langs;
 
         $this->separator = ',';
 
         $invoices_infos = array();
         $supplier_invoices_infos = array();
-        foreach ( $objectLines as $line ) {
-
+        foreach ($objectLines as $line) {
             $date = dol_print_date($line->doc_date, '%d/%m/%Y');
 
             $invoice_ref = $line->doc_ref;
@@ -1553,7 +1553,6 @@ class AccountancyExport
 
             if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {
                 print length_accountg($line->subledger_account) . $this->separator;
-
             } else {
                 print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
             }
@@ -1585,26 +1584,26 @@ class AccountancyExport
      *
      * @return void
      */
-    public function exportGestimumV5($objectLines) {
+    public function exportGestimumV5($objectLines)
+	{
 
         $this->separator = ',';
 
-        foreach ( $objectLines as $line ) {
-
+        foreach ($objectLines as $line) {
             $date = dol_print_date($line->doc_date, '%d%m%Y');
 
             print $line->id . $this->separator;
             print $date . $this->separator;
-            print substr($line->code_journal,0, 4) . $this->separator;
+            print substr($line->code_journal, 0, 4) . $this->separator;
             if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401'))  {
                 print length_accountg($line->subledger_account) . $this->separator;
             } else {
-                print substr(length_accountg($line->numero_compte),0,15) . $this->separator;
+                print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
             }
             print $this->separator;
             //print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
-            print '"'.dol_trunc(str_replace('"', '', $line->doc_ref),40,'right','UTF-8',1).'"' . $this->separator;
-            print '"'.dol_trunc(str_replace('"', '', $line->piece_num),10,'right','UTF-8',1).'"'.$this->separator;
+            print '"'.dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1).'"' . $this->separator;
+            print '"'.dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1).'"'.$this->separator;
             print price2num($line->montant).$this->separator;
             print $line->sens.$this->separator;
             print $date . $this->separator;
