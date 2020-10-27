@@ -383,4 +383,34 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=restrictedArea($user, 'societe');
 		$this->assertEquals(1, $result);
     }
+
+
+    /**
+     * testGetRandomPassword
+     *
+     * @return number
+     */
+    public function testGetURLContent()
+    {
+    	global $conf;
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+    	$url = 'ftp://aaaa';
+    	$tmp = getURLContent($url);
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertGreaterThan(0, strpos($tmp['curl_error_msg'], 'not supported'));	// Test error if return does not contains 'not supported'
+
+    	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+    	$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
+    	print __METHOD__." url=".$url."\n";
+    	$this->assertEquals(301, $tmp['http_code'], 'GET url 301 without following -> 301');
+
+    	$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
+    	$tmp = getURLContent($url);		// We DO follow
+    	print __METHOD__." url=".$url."\n";
+    	//var_dump($tmp);
+    	$this->assertEquals(200, $tmp['http_code'], 'GET url 301 with following -> 200');	// Test error if return does not contains 'not supported'
+
+    	return 0;
+    }
 }

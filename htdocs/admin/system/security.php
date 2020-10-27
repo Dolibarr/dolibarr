@@ -50,15 +50,21 @@ llxHeader();
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<br>';
 
-// Recupere la version de PHP
+print load_fiche_titre($langs->trans("PHPSetup"), '', '');
+
+// Get version of PHP
 $phpversion = version_php();
-print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";
+print "<strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";
 
-// Recupere la version du serveur web
+// Get versionof web server
 print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
 print '<br>';
 
+print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0))."<br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0))."<br>\n";
+print '<br>';
 
 print load_fiche_titre($langs->trans("ConfigFile"), '', '');
 
@@ -73,6 +79,7 @@ print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', '');
 
 print '<strong>'.$langs->trans("PermissionOnFileInWebRoot").'</strong>: ';
 // TODO
+print 'TODO';
 
 
 print '<br>';
@@ -124,6 +131,8 @@ print '<br>';
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 // TODO
+print '<br>';
+
 print '<br>';
 
 print '<strong>'.$langs->trans("SecurityAudit").'</strong>: ';
