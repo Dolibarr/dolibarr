@@ -8994,8 +8994,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 }
 
 /**
- *	Return a file on output using a lo memory.
- *  It can return very large files with no need of memory.
+ *  Return a file on output using a low memory. It can return very large files with no need of memory.
  *  WARNING: This close output buffers.
  *
  *  @param	string	$fullpath_original_file_osencoded		Full path of file to return.
