@@ -1118,6 +1118,37 @@ function dol_strtoupper($string, $encoding = "UTF-8")
     }
 }
 
+/**
+ * Convert first character of the first word of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ *
+ * @param   string      $string         String to encode
+ * @param   string      $encoding       Character set encodign
+ * @return  string                      String converted
+ */
+function dol_ucfirst($string, $encoding = "UTF-8")
+{
+    if (function_exists('mb_substr')) {
+        return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding) . mb_substr($string, 1, null, $encoding);
+    } else {
+        return ucfirst($string);
+    }
+}
+
+/**
+ * Convert first character of all the words of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ *
+ * @param   string      $string         String to encode
+ * @param   string      $encoding       Character set encodign
+ * @return  string                      String converted
+ */
+function dol_ucwords($string, $encoding = "UTF-8")
+{
+    if (function_exists('mb_convert_case')) {
+        return mb_convert_case($string, MB_CASE_TITLE, $encoding);
+    } else {
+        return ucwords($string);
+    }
+}
 
 /**
  *	Write log message into outputs. Possible outputs can be:
