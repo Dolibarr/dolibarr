@@ -1456,6 +1456,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
  *
  *  @param	int		$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
+ *  @deprecated Use print dol_get_fiche_end() instead
  */
 function dol_fiche_end($notab = 0)
 {
@@ -3316,9 +3317,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
 			$enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			/*if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml .= $titlealt;
-			}
+			}*/
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
