@@ -119,7 +119,6 @@ inventoryOfWarehouse=Inventário para depósito: %s
 inventoryErrorQtyAdd=Erro: a quantidade é menor que zero
 SelectCategory=Filtro por categoria
 SelectFournisseur=Filtro de fornecedores
-INVENTORY_DISABLE_VIRTUAL=Produto virtual (kit): não diminua o estoque de um produto filho
 INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT=Os movimentos de estoque terão a data do estoque (em vez da data da validação do estoque)
 RecordedQty=Quant. gravada
 inventoryDeleteLine=Apagar linha

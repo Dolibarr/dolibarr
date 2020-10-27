@@ -1,10 +1,6 @@
 Mrp=Productieorders
-<<<<<<< HEAD
-MO=Productieorder
 MOs=Manufacturing orders
-=======
-ManufacturingOrder=Productieorder
->>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
+ManufacturingOrder=Manufacturing Order
 MRPDescription=Module om productie- en productieorders (PO) te beheren.
 MRPArea=MRP-gebied
 MrpSetupPage=Installatie van module MRP
@@ -80,3 +76,4 @@ ProductsToProduce=Te produceren producten
 UnitCost=De kosten per eenheid
 TotalCost=Totale prijs
 BOMTotalCost=De kosten voor het produceren van deze stuklijst op basis van de kosten van elke hoeveelheid en elk te consumeren product (gebruik kostprijs indien gedefinieerd, anders gemiddelde gewogen prijs indien gedefinieerd, anders de beste aankoopprijs)
+GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.

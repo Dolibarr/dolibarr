@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 Mrp=Comenzi de producţie
-MO=Comandă de producţie 
-MOs=Manufacturing orders
+MOs=Comenzi de producţie
+ManufacturingOrder=Comandă de producţie 
 MRPDescription=Modulul de gestionare a comenzilor de producție și fabricare (MO).
 MRPArea=Producţie
 MrpSetupPage=Configurare modul MRP
@@ -10,18 +9,6 @@ LatestBOMModified=Ultimele %s bonuri de consum modificate
 LatestMOModified=Ultimele %s Comenzi de producţie modificate
 Bom=Bonuri de consum
 BillOfMaterials=Bon de consum
-=======
-Mrp=Manufacturing Orders
-ManufacturingOrder=Manufacturing Order
-MRPDescription=Module to manage production and Manufacturing Orders (MO).
-MRPArea=MRP Area
-MrpSetupPage=Setup of module MRP
-MenuBOM=Bills of material
-LatestBOMModified=Latest %s Bills of materials modified
-LatestMOModified=Latest %s Manufacturing Orders modified
-Bom=Bills of Material
-BillOfMaterials=Bill of Material
->>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 BOMsSetup=Configurarea modulului BOM 
 ListOfBOMs=Listă bonuri de consum - BOM
 ListOfManufacturingOrders=Listă comenzi de producţie
@@ -89,3 +76,4 @@ ProductsToProduce=Produse de fabricat
 UnitCost=Cost unitar
 TotalCost=Cost total
 BOMTotalCost=Costul pentru fabricaţia acestui Bon de consum în funcție de costul fiecărei cantități și produs de consumat (utilizați Prețul de cost, dacă este definit, altfel Prețul mediu ponderat, dacă este definit, altfel cel mai bun preț de achiziție)
+GoOnTabProductionToProduceFirst=Mai întâi trebuie să fi început producția pentru a închide o Comandă de fabricație (Vezi fila '%s'). Puteți anula. 

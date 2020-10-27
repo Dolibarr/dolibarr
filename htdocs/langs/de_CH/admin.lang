@@ -507,7 +507,6 @@ TestGeoIPResult=Test einer Umwandlung IP -> Land
 TasksNumberingModules=Aufgaben-Nummerierungs-Modul
 NbMajMin=Mindestanzahl Grossbuchstaben
 TemplatePDFExpenseReports=Dokumentvorlagen zur Spesenabrechnung Dokument erstellen
-ExpenseReportsIkSetup=Modul Spesenabrechnungen (Milles Index) einrichten
 ExpenseReportsRulesSetup=Modul Spesenabrechnungen (Regeln) einrichten
 ExpenseReportNumberingModules=Modul Spesenabrechnung (Numerierung)
 YouMayFindNotificationsFeaturesIntoModuleNotification=Du kannst automatische Benachrichtigungen im Modul "Benachrichtigungen" festlegen und verwalten.

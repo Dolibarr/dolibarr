@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 Mrp=Encomendas de Manufatura
-MO=Encomenda de Manufatura
 MOs=Manufacturing orders
+ManufacturingOrder=Encomenda de Manufatura
 MRPDescription=Módulo para gerir a produção e as «Encomendas de Manufatura» (EM).
 MRPArea=Área de MRP
 MrpSetupPage=Configuração do módulo MRP
@@ -14,22 +13,6 @@ BOMsSetup=Configuração do módulo de FM
 ListOfBOMs=Lista das faturas do material - FM
 ListOfManufacturingOrders=Lista das Encomendas de Manufaturação
 NewBOM=Nova fatura de material
-=======
-Mrp=Manufacturing Orders
-ManufacturingOrder=Manufacturing Order
-MRPDescription=Module to manage production and Manufacturing Orders (MO).
-MRPArea=MRP Area
-MrpSetupPage=Setup of module MRP
-MenuBOM=Bills of material
-LatestBOMModified=Latest %s Bills of materials modified
-LatestMOModified=Latest %s Manufacturing Orders modified
-Bom=Bills of Material
-BillOfMaterials=Bill of Material
-BOMsSetup=Setup of module BOM
-ListOfBOMs=List of bills of material - BOM
-ListOfManufacturingOrders=List of Manufacturing Orders
-NewBOM=New bill of material
->>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 ProductBOMHelp=Product to create with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
 BOMsNumberingModules=Modelos de numeração de FM
 BOMsModelModule=Modelos de documento de FM
@@ -93,3 +76,4 @@ ProductsToProduce=Produtos para produzir
 UnitCost=Custo unitário
 TotalCost=Custo total
 BOMTotalCost=The cost to produce this BOM based on cost of each quantity and product to consume (use Cost price if defined, else Average Weighted Price if defined, else the Best purchase price)
+GoOnTabProductionToProduceFirst=You must first have started the production to close a Manufacturing Order (See tab '%s'). But you can Cancel it.
