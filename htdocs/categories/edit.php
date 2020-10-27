@@ -65,6 +65,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
+$error = 0;
+
 
 /*
  * Actions
@@ -81,7 +83,7 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 	$object->label          = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
-	$object->socid          = ($socid ? $socid : 'null');
+	$object->socid          = ($socid > 0 ? $socid : 0);
 	$object->visible        = $visible;
     $object->fk_parent = $parent != -1 ? $parent : 0;
 

@@ -424,17 +424,17 @@ class Categorie extends CommonObject
 		$sql .= " fk_user_creat";
 		$sql .= ") VALUES (";
 		$sql .= (int) $this->fk_parent.",";
-		$sql .= "'".$this->db->escape($this->label)."',";
-		$sql .= "'".$this->db->escape($this->description)."',";
-		$sql .= "'".$this->db->escape($this->color)."',";
+		$sql .= "'".$this->db->escape($this->label)."', ";
+		$sql .= "'".$this->db->escape($this->description)."', ";
+		$sql .= "'".$this->db->escape($this->color)."', ";
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
-			$sql .= ($this->socid != -1 ? $this->socid : 'null').",";
+			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
 		}
-		$sql .= "'".$this->db->escape($this->visible)."',";
-		$sql .= $this->db->escape($type).",";
-		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').",";
-		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').",";
-		$sql .= (int) $conf->entity.",";
+		$sql .= "'".$this->db->escape($this->visible)."', ";
+		$sql .= $this->db->escape($type).", ";
+		$sql .= (!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : 'null').", ";
+		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : 'null').", ";
+		$sql .= (int) $conf->entity.", ";
 		$sql .= "'".$this->db->idate($now)."', ";
 		$sql .= (int) $user->id;
 		$sql .= ")";
@@ -516,7 +516,7 @@ class Categorie extends CommonObject
 		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
 		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
-			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
+			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = ".(int) $this->visible;
 		$sql .= ", fk_parent = ".(int) $this->fk_parent;
