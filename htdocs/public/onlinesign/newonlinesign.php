@@ -64,11 +64,11 @@ if (empty($source)) $source = 'proposal';
 
 if (!$action)
 {
-    if ($source && !$ref)
-    {
-    	print $langs->trans('ErrorBadParameters')." - ref missing";
-    	exit;
-    }
+	if ($source && !$ref)
+	{
+		print $langs->trans('ErrorBadParameters')." - ref missing";
+		exit;
+	}
 }
 
 
@@ -83,18 +83,18 @@ $SECUREKEY = GETPOST("securekey"); // Secure key
 
 if (!empty($source))
 {
-    $urlok .= 'source='.urlencode($source).'&';
-    $urlko .= 'source='.urlencode($source).'&';
+	$urlok .= 'source='.urlencode($source).'&';
+	$urlko .= 'source='.urlencode($source).'&';
 }
 if (!empty($REF))
 {
-    $urlok .= 'ref='.urlencode($REF).'&';
-    $urlko .= 'ref='.urlencode($REF).'&';
+	$urlok .= 'ref='.urlencode($REF).'&';
+	$urlko .= 'ref='.urlencode($REF).'&';
 }
 if (!empty($SECUREKEY))
 {
-    $urlok .= 'securekey='.urlencode($SECUREKEY).'&';
-    $urlko .= 'securekey='.urlencode($SECUREKEY).'&';
+	$urlok .= 'securekey='.urlencode($SECUREKEY).'&';
+	$urlko .= 'securekey='.urlencode($SECUREKEY).'&';
 }
 if (!empty($entity))
 {
@@ -114,7 +114,7 @@ $creditor = $mysoc->name;
 
 if ($action == 'dosign')
 {
-    // TODO
+	// TODO
 }
 
 
@@ -134,12 +134,12 @@ llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'on
 // Check link validity for param 'source'
 if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
-    $langs->load("errors");
-    dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
-    // End of page
-    llxFooter();
-    $db->close();
-    exit;
+	$langs->load("errors");
+	dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
+	// End of page
+	llxFooter();
+	$db->close();
+	exit;
 }
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -194,16 +194,16 @@ if ($urllogo)
 $text = '';
 if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 {
-    $langs->load("members");
-    $reg = array();
-    if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
-    else $text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
-    $text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
+	$langs->load("members");
+	$reg = array();
+	if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
+	else $text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
+	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
 {
-    $text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
-    $text .= '<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -237,9 +237,9 @@ if ($source == 'proposal')
 	// Creditor
 
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
-    print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-    print '</td></tr>'."\n";
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
 
 	// Debitor
 
@@ -266,13 +266,13 @@ print '</table>'."\n";
 print "\n";
 
 if ($action != 'dosign') {
-    if ($found && !$error) {
-        // We are in a management option and no error
-    } else {
-    	dol_print_error_email('ERRORNEWONLINESIGN');
-    }
+	if ($found && !$error) {
+		// We are in a management option and no error
+	} else {
+		dol_print_error_email('ERRORNEWONLINESIGN');
+	}
 } else {
-    // Print
+	// Print
 }
 
 print '</td></tr>'."\n";

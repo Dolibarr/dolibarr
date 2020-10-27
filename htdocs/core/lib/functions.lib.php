@@ -6701,10 +6701,10 @@ function setEventMessage($mesgs, $style = 'mesgs')
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
-        // If mesgs is a string
+		// If mesgs is a string
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
 	} else {
-        // If mesgs is an array
+		// If mesgs is an array
 		foreach ($mesgs as $mesg)
 		{
 			if ($mesg) $_SESSION['dol_events'][$style][] = $mesg;

@@ -61,44 +61,44 @@ if ($_POST["cancel"] == $langs->trans("Cancel") && !$id)
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-    $db->begin();
+	$db->begin();
 
-    $datev = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep = dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+	$datev = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+	$datep = dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
 
-    $object->accountid = GETPOST("accountid");
-    $object->paymenttype = GETPOST("paiementtype");
-    $object->datev = $datev;
-    $object->datep = $datep;
-    $object->amount = price2num(GETPOST("amount"));
+	$object->accountid = GETPOST("accountid");
+	$object->paymenttype = GETPOST("paiementtype");
+	$object->datev = $datev;
+	$object->datep = $datep;
+	$object->amount = price2num(GETPOST("amount"));
 	$object->label = GETPOST("label");
 	$object->ltt = $lttype;
 
-    $ret = $object->addPayment($user);
-    if ($ret > 0)
-    {
-        $db->commit();
-        header("Location: list.php?localTaxType=".$lttype);
-        exit;
-    } else {
-        $db->rollback();
-        setEventMessages($object->error, $object->errors, 'errors');
-        $_GET["action"] = "create";
-    }
+	$ret = $object->addPayment($user);
+	if ($ret > 0)
+	{
+		$db->commit();
+		header("Location: list.php?localTaxType=".$lttype);
+		exit;
+	} else {
+		$db->rollback();
+		setEventMessages($object->error, $object->errors, 'errors');
+		$_GET["action"] = "create";
+	}
 }
 
 //delete payment of localtax
 if ($action == 'delete')
 {
-    $result = $object->fetch($id);
+	$result = $object->fetch($id);
 
 	if ($object->rappro == 0)
 	{
-	    $db->begin();
+		$db->begin();
 
-	    $ret = $object->delete($user);
-	    if ($ret > 0)
-	    {
+		$ret = $object->delete($user);
+		if ($ret > 0)
+		{
 			if ($object->fk_bank)
 			{
 				$accountline = new AccountLine($db);
@@ -116,13 +116,13 @@ if ($action == 'delete')
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-	    } else {
-	        $db->rollback();
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
+		} else {
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} else {
-        $mesg = 'Error try do delete a line linked to a conciliated bank transaction';
-        setEventMessages($mesg, null, 'errors');
+		$mesg = 'Error try do delete a line linked to a conciliated bank transaction';
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -149,25 +149,25 @@ llxHeader("", $title, $helpurl);
 
 if ($action == 'create')
 {
-    print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
+	print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
 
-    print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
-    print '<input type="hidden" name="action" value="add">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
+	print '<input type="hidden" name="action" value="add">';
 
-    print dol_get_fiche_head();
+	print dol_get_fiche_head();
 
-    print '<table class="border centpercent">';
+	print '<table class="border centpercent">';
 
-    print "<tr>";
-    print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
-    print '</td></tr>';
+	print "<tr>";
+	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
-    print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
-    print '</td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
+	print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.($_POST["label"] ?GETPOST("label", '', 2) : $langs->transcountry(($lttype == 2 ? "LT2Payment" : "LT1Payment"), $mysoc->country_code)).'"></td></tr>';
