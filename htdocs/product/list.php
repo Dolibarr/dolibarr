@@ -79,6 +79,7 @@ $search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_expor
 $search_finished = GETPOST("search_finished", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
+$search_units = GETPOST('search_units', 'int');
 
 //Show/hide child products
 if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
@@ -299,6 +300,7 @@ if (empty($reshook))
 		$search_accountancy_code_buy_intra = '';
 		$search_accountancy_code_buy_export = '';
 		$search_array_options = array();
+		$search_units = '';
 	}
 
 	// Mass actions
@@ -420,6 +422,7 @@ if ($search_accountancy_code_sell_export) $sql .= natural_search('p.accountancy_
 if ($search_accountancy_code_buy)         $sql .= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
 if ($search_accountancy_code_buy_intra)   $sql .= natural_search('p.accountancy_code_buy_intra', $search_accountancy_code_buy_intra);
 if ($search_accountancy_code_buy_export)  $sql .= natural_search('p.accountancy_code_buy_export', $search_accountancy_code_buy_export);
+if(!empty($conf->global->PRODUCT_USE_UNITS) && $search_units) $sql .= natural_search('cu.rowid', $search_units);
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -756,6 +759,7 @@ if ($resql)
 	if (!empty($arrayfields['cu.label']['checked']))
 	{
 		print '<td class="liste_titre">';
+		print $form->selectUnits($search_units, 'search_units', 1);
 		print '</td>';
 	}
 
@@ -917,7 +921,7 @@ if ($resql)
 	if (!empty($arrayfields['p.surface_units']['checked'])) print_liste_field_titre($arrayfields['p.surface_units']['label'], $_SERVER['PHP_SELF'], 'p.surface_units', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.volume']['checked']))  		print_liste_field_titre($arrayfields['p.volume']['label'], $_SERVER['PHP_SELF'], 'p.volume', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.volume_units']['checked']))  print_liste_field_titre($arrayfields['p.volume_units']['label'], $_SERVER['PHP_SELF'], 'p.volume_units', '', $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($arrayfields['cu.label']['checked']))  		print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['cu.label']['checked']))  		print_liste_field_titre($arrayfields['cu.label']['label'], $_SERVER['PHP_SELF'], 'cu.label', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.sellprice']['checked'])) {
 		print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 	}
