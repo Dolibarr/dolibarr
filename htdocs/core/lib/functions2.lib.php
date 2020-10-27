@@ -492,7 +492,7 @@ function dolAddEmailTrackId($email, $trackingid)
 function isValidMailDomain($mail)
 {
 	list($user, $domain) = explode("@", $mail, 2);
-	return ($domain ? isValidMXRecord($domain, "MX") : 0);
+	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
 /**
