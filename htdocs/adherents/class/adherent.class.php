@@ -590,6 +590,7 @@ class Adherent extends CommonObject
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(trim($this->lastname));
+        if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(trim($this->firstname));
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
