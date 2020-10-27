@@ -881,7 +881,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if (in_array($rowidcol, array('code', 'code_iso'))) {
 			$sql .= " WHERE ".$rowidcol." = '".$db->escape($rowid)."'";
 		} else {
-        	$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 		}
 		if (in_array('entity', $listfieldmodify)) $sql .= " AND entity = '".getEntity($tabname[$id])."'";
 

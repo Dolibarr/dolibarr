@@ -22,15 +22,15 @@
  */
 
 if (!defined('NOCSRFCHECK')) {
-    define('NOCSRFCHECK', '1');
+	define('NOCSRFCHECK', '1');
 }
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
-    define('NOREQUIREMENU', '1');
+	define('NOREQUIREMENU', '1');
 }
 // If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
-    define("NOLOGIN", '1');
+	define("NOLOGIN", '1');
 }
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');

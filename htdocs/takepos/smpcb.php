@@ -40,7 +40,7 @@ if (GETPOSTISSET('status')) {
 if (GETPOST('smp-status')) {
 	print '<html lang="en">';
 	print '<head>';
-    print '<meta charset="utf-8">
+	print '<meta charset="utf-8">
 
     <title>The HTML5 Herald</title>
     <meta name="description" content="The HTML5 Herald">

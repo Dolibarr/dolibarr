@@ -1641,7 +1641,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 						$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
 					}
 				} else {
-                    // Common usage
+					// Common usage
 					$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
