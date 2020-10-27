@@ -157,13 +157,13 @@ class Ticket extends CommonObject
      */
     public $severity_label;
 
-        /**
+    /**
      * Email from user
      */
     public $email_from;
 
 	/**
-	 * @var int Création date
+	 * @var int Creation date
 	 */
 	public $datec = '';
 

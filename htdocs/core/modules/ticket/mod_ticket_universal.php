@@ -116,9 +116,9 @@ class mod_ticket_universal extends ModeleNumRefTicket
     /**
      *  Return next value
      *
-     *  @param  Societe $objsoc    Object third party
-     *  @param  Project $ticket Object ticket
-     *  @return string                    Value if OK, 0 if KO
+     *  @param  Societe $objsoc     Object third party
+     *  @param  Ticket  $ticket 	Object ticket
+     *  @return string              Value if OK, 0 if KO
      */
     public function getNextValue($objsoc, $ticket)
     {
@@ -134,7 +134,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
             return 0;
         }
 
-        $date = empty($ticket->date_c) ? dol_now() : $ticket->datec;
+        $date = empty($ticket->datec) ? dol_now() : $ticket->datec;
         $numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client, $date);
 
         return $numFinal;
