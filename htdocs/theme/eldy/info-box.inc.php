@@ -474,4 +474,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	.info-box-sm .info-box-content {
 		margin-left: 60px;
 	}
+	.info-box {
+		border: 1px solid #e0e0e0;
+	}
+}
 }
