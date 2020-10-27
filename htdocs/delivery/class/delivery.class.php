@@ -542,13 +542,12 @@ class Delivery extends CommonObject
 		$num = count($expedition->lines);
 		for ($i = 0; $i < $num; $i++)
 		{
-			$line = new DeliveryLigne($this->db);
+			$line = new DeliveryLine($this->db);
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
-			$line->libelle           = $expedition->lines[$i]->libelle;
+			$line->label             = $expedition->lines[$i]->label;
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
-			$line->ref               = $expedition->lines[$i]->ref;
 
 			$this->lines[$i] = $line;
 		}
@@ -561,7 +560,7 @@ class Delivery extends CommonObject
 		$this->date_delivery        = $expedition->date_delivery;
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
-		$this->ref_customer = $expedition->ref_customer;
+		$this->ref_customer         = $expedition->ref_customer;
 
 		//Incoterms
 		$this->fk_incoterms = $expedition->fk_incoterms;
@@ -586,7 +585,7 @@ class Delivery extends CommonObject
 
 		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 		{
-			$line = new DeliveryLigne($this->db);
+			$line = new DeliveryLine($this->db);
 			$line->array_options = $array_options;
 			$line->id = $id;
 			$result = $line->insertExtraFields();
@@ -613,7 +612,7 @@ class Delivery extends CommonObject
     public function addline($origin_id, $qty)
 	{
 		$num = count($this->lines);
-		$line = new DeliveryLigne($this->db);
+		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
@@ -789,7 +788,7 @@ class Delivery extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$line = new DeliveryLigne($this->db);
+				$line = new DeliveryLine($this->db);
 
 				$obj = $this->db->fetch_object($resql);
 
@@ -927,7 +926,7 @@ class Delivery extends CommonObject
 		$this->note_private = 'Private note';
 
 		$i = 0;
-		$line = new DeliveryLigne($this->db);
+		$line = new DeliveryLine($this->db);
 		$line->fk_product     = $prodids[0];
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
@@ -1097,12 +1096,22 @@ class Delivery extends CommonObject
 /**
  *  Management class of delivery note lines
  */
-class DeliveryLigne extends CommonObjectLine
+class DeliveryLine extends CommonObjectLine
 {
     /**
      * @var DoliDB Database handler.
      */
     public $db;
+
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element = 'deliverydet';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'deliverydet';
 
     // From llx_expeditiondet
     public $qty;
@@ -1133,18 +1142,10 @@ class DeliveryLigne extends CommonObjectLine
 	 */
 	public $libelle;
 
+	public $origin_line_id;
+
 	public $product_ref;
 	public $product_label;
-
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'deliverydet';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'deliverydet';
 
     /**
      *	Constructor
