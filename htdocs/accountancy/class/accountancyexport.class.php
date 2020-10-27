@@ -149,6 +149,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
             self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
+            self::$EXPORT_TYPE_CHARLEMAGNE => 'charlemagne',
             self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
             self::$EXPORT_TYPE_LDCOMPTA10 => 'ldcompta10',
             self::$EXPORT_TYPE_GESTINUMV3 => 'gestinumv3',
@@ -213,6 +214,10 @@ class AccountancyExport
 				self::$EXPORT_TYPE_SAGE50_SWISS => array(
 					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
 				),
+				self::$EXPORT_TYPE_CHARLEMAGNE => array(
+					'label' => $langs->trans('Modelcsv_charlemagne'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
                 self::$EXPORT_TYPE_LDCOMPTA => array(
                     'label' => $langs->trans('Modelcsv_LDCompta'),
                 ),
@@ -227,10 +232,6 @@ class AccountancyExport
                 ),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
-				),
-				self::$EXPORT_TYPE_CHARLEMAGNE => array(
-					'label' => $langs->trans('Modelcsv_charlemagne'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
 			),
@@ -303,6 +304,9 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_SAGE50_SWISS :
 				$this->exportSAGE50SWISS($TData);
 				break;
+			case self::$EXPORT_TYPE_CHARLEMAGNE :
+				$this->exportCharlemagne($TData);
+				break;
             case self::$EXPORT_TYPE_LDCOMPTA :
                 $this->exportLDCompta($TData);
                 break;
@@ -318,9 +322,6 @@ class AccountancyExport
             case self::$EXPORT_TYPE_FEC :
                 $this->exportFEC($TData);
                 break;
-			case self::$EXPORT_TYPE_CHARLEMAGNE :
-				$this->exportCharlemagne($TData);
-				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
