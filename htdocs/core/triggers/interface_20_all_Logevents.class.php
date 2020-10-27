@@ -81,23 +81,20 @@ class InterfaceLogevents extends DolibarrTriggers
             $text .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
             $desc = "(UserLogged,".$object->login.")";
             $desc .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
-        }
-        if ($action == 'USER_LOGIN_FAILED') {
+        } elseif ($action == 'USER_LOGIN_FAILED') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             // Initialisation donnees (date,duree,texte,desc)
             $text = $object->trigger_mesg; // Message direct
             $desc = $object->trigger_mesg; // Message direct
-        }
-        if ($action == 'USER_LOGOUT') {
+        } elseif ($action == 'USER_LOGOUT') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $text = "(UserLogoff,".$object->login.")";
             $desc = "(UserLogoff,".$object->login.")";
-        }
-        if ($action == 'USER_CREATE') {
+        } elseif ($action == 'USER_CREATE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
 
@@ -136,10 +133,8 @@ class InterfaceLogevents extends DolibarrTriggers
             // Initialisation donnees (date,duree,texte,desc)
             $text = $langs->transnoentities("UserDeleted", $object->login);
             $desc = $langs->transnoentities("UserDeleted", $object->login);
-        }
-
-		// Groupes
-        elseif ($action == 'USERGROUP_CREATE') {
+        } elseif ($action == 'USERGROUP_CREATE') {
+		    // Groups
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
