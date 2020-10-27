@@ -130,8 +130,9 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	print "<!-- title of cash fence -->\n";
 	print "<center><h2>";
-	if ($cashcontrol->status == 2) print $langs->trans("CashControl")." ".$cashcontrol->id;
+	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) print $langs->trans("CashControl")." ".$cashcontrol->id;
 	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
 	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour')."</h2></center>";
 
