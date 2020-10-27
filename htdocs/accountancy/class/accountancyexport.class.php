@@ -209,15 +209,12 @@ class AccountancyExport
 				),
                 self::$EXPORT_TYPE_OPENCONCERTO => array(
                     'label' => $langs->trans('Modelcsv_openconcerto'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
                 ),
 				self::$EXPORT_TYPE_SAGE50_SWISS => array(
 					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
-					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
                 self::$EXPORT_TYPE_LDCOMPTA => array(
                     'label' => $langs->trans('Modelcsv_LDCompta'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
                 ),
 				self::$EXPORT_TYPE_LDCOMPTA10 => array(
                     'label' => $langs->trans('Modelcsv_LDCompta10'),
