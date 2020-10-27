@@ -1086,27 +1086,36 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoreta
 	}
 }
 
-
 /**
  * Convert a string to lower. Never use strtolower because it does not works with UTF8 strings.
  *
- * @param 	string		$utf8_string		String to encode
+ * @param 	string		$string		        String to encode
+ * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
  */
-function dol_strtolower($utf8_string)
+function dol_strtolower($string, $encoding = "UTF-8")
 {
-	return mb_strtolower($utf8_string, "UTF-8");
+	if (function_exists('mb_strtolower')) {
+        return mb_strtolower($string, $encoding);
+    } else {
+        return strtolower($string);
+    }
 }
 
 /**
  * Convert a string to upper. Never use strtolower because it does not works with UTF8 strings.
  *
- * @param 	string		$utf8_string		String to encode
+ * @param 	string		$string		        String to encode
+ * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
  */
-function dol_strtoupper($utf8_string)
+function dol_strtoupper($string, $encoding = "UTF-8")
 {
-	return mb_strtoupper($utf8_string, "UTF-8");
+	if (function_exists('mb_strtoupper')) {
+        return mb_strtoupper($string, $encoding);
+    } else {
+        return strtoupper($string);
+    }
 }
 
 
