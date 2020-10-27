@@ -951,11 +951,11 @@ class Delivery extends CommonObject
 
 		// Get the linked object
 		$this->fetchObjectLinked('', '', $this->id, $this->element);
-		//var_dump($this->linkedObjectIds);
+		//var_dump($this->linkedObjectsIds);
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
 		$sqlSourceLine .= ", p.ref, p.label";
-		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectIds[0]['type']."det as st";
+		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
 		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
 

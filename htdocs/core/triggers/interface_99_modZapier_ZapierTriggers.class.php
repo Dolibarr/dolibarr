@@ -376,7 +376,7 @@ function cleanObjectDatas($toclean)
     // Remove $db object property for object
     unset($toclean->db);
 
-    // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+    // Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
     unset($toclean->linkedObjects);
 
     unset($toclean->lines); // should be ->lines
