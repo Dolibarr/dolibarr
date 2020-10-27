@@ -528,7 +528,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
         print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
         /*

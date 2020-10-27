@@ -501,7 +501,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<td class="tdtop">';
             print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment']) ? '' : $_POST['comment']).'</textarea></td></tr>';
             print '</table>';
-            dol_fiche_end();
+            print dol_get_fiche_end();
 
 
 			$parameters = array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);

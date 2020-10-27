@@ -282,7 +282,7 @@ print '<br>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 	// End of page
 	llxFooter();
 	$db->close();
@@ -501,7 +501,7 @@ print '</form>';
 
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

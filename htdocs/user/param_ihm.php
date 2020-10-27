@@ -316,7 +316,7 @@ if ($action == 'edit')
 	// Theme
 	showSkins($object, (($user->admin || empty($dolibarr_main_demo)) ? 1 : 0), true);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print '<div class="center">';
@@ -386,7 +386,7 @@ if ($action == 'edit')
 	// Skin
 	showSkins($object, 0, true);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print '<div class="tabsAction">';

@@ -337,7 +337,7 @@ if ($id > 0 || !empty($ref))
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<br>';
 		}
@@ -448,7 +448,7 @@ if ($id > 0 || !empty($ref))
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
@@ -574,7 +574,7 @@ if ($id > 0 || !empty($ref))
 			print '</div>';
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 
 

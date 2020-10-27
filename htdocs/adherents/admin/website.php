@@ -208,7 +208,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

@@ -270,7 +270,7 @@ if ($user->rights->categorie->creer)
 
 		print '</table>';
 
-		dol_fiche_end('');
+		print dol_get_fiche_end('');
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';

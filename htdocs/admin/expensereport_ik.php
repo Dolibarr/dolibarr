@@ -180,7 +180,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 echo '</table>';
 echo '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

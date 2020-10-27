@@ -75,7 +75,7 @@ print dol_get_fiche_head($head, 'attributes_group', $langs->trans("MenuUsersAndG
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

@@ -3150,7 +3150,7 @@ if ($action == 'editcss')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3240,7 +3240,7 @@ if ($action == 'createsite')
 
 	//print '</div>';
 
-	//dol_fiche_end();
+	//print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3271,7 +3271,7 @@ if ($action == 'importsite')
 
 	showWebsiteTemplates($website);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3684,7 +3684,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 	//print '</div>';
 
-	//dol_fiche_end();
+	//print dol_get_fiche_end();
 
 	print '</div>';
 

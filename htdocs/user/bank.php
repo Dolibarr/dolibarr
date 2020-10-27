@@ -497,7 +497,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
     print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	// List of bank accounts (Currently only one bank account possible for each employee)
 
@@ -661,7 +661,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
     //print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';

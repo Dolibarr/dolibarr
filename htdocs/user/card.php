@@ -1262,7 +1262,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	print "</table>\n";
 
- 	dol_fiche_end();
+ 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
@@ -1823,7 +1823,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print '<div style="clear:both"></div>';
 
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			/*
@@ -2753,7 +2753,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';

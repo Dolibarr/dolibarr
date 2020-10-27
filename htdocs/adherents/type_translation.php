@@ -166,7 +166,7 @@ $linkback = '<a href="'.dol_buildpath('/adherents/type.php', 1).'">'.$langs->tra
 
 dol_banner_tab($object, 'rowid', $linkback);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -272,7 +272,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

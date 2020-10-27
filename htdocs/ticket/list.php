@@ -459,7 +459,7 @@ if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
 
         print '</table>';
         print '</div>';
-        dol_fiche_end();
+        print dol_get_fiche_end();
     }
 }
 
@@ -521,7 +521,7 @@ if ($projectid > 0 || $project_ref) {
         print "</table>";
 
         print '</div>';
-        dol_fiche_end();
+        print dol_get_fiche_end();
 
         $object = $savobject;
     } else {

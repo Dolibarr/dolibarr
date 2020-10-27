@@ -495,7 +495,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 
 print "</tr>\n";
 print '</table>';
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';

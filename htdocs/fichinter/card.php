@@ -1012,7 +1012,7 @@ if ($action == 'create')
 			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
@@ -1053,7 +1053,7 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
@@ -1588,7 +1588,7 @@ if ($action == 'create')
 		print '</form>'."\n";
  	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print "\n";
 

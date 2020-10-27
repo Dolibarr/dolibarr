@@ -1080,7 +1080,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</form>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// traitement entrepot par défaut
 	print '<script type="text/javascript">

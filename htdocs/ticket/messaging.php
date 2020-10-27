@@ -137,7 +137,7 @@ if ($socid > 0) {
 
     dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
@@ -219,7 +219,7 @@ $linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs
 
 dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

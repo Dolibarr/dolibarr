@@ -231,7 +231,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 $newcardbutton = '';
 if (!empty($conf->website->enabled)) {

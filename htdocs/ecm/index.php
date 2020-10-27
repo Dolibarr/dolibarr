@@ -335,7 +335,7 @@ $module = 'ecm';
 include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

@@ -1030,7 +1030,7 @@ if ($action == 'create')
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			// Shipment lines
@@ -2403,7 +2403,7 @@ if ($action == 'create')
 	}
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$object->fetchObjectLinked($object->id, $object->element);

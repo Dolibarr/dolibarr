@@ -170,7 +170,7 @@ if (empty($reshook)) {
 print '</table>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 print '<div class="center"><input type="submit" class="button" name"submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';

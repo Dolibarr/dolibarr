@@ -741,7 +741,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
 
@@ -923,7 +923,7 @@ if ($action == 'create')
 
 			print "</div>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			// Clone confirmation
@@ -1064,7 +1064,7 @@ if ($action == 'create')
 
 				print '<br>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print dol_set_focus('#sendto');
 			}
@@ -1122,7 +1122,7 @@ if ($action == 'create')
 			} else print dol_htmlentitiesbr($object->body);
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} else {
 			/*
 			 * Edition mode mailing (CKeditor or HTML source)
@@ -1195,7 +1195,7 @@ if ($action == 'create')
 			print '</table>';
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 
@@ -1289,7 +1289,7 @@ if ($action == 'create')
 			print '</div>';
 
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave" value="'.$langs->trans("Save").'" name="save">';

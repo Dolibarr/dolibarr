@@ -130,7 +130,7 @@ print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->t
 print '</td></tr>';
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

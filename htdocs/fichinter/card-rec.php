@@ -417,7 +417,7 @@ if ($action == 'create') {
 
 		print "</table>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -438,7 +438,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="hidden" name="action" value="createfrommodel">';

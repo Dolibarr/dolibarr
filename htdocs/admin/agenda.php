@@ -197,7 +197,7 @@ if (!empty($triggers))
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';

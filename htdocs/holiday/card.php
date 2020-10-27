@@ -979,7 +979,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 			print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
 			print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
@@ -1094,7 +1094,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 		print '</tbody>';
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
@@ -1394,7 +1394,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 				print '<div class="clearboth"></div>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 
 				// Confirmation messages

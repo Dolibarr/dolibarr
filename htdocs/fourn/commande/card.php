@@ -1765,7 +1765,7 @@ if ($action == 'create')
 	// Bouton "Create Draft"
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
@@ -2339,7 +2339,7 @@ if ($action == 'create')
 	print '</div>';
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/**
 	 * Boutons actions

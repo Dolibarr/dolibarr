@@ -174,7 +174,7 @@ if ($id > 0 || !empty($ref))
 
 		print "</div>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		$modulepart = 'facture';
 		$permission = $user->rights->facture->creer;

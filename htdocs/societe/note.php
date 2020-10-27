@@ -121,7 +121,7 @@ if ($object->id > 0)
     //print '<div class="underbanner clearboth"></div>';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 } else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");

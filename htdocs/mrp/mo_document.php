@@ -172,7 +172,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'mrp';
 	$permission = $user->rights->mrp->write;

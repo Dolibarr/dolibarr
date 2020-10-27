@@ -161,7 +161,7 @@ if (!empty($id) || !empty($ref)) {
 
 		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 	print load_fiche_titre($langs->trans('ProductCombinationGenerator'));

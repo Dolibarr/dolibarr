@@ -198,7 +198,7 @@ if ($action == 'create')
 
     print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -271,7 +271,7 @@ if ($id)
 
     print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 
 	/*

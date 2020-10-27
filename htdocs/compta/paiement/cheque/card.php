@@ -370,7 +370,7 @@ if ($action == 'new')
     print '</td></tr>';
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
     print '<div class="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
@@ -719,7 +719,7 @@ if ($action == 'new')
 		dol_print_error($db);
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 

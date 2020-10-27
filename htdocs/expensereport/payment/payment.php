@@ -239,7 +239,7 @@ if ($action == 'create' || empty($action))
 
     print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print dol_get_fiche_head();
 
@@ -279,7 +279,7 @@ if ($action == 'create' || empty($action))
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

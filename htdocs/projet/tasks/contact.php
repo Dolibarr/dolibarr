@@ -290,7 +290,7 @@ if ($id > 0 || !empty($ref))
 
             print '<div class="clearboth"></div>';
 
-    		dol_fiche_end();
+    		print dol_get_fiche_end();
 
     		print '<br>';
 		}
@@ -336,7 +336,7 @@ if ($id > 0 || !empty($ref))
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Lines of contacts
