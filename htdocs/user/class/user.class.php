@@ -1124,7 +1124,7 @@ class User extends CommonObject
 		// Clean parameters
 
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
 
 		$this->login = trim($this->login);
@@ -1469,7 +1469,7 @@ class User extends CommonObject
 		// Clean parameters
 
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
 
 		$this->lastname     = trim($this->lastname);
