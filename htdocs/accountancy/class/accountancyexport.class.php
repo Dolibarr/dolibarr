@@ -1509,9 +1509,9 @@ class AccountancyExport
                     ($line->doc_type == 'supplier_invoice' && !isset($supplier_invoices_infos[$line->fk_doc]))) {
                     if ($line->doc_type == 'customer_invoice') {
                         // Get new customer invoice ref and company name
-                        $sql = "SELECT f.facnumber, s.nom FROM " . MAIN_DB_PREFIX . "facture as f".
-                            " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON f.fk_soc = s.rowid" .
-                            " WHERE f.rowid = " . $line->fk_doc;
+                        $sql = 'SELECT f.facnumber, s.nom FROM ' . MAIN_DB_PREFIX . 'facture as f'.
+                            ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON f.fk_soc = s.rowid' .
+                            ' WHERE f.rowid = ' . $line->fk_doc;
                         $resql = $this->db->query($sql);
                         if ($resql) {
                             if ($obj = $this->db->fetch_object($resql)) {
@@ -1523,9 +1523,9 @@ class AccountancyExport
                         }
                     } else {
                         // Get new supplier invoice ref and company name
-                        $sql = "SELECT ff.ref, s.nom FROM " . MAIN_DB_PREFIX . "facture_fourn as ff".
-                            " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON ff.fk_soc = s.rowid" .
-                            " WHERE ff.rowid = " . $line->fk_doc;
+                        $sql = 'SELECT ff.ref, s.nom FROM ' . MAIN_DB_PREFIX . 'facture_fourn as ff'.
+                            ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON ff.fk_soc = s.rowid' .
+                            ' WHERE ff.rowid = ' . $line->fk_doc;
                         $resql = $this->db->query($sql);
                         if ($resql) {
                             if ($obj = $this->db->fetch_object($resql)) {
