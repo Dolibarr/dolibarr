@@ -714,21 +714,6 @@ function updateProductOrService($authentication, $product)
         $newobject->customcode = $product['customcode'];
 
         $newobject->canvas = $product['canvas'];
-        /*foreach($product['lines'] as $line)
-        {
-            $newline=new FactureLigne($db);
-            $newline->type=$line['type'];
-            $newline->desc=$line['desc'];
-            $newline->fk_product=$line['fk_product'];
-            $newline->total_ht=$line['total_net'];
-            $newline->total_vat=$line['total_vat'];
-            $newline->total_ttc=$line['total'];
-            $newline->vat=$line['vat_rate'];
-            $newline->qty=$line['qty'];
-            $newline->fk_product=$line['product_id'];
-        }*/
-        //var_dump($product['ref_ext']);
-        //var_dump($product['lines'][0]['type']);
 
         $elementtype = 'product';
 
