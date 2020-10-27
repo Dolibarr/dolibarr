@@ -825,6 +825,7 @@ class Delivery extends CommonObject
 				$line->volume_units   	= $obj->volume_units;
 
 				$line->fk_unit = $obj->fk_unit;
+				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 
