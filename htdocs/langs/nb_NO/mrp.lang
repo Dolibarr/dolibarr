@@ -1,6 +1,10 @@
 Mrp=Produksjonsordrer
+<<<<<<< HEAD
 MO=Produksjonsordre
 MOs=Manufacturing orders
+=======
+ManufacturingOrder=Produksjonsordre
+>>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 MRPDescription=Modul for å administrere produksjons- og produksjonsordrer (PO).
 MRPArea=MRP-område
 MrpSetupPage=Oppsett av MRP-modul 

@@ -1,6 +1,10 @@
 Mrp=Pesanan Manufaktur
+<<<<<<< HEAD
 MO=Pesanan manufaktur
 MOs=Manufacturing orders
+=======
+ManufacturingOrder=Pesanan manufaktur
+>>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 MRPDescription=Modul untuk mengelola produksi dan Pesanan Manufaktur (MO).
 MRPArea=Area MRP
 MrpSetupPage=Pengaturan MRP modul

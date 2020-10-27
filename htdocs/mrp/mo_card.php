@@ -314,7 +314,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("MO"), '', 'mrp');
+	print load_fiche_titre($langs->trans("ManufacturingOrder"), '', 'mrp');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -353,7 +353,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("MO"), -1, $object->picto);
+
+	print dol_get_fiche_head($head, 'card', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	$formconfirm = '';
 

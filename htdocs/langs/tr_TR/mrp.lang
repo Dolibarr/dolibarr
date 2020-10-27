@@ -1,6 +1,10 @@
 Mrp=Üretim Emirleri
+<<<<<<< HEAD
 MO=Üretim Emri
 MOs=Manufacturing orders
+=======
+ManufacturingOrder=Üretim Emri
+>>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 MRPDescription=Üretim ve Üretim Siparişlerini (MO) yönetmek için modül.
 MRPArea=MRP Alanı
 MrpSetupPage=Setup of module MRP

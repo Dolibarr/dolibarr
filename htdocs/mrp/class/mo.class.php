@@ -987,7 +987,7 @@ class Mo extends CommonObject
 
         $result = '';
 
-        $label = img_picto('', $this->picto).' <u>'.$langs->trans("MO").'</u>';
+        $label = img_picto('', $this->picto).' <u>'.$langs->trans("ManufacturingOrder").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {

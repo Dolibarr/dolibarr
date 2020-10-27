@@ -1,6 +1,10 @@
 Mrp=Ordini di produzione
+<<<<<<< HEAD
 MO=Ordine di produzione
 MOs=Manufacturing orders
+=======
+ManufacturingOrder=Ordine di produzione
+>>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 MRPDescription=Modulo per la gestione degli ordini di produzione (MO).
 MRPArea=MRP Area
 MrpSetupPage=Configurazione del modulo MRP

@@ -1,6 +1,10 @@
 Mrp=Ražošanas pasūtījumi
+<<<<<<< HEAD
 MO=Ražošanas pasūtījums
 MOs=Manufacturing orders
+=======
+ManufacturingOrder=Ražošanas pasūtījums
+>>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 MRPDescription=Ražošanas un ražošanas pasūtījumu (MO) pārvaldības modulis.
 MRPArea=MRP apgabals
 MrpSetupPage=MRP moduļa iestatīšana

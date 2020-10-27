@@ -1,6 +1,10 @@
 Mrp=Đơn đặt hàng sản xuất
+<<<<<<< HEAD
 MO=Đơn hàng sản xuất
 MOs=Manufacturing orders
+=======
+ManufacturingOrder=Đơn hàng sản xuất
+>>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 MRPDescription=Module to manage production and Manufacturing Orders (MO).
 MRPArea=Khu vực MRP
 MrpSetupPage=Thiết lập mô-đun MRP
