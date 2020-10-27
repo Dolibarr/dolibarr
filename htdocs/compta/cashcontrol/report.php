@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
@@ -28,6 +28,9 @@
  *	\ingroup    cashdesk|takepos
  *	\brief      List of bank transactions
  */
+
+if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');			// Disable browser notification
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
