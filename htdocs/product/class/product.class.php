@@ -3188,7 +3188,7 @@ class Product extends CommonObject
             return -1;
         }
 
-        if (empty($year)) {
+        if (empty($year) || $year == -1) {
             $year = strftime('%Y', time());
             $month = strftime('%m', time());
         }
@@ -3339,8 +3339,7 @@ class Product extends CommonObject
     public function get_nb_propal($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
     {
         // phpcs:enable
-        global $conf;
-        global $user;
+        global $conf, $user;
 
         $sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m')";
         if ($mode == 'bynumber') {
