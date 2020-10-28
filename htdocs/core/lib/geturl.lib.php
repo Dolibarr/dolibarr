@@ -195,8 +195,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 
     $rep = array();
-    if (curl_errno($ch))
-    {
+    if (curl_errno($ch)) {
         // Ad keys to $rep
         $rep['content'] = $response;
 
@@ -239,14 +238,12 @@ function getDomainFromURL($url, $mode = 0)
 {
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
 	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after domain
-	if ($mode == 2)
-	{
+	if ($mode == 2) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
 	} else {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
-	if (empty($mode))
-	{
+	if (empty($mode)) {
 		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove first level domain (.com, .net, ...)
 	}
 

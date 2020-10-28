@@ -29,7 +29,7 @@
  *	\brief      List of bank transactions
  */
 
-if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
 if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');			// Disable browser notification
 
 require '../../main.inc.php';
@@ -125,8 +125,7 @@ elseif ($syear && $smonth && $sday)   $sql .= " AND datef BETWEEN '".$db->idate(
 else dol_print_error('', 'Year not defined');
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -166,12 +165,10 @@ if ($resql)
     $totalarray = array();
     $cachebankaccount = array();
     $amountpertype = array();
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($resql);
 
-        if (empty($cachebankaccount[$objp->bankid]))
-        {
+        if (empty($cachebankaccount[$objp->bankid])) {
             $bankaccounttmp = new Account($db);
             $bankaccounttmp->fetch($objp->bankid);
             $cachebankaccount[$objp->bankid] = $bankaccounttmp;
@@ -235,8 +232,7 @@ if ($resql)
 
         // Debit
     	print '<td class="right">';
-    	if ($objp->amount < 0)
-    	{
+    	if ($objp->amount < 0) {
     	    print price($objp->amount * -1);
     	    $totalarray['val']['totaldebfield'] += $objp->amount;
     	    $amountpertype[$objp->code] += $objp->amount;
@@ -247,8 +243,7 @@ if ($resql)
 
     	// Credit
     	print '<td class="right">';
-    	if ($objp->amount > 0)
-    	{
+    	if ($objp->amount > 0) {
 			print price($objp->amount);
     	    $totalarray['val']['totalcredfield'] += $objp->amount;
     	    $amountpertype[$objp->code] -= $objp->amount;
