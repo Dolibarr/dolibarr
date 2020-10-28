@@ -862,7 +862,7 @@ class CMailFile
 
 				if (!empty($conf->global->$keyforsmtpid)) $this->transport->setUsername($conf->global->$keyforsmtpid);
 				if (!empty($conf->global->$keyforsmtppw)) $this->transport->setPassword($conf->global->$keyforsmtppw);
-				if (! empty($conf->global->$keyforsslseflsigned)) $this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));;
+				if (!empty($conf->global->$keyforsslseflsigned)) $this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
 				// Switch content encoding to base64 - avoid the doubledot issue with quoted-printable
