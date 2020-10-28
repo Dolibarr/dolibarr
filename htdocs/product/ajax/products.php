@@ -99,6 +99,9 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 					$outputlangs->setDefaultLang($newlang);
 					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
 					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
+				} else {
+					$outdesc_trans = $object->description;
+					$outlabel_trans = $object->label;
 				}
 			}
 		}

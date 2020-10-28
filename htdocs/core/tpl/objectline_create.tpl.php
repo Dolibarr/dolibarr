@@ -674,13 +674,18 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
 						jQuery("#price_ht").val(data.price_ht);
-						<?php if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
+						<?php
+						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
-						<?php } else { ?>
+						<?php
+							} else { ?>
 						var proddesc = data.desc;
-						<?php } ?>
+						<?php
+							} ?>
 						console.log("Load desciption into text area : "+proddesc);
-						<?php if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+						<?php
+							if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 						{
 							var editor = CKEDITOR.instances['dp_desc'];
@@ -688,9 +693,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 								editor.setData(proddesc);
 							}
 						}
-						<?php } else { ?>
+						<?php
+							} else { ?>
 						jQuery('#dp_desc').text(proddesc);
-						<?php } ?>
+						<?php
+							} ?>
+						<?php
+						} ?>
 					},
 					'json'
 				);
@@ -834,7 +843,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			{
 				jQuery("#remise_percent").val(pbqpercent);
 			}
-		}
+		} else { jQuery("#pbq").val(''); }
 			<?php
 		}
 		?>
@@ -850,8 +859,6 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			var discount = parseFloat($('option:selected', this).attr('data-discount'));
 			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
 
-			var description = $('option:selected', this).attr('data-description');
-			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
 			console.log("We find supplier price :"+up+" qty: "+qty+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
 
 			jQuery("#price_ht").val(up);
@@ -864,23 +871,47 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 				jQuery("#remise_percent").val(discount);
 			}
 
+			<?php
+			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+			?>
+			var description = $('option:selected', this).attr('data-description');
+			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+
 			console.log("Load desciption into text area : "+description);
-		<?php if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			<?php
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
 				if (editor) {
-				editor.setData(description);
+					editor.setData(description);
 				}
 			}
-		<?php } else { ?>
+			<?php
+				} else { ?>
 			jQuery('#dp_desc').text(description);
-		<?php } ?>
+			<?php
+				}
+			}?>
+		} else if (jQuery('#idprodfournprice').length > 0) {
+			<?php
+			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+				if (editor) {
+					editor.setData('');
+				}
+			}
+			<?php
+			} else { ?>
+			jQuery('#dp_desc').text('');
+			<?php
+				}
+			}?>
 		}
-		else
-		{
-			jQuery("#pbq").val('');
-		}
+
 
 		/* To set focus */
 		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
