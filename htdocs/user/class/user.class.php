@@ -1122,25 +1122,19 @@ class User extends CommonObject
 		global $mysoc;
 
 		// Clean parameters
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-
+		$this->setUpperOrLowerCase();
 		$this->login = trim($this->login);
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
 
 		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 
 		// Check parameters
-		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email))
-		{
+		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
 		}
-		if (empty($this->login))
-		{
+		if (empty($this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 			return -1;
@@ -1467,11 +1461,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->employee    	= $this->employee ? $this->employee : 0;
@@ -1479,9 +1468,10 @@ class User extends CommonObject
 		$this->gender       = trim($this->gender);
 		$this->pass         = trim($this->pass);
 		$this->api_key      = trim($this->api_key);
-		$this->address = $this->address ?trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ?trim($this->town) : trim($this->town);
+		$this->address = $this->address ? trim($this->address) : trim($this->address);
+		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
+		$this->town = $this->town ? trim($this->town) : trim($this->town);
+		$this->setUpperOrLowerCase();
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->office_phone = trim($this->office_phone);
