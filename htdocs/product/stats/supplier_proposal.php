@@ -60,7 +60,7 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "p.date_valid";
 
-$search_month = GETPOST('search_month', 'alpha');
+$search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
