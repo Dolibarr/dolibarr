@@ -171,7 +171,7 @@ class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
             'fileencoding'=>""
         );
 
-        $result = getURLContent($url, 'POST', $data, 1,array(), array('http', 'https'), 2);
+        $result = getURLContent($url, 'POST', $data, 1, array(), array('http', 'https'), 2);
         echo __METHOD__.' Result for sending document: '.var_export($result, true)."\n";
         echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
         $object = json_decode($result['content'], true);

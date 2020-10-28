@@ -76,7 +76,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     // Restrict use to some protocols only
     $protocols = 0;
     if (is_array($allowedschemes)) {
-	    foreach($allowedschemes as $allowedscheme) {
+	    foreach ($allowedschemes as $allowedscheme) {
 	    	if ($allowedscheme == 'http') $protocols |= CURLPROTO_HTTP;
 	    	if ($allowedscheme == 'https') $protocols |= CURLPROTO_HTTPS;
 	    }
@@ -129,8 +129,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     $info = array();
     $response = '';
 
-    do
-    {
+    do {
     	if ($maxRedirection < 1) break;
 
 	    curl_setopt($ch, CURLOPT_URL, $newUrl);
@@ -187,7 +186,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	    	$http_code = 0;
 	    }
     }
-    while($http_code);
+    while ($http_code);
 
     $request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 

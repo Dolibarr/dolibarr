@@ -29,7 +29,7 @@
  *	\brief      List of bank transactions
  */
 
-if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
+if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
 if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');			// Disable browser notification
 
 require '../../main.inc.php';
