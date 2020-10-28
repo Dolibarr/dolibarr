@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -55,14 +55,14 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	public $name = 'Saphir';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -93,28 +93,28 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of number
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of number
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
 		$numExample = $this->getNextValue($mysoc, '');
-    	$mysoc->code_client = $old_code_client;
+		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 
 	/**
@@ -124,8 +124,8 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *  @param  Object		$object			Object delivery
 	 *  @return string      				Value if OK, 0 if KO
 	 */
-    public function getNextValue($objsoc, $object)
-    {
+	public function getNextValue($objsoc, $object)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -142,33 +142,33 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		$numFinal = get_next_value($db, $mask, 'delivery', 'ref', '', $objsoc, $object->date_livraison);
 
 		return  $numFinal;
-    }
+	}
 
 
 	/**
 	 *  Return next free value
 	 *
-     *  @param	Societe		$objsoc     Object third party
+	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
-     *  @return string      			Next free value
-     */
-    public function getNumRef($objsoc, $objforref)
-    {
-        return $this->getNextValue($objsoc, $objforref);
-    }
+	 *  @return string      			Next free value
+	 */
+	public function getNumRef($objsoc, $objforref)
+	{
+		return $this->getNextValue($objsoc, $objforref);
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return next free ref
-     *
-     *  @param	Societe		$objsoc      	Object thirdparty
-     *  @param  Object		$object			Objet livraison
-     *  @return string      				Texte descripif
-     */
-    public function delivery_get_num($objsoc = 0, $object = '')
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $object);
-    }
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return next free ref
+	 *
+	 *  @param	Societe		$objsoc      	Object thirdparty
+	 *  @param  Object		$object			Objet livraison
+	 *  @return string      				Texte descripif
+	 */
+	public function delivery_get_num($objsoc = 0, $object = '')
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $object);
+	}
 }
