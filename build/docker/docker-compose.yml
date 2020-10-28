@@ -52,3 +52,6 @@ services:
         ports:
             - "8081:80"
             - "25:25"
+        networks:
+            - internal-pod
+            - external-pod

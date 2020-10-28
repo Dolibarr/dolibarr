@@ -16,7 +16,7 @@ And then, you can run :
 
         docker-compose up
 
-This will run 3 container Docker : Dolibarr, MariaDB and PhpMyAdmin.
+This will run 4 containers Docker : Dolibarr, MariaDB, PhpMyAdmin and MailDev.
 
 The URL to go to the Dolibarr is :
 
@@ -25,7 +25,10 @@ The URL to go to the Dolibarr is :
 The URL to go to PhpMyAdmin is (login/password is root/root) :
 
         http://0.0.0.0:8080
+        
+In Dolibarr configuration Email let PHP mail function, To see all mail send by Dolibarr go to maildev
 
-Setup the database connection during the installation process, please use mariad
-b (name of the database container) as database host.
+        http://0.0.0.0:8081
+
+Setup the database connection during the installation process, please use mariadb (name of the database container) as database host.
 Setup documents folder, during the installation process, to /var/documents
