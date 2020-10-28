@@ -1086,29 +1086,69 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoreta
 	}
 }
 
-
 /**
  * Convert a string to lower. Never use strtolower because it does not works with UTF8 strings.
  *
- * @param 	string		$utf8_string		String to encode
+ * @param 	string		$string		        String to encode
+ * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
  */
-function dol_strtolower($utf8_string)
+function dol_strtolower($string, $encoding = "UTF-8")
 {
-	return mb_strtolower($utf8_string, "UTF-8");
+	if (function_exists('mb_strtolower')) {
+        return mb_strtolower($string, $encoding);
+    } else {
+        return strtolower($string);
+    }
 }
 
 /**
  * Convert a string to upper. Never use strtolower because it does not works with UTF8 strings.
  *
- * @param 	string		$utf8_string		String to encode
+ * @param 	string		$string		        String to encode
+ * @param   string      $encoding           Character set encoding
  * @return 	string							String converted
  */
-function dol_strtoupper($utf8_string)
+function dol_strtoupper($string, $encoding = "UTF-8")
 {
-	return mb_strtoupper($utf8_string, "UTF-8");
+	if (function_exists('mb_strtoupper')) {
+        return mb_strtoupper($string, $encoding);
+    } else {
+        return strtoupper($string);
+    }
 }
 
+/**
+ * Convert first character of the first word of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ *
+ * @param   string      $string         String to encode
+ * @param   string      $encoding       Character set encodign
+ * @return  string                      String converted
+ */
+function dol_ucfirst($string, $encoding = "UTF-8")
+{
+    if (function_exists('mb_substr')) {
+        return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding) . mb_substr($string, 1, null, $encoding);
+    } else {
+        return ucfirst($string);
+    }
+}
+
+/**
+ * Convert first character of all the words of a string to upper. Never use ucfirst because it does not works with UTF8 strings.
+ *
+ * @param   string      $string         String to encode
+ * @param   string      $encoding       Character set encodign
+ * @return  string                      String converted
+ */
+function dol_ucwords($string, $encoding = "UTF-8")
+{
+    if (function_exists('mb_convert_case')) {
+        return mb_convert_case($string, MB_CASE_TITLE, $encoding);
+    } else {
+        return ucwords($string);
+    }
+}
 
 /**
  *	Write log message into outputs. Possible outputs can be:
