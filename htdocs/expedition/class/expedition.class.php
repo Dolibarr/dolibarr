@@ -1738,7 +1738,7 @@ class Expedition extends CommonObject
 					$line->total_ttc	 	+= $tabprice[2];
 					$line->total_tva	 	+= $tabprice[1];
 				}
-
+                $line->fetch_optionals();
 				$i++;
 				$originline = $obj->fk_origin_line;
 			}
