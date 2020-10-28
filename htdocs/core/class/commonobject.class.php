@@ -296,11 +296,11 @@ abstract class CommonObject
 	 */
 	public $cond_reglement_id;
 
-    /**
-     * @var int Transport mode ID (For module intracomm report)
-     * @see setTransportMode()
-     */
-    public $transport_mode_id;
+	/**
+	 * @var int Transport mode ID (For module intracomm report)
+	 * @see setTransportMode()
+	 */
+	public $transport_mode_id;
 
 	/**
 	 * @var int Payment terms ID
@@ -2196,42 +2196,42 @@ abstract class CommonObject
 		}
 	}
 
-    /**
-     *  Change the transport mode methods
-     *
-     *  @param		int		$id		Id of new payment method
-     *  @return		int				>0 if OK, <0 if KO
-     */
-    public function setTransportMode($id)
-    {
-        dol_syslog(get_class($this).'::setTransportMode('.$id.')');
-        if ($this->statut >= 0 || $this->element == 'societe')
-        {
-            $fieldname = 'fk_transport_mode';
-            if ($this->element == 'societe') $fieldname = 'transport_mode';
-            if (get_class($this) == 'Fournisseur') $fieldname = 'transport_mode_supplier';
+	/**
+	 *  Change the transport mode methods
+	 *
+	 *  @param		int		$id		Id of new payment method
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setTransportMode($id)
+	{
+		dol_syslog(get_class($this).'::setTransportMode('.$id.')');
+		if ($this->statut >= 0 || $this->element == 'societe')
+		{
+			$fieldname = 'fk_transport_mode';
+			if ($this->element == 'societe') $fieldname = 'transport_mode';
+			if (get_class($this) == 'Fournisseur') $fieldname = 'transport_mode_supplier';
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-            $sql .= ' WHERE rowid='.$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
+			$sql .= ' WHERE rowid='.$this->id;
 
-            if ($this->db->query($sql))
-            {
-                $this->transport_mode_id = $id;
-                // for supplier
-                if (get_class($this) == 'Fournisseur') $this->transport_mode_supplier_id = $id;
-                return 1;
-            } else {
-                dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
-                $this->error=$this->db->error();
-                return -1;
-            }
-        } else {
-            dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
-            $this->error='Status of the object is incompatible '.$this->statut;
-            return -2;
-        }
-    }
+			if ($this->db->query($sql))
+			{
+				$this->transport_mode_id = $id;
+				// for supplier
+				if (get_class($this) == 'Fournisseur') $this->transport_mode_supplier_id = $id;
+				return 1;
+			} else {
+				dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
+			$this->error='Status of the object is incompatible '.$this->statut;
+			return -2;
+		}
+	}
 
 	/**
 	 *  Change the retained warranty payments terms
@@ -2785,8 +2785,8 @@ abstract class CommonObject
 	 */
 	public function line_max($fk_parent_line = 0)
 	{
-        // phpcs:enable
-        $positionfield = 'rang';
+		// phpcs:enable
+		$positionfield = 'rang';
 		if ($this->table_element == 'bom_bom') $positionfield = 'position';
 
 		// Search the last rang with fk_parent_line
