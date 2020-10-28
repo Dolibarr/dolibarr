@@ -1530,14 +1530,14 @@ class BookKeeping extends CommonObject
 		$this->label_compte = 'Customer';
 		$this->label_operation = 'Sales of pea';
 		$this->debit = 99.9;
-		$this->credit = '';
-		$this->montant = '';
+		$this->credit = 0.0;
+		$this->amount = 0.0;
 		$this->sens = 'D';
 		$this->fk_user_author = $user->id;
-		$this->import_key = '';
+		$this->import_key = '20201027';
 		$this->code_journal = 'VT';
 		$this->journal_label = 'Journal de vente';
-		$this->piece_num = '';
+		$this->piece_num = 1234;
 		$this->date_creation = $now;
 	}
 
