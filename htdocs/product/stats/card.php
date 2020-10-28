@@ -180,6 +180,7 @@ if (empty($id) & empty($ref))
 if ($result || empty($id))
 {
     print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<table class="noborder centpercent">';

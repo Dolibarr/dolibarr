@@ -3158,14 +3158,16 @@ class Product extends CommonObject
     /**
      *  Return an array formated for showing graphs
      *
-     * @param  string $sql  Request to execute
-     * @param  string $mode 'byunit'=number of unit, 'bynumber'=nb of entities
-     * @param  int    $year Year (0=current year)
-     * @return array               <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+     * @param  string	$sql  	Request to execute
+     * @param  string	$mode 	'byunit'=number of unit, 'bynumber'=nb of entities
+     * @param  int    	$year 	Year (0=current year, -1=all years)
+     * @return array            <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
      */
     private function _get_stats($sql, $mode, $year = 0)
     {
         // phpcs:enable
+        $tab = array();
+
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
@@ -3173,11 +3175,14 @@ class Product extends CommonObject
             while ($i < $num)
             {
                 $arr = $this->db->fetch_array($resql);
-                if ($mode == 'byunit') {
-                    $tab[$arr[1]] = $arr[0]; // 1st field
+                $keyfortab = (string) $arr[1];
+                if ($year == -1) {
+                	$keyfortab = substr($keyfortab, -2);
                 }
-                if ($mode == 'bynumber') {
-                    $tab[$arr[1]] = $arr[2]; // 3rd field
+                if ($mode == 'byunit') {
+                	$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[0]; // 1st field
+                } elseif ($mode == 'bynumber') {
+                	$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
                 }
                 $i++;
             }
@@ -3188,21 +3193,24 @@ class Product extends CommonObject
             return -1;
         }
 
-        if (empty($year) || $year == -1) {
+        if (empty($year)) {
             $year = strftime('%Y', time());
             $month = strftime('%m', time());
-        }
-        else
-        {
+        } elseif ($year == -1) {
+        	$year = '';
+        	$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
+        } else {
             $month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
         }
+
         $result = array();
 
         for ($j = 0; $j < 12; $j++)
         {
-            //$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year), "%b"), 3, 'right', 'UTF-8', 1));
-        	$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, $year), "%b"), 1, 'right', 'UTF-8', 1));
+			// $ids is 'D', 'N', 'O', 'S', ... (First letter of month in user language)
+        	$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, 1970), "%b"), 1, 'right', 'UTF-8', 1));
 
+			//print $idx.'-'.$year.'-'.$month.'<br>';
             $result[$j] = array($idx, isset($tab[$year.$month]) ? $tab[$year.$month] : 0);
             //            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
 
