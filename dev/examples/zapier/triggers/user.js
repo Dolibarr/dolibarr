@@ -6,7 +6,7 @@ const subscribeHook = (z, bundle) => {
     const data = {
         url: bundle.targetUrl,
         event: bundle.event,
-        module: 'action',
+        module: 'user',
         action: bundle.inputData.action
     };
 
@@ -32,7 +32,7 @@ const unsubscribeHook = (z, bundle) => {
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
-        url: bundle.authData.url  + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
+        url: bundle.authData.url + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
         method: 'DELETE',
     };
 
@@ -40,67 +40,76 @@ const unsubscribeHook = (z, bundle) => {
     return z.request(options).then((response) => JSON.parse(response.content));
 };
 
-const getAction = (z, bundle) => {
+const getUser = (z, bundle) => {
     // bundle.cleanedRequest will include the parsed JSON object (if it's not a
     // test poll) and also a .querystring property with the URL's query string.
-    const action = {
+    const user = {
         id: bundle.cleanedRequest.id,
-        ref: bundle.cleanedRequest.ref,
-        ref_client: bundle.cleanedRequest.ref_client,
-        name: bundle.cleanedRequest.name,
+        lastname: bundle.cleanedRequest.lastname,
         firstname: bundle.cleanedRequest.firstname,
-        usertodo__name: bundle.cleanedRequest.usertodo__name,
-        location: bundle.cleanedRequest.location,
-        label: bundle.cleanedRequest.label,
+        address: bundle.cleanedRequest.address,
+        zip: bundle.cleanedRequest.zip,
+        town: bundle.cleanedRequest.town,
+        email: bundle.cleanedRequest.email,
+        login: bundle.cleanedRequest.login,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
-        module: bundle.cleanedRequest.module,
-        datep: bundle.cleanedRequest.datep,
-        datef: bundle.cleanedRequest.datef,
-        fulldayevent: bundle.cleanedRequest.fulldayevent,
-        transparency: bundle.cleanedRequest.transparency,
-        icalname: bundle.cleanedRequest.icalname,
-        icalcolor: bundle.cleanedRequest.icalcolor,
-        note: bundle.cleanedRequest.note,
-        note_public: bundle.cleanedRequest.note_public,
-        note_private: bundle.cleanedRequest.note_private,
         action: bundle.cleanedRequest.action
     };
 
-    return [action];
+    return [user];
 };
 
-const getFallbackRealAction = (z, bundle) => {
+const getFallbackRealUser = (z, bundle) => {
     // For the test poll, you should get some real data, to aid the setup process.
     const module = bundle.inputData.module;
     const options = {
-        url: bundle.authData.url  + '/api/index.php/agendaevents/0',
+        url: bundle.authData.url + '/api/index.php/users/0',
     };
 
     return z.request(options).then((response) => [JSON.parse(response.content)]);
 };
 
+// const getModulesChoices = (z/*, bundle*/) => {
+//     // For the test poll, you should get some real data, to aid the setup process.
+//     const options = {
+//         url: bundle.authData.url + '/api/index.php/zapierapi/getmoduleschoices',
+//     };
+
+//     return z.request(options).then((response) => JSON.parse(response.content));
+// };
+// const getModulesChoices = () => {
+
+//     return {
+//         orders: "Order",
+//         invoices: "Invoice",
+//         thirdparties: "Thirdparty",
+//         users: "User",
+//         contacts: "Contacts"
+//     };
+// };
+
 // const getActionsChoices = (z, bundle) => {
 //     // For the test poll, you should get some real data, to aid the setup process.
 //     const module = bundle.inputData.module;
 //     const options = {
-//         url: bundle.authData.url  + '/api/index.php/zapierapi/getactionschoices/actions',
+//         url:  url: bundle.authData.url + '/api/index.php/zapierapi/getactionschoices/thirparty`,
 //     };
 
 //     return z.request(options).then((response) => JSON.parse(response.content));
 // };
 
-// We recommend writing your actions separate like this and rolling them
+// We recommend writing your triggers separate like this and rolling them
 // into the App definition at the end.
 module.exports = {
-    key: 'action',
+    key: 'user',
 
     // You'll want to provide some helpful display labels and descriptions
     // for users. Zapier will put them into the UX.
-    noun: 'Action',
+    noun: 'User',
     display: {
-        label: 'New Agenda',
-        description: 'Triggers when a new agenda with action is done in Dolibarr.'
+        label: 'New User',
+        description: 'Triggers when a new user action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -112,11 +121,11 @@ module.exports = {
             {
                 key: 'action',
                 type: 'string',
-                helpText: 'Which action of agenda this should trigger on.',
+                helpText: 'Which action of user this should trigger on.',
                 choices: {
                     create: "Create",
                     modify: "Modify",
-                    delete: "Delete",
+                    validate: "Validate",
                 }
             }
         ],
@@ -126,8 +135,8 @@ module.exports = {
         performSubscribe: subscribeHook,
         performUnsubscribe: unsubscribeHook,
 
-        perform: getAction,
-        performList: getFallbackRealAction,
+        perform: getUser,
+        performList: getFallbackRealUser,
 
         // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
         // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
@@ -135,7 +144,13 @@ module.exports = {
         sample: {
             id: 1,
             createdAt: 1472069465,
-            name: 'Best Spagetti Ever',
+            lastname: 'DOE',
+            firstname: 'John',
+            email: 'john@doe.com',
+            address: 'Park Avenue',
+            zip: '12345',
+            town: 'NEW-YORK',
+            login: 'doe.john',
             authorId: 1,
             action: 'create'
         },
@@ -145,14 +160,15 @@ module.exports = {
         // outputFields: () => { return []; }
         // Alternatively, a static field definition should be provided, to specify labels for the fields
         outputFields: [
-            {
-                key: 'id',
-                type: "integer",
-                label: 'ID'
-            },
+            {key: 'id', type: "integer", label: 'ID'},
             {key: 'createdAt', type: "integer", label: 'Created At'},
-            {key: 'name', label: 'Name'},
-            {key: 'usertodo__name', label: 'UserToDo Name'},
+            {key: 'lastname', label: 'Lastname'},
+            {key: 'firstname', label: 'Firstname'},
+            {key: 'email', label: 'Email'},
+            {key: 'address', label: 'Address'},
+            {key: 'zip', label: 'Zip'},
+            {key: 'town', label: 'Town'},
+            {key: 'login', label: 'Login'},
             {key: 'authorId', type: "integer", label: 'Author ID'},
             {key: 'action', label: 'Action'}
         ]

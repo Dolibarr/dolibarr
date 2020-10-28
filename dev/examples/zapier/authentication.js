@@ -48,7 +48,7 @@ module.exports = {
     fields: [
         {
             key: 'url',
-            label: 'Url of service',
+            label: 'Url of service without ending-slash',
             required: true,
             type: 'string'
         },

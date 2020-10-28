@@ -1,5 +1,6 @@
 /*jshint esversion: 6 */
 const triggerThirdparty = require('./triggers/thirdparty');
+const triggerUser = require('./triggers/user');
 const triggerOrder = require('./triggers/order');
 const triggerAction = require('./triggers/action');
 
@@ -54,8 +55,9 @@ const App = {
     // If you want your trigger to show up, you better include it here!
     triggers: {
         [triggerThirdparty.key]: triggerThirdparty,
+        [triggerUser.key]: triggerUser,
         [triggerOrder.key]: triggerOrder,
-        [triggerAction.key]: triggerAction
+        [triggerAction.key]: triggerAction,
     },
 
     // If you want your searches to show up, you better include it here!
