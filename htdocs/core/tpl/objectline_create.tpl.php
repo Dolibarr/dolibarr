@@ -678,13 +678,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
 							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
-						<?php
+								<?php
 							} else { ?>
 						var proddesc = data.desc;
-						<?php
+								<?php
 							} ?>
 						console.log("Load desciption into text area : "+proddesc);
-						<?php
+							<?php
 							if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 						{
@@ -693,12 +693,12 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 								editor.setData(proddesc);
 							}
 						}
-						<?php
+								<?php
 							} else { ?>
 						jQuery('#dp_desc').text(proddesc);
-						<?php
+								<?php
 							} ?>
-						<?php
+							<?php
 						} ?>
 					},
 					'json'
@@ -873,12 +873,12 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 			<?php
 			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
-			?>
+				?>
 			var description = $('option:selected', this).attr('data-description');
 			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
 
 			console.log("Load desciption into text area : "+description);
-			<?php
+				<?php
 				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
@@ -887,10 +887,10 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					editor.setData(description);
 				}
 			}
-			<?php
+					<?php
 				} else { ?>
 			jQuery('#dp_desc').text(description);
-			<?php
+					<?php
 				}
 			}?>
 		} else if (jQuery('#idprodfournprice').length > 0) {
@@ -904,10 +904,10 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					editor.setData('');
 				}
 			}
-			<?php
-			} else { ?>
+					<?php
+				} else { ?>
 			jQuery('#dp_desc').text('');
-			<?php
+					<?php
 				}
 			}?>
 		}
