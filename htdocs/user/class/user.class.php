@@ -1123,9 +1123,9 @@ class User extends CommonObject
 
 		// Clean parameters
 
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 
 		$this->login = trim($this->login);
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
@@ -1468,9 +1468,9 @@ class User extends CommonObject
 
 		// Clean parameters
 
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);

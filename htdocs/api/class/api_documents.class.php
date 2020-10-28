@@ -616,6 +616,12 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$object = new Adherent($this->db);
 			}
+			elseif ($modulepart == 'proposal' || $modulepart == 'propal' || $modulepart == 'propale')
+			{
+				$modulepart = 'propale';
+				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+				$object = new Propal($this->db);
+			}
 			// TODO Implement additional moduleparts
 			else
 			{
