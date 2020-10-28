@@ -73,6 +73,8 @@ $object=new CurrencyRate($db);
 $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
+$hookmanager->initHooks(array('EditorRatelist', 'globallist'));
+
 if (empty($action)) $action='list';
 
 // List of fields to search into when doing a "search in all"
@@ -127,9 +129,9 @@ if ($action == 'update'){
 	if ( $result > 0){
 		$currency_static  = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
-		$currencyRate->date_sync = $db->escape(GETPOST('dateinput'));
+		$currencyRate->date_sync = $db->escape(GETPOST('dateinput', 'alpha'));
 		$currencyRate->fk_multicurrency = $fk_currency;
-		$currencyRate->rate = $db->escape(GETPOST('rateinput'));
+		$currencyRate->rate = $db->escape(GETPOST('rateinput', 'int'));
 		$res = $currencyRate->update();
 		if ($res){
 			setEventMessage($langs->trans('successUpdateRate'));
@@ -174,7 +176,7 @@ if ($action == "confirm_delete"){
 		if ($result){
 			setEventMessage($langs->trans('successRateDelete'));
 		}else {
-			setEventMessage($langs->trans('errorRateDelete'));
+			setEventMessage($langs->trans('errorRateDelete'), 'errors');
 		}
 	}else {
 		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
@@ -249,7 +251,7 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '<td>' . $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
 
 	print ' <td>' . $langs->trans('rate') . '</td>';
-	print ' <td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($rateinput) . '" type="text"></td>';
+	print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($rateinput) . '"></td>';
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
