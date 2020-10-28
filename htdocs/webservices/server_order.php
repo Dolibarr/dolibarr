@@ -112,7 +112,7 @@ $line_fields = array(
 
 $elementtype = 'commandedet';
 
-//Retreive all extrafield for thirdsparty
+//Retrieve all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -216,7 +216,7 @@ $order_fields = array(
 
 $elementtype = 'commande';
 
-//Retreive all extrafield for thirdsparty
+//Retrieve all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -944,7 +944,7 @@ function updateOrder($authentication, $order)
 
 			$elementtype = 'commande';
 
-			//Retreive all extrafield for object
+			//Retrieve all extrafield for object
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);

@@ -65,7 +65,7 @@ $object->fetch_thirdparty();
 $object->info($object->id);
 
 $head = commande_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("CustomerOrder"), -1, 'order');
+print dol_get_fiche_head($head, 'info', $langs->trans("CustomerOrder"), -1, 'order');
 
 // Order card
 
@@ -127,7 +127,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

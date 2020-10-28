@@ -81,7 +81,7 @@ print load_fiche_titre($langs->trans('SalariesSetup'), $linkback, 'title_setup')
 
 $head = salaries_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Salaries"), -1, 'payment');
+print dol_get_fiche_head($head, 'general', $langs->trans("Salaries"), -1, 'payment');
 
 // Document templates
 print load_fiche_titre($langs->trans("Options"), '', '');
@@ -122,7 +122,7 @@ print '</tr>';
 
 print "</table>\n";
 
-//dol_fiche_end();
+//print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

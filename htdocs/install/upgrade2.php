@@ -2090,11 +2090,11 @@ function migrate_commande_livraison($db, $langs, $conf)
 
                     if ($resql2)
                     {
-                    	$date_livraison = $db->jdate($obj->date_livraison);
+                    	$delivery_date = $db->jdate($obj->date_livraison);
 
                         $sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
                         $sqlu .= " ref_client='".$db->escape($obj->ref_client)."'";
-                        $sqlu .= ", date_livraison='".$db->idate($date_livraison)."'";
+                        $sqlu .= ", date_livraison='".$db->idate($delivery_date)."'";
                         $sqlu .= " WHERE rowid = ".$obj->rowid;
                         $resql3 = $db->query($sqlu);
                         if (!$resql3)

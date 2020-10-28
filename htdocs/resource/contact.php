@@ -115,7 +115,7 @@ if ($id > 0 || !empty($ref))
 
 
 	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php'.(!empty($socid) ? '?id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -147,7 +147,7 @@ if ($id > 0 || !empty($ref))
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

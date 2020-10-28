@@ -133,7 +133,7 @@ if ($id > 0 || !empty($ref))
 
 		$totalpaye = $object->getSommePaiement();
 
-		dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, 'bill');
+		print dol_get_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
 		// Invoice content
 
@@ -185,7 +185,7 @@ if ($id > 0 || !empty($ref))
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<br>';
 

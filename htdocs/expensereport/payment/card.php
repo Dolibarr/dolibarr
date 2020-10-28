@@ -81,7 +81,7 @@ $form = new Form($db);
 
 $head = payment_expensereport_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 /*
  * Confirm deleting of the payment
@@ -152,7 +152,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

@@ -111,7 +111,7 @@ if ($socid > 0)
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -126,7 +126,7 @@ if ($socid > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 

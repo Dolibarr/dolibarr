@@ -126,7 +126,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
+	print dol_get_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
 
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=unset&token='.newToken().'&value=0&name=ADHERENT_USE_SPIP">';
@@ -146,13 +146,13 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
 
 	form_constantes($constantes, 2);
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
     print '</form>';
 } else {
-    dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+    print dol_get_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 
     $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value=1&amp;name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Activate");
@@ -160,7 +160,7 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
     $link .= '</a>';
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

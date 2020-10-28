@@ -104,7 +104,7 @@ if ($object->id)
 
 	$head = donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'donation');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'donation');
 
 
 	// Build file list
@@ -179,7 +179,7 @@ if ($object->id)
 
     print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $modulepart = 'don';
     $permission = $user->rights->don->lire;

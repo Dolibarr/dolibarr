@@ -366,7 +366,7 @@ class FormFile
 		}
 
 		$printer = 0;
-		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'livraison', 'ticket')))	// The direct print feature is implemented only for such elements
+		if (in_array($modulepart, array('facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket')))	// The direct print feature is implemented only for such elements
 		{
 			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
 		}
@@ -466,11 +466,11 @@ class FormFile
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 					$modellist = ModelePdfReception::liste_modeles($this->db);
 				}
-			} elseif ($modulepart == 'livraison')
+			} elseif ($modulepart == 'delivery')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
-					include_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 					$modellist = ModelePDFDeliveryOrder::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'ficheinter')

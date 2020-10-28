@@ -281,7 +281,7 @@ if ($modecompta != 'CREANCES-DETTES') {
     }
 }
 
-$morefilter = '';
+$moreforfilter = '';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";

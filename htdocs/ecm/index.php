@@ -327,7 +327,7 @@ $moreheadjs .= '</script>'."\n";
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
 
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
+print dol_get_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
 
 // Add filemanager component
@@ -335,7 +335,7 @@ $module = 'ecm';
 include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

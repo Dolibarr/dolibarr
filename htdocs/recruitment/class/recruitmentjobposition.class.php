@@ -16,7 +16,7 @@
  */
 
 /**
- * \file        class/recruitmentjobposition.class.php
+ * \file        htdocs/recruitment/class/recruitmentjobposition.class.php
  * \ingroup     recruitment
  * \brief       This file is a CRUD class file for RecruitmentJobPosition (Create/Read/Update/Delete)
  */
@@ -125,14 +125,32 @@ class RecruitmentJobPosition extends CommonObject
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
 	);
 	public $rowid;
+
+	/**
+	 * @var string ref
+	 */
 	public $ref;
 	public $entity;
+
+	/**
+	 * @var string label
+	 */
 	public $label;
 	public $qty;
 	public $fk_soc;
 	public $fk_project;
 	public $fk_user_recruiter;
+
+	/**
+	 * @var string recruiter email
+	 */
 	public $email_recruiter;
+
+	/**
+	 * @var string suggested remuneration
+	 */
+	public $remuneration_suggested;
+
 	public $fk_user_supervisor;
 	public $fk_establishment;
 	public $date_planned;

@@ -116,7 +116,7 @@ $db->commit();
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'default', '', -1);
+print dol_get_fiche_head($head, 'default', '', -1);
 
 
 // Show warning about external users
@@ -260,7 +260,7 @@ if ($result)
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

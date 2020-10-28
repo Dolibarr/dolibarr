@@ -202,7 +202,7 @@ print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title
 
 $head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("CommRequests"), -1, 'supplier_proposal');
+print dol_get_fiche_head($head, 'general', $langs->trans("CommRequests"), -1, 'supplier_proposal');
 
 /*
  *  Module numerotation

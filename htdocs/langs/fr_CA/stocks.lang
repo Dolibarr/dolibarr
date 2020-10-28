@@ -89,7 +89,6 @@ inventoryValidate=Validée
 inventoryDraft=Fonctionnement
 inventorySelectWarehouse=Choix d'entrepôt
 SelectCategory=Filtre de catégorie
-INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Utilisez le prix d'achat si aucun dernier prix d'achat ne peut être trouvé
 inventoryChangePMPPermission=Autoriser à modifier la valeur PMP pour un produit
 OnlyProdsInStock=Ne pas ajouter de produit sans stock
 TheoricalQty=Quantité théorique

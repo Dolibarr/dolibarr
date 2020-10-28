@@ -118,7 +118,7 @@ if ($id > 0 || !empty($ref))
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("InterventionCard"), -1, 'intervention');
 
 
 	// Intervention card
@@ -169,7 +169,7 @@ if ($id > 0 || !empty($ref))
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

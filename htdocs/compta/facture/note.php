@@ -81,7 +81,7 @@ if ($id > 0 || !empty($ref))
 
     $totalpaye = $object->getSommePaiement();
 
-    dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
+    print dol_get_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
     // Invoice content
 
@@ -139,7 +139,7 @@ if ($id > 0 || !empty($ref))
 	$cssclass = "titlefield";
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

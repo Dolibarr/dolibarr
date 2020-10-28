@@ -287,7 +287,7 @@ if (empty($reshook))
 			dol_print_error($db, $object->error);
 	} elseif ($action == 'setdate_livraison' && $usercancreate)
 	{
-		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
+		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	} // Positionne ref client
@@ -806,7 +806,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = GETPOST('qty'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef), 'MS');
 		$remise_percent = GETPOST('remise_percent'.$predef);
 		if (empty($remise_percent)) $remise_percent = 0;
 
@@ -1229,7 +1229,10 @@ if (empty($reshook))
 					}
 				}
 			}
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"], $pu_ht_devise);
+
+			$qty = price2num(GETPOST('qty'), 'MS');
+
+			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"], $pu_ht_devise);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1321,7 +1324,7 @@ if (empty($reshook))
 		if ($ret < 0) $error++;
 		if (!$error)
 		{
-			$result = $object->insertExtraFields('PROPAL_MODIFY');
+			$result = $object->updateExtraField(GETPOST('attribute', 'restricthtml'), 'PROPAL_MODIFY', $user);
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1484,7 +1487,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1771,7 +1774,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$langs->load("bills");
 	print '<div class="center">';
@@ -1805,7 +1808,7 @@ if ($action == 'create')
 	$soc->fetch($object->socid);
 
 	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
+	print dol_get_fiche_head($head, 'comm', $langs->trans('Proposal'), -1, 'propal');
 
 	$formconfirm = '';
 
@@ -2382,7 +2385,7 @@ if ($action == 'create')
 
 	print "</form>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

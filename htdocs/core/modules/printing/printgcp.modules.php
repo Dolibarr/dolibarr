@@ -35,16 +35,39 @@ use OAuth\OAuth2\Service\Google;
  */
 class printing_printgcp extends PrintingDriver
 {
+    /**
+     * @var string module name
+     */
 	public $name = 'printgcp';
+
+    /**
+     * @var string module description
+     */
 	public $desc = 'PrintGCPDesc';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'printer';
+
+    /**
+     * @var string module description
+     */
 	public $active = 'PRINTING_PRINTGCP';
+
+    /**
+     * @var array module parameters
+     */
 	public $conf = array();
+
+    /**
+     * @var string google id
+     */
 	public $google_id = '';
+
+    /**
+     * @var string google secret
+     */
 	public $google_secret = '';
 
 	/**
@@ -68,6 +91,7 @@ class printing_printgcp extends PrintingDriver
 	const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/search';
 	const PRINTERS_GET_JOBS = 'https://www.google.com/cloudprint/jobs';
 	const PRINT_URL = 'https://www.google.com/cloudprint/submit';
+	const LANGFILE = 'printgcp';
 
 	/**
 	 *  Constructor
@@ -280,7 +304,7 @@ class printing_printgcp extends PrintingDriver
 		$responsedata = json_decode($response, true);
 		$printers = $responsedata['printers'];
 		// Check if we have printers?
-		if (count($printers) == 0) {
+		if (is_array($printers) && count($printers) == 0) {
 			// We dont have printers so return blank array
 			$ret['available'] = array();
 		} else {

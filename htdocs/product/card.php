@@ -990,7 +990,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$object->country = $tmparray['label'];
 		}
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table class="border centpercent">';
 
@@ -1386,7 +1386,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		}
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -1438,7 +1438,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-			dol_fiche_head($head, 'card', $titre, 0, $picto);
+			print dol_get_fiche_head($head, 'card', $titre, 0, $picto);
 
 
 			print '<table class="border allwidth">';
@@ -1771,7 +1771,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			}
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1789,7 +1789,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-			dol_fiche_head($head, 'card', $titre, -1, $picto);
+			print dol_get_fiche_head($head, 'card', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 			$object->next_prev_filter = " fk_product_type = ".$object->type;
@@ -2169,7 +2169,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</div></div>';
 			print '<div style="clear:both"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	} elseif ($action != 'create')
 	{
@@ -2220,7 +2220,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
 }
 
 // Call Hook formConfirm
@@ -2368,7 +2368,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 
 		print load_fiche_titre($langs->trans("AddToDraft"), '', '');
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
 		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';
@@ -2384,7 +2384,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '</form>';
 	}

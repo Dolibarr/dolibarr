@@ -95,7 +95,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = recruitmentjobpositionPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -155,7 +155,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

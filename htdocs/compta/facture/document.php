@@ -101,7 +101,7 @@ if ($id > 0 || !empty($ref))
 		$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
-		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
+		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
     	$totalpaye = $object->getSommePaiement();
 
@@ -174,7 +174,7 @@ if ($id > 0 || !empty($ref))
 
 		print "</div>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		$modulepart = 'facture';
 		$permission = $user->rights->facture->creer;

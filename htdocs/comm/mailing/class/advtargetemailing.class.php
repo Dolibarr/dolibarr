@@ -451,7 +451,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 	/**
-	 * Save query in database to retreive it
+	 * Save query in database to retrieve it
 	 *
 	 *	@param  	User		$user    		User that deletes
 	 * 	@param		array		$arrayquery		All element to Query

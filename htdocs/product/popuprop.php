@@ -105,7 +105,7 @@ $head[$h][2] = 'popularity';
 $h++;
 
 
-dol_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
 
 
 // Array of liens to show
@@ -236,7 +236,7 @@ print "</table>";
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -105,7 +105,7 @@ if ($object->id)
 
     $head = tax_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
+    print dol_get_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -156,7 +156,7 @@ if ($object->id)
 
     print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;

@@ -69,7 +69,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = dav_admin_prepare_head();
 
-dol_fiche_head($head, 'webdav', '', -1, 'action');
+print dol_get_fiche_head($head, 'webdav', '', -1, 'action');
 
 if ($action == 'edit')
 {
@@ -148,7 +148,7 @@ if ($action == 'edit')
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 /*print '<div class="center">';
 print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";

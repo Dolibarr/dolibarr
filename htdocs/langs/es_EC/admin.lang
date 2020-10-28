@@ -422,7 +422,6 @@ Module54Name=Contratos / Suscripciones
 Module54Desc=Gestión de contratos (servicios o suscripciones recurrentes).
 Module55Desc=Administración de código de barras
 Module58Desc=Integración de un sistema ClickToDial (Asterisco, ...)
-Module59Desc=Añadir función para generar una cuenta Bookmark4u desde una cuenta de Dolibarr
 Module60Name=Adhesivos
 Module60Desc=Manejo de adhesivos
 Module70Desc=Administración de la intervención

@@ -227,12 +227,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_creation))
 		{
-			if ($object->user_creation->id) print $object->user_creation->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_creation->id) print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -261,12 +261,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_modification))
 		{
-			if ($object->user_modification->id) print $object->user_modification->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_modification->id) print $object->user_modification->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -295,12 +295,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_validation))
 		{
-			if ($object->user_validation->id) print $object->user_validation->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_validation->id) print $object->user_validation->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -329,12 +329,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_approve))
 		{
-			if ($object->user_approve->id) print $object->user_approve->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_approve->id) print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -363,7 +363,7 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		$userstatic = new User($db);
 		$userstatic->fetch($object->user_approve_id2);
-		if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+		if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		else print $langs->trans("Unknown");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
@@ -392,12 +392,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_closing))
 		{
-			if ($object->user_closing->id) print $object->user_closing->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_closing->id) print $object->user_closing->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_closing);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -427,7 +427,7 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_rappro))
 		{
-			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
@@ -484,15 +484,15 @@ function dolAddEmailTrackId($email, $trackingid)
 }
 
 /**
- *	Return true if email has a domain name that can't be resolved
+ *	Return true if email has a domain name that can be resolved to MX type.
  *
  *	@param	string	$mail       Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
- *	@return boolean     		True if domain email is OK, False if KO
+ *	@return int     			-1 if error (function not available), 0=Not valid, 1=Valid
  */
 function isValidMailDomain($mail)
 {
 	list($user, $domain) = explode("@", $mail, 2);
-	return checkdnsrr($domain, "MX");
+	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
 /**
@@ -1567,7 +1567,7 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
- * 	@return	mixed			    			0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@return	array|int			    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
@@ -1640,8 +1640,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					{
 						$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
 					}
-				} else // Common usage
-				{
+				} else {
+					// Common usage
 					$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
@@ -1791,9 +1791,9 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
-		$classpath = 'livraison/class';
-		$myobject = 'livraison';
-		$module = 'livraison_bon';
+		$classpath = 'delivery/class';
+		$myobject = 'delivery';
+		$module = 'delivery_note';
 	} elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
@@ -1842,7 +1842,14 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classname = 'CommandeFournisseur';
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-	} elseif ($objecttype == 'stock') {
+	}
+	elseif ($objecttype == 'supplier_proposal') {
+		$classfile = 'supplier_proposal';
+		$classname = 'SupplierProposal';
+		$classpath = 'supplier_proposal/class';
+		$module = 'supplier_proposal';
+	}
+	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';

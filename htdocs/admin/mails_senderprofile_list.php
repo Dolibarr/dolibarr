@@ -205,7 +205,7 @@ print load_fiche_titre($title, $linkback, $titlepicto);
 
 $head = email_admin_prepare_head();
 
-dol_fiche_head($head, 'senderprofiles', '', -1);
+print dol_get_fiche_head($head, 'senderprofiles', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("EMailsSenderProfileDesc")."</span><br>\n";
 print "<br>\n";
@@ -645,7 +645,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	print $formfile->showdocuments('massfilesarea_emailsenderprofile', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

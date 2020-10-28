@@ -100,7 +100,7 @@ $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
-dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
@@ -170,7 +170,7 @@ if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

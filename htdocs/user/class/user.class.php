@@ -401,7 +401,7 @@ class User extends CommonObject
 				// in such case, this admin user must be admin for ALL entities.
 				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 

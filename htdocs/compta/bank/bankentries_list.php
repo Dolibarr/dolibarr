@@ -430,13 +430,13 @@ if ($id > 0 || !empty($ref))
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	dol_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*
@@ -774,7 +774,7 @@ if ($resql)
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
-			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// Default is to record miscellaneous direct entries using miscellaneous payments
 			{
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments

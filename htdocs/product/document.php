@@ -191,7 +191,7 @@ if ($object->id)
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-	dol_fiche_head($head, 'documents', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'documents', $titre, -1, $picto);
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -234,7 +234,7 @@ if ($object->id)
     print '</div>';
     print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

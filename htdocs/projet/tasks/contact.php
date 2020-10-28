@@ -121,7 +121,7 @@ if ($action == 'deleteline' && $user->rights->projet->creer)
 	}
 }
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch(0, $project_ref) > 0)
@@ -175,7 +175,7 @@ if ($id > 0 || !empty($ref))
     		// Tabs for project
     		$tab = 'tasks';
     		$head = project_prepare_head($projectstatic);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
+    		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
     		$param = ($mode == 'mine' ? '&mode=mine' : '');
 
@@ -290,7 +290,7 @@ if ($id > 0 || !empty($ref))
 
             print '<div class="clearboth"></div>';
 
-    		dol_fiche_end();
+    		print dol_get_fiche_end();
 
     		print '<br>';
 		}
@@ -301,7 +301,7 @@ if ($id > 0 || !empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+		print dol_get_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 
 		$param = (GETPOST('withproject') ? '&withproject=1' : '');
@@ -336,7 +336,7 @@ if ($id > 0 || !empty($ref))
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Lines of contacts

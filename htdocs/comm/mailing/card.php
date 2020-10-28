@@ -462,9 +462,9 @@ if (empty($reshook))
 	{
 		$mesgs = array();
 
-		$object->email_from     = GETPOST("from");
-		$object->email_replyto  = GETPOST("replyto");
-		$object->email_errorsto = GETPOST("errorsto");
+		$object->email_from     = GETPOST("from", "none");			// Must allow 'name <email>'
+		$object->email_replyto  = GETPOST("replyto", "none");		// Must allow 'name <email>'
+		$object->email_errorsto = GETPOST("errorsto", "none");		// Must allow 'name <email>'
 		$object->title          = GETPOST("title");
 		$object->sujet          = GETPOST("sujet");
 		$object->body           = GETPOST("bodyemail", 'restricthtml');
@@ -491,7 +491,7 @@ if (empty($reshook))
 			$mesgs[] = $object->error;
 		}
 
-		setEventMessages($mesg, $mesgs, 'errors');
+		setEventMessages(null, $mesgs, 'errors');
 		$action = "create";
 	}
 
@@ -501,11 +501,10 @@ if (empty($reshook))
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') $object->title = trim(GETPOST('title', 'alpha'));
-		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'alpha'));
-		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'alpha'));
-		elseif ($action == 'setemail_errorsto') {
-            $object->email_errorsto = trim(GETPOST('email_errorsto', 'alpha'));
-        } elseif ($action == 'settitle' && empty($object->title)) {
+		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'none'));				// Must allow 'name <email>'
+		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'none'));		// Must allow 'name <email>'
+		elseif ($action == 'setemail_errorsto') $object->email_errorsto = trim(GETPOST('email_errorsto', 'none'));	// Must allow 'name <email>'
+        elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
@@ -708,10 +707,10 @@ if ($action == 'create')
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO) ? $conf->global->MAILING_EMAIL_ERRORSTO : $conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
@@ -742,7 +741,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
 
@@ -776,7 +775,7 @@ if ($action == 'create')
 
 		if ($action != 'edit' && $action != 'edithtml')
 		{
-			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			/*
 			 * View mode mailing
@@ -868,7 +867,11 @@ if ($action == 'create')
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadEMail", $email));
+			} elseif ($email && !isValidMailDomain($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadMXDomain", $email));
 			}
+
 			print '</td></tr>';
 
 			// Errors to
@@ -880,6 +883,9 @@ if ($action == 'create')
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadEMail", $email));
+			} elseif ($email && !isValidMailDomain($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadMXDomain", $email));
 			}
 			print '</td></tr>';
 
@@ -917,7 +923,7 @@ if ($action == 'create')
 
 			print "</div>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			// Clone confirmation
@@ -1027,7 +1033,7 @@ if ($action == 'create')
 			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			    print load_fiche_titre($langs->trans("TestMailing"));
 
-			    dol_fiche_head(null, '', '', -1);
+			    print dol_get_fiche_head(null, '', '', -1);
 
 			    // Create mail form object
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1058,7 +1064,7 @@ if ($action == 'create')
 
 				print '<br>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print dol_set_focus('#sendto');
 			}
@@ -1074,7 +1080,7 @@ if ($action == 'create')
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
-			dol_fiche_head('', '', '', -1);
+			print dol_get_fiche_head('', '', '', -1);
 
 			print '<table class="bordernooddeven" width="100%">';
 
@@ -1116,13 +1122,13 @@ if ($action == 'create')
 			} else print dol_htmlentitiesbr($object->body);
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} else {
 			/*
 			 * Edition mode mailing (CKeditor or HTML source)
 			 */
 
-			dol_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1189,7 +1195,7 @@ if ($action == 'create')
 			print '</table>';
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 
@@ -1210,7 +1216,7 @@ if ($action == 'create')
 			// Print mail content
 			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
-			dol_fiche_head(null, '', '', -1);
+			print dol_get_fiche_head(null, '', '', -1);
 
 			print '<table class="bordernooddeven" width="100%">';
 
@@ -1283,7 +1289,7 @@ if ($action == 'create')
 			print '</div>';
 
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave" value="'.$langs->trans("Save").'" name="save">';

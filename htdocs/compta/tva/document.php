@@ -106,7 +106,7 @@ if ($object->id)
 
     $head = vat_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment');
+    print dol_get_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -142,7 +142,7 @@ if ($object->id)
 
     print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $permission = $user->rights->tax->charges->creer;
     $permtoedit = $user->rights->fournisseur->facture->creer;

@@ -129,7 +129,7 @@ $userstatic = new User($db);
 $userAccess = $object->restrictedProjectArea($user);
 
 $head = project_prepare_head($object);
-dol_fiche_head($head, 'element', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+print dol_get_fiche_head($head, 'element', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 
 // Project card
@@ -263,7 +263,7 @@ print '</div>';
 
 print '<div class="clearboth"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

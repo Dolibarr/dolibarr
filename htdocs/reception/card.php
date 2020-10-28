@@ -425,7 +425,7 @@ if (empty($reshook))
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
-	    $result = $object->set_date_livraison($user, $datedelivery);
+	    $result = $object->setDeliveryDate($user, $datedelivery);
 	    if ($result < 0)
 	    {
 	        setEventMessages($object->error, $object->errors, 'errors');
@@ -727,7 +727,7 @@ if ($action == 'create')
                 print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id', 'int').'">';
             }
 
-            dol_fiche_head('');
+            print dol_get_fiche_head('');
 
             print '<table class="border centpercent">';
 
@@ -873,7 +873,7 @@ if ($action == 'create')
 
             print "</table>";
 
-            dol_fiche_end();
+            print dol_get_fiche_end();
 
 
             // Reception lines
@@ -1203,7 +1203,7 @@ if ($action == 'create')
 		$res = $object->fetch_optionals();
 
 		$head = reception_prepare_head($object);
-		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
+		print dol_get_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'dollyrevert');
 
 		$formconfirm = '';
 
@@ -1665,13 +1665,13 @@ if ($action == 'create')
     		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
     		$sql .= ", ed.rowid as receptionline_id, ed.qty, ed.fk_reception as reception_id,  ed.fk_entrepot";
     		$sql .= ", e.rowid as reception_id, e.ref as reception_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_reception";
-    		//if ($conf->livraison_bon->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
+    		//if ($conf->delivery_note->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
     		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch';
     		$sql .= ', p.description as product_desc';
     		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as ed";
     		$sql .= ", ".MAIN_DB_PREFIX."reception as e";
     		$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-    		//if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
+    		//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_reception = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
     		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
     		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
     		$sql .= " AND obj.fk_commande = ".$origin_id;
@@ -1949,7 +1949,7 @@ if ($action == 'create')
 	}
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$object->fetchObjectLinked($object->id, $object->element);
@@ -2103,7 +2103,7 @@ if ($action == 'create')
 		print '<div class="clearboth"></div>';
 		print '<br>';
 		print load_fiche_titre($langs->trans('SendReceptionByEMail'));
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
@@ -2176,7 +2176,7 @@ if ($action == 'create')
 		}
 		// Show form
 		print $formmail->get_form();
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 }
 

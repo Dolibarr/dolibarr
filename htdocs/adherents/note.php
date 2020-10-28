@@ -66,7 +66,7 @@ $form = new Form($db);
 if ($id) {
 	$head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
 	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -112,7 +112,7 @@ if ($id) {
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

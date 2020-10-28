@@ -94,7 +94,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->expedition->dir_output.'/sending/'.dol_sanitizeFileName($object->ref);
 
 		$head = shipping_prepare_head($object);
-		dol_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, 'sending');
+		print dol_get_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, 'sending');
 
 
 		// Build file list
@@ -169,7 +169,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print "</div>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		$modulepart = 'expedition';
 		$permission = $user->rights->expedition->creer;

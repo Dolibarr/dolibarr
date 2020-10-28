@@ -22,14 +22,14 @@
  */
 
 /**
- *	\file       htdocs/livraison/card.php
+ *	\file       htdocs/delivery/card.php
  *	\ingroup    livraison
  *	\brief      Page to describe a delivery receipt
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -57,9 +57,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 // Security check
 $id = GETPOST('id', 'int');
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+$result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
 
-$object = new Livraison($db);
+$object = new Delivery($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -74,6 +74,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard', 'globalcard'));
 
+$error = 0;
+
 
 /*
  * Actions
@@ -86,18 +88,17 @@ if ($action == 'add')
 {
 	$db->begin();
 
-	$object->date_livraison   = time();
-	$object->note             = $_POST["note"];
-	$object->commande_id      = $_POST["commande_id"];
+	$object->date_delivery = dol_now();
+	$object->note          = GETPOST("note", 'restricthtml');
+	$object->note_private  = GETPOST("note", 'restricthtml');
+	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled))
-	{
-		$expedition->entrepot_id = $_POST["entrepot_id"];
+	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+		$expedition->entrepot_id = GETPOST('entrepot_id');
 	}
 
-	// On boucle sur chaque ligne de commande pour completer objet livraison
-	// avec qte a livrer
+	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
 	$commande->fetch($object->commande_id);
 	$commande->fetch_lines();
@@ -106,15 +107,15 @@ if ($action == 'add')
 	{
 		$qty = "qtyl".$i;
 		$idl = "idl".$i;
-		if ($_POST[$qty] > 0)
+		$qtytouse = price2num(GETPOST($qty));
+		if ($qtytouse > 0)
 		{
-			$object->addline($_POST[$idl], $_POST[$qty]);
+			$object->addline(GETPOST($idl), price2num($qtytouse));
 		}
 	}
 
 	$ret = $object->create($user);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$db->commit();
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -122,12 +123,11 @@ if ($action == 'add')
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
-		$_GET["commande_id"] = $_POST["commande_id"];
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
-    || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
+    || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
 )
 {
 	$result = $object->valid($user);
@@ -151,7 +151,7 @@ if ($action == 'add')
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->livraison->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->delivery->supprimer)
 {
 	$db->begin();
 	$result = $object->delete();
@@ -167,10 +167,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->creer)
+if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer)
 {
     $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-    $result = $object->set_date_livraison($user, $datedelivery);
+    $result = $object->setDeliveryDate($user, $datedelivery);
     if ($result < 0)
     {
         $mesg = '<div class="error">'.$object->error.'</div>';
@@ -180,7 +180,7 @@ if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->cree
 // Set incoterm
 elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 {
-	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	$result = $object->setIncoterms((int) GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
 // Update extrafields
@@ -276,7 +276,6 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			$head = delivery_prepare_head($object);
 
-
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
@@ -284,7 +283,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
-			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'sending');
+			print dol_get_fiche_head($head, 'delivery', $langs->trans("Shipment"), -1, 'sending');
 
 			/*
 			 * Confirmation de la suppression
@@ -306,7 +305,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 
 			/*
-			 *   Livraison
+			 *   Delivery
 			 */
 
 			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled))
@@ -364,7 +363,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			}
 			$morehtmlref .= '</div>';
 
-			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br>';
+			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br><br class="small">';
 
 			dol_banner_tab($expedition, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -434,15 +433,15 @@ if ($action == 'create')    // Create. Seems to no be used
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			if ($action != 'editdate_delivery') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			if ($action == 'editdate_livraison')
+			if ($action == 'editdate_delivery')
 			{
-				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<form name="setdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="setdate_livraison">';
-				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
+				print '<input type="hidden" name="action" value="setdate_delivery">';
+				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
@@ -458,7 +457,7 @@ if ($action == 'create')    // Create. Seems to no be used
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
 		        print '<td><td class="right">';
-		        if ($user->rights->expedition->livraison->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        if ($user->rights->expedition->delivery->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
 		        print '</td>';
@@ -629,7 +628,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			print "</table>\n";
 
-            dol_fiche_end();
+            print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
 			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
@@ -647,14 +646,14 @@ if ($action == 'create')    // Create. Seems to no be used
 
 				if ($object->statut == 0 && $num_prod > 0)
 				{
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
-						|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
+						|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 					}
 				}
 
-				if ($user->rights->expedition->livraison->supprimer)
+				if ($user->rights->expedition->delivery->supprimer)
 				{
 					if ($conf->expedition_bon->enabled)
 					{
@@ -678,10 +677,10 @@ if ($action == 'create')    // Create. Seems to no be used
 			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$genallowed = $user->rights->expedition->livraison->lire;
-			$delallowed = $user->rights->expedition->livraison->creer;
+			$genallowed = $user->rights->expedition->delivery->lire;
+			$delallowed = $user->rights->expedition->delivery->creer;
 
-			print $formfile->showdocuments('livraison', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)

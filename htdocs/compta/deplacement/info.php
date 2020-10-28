@@ -50,7 +50,7 @@ if ($id)
 
 	$head = trip_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
+	print dol_get_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);

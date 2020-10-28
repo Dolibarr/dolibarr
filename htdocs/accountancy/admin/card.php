@@ -210,7 +210,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -252,7 +252,7 @@ if ($action == 'create') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -272,7 +272,7 @@ if ($action == 'create') {
 		// Edit mode
 		if ($action == 'update')
 		{
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -314,7 +314,7 @@ if ($action == 'create') {
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -327,7 +327,7 @@ if ($action == 'create') {
 			// View mode
 			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'account_number', 'ref');
 
@@ -364,7 +364,7 @@ if ($action == 'create') {
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			/*
 			 * Actions buttons

@@ -70,11 +70,11 @@ print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
 
-dol_fiche_head($head, 'attributesrec', $langs->trans("Invoices"), -1, 'invoice');
+print dol_get_fiche_head($head, 'attributesrec', $langs->trans("Invoices"), -1, 'invoice');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

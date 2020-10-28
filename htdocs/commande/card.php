@@ -541,7 +541,7 @@ if (empty($reshook))
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
-	    $result = $object->set_date_livraison($user, $datedelivery);
+	    $result = $object->setDeliveryDate($user, $datedelivery);
 	    if ($result < 0) {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
@@ -1556,7 +1556,7 @@ if ($action == 'create' && $usercancreate)
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -1828,7 +1828,7 @@ if ($action == 'create' && $usercancreate)
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Button "Create Draft"
 	print '<div class="center">';
@@ -1867,7 +1867,7 @@ if ($action == 'create' && $usercancreate)
 		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
 
 		$formconfirm = '';
 
@@ -2474,7 +2474,7 @@ if ($action == 'create' && $usercancreate)
 
 		print "</form>\n";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Buttons for actions
@@ -2556,7 +2556,7 @@ if ($action == 'create' && $usercancreate)
 					$numshipping = $object->nb_expedition();
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
-						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)) {
+						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->delivery_note->enabled && $user->rights->expedition->delivery->creer)) {
 							if ($user->rights->expedition->creer) {
 								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id.'">'.$langs->trans('CreateShipment').'</a>';
 							} else {
@@ -2573,7 +2573,6 @@ if ($action == 'create' && $usercancreate)
 				if (($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS) && $usercanclose) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=shipped">'.$langs->trans('ClassifyShipped').'</a></div>';
 				}
-
 				// Create bill and Classify billed
 				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
 				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {

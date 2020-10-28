@@ -310,7 +310,7 @@ if (!$ret) {
 		{
 			$head = actions_prepare_head($act);
 
-			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
+			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
@@ -427,7 +427,7 @@ if (!$ret) {
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 
@@ -442,7 +442,7 @@ if (!$ret) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
-			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
+			print dol_get_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
 			dol_banner_tab($socstatic, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
@@ -460,7 +460,7 @@ if (!$ret) {
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			$object = $savobject;
 		}
@@ -478,7 +478,7 @@ if (!$ret) {
 		if (is_object($fichinter))
 		{
 			$head = fichinter_prepare_head($fichinter);
-			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
+			print dol_get_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -527,7 +527,7 @@ if (!$ret) {
 
 			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 
@@ -545,13 +545,13 @@ if (!$ret) {
 			$titre = $langs->trans("CardProduct".$product->type);
 			$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-			dol_fiche_head($head, 'resources', $titre, -1, $picto);
+			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
             $shownav = 1;
             if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
         }
 	}
 

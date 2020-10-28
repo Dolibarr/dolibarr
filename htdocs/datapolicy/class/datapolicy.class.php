@@ -152,7 +152,7 @@ class DataPolicy
      * @param 	mixed		$contact		Contact
      * @return	void
      */
-    public function sendMailDataPolicyContact($contact)
+    public static function sendMailDataPolicyContact($contact)
     {
         global $langs, $conf, $db, $user;
 
@@ -167,6 +167,7 @@ class DataPolicy
         } else {
             $l = $langs->defaultlang;
         }
+        // TODO Use a dolibarr email template
         $s = "DATAPOLICIESSUBJECT_".$l;
         $ma = "DATAPOLICIESCONTENT_".$l;
         $la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
@@ -226,7 +227,7 @@ class DataPolicy
      * @param Societe	$societe	Object societe
      * @return	void
      */
-    public function sendMailDataPolicyCompany($societe)
+    public static function sendMailDataPolicyCompany($societe)
     {
         global $langs, $conf, $db, $user;
 
@@ -242,6 +243,7 @@ class DataPolicy
         } else {
             $l = $langs->defaultlang;
         }
+        // TODO Use a dolibarr email template
         $s = "DATAPOLICIESSUBJECT_".$l;
         $ma = "DATAPOLICIESCONTENT_".$l;
         $la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
@@ -264,10 +266,8 @@ class DataPolicy
 
         $actiontypecode = 'AC_EMAIL';
         $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-        if ($message)
-        {
-            if ($sendtocc)
-            {
+        if ($message) {
+            if ($sendtocc) {
                  $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
             }
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
@@ -300,7 +300,7 @@ class DataPolicy
      * @param Adherent	$adherent		Member
      * @return void
      */
-    public function sendMailDataPolicyAdherent($adherent)
+    public static function sendMailDataPolicyAdherent($adherent)
     {
         global $langs, $conf, $db, $user;
 
@@ -310,9 +310,6 @@ class DataPolicy
 
         $sendto = $adherent->email;
 
-        // TODO Use a dolibarr email template
-        $s = 'TXTLINKDATAPOLICIESSUBJECT_'.$l;
-        $ma = 'TXTLINKDATAPOLICIESMESSAGE_'.$l;
 
         $code = md5($adherent->email);
         if (!empty($adherent->default_lang)) {
@@ -320,6 +317,9 @@ class DataPolicy
         } else {
             $l = $langs->defaultlang;
         }
+        // TODO Use a dolibarr email template
+        $s = 'TXTLINKDATAPOLICIESSUBJECT_'.$l;
+        $ma = 'TXTLINKDATAPOLICIESMESSAGE_'.$l;
         $la = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
         $lr = 'TXTLINKDATAPOLICIESREFUSE_'.$l;
 

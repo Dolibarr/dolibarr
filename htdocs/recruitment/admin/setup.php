@@ -194,7 +194,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = recruitmentAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, '');
+print dol_get_fiche_head($head, 'settings', '', -1, '');
 
 // Setup page goes here
 //echo '<span class="opacitymedium">'.$langs->trans("RecruitmentSetupPage").'</span><br><br>';
@@ -517,7 +517,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

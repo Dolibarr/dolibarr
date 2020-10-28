@@ -215,7 +215,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
 $head = bank_admin_prepare_head(null);
-dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
+print dol_get_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
@@ -495,7 +495,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 
 print "</tr>\n";
 print '</table>';
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';

@@ -170,7 +170,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$object->fk_bank."\">";
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
+	print dol_get_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -232,7 +232,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
@@ -256,7 +256,7 @@ if ($rowid && $action != 'edit') {
 
 	$head = subscription_prepare_head($object);
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), -1, 'payment');
+	print dol_get_fiche_head($head, 'general', $langs->trans("Subscription"), -1, 'payment');
 
 	// Confirmation to delete subscription
 	if ($action == 'delete') {
@@ -335,7 +335,7 @@ if ($rowid && $action != 'edit') {
 
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
      * Barre d'actions

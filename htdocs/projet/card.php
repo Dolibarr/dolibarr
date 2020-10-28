@@ -491,7 +491,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -677,7 +677,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
@@ -792,7 +792,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	if ($action == 'edit' && $userWrite > 0)
 	{
-		dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public ? 'projectpub' : 'project'));
 
 		print '<table class="border centpercent">';
 
@@ -963,7 +963,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 		print '</table>';
 	} else {
-		dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 		// Project card
 
@@ -1107,7 +1107,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<div class="clearboth"></div>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit' && $userWrite > 0)
 	{

@@ -28,6 +28,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
@@ -594,7 +595,7 @@ if (empty($action) || $action == "view" || $action == "close")
     	$head[0][1] = $langs->trans("CashControl");
     	$head[0][2] = 'cashcontrol';
 
-	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
+	    print dol_get_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -659,7 +660,7 @@ if (empty($action) || $action == "view" || $action == "close")
 	    print '</div></div>';
 	    print '<div style="clear:both"></div>';
 
-	    dol_fiche_end();
+	    print dol_get_fiche_end();
 
 	    if ($action != 'close') {
 			print '<div class="tabsAction">';

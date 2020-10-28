@@ -196,7 +196,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-    dol_fiche_head();
+    print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -215,7 +215,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->accountid, "accountid", 0, '', 1); // Show open bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->accountid, "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
 	// Number
@@ -231,7 +231,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	/*
  	 * List of payments on donation

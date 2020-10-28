@@ -153,7 +153,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
 
-    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
+    print dol_get_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
 
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&token='.newToken().'&value=0&name=ADHERENT_USE_MAILMAN">';
@@ -198,13 +198,13 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
     print '</form>';
 } else {
-    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
+    print dol_get_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
     $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value=1&name=ADHERENT_USE_MAILMAN">';
     //$link.=img_$langs->trans("Activate")
@@ -212,7 +212,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     $link .= '</a>';
     print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 

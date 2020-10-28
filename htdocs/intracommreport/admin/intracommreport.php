@@ -96,7 +96,7 @@ print load_fiche_titre($langs->trans("IntracommReportSetup"), $linkback, 'title_
 
 $head = intracommReportAdminPrepareHead();
 
-dol_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, "intracommreport");
+print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, "intracommreport");
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -201,7 +201,7 @@ print '</div>';
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

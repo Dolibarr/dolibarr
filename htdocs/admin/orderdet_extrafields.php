@@ -74,11 +74,11 @@ print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("Orders"), -1, 'order');
+print dol_get_fiche_head($head, 'attributeslines', $langs->trans("Orders"), -1, 'order');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

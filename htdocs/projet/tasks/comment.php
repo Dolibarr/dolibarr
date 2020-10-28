@@ -65,7 +65,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // include comment actions
 include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch('', $project_ref) > 0)
@@ -115,7 +115,7 @@ if ($id > 0 || !empty($ref))
 			// Tabs for project
 			$tab = 'tasks';
 			$head = project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 			$param = ($mode == 'mine' ? '&mode=mine' : '');
 
@@ -254,7 +254,7 @@ if ($id > 0 || !empty($ref))
 
             print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<br>';
 		}
@@ -267,7 +267,7 @@ if ($id > 0 || !empty($ref))
 		$param = ($withproject ? '&withproject=1' : '');
 		$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>' : '';
 
-		dol_fiche_head($head, 'task_comment', $langs->trans("Task"), -1, 'projecttask');
+		print dol_get_fiche_head($head, 'task_comment', $langs->trans("Task"), -1, 'projecttask');
 
 		if ($action == 'delete')
 		{
@@ -319,7 +319,7 @@ if ($id > 0 || !empty($ref))
 
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		// Include comment tpl view

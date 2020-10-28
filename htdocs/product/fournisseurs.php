@@ -166,7 +166,7 @@ if (empty($reshook))
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
-		$supplier_description = GETPOST('supplier_description', 'alpha');
+		$supplier_description = GETPOST('supplier_description', 'restricthtml');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
 		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
@@ -385,7 +385,7 @@ if ($id > 0 || $ref)
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
+			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		    $object->next_prev_filter = " fk_product_type = ".$object->type;
@@ -433,7 +433,7 @@ if ($id > 0 || $ref)
             print '</div>';
             print '<div style="clear:both"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			// Form to add or update a price
@@ -453,7 +453,7 @@ if ($id > 0 || $ref)
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="save_price">';
 
-				dol_fiche_head();
+				print dol_get_fiche_head();
 
 				print '<table class="border centpercent">';
 
@@ -825,7 +825,7 @@ SCRIPT;
 
 				print '</table>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<div class="center">';
 				print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';

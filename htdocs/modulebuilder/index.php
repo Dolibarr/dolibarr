@@ -1745,7 +1745,7 @@ $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
 
-dol_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
+print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
 
 if ($module == 'initmodule')
 {
@@ -1875,7 +1875,7 @@ if ($module == 'initmodule')
 
 			if ($action != 'editfile' || empty($file))
 			{
-				dol_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Description - level 2
+				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Description - level 2
 
 				print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc".$tab).'</span>';
 				$infoonmodulepath = '';
@@ -1989,7 +1989,7 @@ if ($module == 'initmodule')
 					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtochangelog).'</span>';
 				}
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 			} else {	// Edit text file
 				$fullpathoffile = dol_buildpath($file, 0, 1); // Description - level 2
 
@@ -2006,12 +2006,12 @@ if ($module == 'initmodule')
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				dol_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
+				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -2022,7 +2022,7 @@ if ($module == 'initmodule')
 				print '</form>';
 			}
 		} else {
-			dol_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Level 2
+			print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix'); // Level 2
 		}
 
 		if ($tab == 'languages')
@@ -2269,7 +2269,7 @@ if ($module == 'initmodule')
 				else $tabobj = 'newobject';
 			}
 
-			dol_fiche_head($head3, $tabobj, '', -1, ''); // Level 3
+			print dol_get_fiche_head($head3, $tabobj, '', -1, ''); // Level 3
 
 			if ($tabobj == 'newobject')
 			{
@@ -2812,7 +2812,7 @@ if ($module == 'initmodule')
 				}
 			}
 
-			dol_fiche_end(); // Level 3
+			print dol_get_fiche_end(); // Level 3
 		}
 
 		if ($tab == 'menus')
@@ -3696,12 +3696,12 @@ if ($module == 'initmodule')
 
 		if ($tab != 'description')
 		{
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 }
 
-dol_fiche_end(); // End modules
+print dol_get_fiche_end(); // End modules
 
 // End of page
 llxFooter();

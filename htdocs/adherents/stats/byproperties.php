@@ -128,7 +128,7 @@ if ($resql) {
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'user');
+print dol_get_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title
@@ -173,7 +173,7 @@ foreach ($data as $val) {
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

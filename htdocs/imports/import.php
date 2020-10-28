@@ -330,7 +330,7 @@ if ($step == 1 || !$datatoimport)
 
     $head = import_prepare_head($param, 1);
 
-	dol_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
+	print dol_get_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
 
 
 	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
@@ -373,7 +373,7 @@ if ($step == 1 || !$datatoimport)
 	print '</table>';
     print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 
@@ -390,7 +390,7 @@ if ($step == 2 && $datatoimport)
 
     $head = import_prepare_head($param, 2);
 
-	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step2', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -417,7 +417,7 @@ if ($step == 2 && $datatoimport)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
@@ -472,7 +472,7 @@ if ($step == 3 && $datatoimport)
 
     $head = import_prepare_head($param, 3);
 
-	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step3', $langs->trans("NewImport"), -2);
 
 	/*
 	 * Confirm delete file
@@ -526,7 +526,7 @@ if ($step == 3 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	if ($format == 'xlsx' && !class_exists('XMLWriter')) {
@@ -763,7 +763,7 @@ if ($step == 4 && $datatoimport)
 
     $head = import_prepare_head($param, 4);
 
-	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step4', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -837,7 +837,7 @@ if ($step == 4 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>'."\n";
 
@@ -1229,7 +1229,7 @@ if ($step == 5 && $datatoimport)
     print '<input type="hidden" name="step" value="5">'; // step 5
     print '<input type="hidden" name="action" value="launchsimu">'; // step 5
 
-	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step5', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1421,7 +1421,7 @@ if ($step == 5 && $datatoimport)
 	print '</table>';
 	print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 
     if ($action != 'launchsimu')
@@ -1652,7 +1652,7 @@ if ($step == 6 && $datatoimport)
 
     $head = import_prepare_head($param, 6);
 
-	dol_fiche_head($head, 'step6', $langs->trans("NewImport"), -1);
+	print dol_get_fiche_head($head, 'step6', $langs->trans("NewImport"), -1);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1879,7 +1879,7 @@ if ($step == 6 && $datatoimport)
 	    else $db->rollback();
 	}
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 
 	// Show result

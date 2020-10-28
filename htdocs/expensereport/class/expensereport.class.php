@@ -1083,30 +1083,51 @@ class ExpenseReport extends CommonObject
 	{
 		global $user, $langs, $conf;
 
-		if (!$rowid) $rowid = $this->id;
+		$rowid = $this->id;
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
-		if ($this->db->query($sql))
-		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->error = $this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-				$this->db->rollback();
-				return -6;
-			}
-		} else {
-			$this->error = $this->db->error()." sql=".$sql;
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -4;
-		}
-	}
+        $error = 0;
+
+        // Delete lines
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE '.$this->fk_element.' = '.$rowid;
+        if (!$error && !$this->db->query($sql))
+        {
+        	$this->error = $this->db->error()." sql=".$sql;
+        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+        	$error++;
+        }
+
+        // Delete llx_ecm_files
+        if (!$error) {
+        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+        	$resql = $this->db->query($sql);
+        	if (!$resql)
+        	{
+        		$this->error = $this->db->lasterror();
+        		$this->errors[] = $this->error;
+        		$error++;
+        	}
+        }
+
+        // Delete main record
+        if (!$error) {
+            $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid = '.$rowid;
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                $this->error = $this->db->error()." sql=".$sql;
+                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            }
+        }
+
+        // Commit or rollback
+        if ($error) {
+        	$this->db->rollback();
+        	return -1;
+        } else {
+        	$this->db->commit();
+        	return 1;
+        }
+    }
 
 	/**
 	 * Set to status validate
@@ -2185,20 +2206,22 @@ class ExpenseReport extends CommonObject
 
 		$langs->load("trips");
 
-		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+	    if (!dol_strlen($modele)) {
+		    if ($this->modelpdf) {
+			    $modele = $this->modelpdf;
+		    } elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+			    $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+		    }
+	    }
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
-				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
-			}
+		if (!empty($modele)) {
+			$modelpath = "core/modules/expensereport/doc/";
+
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		} else {
+			return 0;
 		}
-
-		$modelpath = "core/modules/expensereport/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-	}
+    }
 
 	/**
 	 * List of types

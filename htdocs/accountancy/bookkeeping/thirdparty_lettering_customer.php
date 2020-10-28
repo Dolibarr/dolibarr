@@ -135,13 +135,13 @@ $head = societe_prepare_head($object);
 
 dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
 
-dol_fiche_head($head, 'lettering_customer', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'lettering_customer', $langs->trans("ThirdParty"), 0, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";

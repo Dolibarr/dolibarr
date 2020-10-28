@@ -22,9 +22,9 @@
  */
 
 /**
- *      \file       htdocs/admin/livraison_extrafields.php
- *		\ingroup    livraison
- *		\brief      Page to setup extra fields of livraison
+ *      \file       htdocs/admin/delivery_extrafields.php
+ *		\ingroup    delivery
+ *		\brief      Page to setup extra fields of delivery
  */
 
 require '../main.inc.php';
@@ -49,7 +49,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoenti
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'livraison'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'delivery'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -76,11 +76,11 @@ print "<br>\n";
 
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_receivings', $langs->trans("Receivings"), -1, 'shipment');
+print dol_get_fiche_head($head, 'attributes_receivings', $langs->trans("Receivings"), -1, 'shipment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

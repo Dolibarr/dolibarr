@@ -131,7 +131,7 @@ if ($object->id > 0)
 	$head = moPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("MO"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -185,7 +185,7 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 

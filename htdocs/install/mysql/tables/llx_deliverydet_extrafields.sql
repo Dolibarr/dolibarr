@@ -1,6 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2008 Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2015      Claudio Aschieri	<c.aschieri@19.coop>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,6 +16,10 @@
 --
 -- ===================================================================
 
-
-ALTER TABLE llx_livraisondet ADD INDEX idx_livraisondet_fk_expedition (fk_livraison);
-ALTER TABLE llx_livraisondet ADD CONSTRAINT fk_livraisondet_fk_livraison FOREIGN KEY (fk_livraison) REFERENCES llx_livraison (rowid);
+create table llx_deliverydet_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;

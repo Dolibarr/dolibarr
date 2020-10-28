@@ -531,7 +531,7 @@ if ($resql)
     {
         $head = stock_prepare_head($object);
 
-        dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
+        print dol_get_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
 
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -615,7 +615,7 @@ if ($resql)
 
         print '<div class="clearboth"></div>';
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
     }
 
 

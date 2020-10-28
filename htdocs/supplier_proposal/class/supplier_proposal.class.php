@@ -112,7 +112,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 * @var integer|string date_livraison
 	 */
-	public $date_livraison;
+	public $delivery_date;
 
 	/**
 	 * @deprecated
@@ -1289,7 +1289,7 @@ class SupplierProposal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1379,7 +1379,7 @@ class SupplierProposal extends CommonObject
 					return -1;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -1510,26 +1510,39 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Set delivery date
 	 *
-	 *	@param      User 		$user        		Object user that modify
-	 *	@param      int			$date_livraison     Delivery date
-	 *	@return     int         					<0 if ko, >0 if ok
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
 	 */
-	public function set_date_livraison($user, $date_livraison)
+	public function set_date_livraison($user, $delivery_date)
 	{
 		// phpcs:enable
+		return $this->setDeliveryDate($user, $delivery_date);
+	}
+
+	/**
+	 *	Set delivery date
+	 *
+	 *	@param      User 		$user        		Object user that modify
+	 *	@param      int			$delivery_date     Delivery date
+	 *	@return     int         					<0 if ko, >0 if ok
+	 */
+	public function setDeliveryDate($user, $delivery_date)
+	{
 		if (!empty($user->rights->supplier_proposal->creer))
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET date_livraison = ".($date_livraison != '' ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql))
 			{
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();
-				dol_syslog(get_class($this)."::set_date_livraison Erreur SQL");
+				dol_syslog(get_class($this)."::setDeliveryDate Erreur SQL");
 				return -1;
 			}
 		}

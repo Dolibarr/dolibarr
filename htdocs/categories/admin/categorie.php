@@ -81,7 +81,7 @@ print load_fiche_titre($langs->trans("CategoriesSetup"), $linkback, 'title_setup
 
 $head = categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
+print dol_get_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
 print '<table class="noborder centpercent">';

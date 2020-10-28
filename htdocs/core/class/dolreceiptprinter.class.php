@@ -815,7 +815,7 @@ class dolReceiptPrinter extends Printer
                 }
             }
             // If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector)
+			if ($this->printer->connector instanceof DummyPrintConnector || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 			{
 				$data = $this->printer->connector->getData();
 				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") echo base64_encode($data);
@@ -868,6 +868,11 @@ class dolReceiptPrinter extends Printer
     public function initPrinter($printerid)
     {
         global $conf;
+		if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+			$this->connector = new DummyPrintConnector();
+			$this->printer = new Printer($this->connector, $this->profile);
+			return;
+		}
         $error = 0;
         $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';

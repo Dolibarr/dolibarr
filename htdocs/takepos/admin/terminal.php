@@ -126,7 +126,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
-dol_fiche_head($head, 'terminal'.$terminal, 'TakePOS', -1, 'cash-register');
+print dol_get_fiche_head($head, 'terminal'.$terminal, 'TakePOS', -1, 'cash-register');
 print '<br>';
 
 
@@ -221,32 +221,34 @@ if (!empty($conf->stock->enabled))
 	}
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 	// Select printer to use with terminal
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
-	$printer->listprinters();
-	$printers = array();
-	foreach ($printer->listprinters as $key => $value) {
-		$printers[$value['rowid']] = $value['name'];
-	}
-	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse").'</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
-	print '</td></tr>';
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
-	    print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		$printer->listprinters();
+		$printers = array();
+		foreach ($printer->listprinters as $key => $value) {
+			$printers[$value['rowid']] = $value['name'];
+		}
+		print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse").'</td>';
 		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}), 1);
+		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
 		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}), 1);
-		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal}), 1);
-		print '</td></tr>';
+		if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+			print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
+			print '<td>';
+			print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}), 1);
+			print '</td></tr>';
+			print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
+			print '<td>';
+			print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}), 1);
+			print '</td></tr>';
+			print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
+			print '<td>';
+			print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal}), 1);
+			print '</td></tr>';
+		}
 	}
 	$printer->listPrintersTemplates();
 	$templates = array();

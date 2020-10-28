@@ -85,7 +85,7 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
 
-dol_fiche_head($head, 'services', '', -1, 'technic');
+print dol_get_fiche_head($head, 'services', '', -1, 'technic');
 
 
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
@@ -141,7 +141,7 @@ foreach ($list as $key)
 
 print '</table>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

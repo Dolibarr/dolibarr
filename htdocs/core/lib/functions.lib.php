@@ -361,7 +361,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			{
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
-		} // Else, retreive default values if we are not doing a sort
+		} // Else, retrieve default values if we are not doing a sort
 		elseif (!isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 		{
 			if (!empty($_GET['action']) && $_GET['action'] == 'create' && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
@@ -629,6 +629,9 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'san_alpha':
 			$out = filter_var($out, FILTER_SANITIZE_STRING);
 			break;
+		case 'email':
+			$out = filter_var($out, FILTER_SANITIZE_EMAIL);
+			break;
 		case 'aZ':
 			if (!is_array($out))
 			{
@@ -732,7 +735,7 @@ if (!function_exists('dol_getprefix'))
  */
 function dol_include_once($relpath, $classname = '')
 {
-	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we include. Other globals var must be retreived with $GLOBALS['var']
+	global $conf, $langs, $user, $mysoc; // Do not remove this. They must be defined for files we include. Other globals var must be retrieved with $GLOBALS['var']
 
 	$fullpath = dol_buildpath($relpath);
 
@@ -865,7 +868,7 @@ function dol_clone($object, $native = 0)
 	{
 		$myclone = unserialize(serialize($object));
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep references (refer to the same target/variable)
+		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
 
 	return $myclone;
@@ -1255,7 +1258,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
  *	@param	array	$links				Array of tabs. Currently initialized by calling a function xxx_admin_prepare_head
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
- *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using dol_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
@@ -1276,7 +1279,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *	@param	array	$links				Array of tabs
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using dol_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
@@ -1453,6 +1456,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
  *
  *  @param	int		$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
+ *  @deprecated Use print dol_get_fiche_end() instead
  */
 function dol_fiche_end($notab = 0)
 {
@@ -2284,7 +2288,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 }
 
 /**
- * Show EMail link
+ * Show EMail link formatted for HTML output.
  *
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
  * @param 	int			$cid 			Id of contact if known
@@ -2299,7 +2303,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 {
 	global $conf, $user, $langs, $hookmanager;
 
-	$newemail = $email;
+	$newemail = dol_escape_htmltag($email);
 
 	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
 
@@ -2936,11 +2940,12 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 
 
 /**
- *	Return true if email syntax is ok
+ *	Return true if email syntax is ok.
  *
  *	@param	    string		$address    			email (Ex: "toto@examle.com", "John Do <johndo@example.com>")
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
+ *  @see isValidMXRecord()
  */
 function isValidEmail($address, $acceptsupervisorkey = 0)
 {
@@ -2956,6 +2961,7 @@ function isValidEmail($address, $acceptsupervisorkey = 0)
  *
  *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
  *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
+ *  @see isValidEmail()
  */
 function isValidMXRecord($domain)
 {
@@ -3311,9 +3317,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			$enabledisablehtml = '<span class="'.$fa.' '.$fakey.($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
 			$enabledisablehtml .= ($morecss ? ' '.$morecss : '').'" style="'.($fasize ? ('font-size: '.$fasize.';') : '').($facolor ? (' color: '.$facolor.';') : '').($morestyle ? ' '.$morestyle : '').'"'.(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt : '').'>';
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			/*if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml .= $titlealt;
-			}
+			}*/
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
@@ -3946,9 +3952,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  This function must be called when a blocking technical error is encountered.
  *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
- *	@param	 	DoliDB	$db      	Database handler
- *	@param  	mixed	$error		String or array of errors strings to show
- *  @param		array	$errors		Array of errors
+ *	@param	 	DoliDB          $db      	Database handler
+ *	@param  	string|string[] $error		String or array of errors strings to show
+ *  @param		array           $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
  */
@@ -4390,7 +4396,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle right">';
-	print '<input type="hidden" name="pageplusoneold" value="'.($page+1).'">';
+	print '<input type="hidden" name="pageplusoneold" value="'.((int) $page + 1).'">';
 	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
 	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
@@ -6686,19 +6692,19 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *  Note: Prefer to use setEventMessages instead.
  *
- *	@param	mixed	$mesgs			Message string or array
- *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *	@param	string|string[] $mesgs			Message string or array
+ *  @param  string          $style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
 function setEventMessage($mesgs, $style = 'mesgs')
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
-	if (!is_array($mesgs))		// If mesgs is a string
-	{
+	if (!is_array($mesgs)) {
+		// If mesgs is a string
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
-	} else // If mesgs is an array
-	{
+	} else {
+		// If mesgs is an array
 		foreach ($mesgs as $mesg)
 		{
 			if ($mesg) $_SESSION['dol_events'][$style][] = $mesg;
@@ -8718,9 +8724,9 @@ function getElementProperties($element_type)
 		$module = 'expedition_bon';
 	}
 	if ($element_type == 'delivery') {
-		$classpath = 'livraison/class';
-		$subelement = 'livraison';
-		$module = 'livraison_bon';
+		$classpath = 'delivery/class';
+		$subelement = 'delivery';
+		$module = 'delivery_note';
 	}
 	if ($element_type == 'contract') {
 		$classpath = 'contrat/class';
@@ -8989,8 +8995,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 }
 
 /**
- *	Return a file on output using a lo memory.
- *  It can return very large files with no need of memory.
+ *  Return a file on output using a low memory. It can return very large files with no need of memory.
  *  WARNING: This close output buffers.
  *
  *  @param	string	$fullpath_original_file_osencoded		Full path of file to return.

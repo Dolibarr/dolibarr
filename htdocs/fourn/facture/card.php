@@ -57,7 +57,7 @@ if (!empty($conf->variants->enabled)) {
 if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 
-$langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks'));
+$langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
@@ -317,7 +317,39 @@ if (empty($reshook))
 	// payments conditions
 	if ($action == 'setconditions' && $usercancreate)
 	{
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+	    $object->fetch($id);
+	    $object->cond_reglement_code = 0; // To clean property
+	    $object->cond_reglement_id = 0; // To clean property
+
+	    $error = 0;
+
+	    $db->begin();
+
+	    if (! $error) {
+		    $result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+		    if ($result < 0) {
+	    		$error++;
+	        	setEventMessages($object->error, $object->errors, 'errors');
+	    	}
+	    }
+
+	    if (! $error) {
+		    $old_date_echeance = $object->date_echeance;
+	    	$new_date_echeance = $object->calculate_date_lim_reglement();
+	    	if ($new_date_echeance > $old_date_echeance) $object->date_echeance = $new_date_echeance;
+	    	if ($object->date_echeance < $object->date) $object->date_echeance = $object->date;
+	    	$result = $object->update($user);
+	    	if ($result < 0) {
+	    		$error++;
+	    		setEventMessages($object->error, $object->errors, 'errors');
+	    	}
+	    }
+
+	    if ($error) {
+	    	$db->rollback();
+	    } else {
+	    	$db->commit();
+	    }
 	}
 
 	// Set incoterm
@@ -1746,7 +1778,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -2159,7 +2191,7 @@ if ($action == 'create')
 	// Bouton "Create Draft"
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
@@ -2242,7 +2274,7 @@ if ($action == 'create')
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
-		dol_fiche_head($head, 'card', $titre, -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $titre, -1, 'bill');
 
 		$formconfirm = '';
 
@@ -2268,57 +2300,59 @@ if ($action == 'create')
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 		}
 
-		// Confirmation de la validation
+		// Confirmation of validation
 		if ($action == 'valid')
 		{
-			 // on verifie si l'objet est en numerotation provisoire
-			$objectref = substr($object->ref, 1, 4);
-			if ($objectref == 'PROV')
-			{
-				$savdate = $object->date;
+			// We check if number is temporary number
+			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) {
+                // empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
 				$numref = $object->ref;
 			}
 
-			$text = $langs->trans('ConfirmValidateBill', $numref);
-			/*if (! empty($conf->notification->enabled))
-            {
-            	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
-            	$notify=new Notify($db);
-            	$text.='<br>';
-            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid, $object);
-            }*/
-			$formquestion = array();
-
-			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
-			{
-				$qualified_for_stock_change = $object->hasProductsOrServices(2);
+			if ($numref < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
 			} else {
-				$qualified_for_stock_change = $object->hasProductsOrServices(1);
-			}
+				$text = $langs->trans('ConfirmValidateBill', $numref);
+				/*if (! empty($conf->notification->enabled))
+				 {
+				 require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+				 $notify=new Notify($db);
+				 $text.='<br>';
+				 $text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid, $object);
+				 }*/
+				$formquestion = array();
 
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
-			{
-				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
-				$warehouse = new Entrepot($db);
-				$warehouse_array = $warehouse->list_array();
-				if (count($warehouse_array) == 1) {
-					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
-					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
+				$qualified_for_stock_change = 0;
+				if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$qualified_for_stock_change = $object->hasProductsOrServices(2);
 				} else {
-					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					$qualified_for_stock_change = $object->hasProductsOrServices(1);
 				}
-				$formquestion = array(
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value)
-				);
-			}
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1);
+				if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+				{
+					$langs->load("stocks");
+					require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+					$formproduct = new FormProduct($db);
+					$warehouse = new Entrepot($db);
+					$warehouse_array = $warehouse->list_array();
+					if (count($warehouse_array) == 1) {
+						$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+						$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
+					} else {
+						$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+						$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					}
+					$formquestion = array(
+						array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value)
+					);
+				}
+
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1);
+			}
 		}
 
 		// Confirmation edit (back to draft)
@@ -3061,7 +3095,7 @@ if ($action == 'create')
 		print '</div>';
 		print '</form>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		if ($action != 'presend')

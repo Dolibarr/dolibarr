@@ -87,7 +87,7 @@ if ($object->id)
 
     $head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
+    print dol_get_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan
@@ -151,7 +151,7 @@ if ($object->id)
 
     print "</div>\n";
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $modulepart = 'loan';
     $permission = $user->rights->loan->write;

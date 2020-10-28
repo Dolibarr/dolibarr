@@ -245,7 +245,7 @@ if ($object->id > 0)
 {
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1256,7 +1256,7 @@ if ($object->id > 0)
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

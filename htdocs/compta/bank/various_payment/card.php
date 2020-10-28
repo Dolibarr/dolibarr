@@ -330,7 +330,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 
@@ -370,7 +370,7 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 2); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -454,7 +454,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -491,7 +491,7 @@ if ($id)
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 	}
 
-	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
@@ -603,7 +603,7 @@ if ($id)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

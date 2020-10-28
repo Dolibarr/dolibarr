@@ -252,7 +252,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -367,7 +367,7 @@ if ($action == 'create')
 	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -411,7 +411,7 @@ if ($id > 0)
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
 		// Loan card
 
@@ -716,7 +716,7 @@ if ($id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action == 'edit')
 		{

@@ -151,7 +151,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'handler', '', -1);
+print dol_get_fiche_head($head, 'handler', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
 print "<br>\n";
@@ -206,7 +206,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';

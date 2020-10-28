@@ -69,11 +69,11 @@ print load_fiche_titre($langs->trans("ProjectsSetup"), $linkback, 'title_setup')
 
 $head = project_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Projects"), -1, 'project');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Projects"), -1, 'project');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

@@ -107,7 +107,7 @@ $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
-dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
@@ -130,7 +130,7 @@ print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->t
 print '</td></tr>';
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

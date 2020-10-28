@@ -891,7 +891,7 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retreive all extrafields for contract
+				// Retrieve all extrafields for contract
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 
@@ -928,7 +928,7 @@ class Contrat extends CommonObject
 
 		$this->nbofservices = count($this->lines);
         $this->total_ttc = price2num($total_ttc); // TODO For the moment value is false as value is not stored in database for line linked to products
-        $this->total_vat = price2num($total_vat); // TODO For the moment value is false as value is not stored in database for line linked to products
+        $this->total_tva = price2num($total_vat); // TODO For the moment value is false as value is not stored in database for line linked to products
         $this->total_ht = price2num($total_ht); // TODO For the moment value is false as value is not stored in database for line linked to products
 
 		return $this->lines;
@@ -1905,12 +1905,12 @@ class Contrat extends CommonObject
 		{
 			global $langs;
 			$langs->load("contracts");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('ContractStatusDraft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ContractStatusValidated');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('ContractStatusClosed');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('ContractStatusDraft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('ContractStatusValidated');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('ContractStatusClosed');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ContractStatusDraft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ContractStatusValidated');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('ContractStatusClosed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ContractStatusDraft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ContractStatusValidated');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('ContractStatusClosed');
 		}
 
 		$statusType = 'status'.$status;

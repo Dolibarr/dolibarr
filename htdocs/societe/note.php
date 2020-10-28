@@ -74,7 +74,7 @@ if ($object->id > 0)
 
     $head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
+    print dol_get_fiche_head($head, 'note', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -121,7 +121,7 @@ if ($object->id > 0)
     //print '<div class="underbanner clearboth"></div>';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 } else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");

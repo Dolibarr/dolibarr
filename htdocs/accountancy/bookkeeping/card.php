@@ -351,7 +351,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -386,7 +386,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -415,7 +415,7 @@ if ($action == 'create')
 		$head[$h][2] = 'transaction';
 		$h++;
 
-		dol_fiche_head($head, 'transaction', '', -1);
+		print dol_get_fiche_head($head, 'transaction', '', -1);
 
 		//dol_banner_tab($object, '', $backlink);
 
@@ -573,7 +573,7 @@ if ($action == 'create')
 
 		print '</div></div><!-ee-->';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div style="clear:both"></div>';
 
@@ -719,7 +719,7 @@ if ($action == 'create')
 	}
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

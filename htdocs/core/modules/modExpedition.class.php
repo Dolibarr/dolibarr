@@ -103,21 +103,21 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "LIVRAISON_ADDON_PDF";
+		$this->const[$r][0] = "DELIVERY_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "typhon";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de reception en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "LIVRAISON_ADDON_NUMBER";
+		$this->const[$r][0] = "DELIVERY_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_livraison_jade";
+		$this->const[$r][2] = "mod_delivery_jade";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "LIVRAISON_ADDON_PDF_ODT_PATH";
+		$this->const[$r][0] = "DELIVERY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/deliveries";
 		$this->const[$r][3] = "";
@@ -191,7 +191,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Read delivery receipts';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
+		$this->rights[$r][4] = 'delivery';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
@@ -199,7 +199,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Create/modify delivery receipts';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
+		$this->rights[$r][4] = 'delivery';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
@@ -207,7 +207,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Validate delivery receipts';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison_advance';
+		$this->rights[$r][4] = 'delivery_advance';
 		$this->rights[$r][5] = 'validate';
 
 		$r++;
@@ -215,7 +215,7 @@ class modExpedition extends DolibarrModules
 		$this->rights[$r][1] = 'Delete delivery receipts';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'livraison';
+		$this->rights[$r][4] = 'delivery';
 		$this->rights[$r][5] = 'supprimer';
 
 

@@ -299,7 +299,7 @@ class Stripe extends CommonObject
 	 * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
 	 * Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * that's why i comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
@@ -354,7 +354,7 @@ class Stripe extends CommonObject
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
 			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
-			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+			// That's why we can comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
@@ -536,7 +536,7 @@ class Stripe extends CommonObject
 	 * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed.
 	 * Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-	 * that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
+	 * that's why i comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
@@ -1034,7 +1034,7 @@ class Stripe extends CommonObject
 
 			if (preg_match('/pm_/i', $source))
 			{
-				$return->message = 'Payment retreived by card status = '.$charge->status;
+				$return->message = 'Payment retrieved by card status = '.$charge->status;
 			} else {
 				if ($charge->source->type == 'card') {
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;

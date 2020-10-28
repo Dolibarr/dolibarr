@@ -202,7 +202,7 @@ if ($object->id > 0)
 	$res = $object->fetch_optionals();
 
 	$head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
+	print dol_get_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
@@ -300,7 +300,7 @@ if ($object->id > 0)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions

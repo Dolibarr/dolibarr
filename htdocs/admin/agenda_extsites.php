@@ -136,7 +136,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
 print "<br>\n";
@@ -224,7 +224,7 @@ while ($i <= $MAXAGENDA)
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';

@@ -1,6 +1,6 @@
 Mrp=Fertigungsaufträge
-MO=Fertigungsauftrag
-MOs=Manufacturing orders
+MOs=Produktionsaufträge
+ManufacturingOrder=Fertigungsauftrag
 MRPDescription=Modul zur Verwaltung von Produktions- und Fertigungsaufträgen (MO).
 MRPArea=MRP Bereich
 MrpSetupPage=Einrichtung des Moduls MRP
@@ -76,3 +76,4 @@ ProductsToProduce=Produkte zu produzieren
 UnitCost=Kosten pro Einheit
 TotalCost=Gesamtsumme Kosten
 BOMTotalCost=Die Herstellungskosten dieser Stückliste, basierend auf den Kosten jeder Menge und jeden verbrauchten Produktes (nutzt den Selbstkostenpreis wenn er definiert ist, ansonsten den Durchschnittspreis sofern definiert oder den besten Einkaufspreis)
+GoOnTabProductionToProduceFirst=Die Produktion muss begonnen sein, um einen Produktionsauftrag zu schließen (siehe Tab '%s'). Alternativ kann er storniert werden.

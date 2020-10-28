@@ -128,9 +128,9 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
         if ($socid > 0) {
             $object->fetch_thirdparty();
             $head = societe_prepare_head($object->thirdparty);
-            dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
+            print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
             dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
-            dol_fiche_end();
+            print dol_get_fiche_end();
         }
 
         if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
@@ -141,7 +141,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
         $head = ticket_prepare_head($object);
 
-        dol_fiche_head($head, 'contact', $langs->trans("Ticket"), -1, 'ticket');
+        print dol_get_fiche_head($head, 'contact', $langs->trans("Ticket"), -1, 'ticket');
 
         $morehtmlref = '<div class="refidno">';
         $morehtmlref .= $object->subject;
@@ -213,7 +213,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
         dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1, '');
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
 
         //print '<br>';
 

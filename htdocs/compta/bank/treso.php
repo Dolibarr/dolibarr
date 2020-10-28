@@ -90,13 +90,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Onglets
 	$head = bank_prepare_head($object);
-	dol_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), 0, 'account');
+	print dol_get_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
     print '<br>';
 

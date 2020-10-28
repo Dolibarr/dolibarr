@@ -105,7 +105,7 @@ if ($object->id)
 
 	$form = new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
 	// Build file list
@@ -159,7 +159,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'societe';
 	$permission = $user->rights->societe->creer;

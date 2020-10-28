@@ -449,7 +449,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 		} else {
 			dol_print_error($db);
 		}
-		// TVA retreived
+		// TVA retrieved
 		$sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql .= " WHERE amount < 0";
@@ -915,7 +915,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	print '</td>';
 	print '<td class="liste_titre" align="center" class="borderrightlight">';
 	$htmlhelp = '';
-	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetreive");
+	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetrieve");
 	print $form->textwithpicto($langs->trans("Income"), $htmlhelp);
 	print '</td>';
 }

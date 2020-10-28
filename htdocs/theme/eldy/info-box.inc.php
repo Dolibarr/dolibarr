@@ -87,12 +87,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .info-box-sm .info-box-icon {
     height: 80px;
-    width: 80px;
+    width: 78px;
     font-size: 25px;
     line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
-    border-radius: 0 20px 0 20px;
+    border-radius: 0 0 0 20px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
@@ -435,18 +435,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 	    min-width: 315px;
 	    max-width: 315px;
 	}
 }
+
 @media only screen and (max-width: 767px) {
 	.info-box-module {
 		min-width: 260px;
 	}
 }
-
 
 .info-box-module .info-box-content {
 	height: 98px;
@@ -463,9 +464,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	    margin: 0 0 0 0px !important;
 	    width: 100% !important;
 	}
-
 	.info-box-module {
 		width: 100%;
 		max-width: unset;
 	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
+	.info-box {
+		border: 1px solid #e0e0e0;
+	}
+}
 }

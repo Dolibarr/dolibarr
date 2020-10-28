@@ -415,9 +415,9 @@ print '<form method="POST" id="searchFormList" class="listactionsfilter" action=
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-//dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+//print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 //print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
-//dol_fiche_end();
+//print dol_get_fiche_end();
 
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">';

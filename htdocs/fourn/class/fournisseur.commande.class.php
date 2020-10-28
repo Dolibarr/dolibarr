@@ -117,7 +117,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * Delivery date
 	 */
-	public $date_livraison;
+	public $delivery_date;
 
 	public $total_ht;
 	public $total_tva;
@@ -407,7 +407,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->free($resql);
 
-			// Retreive all extrafield
+			// Retrieve all extrafield
 			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
@@ -530,7 +530,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$line->rang                = $objp->rang;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 
@@ -2210,10 +2210,9 @@ class CommandeFournisseur extends CommonOrder
 
 			// TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
-
-			if (!$error)
-			{
-				$this->db->begin();
+            if (empty($error))
+            {
+                $this->db->begin();
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql .= " SET fk_statut = ".$statut;
@@ -2224,17 +2223,17 @@ class CommandeFournisseur extends CommonOrder
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
-					$result = 0;
+					$result = 1;
 					$old_statut = $this->statut;
 					$this->statut = $statut;
 					$this->actionmsg2 = $comment;
 
-					// Call trigger
-					$result = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
-					if ($result < 0) $error++;
-					// End call triggers
+                    // Call trigger
+                    $result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
+                    if ($result_trigger < 0) $error++;
+                    // End call triggers
 
-					if (!$error)
+					if (empty($error))
 					{
 						$this->db->commit();
 					} else {
@@ -2260,16 +2259,30 @@ class CommandeFournisseur extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *	Set delivery date
+	 *
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
+	 */
+	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
+	{
+		// phpcs:enable
+		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
+	}
+
+	/**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet user making change
-	 *	@param      integer  		$date_livraison     Planned delivery date
+	 *	@param      integer  		$delivery_date     Planned delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-	public function set_date_livraison($user, $date_livraison, $notrigger = 0)
+	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		// phpcs:enable
 		if ($user->rights->fournisseur->commande->creer)
 		{
 			$error = 0;
@@ -2277,7 +2290,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-			$sql .= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2291,7 +2304,7 @@ class CommandeFournisseur extends CommonOrder
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -2325,7 +2338,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Set the id projet
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      int				$id_projet    	 	Date de livraison
+	 *	@param      int				$id_projet    	 	Delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         						<0 si ko, >0 si ok
 	 */

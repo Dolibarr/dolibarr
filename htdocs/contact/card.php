@@ -611,7 +611,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
 			}
 
-			dol_fiche_head($head, 'card', '', 0, '');
+			print dol_get_fiche_head($head, 'card', '', 0, '');
 
 			print '<table class="border centpercent">';
 
@@ -873,7 +873,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
@@ -940,7 +940,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
 			if (!empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			dol_fiche_head($head, 'card', $title, 0, 'contact');
+			print dol_get_fiche_head($head, 'card', $title, 0, 'contact');
 
 			print '<table class="border centpercent">';
 
@@ -1237,7 +1237,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1263,7 +1263,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		// Show errors
 		dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
-		dol_fiche_head($head, 'card', $title, -1, 'contact');
+		print dol_get_fiche_head($head, 'card', $title, -1, 'contact');
 
 		if ($action == 'create_user')
 		{
@@ -1482,7 +1482,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</div></div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Barre d'actions
 		print '<div class="tabsAction">';

@@ -132,7 +132,7 @@ print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
+print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -246,7 +246,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
 form_constantes($constantes, 0, $helptext);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

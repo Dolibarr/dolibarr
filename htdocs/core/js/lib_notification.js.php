@@ -80,7 +80,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                 	//console.log(result);
                     var arrayofpastreminders = Object.values(result.pastreminders);
                     if (arrayofpastreminders && arrayofpastreminders.length > 0) {
-	                    console.log("Retreived "+arrayofpastreminders.length+" reminders to do.");
+	                    console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
                     	var audio = null;
                         <?php
 						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {

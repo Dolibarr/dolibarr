@@ -296,7 +296,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -370,13 +370,13 @@ if ($action == 'create')
 	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+		$form->select_comptes($fk_account, 'fk_account', 0, '', 2);
 		print '</td></tr>';
 	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -440,7 +440,7 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
@@ -681,7 +681,7 @@ if ($id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action == 'edit')
 		{

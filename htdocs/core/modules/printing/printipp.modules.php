@@ -30,19 +30,54 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
  */
 class printing_printipp extends PrintingDriver
 {
+    /**
+     * @var string module name
+     */
     public $name = 'printipp';
+
+    /**
+     * @var string module description
+     */
     public $desc = 'PrintIPPDesc';
 
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
     public $picto = 'printer';
+
+    /**
+     * @var string Constant name
+     */
     public $active = 'PRINTING_PRINTIPP';
+
+    /**
+     * @var array array of setup value
+     */
     public $conf = array();
+
+    /**
+     * @var string host
+     */
     public $host;
+
+    /**
+     * @var string port
+     */
     public $port;
-    public $userid; /* user login */
+
+    /**
+     * @var string username
+     */
+    public $userid;
+
+    /**
+     * @var string login for printer host
+     */
     public $user;
+
+    /**
+     * @var string password for printer host
+     */
     public $password;
 
     /**
@@ -59,6 +94,8 @@ class printing_printipp extends PrintingDriver
      * @var DoliDB Database handler.
      */
     public $db;
+
+    const LANGFILE = 'printipp';
 
 
     /**
@@ -113,7 +150,7 @@ class printing_printipp extends PrintingDriver
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
-            	dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
+                dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
                 $ipp->setPrinterURI($obj->printer_id);
             } else {
                 if (!empty($conf->global->PRINTIPP_URI_DEFAULT))

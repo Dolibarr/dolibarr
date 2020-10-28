@@ -63,7 +63,7 @@ llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition
 $object->fetch_thirdparty();
 
 $head = propal_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans('Proposal'), -1, 'propal');
+print dol_get_fiche_head($head, 'info', $langs->trans('Proposal'), -1, 'propal');
 
 $object->info($object->id);
 
@@ -126,7 +126,7 @@ dol_print_object_info($object);
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

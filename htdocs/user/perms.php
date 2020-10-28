@@ -142,7 +142,7 @@ llxHeader('', $langs->trans("Permissions"));
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'rights', $title, -1, 'user');
+print dol_get_fiche_head($head, 'rights', $title, -1, 'user');
 
 
 $db->begin();
@@ -458,7 +458,7 @@ $reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object,
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

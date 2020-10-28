@@ -448,7 +448,7 @@ print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'projecttask');
+print dol_get_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'projecttask');
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
@@ -468,7 +468,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.

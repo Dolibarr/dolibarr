@@ -106,7 +106,7 @@ $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
 
-dol_fiche_head($head, 'replenishorders', '', -1, '');
+print dol_get_fiche_head($head, 'replenishorders', '', -1, '');
 
 $commandestatic = new CommandeFournisseur($db);
 
@@ -315,7 +315,7 @@ if ($resql)
 
     $db->free($resql);
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 } else {
     dol_print_error($db);
 }

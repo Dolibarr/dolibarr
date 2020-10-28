@@ -77,11 +77,11 @@ print "<br>\n";
 
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines_shipment', $langs->trans("Sendings"), -1, 'shipment');
+print dol_get_fiche_head($head, 'attributeslines_shipment', $langs->trans("Sendings"), -1, 'shipment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

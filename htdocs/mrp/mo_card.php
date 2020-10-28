@@ -218,7 +218,7 @@ if ($action == 'create')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -230,7 +230,7 @@ if ($action == 'create')
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	?>
 	<script>
@@ -314,7 +314,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("MO"), '', 'mrp');
+	print load_fiche_titre($langs->trans("ManufacturingOrder"), '', 'mrp');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -323,7 +323,7 @@ if (($id || $ref) && $action == 'edit')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	$object->fields['fk_bom']['disabled'] = 1;
 
@@ -337,7 +337,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -353,7 +353,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("MO"), -1, $object->picto);
+
+	print dol_get_fiche_head($head, 'card', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -492,7 +493,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

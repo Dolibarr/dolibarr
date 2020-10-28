@@ -70,11 +70,11 @@ print load_fiche_titre($langs->trans("MrpSetupPage"), $linkback, 'title_setup');
 
 $head = mrpAdminPrepareHead();
 
-dol_fiche_head($head, 'mrp_extrafields', $langs->trans("ExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'mrp_extrafields', $langs->trans("ExtraFields"), -1, 'account');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

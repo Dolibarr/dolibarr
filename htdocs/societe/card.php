@@ -239,7 +239,7 @@ if (empty($reshook))
 						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-						'Livraison' => '/livraison/class/livraison.class.php',
+						'Livraison' => '/delivery/class/delivery.class.php',
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
 						'Ticket' => '/ticket/class/ticket.class.php',
@@ -1172,7 +1172,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
-        dol_fiche_head(null, 'card', '', 0, '');
+        print dol_get_fiche_head(null, 'card', '', 0, '');
 
         print '<table class="border centpercent">';
 
@@ -1537,7 +1537,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         print '</table>'."\n";
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
 
         print '<div class="center">';
         print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
@@ -1768,7 +1768,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 
-            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
+            print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
             print '<div class="fichecenter2">';
             print '<table class="border centpercent">';
@@ -2182,7 +2182,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             print '</table>';
             print '</div>';
 
-	          dol_fiche_end();
+	          print dol_get_fiche_end();
 
             print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -2203,7 +2203,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         $head = societe_prepare_head($object);
 
-        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
+        print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
 
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
@@ -2599,7 +2599,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/*

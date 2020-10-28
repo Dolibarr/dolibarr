@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref))
 	    $object->fetch_thirdparty();
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
 
 
 		// Order card
@@ -188,7 +188,7 @@ if ($id > 0 || !empty($ref))
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<br>';
 

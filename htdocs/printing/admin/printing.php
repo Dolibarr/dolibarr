@@ -69,8 +69,7 @@ if ($action == 'setconst' && $user->admin)
         if (!$result > 0) $error++;
     }
 
-    if (!$error)
-    {
+    if (!$error) {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
     } else {
@@ -87,8 +86,7 @@ if ($action == 'setvalue' && $user->admin)
     $result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
     if (!$result > 0) $error++;
 
-    if (!$error)
-    {
+    if (!$error) {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
     } else {
@@ -118,7 +116,7 @@ if ($mode == 'setup' && $user->admin)
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="setconst">';
 
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
@@ -131,10 +129,17 @@ if ($mode == 'setup' && $user->admin)
     $submit_enabled = 0;
 
     if (!empty($driver)) {
-        require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+        $dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+        foreach ($dirmodels as $dir) {
+            if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
+                $classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+                break;
+            }
+        }
+        require_once $classfile;
         $classname = 'printing_'.$driver;
-        $langs->load($driver);
         $printer = new $classname($db);
+        $langs->load($printer::LANGFILE);
 
         $i = 0;
         $submit_enabled = 0;
@@ -218,7 +223,7 @@ if ($mode == 'setup' && $user->admin)
 
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     if (!empty($driver))
     {
@@ -231,7 +236,7 @@ if ($mode == 'setup' && $user->admin)
 }
 if ($mode == 'config' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("PrintingDesc")."<br><br>\n";
 
@@ -246,22 +251,27 @@ if ($mode == 'config' && $user->admin)
 
     $object = new PrintingDriver($db);
     $result = $object->listDrivers($db, 10);
+    $dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
     foreach ($result as $driver) {
-        require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+        foreach ($dirmodels as $dir) {
+            if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
+                $classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+                break;
+            }
+        }
+        require_once $classfile;
         $classname = 'printing_'.$driver;
-        $langs->load($driver);
         $printer = new $classname($db);
+        $langs->load($printer::LANGFILE);
         //print '<pre>'.print_r($printer, true).'</pre>';
 
         print '<tr class="oddeven">';
         print '<td>'.img_picto('', $printer->picto).' '.$langs->trans($printer->desc).'</td>';
         print '<td class="center">';
-        if (!empty($conf->use_javascript_ajax))
-        {
+        if (!empty($conf->use_javascript_ajax)) {
             print ajax_constantonoff($printer->active);
         } else {
-            if (empty($conf->global->{$printer->conf}))
-            {
+            if (empty($conf->global->{$printer->conf})) {
                 print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             } else {
                 print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;token='.newToken().'&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -274,22 +284,29 @@ if ($mode == 'config' && $user->admin)
 
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 if ($mode == 'test' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder centpercent">';
-    if (!empty($driver))
-    {
-        require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
+    if (!empty($driver)) {
+        $dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+        foreach ($dirmodels as $dir) {
+            if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
+                $classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+                break;
+            }
+        }
+        require_once $classfile;
         $classname = 'printing_'.$driver;
         $langs->load($driver);
         $printer = new $classname($db);
+        $langs->load($printer::LANGFILE);
         //print '<pre>'.print_r($printer, true).'</pre>';
         if (count($printer->getlistAvailablePrinters())) {
             if ($printer->listAvailablePrinters() == 0) {
@@ -305,12 +322,12 @@ if ($mode == 'test' && $user->admin)
     }
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 if ($mode == 'userconf' && $user->admin)
 {
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+    print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
@@ -341,7 +358,7 @@ if ($mode == 'userconf' && $user->admin)
     }
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 // End of page

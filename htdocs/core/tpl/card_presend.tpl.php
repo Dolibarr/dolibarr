@@ -114,7 +114,7 @@ if ($action == 'presend')
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -167,6 +167,9 @@ if ($action == 'presend')
 	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} else {
+		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -289,5 +292,5 @@ if ($action == 'presend')
 	// Show form
 	print $formmail->get_form();
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }

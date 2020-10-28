@@ -293,7 +293,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->l
 	}
 }
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch(0, $project_ref) > 0)
@@ -585,7 +585,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			else $tab = 'tasks';
 
 			$head = project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 			$param = ($mode == 'mine' ? '&mode=mine' : '');
 
@@ -700,7 +700,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<br>';
 		}
@@ -749,7 +749,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 	if (empty($projectidforalltimes))
 	{
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+		print dol_get_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline')
 		{
@@ -842,7 +842,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		print '</div>';
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 

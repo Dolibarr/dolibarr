@@ -624,7 +624,7 @@ class Expedition extends CommonObject
 				 */
 				$result = $this->fetch_thirdparty();
 
-				// Retreive extrafields
+				// Retrieve extrafields
 				$this->fetch_optionals();
 
 				// Fix Get multicurrency param for transmited
@@ -880,13 +880,13 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf;
 
-		if ($conf->livraison_bon->enabled)
+		if ($conf->delivery_note->enabled)
 		{
 			if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_CLOSED)
 			{
 				// Expedition validee
-				include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
-				$delivery = new Livraison($this->db);
+				include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+				$delivery = new Delivery($this->db);
 				$result = $delivery->create_from_sending($user, $this->id);
 				if ($result > 0)
 				{
@@ -1957,28 +1957,41 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *	Set delivery date
+	 *
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
+	 */
+	public function set_date_livraison($user, $delivery_date)
+	{
+		// phpcs:enable
+		return $this->setDeliveryDate($user, $delivery_date);
+	}
+
+    /**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet user that modify
-	 *	@param      integer 		$date_livraison     Date of delivery
+	 *	@param      integer 		$delivery_date     Date of delivery
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-	public function set_date_livraison($user, $date_livraison)
+	public function setDeliveryDate($user, $delivery_date)
 	{
-        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
-			$sql .= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->date_delivery = $date_livraison;
+				$this->date_delivery = $delivery_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();

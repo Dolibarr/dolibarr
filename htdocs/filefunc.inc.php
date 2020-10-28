@@ -31,7 +31,7 @@
  */
 
 if (!defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE', 'Dolibarr');
-if (!defined('DOL_VERSION')) define('DOL_VERSION', '13.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (!defined('DOL_VERSION')) define('DOL_VERSION', '13.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (!defined('EURO')) define('EURO', chr(128));
 
@@ -277,13 +277,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 //print memory_get_usage();
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
-if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
-{
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
-	{
+if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+	} else {
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
-	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }

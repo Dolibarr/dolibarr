@@ -108,7 +108,7 @@ if (empty($reshook))
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
-	    $result = $object->set_date_livraison($user, $datedelivery);
+	    $result = $object->setDeliveryDate($user, $datedelivery);
 	    if ($result < 0)
 	    {
 	        setEventMessages($object->error, $object->errors, 'errors');
@@ -250,7 +250,7 @@ if ($id > 0 || !empty($ref))
 		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
 
 
 		$formconfirm = '';

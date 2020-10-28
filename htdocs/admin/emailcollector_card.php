@@ -247,7 +247,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfield">'."\n";
 
@@ -261,7 +261,7 @@ if ($action == 'create') {
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -283,7 +283,7 @@ if (($id || $ref) && $action == 'edit')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfield">'."\n";
 
@@ -295,7 +295,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -313,7 +313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fetchActions();
 
 	$head = emailcollectorPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'email');
+	print dol_get_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'email');
 
 	$formconfirm = '';
 
@@ -655,7 +655,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div><br>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {

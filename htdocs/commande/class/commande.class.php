@@ -180,7 +180,7 @@ class Commande extends CommonOrder
 	 */
 	public $date_commande;
 
-	public $date_livraison; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
 	/**
 	 * @var int ID
@@ -478,7 +478,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid = ".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::valid()", LOG_DEBUG);
+		dol_syslog(get_class($this)."::valid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql)
 		{
@@ -544,7 +544,7 @@ class Commande extends CommonOrder
 				$dirdest = $conf->commande->multidir_output[$this->entity].'/'.$newref;
 				if (!$error && file_exists($dirsource))
 				{
-					dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest))
 					{
@@ -745,6 +745,10 @@ class Commande extends CommonOrder
 		if ($usercanclose)
 		{
 			$this->db->begin();
+			if ($this->statut == self::STATUS_CLOSED)
+			{
+				return 0;
+			}
 
 			$now = dol_now();
 
@@ -1885,7 +1889,7 @@ class Commande extends CommonOrder
 
 				if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -2545,16 +2549,30 @@ class Commande extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *	Set delivery date
+	 *
+	 *	@param      User 	$user        		Object user that modify
+	 *	@param      int		$delivery_date		Delivery date
+	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
+	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@deprecated Use  setDeliveryDate
+	 */
+	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
+	{
+		// phpcs:enable
+		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
+	}
+
+	/**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User	$user        		Objet utilisateur qui modifie
-	 *	@param      int		$date_livraison     Date de livraison
+	 *	@param      int		$delivery_date     Delivery date
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 si ko, >0 si ok
 	 */
-	public function set_date_livraison($user, $date_livraison, $notrigger = 0)
+	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		// phpcs:enable
 		if ($user->rights->commande->creer)
 		{
 			$error = 0;
@@ -2562,7 +2580,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-			$sql .= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2576,7 +2594,7 @@ class Commande extends CommonOrder
 			if (!$error)
 			{
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $date_livraison;
+				$this->date_livraison = $delivery_date;
 			}
 
 			if (!$notrigger && empty($error))
@@ -2882,6 +2900,10 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		$this->db->begin();
+		if ($this->billed)
+		{
+			return 0;
+		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
@@ -3529,41 +3551,41 @@ class Commande extends CommonOrder
 		global $langs, $conf;
 
 		$billedtext = '';
-		if (empty($donotshowbilled)) $billedtext .= ($billed ? ' - '.$langs->trans("Billed") : '');
+		if (empty($donotshowbilled)) $billedtext .= ($billed ? ' - '.$langs->transnoentitiesnoconv("Billed") : '');
 
 		$labelTooltip = '';
 
 		if ($status == self::STATUS_CANCELED) {
-			$labelStatus = $langs->trans('StatusOrderCanceled');
-			$labelStatusShort = $langs->trans('StatusOrderCanceledShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderCanceled');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderCanceledShort');
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_DRAFT) {
-			$labelStatus = $langs->trans('StatusOrderDraft');
-			$labelStatusShort = $langs->trans('StatusOrderDraftShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDraft');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDraftShort');
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
-			$labelStatus = $langs->trans('StatusOrderValidated').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderValidated').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderValidatedShort').$billedtext;
 			$statusType = 'status1';
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
-			$labelStatus = $langs->trans('StatusOrderSent').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
-			$labelTooltip = $langs->trans("StatusOrderSent").' - '.$langs->trans("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderSent').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderSentShort').$billedtext;
+			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent").' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->trans('StatusOrderToBill');
-			$labelStatusShort = $langs->trans('StatusOrderToBillShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderToBillShort');
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->trans('StatusOrderProcessed').$billedtext;
-			$labelStatusShort = $langs->trans('StatusOrderProcessedShort').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderProcessed').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderProcessedShort').$billedtext;
 			$statusType = 'status6';
 		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$labelStatus = $langs->trans('StatusOrderDelivered');
-			$labelStatusShort = $langs->trans('StatusOrderDeliveredShort');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort');
 			$statusType = 'status6';
 		} else {
-			$labelStatus = $langs->trans('Unknown');
+			$labelStatus = $langs->transnoentitiesnoconv('Unknown');
 			$labelStatusShort = '';
 			$statusType = '';
 			$mode = 0;

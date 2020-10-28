@@ -136,7 +136,7 @@ $head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
     print '<form method="POST">';
@@ -176,7 +176,7 @@ if ($action != 'edit') {
     print '</div>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if ($action == 'edit') {
 	print '<div style="text-align: center;">';

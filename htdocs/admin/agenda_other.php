@@ -175,7 +175,7 @@ print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
@@ -376,7 +376,7 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 

@@ -74,11 +74,11 @@ print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Agenda"), -1, 'action');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

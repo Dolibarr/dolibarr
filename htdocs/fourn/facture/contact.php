@@ -133,7 +133,7 @@ if ($id > 0 || !empty($ref))
 
 		$head = facturefourn_prepare_head($object);
 
-		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'bill');
+		print dol_get_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'bill');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -254,7 +254,7 @@ if ($id > 0 || !empty($ref))
 
 		print "</table>";
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<br>';
 

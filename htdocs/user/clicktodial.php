@@ -94,7 +94,7 @@ if ($id > 0)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'clicktodial', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -180,7 +180,7 @@ if ($id > 0)
         print "</table>\n";
     }
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     if ($action == 'edit')
     {

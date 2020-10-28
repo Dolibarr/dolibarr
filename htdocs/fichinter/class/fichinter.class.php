@@ -733,14 +733,14 @@ class Fichinter extends CommonObject
 			global $langs;
 			$langs->load("fichinter");
 
-			$this->statuts[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->statuts[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->statuts[self::STATUS_BILLED] = $langs->trans('StatusInterInvoiced');
-			$this->statuts[self::STATUS_CLOSED] = $langs->trans('Done');
-			$this->statuts_short[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->statuts_short[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->statuts_short[self::STATUS_BILLED] = $langs->trans('StatusInterInvoiced');
-			$this->statuts_short[self::STATUS_CLOSED] = $langs->trans('Done');
+			$this->statuts[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->statuts[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->statuts[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
+			$this->statuts[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->statuts_short[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->statuts_short[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->statuts_short[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
+			$this->statuts_short[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
 			$this->statuts_logo[self::STATUS_DRAFT] = 'status0';
 			$this->statuts_logo[self::STATUS_VALIDATED] = 'status1';
 			$this->statuts_logo[self::STATUS_BILLED] = 'status6';

@@ -213,7 +213,7 @@ $type = 'ticket_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -316,7 +316,7 @@ print '</td></tr></table>';
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

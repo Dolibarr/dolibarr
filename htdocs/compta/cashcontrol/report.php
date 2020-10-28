@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
@@ -29,13 +29,16 @@
  *	\brief      List of bank transactions
  */
 
+if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');			// Disable browser notification
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
-$langs->load("bills");
+$langs->loadLangs(array("bills", "banks"));
 
 $id = GETPOST('id', 'int');
 
@@ -127,8 +130,9 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	print "<!-- title of cash fence -->\n";
 	print "<center><h2>";
-	if ($cashcontrol->status == 2) print $langs->trans("CashControl")." ".$cashcontrol->id;
+	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) print $langs->trans("CashControl")." ".$cashcontrol->id;
 	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
 	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour')."</h2></center>";
 

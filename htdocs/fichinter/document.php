@@ -92,7 +92,7 @@ if ($object->id)
 
 	$head = fichinter_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("InterventionCard"), -1, 'intervention');
 
 
 	// Build file list
@@ -163,7 +163,7 @@ if ($object->id)
 
     print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $modulepart = 'ficheinter';
     $permission = $user->rights->ficheinter->creer;

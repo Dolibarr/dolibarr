@@ -84,7 +84,7 @@ if ($id > 0 || !empty($ref))
         $head = ordersupplier_prepare_head($object);
 
         $title = $langs->trans("SupplierOrder");
-        dol_fiche_head($head, 'note', $title, -1, 'order');
+        print dol_get_fiche_head($head, 'note', $title, -1, 'order');
 
 		// Supplier order card
 
@@ -144,7 +144,7 @@ if ($id > 0 || !empty($ref))
 
         print '</div>';
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
     } else {
         /* Order not found */
         $langs->load("errors");

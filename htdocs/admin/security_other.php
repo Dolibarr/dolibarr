@@ -93,7 +93,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'misc', '', -1);
+print dol_get_fiche_head($head, 'misc', '', -1);
 
 
 // Other Options
@@ -184,7 +184,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 

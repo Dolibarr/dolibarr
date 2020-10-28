@@ -935,7 +935,7 @@ if ($action == 'create')
 	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"), '', 'title_agenda');
 	else print load_fiche_titre($langs->trans("AddAnAction"), '', 'title_agenda');
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -1291,7 +1291,7 @@ if ($action == 'create')
         print '</script>'."\n";
     }
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
@@ -1410,7 +1410,7 @@ if ($id > 0)
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 
-		dol_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
 
 		print '<table class="border tableforfield" width="100%">';
 
@@ -1782,7 +1782,7 @@ if ($id > 0)
 			print '</script>'."\n";
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
@@ -1792,7 +1792,7 @@ if ($id > 0)
 
 		print '</form>';
 	} else {
-		dol_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
 
 		// Clone event
@@ -2095,7 +2095,7 @@ if ($id > 0)
 		print '</div>';
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 

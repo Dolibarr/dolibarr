@@ -100,7 +100,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'file', '', -1);
+print dol_get_fiche_head($head, 'file', '', -1);
 
 
 // Upload options
@@ -177,7 +177,7 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 

@@ -1320,7 +1320,7 @@ class Adherent extends CommonObject
 
 				$this->model_pdf = $obj->model_pdf;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				if ($fetch_optionals) {
 					$this->fetch_optionals();

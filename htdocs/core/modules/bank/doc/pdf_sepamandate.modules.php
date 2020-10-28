@@ -415,7 +415,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			}
 		}
 
-		$this->error = $langs->transnoentities("ErrorConstantNotDefined", "LIVRAISON_OUTPUTDIR");
+		$this->error = $langs->transnoentities("ErrorConstantNotDefined", "DELIVERY_OUTPUTDIR");
 		return 0;
 	}
 

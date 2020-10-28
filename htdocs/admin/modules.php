@@ -496,7 +496,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$newmode = $mode;
 	if ($newmode == 'common') $newmode = 'commonkanban';
 
-	dol_fiche_head($head, $newmode, '', -1);
+	print dol_get_fiche_head($head, $newmode, '', -1);
 
 	$moreforfilter = '<div class="valignmiddle">';
 
@@ -883,7 +883,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		}
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -895,7 +895,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 
 if ($mode == 'marketplace')
 {
-	dol_fiche_head($head, $mode, '', -1);
+	print dol_get_fiche_head($head, $mode, '', -1);
 
 	// Marketplace
 	print '<div class="div-table-responsive-no-min">';
@@ -916,7 +916,7 @@ if ($mode == 'marketplace')
 	print "</table>\n";
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -980,7 +980,7 @@ if ($mode == 'marketplace')
 
 if ($mode == 'deploy')
 {
-	dol_fiche_head($head, $mode, '', -1);
+	print dol_get_fiche_head($head, $mode, '', -1);
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
@@ -1136,12 +1136,12 @@ if ($mode == 'deploy')
 		}
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 if ($mode == 'develop')
 {
-	dol_fiche_head($head, $mode, '', -1);
+	print dol_get_fiche_head($head, $mode, '', -1);
 
 	// Marketplace
 	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
@@ -1170,7 +1170,7 @@ if ($mode == 'develop')
 
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

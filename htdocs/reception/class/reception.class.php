@@ -1018,12 +1018,12 @@ class Reception extends CommonObject
 
 		if (!empty($resql)) {
 			$this->lines = array();
-			while ($obj = $resql->fetch_object()) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new CommandeFournisseurDispatch($this->db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
 				$sql_commfourndet = 'SELECT qty, ref,  label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
-				$resql_commfourndet = $db->query($sql_commfourndet);
+				$resql_commfourndet = $this->db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
 					$obj = $this->db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
@@ -1219,28 +1219,27 @@ class Reception extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    /**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      integer 		$date_livraison     Date de livraison
+	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    public function set_date_livraison($user, $date_livraison)
+    public function setDeliveryDate($user, $delivery_date)
 	{
 		// phpcs:enable
 		if ($user->rights->reception->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
-			$sql .= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$this->date_delivery = $date_livraison;
+				$this->date_delivery = $delivery_date;
 				return 1;
 			} else {
 				$this->error = $this->db->error();

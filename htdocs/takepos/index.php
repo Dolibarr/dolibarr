@@ -25,13 +25,13 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+//if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN','1');
+if (!defined('NOCSRFCHECK'))	define('NOCSRFCHECK', '1');
 if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREMENU'))	define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))	define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))	define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -887,6 +887,20 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	</div>
 </div>
 <?php } ?>
+
+<!-- Modal terminal Credit Note -->
+<div id="ModalCreditNote" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+		<span class="close" href="#" onclick="document.getElementById('ModalCreditNote').style.display = 'none';">&times;</span>
+		<h3><?php print $langs->trans("invoiceAvoirWithLines"); ?></h3>
+	</div>
+	<div class="modal-body">
+		<button type="button" class="block" onclick="CreditNote(); document.getElementById('ModalCreditNote').style.display = 'none';"><?php print $langs->trans("Yes"); ?></button>
+		<button type="button" class="block" onclick="document.getElementById('ModalCreditNote').style.display = 'none';"><?php print $langs->trans("No"); ?></button>
+	</div>
+</div>
+</div>
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 

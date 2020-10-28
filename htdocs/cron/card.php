@@ -305,8 +305,8 @@ if (($action == "create") || ($action == "edit"))
 		print '<input type="hidden" name="action" value="add">'."\n";
 	}
 
-	if ($action == "edit") dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
-	else dol_fiche_head('');
+	if ($action == "edit") print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
+	else print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -510,7 +510,7 @@ if (($action == "create") || ($action == "edit"))
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div align="center">';
 	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
@@ -525,7 +525,7 @@ if (($action == "create") || ($action == "edit"))
 	 */
     $now = dol_now();
 
-	dol_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
+	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -693,7 +693,7 @@ if (($action == "create") || ($action == "edit"))
 	print '</table>';
     print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print "\n\n<div class=\"tabsAction\">\n";

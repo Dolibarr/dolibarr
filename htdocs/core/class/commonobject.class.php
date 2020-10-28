@@ -2785,9 +2785,9 @@ abstract class CommonObject
 	 */
 	public function line_max($fk_parent_line = 0)
 	{
-		// phpcs:enable
-		$positionfield = 'rang';
-		if ($this->table_element == 'bom') $positionfield = 'position';
+        // phpcs:enable
+        $positionfield = 'rang';
+		if ($this->table_element == 'bom_bom') $positionfield = 'position';
 
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line)
@@ -3356,7 +3356,7 @@ abstract class CommonObject
 					} elseif ($objecttype == 'shipping') {
 						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
 					} elseif ($objecttype == 'delivery') {
-						$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
+						$classpath = 'delivery/class'; $subelement = 'delivery'; $module = 'delivery_note';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
 						$classpath = 'fourn/class'; $module = 'fournisseur';
 					} elseif ($objecttype == 'fichinter') {
@@ -5195,7 +5195,7 @@ abstract class CommonObject
 			$extrafields = new ExtraFields($this->db);
 			$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
 
-			//Eliminate copied source object extra_fields that do not exist in target object
+			// Eliminate copied source object extra fields that do not exist in target object
 			$new_array_options = array();
 			foreach ($this->array_options as $key => $value) {
 				if (in_array(substr($key, 8), array_keys($target_extrafields)))	// We remove the 'options_' from $key for test
@@ -5213,7 +5213,8 @@ abstract class CommonObject
 			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 
-			   	if ($attributeRequired)
+				// Similar code than into insertExtraFields
+				if ($attributeRequired)
 			   	{
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
@@ -5241,7 +5242,7 @@ abstract class CommonObject
 					}
 				}
 
-			   	switch ($attributeType)
+				switch ($attributeType)
 			   	{
 			   		case 'int':
 			  			if (!is_numeric($value) && $value != '')
@@ -5325,11 +5326,10 @@ abstract class CommonObject
 							if ($value == '-1')	// -1 is key for no defined in combo list of objects
 							{
 								$new_array_options[$key] = '';
-							} elseif ($value)
-							{
+							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
-								if (is_numeric($value)) $res = $object->fetch($value);
-								else $res = $object->fetch('', $value);
+								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
+								else $res = $object->fetch('', $value);					// For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -5552,7 +5552,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Update an extra field value for the current object.
+	 *	Update 1 extra field value for the current object. Keep other fields unchanged.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
 	 *  @param  string      $key    		Key of the extrafield to update (without starting 'options_')
@@ -5585,9 +5585,36 @@ abstract class CommonObject
 			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
 			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$key];
+
+			// Similar code than into insertExtraFields
+			if ($attributeRequired)
+			{
+				$mandatorypb = false;
+				if ($attributeType == 'link' && $this->array_options["options_".$key] == '-1') $mandatorypb = true;
+				if ($this->array_options["options_".$key] === '') $mandatorypb = true;
+				if ($mandatorypb)
+				{
+					dol_syslog("Mandatory extra field options_".$key." is empty");
+					$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
+					return -1;
+				}
+			}
 
 			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
+
+			if (!empty($attrfieldcomputed))
+			{
+				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS))
+				{
+					$value = dol_eval($attrfieldcomputed, 1, 0);
+					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
+					$this->array_options["options_".$key] = $value;
+				} else {
+					$this->array_options["options_".$key] = null;
+				}
+			}
 
 			switch ($attributeType)
 			{
@@ -5630,31 +5657,65 @@ abstract class CommonObject
 				case 'datetime':
 					$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
 					break;
+				/*
 				case 'link':
 					$param_list = array_keys($attributeParam['options']);
 					// 0 : ObjectName
 					// 1 : classPath
 					$InfoFieldList = explode(":", $param_list[0]);
 					dol_include_once($InfoFieldList[1]);
-					if ($value)
+					if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 					{
-						$object = new $InfoFieldList[0]($this->db);
-						$object->fetch(0, $value);
-						$this->array_options["options_".$key] = $object->id;
+						if ($value == '-1')	// -1 is key for no defined in combo list of objects
+						{
+							$new_array_options[$key] = '';
+						} elseif ($value) {
+							$object = new $InfoFieldList[0]($this->db);
+							if (is_numeric($value)) $res = $object->fetch($value);	// Common case
+							else $res = $object->fetch('', $value);					// For compatibility
+
+							if ($res > 0) $new_array_options[$key] = $object->id;
+							else {
+								$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
+								$this->db->rollback();
+								return -1;
+							}
+						}
+					} else {
+						dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					}
 					break;
+				*/
 			}
 
 			$this->db->begin();
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key."='".$this->db->escape($this->array_options["options_".$key])."'";
-			$sql .= " WHERE fk_object = ".$this->id;
+
+			$linealreadyfound = 0;
+
+			// Check if there is already a line for this object (in most cases, it is, but sometimes it is not, for example when extra field has been created after), so we must keep this overload)
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$tmpobj = $this->db->fetch_object($resql);
+				if ($tmpobj) {
+					$linealreadyfound = $tmpobj->nb;
+				}
+			}
+
+			if ($linealreadyfound) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+				$sql .= " WHERE fk_object = ".$this->id;
+			} else {
+				$result = $this->insertExtraFields('', $user);
+				if ($result < 0) $error++;
+			}
+
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
-
 			if (!$error && $trigger)
 			{
 				// Call trigger
@@ -6888,6 +6949,8 @@ abstract class CommonObject
 									var parent = $(this).find("option[parent]:first").attr("parent");
 									var infos = parent.split(":");
 									var parent_list = infos[0];
+									showOptions(child_list, parent_list);
+
 									$("select[name=\""+parent_list+"\"]").change(function() {
 										showOptions(child_list, parent_list);
 									});
@@ -7725,7 +7788,7 @@ abstract class CommonObject
 			{
 				$this->setVarsFromFetchObj($obj);
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -7973,6 +8036,18 @@ abstract class CommonObject
 				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
+			}
+		}
+
+		// Delete llx_ecm_files
+		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				$error++;
 			}
 		}
 

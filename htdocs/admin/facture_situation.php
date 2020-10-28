@@ -71,7 +71,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
-dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
+print dol_get_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoice');
 
 
 print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").'</span><br><br>';
@@ -104,12 +104,7 @@ $arrayAvailableType = array(
 	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
 	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
 );
-$selected = array();
-$implodeglue = '+';
-if (!empty($conf->global->{$confkey}) && !is_array($conf->global->{$confkey})) {
-	$selected = explode('+', $conf->global->{$confkey});
-}
-
+$selected = $conf->global->$confkey;
 $curentInput = (empty($inputCount) ? 1 : ($inputCount + 1));
 $formSelectInvoiceType = $form->selectarray('value'.$curentInput, $arrayAvailableType, $selected, 1);
 _printInputFormPart($confkey, $langs->trans('AllowedInvoiceForRetainedWarranty'), '', array(), $formSelectInvoiceType);
@@ -145,7 +140,7 @@ _updateBtn();
 
 print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

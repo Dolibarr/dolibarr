@@ -155,7 +155,7 @@ if ($id > 0 || !empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = reception_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'dollyrevert');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'dollyrevert');
 
 
 	// Reception card
@@ -252,7 +252,7 @@ if ($id > 0 || !empty($ref))
 	print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Lines of contacts
 	echo '<br>';

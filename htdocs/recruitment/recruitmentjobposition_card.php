@@ -230,7 +230,7 @@ if ($action == 'create')
 	// Set some default values
 	if (! GETPOSTISSET('fk_user_recruiter')) $_POST['fk_user_recruiter'] = $user->id;
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -242,7 +242,7 @@ if ($action == 'create')
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -267,7 +267,7 @@ if (($id || $ref) && $action == 'edit')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
@@ -279,7 +279,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -294,7 +294,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = recruitmentjobpositionPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -412,7 +412,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

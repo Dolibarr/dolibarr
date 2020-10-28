@@ -62,7 +62,7 @@ $object->fetch($id);
 $object->info($object->id);
 
 $head = actions_prepare_head($object);
-dol_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
+print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
 $linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
 $linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
@@ -112,7 +112,7 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

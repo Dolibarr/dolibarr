@@ -41,6 +41,7 @@
 //if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
 //if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
 
 // Load Dolibarr environment
 $res = 0;
@@ -134,7 +135,7 @@ if ($object->id)
 	 */
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
 
 
 	// Build file list
@@ -206,7 +207,7 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'mymodule';
 	//$permission = $user->rights->mymodule->myobject->write;

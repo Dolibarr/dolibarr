@@ -41,8 +41,8 @@ if (!$user->rights->categorie->lire) accessforbidden();
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $origin		= GETPOST('origin', 'alpha');
-$catorigin = GETPOST('catorigin', 'int');
-$type = GETPOST('type', 'alpha');
+$catorigin  = GETPOST('catorigin', 'int');
+$type       = GETPOST('type', 'aZ09');
 $urlfrom	= GETPOST('urlfrom', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -72,6 +72,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
+
+$error = 0;
 
 
 /*
@@ -127,7 +129,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object->label			= $label;
 	$object->color			= $color;
 	$object->description = dol_htmlcleanlastbr($description);
-	$object->socid			= ($socid ? $socid : 'null');
+	$object->socid			= ($socid > 0 ? $socid : 0);
 	$object->visible = $visible;
 	$object->type = $type;
 
@@ -233,7 +235,7 @@ if ($user->rights->categorie->creer)
 
 		print load_fiche_titre($langs->trans("CreateCat"));
 
-		dol_fiche_head('');
+		print dol_get_fiche_head('');
 
 		print '<table width="100%" class="border">';
 
@@ -270,7 +272,7 @@ if ($user->rights->categorie->creer)
 
 		print '</table>';
 
-		dol_fiche_end('');
+		print dol_get_fiche_end('');
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';

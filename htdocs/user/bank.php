@@ -247,7 +247,7 @@ if ($id && $action == 'create' && $user->rights->user->user->creer)
 if ($action != 'edit' && $action != 'create')		// If not bank account yet, $account may be empty
 {
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'bank', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'bank', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -497,7 +497,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
     print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	// List of bank accounts (Currently only one bank account possible for each employee)
 
@@ -594,7 +594,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer)
 {
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'bank', $title, 0, 'user');
+	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -661,7 +661,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
     //print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';

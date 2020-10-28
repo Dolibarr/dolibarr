@@ -2644,10 +2644,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/sending/".$original_file;
-	} // Wrapping pour les bons de livraison
-	elseif ($modulepart == 'livraison' && !empty($conf->expedition->dir_output))
+	} // Delivery Note Wrapping
+	elseif ($modulepart == 'delivery' && !empty($conf->expedition->dir_output))
 	{
-		if ($fuser->rights->expedition->livraison->{$lire} || preg_match('/^specimen/i', $original_file))
+		if ($fuser->rights->expedition->delivery->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed = 1;
 		}

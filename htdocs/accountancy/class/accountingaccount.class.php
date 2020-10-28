@@ -453,21 +453,22 @@ class AccountingAccount extends CommonObject
 	 */
     public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $option = '')
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
 
+		$url = '';
 		if (empty($option) || $option == 'ledger') {
-			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$url = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start='.urlencode($this->account_number).'&search_accountancy_code_end='.urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInLedger");
 		} elseif ($option == 'journals') {
-			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+			$url = DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($this->account_number).'&search_accountancy_code_end='.urlencode($this->account_number);
 			$labelurl = $langs->trans("ShowAccountingAccountInJournals");
 		} elseif ($option == 'accountcard') {
-			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
+			$url = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.urlencode($this->id);
 			$labelurl = $langs->trans("ShowAccountingAccount");
 		}
 

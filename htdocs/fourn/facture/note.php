@@ -82,7 +82,7 @@ if ($object->id > 0)
 
 	$head = facturefourn_prepare_head($object);
 	$titre = $langs->trans('SupplierInvoice');
-	dol_fiche_head($head, 'note', $titre, -1, 'bill');
+	print dol_get_fiche_head($head, 'note', $titre, -1, 'bill');
 
 
 	// Supplier invoice card
@@ -212,7 +212,7 @@ if ($object->id > 0)
 	$cssclass = "titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

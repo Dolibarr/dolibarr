@@ -99,7 +99,7 @@ if ($object->id)
     $head = contact_prepare_head($object);
 	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-    dol_fiche_head($head, 'documents', $title, -1, 'contact');
+    print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
     // Build file list
@@ -162,7 +162,7 @@ if ($object->id)
 
     print '</div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $modulepart = 'contact';
     $permission = $user->rights->societe->contact->creer;

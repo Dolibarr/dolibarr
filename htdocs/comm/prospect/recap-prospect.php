@@ -56,7 +56,7 @@ if ($socid > 0)
      */
 	$head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'prospect', $langs->trans("ThirdParty"), 0, 'company');
+    print dol_get_fiche_head($head, 'prospect', $langs->trans("ThirdParty"), 0, 'company');
 
 
     print "<table width=\"100%\">\n";
