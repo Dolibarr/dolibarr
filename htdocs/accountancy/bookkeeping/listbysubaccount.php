@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
+ * \file 		htdocs/accountancy/bookkeeping/listbysubaccount.php
  * \ingroup 	Accountancy (Double entries)
- * \brief 		List operation of book keeping ordered by account number
+ * \brief 		List operation of ledger ordered by subaccount number
  */
 
 require '../../main.inc.php';
@@ -81,7 +81,7 @@ if ($sortfield == "") $sortfield = "t.doc_date,t.rowid";
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
 $formfile = new FormFile($db);
-$hookmanager->initHooks(array('bookkeepingbyaccountlist'));
+$hookmanager->initHooks(array('bookkeepingbysubaccountlist'));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
@@ -183,11 +183,11 @@ if (empty($reshook))
 		$param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
 	}
 	if (!empty($search_accountancy_code_start)) {
-		$filter['t.numero_compte>='] = $search_accountancy_code_start;
+		$filter['t.subledger_account>='] = $search_accountancy_code_start;
 		$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
 	}
 	if (!empty($search_accountancy_code_end)) {
-		$filter['t.numero_compte<='] = $search_accountancy_code_end;
+		$filter['t.subledger_account<='] = $search_accountancy_code_end;
 		$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
 	}
 	if (!empty($search_label_account)) {
@@ -267,7 +267,7 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
-		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
+		header("Location: listbysubaccount.php".($param ? '?'.$param : ''));
 		exit;
 	} else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
@@ -284,7 +284,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
-		header("Location: listbyaccount.php?noreset=1".($param ? '&'.$param : ''));
+		header("Location: listbysubaccount.php?noreset=1".($param ? '&'.$param : ''));
 		exit;
 	}
 }
@@ -299,7 +299,7 @@ $formfile = new FormFile($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-$title_page = $langs->trans("Operations").' - '.$langs->trans("VueByAccountAccounting").' ('.$langs->trans("Bookkeeping").')';
+$title_page = $langs->trans("Operations").' - '.$langs->trans("VueByAccountAccounting").' ('.$langs->trans("BookkeepingSubAccount").')';
 
 llxHeader('', $title_page);
 
@@ -307,13 +307,13 @@ llxHeader('', $title_page);
 // List
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+	$nbtotalofrecords = $object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
 	if ($nbtotalofrecords < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
-$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter);
+$result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 1);
 
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
@@ -377,7 +377,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 
-$newcardbutton = dolGetButtonTitle($langs->trans('ViewSubAccountList'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss'=>'marginleftonly btnTitleSelected'));
+$newcardbutton = dolGetButtonTitle($langs->trans('ViewAccountList'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php', '', 1, array('morecss'=>'marginleftonly btnTitleSelected'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
@@ -400,9 +400,9 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
 $moreforfilter .= $langs->trans('From').' ';
-$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
+$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
 $moreforfilter .= ' '.$langs->trans('to').' ';
-$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
+$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
@@ -512,7 +512,7 @@ while ($i < min($num, $limit))
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
 
-	$accountg = length_accountg($line->numero_compte);
+	$accountg = length_accounta($line->subledger_account);
 	//if (empty($accountg)) $accountg = '-';
 
 	// Is it a break ?
@@ -522,7 +522,7 @@ while ($i < min($num, $limit))
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total">';
-			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.length_accountg($displayed_account_number).':</td>';
+			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.length_accounta($displayed_account_number).':</td>';
 			print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
 			print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
 			print '<td colspan="'.$colspanend.'"></td>';
@@ -550,7 +550,7 @@ while ($i < min($num, $limit))
 		// Show the break account
 		print "<tr>";
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 9).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
-		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
+		if ($line->subledger_account != "" && $line->subledger_account != '-1') print length_accounta($line->subledger_account).' : '.$object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
 		print '</tr>';
