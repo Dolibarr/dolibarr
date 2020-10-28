@@ -1356,6 +1356,7 @@ class Fichinter extends CommonObject
 				$line->datei = $this->db->jdate($objp->date);
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
+				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 
