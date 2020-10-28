@@ -134,7 +134,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 										}
 										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
 												 update: update, textarea: textarea,
-												 pbq: item.pbq, type: item.type, qty: item.qty, discount: item.discount, pricebasetype: item.pricebasetype, price_ht: item.price_ht, price_ttc: item.price_ttc }
+												 pbq: item.pbq, type: item.type, qty: item.qty, discount: item.discount, pricebasetype: item.pricebasetype, price_ht: item.price_ht, price_ttc: item.price_ttc, ref_customer: item.ref_customer }
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -152,6 +152,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
 							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
 							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
+							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
 
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
