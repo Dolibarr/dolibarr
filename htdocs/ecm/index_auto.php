@@ -466,7 +466,7 @@ if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

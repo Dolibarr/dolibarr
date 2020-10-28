@@ -358,7 +358,7 @@ if ($action == 'create') {
 	print '<tbody>';
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
@@ -433,7 +433,7 @@ if ($rowid > 0) {
 		print '</table>';
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Buttons
@@ -759,7 +759,7 @@ if ($rowid > 0) {
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

@@ -292,5 +292,5 @@ if ($action == 'presend')
 	// Show form
 	print $formmail->get_form();
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }

@@ -28,6 +28,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
@@ -659,7 +660,7 @@ if (empty($action) || $action == "view" || $action == "close")
 	    print '</div></div>';
 	    print '<div style="clear:both"></div>';
 
-	    dol_fiche_end();
+	    print dol_get_fiche_end();
 
 	    if ($action != 'close') {
 			print '<div class="tabsAction">';

@@ -384,7 +384,7 @@ if ($action == 'edit')
 
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<br><div class="center">';
     print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
@@ -475,7 +475,7 @@ if ($action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
     if ($conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
@@ -599,7 +599,7 @@ if ($action == 'edit')
 
 		print $formmail->get_form('addfile', 'removefile');
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 }
 

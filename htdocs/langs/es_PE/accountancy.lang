@@ -10,7 +10,6 @@ ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
 DefaultForService=Servicio por defecto
 DefaultForProduct=Producto por defecto
 ConfigAccountingExpert=Configuración del módulo experto en contabilidad
-Journaux=Revistas
 JournalFinancial=Revistas financieras
 BackToChartofaccounts=Retornar gráfico de cuentas
 Selectchartofaccounts=Seleccione el plan de cuentas activo

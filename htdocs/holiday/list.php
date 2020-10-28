@@ -415,7 +415,7 @@ if ($resql)
 		    showMyBalance($object, $user_id);
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Buttons for actions
 

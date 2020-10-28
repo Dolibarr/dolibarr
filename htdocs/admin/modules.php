@@ -883,7 +883,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		}
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -916,7 +916,7 @@ if ($mode == 'marketplace')
 	print "</table>\n";
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -1136,7 +1136,7 @@ if ($mode == 'deploy')
 		}
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 if ($mode == 'develop')
@@ -1170,7 +1170,7 @@ if ($mode == 'develop')
 
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

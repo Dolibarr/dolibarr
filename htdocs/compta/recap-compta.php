@@ -97,7 +97,7 @@ if ($id > 0)
 
 	print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{

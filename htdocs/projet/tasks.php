@@ -482,7 +482,7 @@ if ($id > 0 || !empty($ref))
 	print '<div class="clearboth"></div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 
@@ -595,7 +595,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';

@@ -3623,7 +3623,7 @@ if ($action == 'create')
 
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Button "Create Draft"
 	print '<div class="center">';
@@ -5035,7 +5035,7 @@ if ($action == 'create')
 
 	print "</form>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Actions buttons

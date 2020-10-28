@@ -232,7 +232,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
@@ -335,7 +335,7 @@ if ($rowid && $action != 'edit') {
 
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
      * Barre d'actions

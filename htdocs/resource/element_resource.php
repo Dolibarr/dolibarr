@@ -427,7 +427,7 @@ if (!$ret) {
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 
@@ -460,7 +460,7 @@ if (!$ret) {
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			$object = $savobject;
 		}
@@ -527,7 +527,7 @@ if (!$ret) {
 
 			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 	}
 
@@ -551,7 +551,7 @@ if (!$ret) {
             if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
         }
 	}
 

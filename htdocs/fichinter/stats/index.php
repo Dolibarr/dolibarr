@@ -320,7 +320,7 @@ print '</td></tr></table>';
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 llxFooter();

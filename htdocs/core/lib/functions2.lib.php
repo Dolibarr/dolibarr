@@ -227,12 +227,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_creation))
 		{
-			if ($object->user_creation->id) print $object->user_creation->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_creation->id) print $object->user_creation->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -261,12 +261,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_modification))
 		{
-			if ($object->user_modification->id) print $object->user_modification->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_modification->id) print $object->user_modification->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -295,12 +295,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_validation))
 		{
-			if ($object->user_validation->id) print $object->user_validation->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_validation->id) print $object->user_validation->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -329,12 +329,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_approve))
 		{
-			if ($object->user_approve->id) print $object->user_approve->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_approve->id) print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -363,7 +363,7 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		$userstatic = new User($db);
 		$userstatic->fetch($object->user_approve_id2);
-		if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+		if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		else print $langs->trans("Unknown");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
@@ -392,12 +392,12 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_closing))
 		{
-			if ($object->user_closing->id) print $object->user_closing->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_closing->id) print $object->user_closing->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
 			$userstatic->fetch($object->user_closing);
-			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
+			if ($userstatic->id) print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		}
 		if ($usetable) print '</td></tr>';
@@ -427,7 +427,7 @@ function dol_print_object_info($object, $usetable = 0)
 		else print ': ';
 		if (is_object($object->user_rappro))
 		{
-			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1, '', 0, 0, 0);
+			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(-1, '', 0, 0, 0);
 			else print $langs->trans("Unknown");
 		} else {
 			$userstatic = new User($db);
@@ -492,7 +492,7 @@ function dolAddEmailTrackId($email, $trackingid)
 function isValidMailDomain($mail)
 {
 	list($user, $domain) = explode("@", $mail, 2);
-	return ($domain ? isValidMXRecord($domain, "MX") : 0);
+	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
 /**
@@ -1641,7 +1641,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 						$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
 					}
 				} else {
-                    // Common usage
+					// Common usage
 					$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}

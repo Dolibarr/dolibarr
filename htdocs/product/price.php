@@ -1087,7 +1087,7 @@ print '</div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -1159,7 +1159,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1272,7 +1272,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1392,7 +1392,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print '</table>';
 
-		//dol_fiche_end();
+		//print dol_get_fiche_end();
 
 		print '<div style="text-align: center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1705,7 +1705,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 
@@ -1800,7 +1800,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<div class="marginbottomonly">';

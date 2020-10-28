@@ -888,6 +888,20 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 <?php } ?>
 
+<!-- Modal terminal Credit Note -->
+<div id="ModalCreditNote" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+		<span class="close" href="#" onclick="document.getElementById('ModalCreditNote').style.display = 'none';">&times;</span>
+		<h3><?php print $langs->trans("invoiceAvoirWithLines"); ?></h3>
+	</div>
+	<div class="modal-body">
+		<button type="button" class="block" onclick="CreditNote(); document.getElementById('ModalCreditNote').style.display = 'none';"><?php print $langs->trans("Yes"); ?></button>
+		<button type="button" class="block" onclick="document.getElementById('ModalCreditNote').style.display = 'none';"><?php print $langs->trans("No"); ?></button>
+	</div>
+</div>
+</div>
+
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) print 'withhead'; ?>">
 
 		<div id="poslines" class="div1">

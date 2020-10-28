@@ -462,7 +462,7 @@ print '</td></tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 

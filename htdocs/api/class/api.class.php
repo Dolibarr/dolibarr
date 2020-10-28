@@ -104,7 +104,7 @@ class DolibarrApi
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
 
-        // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+        // Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
         unset($object->linkedObjects);
 
         unset($object->fields);

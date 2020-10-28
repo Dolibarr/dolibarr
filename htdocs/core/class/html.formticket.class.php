@@ -422,7 +422,7 @@ class FormTicket
 
 		print '</table>';
 
-		if ($withdolfichehead) dol_fiche_end();
+		if ($withdolfichehead) print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")).'" />';

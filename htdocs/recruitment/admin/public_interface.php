@@ -165,7 +165,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 }
 */
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

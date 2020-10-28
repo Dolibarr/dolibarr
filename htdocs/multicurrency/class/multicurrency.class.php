@@ -634,7 +634,7 @@ class MultiCurrency extends CommonObject
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		// TODO Use getURLContent() function instead.
+		// FIXME Use getURLContent() function instead.
 		$ch = curl_init($urlendpoint);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($ch);

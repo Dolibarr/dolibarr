@@ -2191,7 +2191,7 @@ if ($action == 'create')
 	// Bouton "Create Draft"
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
@@ -2304,7 +2304,8 @@ if ($action == 'create')
 		if ($action == 'valid')
 		{
 			// We check if number is temporary number
-			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
+			if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) {
+                // empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
 				$numref = $object->ref;
@@ -3094,7 +3095,7 @@ if ($action == 'create')
 		print '</div>';
 		print '</form>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		if ($action != 'presend')

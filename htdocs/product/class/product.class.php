@@ -388,6 +388,13 @@ class Product extends CommonObject
 	 */
 	public $price_autogen = 0;
 
+	/**
+	 * Array with list of supplier prices of product
+	 *
+	 * @var array
+	 */
+	public $supplierprices;
+
 
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),

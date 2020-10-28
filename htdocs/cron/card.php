@@ -510,7 +510,7 @@ if (($action == "create") || ($action == "edit"))
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div align="center">';
 	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
@@ -693,7 +693,7 @@ if (($action == "create") || ($action == "edit"))
 	print '</table>';
     print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	print "\n\n<div class=\"tabsAction\">\n";

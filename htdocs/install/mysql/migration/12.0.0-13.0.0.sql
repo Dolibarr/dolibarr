@@ -426,9 +426,9 @@ ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
 
 -- drop constraint
-ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_soc;
-ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_author;
-ALTER TABLE llx_livraison DROP CONSTRAINT fk_livraison_fk_user_valid;
+ALTER TABLE llx_livraison DROP FOREIGN KEY  fk_livraison_fk_soc;
+ALTER TABLE llx_livraison DROP FOREIGN KEY  fk_livraison_fk_user_author;
+ALTER TABLE llx_livraison DROP FOREIGN KEY  fk_livraison_fk_user_valid;
 
 -- rename Table
 ALTER TABLE llx_livraison RENAME TO llx_delivery;
@@ -447,18 +447,21 @@ ALTER TABLE llx_delivery DROP INDEX idx_livraison_fk_user_valid;
 ALTER TABLE llx_delivery ADD INDEX idx_delivery_fk_user_valid (fk_user_valid);
 
 -- drop constraint
-ALTER TABLE llx_delivery DROP CONSTRAINT fk_livraison_fk_soc;
-ALTER TABLE llx_delivery DROP CONSTRAINT fk_livraison_fk_user_author;
-ALTER TABLE llx_delivery DROP CONSTRAINT fk_livraison_fk_user_valid;
+ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_soc;
+ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_author;
+ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_valid;
 
 -- add constraint
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
 ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
 
-ALTER TABLE llx_deliverydet CHANGE COLUMN fk_livraison fk_delivery integer; 
+ALTER TABLE llx_deliverydet DROP FOREIGN KEY  fk_livraisondet_fk_livraison;
+ALTER TABLE llx_deliverydet DROP INDEX idx_livraisondet_fk_expedition;
+ALTER TABLE llx_deliverydet CHANGE COLUMN fk_livraison fk_delivery integer;
+ALTER TABLE llx_deliverydet ADD INDEX idx_deliverydet_fk_delivery (fk_delivery);
+ALTER TABLE llx_deliverydet ADD CONSTRAINT fk_deliverydet_fk_delivery FOREIGN KEY (fk_delivery) REFERENCES llx_delivery (rowid);
 
--- update llx_extrafields
 UPDATE llx_extrafields SET elementtype = 'delivery' WHERE elementtype = 'livraison';
 UPDATE llx_extrafields SET elementtype = 'deliverydet' WHERE elementtype = 'livraisondet';
 

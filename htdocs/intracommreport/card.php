@@ -157,7 +157,7 @@ if ($action == 'create')
 
     print '</table>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
@@ -225,7 +225,7 @@ if ($id > 0 && $action != 'edit') {
     print "</div></div></div>\n";
     print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
     /*

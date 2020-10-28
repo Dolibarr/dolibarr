@@ -138,7 +138,7 @@ if ($socid > 0)
     print '</div>';
     print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<br>';
 

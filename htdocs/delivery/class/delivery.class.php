@@ -67,8 +67,19 @@ class Delivery extends CommonObject
 	 */
 	public $picto = 'sending';
 
-	public $draft;
-	public $socid;
+    /**
+     * @var int draft status
+     */
+    public $draft;
+
+    /**
+     * @var int thirdparty id
+     */
+    public $socid;
+
+    /**
+     * @var string ref custome
+     */
 	public $ref_customer;
 
 	/**
@@ -86,7 +97,9 @@ class Delivery extends CommonObject
 	 */
 	public $date_valid;
 
-
+    /**
+     * @var string model pdf
+     */
 	public $model_pdf;
 
 
@@ -529,13 +542,12 @@ class Delivery extends CommonObject
 		$num = count($expedition->lines);
 		for ($i = 0; $i < $num; $i++)
 		{
-			$line = new DeliveryLigne($this->db);
+			$line = new DeliveryLine($this->db);
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
-			$line->libelle           = $expedition->lines[$i]->libelle;
+			$line->label             = $expedition->lines[$i]->label;
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
-			$line->ref               = $expedition->lines[$i]->ref;
 
 			$this->lines[$i] = $line;
 		}
@@ -548,7 +560,7 @@ class Delivery extends CommonObject
 		$this->date_delivery        = $expedition->date_delivery;
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
-		$this->ref_customer = $expedition->ref_customer;
+		$this->ref_customer         = $expedition->ref_customer;
 
 		//Incoterms
 		$this->fk_incoterms = $expedition->fk_incoterms;
@@ -573,7 +585,7 @@ class Delivery extends CommonObject
 
 		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 		{
-			$line = new DeliveryLigne($this->db);
+			$line = new DeliveryLine($this->db);
 			$line->array_options = $array_options;
 			$line->id = $id;
 			$result = $line->insertExtraFields();
@@ -600,7 +612,7 @@ class Delivery extends CommonObject
     public function addline($origin_id, $qty)
 	{
 		$num = count($this->lines);
-		$line = new DeliveryLigne($this->db);
+		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
@@ -776,7 +788,7 @@ class Delivery extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$line = new DeliveryLigne($this->db);
+				$line = new DeliveryLine($this->db);
 
 				$obj = $this->db->fetch_object($resql);
 
@@ -914,7 +926,7 @@ class Delivery extends CommonObject
 		$this->note_private = 'Private note';
 
 		$i = 0;
-		$line = new DeliveryLigne($this->db);
+		$line = new DeliveryLine($this->db);
 		$line->fk_product     = $prodids[0];
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
@@ -939,11 +951,11 @@ class Delivery extends CommonObject
 
 		// Get the linked object
 		$this->fetchObjectLinked('', '', $this->id, $this->element);
-		//var_dump($this->linkedObjectIds);
+		//var_dump($this->linkedObjectsIds);
 		// Get the product ref and qty in source
 		$sqlSourceLine = "SELECT st.rowid, st.description, st.qty";
 		$sqlSourceLine .= ", p.ref, p.label";
-		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectIds[0]['type']."det as st";
+		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
 		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
 
@@ -999,24 +1011,22 @@ class Delivery extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    /**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    public function set_delivery_date($user, $delivery_date)
+    public function setDeliveryDate($user, $delivery_date)
 	{
-        // phpcs:enable
 		if ($user->rights->expedition->creer)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_delivery_date", LOG_DEBUG);
+			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1086,12 +1096,22 @@ class Delivery extends CommonObject
 /**
  *  Management class of delivery note lines
  */
-class DeliveryLigne extends CommonObjectLine
+class DeliveryLine extends CommonObjectLine
 {
     /**
      * @var DoliDB Database handler.
      */
     public $db;
+
+    /**
+     * @var string ID to identify managed object
+     */
+    public $element = 'deliverydet';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'deliverydet';
 
     // From llx_expeditiondet
     public $qty;
@@ -1122,18 +1142,10 @@ class DeliveryLigne extends CommonObjectLine
 	 */
 	public $libelle;
 
+	public $origin_line_id;
+
 	public $product_ref;
 	public $product_label;
-
-	/**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'deliverydet';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'deliverydet';
 
     /**
      *	Constructor

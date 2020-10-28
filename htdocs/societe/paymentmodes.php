@@ -912,7 +912,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -1686,7 +1686,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	}
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
@@ -1733,7 +1733,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
@@ -1847,7 +1847,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	dol_set_focus('#label');
 
@@ -1897,7 +1897,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	dol_set_focus('#label');
 

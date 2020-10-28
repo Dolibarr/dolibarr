@@ -180,7 +180,7 @@ if ($id > 0)
         print "</table>\n";
     }
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     if ($action == 'edit')
     {

@@ -74,6 +74,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard', 'globalcard'));
 
+$error = 0;
+
 
 /*
  * Actions
@@ -86,19 +88,17 @@ if ($action == 'add')
 {
 	$db->begin();
 
-	$object->date_livraison   = time();
-	$object->note             = GETPOST("note", 'restricthtml');
-	$object->note_private     = GETPOST("note", 'restricthtml');
-	$object->commande_id      = GETPOST("commande_id", 'int');
+	$object->date_delivery = dol_now();
+	$object->note          = GETPOST("note", 'restricthtml');
+	$object->note_private  = GETPOST("note", 'restricthtml');
+	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled))
-	{
+	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
 		$expedition->entrepot_id = GETPOST('entrepot_id');
 	}
 
-	// On boucle sur chaque ligne de commande pour completer objet livraison
-	// avec qte a livrer
+	// We loop on each line of order to complete object delivery with qty to delivery
 	$commande = new Commande($db);
 	$commande->fetch($object->commande_id);
 	$commande->fetch_lines();
@@ -107,15 +107,15 @@ if ($action == 'add')
 	{
 		$qty = "qtyl".$i;
 		$idl = "idl".$i;
-		if ($_POST[$qty] > 0)
+		$qtytouse = price2num(GETPOST($qty));
+		if ($qtytouse > 0)
 		{
-			$object->addline($_POST[$idl], $_POST[$qty]);
+			$object->addline(GETPOST($idl), price2num($qtytouse));
 		}
 	}
 
 	$ret = $object->create($user);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$db->commit();
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -123,7 +123,6 @@ if ($action == 'add')
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
-		$_GET["commande_id"] = $_POST["commande_id"];
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
@@ -168,10 +167,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'setdate_livraison' && $user->rights->expedition->delivery->creer)
+if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer)
 {
     $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-    $result = $object->set_delivery_date($user, $datedelivery);
+    $result = $object->setDeliveryDate($user, $datedelivery);
     if ($result < 0)
     {
         $mesg = '<div class="error">'.$object->error.'</div>';
@@ -181,7 +180,7 @@ if ($action == 'setdate_livraison' && $user->rights->expedition->delivery->creer
 // Set incoterm
 elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 {
-	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	$result = $object->setIncoterms((int) GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
 // Update extrafields
@@ -434,15 +433,15 @@ if ($action == 'create')    // Create. Seems to no be used
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			if ($action != 'editdate_delivery') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			if ($action == 'editdate_livraison')
+			if ($action == 'editdate_delivery')
 			{
-				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<form name="setdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<input type="hidden" name="action" value="setdate_livraison">';
-				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
+				print '<input type="hidden" name="action" value="setdate_delivery">';
+				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_delivery", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
@@ -629,7 +628,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			print "</table>\n";
 
-            dol_fiche_end();
+            print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
 			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';

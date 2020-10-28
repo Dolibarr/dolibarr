@@ -1203,7 +1203,7 @@ if ($action == 'create')
 
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -2021,7 +2021,7 @@ if ($action == 'create')
 			print '</form>';
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		/*

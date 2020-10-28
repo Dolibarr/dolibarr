@@ -186,7 +186,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1
 
 print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries").'</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

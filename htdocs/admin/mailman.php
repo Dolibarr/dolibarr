@@ -198,7 +198,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
@@ -212,7 +212,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
     $link .= '</a>';
     print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 }
 
 

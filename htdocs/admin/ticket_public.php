@@ -175,7 +175,7 @@ print dol_get_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, 
 
 print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.dol_buildpath('/public/ticket/index.php', 1).'" target="_blank" >'.dol_buildpath('/public/ticket/index.php', 2).'</a>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 $enabledisablehtml = $langs->trans("TicketsActivatePublicInterface").' ';

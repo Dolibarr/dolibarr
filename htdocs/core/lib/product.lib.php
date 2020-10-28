@@ -357,7 +357,7 @@ function show_stats_for_company($product, $socid)
 	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
-		// Customer proposals
+	// Customer proposals
 	if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$nblines++;
@@ -508,7 +508,6 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-
 
 	// MO
 	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)

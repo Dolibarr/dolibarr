@@ -86,7 +86,7 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "p.datep";
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOSTISSET("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(

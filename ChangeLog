@@ -222,6 +222,7 @@ NEW: standardizes API thirdparties by email like other object
 NEW: thirdparty REST API: endpoint to set price level
 NEW: Use new category API for project list view
 NEW: Triggers Attributes and Attributes values
+NEW: Add hooks on newpayment page to allow external payment modules
 
 WARNING:
 

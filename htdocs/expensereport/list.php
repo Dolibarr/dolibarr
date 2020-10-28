@@ -345,7 +345,7 @@ if ($resql)
 
 		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action != 'edit')
 		{

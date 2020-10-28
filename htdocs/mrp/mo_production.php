@@ -413,7 +413,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
-	print dol_get_fiche_head($head, 'production', $langs->trans("MO"), -1, $object->picto);
+
+	print dol_get_fiche_head($head, 'production', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -550,7 +551,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall')))

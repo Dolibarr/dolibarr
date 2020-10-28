@@ -149,7 +149,7 @@ if ($object->id)
     print '</div>';
     print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $permission = ($user->rights->produit->creer);
     $param = '&id='.$object->id;

@@ -229,7 +229,7 @@ if (empty($reshook))
 			else setEventMessages($langs->trans($object->error), null, 'errors');
 		}
 	} elseif ($action == 'setdate_livraison' && $usercancreate) {
-		$result = $object->set_delivery_date($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
@@ -1350,7 +1350,7 @@ if ($action == 'create')
 
 	if (!empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
@@ -1804,7 +1804,7 @@ if ($action == 'create')
 	print '</div>';
 	print "</form>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'statut')
 	{

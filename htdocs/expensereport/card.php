@@ -1483,7 +1483,7 @@ if ($action == 'create')
 	print '<tbody>';
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
@@ -1616,7 +1616,7 @@ if ($action == 'create')
 
 				print '</table>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 
 				print '<div class="center">';
 				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
@@ -2543,7 +2543,7 @@ if ($action == 'create')
 
 				print '</form>';
 
-				dol_fiche_end();
+				print dol_get_fiche_end();
 			} // end edit or not edit
 		}	// end of if result
 		else {

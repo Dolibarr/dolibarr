@@ -567,7 +567,7 @@ print '<input class="button" type="submit" name="search" value="'.$langs->trans(
 
 print '</form>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if (!empty($date_start) && !empty($date_stop))
 {

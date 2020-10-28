@@ -566,7 +566,7 @@ if ($result)
 
         print '</div>';
 
-        dol_fiche_end();
+        print dol_get_fiche_end();
 
 
         print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div><br>';

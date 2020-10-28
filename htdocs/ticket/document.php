@@ -96,7 +96,7 @@ if ($object->id)
         $head = societe_prepare_head($object->thirdparty);
         print dol_get_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
         dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
-        dol_fiche_end();
+        print dol_get_fiche_end();
     }
 
     if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
@@ -179,7 +179,7 @@ if ($object->id)
 
     dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     // Build file list
     $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

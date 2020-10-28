@@ -32,19 +32,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 class InterfaceWorkflowManager extends DolibarrTriggers
 {
-	/**
-	 * @var string Image of the trigger
-	 */
-	public $picto = 'technic';
+    /**
+     * Constructor
+     *
+     * @param DoliDB $db Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
 
-	public $family = 'core';
-	public $description = "Triggers of this module allows to manage workflows";
-
-	/**
-	 * Version of the trigger
-	 * @var string
-	 */
-	public $version = self::VERSION_DOLIBARR;
+        $this->name = preg_replace('/^Interface/i', '', get_class($this));
+        $this->family = "core";
+        $this->description = "Triggers of this module allows to manage workflows";
+        // 'development', 'experimental', 'dolibarr' or version
+        $this->version = self::VERSION_DOLIBARR;
+        $this->picto = 'technic';
+    }
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
@@ -62,11 +65,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         if (empty($conf->workflow->enabled)) return 0; // Module not active, we do nothing
 
         // Proposals to order
-        if ($action == 'PROPAL_CLOSE_SIGNED')
-        {
+        if ($action == 'PROPAL_CLOSE_SIGNED') {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER))
-            {
+            if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
                 include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
                 $newobject = new Commande($this->db);
 
@@ -81,11 +82,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         }
 
         // Order to invoice
-        if ($action == 'ORDER_CLOSE')
-        {
+        if ($action == 'ORDER_CLOSE') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE))
-            {
+            if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE)) {
                 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
                 $newobject = new Facture($this->db);
 
@@ -100,24 +99,18 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         }
 
         // Order classify billed proposal
-        if ($action == 'ORDER_CLASSIFY_BILLED')
-        {
+        if ($action == 'ORDER_CLASSIFY_BILLED') {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        	if (!empty($conf->propal->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
-        	{
+        	if (!empty($conf->propal->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL)) {
         		$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
-				if (!empty($object->linkedObjects))
-				{
+				if (!empty($object->linkedObjects)) {
 				    $totalonlinkedelements = 0;
-					foreach ($object->linkedObjects['propal'] as $element)
-					{
+					foreach ($object->linkedObjects['propal'] as $element) {
 					    if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht))
-                    {
-    					foreach ($object->linkedObjects['propal'] as $element)
-    					{
+                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+    					foreach ($object->linkedObjects['propal'] as $element) {
     					    $ret = $element->classifyBilled($user);
     					}
 					}
@@ -127,27 +120,21 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         }
 
         // classify billed order & billed propososal
-        if ($action == 'BILL_VALIDATE')
-        {
+        if ($action == 'BILL_VALIDATE') {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	$ret = 0;
 
 			// First classify billed the order to allow the proposal classify process
-			if (!empty($conf->commande->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
-        	{
+			if (!empty($conf->commande->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
         		$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
-        		if (!empty($object->linkedObjects))
-        		{
+        		if (!empty($object->linkedObjects)) {
         		    $totalonlinkedelements = 0;
-        		    foreach ($object->linkedObjects['commande'] as $element)
-        		    {
+        		    foreach ($object->linkedObjects['commande'] as $element) {
         		        if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) $totalonlinkedelements += $element->total_ht;
         		    }
         		    dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht))
-        		    {
-        		        foreach ($object->linkedObjects['commande'] as $element)
-        		        {
+                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+        		        foreach ($object->linkedObjects['commande'] as $element) {
         		            $ret = $element->classifyBilled($user);
         		        }
         		    }
@@ -155,21 +142,16 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	}
 
 			// Second classify billed the proposal.
-        	if (!empty($conf->propal->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
-        	{
+        	if (!empty($conf->propal->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL)) {
         		$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
-        		if (!empty($object->linkedObjects))
-        		{
+        		if (!empty($object->linkedObjects)) {
         		    $totalonlinkedelements = 0;
-        		    foreach ($object->linkedObjects['propal'] as $element)
-        		    {
+        		    foreach ($object->linkedObjects['propal'] as $element) {
         		        if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
         		    }
         		    dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht))
-        		    {
-        		        foreach ($object->linkedObjects['propal'] as $element)
-        		        {
+                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+        		        foreach ($object->linkedObjects['propal'] as $element) {
         		            $ret = $element->classifyBilled($user);
         		        }
         		    }
@@ -180,26 +162,20 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         }
 
         // classify billed order & billed propososal
-        if ($action == 'BILL_SUPPLIER_VALIDATE')
-        {
+        if ($action == 'BILL_SUPPLIER_VALIDATE') {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	// First classify billed the order to allow the proposal classify process
-        	if (!empty($conf->fournisseur->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER))
-        	{
+        	if (!empty($conf->fournisseur->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER)) {
         		$object->fetchObjectLinked('', 'order_supplier', $object->id, $object->element);
-        		if (!empty($object->linkedObjects))
-        		{
+        		if (!empty($object->linkedObjects)) {
         			$totalonlinkedelements = 0;
-        			foreach ($object->linkedObjects['order_supplier'] as $element)
-        			{
+        			foreach ($object->linkedObjects['order_supplier'] as $element) {
         				if ($element->statut == CommandeFournisseur::STATUS_ACCEPTED || $element->statut == CommandeFournisseur::STATUS_ORDERSENT || $element->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY || $element->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) $totalonlinkedelements += $element->total_ht;
         			}
         			dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht))
-					{
-        				foreach ($object->linkedObjects['order_supplier'] as $element)
-        				{
+                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+        				foreach ($object->linkedObjects['order_supplier'] as $element) {
         					$ret = $element->classifyBilled($user);
         				}
         			}
@@ -208,21 +184,16 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	}
 
         	// Second classify billed the proposal.
-        	if (!empty($conf->supplier_proposal->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL))
-        	{
+        	if (!empty($conf->supplier_proposal->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
         		$object->fetchObjectLinked('', 'supplier_proposal', $object->id, $object->element);
-        		if (!empty($object->linkedObjects))
-        		{
+        		if (!empty($object->linkedObjects)) {
         			$totalonlinkedelements = 0;
-        			foreach ($object->linkedObjects['supplier_proposal'] as $element)
-        			{
+        			foreach ($object->linkedObjects['supplier_proposal'] as $element) {
         				if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
         			}
         			dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht))
-        			{
-        				foreach ($object->linkedObjects['supplier_proposal'] as $element)
-        				{
+                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+        				foreach ($object->linkedObjects['supplier_proposal'] as $element) {
         					$ret = $element->classifyBilled($user);
         				}
         			}
@@ -232,25 +203,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         }
 
         // Invoice classify billed order
-        if ($action == 'BILL_PAYED')
-        {
+        if ($action == 'BILL_PAYED') {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-            if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER))
-            {
+            if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER)) {
                 $object->fetchObjectLinked('', 'commande', $object->id, $object->element);
-                if (!empty($object->linkedObjects))
-                {
+                if (!empty($object->linkedObjects)) {
                     $totalonlinkedelements = 0;
-                    foreach ($object->linkedObjects['commande'] as $element)
-                    {
+                    foreach ($object->linkedObjects['commande'] as $element) {
                         if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) $totalonlinkedelements += $element->total_ht;
                     }
                     dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht))
-                    {
-                        foreach ($object->linkedObjects['commande'] as $element)
-                        {
+                    if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+                        foreach ($object->linkedObjects['commande'] as $element) {
                             $ret = $element->classifyBilled($user);
                         }
                     }
@@ -259,12 +224,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
             }
         }
 
-        if ($action == 'SHIPPING_VALIDATE')
-        {
+        if ($action == 'SHIPPING_VALIDATE') {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-        	if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING))
-        	{
+        	if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING)) {
         		$qtyshipped = array();
         		$qtyordred = array();
         		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -318,25 +281,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         	}
         }
 		 // classify billed reception
-        if ($action == 'BILL_SUPPLIER_VALIDATE')
-        {
+        if ($action == 'BILL_SUPPLIER_VALIDATE') {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id, LOG_DEBUG);
 
-        	if (!empty($conf->reception->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
-        	{
+        	if (!empty($conf->reception->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {
         		$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
-        		if (!empty($object->linkedObjects))
-        		{
+        		if (!empty($object->linkedObjects)) {
         		    $totalonlinkedelements = 0;
-        		    foreach ($object->linkedObjects['reception'] as $element)
-        		    {
+        		    foreach ($object->linkedObjects['reception'] as $element) {
         		        if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
         		    }
         		    dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-        		    if ($totalonlinkedelements == $object->total_ht)
-        		    {
-        		        foreach ($object->linkedObjects['reception'] as $element)
-        		        {
+        		    if ($totalonlinkedelements == $object->total_ht) {
+        		        foreach ($object->linkedObjects['reception'] as $element) {
         		            $ret = $element->set_billed();
         		        }
         		    }

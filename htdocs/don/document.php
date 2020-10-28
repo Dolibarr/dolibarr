@@ -179,7 +179,7 @@ if ($object->id)
 
     print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+    print dol_get_fiche_end();
 
     $modulepart = 'don';
     $permission = $user->rights->don->lire;

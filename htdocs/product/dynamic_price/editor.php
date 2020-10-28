@@ -196,7 +196,7 @@ $doleditor->Create();
 print '</td></tr>';
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //Buttons
 print '<div class="center">';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2017-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceZapierTriggers extends DolibarrTriggers
 {
     /**
-     * @var DoliDB Database handler
-     */
-    protected $db;
-
-    /**
      * Constructor
      *
      * @param DoliDB $db Database handler
@@ -57,30 +52,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         $this->family = "technic";
         $this->description = "Zapier triggers.";
         // 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'development';
+        $this->version = self::VERSION_DEVELOPMENT;
         $this->picto = 'zapier';
     }
-
-    /**
-     * Trigger name
-     *
-     * @return string Name of trigger file
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Trigger description
-     *
-     * @return string Description of trigger file
-     */
-    public function getDesc()
-    {
-        return $this->description;
-    }
-
 
     /**
      * Function called when a Dolibarrr business event is done.
@@ -96,7 +70,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
      */
     public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
-        global $db;
         if (empty($conf->zapier->enabled)) {
             // Module not active, we do nothing
             return 0;
@@ -403,7 +376,7 @@ function cleanObjectDatas($toclean)
     // Remove $db object property for object
     unset($toclean->db);
 
-    // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+    // Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
     unset($toclean->linkedObjects);
 
     unset($toclean->lines); // should be ->lines

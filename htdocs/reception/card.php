@@ -425,7 +425,7 @@ if (empty($reshook))
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
-	    $result = $object->set_delivery_date($user, $datedelivery);
+	    $result = $object->setDeliveryDate($user, $datedelivery);
 	    if ($result < 0)
 	    {
 	        setEventMessages($object->error, $object->errors, 'errors');
@@ -873,7 +873,7 @@ if ($action == 'create')
 
             print "</table>";
 
-            dol_fiche_end();
+            print dol_get_fiche_end();
 
 
             // Reception lines
@@ -1949,7 +1949,7 @@ if ($action == 'create')
 	}
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$object->fetchObjectLinked($object->id, $object->element);
@@ -2176,7 +2176,7 @@ if ($action == 'create')
 		}
 		// Show form
 		print $formmail->get_form();
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 }
 
