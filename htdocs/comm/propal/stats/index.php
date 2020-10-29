@@ -267,9 +267,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 	print "&nbsp;";
 	if($object_status == Propal::STATUS_SIGNED) $moreclass="";
-	else $moreclass="hideobject";
+else $moreclass="hideobject";
 
-	?><script>
+?><script>
 	let $statusList = $("select[name='object_status']");
 	$statusList.on('change', function (){
 		let $selectedStatusIndex = $("select[name='object_status'] option:selected").val();

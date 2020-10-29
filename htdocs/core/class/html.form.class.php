@@ -5812,7 +5812,6 @@ class Form
         $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 
         foreach ($TDurationTypes as $key=>$typeduration){
-
             $retstring .= '<option value="'.$key.'"';
             if($key == $selected)
             {
@@ -5834,7 +5833,8 @@ class Form
      * @param   string   $modelType  Model type
      * @return  string               HTML select string
      */
-    public function select_model_mail($prefix, $modelType = '', $default = 0) {
+    public function select_model_mail($prefix, $modelType = '', $default = 0)
+	{
 
         global $langs, $db, $user;
 

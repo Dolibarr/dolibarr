@@ -3540,7 +3540,7 @@ class Propal extends CommonObject
 				dol_print_error($this->db);
 				$error++;
 			}
-		} else if ($nextStatus == $this::STATUS_SIGNED && $this->statut == $this::STATUS_VALIDATED) {
+		} elseif ($nextStatus == $this::STATUS_SIGNED && $this->statut == $this::STATUS_VALIDATED) {
 			if ($this->cloture($user, $this::STATUS_SIGNED) <= 0) {
 				dol_print_error($this->db);
 				$error++;
@@ -3553,7 +3553,7 @@ class Propal extends CommonObject
 			$this->db->rollback();
 			if ($nextStatus == $this::STATUS_VALIDATED){
 				setEventMessage($langs->trans('CantBeValidated', $this->ref), 'errors');
-			} else if ($nextStatus == $this::STATUS_SIGNED){
+			} elseif ($nextStatus == $this::STATUS_SIGNED){
 				setEventMessage($langs->trans('CantBeSign', $this->ref), 'errors');
 			} else {
 				setEventMessage($langs->trans('CantValidateOrSignThisStatus', $this->ref), 'errors');
@@ -3562,7 +3562,7 @@ class Propal extends CommonObject
 			$this->db->commit();
 			if ($nextStatus == $this::STATUS_VALIDATED) {
 				setEventMessage($this->ref . " " . $langs->trans('PassedInOpenStatus', $this->ref), 'mesgs');
-			} else if ($nextStatus == $this::STATUS_SIGNED) {
+			} elseif ($nextStatus == $this::STATUS_SIGNED) {
 				setEventMessage($this->ref . " " . $langs->trans('Signed', $this->ref), 'mesgs');
 			}
 		}
