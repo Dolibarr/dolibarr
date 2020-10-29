@@ -71,7 +71,9 @@ class Product extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
-
+	/**
+	 * @var string picto
+	 */
 	public $picto = 'product';
 
 	/**
@@ -86,6 +88,7 @@ class Product extends CommonObject
     * @see label
     */
 	public $libelle;
+
 	/**
 	 * Product label
 	 *
@@ -395,7 +398,9 @@ class Product extends CommonObject
 	 */
 	public $supplierprices;
 
-
+	/**
+	 * @var array fields of object product
+	 */
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -3190,7 +3195,7 @@ class Product extends CommonObject
 	 * @param  string $sql  		Request to execute
 	 * @param  string $mode 		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * @param  int    $year 		Year (0=current year, -1=all years)
-	 * @return array               	<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array|int           	<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	private function _get_stats($sql, $mode, $year = 0)
 	{

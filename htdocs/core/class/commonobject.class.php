@@ -570,6 +570,28 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Set to upper or ucwords/lower if needed
+	 *
+	 * @return void;
+	 */
+	public function setUpperOrLowerCase()
+	{
+		global $conf;
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
+			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+			$this->name = dol_ucwords(dol_strtolower($this->name));
+		}
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
+			$this->lastname = dol_strtoupper($this->lastname);
+			$this->name = dol_strtoupper($this->name);
+		}
+		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+			$this->town = dol_strtoupper($this->town);
+		}
+	}
+
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -6862,7 +6884,7 @@ abstract class CommonObject
 							{
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
