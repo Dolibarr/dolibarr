@@ -41,8 +41,8 @@ if (!empty($conf->expedition_bon->enabled))
 if (!empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -126,8 +126,8 @@ if ($action == 'add')
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-    || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
+	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
+	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
 )
 {
 	$result = $object->valid($user);
@@ -310,13 +310,13 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled))
 			{
-			    $objectsrc = new Commande($db);
-			    $objectsrc->fetch($expedition->origin_id);
+				$objectsrc = new Commande($db);
+				$objectsrc->fetch($expedition->origin_id);
 			}
 			if ($typeobject == 'propal' && $expedition->origin_id > 0 && !empty($conf->propal->enabled))
 			{
-			    $objectsrc = new Propal($db);
-			    $objectsrc->fetch($expedition->origin_id);
+				$objectsrc = new Propal($db);
+				$objectsrc->fetch($expedition->origin_id);
 			}
 
 			// Shipment card
@@ -331,35 +331,35 @@ if ($action == 'create')    // Create. Seems to no be used
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
 			// Project
 			if (!empty($conf->projet->enabled)) {
-			    $langs->load("projects");
-			    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			    if (0) {    // Do not change on shipment
-			        if ($action != 'classify') {
-			            $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-			        }
-			        if ($action == 'classify') {
-			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
-			            $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
-			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-			            $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-			            $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-			            $morehtmlref .= '</form>';
-			        } else {
-			            $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
-			        }
-			    } else {
-			        $morehtmlref .= ' : ';
-			        if (!empty($objectsrc->fk_project)) {
-			            $proj = new Project($db);
-			            $proj->fetch($objectsrc->fk_project);
-			            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			            $morehtmlref .= $proj->ref;
-			            $morehtmlref .= '</a>';
-			        } else {
-			            $morehtmlref .= '';
-			        }
-			    }
+				$langs->load("projects");
+				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+				if (0) {    // Do not change on shipment
+					if ($action != 'classify') {
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					}
+					if ($action == 'classify') {
+						// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
+						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
+						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+						$morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '</form>';
+					} else {
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
+					}
+				} else {
+					$morehtmlref .= ' : ';
+					if (!empty($objectsrc->fk_project)) {
+						$proj = new Project($db);
+						$proj->fetch($objectsrc->fk_project);
+						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+						$morehtmlref .= $proj->ref;
+						$morehtmlref .= '</a>';
+					} else {
+						$morehtmlref .= '';
+					}
+				}
 			}
 			$morehtmlref .= '</div>';
 
@@ -371,7 +371,7 @@ if ($action == 'create')    // Create. Seems to no be used
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-		    print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield" width="100%">';
 
 			// Shipment
 			/*
@@ -454,21 +454,21 @@ if ($action == 'create')    // Create. Seems to no be used
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr><td>';
-		        print '<table width="100%" class="nobordernopadding"><tr><td>';
-		        print $langs->trans('IncotermLabel');
-		        print '<td><td class="right">';
-		        if ($user->rights->expedition->delivery->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
-		        else print '&nbsp;';
-		        print '</td></tr></table>';
-		        print '</td>';
-		        print '<td colspan="3">';
+				print '<table width="100%" class="nobordernopadding"><tr><td>';
+				print $langs->trans('IncotermLabel');
+				print '<td><td class="right">';
+				if ($user->rights->expedition->delivery->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+				else print '&nbsp;';
+				print '</td></tr></table>';
+				print '</td>';
+				print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 				} else {
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}
-		        print '</td></tr>';
+				print '</td></tr>';
 			}
 
 			/* A delivery note should be just more properties of a shipment, so notes are on shipment
@@ -690,9 +690,9 @@ if ($action == 'create')    // Create. Seems to no be used
 				$shipment = new Expedition($db);
 				$shipment->fetch($object->origin_id);
 
-    			// Show links to link elements
-    			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-    			$somethingshown = $form->showLinkedObjectBlock($object, '');
+				// Show links to link elements
+				//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 

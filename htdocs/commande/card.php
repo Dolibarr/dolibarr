@@ -242,7 +242,7 @@ if (empty($reshook))
 	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-        $selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), null, 'errors');
@@ -349,7 +349,7 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
-                                if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+								if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
 
 								$label = (!empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
@@ -738,8 +738,8 @@ if (empty($reshook))
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 					{
-					    if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					    if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 				}
 				// If price per customer
@@ -1284,82 +1284,82 @@ if (empty($reshook))
 
 	// add lines from objectlinked
 	if ($action == 'import_lines_from_object'
-	    && $usercancreate
-	    && $object->statut == Commande::STATUS_DRAFT
+		&& $usercancreate
+		&& $object->statut == Commande::STATUS_DRAFT
 	  )
 	{
-	    $fromElement = GETPOST('fromelement');
-	    $fromElementid = GETPOST('fromelementid');
-	    $importLines = GETPOST('line_checkbox');
+		$fromElement = GETPOST('fromelement');
+		$fromElementid = GETPOST('fromelementid');
+		$importLines = GETPOST('line_checkbox');
 
-	    if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
-	    {
-	        if ($fromElement == 'commande')
-	        {
-	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
-	            $lineClassName = 'OrderLine';
-	        } elseif ($fromElement == 'propal')
-	        {
-	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
-	            $lineClassName = 'PropaleLigne';
-	        }
-	        $nextRang = count($object->lines) + 1;
-	        $importCount = 0;
-	        $error = 0;
-	        foreach ($importLines as $lineId)
-	        {
-	            $lineId = intval($lineId);
-	            $originLine = new $lineClassName($db);
-	            if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
-	            {
-	                $originLine->fetch_optionals();
-	                $desc = $originLine->desc;
-	                $pu_ht = $originLine->subprice;
-	                $qty = $originLine->qty;
-	                $txtva = $originLine->tva_tx;
-	                $txlocaltax1 = $originLine->localtax1_tx;
-	                $txlocaltax2 = $originLine->localtax2_tx;
-	                $fk_product = $originLine->fk_product;
-	                $remise_percent = $originLine->remise_percent;
-	                $date_start = $originLine->date_start;
-	                $date_end = $originLine->date_end;
-	                $ventil = 0;
-	                $info_bits = $originLine->info_bits;
-	                $fk_remise_except = $originLine->fk_remise_except;
-	                $price_base_type = 'HT';
-	                $pu_ttc = 0;
-	                $type = $originLine->product_type;
-	                $rang = $nextRang++;
-	                $special_code = $originLine->special_code;
-	                $origin = $originLine->element;
-	                $origin_id = $originLine->id;
-	                $fk_parent_line = 0;
-	                $fk_fournprice = $originLine->fk_fournprice;
-	                $pa_ht = $originLine->pa_ht;
-	                $label = $originLine->label;
-	                $array_options = $originLine->array_options;
-	                $situation_percent = 100;
-	                $fk_prev_id = '';
-	                $fk_unit = $originLine->fk_unit;
-	                $pu_ht_devise = $originLine->multicurrency_subprice;
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+		{
+			if ($fromElement == 'commande')
+			{
+				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'OrderLine';
+			} elseif ($fromElement == 'propal')
+			{
+				dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+				$lineClassName = 'PropaleLigne';
+			}
+			$nextRang = count($object->lines) + 1;
+			$importCount = 0;
+			$error = 0;
+			foreach ($importLines as $lineId)
+			{
+				$lineId = intval($lineId);
+				$originLine = new $lineClassName($db);
+				if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
+				{
+					$originLine->fetch_optionals();
+					$desc = $originLine->desc;
+					$pu_ht = $originLine->subprice;
+					$qty = $originLine->qty;
+					$txtva = $originLine->tva_tx;
+					$txlocaltax1 = $originLine->localtax1_tx;
+					$txlocaltax2 = $originLine->localtax2_tx;
+					$fk_product = $originLine->fk_product;
+					$remise_percent = $originLine->remise_percent;
+					$date_start = $originLine->date_start;
+					$date_end = $originLine->date_end;
+					$ventil = 0;
+					$info_bits = $originLine->info_bits;
+					$fk_remise_except = $originLine->fk_remise_except;
+					$price_base_type = 'HT';
+					$pu_ttc = 0;
+					$type = $originLine->product_type;
+					$rang = $nextRang++;
+					$special_code = $originLine->special_code;
+					$origin = $originLine->element;
+					$origin_id = $originLine->id;
+					$fk_parent_line = 0;
+					$fk_fournprice = $originLine->fk_fournprice;
+					$pa_ht = $originLine->pa_ht;
+					$label = $originLine->label;
+					$array_options = $originLine->array_options;
+					$situation_percent = 100;
+					$fk_prev_id = '';
+					$fk_unit = $originLine->fk_unit;
+					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-	                $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $date_start, $date_end, $type, $rang, $special_code, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $fk_unit, $origin, $origin_id, $pu_ht_devise);
 
-	                if ($res > 0) {
-	                    $importCount++;
-	                } else {
-	                    $error++;
-	                }
-	            } else {
-	                $error++;
-	            }
-	        }
+					if ($res > 0) {
+						$importCount++;
+					} else {
+						$error++;
+					}
+				} else {
+					$error++;
+				}
+			}
 
-	        if ($error)
-	        {
-	            setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
-	        }
-	    }
+			if ($error)
+			{
+				setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
+			}
+		}
 	}
 
 	// Actions when printing a doc from card
@@ -1849,7 +1849,7 @@ if ($action == 'create' && $usercancreate)
 		print '</table>';
 	}
 
-    print '</form>';
+	print '</form>';
 } else {
 	// Mode view
 	$now = dol_now();
@@ -2635,9 +2635,9 @@ if ($action == 'create' && $usercancreate)
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate
-			    && $object->statut == Commande::STATUS_DRAFT)
+				&& $object->statut == Commande::STATUS_DRAFT)
 			{
-			    $compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
+				$compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
 			}
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
