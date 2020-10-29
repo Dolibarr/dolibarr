@@ -193,7 +193,7 @@ if (empty($reshook))
 					}
 				}
 
-				$result = $object->createFromClone($user, $socid);
+				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : null));
 				if ($result > 0) {
 					$soc = new  Societe($db);
 					$obj = $soc->fetch(GETPOST('socid'));
