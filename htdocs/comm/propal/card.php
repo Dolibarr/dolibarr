@@ -195,6 +195,25 @@ if (empty($reshook))
 
 				$result = $object->createFromClone($user, $socid);
 				if ($result > 0) {
+					$soc = new  Societe($db);
+					$obj = $soc->fetch(GETPOST('socid'));
+					if ($obj == 1 && $soc->tva_assuj != 1) {
+						$propal = new Propal($db);
+						$obj = $propal->fetch($result);
+						if ($obj) {
+							foreach ($propal->lines as $line) {
+								$line->tva_tx = 0;
+								$line->total_ttc = $line->total_ttc - $line->total_tva;
+								$line->total_tva = 0;
+								$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $line->multicurrency_total_tva;
+								$line->multicurrency_total_tva = 0;
+								$line->update($user);
+							}
+							$propal->total_ttc = $propal->total_ttc - $propal->total_tva;
+							$propal->total_tva = 0;
+							$propal->update($user);
+						}
+					}
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit();
 				} else {
