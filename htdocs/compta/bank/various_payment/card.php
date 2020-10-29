@@ -219,6 +219,8 @@ if (empty($reshook))
 	}
 
 	if ($action == 'setsubledger_account') {
+		$db->begin();
+
 		$result = $object->fetch($id);
 
 		$object->subledger_account = (GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "");
