@@ -159,11 +159,13 @@ if (isset($_GET["attachment"])) $attachment = GETPOST("attachment", 'alpha') ?tr
 if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
 
 // Define mime type
-$type = 'application/octet-stream';
+$type = 'application/octet-stream';	// By default
 if (GETPOST('type', 'alpha')) $type = GETPOST('type', 'alpha');
-else $type = dol_mimetype($original_file);
-// Security: Force to octet-stream if file is a dangerous file
-if (preg_match('/\.noexe$/i', $original_file)) $type = 'application/octet-stream';
+else $type=dol_mimetype($original_file);
+// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
+if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
+	$type = 'application/octet-stream';
+}
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);

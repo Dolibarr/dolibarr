@@ -2,6 +2,52 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 11.0.5 compared to 11.0.4 *****
+FIX: $arraydefaultmessage is an object, as well as in /htdocs/core/class/html.formmail.class.php
+FIX: 10.0 - pagination in prelevement/bons.php
+FIX: 10.0 - undefined $langs if template file copy fails during activation of modContrat
+FIX: 11.0 - fatal with postgres on contact/agenda.php
+FIX: 11.0 - multicurrency amount not fetched when fetching payments from llx_paiement or llx_paiementfourn
+FIX: 11.0 - when using pdftk as per hidden conf USE_PDFTK_FOR_PDF_CONCAT, check that the file exists before displaying a success message
+FIX: #13841
+FIX: #13877 - Can validate invoice if there is a credit note with VAT 0% on an invoice with other lines with a VAT non 0%
+FIX: #13968
+FIX: #14001
+FIX: #14002
+FIX: 9.0 - delete unused mandatory argument from migrate_clean_association: argument count mismatch causes a fatal error since php7
+FIX: 9.0 - fatal during migration from 3.1 using PHP 7
+FIX: Accountancy - Binding index - Add a filter on sql request for module Subtotal & Jalon
+FIX: avoid error "Call to undefined function measuringUnitString()"
+FIX: BlindBoolean SQL injection reported by Christian Weiler
+FIX: Can create a credit note on situation invoice if previous is also
+FIX: can install module even if (x) was appended during download.
+FIX: copy value date of VariousPayment onto the new AccountLine
+FIX: count of open day when date and start are not open should be 0
+FIX: Default bank account was not loaded for document generation.
+FIX: Do not show stats panel if the user does not have permissions
+FIX: Fix link of the button to create a credit note and fix the awareness of a error that happen when wo create a credit note
+FIX: force rounding 2 on export ld compta
+FIX: free text on cash desk
+FIX: links into emails of notifications
+FIX: missing file manifest.json.php
+FIX: missing GetNomURL Hook in warehouse class
+FIX: missing hook init + table class + $page not set
+FIX: missing rollbacks on trigger bad return
+FIX: missing translation value for key "NoMorePredefinedProductToDispatch"
+FIX: percent must be displayed on one line
+FIX: php error if multicompany disabled
+FIX: Privilege escalation reported by wizlynx WLX-2020-011
+FIX: replace filter parameter "none" by "restricthtml"
+FIX: Rounding Total TVA in "crabe" model pdf
+FIX: Show ref_customer, amount on contract link object
+FIX: Site ec.europa.eu has moved to https://
+FIX: Tickets mail models doesn't work
+FIX: vulnerability reported by wizlynx WLX-2020-012
+FIX: We must only rename current bank receipt
+FIX: when creating a VariousPayment, the value date is not copied onto the AccountLine that gets created at the same time, so the bank transaction's value date will be the payment date instead of the payment's value date
+FIX: wrong url param
+FIX: XSS using the renaming of .noexe files - reported by Nolan.
+
 ***** ChangeLog for 11.0.4 compared to 11.0.3 *****
 FIX: #13749
 FIX: #7594 Expense report multi pagebreak

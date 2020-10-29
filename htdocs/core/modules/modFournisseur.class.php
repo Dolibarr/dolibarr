@@ -297,6 +297,14 @@ class modFournisseur extends DolibarrModules
 			'p.ref'=>'ProductRef','p.label'=>'ProductLabel','p.accountancy_code_buy'=>'ProductAccountancyBuyCode','project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef','project.title'=>'ProjectLabel'
 		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
 		//$this->export_TypeFields_array[$r]=array(
 		//    's.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text',
 		//    's.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.total_tva'=>"Numeric",
@@ -423,6 +431,14 @@ class modFournisseur extends DolibarrModules
 			'f.fk_statut'=>'InvoiceStatus','f.note_public'=>"InvoiceNote",'p.rowid'=>'PaymentId','pf.amount'=>'AmountPayment',
 			'p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber','p.fk_bank'=>'IdTransaction','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel'
 		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text',
 		//	's.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",
@@ -508,6 +524,14 @@ class modFournisseur extends DolibarrModules
 			'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.ref'=>'RefSupplier','fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef','p.label'=>'ProductLabel','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel'
 		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
 		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 		{
 			unset($this->export_fields_array['f.date_approve2']);

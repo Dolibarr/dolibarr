@@ -777,7 +777,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact))?$object->contact:null), $usecontact, 'target', $object);
+			$usecontact = 0;
+
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ((!empty($object->contact))?$object->contact:null), $usecontact, 'target', $object);
 
 			// Show recipient
 			$widthrecbox=90;

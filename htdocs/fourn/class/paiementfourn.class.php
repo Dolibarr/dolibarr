@@ -89,7 +89,7 @@ class PaiementFourn extends Paiement
 	{
 		$error=0;
 
-		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank, p.multicurrency_amount,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement as num_payment, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -111,23 +111,24 @@ class PaiementFourn extends Paiement
 			if ($num > 0)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$this->id             = $obj->rowid;
-				$this->ref            = $obj->ref;
-				$this->entity         = $obj->entity;
-				$this->date           = $this->db->jdate($obj->dp);
-				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->num_paiement   = $obj->num_payment;
-				$this->num_payment    = $obj->num_payment;
-				$this->bank_account   = $obj->fk_account;
-				$this->fk_account     = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
-				$this->montant        = $obj->amount;
-				$this->amount         = $obj->amount;
-				$this->note           = $obj->note;
-				$this->note_private   = $obj->note;
-				$this->type_code      = $obj->paiement_code;
-				$this->type_label   = $obj->paiement_type;
-				$this->statut         = $obj->statut;
+				$this->id                   = $obj->rowid;
+				$this->ref                  = $obj->ref;
+				$this->entity               = $obj->entity;
+				$this->date                 = $this->db->jdate($obj->dp);
+				$this->datepaye             = $this->db->jdate($obj->dp);
+				$this->num_paiement         = $obj->num_payment;
+				$this->num_payment          = $obj->num_payment;
+				$this->bank_account         = $obj->fk_account;
+				$this->fk_account           = $obj->fk_account;
+				$this->bank_line            = $obj->fk_bank;
+				$this->montant              = $obj->amount;
+				$this->amount               = $obj->amount;
+				$this->multicurrency_amount = $obj->multicurrency_amount;
+				$this->note                 = $obj->note;
+				$this->note_private         = $obj->note;
+				$this->type_code            = $obj->paiement_code;
+				$this->type_label           = $obj->paiement_type;
+				$this->statut               = $obj->statut;
 				$error = 1;
 			}
 			else

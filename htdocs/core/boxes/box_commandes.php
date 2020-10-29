@@ -105,7 +105,7 @@ class box_commandes extends ModeleBoxes
             $sql.= ", ".MAIN_DB_PREFIX."commande as c";
             if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE c.fk_soc = s.rowid";
-            $sql.= " AND c.entity = ".$conf->entity;
+            $sql.= " AND c.entity IN (".getEntity('commande').")";
             if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql.=" AND c.fk_statut = 1";
             if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;

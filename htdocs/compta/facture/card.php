@@ -319,15 +319,23 @@ if (empty($reshook))
 
 				if (($tmp_total_ht < 0 || $tmp_total_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 				{
-					$langs->load("errors");
 					if ($object->type == $object::TYPE_DEPOSIT) {
+						$langs->load("errors");
 						// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
 						setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+						$error++;
+						$action = '';
 					} else {
-						setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate"), null, 'errors');
+						$tmpvatratetoshow = explode('_', $vatrate);
+						$tmpvatratetoshow[0] = round($tmpvatratetoshow[0], 2);
+
+						if ($tmpvatratetoshow[0] != 0) {
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate", $tmpvatratetoshow[0]), null, 'errors');
+							$error++;
+							$action = '';
+						}
 					}
-					$error++;
-					$action = '';
 				}
 			}
 		}
@@ -431,15 +439,36 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->cond_reglement_code = 0; // To clean property
 		$object->cond_reglement_id = 0; // To clean property
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-		if ($result < 0) dol_print_error($db, $object->error);
 
-		$old_date_lim_reglement = $object->date_lim_reglement;
-		$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
-		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
-		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		$error = 0;
+
+		$db->begin();
+
+		if (! $error) {
+			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			if ($result < 0) {
+			    $error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if (! $error) {
+			$old_date_lim_reglement = $object->date_lim_reglement;
+			$new_date_lim_reglement = $object->calculate_date_lim_reglement();
+			if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+			if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
+			$result = $object->update($user);
+			if ($result < 0) {
+			    $error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
 	}
 
 	elseif ($action == 'setpaymentterm' && $usercancreate)
@@ -968,6 +997,7 @@ if (empty($reshook))
 	elseif ($action == 'add' && $usercancreate)
 	{
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
+		$selectedLines = GETPOST('toselect', 'array');
 
 		$db->begin();
 
@@ -1434,7 +1464,7 @@ if (empty($reshook))
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
 							$typeamount = GETPOST('typedeposit', 'alpha');
-							$valuedeposit = GETPOST('valuedeposit', 'int');
+							$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
 
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
@@ -1557,8 +1587,11 @@ if (empty($reshook))
 
 								$fk_parent_line = 0;
 								$num = count($lines);
+
 								for ($i = 0; $i < $num; $i++)
 								{
+									if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+
 									// Don't add lines with qty 0 when coming from a shipment including all order lines
 									if ($srcobject->element == 'shipping' && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS && $lines[$i]->qty == 0) continue;
 									// Don't add closed lines when coming from a contract (Set constant to '0,5' to exclude also inactive lines)
@@ -3618,8 +3651,6 @@ if ($action == 'create')
 	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
-	print "</form>\n";
-
 	// Show origin lines
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 		print '<br>';
@@ -3629,12 +3660,12 @@ if ($action == 'create')
 
 		print '<table class="noborder centpercent">';
 
-		$objectsrc->printOriginLinesList();
+		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
 	}
 
-	print '<br>';
+	print "</form>\n";
 }
 elseif ($id > 0 || !empty($ref))
 {

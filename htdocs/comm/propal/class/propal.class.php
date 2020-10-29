@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2019 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
@@ -2992,9 +2992,9 @@ class Propal extends CommonObject
 
 		if (!$error)
 		{
-                    $main = MAIN_DB_PREFIX . 'propaldet';
-                    $ef = $main . "_extrafields";
-                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = " . $this->id . ")";
+			$main = MAIN_DB_PREFIX . 'propaldet';
+			$ef = $main . "_extrafields";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = " . $this->id . ")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
@@ -3011,6 +3011,9 @@ class Propal extends CommonObject
 
 					if (!$error)
 					{
+						// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+						$this->deleteEcmFiles();
+
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
 						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
