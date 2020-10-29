@@ -678,14 +678,14 @@ class User extends CommonObject
 		} else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
-			if (!empty($allmodule))
-			{
-				if ($allmodule == 'allmodules')
-				{
+			if (!empty($allmodule)) {
+				if ($allmodule == 'allmodules') {
 					$wherefordel = 'allmodules';
 				} else {
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
-					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+					if (!empty($allperms)) {
+						$wherefordel .= " AND perms='".$this->db->escape($allperms)."'";
+					}
 				}
 			}
 		}
