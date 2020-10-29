@@ -51,8 +51,12 @@ $sens = GETPOST("sens", "int");
 $amount = price2num(GETPOST("amount", "alpha"));
 $paymenttype = GETPOST("paymenttype", "int");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
-$subledger_account = GETPOST("subledger_account", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+if (!empty($conf->accounting->enabled) && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
+} else {
+	$subledger_account = GETPOST("subledger_account", "alpha");
+}
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -115,7 +119,7 @@ if (empty($reshook))
 		$object->category_transaction = GETPOST("category_transaction", 'alpha');
 
 		$object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
-        $object->subledger_account = GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
+        $object->subledger_account = $subledger_account;
 
 		$object->sens = GETPOST('sens');
 		$object->fk_project = GETPOST('fk_project', 'int');
@@ -219,9 +223,11 @@ if (empty($reshook))
 	}
 
 	if ($action == 'setsubledger_account') {
+		$db->begin();
+
 		$result = $object->fetch($id);
 
-		$object->subledger_account = (GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "");
+		$object->subledger_account = $subledger_account;
 
 		$res = $object->update($user);
 		if ($res > 0) {
@@ -386,7 +392,7 @@ if ($action == 'create')
     // Subledger account
     if (!empty($conf->accounting->enabled))
     {
-        print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
+        print '<tr><td>'.$langs->trans("SubledgerAccount").'aaaa</td>';
         print '<td>';
         if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
         {

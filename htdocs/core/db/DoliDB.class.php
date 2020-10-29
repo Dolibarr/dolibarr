@@ -229,24 +229,29 @@ abstract class DoliDB implements Database
 	{
 		if (!empty($sortfield))
 		{
-			$return = '';
-			$fields = explode(',', $sortfield);
-			$orders = explode(',', $sortorder);
-			$i = 0;
-			foreach ($fields as $val)
+			$oldsortorder = '';
+			$return='';
+			$fields=explode(',', $sortfield);
+			$orders=explode(',', $sortorder);
+			$i=0;
+			foreach($fields as $val)
 			{
 				if (!$return) $return .= ' ORDER BY ';
 				else $return .= ', ';
 
-				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val);
+				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val);	// Add field
 
 				$tmpsortorder = trim($orders[$i]);
 
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {
+					$oldsortorder = 'ASC';
 					$return .= ' ASC';
 				} elseif (strtoupper($tmpsortorder) === 'DESC') {
+					$oldsortorder = 'DESC';
 					$return .= ' DESC';
+				} else {
+					$return .= ' '.($oldsortorder ? $oldsortorder : 'ASC');
 				}
 
 				$i++;
