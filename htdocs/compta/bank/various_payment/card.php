@@ -115,7 +115,7 @@ if (empty($reshook))
 		$object->category_transaction = GETPOST("category_transaction", 'alpha');
 
 		$object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
-		$object->subledger_account = $subledger_account;
+        $object->subledger_account = GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
 
 		$object->sens = GETPOST('sens');
 		$object->fk_project = GETPOST('fk_project', 'int');
@@ -221,10 +221,13 @@ if (empty($reshook))
 	if ($action == 'setsubledger_account') {
 		$result = $object->fetch($id);
 
-		$object->subledger_account = $subledger_account;
+		$object->subledger_account = (GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "");
 
 		$res = $object->update($user);
-		if ($res < 0) {
+		if ($res > 0) {
+			$db->commit();
+		} else {
+			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
