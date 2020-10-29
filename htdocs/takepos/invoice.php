@@ -198,25 +198,26 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    $res = $invoice->validate($user);
 	}
 
-	$remaintopay = $invoice->getRemainToPay();
-
 	// Add the payment
-	if ($res >= 0 && $remaintopay > 0) {
-		$payment = new Paiement($db);
-		$payment->datepaye = $now;
-		$payment->fk_account = $bankaccount;
-		$payment->amounts[$invoice->id] = $amountofpayment;
+	if ($res >= 0) {
+		$remaintopay = $invoice->getRemainToPay();
+		if ($remaintopay > 0) {
+			$payment = new Paiement($db);
+			$payment->datepaye = $now;
+			$payment->fk_account = $bankaccount;
+			$payment->amounts[$invoice->id] = $amountofpayment;
 
-		// If user has not used change control, add total invoice payment
-		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $remaintopay;
+			// If user has not used change control, add total invoice payment
+			if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $remaintopay;
 
-		$payment->paiementid = $paiementid;
-		$payment->num_payment = $invoice->ref;
+			$payment->paiementid = $paiementid;
+			$payment->num_payment = $invoice->ref;
 
-		$payment->create($user);
-		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+			$payment->create($user);
+			$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+			$remaintopay = $invoice->getRemainToPay();    // Recalculate remain to pay after the payment is recorded
+		}
 
-		$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 		if ($remaintopay == 0) {
 			dol_syslog("Invoice is paid, so we set it to status Paid");
 			$result = $invoice->set_paid($user);

@@ -91,7 +91,7 @@ class box_propales extends ModeleBoxes
     		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
     		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE p.fk_soc = s.rowid";
-    		$sql.= " AND p.entity = ".$conf->entity;
+    		$sql .= " AND p.entity IN (".getEntity('propal').")";
     		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY p.datep DESC, p.ref DESC ";

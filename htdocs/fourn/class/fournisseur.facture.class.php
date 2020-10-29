@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
@@ -359,7 +359,7 @@ class FactureFournisseur extends CommonInvoice
         $remise = $this->remise;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -1217,6 +1217,9 @@ class FactureFournisseur extends CommonInvoice
 
         if (!$error)
         {
+        	// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+        	$this->deleteEcmFiles();
+
         	// We remove directory
         	if ($conf->fournisseur->facture->dir_output)
         	{
@@ -2466,7 +2469,7 @@ class FactureFournisseur extends CommonInvoice
         {
             $this->error=$obj->error;
             //dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-            return false;
+            return -1;
         }
     }
 

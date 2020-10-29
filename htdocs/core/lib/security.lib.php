@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -309,6 +310,10 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			elseif ($feature == 'cheque')
 			{
 				if (!$user->rights->banque->cheque) { $createok = 0; $nbko++; }
+			} elseif ($feature == 'import') {
+				if (!$user->rights->import->run) { $createok = 0; $nbko++; }
+			} elseif ($feature == 'ecm') {
+				if (!$user->rights->ecm->upload) { $createok = 0; $nbko++; }
 			}
 			elseif (!empty($feature2))														// This is for permissions on one level
 			{
@@ -570,6 +575,18 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			}
+
+			if ($feature == 'agenda')// Also check myactions rights
+			{
+				if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
+					require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+					$action = new ActionComm($db);
+					$action->fetch($objectid);
+					if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
+						return false;
+					}
+				}
 			}
 		}
 		elseif (in_array($feature, $checkproject))

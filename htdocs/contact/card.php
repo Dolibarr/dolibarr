@@ -1254,6 +1254,11 @@ else
         }
     }
 
+    // Select mail models is same action as presend
+    if (GETPOST('modelselected', 'alpha')) {
+        $action = 'presend';
+    }
+
     if (!empty($id) && $action != 'edit' && $action != 'create')
     {
         $objsoc = new Societe($db);

@@ -41,12 +41,31 @@ $action = GETPOST('action', 'alpha');
 /*
  * Action
  */
+
+$reg = array();
+
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
+
+    // If constant is for a unique choice, delete other choices
+    if (in_array($code, array('STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE'))) {
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_BILL', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_VALIDATE_ORDER', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE', $conf->entity);
+    }
+    if (in_array($code, array('STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'))) {
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_BILL', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', $conf->entity);
+    	dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', $conf->entity);
+    }
+
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
     {
-        header("Location: ".$_SERVER["PHP_SELF"]);
+    	header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
     else
@@ -114,7 +133,7 @@ print '<td class="right">';
 if (! empty($conf->facture->enabled))
 {
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_BILL');
+        print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_BILL);
@@ -134,7 +153,7 @@ print '<td class="right">';
 if (! empty($conf->commande->enabled))
 {
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER);
@@ -156,7 +175,7 @@ print '<td class="right">';
 if (! empty($conf->expedition->enabled))
 {
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT);
@@ -176,7 +195,7 @@ print '<td class="right">';
 if (! empty($conf->expedition->enabled))
 {
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
@@ -189,17 +208,11 @@ else
 print "</td>\n</tr>\n";
 $found++;
 
-/*if (! $found)
-{
-
-	print '<tr class="oddeven">';
-	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
-	print "</tr>\n";
-}*/
-
 print '</table>';
 
+
 print '<br>';
+
 
 // Title rule for stock increase
 print '<table class="noborder centpercent">';
@@ -216,7 +229,7 @@ print '<td class="right">';
 if (! empty($conf->fournisseur->enabled))
 {
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL);
@@ -237,7 +250,7 @@ print '<td class="right">';
 if (! empty($conf->fournisseur->enabled))
 {
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER);
@@ -257,7 +270,7 @@ if (!empty($conf->reception->enabled))
     print '<td class="right">';
 
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION);
@@ -272,7 +285,7 @@ if (!empty($conf->reception->enabled))
     print '<td class="right">';
 
     if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE');
+    	print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE', array(), null, 0, 0, 1);
     } else {
         $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
         print $form->selectarray("STOCK_CALCULATE_ON_RECEPTION_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE);
@@ -288,7 +301,7 @@ else
 	if (! empty($conf->fournisseur->enabled))
 	{
         if ($conf->use_javascript_ajax) {
-            print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER');
+        	print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 1);
         } else {
             $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
             print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", $arrval, $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER);

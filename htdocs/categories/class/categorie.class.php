@@ -781,8 +781,8 @@ class Categorie extends CommonObject
 
 		$objs = array();
 
-		$tmpclass = $this->MAP_OBJ_CLASS[$type];
-		$obj = new $tmpclass($this->db);
+		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
+		$obj = new $classnameforobj($this->db);
 
 		$sql = "SELECT c.fk_".$this->MAP_CAT_FK[$type];
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type]." as c";
@@ -810,8 +810,11 @@ class Categorie extends CommonObject
 			    }
 			    else
 			    {
-				    $obj = new $this->MAP_OBJ_CLASS[$type]($this->db);
-				    $obj->fetch($rec['fk_'.$this->MAP_CAT_FK[$type]]);
+			        $classnameforobj = $this->MAP_OBJ_CLASS[$type];
+
+			        $obj = new $classnameforobj($this->db);
+				    $obj->fetch($rec['fk_' . $this->MAP_CAT_FK[$type]]);
+
 				    $objs[] = $obj;
 			    }
 			}
