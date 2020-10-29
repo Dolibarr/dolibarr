@@ -353,9 +353,7 @@ class Contact extends CommonObject
 		// Clean parameters
 		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
         $this->firstname = trim($this->firstname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+		$this->setUpperOrLowerCase();
         if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
@@ -464,10 +462,6 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = dol_strtoupper($this->lastname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
@@ -478,8 +472,9 @@ class Contact extends CommonObject
 		$this->skype = trim($this->skype);
 		$this->photo = trim($this->photo);
 		$this->fax = trim($this->fax);
-		$this->zip = (empty($this->zip) ? '' : $this->zip);
-		$this->town = (empty($this->town) ? '' : $this->town);
+		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
+		$this->town = (empty($this->town) ? '' : trim($this->town));
+		$this->setUpperOrLowerCase();
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		if (empty($this->statut)) $this->statut = 0;
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) $this->civility_code = $this->civility_id; // For backward compatibility

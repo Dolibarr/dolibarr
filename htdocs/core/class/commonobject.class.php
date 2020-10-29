@@ -570,6 +570,28 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Set to upper or ucwords/lower if needed
+	 *
+	 * @return void;
+	 */
+	public function setUpperOrLowerCase()
+	{
+		global $conf;
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
+			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
+			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
+			$this->name = dol_ucwords(dol_strtolower($this->name));
+		}
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
+			$this->lastname = dol_strtoupper($this->lastname);
+			$this->name = dol_strtoupper($this->name);
+		}
+		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+			$this->town = dol_strtoupper($this->town);
+		}
+	}
+
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

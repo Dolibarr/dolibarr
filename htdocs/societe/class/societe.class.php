@@ -789,8 +789,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		if (empty($this->status)) $this->status = 0;
 		$this->name = $this->name ?trim($this->name) : trim($this->nom);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = dol_ucwords(dol_strtolower($this->name));
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = dol_strtoupper($this->name);
+		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client))      $this->client = 0;
 		if (empty($this->fournisseur)) $this->fournisseur = 0;
@@ -1094,8 +1093,6 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = dol_ucwords(dol_strtolower($this->name));
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = dol_strtoupper($this->name);
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
@@ -1106,6 +1103,7 @@ class Societe extends CommonObject
 		$this->address		= $this->address ?trim($this->address) : trim($this->address);
 		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
 		$this->town			= $this->town ?trim($this->town) : trim($this->town);
+		$this->setUpperOrLowerCase();
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
