@@ -242,7 +242,7 @@ abstract class DoliDB implements Database
 			$fields=explode(',', $sortfield);
 			$orders=explode(',', $sortorder);
 			$i=0;
-			foreach($fields as $val)
+			foreach ($fields as $val)
 			{
 				if (!$return) $return .= ' ORDER BY ';
 				else $return .= ', ';

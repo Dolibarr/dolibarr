@@ -1125,21 +1125,7 @@ class User extends CommonObject
 		global $mysoc;
 
 		// Clean parameters
-<<<<<<< HEAD
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
-			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-		}
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
-			$this->lastname = dol_strtoupper($this->lastname);
-		}
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
-			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-		}
-
-=======
 		$this->setUpperOrLowerCase();
->>>>>>> upstream/develop
 		$this->login = trim($this->login);
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
@@ -1476,20 +1462,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-<<<<<<< HEAD
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
-			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
-		}
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
-			$this->lastname = dol_strtoupper($this->lastname);
-		}
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
-			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
-		}
-
-=======
->>>>>>> upstream/develop
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->employee    	= $this->employee ? $this->employee : 0;

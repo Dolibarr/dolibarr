@@ -110,6 +110,7 @@ class ZapierApi extends DolibarrApi
 			'orders' => 'Orders',
 			'thirdparties' => 'Thirparties',
 			'contacts' => 'Contacts',
+			'users' => 'Users',
 		);
 		// $result = $this->hook->fetch($id);
 		// if (! $result ) {
@@ -244,6 +245,7 @@ class ZapierApi extends DolibarrApi
 		$fields = array(
 			'url',
 		);
+		dol_syslog("API Zapier create hook receive : " . print_r($request_data, true), LOG_NOTICE);
 		$result = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {

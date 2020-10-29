@@ -17,7 +17,7 @@ const subscribeHook = (z, bundle) => {
     const options = {
         url: url,
         method: 'POST',
-        body: JSON.stringify(data)
+        body: data,
     };
 
     // You may return a promise or a normal data structure from any perform method.
