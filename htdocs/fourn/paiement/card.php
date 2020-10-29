@@ -39,7 +39,7 @@ $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $object = new PaiementFourn($db);
-
+$hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
@@ -49,92 +49,98 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
-{
-	$db->begin();
+$parameters = array('objectId' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+elseif (empty($reshook)) {
+	if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
+	{
+		$db->begin();
 
-	$object->fetch($id);
-	$result = $object->update_note(GETPOST('note', 'none'));
-	if ($result > 0)
-	{
-		$db->commit();
-		$action='';
+		$object->fetch($id);
+		$result = $object->update_note(GETPOST('note', 'none'));
+		if ($result > 0)
+		{
+			$db->commit();
+			$action='';
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
+		}
 	}
-	else
+
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
 	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
+		$db->begin();
+
+		$object->fetch($id);
+		$result = $object->delete();
+		if ($result > 0)
+		{
+			$db->commit();
+			header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
+		}
+	}
+
+	if ($action == 'confirm_valide' && $confirm == 'yes' &&
+		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+	)
+	{
+		$db->begin();
+
+		$object->fetch($id);
+		if ($object->valide() >= 0)
+		{
+			$db->commit();
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
+		}
+	}
+
+	if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
+	{
+		$object->fetch($id);
+		$res = $object->update_num($_POST['num_paiement']);
+		if ($res === 0)
+		{
+			setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
+		}
+		else
+		{
+			setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
+		}
+	}
+
+	if ($action == 'setdatep' && ! empty($_POST['datepday']))
+	{
+		$object->fetch($id);
+		$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+		$res = $object->update_date($datepaye);
+		if ($res === 0)
+		{
+			setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
+		}
+		else
+		{
+			setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
+		}
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
-{
-	$db->begin();
-
-	$object->fetch($id);
-	$result = $object->delete();
-	if ($result > 0)
-	{
-		$db->commit();
-		header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
-	}
-}
-
-if ($action == 'confirm_valide' && $confirm == 'yes' &&
-	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
-)
-{
-	$db->begin();
-
-	$object->fetch($id);
-	if ($object->valide() >= 0)
-	{
-		$db->commit();
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
-	}
-}
-
-if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
-{
-	$object->fetch($id);
-	$res = $object->update_num($_POST['num_paiement']);
-	if ($res === 0)
-	{
-		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
-	}
-}
-
-if ($action == 'setdatep' && ! empty($_POST['datepday']))
-{
-	$object->fetch($id);
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
-	$res = $object->update_date($datepaye);
-	if ($res === 0)
-	{
-		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
-	}
-}
 
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
@@ -264,9 +270,24 @@ if ($result > 0)
 	 *	Liste des factures
 	 */
 	$sql = 'SELECT f.rowid, f.ref, f.ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom as name, s.rowid as socid';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $sql .= $hookmanager->resPrint;
+
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $sql .= $hookmanager->resPrint;
+
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $sql .= $hookmanager->resPrint;
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -277,12 +298,24 @@ if ($result > 0)
 		print '<b>'.$langs->trans("Invoices").'</b><br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('RefSupplier').'</td>';
-		print '<td>'.$langs->trans('Company').'</td>';
-		print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
-		print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
-		print '<td class="right">'.$langs->trans('Status').'</td>';
+		$headerRow = '';
+		$headerRow .= '<td>'.$langs->trans('Ref').'</td>';
+		$headerRow .= '<td>'.$langs->trans('RefSupplier').'</td>';
+		$headerRow .= '<td>'.$langs->trans('Company').'</td>';
+		$headerRow .= '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+		$headerRow .= '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+		$headerRow .= '<td class="right">'.$langs->trans('Status').'</td>';
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			// extend default behavior
+			$headerRow .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			// override default behavior
+			$headerRow = $hookmanager->resPrint;
+		}
+		print $headerRow;
 		print "</tr>\n";
 
 		if ($num > 0)
@@ -298,19 +331,32 @@ if ($result > 0)
 
 				print '<tr class="oddeven">';
 				// Ref
-				print '<td>';
-				print $facturestatic->getNomUrl(1);
-				print "</td>\n";
+				$valueRow = '';
+				$valueRow .= '<td>';
+				$valueRow .= $facturestatic->getNomUrl(1);
+				$valueRow .= "</td>\n";
 				// Ref supplier
-				print '<td>'.$objp->ref_supplier."</td>\n";
+				$valueRow .= '<td>'.$objp->ref_supplier."</td>\n";
 				// Third party
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$objp->name.'</a></td>';
+				$valueRow .= '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$objp->name.'</a></td>';
 				// Expected to pay
-				print '<td class="right">'.price($objp->total_ttc).'</td>';
+				$valueRow .= '<td class="right">'.price($objp->total_ttc).'</td>';
 				// Payed
-				print '<td class="right">'.price($objp->amount).'</td>';
+				$valueRow .= '<td class="right">'.price($objp->amount).'</td>';
 				// Status
-				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->fk_statut, 6, 1).'</td>';
+				$valueRow .= '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->fk_statut, 6, 1).'</td>';
+
+				$parameters = array('obj_invoice' => $objp);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					// extend default behavior
+					$valueRow .= $hookmanager->resPrint;
+				} elseif ($reshook > 0) {
+					// override default behavior
+					$valueRow = $hookmanager->resPrint;
+				}
+
+				print $valueRow;
 				print "</tr>\n";
 
 				if ($objp->paye == 1)
