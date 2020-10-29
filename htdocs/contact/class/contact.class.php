@@ -1474,6 +1474,7 @@ class Contact extends CommonObject
 
 		// Initialise parameters
 		$this->id = 0;
+		$this->entity = 1;
 		$this->specimen = 1;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
