@@ -1,8 +1,9 @@
 /*jshint esversion: 6 */
-const triggerThirdparty = require('./triggers/thirdparty');
-const triggerUser = require('./triggers/user');
-const triggerOrder = require('./triggers/order');
 const triggerAction = require('./triggers/action');
+const triggerOrder = require('./triggers/order');
+const triggerThirdparty = require('./triggers/thirdparty');
+const triggerTicket = require('./triggers/ticket');
+const triggerUser = require('./triggers/user');
 
 const searchThirdparty = require('./searches/thirdparty');
 
@@ -50,7 +51,6 @@ const App = {
 
     afterResponse: [
         ...afters
-        //sessionRefreshIf401
     ],
 
     // If you want to define optional resources to simplify creation of triggers, searches, creates - do that here!
@@ -59,10 +59,11 @@ const App = {
 
     // If you want your trigger to show up, you better include it here!
     triggers: {
-        [triggerThirdparty.key]: triggerThirdparty,
-        [triggerUser.key]: triggerUser,
-        [triggerOrder.key]: triggerOrder,
         [triggerAction.key]: triggerAction,
+        [triggerOrder.key]: triggerOrder,
+        [triggerThirdparty.key]: triggerThirdparty,
+        [triggerTicket.key]: triggerTicket,
+        [triggerUser.key]: triggerUser,
     },
 
     // If you want your searches to show up, you better include it here!

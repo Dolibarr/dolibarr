@@ -136,11 +136,14 @@ class Tickets extends DolibarrApi
         }
 
         // Check parameters
-        if (!$id && !$track_id && !$ref) {
+        if (($id < 0) && !$track_id && !$ref) {
             throw new RestException(401, 'Wrong parameters');
         }
-
-        $result = $this->ticket->fetch($id, $ref, $track_id);
+		if ($id == 0) {
+			$result = $this->ticket->initAsSpecimen();
+		} else {
+			$result = $this->ticket->fetch($id, $ref, $track_id);
+		}
         if (!$result) {
             throw new RestException(404, 'Ticket not found');
         }
@@ -204,7 +207,6 @@ class Tickets extends DolibarrApi
             }
             $this->ticket->history = $history;
         }
-
 
         if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);

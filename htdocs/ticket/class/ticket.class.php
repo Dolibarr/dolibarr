@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,8 +108,13 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
+	 * @deprecated
 	 */
-	public $fk_statut; // deprecated
+	public $fk_statut;
+
+	/**
+	 * @var int  Ticket status
+	 */
 	public $status;
 
 	/**
@@ -188,10 +193,13 @@ class Ticket extends CommonObject
 	public $cache_category_tickets;
 
 	/**
-	 * @var int Notify tiers at create
+	 * @var int Notify thirdparty at create
 	 */
 	public $notify_tiers_at_create;
 
+	/**
+	 * @var string msgid
+	 */
 	public $email_msgid;
 
 	public $lines;
@@ -279,8 +287,26 @@ class Ticket extends CommonObject
 	{
 		$this->db = $db;
 
-		$this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
-		$this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+		$this->statuts_short = array(
+			self::STATUS_NOT_READ => 'Unread',
+			self::STATUS_READ => 'Read',
+			self::STATUS_ASSIGNED => 'Assigned',
+			self::STATUS_IN_PROGRESS => 'InProgress',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'Suspended',
+			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CANCELED => 'Canceled'
+		);
+		$this->statuts = array(
+			self::STATUS_NOT_READ => 'Unread',
+			self::STATUS_READ => 'Read',
+			self::STATUS_ASSIGNED => 'Assigned',
+			self::STATUS_IN_PROGRESS => 'InProgress',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
+			self::STATUS_WAITING => 'Suspended',
+			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CANCELED => 'Canceled'
+		);
 	}
 
 	/**
@@ -1053,12 +1079,12 @@ class Ticket extends CommonObject
 	 *     Initialise object with example values
 	 *     Id must be 0 if object instance is a specimen
 	 *
-	 *     @return void
+	 *     @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-
+		$this->entity = 1;
 		$this->ref = 'TI0501-001';
 		$this->track_id = 'XXXXaaaa';
 		$this->origin_email = 'email@email.com';
@@ -1067,7 +1093,7 @@ class Ticket extends CommonObject
 		$this->fk_user_assign = 1;
 		$this->subject = 'Subject of ticket';
 		$this->message = 'Message of ticket';
-		$this->fk_statut = 0;
+		$this->status = 0;
 		$this->resolution = '1';
 		$this->progress = '10';
 		$this->timing = '30';
@@ -1078,6 +1104,7 @@ class Ticket extends CommonObject
 		$this->date_read = '';
 		$this->date_close = '';
 		$this->tms = '';
+		return 1;
 	}
 
 	/**
