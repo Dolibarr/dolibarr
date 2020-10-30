@@ -501,13 +501,10 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	{
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
-		if (function_exists('random_int'))	// Cryptographic random
-		{
+		if (function_exists('random_int')) {	// Cryptographic random
 			$tmp = random_int(0, $max);
 			$generated_password = str_replace($replaceambiguouschars, $numbers[$tmp], $generated_password);
-		}
-		else
-		{
+		} else {
 			$tmp = mt_rand(0, $max);
 			$generated_password = str_replace($replaceambiguouschars, $numbers[$tmp], $generated_password);
 		}
