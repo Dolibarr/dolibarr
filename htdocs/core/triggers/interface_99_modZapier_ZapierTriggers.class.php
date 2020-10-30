@@ -80,7 +80,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			$actions = explode('_', $action);
 			$sql = 'SELECT rowid, url FROM '.MAIN_DB_PREFIX.'zapier_hook';
 			$sql .= ' WHERE module="'.$this->db->escape(strtolower($actions[0])).'" AND action="'.$this->db->escape(strtolower($actions[1])).'"';
-			//setEventMessages($sql, null);
 		}
 
 		switch ($action) {
@@ -93,7 +92,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 					$json = json_encode($cleaned);
 					// call the zapierPostWebhook() function
 					zapierPostWebhook($obj['url'], $json);
-					//setEventMessages($obj['url'], null);
 				}
 				$logtriggeraction = true;
 				break;
@@ -105,7 +103,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 					$json = json_encode($cleaned);
 					// call the zapierPostWebhook() function
 					zapierPostWebhook($obj['url'], $json);
-					//setEventMessages($obj['url'], null);
 				}
 				$logtriggeraction = true;
 				break;
@@ -133,7 +130,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 					$json = json_encode($cleaned);
 					// call the zapierPostWebhook() function
 					zapierPostWebhook($obj['url'], $json);
-					//setEventMessages($obj['url'], null);
 				}
 				$logtriggeraction = true;
 				break;
@@ -352,11 +348,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 				// TODO voir comment regrouper les webhooks en un post
 				while ($resql && $obj = $this->db->fetch_array($resql)) {
 					$cleaned = cleanObjectDatas(dol_clone($object));
-					$cleaned = cleanAgendaEventsDatas($cleaned);
 					$json = json_encode($cleaned);
 					// call the zapierPostWebhook() function
 					zapierPostWebhook($obj['url'], $json);
-					//setEventMessages($obj['url'], null);
 				}
 				$logtriggeraction = true;
 				break;
