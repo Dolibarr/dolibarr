@@ -75,7 +75,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 
-    dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.$_SESSION['auto_check_events_not_before']);
+    dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.(empty($_SESSION['auto_check_events_not_before']) ? '' : $_SESSION['auto_check_events_not_before']));
 
     $sql = 'SELECT id';
     $sql .= ' FROM ' . MAIN_DB_PREFIX . 'actioncomm a, ' . MAIN_DB_PREFIX . 'actioncomm_resources ar';
