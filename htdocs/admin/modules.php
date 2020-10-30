@@ -281,7 +281,7 @@ if ($action == 'set' && $user->admin)
 
 $form = new Form($db);
 
-//$morejs  = array("/admin/dolistore/js/dolistore.js.php");
+$morejs = array();
 $morecss = array("/admin/dolistore/css/dolistore.css");
 
 // Set dir where external modules are installed
@@ -402,7 +402,7 @@ foreach ($modulesdir as $dir)
 										$arrayofwarningsext[$modName] = $objMod->warnings_activation_ext;
 									}
 
-									$familyposition = $familyinfo[$familykey]['position'];
+									$familyposition = (empty($familyinfo[$familykey]['position']) ? 0 : $familyinfo[$familykey]['position']);
 									$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
 									if ($external && ! in_array($familykey, $listOfOfficialModuleGroups))
 									{

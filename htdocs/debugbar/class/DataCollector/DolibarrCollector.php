@@ -91,8 +91,8 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info .= $langs->trans('Port').': <strong>'.$conf->global->MAIN_MAIL_SMTP_PORT.'</strong><br>';
 		$info .= $langs->trans('ID').': <strong>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</strong><br>';
 		$info .= $langs->trans('Pwd').': <strong>'.preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW).'</strong><br>';
-		$info .= $langs->trans('TLS/STARTTLS').': <strong>'.$conf->global->MAIN_MAIL_EMAIL_TLS.'</strong> / <strong>'.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.'</strong><br>';
-		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS').': <strong>'.($conf->global->MAIN_DISABLE_ALL_MAILS ? $langs->trans('Yes') : $langs->trans('No')).'</strong><br>';
+		$info .= $langs->trans('TLS/STARTTLS').': <strong>'.(empty($conf->global->MAIN_MAIL_EMAIL_TLS) ? '' : $conf->global->MAIN_MAIL_EMAIL_TLS).'</strong> / <strong>'.(empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) ? '' : $conf->global->MAIN_MAIL_EMAIL_STARTTLS).'</strong><br>';
+		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS').': <strong>'.(empty($conf->global->MAIN_DISABLE_ALL_MAILS) ? $langs->trans('No') : $langs->trans('Yes')).'</strong><br>';
 		$info .= 'dolibarr_mailing_limit_sendbyweb = <strong>'.$dolibarr_mailing_limit_sendbyweb.'</strong><br>';
 
 		return $info;

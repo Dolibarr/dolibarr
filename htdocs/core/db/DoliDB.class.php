@@ -248,7 +248,7 @@ abstract class DoliDB implements Database
 
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val);	// Add field
 
-				$tmpsortorder = trim($orders[$i]);
+				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {

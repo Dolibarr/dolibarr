@@ -51,7 +51,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
     //var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-    var time_first_execution = <?php echo max(3, $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+    var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
     if (login != '') {
     	setTimeout(first_execution, time_first_execution * 1000);
         time_js_next_test = nowtime + time_first_execution;
