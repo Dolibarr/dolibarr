@@ -237,7 +237,7 @@ print 'fontsizesmaller='.$fontsizesmaller."\n";
 print 'topMenuFontSize='.$topMenuFontSize."\n";
 print 'toolTipBgColor='.$toolTipBgColor."\n";
 print 'toolTipFontColor='.$toolTipFontColor."\n";
-print 'conf->global->THEME_SATURATE_RATIO='.$conf->global->THEME_SATURATE_RATIO." (must be between 0 and 1)\n";
+print 'conf->global->THEME_SATURATE_RATIO='.(empty($conf->global->THEME_SATURATE_RATIO) ? '' : $conf->global->THEME_SATURATE_RATIO)." (must be between 0 and 1)\n";
 print '*/'."\n";
 
 
