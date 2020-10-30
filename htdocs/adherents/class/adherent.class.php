@@ -2274,14 +2274,16 @@ class Adherent extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
 		global $user, $langs;
+		$now = dol_now();
 
 		// Initialise parametres
 		$this->id = 0;
+		$this->entity = 1;
 		$this->specimen = 1;
 		$this->civility_id = 0;
 		$this->lastname = 'DOLIBARR';
@@ -2298,24 +2300,30 @@ class Adherent extends CommonObject
 		$this->country = 'France';
 		$this->morphy = 'mor';
 		$this->email = 'specimen@specimen.com';
-		$this->socialnetworks = array('skype' => 'skypepseudo', 'twitter' => 'twitterpseudo', 'facebook' => 'facebookpseudo', 'linkedin' => 'linkedinpseudo');
+		$this->socialnetworks = array(
+			'skype' => 'skypepseudo',
+			'twitter' => 'twitterpseudo',
+			'facebook' => 'facebookpseudo',
+			'linkedin' => 'linkedinpseudo',
+		);
 		$this->phone = '0999999999';
 		$this->phone_perso = '0999999998';
 		$this->phone_mobile = '0999999997';
-		$this->note_private = 'No comment';
-		$this->birth = time();
+		$this->note_public = 'This is a public note';
+		$this->note_private = 'This is a private note';
+		$this->birth = $now;
 		$this->photo = '';
 		$this->public = 1;
 		$this->statut = 0;
 
-		$this->datefin = time();
-		$this->datevalid = time();
+		$this->datefin = $now;
+		$this->datevalid = $now;
 
 		$this->typeid = 1; // Id type adherent
 		$this->type = 'Type adherent'; // Libelle type adherent
 		$this->need_subscription = 0;
 
-		$this->first_subscription_date = time();
+		$this->first_subscription_date = $now;
 		$this->first_subscription_date_start = $this->first_subscription_date;
 		$this->first_subscription_date_end = dol_time_plus_duree($this->first_subscription_date_start, 1, 'y');
 		$this->first_subscription_amount = 10;
@@ -2324,6 +2332,7 @@ class Adherent extends CommonObject
 		$this->last_subscription_date_start = $this->first_subscription_date;
 		$this->last_subscription_date_end = dol_time_plus_duree($this->last_subscription_date_start, 1, 'y');
 		$this->last_subscription_amount = 10;
+		return 1;
 	}
 
 

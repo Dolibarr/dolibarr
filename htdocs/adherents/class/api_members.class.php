@@ -65,8 +65,12 @@ class Members extends DolibarrApi
             throw new RestException(401);
         }
 
-        $member = new Adherent($this->db);
-        $result = $member->fetch($id);
+		$member = new Adherent($this->db);
+		if ($id == 0) {
+			$result = $member->initAsSpecimen();
+		} else {
+			$result = $member->fetch($id);
+		}
         if (!$result) {
             throw new RestException(404, 'member not found');
         }
