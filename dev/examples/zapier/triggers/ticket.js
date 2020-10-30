@@ -45,12 +45,15 @@ const getTicket = (z, bundle) => {
     // test poll) and also a .querystring property with the URL's query string.
     const ticket = {
         id: bundle.cleanedRequest.id,
+        track_id: bundle.cleanedRequest.track_id,
+        subject: bundle.cleanedRequest.subject,
+        message: bundle.cleanedRequest.message,
         lastname: bundle.cleanedRequest.lastname,
         firstname: bundle.cleanedRequest.firstname,
         address: bundle.cleanedRequest.address,
         zip: bundle.cleanedRequest.zip,
         town: bundle.cleanedRequest.town,
-        email: bundle.cleanedRequest.email,
+        email_from: bundle.cleanedRequest.email_from,
         login: bundle.cleanedRequest.login,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
