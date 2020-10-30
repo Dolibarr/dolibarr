@@ -482,7 +482,6 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 			print '<tr><td>' . $extrafields->attributes[$elementtype]['label'][$key];
 			if ($array_query['options_' . $key . '_cnct'] != '' || (is_array($array_query['options_' . $key . '_cnct']) && count($array_query['options_' . $key . '_cnct']) > 0)) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
-
 			}
 			print '</td><td>';
 			if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') || ($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
