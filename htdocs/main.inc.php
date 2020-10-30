@@ -255,6 +255,7 @@ if (!empty($conf->debugbar->enabled) && !GETPOST('dol_use_jmobile') && empty($_S
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
 	$renderer = $debugbar->getRenderer();
+	if (empty($conf->global->MAIN_HTML_HEADER)) $conf->global->MAIN_HTML_HEADER = '';
 	$conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
 
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
@@ -925,7 +926,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($user->conf->MAI
 }
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
-$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
 
 // Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu', 'int') || !empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu = 1;
@@ -1162,8 +1163,8 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		//	// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
 		//}
-		//else $contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
-		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+		//else
+		$contentsecuritypolicy = empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY) ? '': $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
 
 		if (!is_object($hookmanager)) $hookmanager = new HookManager($db);
 		$hookmanager->initHooks(array("main"));
