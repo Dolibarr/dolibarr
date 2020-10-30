@@ -64,6 +64,8 @@ $main_use_alt_dir = ((GETPOST("main_use_alt_dir", 'alpha') == '' || (GETPOST("ma
 // Alternative root directory name
 $main_alt_dir_name = ((GETPOST("main_alt_dir_name", 'alpha') && GETPOST("main_alt_dir_name", 'alpha') != '') ? GETPOST("main_alt_dir_name", 'alpha') : 'custom');
 
+$dolibarr_main_distrib = 'standard';
+
 session_start(); // To be able to keep info into session (used for not losing password during navigation. The password must not transit through parameters)
 
 // Save a flag to tell to restore input value if we go back
@@ -126,6 +128,10 @@ if (@file_exists($forcedfile)) {
 		if (!empty($force_install_mainforcehttps)) {
 			$main_force_https = $force_install_mainforcehttps;
 		}
+	}
+
+	if (!empty($force_install_distrib)) {
+		$dolibarr_main_distrib = $force_install_distrib;
 	}
 }
 
@@ -833,6 +839,7 @@ function write_conf_file($conffile)
     global $dolibarr_main_url_root, $dolibarr_main_document_root, $dolibarr_main_data_root, $dolibarr_main_db_host;
     global $dolibarr_main_db_port, $dolibarr_main_db_name, $dolibarr_main_db_user, $dolibarr_main_db_pass;
     global $dolibarr_main_db_type, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_authentication;
+    global $dolibarr_main_distrib;
     global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
     global $conffile, $conffiletoshow, $conffiletoshowshort;
     global $force_dolibarr_lib_ADODB_PATH, $force_dolibarr_lib_NUSOAP_PATH;
@@ -900,7 +907,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'", "\'", trim($db_collation)).'\';');
 		fputs($fp, "\n");
 
-		/* Authentication */
+		// Authentication
 		fputs($fp, '// Authentication settings');
         fputs($fp, "\n");
 
@@ -980,6 +987,10 @@ function write_conf_file($conffile)
         fputs($fp, "\n");
         if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = ''; }
         fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
+        fputs($fp, "\n");
+
+        // Other
+        fputs($fp, '$dolibarr_main_distrib=\''.str_replace("'", "\'", trim($dolibarr_main_distrib)).'\';');
         fputs($fp, "\n");
 
 		fclose($fp);
