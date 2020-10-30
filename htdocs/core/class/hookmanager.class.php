@@ -144,7 +144,7 @@ class HookManager
      */
 	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
 	{
-        if (! is_array($this->hooks) || empty($this->hooks)) return 0;
+        if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         $parameters['context']=join(':', $this->contextarray);
         //dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
