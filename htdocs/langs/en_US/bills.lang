@@ -572,3 +572,6 @@ MaxNumberOfGenerationReached=Max number of gen. reached
 BILL_DELETEInDolibarr=Invoice deleted
 BILL_SUPPLIER_DELETEInDolibarr=Supplier invoice deleted
 UnitPriceXQtyLessDiscount=Unit price x Qty - Discount
+SituationTotalRayToRest=Remainder to pay without taxe
+PDFSituationTitle=Situation n° %d
+SituationTotalProgress=Total progress %d %%
