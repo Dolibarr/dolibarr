@@ -679,8 +679,8 @@ class modProduct extends DolibarrModules
 			    }
 			}
 			// End add extra fields
-			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent) //END DW
-			
+			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
