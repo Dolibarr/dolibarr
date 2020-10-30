@@ -2704,6 +2704,7 @@ if (!function_exists("llxFooter"))
 		global $conf, $db, $langs, $user, $mysoc, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
+		global $dolibarr_distrib;
 
 		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
