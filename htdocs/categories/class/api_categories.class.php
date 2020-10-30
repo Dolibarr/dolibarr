@@ -658,7 +658,7 @@ class Categories extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Categorie  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  Object     Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

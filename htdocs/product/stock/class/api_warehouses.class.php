@@ -255,8 +255,8 @@ class Warehouses extends DolibarrApi
     /**
      * Clean sensible object datas
      *
-     * @param   Entrepot  $object    Object to clean
-     * @return    array    Array of cleaned object properties
+     * @param   Entrepot  $object   Object to clean
+     * @return  Object              Object with cleaned properties
      */
     protected function _cleanObjectDatas($object)
     {
