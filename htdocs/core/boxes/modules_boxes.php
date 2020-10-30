@@ -458,6 +458,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			{
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
+				$disabledbymodule = 0;	// TODO Set to 2 if module is not enabled
 				$module = '';
 
 				// Check if widget file is disabled by name
@@ -476,7 +477,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				$text = '<b>'.$langs->trans("Description").':</b><br>';
 				$text .= $objMod->boxlabel.'<br>';
 				$text .= '<br><b>'.$langs->trans("Status").':</b><br>';
-				if ($disabledbymodule == 2) $text .= $langs->trans("HooksDisabledAsModuleDisabled", $module).'<br>';
+				if ($disabledbymodule == 2) $text .= $langs->trans("WidgetDisabledAsModuleDisabled", $module).'<br>';
 
 				$widget[$j]['info'] = $text;
 			}
