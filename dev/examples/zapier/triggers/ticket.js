@@ -125,6 +125,7 @@ module.exports = {
             {
                 key: 'action',
                 type: 'string',
+                required: true,
                 helpText: 'Which action of ticket this should trigger on.',
                 choices: {
                     create: "Create",

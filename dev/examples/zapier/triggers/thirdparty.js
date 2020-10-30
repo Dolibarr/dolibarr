@@ -123,6 +123,7 @@ module.exports = {
         inputFields: [
             {
                 key: 'action',
+                required: true,
                 type: 'string',
                 helpText: 'Which action of thirdparty this should trigger on.',
                 choices: {
