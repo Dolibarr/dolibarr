@@ -244,7 +244,7 @@ class ZapierApi extends DolibarrApi
 		$fields = array(
 			'url',
 		);
-		dol_syslog("API Zapier create hook receive : " . print_r($request_data, true), LOG_NOTICE);
+		dol_syslog("API Zapier create hook receive : " . print_r($request_data, true), LOG_DEBUG);
 		$result = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {
@@ -336,8 +336,8 @@ class ZapierApi extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   object  $object    Object to clean
-	 * @return  array    Array of cleaned object properties
+	 * @param   Object  $object 	Object to clean
+	 * @return  Object    			Array of cleaned object properties
 	 */
 	public function _cleanObjectDatas($object)
 	{
