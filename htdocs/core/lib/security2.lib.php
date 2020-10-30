@@ -527,7 +527,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		}
 		else
 		{
-			$tmp = random_int(0, $max);
+			$tmp = mt_rand(0, $max);
 			$generated_password=str_replace($replaceambiguouschars, $numbers[$tmp], $generated_password);
 		}
 	}
