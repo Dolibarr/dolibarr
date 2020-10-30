@@ -93,14 +93,13 @@ class ZapierApi extends DolibarrApi
 	 * Get list of possibles choices for module
 	 *
 	 * Return an array with hook informations
-	 * @param integer $id ID
 	 *
-	 * @return  array|mixed     data
+	 * @return  array     data
 	 *
 	 * @url GET /getmoduleschoices/
 	 * @throws  RestException
 	 */
-	public function getModulesChoices($id)
+	public function getModulesChoices()
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(401);
