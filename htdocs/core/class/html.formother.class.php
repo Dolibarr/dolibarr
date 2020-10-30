@@ -1152,6 +1152,7 @@ class FormOther
 		}
 
 		// Define boxlista and boxlistb
+		$boxlista = ''; $boxlistb = '';
 		$nbboxactivated = count($boxidactivatedforuser);
 
 		if ($nbboxactivated)

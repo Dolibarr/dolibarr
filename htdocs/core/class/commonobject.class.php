@@ -6410,7 +6410,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 			$size = $reg[1];
 		} elseif (preg_match('/varchar/', $type)) $type = 'varchar'; // convert varchar(xx) int varchar
-		if (is_array($val['arrayofkeyval'])) $type = 'select';
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $type = 'select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type = 'link';
 
 		$default = $val['default'];
@@ -6420,7 +6420,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 
-		if (is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
 		{
 			$type = 'link';

@@ -242,14 +242,13 @@ abstract class DoliDB implements Database
 			$fields=explode(',', $sortfield);
 			$orders=explode(',', $sortorder);
 			$i=0;
-			foreach ($fields as $val)
-			{
+			foreach ($fields as $val) {
 				if (!$return) $return .= ' ORDER BY ';
 				else $return .= ', ';
 
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val);	// Add field
 
-				$tmpsortorder = trim($orders[$i]);
+				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {

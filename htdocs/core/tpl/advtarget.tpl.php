@@ -519,14 +519,11 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 				print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attributes[$key]['param']['options'], $array_query['options_' . $key . '_cnct']);
 				print '</td><td>' . "\n";
 			} else {
-				print '<table class="nobordernopadding"><tr>';
-				print '<td></td><td>';
 				if (is_array($array_query['options_' . $key . '_cnct'])) {
 					print $extrafields->showInputField($key, implode(',', $array_query['options_' . $key . '_cnct']), '', '_cnct');
 				} else {
 					print $extrafields->showInputField($key, $array_query['options_' . $key . '_cnct'], '', '_cnct');
 				}
-				print '</td></tr></table>';
 				print '</td><td>' . "\n";
 			}
 			print '</td></tr>' . "\n";

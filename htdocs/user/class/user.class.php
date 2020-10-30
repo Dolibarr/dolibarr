@@ -681,7 +681,7 @@ class User extends CommonObject
 				} else {
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
 					if (!empty($allperms)) {
-						$whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+						$wherefordel .= " AND perms='".$this->db->escape($allperms)."'";
 					}
 				}
 			}
