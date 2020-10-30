@@ -415,6 +415,7 @@ class Members extends DolibarrApi
     protected function _cleanObjectDatas($object)
     {
         // phpcs:enable
+        $object = parent::_cleanObjectDatas($object);
 
         // Remove the subscriptions because they are handled as a subresource.
         unset($object->subscriptions);
@@ -428,10 +429,7 @@ class Members extends DolibarrApi
         unset($object->total_ttc);
         unset($object->total_tva);
         unset($object->total_localtax1);
-		unset($object->total_localtax2);
-
-		// cleanObjectDatas return an array so need to be done after unset
-        $object = parent::_cleanObjectDatas($object);
+        unset($object->total_localtax2);
 
         return $object;
     }
