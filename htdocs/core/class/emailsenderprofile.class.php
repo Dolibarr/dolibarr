@@ -127,8 +127,7 @@ class EmailSenderProfile extends CommonObject
 
 
 	public $tms;
-	//public $fk_user_creat;
-	//public $fk_user_modif;
+	public $private;
 	public $signature;
 	public $position;
 	public $active;
