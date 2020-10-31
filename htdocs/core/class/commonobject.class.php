@@ -6306,7 +6306,8 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
-			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+
+			if (!preg_match('/search_/', $keyprefix) && !empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
 				$morecss .= ' widthcentpercentminusx';
 			}
 
