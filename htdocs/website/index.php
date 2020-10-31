@@ -2406,7 +2406,8 @@ if (!GETPOST('hide_websitemenu'))
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 		{
 			print '<span class="websiteselection">';
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"><span>', '/website/index.php?action=file_manager&website='.$website->ref, $disabled);
 
 			if (! empty($conf->categorie->enabled)) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
