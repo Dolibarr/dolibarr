@@ -2115,8 +2115,8 @@ class Holiday extends CommonObject
 		if (empty($user->rights->expensereport->read_all))
 		{
 			$userchildids = $user->getAllChildIds(1);
-			$sql.= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql.= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
+			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
 		}
 
 		$resql = $this->db->query($sql);

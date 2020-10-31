@@ -102,7 +102,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					$objp		= $this->db->fetch_object($result);
 					$date		= $this->db->jdate($objp->date_movement);
 					$journal	= $objp->code_journal;
-					$label		= $objp->label_operation;
+					$label = $objp->label_operation;
 					$amount		= $objp->amount;
 
 					$bookkeepingstatic->id = $objp->id;

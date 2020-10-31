@@ -304,62 +304,62 @@ class Donations extends DolibarrApi
 
 		$result = $this->don->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
 		if ($result == 0) {
-		    throw new RestException(304, 'Error nothing done. May be object is already validated');
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-		    throw new RestException(500, 'Error when validating Order: '.$this->don->error);
+			throw new RestException(500, 'Error when validating Order: '.$this->don->error);
 		}
-        $result = $this->don->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Order not found');
-        }
+		$result = $this->don->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        $this->don->fetchObjectLinked();
+		$this->don->fetchObjectLinked();
 
-        return $this->_cleanObjectDatas($this->don);
-    }
+		return $this->_cleanObjectDatas($this->don);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   Object  $object     Object to clean
-     * @return  Object              Object with cleaned properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
 
-        unset($object->note);
-        unset($object->address);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);
+		unset($object->note);
+		unset($object->address);
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array           $data   Array with data to verify
-     * @return  array
-     * @throws  RestException
-     */
-    private function _validate($data)
-    {
-        $don = array();
-        foreach (Orders::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, $field." field missing");
-            $don[$field] = $data[$field];
-        }
-        return $don;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException
+	 */
+	private function _validate($data)
+	{
+		$don = array();
+		foreach (Orders::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, $field." field missing");
+			$don[$field] = $data[$field];
+		}
+		return $don;
+	}
 }

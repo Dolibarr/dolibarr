@@ -392,17 +392,17 @@ class SMTPs
 				$socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
 				set_error_handler([$this, 'errorHandler']);
 				$this->socket = @stream_socket_client(
-					preg_replace('@tls://@i', '', $this->getHost()) .    // Host to 'hit', IP or domain
-					':' . $this->getPort(),             // which Port number to use
-					$this->errno,                       // actual system level error
-					$this->errstr,                      // and any text that goes with the error
-					$this->_smtpTimeout,                // timeout for reading/writing data over the socket
+					preg_replace('@tls://@i', '', $this->getHost()).// Host to 'hit', IP or domain
+					':'.$this->getPort(), // which Port number to use
+					$this->errno, // actual system level error
+					$this->errstr, // and any text that goes with the error
+					$this->_smtpTimeout, // timeout for reading/writing data over the socket
 					STREAM_CLIENT_CONNECT,
 					$socket_context                     // Options for connection
 				);
 			} else {
 				$this->socket = @fsockopen(
-					preg_replace('@tls://@i', '', $this->getHost()),       // Host to 'hit', IP or domain
+					preg_replace('@tls://@i', '', $this->getHost()), // Host to 'hit', IP or domain
 				$this->getPort(), // which Port number to use
 				$this->errno, // actual system level error
 				$this->errstr, // and any text that goes with the error
@@ -590,7 +590,7 @@ class SMTPs
 				$host = preg_replace('@ssl://@i', '', $host); // Remove prefix
 				$host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
-				if ($usetls && ! empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) $host = 'tls://'.$host;
+				if ($usetls && !empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) $host = 'tls://'.$host;
 
 				$hosth = $host;
 

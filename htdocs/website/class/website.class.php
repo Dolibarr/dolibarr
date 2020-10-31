@@ -245,23 +245,23 @@ class Website extends CommonObject
 				}
 			}
 
-            // Uncomment this and change MYOBJECT to your own tag if you
-            // want this action to call a trigger.
-            // if (!$notrigger) {
+			// Uncomment this and change MYOBJECT to your own tag if you
+			// want this action to call a trigger.
+			// if (!$notrigger) {
 
-            //     // Call triggers
-            //     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
-            //     if ($result < 0) $error++;
-            //     // End call triggers
-            // }
-        }
+			//     // Call triggers
+			//     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
+			//     if ($result < 0) $error++;
+			//     // End call triggers
+			// }
+		}
 
-	    if (!$error) {
-	    	$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
-	    	$stringtodolibarrfile .= "param=value\n";
-	    	//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
-	    	file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
-        }
+		if (!$error) {
+			$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
+			$stringtodolibarrfile .= "param=value\n";
+			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
+			file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+		}
 
 		// Commit or rollback
 		if ($error) {

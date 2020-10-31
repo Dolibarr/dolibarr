@@ -45,10 +45,10 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $confirm == 'yes')
 {
-	$result=$object->delete($id, $user);
+	$result = $object->delete($id, $user);
 	if ($result > 0)
 	{
-		if (! empty($backtopage))
+		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
 			exit;
@@ -59,12 +59,12 @@ if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $co
 		}
 	}
 	else {
-		$errmesg=$object->error;
+		$errmesg = $object->error;
 	}
 }
 
 if ($action == 'add' && $user->rights->intracommreport->write) {
-	$object->label			    = trim($label);
+	$object->label = trim($label);
 	$object->type               = trim($type);
 	$object->type_declaration   = (int) $statut;
 	$object->subscription       = (int) $subscription;
@@ -90,9 +90,9 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 		}
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$id=$object->create($user);
+		$id = $object->create($user);
 		if ($id > 0)
 		{
 			header("Location: ".$_SERVER["PHP_SELF"]);
@@ -134,7 +134,7 @@ if ($action == 'create')
 	$declaration["deb"] = $langs->trans("DEB");
 	$declaration["des"] = $langs->trans("DES");
 	print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
-	print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha')?GETPOST('declaration', 'alpha'):$object->declaration, 0);
+	print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha') ?GETPOST('declaration', 'alpha') : $object->declaration, 0);
 	print "</td>\n";
 
 	// Analysis period
@@ -152,7 +152,7 @@ if ($action == 'create')
 	$typeOfDeclaration["introduction"] = $langs->trans("Introduction");
 	$typeOfDeclaration["expedition"] = $langs->trans("Expedition");
 	print '<tr><td class="fieldrequired">'.$langs->trans("TypeOfDeclaration")."</td><td>\n";
-	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha')?GETPOST('type_declaration', 'alpha'):$object->type_declaration, 0);
+	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ?GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
 	print "</td>\n";
 
 	print '</table>';
@@ -160,7 +160,7 @@ if ($action == 'create')
 	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -195,11 +195,11 @@ if ($id > 0 && $action != 'edit') {
 				'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"])
 			);
 		}
-		print $form->formconfirm("card.php?rowid=" . $id, $langs->trans("DeleteReport"),
+		print $form->formconfirm("card.php?rowid=".$id, $langs->trans("DeleteReport"),
 			$langs->trans("ConfirmDeleteReport"), "confirm_delete", $formquestion, 'no', 1);
 	}
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/intracommreport/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/intracommreport/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'rowid', $linkback);
 
@@ -210,14 +210,14 @@ if ($id > 0 && $action != 'edit') {
 	print '<table class="border tableforfield centpercent">';
 
 	// Type
-	print '<tr><td class="titlefield">' . $langs->trans("Type") . '</td><td class="valeur">' . $object->declaration . "</td></tr>\n";
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$object->declaration."</td></tr>\n";
 
 	// Analysis Period
-	print '<tr><td>' . $langs->trans("AnalysisPeriod") . '</td><td class="valeur">' . $object->period . '</td>';
+	print '<tr><td>'.$langs->trans("AnalysisPeriod").'</td><td class="valeur">'.$object->period.'</td>';
 	print '</tr>';
 
 	// Type of Declaration
-	print '<tr><td>' . $langs->trans("TypeOfDeclaration") . '</td><td class="valeur">' . $object->type_declaration . '</td>';
+	print '<tr><td>'.$langs->trans("TypeOfDeclaration").'</td><td class="valeur">'.$object->type_declaration.'</td>';
 	print '</tr>';
 
 	print "</table>\n";

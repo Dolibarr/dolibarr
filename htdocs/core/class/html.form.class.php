@@ -3577,16 +3577,16 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num=count($this->cache_transport_mode);
-		if ($num > 0) return $num;    // Cache already loaded
+		$num = count($this->cache_transport_mode);
+		if ($num > 0) return $num; // Cache already loaded
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$this->cache_transport_mode = array();
 
 		$sql = "SELECT rowid, code, label, active";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
-		$sql.= " WHERE entity IN (".getEntity('c_transport_mode').")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_transport_mode";
+		$sql .= " WHERE entity IN (".getEntity('c_transport_mode').")";
 		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
@@ -3599,10 +3599,10 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// If traduction exist, we use it else we take the default label
-				$label=($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
+				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code) != ("PaymentTypeShort".$obj->code) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
-				$this->cache_transport_mode[$obj->rowid]['label']= $label;
+				$this->cache_transport_mode[$obj->rowid]['label'] = $label;
 				$this->cache_transport_mode[$obj->rowid]['active'] = $obj->active;
 				$i++;
 			}
@@ -3632,13 +3632,13 @@ class Form
 	 */
 	public function selectTransportMode($selected = '', $htmlname = 'transportmode', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
 	{
-		global $langs,$user;
+		global $langs, $user;
 
 		dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$format, LOG_DEBUG);
 
 		$this->load_cache_transport_mode();
 
-		print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
+		print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) print '<option value="">&nbsp;</option>';
 		foreach ($this->cache_transport_mode as $id => $arraytypes)
 		{
@@ -3656,15 +3656,15 @@ class Form
 			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
 			elseif ($selected == $id) print ' selected';
 			print '>';
-			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-			elseif ($format == 1) $value=$arraytypes['code'];
-			elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-			elseif ($format == 3) $value=$arraytypes['code'];
-			print $value?$value:'&nbsp;';
+			if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+			elseif ($format == 1) $value = $arraytypes['code'];
+			elseif ($format == 2) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+			elseif ($format == 3) $value = $arraytypes['code'];
+			print $value ? $value : '&nbsp;';
 			print '</option>';
 		}
 		print '</select>';
-		if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		if ($user->admin && !$noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
 
 	/**

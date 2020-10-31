@@ -458,7 +458,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			{
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
-				$disabledbymodule = 0;	// TODO Set to 2 if module is not enabled
+				$disabledbymodule = 0; // TODO Set to 2 if module is not enabled
 				$module = '';
 
 				// Check if widget file is disabled by name

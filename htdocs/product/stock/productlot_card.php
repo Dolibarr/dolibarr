@@ -309,24 +309,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $shownav = 1;
-    if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	$shownav = 1;
+	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent">'."\n";
 
 	// Product
-    print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
-    $producttmp = new Product($db);
-    $producttmp->fetch($object->fk_product);
-    print $producttmp->getNomUrl(1, 'stock')." - ".$producttmp->label;
-    print '</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
+	$producttmp = new Product($db);
+	$producttmp->fetch($object->fk_product);
+	print $producttmp->getNomUrl(1, 'stock')." - ".$producttmp->label;
+	print '</td></tr>';
 
-    // Eat by
+	// Eat by
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');

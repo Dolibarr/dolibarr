@@ -626,13 +626,13 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_remise_percent = $record["remise_percent"];
 				$prodfourn->fourn_remise = $record["remise"];
 				$prodfourn->fourn_unitprice = $record["unitprice"];
-				$prodfourn->fourn_charges           = $record["charges"]; // deprecated
+				$prodfourn->fourn_charges = $record["charges"]; // deprecated
 				$prodfourn->fourn_tva_tx = $record["tva_tx"];
-				$prodfourn->fourn_id				= $record["fourn_id"];
+				$prodfourn->fourn_id = $record["fourn_id"];
 				$prodfourn->fourn_name = $record["supplier_name"];
 				$prodfourn->fk_availability			= $record["fk_availability"];
-				$prodfourn->delivery_time_days		= $record["delivery_time_days"];
-				$prodfourn->id						= $prodid;
+				$prodfourn->delivery_time_days = $record["delivery_time_days"];
+				$prodfourn->id = $prodid;
 				$prodfourn->fourn_tva_npr					= $record["info_bits"];
 				$prodfourn->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
 				$prodfourn->supplier_reputation = $record["supplier_reputation"];

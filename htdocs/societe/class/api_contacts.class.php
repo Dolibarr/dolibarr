@@ -431,131 +431,131 @@ class Contacts extends DolibarrApi
 		}
 
 		return $result;
-    }
+	}
 
-    /**
-     * Add a category to a contact
-     *
-     * @url POST {id}/categories/{category_id}
-     *
-     * @param   int		$id             Id of contact
-     * @param   int     $category_id    Id of category
-     *
-     * @return  mixed
-     *
-     * @throws RestException 401 Insufficient rights
-     * @throws RestException 404 Category or contact not found
-     */
-    public function addCategory($id, $category_id)
-    {
-        if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
-            throw new RestException(401, 'Insufficient rights');
-        }
+	/**
+	 * Add a category to a contact
+	 *
+	 * @url POST {id}/categories/{category_id}
+	 *
+	 * @param   int		$id             Id of contact
+	 * @param   int     $category_id    Id of category
+	 *
+	 * @return  mixed
+	 *
+	 * @throws RestException 401 Insufficient rights
+	 * @throws RestException 404 Category or contact not found
+	 */
+	public function addCategory($id, $category_id)
+	{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			throw new RestException(401, 'Insufficient rights');
+		}
 
-        $result = $this->contact->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Contact not found');
-        }
-        $category = new Categorie($this->db);
-        $result = $category->fetch($category_id);
-        if (!$result) {
-            throw new RestException(404, 'category not found');
-        }
+		$result = $this->contact->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Contact not found');
+		}
+		$category = new Categorie($this->db);
+		$result = $category->fetch($category_id);
+		if (!$result) {
+			throw new RestException(404, 'category not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        $category->add_type($this->contact, 'contact');
+		$category->add_type($this->contact, 'contact');
 
-        return $this->_cleanObjectDatas($this->contact);
-    }
+		return $this->_cleanObjectDatas($this->contact);
+	}
 
-    /**
-     * Remove the link between a category and a contact
-     *
-     * @url DELETE {id}/categories/{category_id}
-     *
-     * @param   int		$id				Id of contact
-     * @param   int		$category_id	Id of category
-     * @return  mixed
-     *
-     * @throws  RestException 401     Insufficient rights
-     * @throws  RestException 404     Category or contact not found
-     */
-    public function deleteCategory($id, $category_id)
-    {
-        if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
-            throw new RestException(401, 'Insufficient rights');
-        }
+	/**
+	 * Remove the link between a category and a contact
+	 *
+	 * @url DELETE {id}/categories/{category_id}
+	 *
+	 * @param   int		$id				Id of contact
+	 * @param   int		$category_id	Id of category
+	 * @return  mixed
+	 *
+	 * @throws  RestException 401     Insufficient rights
+	 * @throws  RestException 404     Category or contact not found
+	 */
+	public function deleteCategory($id, $category_id)
+	{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
+			throw new RestException(401, 'Insufficient rights');
+		}
 
-        $result = $this->contact->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'Contact not found');
-        }
-        $category = new Categorie($this->db);
-        $result = $category->fetch($category_id);
-        if (!$result) {
-            throw new RestException(404, 'category not found');
-        }
+		$result = $this->contact->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Contact not found');
+		}
+		$category = new Categorie($this->db);
+		$result = $category->fetch($category_id);
+		if (!$result) {
+			throw new RestException(404, 'category not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-        if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        $category->del_type($this->contact, 'contact');
+		$category->del_type($this->contact, 'contact');
 
-        return $this->_cleanObjectDatas($this->contact);
-    }
+		return $this->_cleanObjectDatas($this->contact);
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   Object  $object     Object to clean
-     * @return  Object              Object with cleaned properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
 
-        unset($object->total_ht);
-        unset($object->total_tva);
-        unset($object->total_localtax1);
-        unset($object->total_localtax2);
-        unset($object->total_ttc);
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
 
-        unset($object->note);
-        unset($object->lines);
-        unset($object->thirdparty);
+		unset($object->note);
+		unset($object->lines);
+		unset($object->thirdparty);
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array|null     $data   Data to validate
-     * @return  array
-     * @throws  RestException
-     */
-    private function _validate($data)
-    {
-        $contact = array();
-        foreach (Contacts::$FIELDS as $field) {
-            if (!isset($data[$field])) {
-                throw new RestException(400, "$field field missing");
-            }
-            $contact[$field] = $data[$field];
-        }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array|null     $data   Data to validate
+	 * @return  array
+	 * @throws  RestException
+	 */
+	private function _validate($data)
+	{
+		$contact = array();
+		foreach (Contacts::$FIELDS as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, "$field field missing");
+			}
+			$contact[$field] = $data[$field];
+		}
 
-        return $contact;
-    }
+		return $contact;
+	}
 }

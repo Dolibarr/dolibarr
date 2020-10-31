@@ -317,39 +317,39 @@ if (empty($reshook))
 	// payments conditions
 	if ($action == 'setconditions' && $usercancreate)
 	{
-	    $object->fetch($id);
-	    $object->cond_reglement_code = 0; // To clean property
-	    $object->cond_reglement_id = 0; // To clean property
+		$object->fetch($id);
+		$object->cond_reglement_code = 0; // To clean property
+		$object->cond_reglement_id = 0; // To clean property
 
-	    $error = 0;
+		$error = 0;
 
-	    $db->begin();
+		$db->begin();
 
-	    if (!$error) {
-		    $result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-		    if ($result < 0) {
-	    		$error++;
-	        	setEventMessages($object->error, $object->errors, 'errors');
-	    	}
-	    }
+		if (!$error) {
+			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 
-	    if (!$error) {
-		    $old_date_echeance = $object->date_echeance;
-	    	$new_date_echeance = $object->calculate_date_lim_reglement();
-	    	if ($new_date_echeance > $old_date_echeance) $object->date_echeance = $new_date_echeance;
-	    	if ($object->date_echeance < $object->date) $object->date_echeance = $object->date;
-	    	$result = $object->update($user);
-	    	if ($result < 0) {
-	    		$error++;
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    	}
-	    }
+		if (!$error) {
+			$old_date_echeance = $object->date_echeance;
+			$new_date_echeance = $object->calculate_date_lim_reglement();
+			if ($new_date_echeance > $old_date_echeance) $object->date_echeance = $new_date_echeance;
+			if ($object->date_echeance < $object->date) $object->date_echeance = $object->date;
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 
-	    if ($error) {
-	    	$db->rollback();
-	    } else {
-	    	$db->commit();
-	    }
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
 	}
 
 	// Set incoterm
@@ -379,11 +379,11 @@ if (empty($reshook))
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	}
 
-    // transport mode
-    if ($action == 'settransportmode' && $user->rights->fournisseur->facture->creer)
-    {
-        $result = $object->setTransportMode(GETPOST('transport_mode_id', 'int'));
-    }
+	// transport mode
+	if ($action == 'settransportmode' && $user->rights->fournisseur->facture->creer)
+	{
+		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'int'));
+	}
 
 	// Set label
 	elseif ($action == 'setlabel' && $usercancreate)
@@ -2096,14 +2096,14 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-    // Intracomm report
-    if (!empty($conf->intracommreport->enabled))
-    {
-        $langs->loadLangs(array("intracommreport"));
-        print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
-        $form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
-        print '</td></tr>';
-    }
+	// Intracomm report
+	if (!empty($conf->intracommreport->enabled))
+	{
+		$langs->loadLangs(array("intracommreport"));
+		print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
+		$form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
+		print '</td></tr>';
+	}
 
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';

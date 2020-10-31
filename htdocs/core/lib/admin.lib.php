@@ -131,246 +131,246 @@ function versiondolibarrarray()
  */
 function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0)
 {
-    global $db, $conf, $langs, $user;
+	global $db, $conf, $langs, $user;
 
-    dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
+	dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
 
-    if (!is_numeric($linelengthlimit))
-    {
-    	dol_syslog("Admin.lib::run_sql param linelengthlimit is not a numeric", LOG_ERR);
-    	return -1;
-    }
+	if (!is_numeric($linelengthlimit))
+	{
+		dol_syslog("Admin.lib::run_sql param linelengthlimit is not a numeric", LOG_ERR);
+		return -1;
+	}
 
-    $ok = 0;
-    $error = 0;
-    $i = 0;
-    $buffer = '';
-    $arraysql = array();
+	$ok = 0;
+	$error = 0;
+	$i = 0;
+	$buffer = '';
+	$arraysql = array();
 
-    // Get version of database
-    $versionarray = $db->getVersionArray();
+	// Get version of database
+	$versionarray = $db->getVersionArray();
 
-    $fp = fopen($sqlfile, "r");
-    if ($fp)
-    {
-        while (!feof($fp))
-        {
-        	// Warning fgets with second parameter that is null or 0 hang.
-        	if ($linelengthlimit > 0) $buf = fgets($fp, $linelengthlimit);
-        	else $buf = fgets($fp);
+	$fp = fopen($sqlfile, "r");
+	if ($fp)
+	{
+		while (!feof($fp))
+		{
+			// Warning fgets with second parameter that is null or 0 hang.
+			if ($linelengthlimit > 0) $buf = fgets($fp, $linelengthlimit);
+			else $buf = fgets($fp);
 
-            // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
-            $reg = array();
-            if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', $buf, $reg))
-            {
-            	$qualified = 1;
+			// Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
+			$reg = array();
+			if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', $buf, $reg))
+			{
+				$qualified = 1;
 
-            	// restrict on database type
-            	if (!empty($reg[1]))
-            	{
-            		if (!preg_match('/'.preg_quote($reg[1]).'/i', $db->type)) $qualified = 0;
-            	}
+				// restrict on database type
+				if (!empty($reg[1]))
+				{
+					if (!preg_match('/'.preg_quote($reg[1]).'/i', $db->type)) $qualified = 0;
+				}
 
-            	// restrict on version
-            	if ($qualified)
-            	{
-            		if (!empty($reg[2]))
-            		{
-            			if (is_numeric($reg[2]))	// This is a version
-            			{
-			                $versionrequest = explode('.', $reg[2]);
-			                //print var_dump($versionrequest);
-			                //print var_dump($versionarray);
-			                if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0)
-			                {
-			                	$qualified = 0;
-			                }
-            			} else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
-            			{
-            				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
-            				//var_dump($reg[2]);
-            				//var_dump($dbcollation);
-            				if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified = 0;
-            				//var_dump($qualified);
-            			}
-            		}
-            	}
+				// restrict on version
+				if ($qualified)
+				{
+					if (!empty($reg[2]))
+					{
+						if (is_numeric($reg[2]))	// This is a version
+						{
+							$versionrequest = explode('.', $reg[2]);
+							//print var_dump($versionrequest);
+							//print var_dump($versionarray);
+							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0)
+							{
+								$qualified = 0;
+							}
+						} else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+						{
+							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+							//var_dump($reg[2]);
+							//var_dump($dbcollation);
+							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) $qualified = 0;
+							//var_dump($qualified);
+						}
+					}
+				}
 
-                if ($qualified)
-                {
-                    // Version qualified, delete SQL comments
-                    $buf = preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', '', $buf);
-                    //print "Ligne $i qualifi?e par version: ".$buf.'<br>';
-                }
-            }
+				if ($qualified)
+				{
+					// Version qualified, delete SQL comments
+					$buf = preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', '', $buf);
+					//print "Ligne $i qualifi?e par version: ".$buf.'<br>';
+				}
+			}
 
-            // Add line buf to buffer if not a comment
-            if ($nocommentremoval || !preg_match('/^\s*--/', $buf))
-            {
-            	if (empty($nocommentremoval)) $buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
-                $buffer .= trim($buf);
-            }
+			// Add line buf to buffer if not a comment
+			if ($nocommentremoval || !preg_match('/^\s*--/', $buf))
+			{
+				if (empty($nocommentremoval)) $buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
+				$buffer .= trim($buf);
+			}
 
-            //print $buf.'<br>';exit;
+			//print $buf.'<br>';exit;
 
-            if (preg_match('/;/', $buffer))	// If string contains ';', it's end of a request string, we save it in arraysql.
-            {
-                // Found new request
-                if ($buffer) $arraysql[$i] = $buffer;
-                $i++;
-                $buffer = '';
-            }
-        }
+			if (preg_match('/;/', $buffer))	// If string contains ';', it's end of a request string, we save it in arraysql.
+			{
+				// Found new request
+				if ($buffer) $arraysql[$i] = $buffer;
+				$i++;
+				$buffer = '';
+			}
+		}
 
-        if ($buffer) $arraysql[$i] = $buffer;
-        fclose($fp);
-    } else {
-        dol_syslog("Admin.lib::run_sql failed to open file ".$sqlfile, LOG_ERR);
-    }
+		if ($buffer) $arraysql[$i] = $buffer;
+		fclose($fp);
+	} else {
+		dol_syslog("Admin.lib::run_sql failed to open file ".$sqlfile, LOG_ERR);
+	}
 
-    // Loop on each request to see if there is a __+MAX_table__ key
-    $listofmaxrowid = array(); // This is a cache table
-    foreach ($arraysql as $i => $sql)
-    {
-        $newsql = $sql;
+	// Loop on each request to see if there is a __+MAX_table__ key
+	$listofmaxrowid = array(); // This is a cache table
+	foreach ($arraysql as $i => $sql)
+	{
+		$newsql = $sql;
 
-        // Replace __+MAX_table__ with max of table
-        while (preg_match('/__\+MAX_([A-Za-z0-9_]+)__/i', $newsql, $reg))
-        {
-            $table = $reg[1];
-            if (!isset($listofmaxrowid[$table]))
-            {
-                //var_dump($db);
-                $sqlgetrowid = 'SELECT MAX(rowid) as max from '.preg_replace('/^llx_/', MAIN_DB_PREFIX, $table);
-                $resql = $db->query($sqlgetrowid);
-                if ($resql)
-                {
-                    $obj = $db->fetch_object($resql);
-                    $listofmaxrowid[$table] = $obj->max;
-                    if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table] = 0;
-                } else {
-                    if (!$silent) print '<tr><td class="tdtop" colspan="2">';
-                    if (!$silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
-                    if (!$silent) print '</tr>';
-                    $error++;
-                    break;
-                }
-            }
-            // Replace __+MAX_llx_table__ with +999
-            $from = '__+MAX_'.$table.'__';
-            $to = '+'.$listofmaxrowid[$table];
-            $newsql = str_replace($from, $to, $newsql);
-            dol_syslog('Admin.lib::run_sql New Request '.($i + 1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
+		// Replace __+MAX_table__ with max of table
+		while (preg_match('/__\+MAX_([A-Za-z0-9_]+)__/i', $newsql, $reg))
+		{
+			$table = $reg[1];
+			if (!isset($listofmaxrowid[$table]))
+			{
+				//var_dump($db);
+				$sqlgetrowid = 'SELECT MAX(rowid) as max from '.preg_replace('/^llx_/', MAIN_DB_PREFIX, $table);
+				$resql = $db->query($sqlgetrowid);
+				if ($resql)
+				{
+					$obj = $db->fetch_object($resql);
+					$listofmaxrowid[$table] = $obj->max;
+					if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table] = 0;
+				} else {
+					if (!$silent) print '<tr><td class="tdtop" colspan="2">';
+					if (!$silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
+					if (!$silent) print '</tr>';
+					$error++;
+					break;
+				}
+			}
+			// Replace __+MAX_llx_table__ with +999
+			$from = '__+MAX_'.$table.'__';
+			$to = '+'.$listofmaxrowid[$table];
+			$newsql = str_replace($from, $to, $newsql);
+			dol_syslog('Admin.lib::run_sql New Request '.($i + 1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
-            $arraysql[$i] = $newsql;
-        }
+			$arraysql[$i] = $newsql;
+		}
 
-        if ($offsetforchartofaccount > 0)
-        {
-        	// Replace lines
-        	// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
-        	// with
-            // 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
-            // Note: string with 1234 instead of '1234' is also supported
-        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
-        	$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
-        	//var_dump($newsql);
-        	$arraysql[$i] = $newsql;
-        }
-    }
+		if ($offsetforchartofaccount > 0)
+		{
+			// Replace lines
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
+			// with
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
+			// Note: string with 1234 instead of '1234' is also supported
+			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
+			$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
+			//var_dump($newsql);
+			$arraysql[$i] = $newsql;
+		}
+	}
 
-    // Loop on each request to execute request
-    $cursorinsert = 0;
-    $listofinsertedrowid = array();
-    foreach ($arraysql as $i => $sql)
-    {
-        if ($sql)
-        {
-        	// Replace the prefix tables
-        	if (MAIN_DB_PREFIX != 'llx_')
-        	{
-        		$sql = preg_replace('/llx_/i', MAIN_DB_PREFIX, $sql);
-        	}
+	// Loop on each request to execute request
+	$cursorinsert = 0;
+	$listofinsertedrowid = array();
+	foreach ($arraysql as $i => $sql)
+	{
+		if ($sql)
+		{
+			// Replace the prefix tables
+			if (MAIN_DB_PREFIX != 'llx_')
+			{
+				$sql = preg_replace('/llx_/i', MAIN_DB_PREFIX, $sql);
+			}
 
-            if (!empty($handler)) $sql = preg_replace('/__HANDLER__/i', "'".$db->escape($handler)."'", $sql);
+			if (!empty($handler)) $sql = preg_replace('/__HANDLER__/i', "'".$db->escape($handler)."'", $sql);
 
-            $newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : $conf->entity), $sql);
+			$newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : $conf->entity), $sql);
 
-            // Add log of request
-            if (!$silent) print '<tr class="trforrunsql"><td class="tdtop opacitymedium">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
-            dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
+			// Add log of request
+			if (!$silent) print '<tr class="trforrunsql"><td class="tdtop opacitymedium">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
 
-            // Replace for encrypt data
-            if (preg_match_all('/__ENCRYPT\(\'([^\']+)\'\)__/i', $newsql, $reg))
-            {
-                $num = count($reg[0]);
+			// Replace for encrypt data
+			if (preg_match_all('/__ENCRYPT\(\'([^\']+)\'\)__/i', $newsql, $reg))
+			{
+				$num = count($reg[0]);
 
-                for ($j = 0; $j < $num; $j++)
-                {
-                    $from = $reg[0][$j];
-                    $to = $db->encrypt($reg[1][$j], 1);
-                    $newsql = str_replace($from, $to, $newsql);
-                }
-                $sqlmodified++;
-            }
+				for ($j = 0; $j < $num; $j++)
+				{
+					$from = $reg[0][$j];
+					$to = $db->encrypt($reg[1][$j], 1);
+					$newsql = str_replace($from, $to, $newsql);
+				}
+				$sqlmodified++;
+			}
 
-            // Replace for decrypt data
-            if (preg_match_all('/__DECRYPT\(\'([A-Za-z0-9_]+)\'\)__/i', $newsql, $reg))
-            {
-                $num = count($reg[0]);
+			// Replace for decrypt data
+			if (preg_match_all('/__DECRYPT\(\'([A-Za-z0-9_]+)\'\)__/i', $newsql, $reg))
+			{
+				$num = count($reg[0]);
 
-                for ($j = 0; $j < $num; $j++)
-                {
-                    $from = $reg[0][$j];
-                    $to = $db->decrypt($reg[1][$j]);
-                    $newsql = str_replace($from, $to, $newsql);
-                }
-                $sqlmodified++;
-            }
+				for ($j = 0; $j < $num; $j++)
+				{
+					$from = $reg[0][$j];
+					$to = $db->decrypt($reg[1][$j]);
+					$newsql = str_replace($from, $to, $newsql);
+				}
+				$sqlmodified++;
+			}
 
-            // Replace __x__ with rowid of insert nb x
-            while (preg_match('/__([0-9]+)__/', $newsql, $reg))
-            {
-                $cursor = $reg[1];
-                if (empty($listofinsertedrowid[$cursor]))
-                {
-                    if (!$silent) print '<tr><td class="tdtop" colspan="2">';
-                    if (!$silent) print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
-                    if (!$silent) print '</tr>';
-                    $error++;
-                    break;
-                }
-                $from = '__'.$cursor.'__';
-                $to = $listofinsertedrowid[$cursor];
-                $newsql = str_replace($from, $to, $newsql);
-                $sqlmodified++;
-            }
+			// Replace __x__ with rowid of insert nb x
+			while (preg_match('/__([0-9]+)__/', $newsql, $reg))
+			{
+				$cursor = $reg[1];
+				if (empty($listofinsertedrowid[$cursor]))
+				{
+					if (!$silent) print '<tr><td class="tdtop" colspan="2">';
+					if (!$silent) print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
+					if (!$silent) print '</tr>';
+					$error++;
+					break;
+				}
+				$from = '__'.$cursor.'__';
+				$to = $listofinsertedrowid[$cursor];
+				$newsql = str_replace($from, $to, $newsql);
+				$sqlmodified++;
+			}
 
-            if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i + 1), LOG_DEBUG);
+			if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i + 1), LOG_DEBUG);
 
-            $result = $db->query($newsql, $usesavepoint);
-            if ($result)
-            {
-                if (!$silent) print '<!-- Result = OK -->'."\n";
+			$result = $db->query($newsql, $usesavepoint);
+			if ($result)
+			{
+				if (!$silent) print '<!-- Result = OK -->'."\n";
 
-                if (preg_replace('/insert into ([^\s]+)/i', $newsql, $reg))
-                {
-                    $cursorinsert++;
+				if (preg_replace('/insert into ([^\s]+)/i', $newsql, $reg))
+				{
+					$cursorinsert++;
 
-                    // It's an insert
-                    $table = preg_replace('/([^a-zA-Z_]+)/i', '', $reg[1]);
-                    $insertedrowid = $db->last_insert_id($table);
-                    $listofinsertedrowid[$cursorinsert] = $insertedrowid;
-                    dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
-                }
-                // 	          print '<td class="right">OK</td>';
-            } else {
-                $errno = $db->errno();
-                if (!$silent) print '<!-- Result = '.$errno.' -->'."\n";
+					// It's an insert
+					$table = preg_replace('/([^a-zA-Z_]+)/i', '', $reg[1]);
+					$insertedrowid = $db->last_insert_id($table);
+					$listofinsertedrowid[$cursorinsert] = $insertedrowid;
+					dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
+				}
+				// 	          print '<td class="right">OK</td>';
+			} else {
+				$errno = $db->errno();
+				if (!$silent) print '<!-- Result = '.$errno.' -->'."\n";
 
 				// Define list of errors we accept (array $okerrors)
-            	$okerrors = array(	// By default
+				$okerrors = array(	// By default
 					'DB_ERROR_TABLE_ALREADY_EXISTS',
 					'DB_ERROR_COLUMN_ALREADY_EXISTS',
 					'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
@@ -383,32 +383,32 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					'DB_ERROR_CANNOT_CREATE', // Qd contrainte deja existante
 					'DB_ERROR_CANT_DROP_PRIMARY_KEY',
 					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
-            		'DB_ERROR_22P02'
+					'DB_ERROR_22P02'
 				);
-                if ($okerror == 'none') $okerrors = array();
+				if ($okerror == 'none') $okerrors = array();
 
-                // Is it an error we accept
+				// Is it an error we accept
 				if (!in_array($errno, $okerrors))
 				{
-				    if (!$silent) print '<tr><td class="tdtop" colspan="2">';
-				    if (!$silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
-				    if (!$silent) print '</tr>'."\n";
-				    dol_syslog('Admin.lib::run_sql Request '.($i + 1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
-				    $error++;
+					if (!$silent) print '<tr><td class="tdtop" colspan="2">';
+					if (!$silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
+					if (!$silent) print '</tr>'."\n";
+					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
+					$error++;
 				}
-            }
+			}
 
-            if (!$silent) print '</tr>'."\n";
-        }
-    }
+			if (!$silent) print '</tr>'."\n";
+		}
+	}
 
-    if ($error == 0)
-    {
-    	if (!$silent) {
-    		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-        	print '<td class="right">'.$langs->trans("OK");
-        	//if (! empty($conf->use_javascript_ajax)) {
-	        	print '<script type="text/javascript" language="javascript">
+	if ($error == 0)
+	{
+		if (!$silent) {
+			print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+			print '<td class="right">'.$langs->trans("OK");
+			//if (! empty($conf->use_javascript_ajax)) {
+				print '<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
 					function init_trrunsql()
 					{
@@ -421,21 +421,21 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					});
 				});
 				</script>';
-	        	print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
-        	//}
-        	print '</td></tr>'."\n";
-    	}
-        $ok = 1;
-    } else {
-    	if (!$silent) {
-    		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-        	print '<td class="right"><font class="error">'.$langs->trans("KO").'</font>';
-        	print '</td></tr>'."\n";
-    	}
-        $ok = 0;
-    }
+				print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+			//}
+			print '</td></tr>'."\n";
+		}
+		$ok = 1;
+	} else {
+		if (!$silent) {
+			print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+			print '<td class="right"><font class="error">'.$langs->trans("KO").'</font>';
+			print '</td></tr>'."\n";
+		}
+		$ok = 0;
+	}
 
-    return $ok;
+	return $ok;
 }
 
 

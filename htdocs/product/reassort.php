@@ -405,19 +405,19 @@ if ($resql)
 			print price2num($product->stock_theorique, 'MS');
 			print '</td>';
 		}
-        // Units
-        if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-            print '<td class="left">'.$objp->unit_short.'</td>';
-        }
+		// Units
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			print '<td class="left">'.$objp->unit_short.'</td>';
+		}
 		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
-        print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
+		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Fields from hook
 		$parameters = array('obj'=>$objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		print '<td></td>';
-        print "</tr>\n";
+		print "</tr>\n";
 		$i++;
 	}
 

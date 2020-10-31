@@ -125,7 +125,7 @@ if ($action == 'add_payment')
 		if (!empty($line)) $pay_amount_interest = $line->amount_interest;
 		else $pay_amount_interest = price2num(GETPOST('amount_interest'));
 		$remaindertopay = price2num(GETPOST('remaindertopay'));
-		$amount =  $pay_amount_capital + $pay_amount_insurance + $pay_amount_interest;
+		$amount = $pay_amount_capital + $pay_amount_insurance + $pay_amount_interest;
 
 		// This term is allready paid
 		if (!empty($line) && !empty($line->fk_bank))
@@ -184,7 +184,7 @@ if ($action == 'add_payment')
 			}
 
 			// Update loan schedule with payment value
-			if (! $error && !empty($line))
+			if (!$error && !empty($line))
 			{
 				// If payment values are modified, recalculate schedule
 				if (($line->amount_capital <> $pay_amount_capital) || ($line->amount_insurance <> $pay_amount_insurance) || ($line->amount_interest <> $pay_amount_interest))
@@ -195,14 +195,14 @@ if ($action == 'add_payment')
 						// Update fk_bank for current line
 						if ($k == $echance)
 						{
-							$ls->lines[$k-1]->fk_bank = $payment->fk_bank;
-							$ls->lines[$k-1]->fk_payment_loan = $payment->id;
+							$ls->lines[$k - 1]->fk_bank = $payment->fk_bank;
+							$ls->lines[$k - 1]->fk_payment_loan = $payment->id;
 						}
-						$ls->lines[$k-1]->amount_capital = $v['mens'] - $v['interet'];
-						$ls->lines[$k-1]->amount_interest = $v['interet'];
-						$ls->lines[$k-1]->tms = dol_now();
-						$ls->lines[$k-1]->fk_user_modif = $user->id;
-						$result = $ls->lines[$k-1]->update($user, 0);
+						$ls->lines[$k - 1]->amount_capital = $v['mens'] - $v['interet'];
+						$ls->lines[$k - 1]->amount_interest = $v['interet'];
+						$ls->lines[$k - 1]->tms = dol_now();
+						$ls->lines[$k - 1]->fk_user_modif = $user->id;
+						$result = $ls->lines[$k - 1]->update($user, 0);
 						if ($result < 1)
 						{
 							setEventMessages(null, $ls->errors, 'errors');
@@ -300,7 +300,7 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	if (empty($datepaid))
-		if (empty($ts_temppaid)) $datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:dol_now();
+		if (empty($ts_temppaid)) $datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : dol_now();
 	else $datepayment = $ts_temppaid;
 	else $datepayment = $datepaid;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
@@ -367,7 +367,7 @@ if ($action == 'create')
 	print '<td class="right">';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.(GETPOSTISSET('amount_capital')?GETPOST('amount_capital'):$amount_capital).'">';
+		print $langs->trans("LoanCapital").': <input type="text" size="8" name="amount_capital" value="'.(GETPOSTISSET('amount_capital') ?GETPOST('amount_capital') : $amount_capital).'">';
 	}
 	else {
 		print '-';

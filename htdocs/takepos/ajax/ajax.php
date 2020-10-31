@@ -77,13 +77,13 @@ if ($action == 'getProducts') {
 	$result = $thirdparty->fetch('', '', '', $term);
 
 	if ($result && $thirdparty->id > 0) {
-	    $rows = array();
-	    	$rows[] = array(
-	    		'rowid' => $thirdparty->id,
-	    		'name' => $thirdparty->name,
-	    		'barcode' => $thirdparty->barcode,
-          'object' => 'thirdparty'
-	    	);
+		$rows = array();
+			$rows[] = array(
+				'rowid' => $thirdparty->id,
+				'name' => $thirdparty->name,
+				'barcode' => $thirdparty->barcode,
+		  'object' => 'thirdparty'
+			);
 			echo json_encode($rows);
 			exit;
 	}

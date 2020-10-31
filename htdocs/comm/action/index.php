@@ -1500,7 +1500,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '</div><div class="nowrap tagtd right">';
 		if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
 		{
-			print '<a class="cursoradd" href="'.$urltocreate.'">';	// Explicit link, usefull for nojs interfaces
+			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
 		}
