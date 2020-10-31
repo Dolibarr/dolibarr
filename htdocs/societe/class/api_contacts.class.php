@@ -519,7 +519,7 @@ class Contacts extends DolibarrApi
      * Clean sensible object datas
      *
      * @param   Object  $object     Object to clean
-     * @return  array               Array of cleaned object properties
+     * @return  Object              Object with cleaned properties
      */
     protected function _cleanObjectDatas($object)
     {

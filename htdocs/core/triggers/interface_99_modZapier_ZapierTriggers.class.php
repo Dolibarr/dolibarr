@@ -368,8 +368,8 @@ function zapierPostWebhook($url, $json)
 /**
  * Clean sensible object datas
  *
- * @param   object  $toclean    Object to clean
- * @return  array   Array of cleaned object properties
+ * @param   Object  $toclean    Object to clean
+ * @return  Object              Object with cleaned properties
  */
 function cleanObjectDatas($toclean)
 {
@@ -454,7 +454,7 @@ function cleanObjectDatas($toclean)
  * Clean sensible object datas
  *
  * @param   object  $toclean    Object to clean
- * @return  array   Array of cleaned object properties
+ * @return  Object              Object with cleaned properties
  */
 function cleanAgendaEventsDatas($toclean)
 {
