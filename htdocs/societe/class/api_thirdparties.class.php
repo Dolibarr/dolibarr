@@ -1374,7 +1374,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			if ($result->num_rows == 0) {
+			if ($result && $this->db->num_rows == 0) {
 				throw new RestException(404, 'Bank account not found');
 			}
 
@@ -1443,7 +1443,7 @@ class Thirdparties extends DolibarrApi
 
 		$result = $this->db->query($sql);
 
-		if ($result->num_rows == 0) {
+		if ($result && $this->db->num_rows == 0) {
 			throw new RestException(404, 'This thirdparty does not have any gateway attached or does not exist.');
 		}
 
@@ -1514,7 +1514,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."'";
 		$result = $this->db->query($sql);
 
-		if ($result->num_rows == 0) {
+		if ($result && $this->db->num_rows == 0) {
 			$account = new SocieteAccount($this->db);
 			if (!isset($request_data['login'])) {
 				$account->login = "";
@@ -1570,7 +1570,7 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
-		if ($result->num_rows == 0) {
+		if ($result && $this->db->num_rows == 0) {
 			if (!isset($request_data['key_account'])) {
 				throw new RestException(422, 'Unprocessable Entity: You must pass the key_account attribute in your request data !');
 			}
@@ -1595,7 +1595,7 @@ class Thirdparties extends DolibarrApi
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
 				$result = $this->db->query($sql);
 
-				if ($result->num_rows !== 0) {
+				if ($result && $this->db->num_rows !== 0) {
 					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) from $site to ".$request_data['site']." but another SocieteAccount entity already exists with this site key.");
 				}
 			}
@@ -1652,7 +1652,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '$site' ";
 		$result = $this->db->query($sql);
 
-		if ($result->num_rows == 0) {
+		if ($result && $this->db->num_rows == 0) {
 			throw new RestException(404, "This thirdparty does not have $site gateway attached or does not exist.");
 		} else {
 			// If the user tries to edit the site member, we check first if
@@ -1660,7 +1660,7 @@ class Thirdparties extends DolibarrApi
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
 				$result = $this->db->query($sql);
 
-				if ($result->num_rows !== 0)
+				if ($result && $this->db->num_rows !== 0)
 					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from $site to ".$request_data['site']." but another SocieteAccount entity already exists for this thirdparty with this site key.");
 			}
 
@@ -1705,7 +1705,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
-		if ($result->num_rows == 0) {
+		if ($result && $this->db->num_rows == 0) {
 			throw new RestException(404);
 		} else {
 			$obj = $this->db->fetch_object($result);
@@ -1724,9 +1724,9 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id ID of thirdparty
 	 *
 	 * @return void
-	 * @throws RestException(401) Unauthorized: User does not have permission to delete thirdparties gateways
-	 * @throws RestException(404) Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
-	 * @throws RestException(500) Internal Server Error: Error deleting SocieteAccount entity
+	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties gateways
+	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
+	 * @throws RestException 500 Internal Server Error: Error deleting SocieteAccount entity
 	 *
 	 * @url DELETE {id}/gateways
 	 */
@@ -1747,7 +1747,7 @@ class Thirdparties extends DolibarrApi
 
 		$result = $this->db->query($sql);
 
-		if ($result->num_rows == 0) {
+		if ($result && $this->db->num_rows == 0) {
 			throw new RestException(404, 'This third party does not have any gateway attached or does not exist.');
 		} else {
 			$i = 0;
