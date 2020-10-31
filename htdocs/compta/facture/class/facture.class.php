@@ -95,6 +95,9 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'ref';
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
 
 	public $author;
@@ -111,6 +114,10 @@ class Facture extends CommonInvoice
 
 	public $date; // Date invoice
 	public $datem;
+
+	/**
+	 * @var string customer ref
+	 */
 	public $ref_client;
 
 	/**
@@ -169,7 +176,6 @@ class Facture extends CommonInvoice
 
 	public $line;
 	public $extraparams = array();
-	public $specimen;
 
 	public $fac_rec;
 
