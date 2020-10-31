@@ -336,6 +336,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int Bank account ID
+	 * @deprecated
 	 * @see $fk_account
 	 */
 	public $fk_bank;
