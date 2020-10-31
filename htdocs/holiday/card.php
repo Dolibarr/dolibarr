@@ -153,7 +153,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 			} else {
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-					if (! in_array($fuserid, $childids)) {
+					if (!in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -204,7 +204,7 @@ if (empty($reshook))
 			$nbopenedday = num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 			if ($nbopenedday < 0.5)
 			{
-				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');		// No working day
+				setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors'); // No working day
 				$error++;
 				$action = 'create';
 			}

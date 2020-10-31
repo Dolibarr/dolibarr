@@ -830,12 +830,12 @@ class modFournisseur extends DolibarrModules
 
 		//Import Purchase Orders
 		$r++;
-		$this->import_code[$r] = 'commande_fournisseur_' . $r;
+		$this->import_code[$r] = 'commande_fournisseur_'.$r;
 		$this->import_label[$r] = 'Purchase Orders';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
-		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX . 'commande_fournisseur', 'extra' => MAIN_DB_PREFIX . 'commande_fournisseur_extrafields'];
-		$this->import_tables_creator_array[$r] = ['c' => 'fk_user_author'];	// Fields to store import user id
+		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields'];
+		$this->import_tables_creator_array[$r] = ['c' => 'fk_user_author']; // Fields to store import user id
 		$this->import_fields_array[$r] = [
 			'c.ref'               => 'Document Ref*',
 			'c.ref_supplier'      => 'RefSupplier',
@@ -863,7 +863,7 @@ class modFournisseur extends DolibarrModules
 			'c.model_pdf'         => 'Model'
 		];
 
-		if (! empty($conf->multicurrency->enabled)) {
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['c.multicurrency_code']      = 'Currency';
 			$this->import_fields_array[$r]['c.multicurrency_tx']        = 'CurrencyRate';
 			$this->import_fields_array[$r]['c.multicurrency_total_ht']  = 'MulticurrencyAmountHT';
@@ -873,23 +873,23 @@ class modFournisseur extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, " . $conf->entity . ")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
+				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 				$import_extrafield_sample[$fieldname] = $fieldlabel;
 			}
 		}
 		// End add extra fields
 
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseur'];
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande_fournisseur'];
 		$this->import_regex_array[$r] = [
 			'c.ref' => '(PO\d{4}-\d{4}|PORDER.{1,32}$|PROV.{1,32}$)',
-			'c.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency'
+			'c.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		];
 
 		$this->import_updatekeys_array[$r] = ['c.ref' => 'Ref'];
@@ -917,7 +917,7 @@ class modFournisseur extends DolibarrModules
 		$this->import_label[$r] = 'PO Lines';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
-		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX . 'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX . 'commande_fournisseurdet_extrafields'];
+		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields'];
 		$this->import_fields_array[$r] = [
 			'cd.fk_commande'    => 'Document Ref*',
 			'cd.fk_parent_line' => 'PrParentLine',
@@ -941,7 +941,7 @@ class modFournisseur extends DolibarrModules
 			'cd.fk_unit'        => 'Unit'
 		];
 
-		if (! empty($conf->multicurrency->enabled)) {
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['cd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['cd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -950,22 +950,22 @@ class modFournisseur extends DolibarrModules
 		}
 
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM " . MAIN_DB_PREFIX . "extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, " . $conf->entity . ")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.' . $obj->name;
+				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel . ($obj->fieldrequired ? '*' : '');
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
 			}
 		}
 		// End add extra fields
 
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-' . MAIN_DB_PREFIX . 'commande_fournisseurdet'];
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande_fournisseurdet'];
 		$this->import_regex_array[$r] = [
 			'cd.product_type'       => '[0|1]$',
-			'cd.fk_product'         => 'rowid@' . MAIN_DB_PREFIX . 'product',
-			'cd.multicurrency_code' => 'code@' . MAIN_DB_PREFIX . 'multicurrency'
+			'cd.fk_product'         => 'rowid@'.MAIN_DB_PREFIX.'product',
+			'cd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		];
 		$this->import_updatekeys_array[$r] = ['cd.fk_commande' => 'Purchase Order Id'];
 		$this->import_convertvalue_array[$r] = [

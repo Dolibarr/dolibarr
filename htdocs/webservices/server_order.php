@@ -476,13 +476,13 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 			else {
 				$error++;
 				$errorcode = 'NOT_FOUND';
-                $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
 		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED';
-            $errorlabel = 'User does not have permission for this request';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -553,7 +553,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 				{
 					$error++;
 					$errorcode = 'PERMISSION_DENIED';
-                    $errorlabel = $order->socid.' User does not have permission for this request';
+					$errorlabel = $order->socid.' User does not have permission for this request';
 				}
 
 				if (!$error)
@@ -675,7 +675,7 @@ function createOrder($authentication, $order)
 	// Init and check authentication
 	$objectresp = array();
 	$errorcode = '';
-    $errorlabel = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -818,7 +818,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 	// Init and check authentication
 	$objectresp = array();
 	$errorcode = '';
-    $errorlabel = '';
+	$errorlabel = '';
 	$error = 0;
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);

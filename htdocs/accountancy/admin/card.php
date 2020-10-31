@@ -108,16 +108,16 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			setEventMessages($object->error, $object->errors, 'errors');
 		} elseif ($res < 0)
 		{
-		    $error++;
-		    setEventMessages($object->error, $object->errors, 'errors');
-		    $action = "create";
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = "create";
 		}
 		if (!$error)
 		{
-		    setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
-		    $urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
-		    header("Location: ".$urltogo);
-		    exit;
+			setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
+			$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
+			header("Location: ".$urltogo);
+			exit;
 		}
 	}
 } elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
@@ -158,15 +158,15 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$result = $object->update($user);
 
 		if ($result > 0) {
-		    $urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
-		    header("Location: ".$urltogo);
+			$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+			header("Location: ".$urltogo);
 			exit();
 		} else {
 			$mesg = $object->error;
 		}
 	} else {
-	    $urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
-	    header("Location: ".$urltogo);
+		$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+		header("Location: ".$urltogo);
 		exit();
 	}
 } elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {

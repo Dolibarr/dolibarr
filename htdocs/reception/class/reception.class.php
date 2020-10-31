@@ -404,7 +404,7 @@ class Reception extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;	// deprecated
+				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
@@ -1219,14 +1219,14 @@ class Reception extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    public function setDeliveryDate($user, $delivery_date)
+	public function setDeliveryDate($user, $delivery_date)
 	{
 		// phpcs:enable
 		if ($user->rights->reception->creer)
@@ -1256,7 +1256,7 @@ class Reception extends CommonObject
 	 *
 	 * 	@return	void
 	 */
-    public function fetch_delivery_methods()
+	public function fetch_delivery_methods()
 	{
 		// phpcs:enable
 		global $langs;

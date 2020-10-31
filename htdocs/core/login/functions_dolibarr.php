@@ -123,11 +123,11 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				{
 					$login = $obj->login;
 				} else {
-				    sleep(2); // Anti brut force protection
-				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
+					sleep(2); // Anti brut force protection
+					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
 
 					// Load translation files required by the page
-                    $langs->loadLangs(array('main', 'errors'));
+					$langs->loadLangs(array('main', 'errors'));
 
 					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 				}
@@ -152,7 +152,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				sleep(1);
 
 				// Load translation files required by the page
-                $langs->loadLangs(array('main', 'errors'));
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 			}

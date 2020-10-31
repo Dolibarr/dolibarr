@@ -235,17 +235,17 @@ if ($action == 'create' || empty($action))
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total - $sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    print dol_get_fiche_end();
+	print dol_get_fiche_end();
 
-    print dol_get_fiche_head();
+	print dol_get_fiche_head();
 
-    print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent">'."\n";
 
-    print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 	$datepayment = ($datepaid == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepaid);
 	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1);

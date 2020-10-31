@@ -119,7 +119,7 @@ if (!$base)
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
 				if (isset($obj->Engine) && $obj->Engine == "MyISAM") {
-				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDb</a></td>';
+					print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDb</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}

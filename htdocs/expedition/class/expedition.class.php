@@ -338,10 +338,10 @@ class Expedition extends CommonObject
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql.= ", ".(is_numeric($this->weight)?$this->weight:'NULL');
-		$sql.= ", ".(is_numeric($this->sizeS)?$this->sizeS:'NULL');	// TODO Should use this->trueDepth
-		$sql.= ", ".(is_numeric($this->sizeW)?$this->sizeW:'NULL');	// TODO Should use this->trueWidth
-		$sql.= ", ".(is_numeric($this->sizeH)?$this->sizeH:'NULL');	// TODO Should use this->trueHeight
+		$sql .= ", ".(is_numeric($this->weight) ? $this->weight : 'NULL');
+		$sql .= ", ".(is_numeric($this->sizeS) ? $this->sizeS : 'NULL'); // TODO Should use this->trueDepth
+		$sql .= ", ".(is_numeric($this->sizeW) ? $this->sizeW : 'NULL'); // TODO Should use this->trueWidth
+		$sql .= ", ".(is_numeric($this->sizeH) ? $this->sizeH : 'NULL'); // TODO Should use this->trueHeight
 		$sql .= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
 		$sql .= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -1164,32 +1164,32 @@ class Expedition extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-		$error=0;
-		$this->error='';
+		$error = 0;
+		$this->error = '';
 
 		$this->db->begin();
 
 		// Add a protection to refuse deleting if shipment has at least one delivery
-		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
+		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery'); // Get deliveries linked to this shipment
 		if (count($this->linkedObjectsIds) > 0)
 		{
-			$this->error='ErrorThereIsSomeDeliveries';
+			$this->error = 'ErrorThereIsSomeDeliveries';
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('SHIPPING_CANCEL', $user);
+				$result = $this->call_trigger('SHIPPING_CANCEL', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 		}
 
 		// Stock control
-		if (! $error && $conf->stock->enabled &&
+		if (!$error && $conf->stock->enabled &&
 			(($conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > self::STATUS_DRAFT) ||
 			 ($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE && $this->statut == self::STATUS_CLOSED && $also_update_stock)))
 		{
@@ -1738,7 +1738,7 @@ class Expedition extends CommonObject
 					$line->total_ttc	 	+= $tabprice[2];
 					$line->total_tva	 	+= $tabprice[1];
 				}
-                $line->fetch_optionals();
+				$line->fetch_optionals();
 				$i++;
 				$originline = $obj->fk_origin_line;
 			}
@@ -1972,7 +1972,7 @@ class Expedition extends CommonObject
 		return $this->setDeliveryDate($user, $delivery_date);
 	}
 
-    /**
+	/**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet user that modify
@@ -2010,7 +2010,7 @@ class Expedition extends CommonObject
 	 */
 	public function fetch_delivery_methods()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$this->meths = array();
 
@@ -2076,7 +2076,7 @@ class Expedition extends CommonObject
 	 */
 	public function update_delivery_method($id = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if ($id == '')
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
@@ -2094,7 +2094,7 @@ class Expedition extends CommonObject
 		if ($resql < 0) dol_print_error($this->db, '');
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Activate delivery method.
 	 *
@@ -2103,7 +2103,7 @@ class Expedition extends CommonObject
 	 */
 	public function activ_delivery_method($id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
 		$sql .= ' WHERE rowid='.$id;
 
@@ -2120,7 +2120,7 @@ class Expedition extends CommonObject
 	 */
 	public function disable_delivery_method($id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
 		$sql .= ' WHERE rowid='.$id;
 

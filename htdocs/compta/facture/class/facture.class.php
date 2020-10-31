@@ -1597,7 +1597,7 @@ class Facture extends CommonInvoice
 				$this->user_author			= $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
 				$this->model_pdf = $obj->model_pdf;
-				$this->modelpdf = $obj->model_pdf;				// deprecated
+				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
@@ -4860,11 +4860,11 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->ref = $objp->product_ref; // deprecated
 
-			$this->product_ref          = $objp->product_ref;
+			$this->product_ref = $objp->product_ref;
 			$this->product_label		= $objp->product_label;
 			$this->product_desc			= $objp->product_desc;
 
-			$this->fk_unit				= $objp->fk_unit;
+			$this->fk_unit = $objp->fk_unit;
 			$this->fk_user_modif		= $objp->fk_user_modif;
 			$this->fk_user_author = $objp->fk_user_author;
 

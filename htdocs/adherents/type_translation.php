@@ -154,9 +154,9 @@ $titre = $langs->trans("MemberType".$object->type);
 // Calculate $cnt_trans
 $cnt_trans = 0;
 if (!empty($object->multilangs)) {
-    foreach ($object->multilangs as $key => $value) {
-        $cnt_trans++;
-    }
+	foreach ($object->multilangs as $key => $value) {
+		$cnt_trans++;
+	}
 }
 
 
@@ -179,10 +179,10 @@ print dol_get_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-    if ($user->rights->produit->creer || $user->rights->service->creer) {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
-        if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
-    }
+	if ($user->rights->produit->creer || $user->rights->service->creer) {
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+		if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+	}
 }
 
 print "\n</div>\n";
@@ -262,7 +262,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
-    print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
+	print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';

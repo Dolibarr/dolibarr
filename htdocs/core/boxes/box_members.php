@@ -32,28 +32,28 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_members extends ModeleBoxes
 {
-    public $boxcode = "lastmembers";
-    public $boximg = "object_user";
-    public $boxlabel = "BoxLastMembers";
-    public $depends = array("adherent");
+	public $boxcode = "lastmembers";
+	public $boximg = "object_user";
+	public $boxlabel = "BoxLastMembers";
+	public $depends = array("adherent");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
-    public $enabled = 1;
+	public $param;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -72,7 +72,7 @@ class box_members extends ModeleBoxes
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -81,8 +81,8 @@ class box_members extends ModeleBoxes
 
 		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-        $memberstatic = new Adherent($this->db);
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$memberstatic = new Adherent($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
@@ -110,12 +110,12 @@ class box_members extends ModeleBoxes
 					$memberstatic->lastname = $objp->lastname;
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->id = $objp->rowid;
-                    $memberstatic->ref = $objp->rowid;
-                    $memberstatic->photo = $objp->photo;
-                    $memberstatic->gender = $objp->gender;
-                    $memberstatic->email = $objp->email;
-                    $memberstatic->morphy = $objp->morphy;
-                    $memberstatic->company = $objp->company;
+					$memberstatic->ref = $objp->rowid;
+					$memberstatic->photo = $objp->photo;
+					$memberstatic->gender = $objp->gender;
+					$memberstatic->email = $objp->email;
+					$memberstatic->morphy = $objp->morphy;
+					$memberstatic->company = $objp->company;
 
 					if (!empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
@@ -125,52 +125,52 @@ class box_members extends ModeleBoxes
 						$memberstatic->name = $objp->company;
 					}
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $memberstatic->getNomUrl(-1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $memberstatic->getNomUrl(-1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $memberstatic->company,
-                        'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $memberstatic->company,
+						'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, "day"),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($datem, "day"),
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $this->db->jdate($objp->date_end_subscription), 3),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $this->db->jdate($objp->date_end_subscription), 3),
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0)
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="center"',
-                        'text'=>$langs->trans("NoRecordedCustomers"),
-                    );
+				if ($num == 0)
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center"',
+						'text'=>$langs->trans("NoRecordedCustomers"),
+					);
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-    }
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -180,8 +180,8 @@ class box_members extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

@@ -41,9 +41,9 @@ if (isset($user->socid) && $user->socid > 0)
 }
 
 // Maximum elements of the tables
-$maxDraftCount		= empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxLatestEditCount	= 5;
-$maxOpenCount		= empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxLatestEditCount = 5;
+$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 /*
 * View
@@ -263,21 +263,21 @@ function getDraftTable($maxCount = 500, $socid = 0)
 		return $result;
 	}
 
-	$objectstatic	= new Facture($db);
-	$companystatic	= new Societe($db);
-	$nbofloop		= min($num, $maxCount);
-	$total			= 0;
-	$i				= 0;
+	$objectstatic = new Facture($db);
+	$companystatic = new Societe($db);
+	$nbofloop = min($num, $maxCount);
+	$total = 0;
+	$i = 0;
 
 	while ($i < $nbofloop)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$objectstatic->id	= $obj->rowid;
-		$objectstatic->ref	= $obj->ref;
+		$objectstatic->id = $obj->rowid;
+		$objectstatic->ref = $obj->ref;
 
-		$companystatic->id		= $obj->socid;
-		$companystatic->name	= $obj->socname;
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->socname;
 		$companystatic->client	= $obj->client;
 		$companystatic->canvas	= $obj->canvas;
 
@@ -344,9 +344,9 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder centpercent">';
 
-	$result .=  '<tr class="liste_titre">';
-	$result .=  '<td colspan="4">'.$langs->trans("LastCustomersBills", $maxCount).'</td>';
-	$result .=  '</tr>';
+	$result .= '<tr class="liste_titre">';
+	$result .= '<td colspan="4">'.$langs->trans("LastCustomersBills", $maxCount).'</td>';
+	$result .= '</tr>';
 
 	if ($num < 1)
 	{
@@ -355,47 +355,47 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 		return $result;
 	}
 
-	$formfile		= new FormFile($db);
-	$objectstatic	= new Facture($db);
-	$companystatic	= new Societe($db);
-	$i				= 0;
+	$formfile = new FormFile($db);
+	$objectstatic = new Facture($db);
+	$companystatic = new Societe($db);
+	$i = 0;
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$objectstatic->id		= $obj->rowid;
-		$objectstatic->ref		= $obj->ref;
-		$objectstatic->paye		= $obj->paye;
-		$objectstatic->statut	= $obj->status;
+		$objectstatic->id = $obj->rowid;
+		$objectstatic->ref = $obj->ref;
+		$objectstatic->paye = $obj->paye;
+		$objectstatic->statut = $obj->status;
 
-		$companystatic->id		= $obj->socid;
-		$companystatic->name	= $obj->socname;
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->socname;
 		$companystatic->client	= $obj->client;
 		$companystatic->canvas	= $obj->canvas;
 
 		$filename = dol_sanitizeFileName($obj->ref);
 		$filedir = $conf->propal->multidir_output[$obj->entity].'/'.$filename;
 
-		$result .=  '<tr width="20%" class="nowrap">';
+		$result .= '<tr width="20%" class="nowrap">';
 
-		$result .=  '<td class="oddeven">';
-		$result .=  '<table class="nobordernopadding">';
-		$result .=  '<tr class="nocellnopadd">';
+		$result .= '<td class="oddeven">';
+		$result .= '<table class="nobordernopadding">';
+		$result .= '<tr class="nocellnopadd">';
 
-		$result .=  '<td width="96" class="nobordernopadding nowrap">'.$objectstatic->getNomUrl(1).'</td>';
-		$result .=  '<td width="16" class="nobordernopadding nowrap">&nbsp;</td>';
-		$result .=  '<td width="16" class="nobordernopadding right">'.$formfile->getDocumentsLink($objectstatic->element, $filename, $filedir).'</td>';
+		$result .= '<td width="96" class="nobordernopadding nowrap">'.$objectstatic->getNomUrl(1).'</td>';
+		$result .= '<td width="16" class="nobordernopadding nowrap">&nbsp;</td>';
+		$result .= '<td width="16" class="nobordernopadding right">'.$formfile->getDocumentsLink($objectstatic->element, $filename, $filedir).'</td>';
 
-		$result .=  '</tr>';
-		$result .=  '</table>';
-		$result .=  '</td>';
+		$result .= '</tr>';
+		$result .= '</table>';
+		$result .= '</td>';
 
-		$result .=  '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
-		$result .=  '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-		$result .=  '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+		$result .= '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
 
-		$result .=  '</tr>';
+		$result .= '</tr>';
 
 		$i++;
 	}
@@ -457,23 +457,23 @@ function getOpenTable($maxCount = 500, $socid = 0)
 		return $result;
 	}
 
-	$objectstatic	= new Facture($db);
-	$companystatic	= new Societe($db);
+	$objectstatic = new Facture($db);
+	$companystatic = new Societe($db);
 	$formfile		= new FormFile($db);
 	$nbofloop		= min($num, $maxCount);
-	$now			= dol_now();
-	$total			= 0;
-	$i				= 0;
+	$now = dol_now();
+	$total = 0;
+	$i = 0;
 
 	while ($i < $nbofloop)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$objectstatic->id= $obj->id;
-		$objectstatic->ref	= $obj->ref;
+		$objectstatic->id = $obj->id;
+		$objectstatic->ref = $obj->ref;
 
-		$companystatic->id		= $obj->socid;
-		$companystatic->name	= $obj->socname;
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->socname;
 		$companystatic->client	= $obj->client;
 		$companystatic->canvas	= $obj->canvas;
 

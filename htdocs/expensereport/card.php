@@ -230,7 +230,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
 		} else {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
-				if (! in_array($object->fk_user_author, $childids)) {
+				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 				}

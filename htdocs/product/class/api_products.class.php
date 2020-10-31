@@ -1857,6 +1857,6 @@ class Products extends DolibarrApi
 			}
 		}
 
-        return $this->_cleanObjectDatas($this->product);
-    }
+		return $this->_cleanObjectDatas($this->product);
+	}
 }

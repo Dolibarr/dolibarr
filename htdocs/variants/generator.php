@@ -112,9 +112,9 @@ if ($_POST)
 			{
 				$res = $combination->createProductCombination($user, $product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
-				    $error++;
-				    setEventMessages($combination->error, $combination->errors, 'errors');
-				    break;
+					$error++;
+					setEventMessages($combination->error, $combination->errors, 'errors');
+					break;
 				}
 			}
 
@@ -378,8 +378,8 @@ if (!empty($id) || !empty($ref)) {
 
 	<?php
 
-    // End of page
-    llxFooter();
+	// End of page
+	llxFooter();
 }
 
 $db->close();

@@ -114,7 +114,7 @@ if ($conf->use_javascript_ajax)
 		$listofstatus = array(0, 1, 3, 9);
 		foreach ($listofstatus as $status)
 		{
-			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentjobposition->LibStatut($status, 1), ENT_QUOTES|ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentjobposition->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 			if ($status == RecruitmentJobPosition::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
 			if ($status == RecruitmentJobPosition::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus4;
 			if ($status == RecruitmentJobPosition::STATUS_RECRUITED) $colorseries[$status] = $badgeStatus6;
@@ -190,7 +190,7 @@ if ($conf->use_javascript_ajax)
 		$listofstatus = array(0, 1, 3, 5, 8, 9);
 		foreach ($listofstatus as $status)
 		{
-			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentcandidature->LibStatut($status, 1), ENT_QUOTES|ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+			$dataseries[] = array(dol_html_entity_decode($staticrecruitmentcandidature->LibStatut($status, 1), ENT_QUOTES | ENT_HTML5), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 			if ($status == RecruitmentCandidature::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
 			if ($status == RecruitmentCandidature::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
 			if ($status == RecruitmentCandidature::STATUS_CONTRACT_PROPOSED) $colorseries[$status] = $badgeStatus4;

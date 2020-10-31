@@ -80,11 +80,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensere
 $sql .= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
+	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-    $childids = $user->getAllChildIds();
-    $childids[] = $user->id;
-    $sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$childids = $user->getAllChildIds();
+	$childids[] = $user->id;
+	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 
 $sql .= " GROUP BY tf.code, tf.label";
@@ -92,22 +92,22 @@ $sql .= " GROUP BY tf.code, tf.label";
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
-    $i = 0;
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
+	$num = $db->num_rows($result);
+	$i = 0;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
 
-        $somme[$objp->code] = $objp->km;
-        $nb[$objp->code] = $objp->nb;
-        $label[$objp->code] = $objp->label;
-        $totalnb += $objp->nb;
-        $totalsum += $objp->km;
-        $i++;
-    }
-    $db->free($result);
+		$somme[$objp->code] = $objp->km;
+		$nb[$objp->code] = $objp->nb;
+		$label[$objp->code] = $objp->label;
+		$totalnb += $objp->nb;
+		$totalsum += $objp->km;
+		$i++;
+	}
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -125,26 +125,26 @@ print "</tr>\n";
 $listoftype = $tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
-    $dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
+	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr><td class="center" colspan="4">';
+	print '<tr><td class="center" colspan="4">';
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->setHeight(350);
-    $dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT) ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
-    $dolgraph->setShowLegend(2);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setHeight('200');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($totalnb ? 0 : 1);
+	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	$dolgraph = new DolGraph();
+	$dolgraph->SetData($dataseries);
+	$dolgraph->setHeight(350);
+	$dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT) ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
+	$dolgraph->setShowLegend(2);
+	$dolgraph->setShowPercent(1);
+	$dolgraph->SetType(array('pie'));
+	$dolgraph->setHeight('200');
+	$dolgraph->draw('idgraphstatus');
+	print $dolgraph->show($totalnb ? 0 : 1);
 
-    print '</td></tr>';
+	print '</td></tr>';
 }
 
 print '<tr class="liste_total">';
@@ -172,11 +172,11 @@ if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
+	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-    $childids = $user->getAllChildIds();
-    $childids[] = $user->id;
-    $sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$childids = $user->getAllChildIds();
+	$childids[] = $user->id;
+	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 $sql .= ' AND d.entity IN ('.getEntity('expensereport').')';
 if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -187,56 +187,56 @@ $sql .= $db->plimit($max, 0);
 $result = $db->query($sql);
 if ($result)
 {
-    $var = false;
-    $num = $db->num_rows($result);
+	$var = false;
+	$num = $db->num_rows($result);
 
-    $i = 0;
+	$i = 0;
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
-    print '<th class="right">'.$langs->trans("AmountHT").'</th>';
-    print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
-    print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-    print '<th>&nbsp;</th>';
-    print '</tr>';
-    if ($num)
-    {
-        $total_ttc = $totalam = $total = 0;
+	print '<tr class="liste_titre">';
+	print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
+	print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+	print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+	print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
+	print '<th>&nbsp;</th>';
+	print '</tr>';
+	if ($num)
+	{
+		$total_ttc = $totalam = $total = 0;
 
-        $expensereportstatic = new ExpenseReport($db);
-        $userstatic = new User($db);
-        while ($i < $num && $i < $max)
-        {
-            $obj = $db->fetch_object($result);
-            $expensereportstatic->id = $obj->rowid;
-            $expensereportstatic->ref = $obj->ref;
-            $userstatic->id = $obj->uid;
-            $userstatic->admin = $obj->admin;
-            $userstatic->email = $obj->email;
-            $userstatic->lastname = $obj->lastname;
-            $userstatic->firstname = $obj->firstname;
-            $userstatic->login = $obj->login;
-            $userstatic->statut = $obj->statut;
-            $userstatic->photo = $obj->photo;
-            print '<tr class="oddeven">';
-            print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
-            print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-            print '<td class="right">'.price($obj->total_ht).'</td>';
-            print '<td class="right">'.price($obj->total_ttc).'</td>';
-            print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-            print '<td class="right">';
+		$expensereportstatic = new ExpenseReport($db);
+		$userstatic = new User($db);
+		while ($i < $num && $i < $max)
+		{
+			$obj = $db->fetch_object($result);
+			$expensereportstatic->id = $obj->rowid;
+			$expensereportstatic->ref = $obj->ref;
+			$userstatic->id = $obj->uid;
+			$userstatic->admin = $obj->admin;
+			$userstatic->email = $obj->email;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			$userstatic->login = $obj->login;
+			$userstatic->statut = $obj->statut;
+			$userstatic->photo = $obj->photo;
+			print '<tr class="oddeven">';
+			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
+			print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+			print '<td class="right">'.price($obj->total_ht).'</td>';
+			print '<td class="right">'.price($obj->total_ttc).'</td>';
+			print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+			print '<td class="right">';
 			print $expensereportstatic->LibStatut($obj->fk_status, 3);
-            print '</td>';
-            print '</tr>';
+			print '</td>';
+			print '</tr>';
 
-            $i++;
-        }
-    } else {
-        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    }
-    print '</table></div><br>';
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	}
+	print '</table></div><br>';
 } else dol_print_error($db);
 
 print '</div></div></div>';

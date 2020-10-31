@@ -86,32 +86,32 @@ if ($action == 'send' && !$_POST['cancel'])
 	if (!empty($formsms->error))
 	{
 		setEventMessages($formsms->error, $formsms->errors, 'errors');
-	    $action = 'test';
-	    $error++;
+		$action = 'test';
+		$error++;
 	}
-    if (empty($body))
-    {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
-        $action = 'test';
-        $error++;
-    }
+	if (empty($body))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
+		$action = 'test';
+		$error++;
+	}
 	if (empty($smsfrom) || !str_replace('+', '', $smsfrom))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
-        $action = 'test';
+		$action = 'test';
 		$error++;
 	}
 	if (empty($sendto) || !str_replace('+', '', $sendto))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
-        $action = 'test';
+		$action = 'test';
 		$error++;
 	}
 	if (!$error)
 	{
 		// Make substitutions into message
-        complete_substitutions_array($substitutionarrayfortest, $langs);
-	    $body = make_substitutions($body, $substitutionarrayfortest);
+		complete_substitutions_array($substitutionarrayfortest, $langs);
+		$body = make_substitutions($body, $substitutionarrayfortest);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
@@ -180,7 +180,7 @@ if ($action == 'edit')
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
-    print '</td></tr>';
+	print '</td></tr>';
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
@@ -259,9 +259,9 @@ if ($action == 'edit')
 
 	if (count($listofmethods) && !empty($conf->global->MAIN_SMS_SENDMODE))
 	{
-	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	} else {
-        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
 
@@ -298,9 +298,9 @@ if ($action == 'edit')
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 		$formsms = new FormSms($db);
-        $formsms->fromtype = 'user';
-        $formsms->fromid = $user->id;
-        $formsms->fromsms = (GETPOSTISSET('fromsms') ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->fromtype = 'user';
+		$formsms->fromid = $user->id;
+		$formsms->fromsms = (GETPOSTISSET('fromsms') ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;

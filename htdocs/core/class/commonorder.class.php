@@ -89,7 +89,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * @deprecated
 	 * @see $subprice
 	 */
-    public $price;
+	public $price;
 
 	/**
 	 * Unit price before taxes

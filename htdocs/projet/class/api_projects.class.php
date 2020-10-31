@@ -359,18 +359,18 @@ class Projects extends DolibarrApi
     }
     */
 
-    /**
-     * Update a task to given project
-     *
-     * @param int   $id             Id of project to update
-     * @param int   $taskid         Id of task to update
-     * @param array $request_data   Projectline data
-     *
-     * @url	PUT {id}/tasks/{taskid}
-     *
-     * @return object
-     */
-    /*
+	/**
+	 * Update a task to given project
+	 *
+	 * @param int   $id             Id of project to update
+	 * @param int   $taskid         Id of task to update
+	 * @param array $request_data   Projectline data
+	 *
+	 * @url	PUT {id}/tasks/{taskid}
+	 *
+	 * @return object
+	 */
+	/*
     public function putLine($id, $lineid, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {

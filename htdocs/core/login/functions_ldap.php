@@ -56,7 +56,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		sleep(1);
 
 		// Load translation files required by the page
-        $langs->loadLangs(array('main', 'other'));
+		$langs->loadLangs(array('main', 'other'));
 
 		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->trans("TryAnotherConnectionMode");
 		return;
@@ -234,7 +234,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				sleep(1);
 
 				// Load translation files required by the page
-                $langs->loadLangs(array('main', 'other'));
+				$langs->loadLangs(array('main', 'other'));
 
 				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 			}
@@ -257,7 +257,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			sleep(2); // Anti brut force protection
 
 			// Load translation files required by the page
-            $langs->loadLangs(array('main', 'other', 'errors'));
+			$langs->loadLangs(array('main', 'other', 'errors'));
 			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->trans("ErrorBadLoginPassword"));
 		}
 

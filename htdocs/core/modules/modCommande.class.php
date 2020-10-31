@@ -145,7 +145,7 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'order_advance';
-        $this->rights[$r][5] = 'send';
+		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 87;
@@ -205,11 +205,11 @@ class modCommande extends DolibarrModules
 		);
 		if (!empty($conf->multicurrency->enabled))
 		{
-		    $this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
-		    $this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
-		    $this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
-		    $this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
-		    $this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
@@ -426,7 +426,7 @@ class modCommande extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

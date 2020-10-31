@@ -37,9 +37,9 @@ $langs->load("stripe@stripe");
 class ActionsStripeconnect
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	private $config = array();
 
@@ -53,10 +53,10 @@ class ActionsStripeconnect
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
 	/**
@@ -65,10 +65,10 @@ class ActionsStripeconnect
 	 * @param	array	$parameters		Parameters
 	 * @param	Object	$object			Object
 	 * @param	string	$action			Action
-     * @return bool
+	 * @return bool
 	 */
-    public function formObjectOptions($parameters, &$object, &$action)
-    {
+	public function formObjectOptions($parameters, &$object, &$action)
+	{
 		global $db, $conf, $user, $langs, $form;
 
 		if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
@@ -160,7 +160,7 @@ class ActionsStripeconnect
 			$this->resprints .= '</td></tr>';
 		}
 		return 0;
-    }
+	}
 
 	/**
 	 * addMoreActionsButtons
@@ -170,8 +170,8 @@ class ActionsStripeconnect
 	 * @param string	$action		action
 	 * @return int					0
 	 */
-    public function addMoreActionsButtons($parameters, &$object, &$action)
-    {
+	public function addMoreActionsButtons($parameters, &$object, &$action)
+	{
 		global $db, $conf, $user, $langs, $form;
 		if (is_object($object) && $object->element == 'facture') {
 			// On verifie si la facture a des paiements
@@ -220,5 +220,5 @@ class ActionsStripeconnect
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("StripeAutoSubscription")).'">'.$langs->trans("StripeAutoSubscription").'</a>';
 		}
 		return 0;
-    }
+	}
 }

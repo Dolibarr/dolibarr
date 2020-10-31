@@ -31,20 +31,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_ficheinter extends ModeleBoxes
 {
-    public $boxcode = "ficheinter";
-    public $boximg = "object_intervention";
-    public $boxlabel = "BoxFicheInter";
-    public $depends = array("ficheinter"); // conf->contrat->enabled
+	public $boxcode = "ficheinter";
+	public $boximg = "object_intervention";
+	public $boxlabel = "BoxFicheInter";
+	public $depends = array("ficheinter"); // conf->contrat->enabled
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -55,11 +55,11 @@ class box_ficheinter extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->ficheinter->lire);
+		$this->hidden = !($user->rights->ficheinter->lire);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class box_ficheinter extends ModeleBoxes
 	 *
 	 *  @param	int		$max        Maximum number of records to load
 	 *  @return	void
-	*/
+	 */
 	public function loadBox($max = 10)
 	{
 		global $user, $langs, $conf;
@@ -120,26 +120,26 @@ class box_ficheinter extends ModeleBoxes
 					$companystatic->email = $objp->semail;
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $ficheinterstatic->getNomUrl(1),
-                        'asis' => 1,
+						'td' => 'class="nowraponall"',
+						'text' => $ficheinterstatic->getNomUrl(1),
+						'asis' => 1,
 					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $companystatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $companystatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datec, 'day'),
-                    );
+						'td' => 'class="right"',
+						'text' => dol_print_date($datec, 'day'),
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="nowrap right"',
-                        'text' => $ficheinterstatic->getLibStatut(3),
-                        'asis' => 1,
+						'td' => 'class="nowrap right"',
+						'text' => $ficheinterstatic->getLibStatut(3),
+						'asis' => 1,
 					);
 
 					$i++;
@@ -153,15 +153,15 @@ class box_ficheinter extends ModeleBoxes
 				$this->db->free($resql);
 			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-			    'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
@@ -174,8 +174,8 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

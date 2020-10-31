@@ -86,12 +86,12 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    't.ref'=>"Ref",
-    't.lieu'=>"LocationSummary",
-    't.description'=>"Description",
-    't.address'=>"Address",
-    't.zip'=>'Zip',
-    't.town'=>'Town',
+	't.ref'=>"Ref",
+	't.lieu'=>"LocationSummary",
+	't.description'=>"Description",
+	't.address'=>"Address",
+	't.zip'=>'Zip',
+	't.town'=>'Town',
 	't.phone'=>'Phone',
 	't.fax'=>'Fax',
 );

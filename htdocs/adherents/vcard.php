@@ -66,7 +66,7 @@ $v->setPhoneNumber($adherent->phone_pro, "TYPE=WORK;VOICE");
 $v->setPhoneNumber($adherent->phone_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($adherent->fax, "TYPE=WORK;FAX");
 
-$country = $adherent->country_code ? $adherent->country : '' ;
+$country = $adherent->country_code ? $adherent->country : '';
 
 $v->setAddress("", "", $adherent->address, $adherent->town, $adherent->state, $adherent->zip, $country, "TYPE=WORK;POSTAL");
 $v->setLabel("", "", $adherent->address, $adherent->town, $adherent->state, $adherent->zip, $country, "TYPE=WORK");
@@ -79,9 +79,9 @@ $v->setTitle($adherent->poste);
 if ($company->id)
 {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (! $adherent->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (! $adherent->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (! $adherent->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	if (!$adherent->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+	if (!$adherent->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+	if (!$adherent->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
 
 	// when company e-mail is empty, use only adherent e-mail
 	if (empty(trim($company->email)))
@@ -124,7 +124,7 @@ $db->close();
 
 $output = $v->getVCard();
 
-$filename = trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 

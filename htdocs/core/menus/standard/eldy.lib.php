@@ -353,7 +353,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
 
-		'loadLangs' => array("compta", "accountancy", "assets","intracommreport"),
+		'loadLangs' => array("compta", "accountancy", "assets", "intracommreport"),
 		'submenus' => array(),
 	);
 
@@ -1439,16 +1439,16 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journals"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 			}
 
-            // Intracomm report
-            if (! empty($conf->intracommreport->enabled))
-            {
-                $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
-                if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
-                    // DEB / DES
-                    $newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
-                    $newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReportList"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
-                }
-            }
+			// Intracomm report
+			if (! empty($conf->intracommreport->enabled))
+			{
+				$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+				if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {
+					// DEB / DES
+					$newmenu->add("/intracommreport/card.php?action=create&leftmenu=intracommreport", $langs->trans("MenuIntracommReportNew"), 1, $user->rights->intracommreport->write, '', $mainmenu, 'intracommreport', 1);
+					$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReportList"), 1, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
+				}
+			}
 
 			// Assets
 			if (!empty($conf->asset->enabled))

@@ -116,7 +116,7 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
 		<?php
-    }
+	}
 }
 
 if (!empty($conf->barcode->enabled)) { ?>

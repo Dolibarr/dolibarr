@@ -184,7 +184,7 @@ if (empty($user->socid))	// If internal user or not defined
 
 // Load the menu manager (only if not already done)
 $file_menu = $conf->standard_menu;
-if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09');     // example: menu=eldy_menu.php
+if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09'); // example: menu=eldy_menu.php
 if (!class_exists('MenuManager'))
 {
 	$menufound = 0;

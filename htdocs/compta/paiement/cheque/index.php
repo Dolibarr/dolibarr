@@ -67,17 +67,17 @@ print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql) {
-    if ($row = $db->fetch_row($resql)) {
-        $num = $row[0];
-    }
-    print '<tr class="oddeven">';
-    print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-    print '<td class="right">';
-    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
-    print '</td></tr>';
-    print "</table>\n";
+	if ($row = $db->fetch_row($resql)) {
+		$num = $row[0];
+	}
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+	print '<td class="right">';
+	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+	print '</td></tr>';
+	print "</table>\n";
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -112,9 +112,9 @@ if ($resql)
 
 	while ($objp = $db->fetch_object($resql))
 	{
-        $checkdepositstatic->id = $objp->rowid;
-        $checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-	    $checkdepositstatic->statut = $objp->statut;
+		$checkdepositstatic->id = $objp->rowid;
+		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+		$checkdepositstatic->statut = $objp->statut;
 
 		$accountstatic->id = $objp->bid;
 		$accountstatic->ref = $objp->bref;
@@ -141,7 +141,7 @@ if ($resql)
 
 	$db->free($resql);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 

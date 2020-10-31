@@ -27,7 +27,7 @@ if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id = GETPOST('id', 'int');	// id of thirdparty
+$id = GETPOST('id', 'int'); // id of thirdparty
 $action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
 $showempty = GETPOST('showempty', 'int');

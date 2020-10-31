@@ -30,17 +30,17 @@ if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
 require_once '../../main.inc.php';
 
 if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/index.php'
-    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
+	|| preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    top_httphead('text/javascript; charset=UTF-8');
+	top_httphead('text/javascript; charset=UTF-8');
 
-    print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
+	print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
 	print 'var nowtime = Date.now();';
-    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
-    print 'var time_js_next_test;'."\n";
-    ?>
+	print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
+	print 'var time_js_next_test;'."\n";
+	?>
 
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {

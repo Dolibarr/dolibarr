@@ -426,9 +426,9 @@ foreach ($object->fields as $key => $val)
 	elseif (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield .= ($cssforfield ? ' ' : '').'right';
 	if (!empty($arrayfields['t.'.$key]['checked']))
-    {
-        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
-    }
+	{
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -470,26 +470,26 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	{
 		$cssforfield = (empty($val['css']) ? '' : $val['css']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
-	    elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 
-	    if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	    elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 
-	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status'))) $cssforfield .= ($cssforfield ? ' ' : '').'right';
-	    //if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
+		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status'))) $cssforfield .= ($cssforfield ? ' ' : '').'right';
+		//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
-	    if (!empty($arrayfields['t.'.$key]['checked']))
-	    {
-	    	print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
-	    	if ($key == 'status') print $object->getLibStatut(5);
-	    	else print $object->showOutputField($val, $key, $object->$key, '');
-	    	print '</td>';
-	    	if (!$i) $totalarray['nbfield']++;
-	    	if (!empty($val['isameasure']))
-	    	{
-	    		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
-	    		$totalarray['val']['t.'.$key] += $object->$key;
-	    	}
+		if (!empty($arrayfields['t.'.$key]['checked']))
+		{
+			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
+			if ($key == 'status') print $object->getLibStatut(5);
+			else print $object->showOutputField($val, $key, $object->$key, '');
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!empty($val['isameasure']))
+			{
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				$totalarray['val']['t.'.$key] += $object->$key;
+			}
 		}
 	}
 	// Extra fields

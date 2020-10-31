@@ -90,8 +90,8 @@ class modMyModule extends DolibarrModules
 			'barcode' => 0,
 			// Set this to 1 if module has its own models directory (core/modules/xxx)
 			'models' => 0,
-            // Set this to 1 if module has its own printing directory (core/modules/printing)
-            'printing' => 0,
+			// Set this to 1 if module has its own printing directory (core/modules/printing)
+			'printing' => 0,
 			// Set this to 1 if module has its own theme directory (theme)
 			'theme' => 0,
 			// Set this to relative path of css file if module has its own css file
@@ -409,24 +409,24 @@ class modMyModule extends DolibarrModules
 		// Document templates
 		$moduledir = 'mymodule';
 		$myTmpObjects = array();
-		$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			if ($myTmpObjectKey == 'MyObject') continue;
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-				$dirodt=DOL_DATA_ROOT.'/doctemplates/mymodule';
-				$dest=$dirodt.'/template_myobjects.odt';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
+				$dest = $dirodt.'/template_myobjects.odt';
 
-				if (file_exists($src) && ! file_exists($dest))
+				if (file_exists($src) && !file_exists($dest))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result=dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, 0, 0);
 					if ($result < 0)
 					{
 						$langs->load("errors");
-						$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 						return 0;
 					}
 				}

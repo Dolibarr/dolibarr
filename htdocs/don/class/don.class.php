@@ -98,9 +98,9 @@ class Don extends CommonObject
 	 */
 	public $email;
 
-    /**
-     * @var int 0 or 1
-     */
+	/**
+	 * @var int 0 or 1
+	 */
 	public $public;
 
 	/**
@@ -116,10 +116,10 @@ class Don extends CommonObject
 	public $num_payment;
 	public $date_valid;
 
-    /**
-     * @var int payment mode id
-     */
-    public $modepaymentid = 0;
+	/**
+	 * @var int payment mode id
+	 */
+	public $modepaymentid = 0;
 
 	/**
 	 * @var array Array of status label
@@ -247,8 +247,8 @@ class Don extends CommonObject
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
 		$this->email = 'email@email.com';
-        $this->phone = '0123456789';
-        $this->phone_mobile = '0606060606';
+		$this->phone = '0123456789';
+		$this->phone_mobile = '0606060606';
 		$this->statut = 1;
 	}
 
