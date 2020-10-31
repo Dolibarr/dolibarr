@@ -501,9 +501,6 @@ class Societe extends CommonObject
 	 */
 	public $user_creation;
 
-
-	public $specimen;
-
 	/**
 	 * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
 	 * @var int

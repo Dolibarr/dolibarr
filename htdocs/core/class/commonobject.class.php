@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -336,6 +336,12 @@ abstract class CommonObject
 
 	/**
 	 * @var int Bank account ID
+	 * @see $fk_account
+	 */
+	public $fk_bank;
+
+	/**
+	 * @var int Bank account ID
 	 * @see SetBankAccount()
 	 */
 	public $fk_account;
@@ -436,6 +442,11 @@ abstract class CommonObject
 	public $date_modification; // Date last change (tms field)
 
 	public $next_prev_filter;
+
+	/**
+	 * @var int 1 if object is specimen
+	 */
+	public $specimen = 0;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.

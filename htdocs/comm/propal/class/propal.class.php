@@ -13,7 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -213,8 +213,6 @@ class Propal extends CommonObject
 
 	public $labelStatus = array();
 	public $labelStatusShort = array();
-
-	public $specimen;
 
 	// Multicurrency
 	/**
