@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
+ * Copyright (C) 2020     	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,8 +132,7 @@ class Boms extends DolibarrApi
         }
         if ($sqlfilters)
         {
-            if (!DolibarrApi::_checkFilters($sqlfilters))
-            {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
 	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -224,8 +224,7 @@ class Boms extends DolibarrApi
             $this->bom->$field = $value;
         }
 
-        if ($this->bom->update($id, DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
         } else {
             throw new RestException(500, $this->bom->error);
