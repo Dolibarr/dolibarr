@@ -229,9 +229,7 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
-		}
-		else
-		{
+		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
 		}
 
@@ -277,6 +275,8 @@ class Documents extends DolibarrApi
 		}
 
 		$id = (empty($id) ? 0 : $id);
+		$recursive = 0;
+		$type = 'files';
 
 		if ($modulepart == 'societe' || $modulepart == 'thirdparty')
 		{
@@ -474,15 +474,29 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->categorie->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
-		}
-		else
-		{
+		} elseif ($modulepart == 'ecm') {
+            throw new RestException(500, 'Modulepart Ecm not implemented yet.');
+			// // require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+
+			// if (!DolibarrApiAccess::$user->rights->ecm->read) {
+			// 	throw new RestException(401);
+			// }
+
+			// // $object = new EcmDirectory($this->db);
+			// // $result = $object->fetch($ref);
+			// // if (!$result) {
+			// // 	throw new RestException(404, 'EcmDirectory not found');
+			// // }
+			// $upload_dir = $conf->ecm->dir_output;
+			// $type = 'all';
+			// $recursive = 0;
+		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
 
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
-			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->Ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
+			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
 		}
 
 		return $filearray;
@@ -594,9 +608,7 @@ class Documents extends DolibarrApi
 					{
 						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
 					}
-				}
-				else
-				{
+				} else {
 					throw new RestException(500, 'Error while fetching Task '.$ref);
 				}
 			}
@@ -621,10 +633,8 @@ class Documents extends DolibarrApi
 				$modulepart = 'propale';
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
-			}
-			// TODO Implement additional moduleparts
-			else
-			{
+			} else {
+    			// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 			}
 
@@ -662,9 +672,7 @@ class Documents extends DolibarrApi
 			{
 				throw new RestException(500, 'This value of modulepart does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');
 			}
-		}
-		else
-		{
+		} else {
 			if ($modulepart == 'invoice') $modulepart = 'facture';
 			if ($modulepart == 'member') $modulepart = 'adherent';
 
@@ -707,9 +715,7 @@ class Documents extends DolibarrApi
 			$nbofbyteswrote = fwrite($fhandle, $newfilecontent);
 			fclose($fhandle);
 			@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
-		}
-		else
-		{
+		} else {
 			throw new RestException(500, "Failed to open file '".$destfiletmp."' for write");
 		}
 
