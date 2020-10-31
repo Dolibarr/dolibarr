@@ -118,7 +118,7 @@ if ($action == "create"){
 			setEventMessages($currencyRate_static->error, $currencyRate_static->errors, 'errors');
 		}
 	} else {
-		setEventMessages($langs->trans('NoEmptyRate'),null, "errors");
+		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
 	}
 }
 
