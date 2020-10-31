@@ -15,6 +15,7 @@ NEW: Accountancy - Add options to disable binding on sales, purchases & expense 
 NEW: Accountancy balance - Add a input to show subtotal by group
 NEW: Accountancy - Move to real ledger, real journals, menu disposition
 NEW: Accountancy - On transfers, select the periodicity by default
+NEW: New currency rate editor.
 NEW: Add 2 rules for emailcollector: Message send/not sent from Dolibarr
 NEW: Add a counter of number of words of pages in website module
 NEW: add alert before change thirdparty in takepos
