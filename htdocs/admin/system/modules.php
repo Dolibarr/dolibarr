@@ -270,13 +270,13 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print '</tr>';
 
 // sort list
-if ($sortfield == "name" && $sortorder == "asc") usort($moduleList, function(stdClass $a, stdClass $b) {
+if ($sortfield == "name" && $sortorder == "asc") usort($moduleList, function (stdClass $a, stdClass $b) {
 	return strcasecmp($a->name, $b->name); });
-if ($sortfield == "name" && $sortorder == "desc") usort($moduleList, function(stdClass $a, stdClass $b) {
+if ($sortfield == "name" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
 	return strcasecmp($b->name, $a->name); });
-if ($sortfield == "version" && $sortorder == "asc") usort($moduleList, function(stdClass $a, stdClass $b) {
+if ($sortfield == "version" && $sortorder == "asc") usort($moduleList, function (stdClass $a, stdClass $b) {
 	return strcasecmp($a->version, $b->version); });
-if ($sortfield == "version" && $sortorder == "desc") usort($moduleList, function(stdClass $a, stdClass $b) {
+if ($sortfield == "version" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
 	return strcasecmp($b->version, $a->version); });
 if ($sortfield == "id" && $sortorder == "asc") usort($moduleList, "compareIdAsc");
 if ($sortfield == "id" && $sortorder == "desc") usort($moduleList, "compareIdDesc");
