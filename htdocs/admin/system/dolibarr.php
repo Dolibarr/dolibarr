@@ -48,9 +48,9 @@ $version = '0.0';
 
 if ($action == 'getlastversion')
 {
-    $result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
-    //var_dump($result['content']);
-    $sfurl = simplexml_load_string($result['content']);
+	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
+	//var_dump($result['content']);
+	$sfurl = simplexml_load_string($result['content']);
 }
 
 
@@ -74,43 +74,43 @@ print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->tr
 // If current version differs from last upgrade
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 {
-    // Compare version with last install database version (upgrades never occured)
-    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
+	// Compare version with last install database version (upgrades never occured)
+	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
 } else {
-    // Compare version with last upgrade database version
-    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
+	// Compare version with last upgrade database version
+	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
 }
 
 if (function_exists('curl_init'))
 {
-    $conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
-    print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
-    if ($action == 'getlastversion')
-    {
-        if ($sfurl)
-        {
-            while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
-            {
-                $title = $sfurl->channel[0]->item[$i]->title;
-                if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
-                {
-                    $newversion = $reg[1];
-                    $newversionarray = explode('.', $newversion);
-                    $versionarray = explode('.', $version);
-                    //var_dump($newversionarray);var_dump($versionarray);
-                    if (versioncompare($newversionarray, $versionarray) > 0) $version = $newversion;
-                }
-                $i++;
-            }
+	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
+	print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
+	if ($action == 'getlastversion')
+	{
+		if ($sfurl)
+		{
+			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+			{
+				$title = $sfurl->channel[0]->item[$i]->title;
+				if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+				{
+					$newversion = $reg[1];
+					$newversionarray = explode('.', $newversion);
+					$versionarray = explode('.', $version);
+					//var_dump($newversionarray);var_dump($versionarray);
+					if (versioncompare($newversionarray, $versionarray) > 0) $version = $newversion;
+				}
+				$i++;
+			}
 
-            // Show version
-            print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
-        } else {
-            print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
-        }
-    } else {
-        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction">'.$langs->trans("Check").'</a>';
-    }
+			// Show version
+			print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
+		} else {
+			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
+		}
+	} else {
+		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction">'.$langs->trans("Check").'</a>';
+	}
 }
 
 // Now show link to the changelog
@@ -168,7 +168,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 {
 	$shmoparray = dol_listshmop();
 
-    print '<div class="div-table-responsive-no-min">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
@@ -280,8 +280,8 @@ $configfileparameters = array(
 		'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
 		'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
 		'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
-        'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
-        'separator1' => '',
+		'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
+		'separator1' => '',
 		'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
 		'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
 		'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
@@ -293,7 +293,7 @@ $configfileparameters = array(
 		'?dolibarr_main_db_prefix' => $langs->trans("Prefix"),
 		'separator2' => '',
 		'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
-        '?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
+		'?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
 		'separator'=> '',
 		'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
 		'?dolibarr_main_auth_ldap_host' => 'dolibarr_main_auth_ldap_host',
@@ -349,8 +349,8 @@ foreach ($configfileparameters as $key => $value)
 
 		if (preg_match('/^\?/', $key) && empty(${$newkey}))
 		{
-		    if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled))
-                continue; // We discard parameters starting with ?
+			if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled))
+				continue; // We discard parameters starting with ?
 		}
 		if (strpos($newkey, 'separator') !== false && $lastkeyshown == 'separator') continue;
 
@@ -387,14 +387,14 @@ foreach ($configfileparameters as $key => $value)
 					++$i;
 				}
 			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
-			    //print $conf->file->instance_unique_id;
-			    global $dolibarr_main_cookie_cryptkey;
-			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
-			    print $valuetoshow;
-			    if (empty($valuetoshow)) {
-			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
-			    }
-			    print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
+				//print $conf->file->instance_unique_id;
+				global $dolibarr_main_cookie_cryptkey;
+				$valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
+				print $valuetoshow;
+				if (empty($valuetoshow)) {
+					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
+				}
+				print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
 			} elseif ($newkey == 'dolibarr_main_prod') {
 				print ${$newkey};
 
@@ -410,7 +410,7 @@ foreach ($configfileparameters as $key => $value)
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
 				}
 			} else {
-			    print ${$newkey};
+				print ${$newkey};
 			}
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";

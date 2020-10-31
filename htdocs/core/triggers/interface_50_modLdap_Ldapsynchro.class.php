@@ -31,22 +31,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceLdapsynchro extends DolibarrTriggers
 {
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "ldap";
-        $this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
-        // 'development', 'experimental', 'dolibarr' or version
-        $this->version = self::VERSION_DOLIBARR;
-        $this->picto = 'technic';
-    }
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "ldap";
+		$this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'technic';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.

@@ -45,25 +45,25 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 $action				= GETPOST('action', 'aZ09');
 $massaction			= GETPOST('massaction', 'alpha');
 $confirm			= GETPOST('confirm', 'alpha');
-$optioncss			= GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 
 $search_ref			= GETPOST('search_ref', 'int');
-$search_label		= GETPOST('search_label', 'alpha');
+$search_label = GETPOST('search_label', 'alpha');
 $search_amount		= GETPOST('search_amount', 'alpha');
 $search_status		= GETPOST('search_status', 'int');
 $search_day_lim		= GETPOST('search_day_lim', 'int');
-$search_month_lim	= GETPOST('search_month_lim', 'int');
+$search_month_lim = GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
-$search_project_ref	= GETPOST('search_project_ref', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project		= GETPOST('search_project', 'alpha');
 
-$limit				= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
 $sortorder			= GETPOST("sortorder", 'alpha');
-$page				= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
-if (empty($page) || $page == -1) $page = 0;				// If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) $page = 0; // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -88,14 +88,14 @@ if (!GETPOSTISSET('search_typeid'))
 }
 
 $arrayfields = array(
-	'cs.rowid'		=>array('label'=>"Ref",				'checked'=>1, 'position'=>10),
-	'cs.libelle'	=>array('label'=>"Label",			'checked'=>1, 'position'=>20),
-	'cs.fk_type'	=>array('label'=>"Type",			'checked'=>1, 'position'=>30),
-	'p.ref'			=>array('label'=>"ProjectRef",		'checked'=>1, 'position'=>40, 'enable'=>(!empty($conf->projet->enabled))),
-	'cs.date_ech'	=>array('label'=>"Date",			'checked'=>1, 'position'=>50),
-	'cs.periode'	=>array('label'=>"PeriodEndDate",	'checked'=>1, 'position'=>60),
-	'cs.amount'		=>array('label'=>"Amount",			'checked'=>1, 'position'=>70),
-	'cs.paye'		=>array('label'=>"Status",			'checked'=>1, 'position'=>80),
+	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
+	'cs.libelle'	=>array('label'=>"Label", 'checked'=>1, 'position'=>20),
+	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>40, 'enable'=>(!empty($conf->projet->enabled))),
+	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>50),
+	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>60),
+	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
+	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>80),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 

@@ -436,7 +436,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = $_SESSION["takeposterminal"];
-	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"])?$_SESSION["takeposinvoiceentity"]:$conf->entity;
+	$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
 
 	if ($invoice->socid <= 0)
 	{
@@ -1315,7 +1315,7 @@ if ($placeid > 0)
 
 print '</table>';
 
-if ($action == "valid" || $action == "history"){
+if ($action == "valid" || $action == "history") {
 	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
 }
 

@@ -33,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
  */
 class ImportXlsx extends ModeleImports
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $datatoimport;
+	public $datatoimport;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -50,22 +50,22 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $errors = array();
 
-    /**
+	/**
 	 * @var int ID
 	 */
 	public $id;
 
 	/**
-     * @var string label
-     */
-    public $label;
+	 * @var string label
+	 */
+	public $label;
 
 	public $extension; // Extension of files imported by driver
 
 	/**
-     * Dolibarr version of driver
-     * @var string
-     */
+	 * Dolibarr version of driver
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	public $label_lib; // Label of external lib used by driver
@@ -74,7 +74,7 @@ class ImportXlsx extends ModeleImports
 
 	public $separator;
 
-    public $file; // Path of file
+	public $file; // Path of file
 
 	public $handle; // Handle fichier
 
@@ -95,7 +95,7 @@ class ImportXlsx extends ModeleImports
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-    public function __construct($db, $datatoimport)
+	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
 		$this->db = $db;
@@ -109,56 +109,56 @@ class ImportXlsx extends ModeleImports
 		$this->version = '1.0'; // Driver version
 
 		// If driver use an external library, put its name here
-        require_once PHPEXCEL_PATH.'PHPExcel.php';
+		require_once PHPEXCEL_PATH.'PHPExcel.php';
 		require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-        if (!class_exists('ZipArchive')) // For Excel2007, PHPExcel need ZipArchive
-        {
-                $langs->load("errors");
-                $this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
-                return -1;
-        }
-        $this->label_lib = 'PhpExcel';
-        $this->version_lib = '1.8.0';
+		if (!class_exists('ZipArchive')) // For Excel2007, PHPExcel need ZipArchive
+		{
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
+				return -1;
+		}
+		$this->label_lib = 'PhpExcel';
+		$this->version_lib = '1.8.0';
 
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) $this->thirpartyobject = new Societe($this->db);
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @return	string							Empty string
 	 */
-    public function write_header_example($outputlangs)
+	public function write_header_example($outputlangs)
 	{
-        // phpcs:enable
-        global $user, $conf, $langs;
-        // create a temporary object, the final output will be generated in footer
-        if (!empty($conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR)) {
-            $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_discISAM;
-            $cacheSettings = array(
-                'dir' => $conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR
-            );
-            PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
-        }
+		// phpcs:enable
+		global $user, $conf, $langs;
+		// create a temporary object, the final output will be generated in footer
+		if (!empty($conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR)) {
+			$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_discISAM;
+			$cacheSettings = array(
+				'dir' => $conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR
+			);
+			PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+		}
 
-        $this->workbook = new PHPExcel();
-        $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
-        $this->workbook->getProperties()->setTitle($outputlangs->trans("Import").' - '.$file);
-        $this->workbook->getProperties()->setSubject($outputlangs->trans("Import").' - '.$file);
-        $this->workbook->getProperties()->setDescription($outputlangs->trans("Import").' - '.$file);
+		$this->workbook = new PHPExcel();
+		$this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
+		$this->workbook->getProperties()->setTitle($outputlangs->trans("Import").' - '.$file);
+		$this->workbook->getProperties()->setSubject($outputlangs->trans("Import").' - '.$file);
+		$this->workbook->getProperties()->setDescription($outputlangs->trans("Import").' - '.$file);
 
-        $this->workbook->setActiveSheetIndex(0);
-        $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
-        $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
+		$this->workbook->setActiveSheetIndex(0);
+		$this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
+		$this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
 
-        return '';
-    }
+		return '';
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output title line of an example file for this format
 	 *
@@ -166,9 +166,9 @@ class ImportXlsx extends ModeleImports
 	 *  @param	array		$headerlinefields	Array of fields name
 	 * 	@return	string							String output
 	 */
-    public function write_title_example($outputlangs, $headerlinefields)
+	public function write_title_example($outputlangs, $headerlinefields)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
 		$this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
@@ -184,7 +184,7 @@ class ImportXlsx extends ModeleImports
 		return ''; // final output will be generated in footer
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output record of an example file for this format
 	 *
@@ -192,9 +192,9 @@ class ImportXlsx extends ModeleImports
 	 * 	@param	array		$contentlinevalues	Array of lines
 	 * 	@return	string							Empty string
 	 */
-    public function write_record_example($outputlangs, $contentlinevalues)
+	public function write_record_example($outputlangs, $contentlinevalues)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$col = 0;
 		$row = 2;
 		foreach ($contentlinevalues as $cell) {
@@ -205,16 +205,16 @@ class ImportXlsx extends ModeleImports
 		return ''; // final output will be generated in footer
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @return	string							String output
 	 */
-    public function write_footer_example($outputlangs)
+	public function write_footer_example($outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		// return the file content as a string
 		$tempfile = tempnam(sys_get_temp_dir(), 'dol');
 		$objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
@@ -229,16 +229,16 @@ class ImportXlsx extends ModeleImports
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
 	 *	@return	int					<0 if KO, >=0 if OK
 	 */
-    public function import_open_file($file)
+	public function import_open_file($file)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$ret = 1;
 
@@ -253,16 +253,16 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
 	 * 	@return	int					<0 if KO, >=0 if OK
 	 */
-    public function import_get_nb_of_lines($file)
+	public function import_get_nb_of_lines($file)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$reader = new PHPExcel_Reader_Excel2007();
 		$this->workbook = $reader->load($file);
 
@@ -275,15 +275,15 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Input header line from file
 	 *
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
-    public function import_read_header()
+	public function import_read_header()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		// This is not called by the import code !!!
 		$this->headers = array();
 		$colcount = PHPExcel_Cell::columnIndexFromString($this->workbook->getActiveSheet()->getHighestDataColumn());
@@ -294,15 +294,15 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return array of next record in input file.
 	 *
 	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
-    public function import_read_record()
+	public function import_read_record()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
@@ -319,22 +319,22 @@ class ImportXlsx extends ModeleImports
 		return $array;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
 	 *  @return	integer
 	 */
-    public function import_close_file()
+	public function import_close_file()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->workbook->disconnectWorksheets();
 		unset($this->workbook);
 	}
 
 
-    // What is this doing here ? it is common to all imports, is should be in the parent class
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// What is this doing here ? it is common to all imports, is should be in the parent class
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Insert a record into database
 	 *
@@ -346,11 +346,11 @@ class ImportXlsx extends ModeleImports
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-    public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
+	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs, $conf, $user;
-        global $thirdparty_static; // Specific to thirdparty import
+		global $thirdparty_static; // Specific to thirdparty import
 		global $tablewithentity_cache; // Cache to avoid to call  desc at each rows on tables
 
 		$error = 0;
@@ -403,19 +403,19 @@ class ImportXlsx extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-                // array of fields to column index
-                $arrayfield = array();
-                foreach ($sort_array_match_file_to_database as $key => $val) {
-                    $arrayfield[$val] = ($key - 1);
-                }
+				// array of fields to column index
+				$arrayfield = array();
+				foreach ($sort_array_match_file_to_database as $key => $val) {
+					$arrayfield[$val] = ($key - 1);
+				}
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach ($sort_array_match_file_to_database as $key => $val)
 				{
-				    $fieldalias = preg_replace('/\..*$/i', '', $val);
-				    $fieldname = preg_replace('/^.*\./i', '', $val);
+					$fieldalias = preg_replace('/\..*$/i', '', $val);
+					$fieldname = preg_replace('/^.*\./i', '', $val);
 
-				    if ($alias != $fieldalias) continue; // Not a field of current table
+					if ($alias != $fieldalias) continue; // Not a field of current table
 
 					if ($key <= $maxfields)
 					{
@@ -435,43 +435,43 @@ class ImportXlsx extends ModeleImports
 						}
 						// Test format only if field is not a missing mandatory field (field may be a value or empty but not mandatory)
 						else {
-						    // We convert field if required
-						    if (!empty($objimport->array_import_convertvalue[0][$val]))
-						    {
-                                //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
-                                if ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeid'
-                                	|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromref'
-                                	|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel'
-                                	)
-                                {
-                                    // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
-                                    $isidorref = 'id';
-                                    if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
-                                    $newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
-                                    //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+							// We convert field if required
+							if (!empty($objimport->array_import_convertvalue[0][$val]))
+							{
+								//print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
+								if ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeid'
+									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromref'
+									|| $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel'
+									)
+								{
+									// New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
+									$isidorref = 'id';
+									if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
+									$newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
+									//print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
 
-                                    if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
-                                    {
-                                        $file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-                                        $class = $objimport->array_import_convertvalue[0][$val]['class'];
-                                        $method = $objimport->array_import_convertvalue[0][$val]['method'];
-                                        if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '')
-                                        {
-                                        	$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
-                                        } else {
-                                            $resultload = dol_include_once($file);
-                                            if (empty($resultload))
-                                            {
-                                                dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
-                                                break;
-                                            }
-                                            $classinstance = new $class($this->db);
-                                            // Try the fetch from code or ref
-                                            $param_array = array('', $newval);
-                                            if ($class == 'AccountingAccount')
-                                            {
-                                                //var_dump($arrayrecord[0]['val']);
-                                                /*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
+									if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
+									{
+										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+										$class = $objimport->array_import_convertvalue[0][$val]['class'];
+										$method = $objimport->array_import_convertvalue[0][$val]['method'];
+										if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] != '')
+										{
+											$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval];
+										} else {
+											$resultload = dol_include_once($file);
+											if (empty($resultload))
+											{
+												dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+												break;
+											}
+											$classinstance = new $class($this->db);
+											// Try the fetch from code or ref
+											$param_array = array('', $newval);
+											if ($class == 'AccountingAccount')
+											{
+												//var_dump($arrayrecord[0]['val']);
+												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
                                                 $tmpchartofaccount = new AccountancySystem($this->db);
                                                 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
                                                 var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
@@ -482,182 +482,182 @@ class ImportXlsx extends ModeleImports
                                                     $errorforthistable++;
                                                     $error++;
                                                 }*/
-                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
-                                            }
-                                            call_user_func_array(array($classinstance, $method), $param_array);
-                                            // If not found, try the fetch from label
-                                            if (!($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel')
-                                            {
-                                                $param_array = array('', '', $newval);
-                                                call_user_func_array(array($classinstance, $method), $param_array);
-                                            }
-                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] = $classinstance->id;
-                                            //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
-                                            if ($classinstance->id != '')	// id may be 0, it is a found value
-                                            {
-                                                $newval = $classinstance->id;
-                                            } else {
-                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
-                                                else $this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
-                                                $this->errors[$error]['type'] = 'FOREIGNKEY';
-                                                $errorforthistable++;
-                                                $error++;
-                                            }
-                                        }
-                                    }
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeandlabel')
-                                {
-                                    $isidorref = 'id';
-                                    if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
-                                    $newval = preg_replace('/^(id|ref):/i', '', $newval);
+												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
+											}
+											call_user_func_array(array($classinstance, $method), $param_array);
+											// If not found, try the fetch from label
+											if (!($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel')
+											{
+												$param_array = array('', '', $newval);
+												call_user_func_array(array($classinstance, $method), $param_array);
+											}
+											$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] = $classinstance->id;
+											//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
+											if ($classinstance->id != '')	// id may be 0, it is a found value
+											{
+												$newval = $classinstance->id;
+											} else {
+												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+												elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+												else $this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
+												$this->errors[$error]['type'] = 'FOREIGNKEY';
+												$errorforthistable++;
+												$error++;
+											}
+										}
+									}
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeandlabel')
+								{
+									$isidorref = 'id';
+									if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
+									$newval = preg_replace('/^(id|ref):/i', '', $newval);
 
-                                    if ($isidorref == 'ref') {
-                                        $file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-                                        $class = $objimport->array_import_convertvalue[0][$val]['class'];
-                                        $method = $objimport->array_import_convertvalue[0][$val]['method'];
-                                        $codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
-                                        $code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
-                                        if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] != '') {
-                                            $newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval];
-                                        } else {
-                                            $resultload = dol_include_once($file);
-                                            if (empty($resultload)) {
-                                                dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', code='.$code);
-                                                break;
-                                            }
-                                            $classinstance = new $class($this->db);
-                                            // Try the fetch from code and ref
-                                            $param_array = array('', $newval, $code);
-                                            call_user_func_array(array($classinstance, $method), $param_array);
-                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] = $classinstance->id;
-                                            if ($classinstance->id > 0)    // we found record
-                                            {
-                                                $newval = $classinstance->id;
-                                            } else {
-                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-                                                $this->errors[$error]['type'] = 'FOREIGNKEY';
-                                                $errorforthistable++;
-                                                $error++;
-                                            }
-                                        }
-                                    }
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'zeroifnull')
-                                {
-                                    if (empty($newval)) $newval = '0';
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits')
-                                {
-                                	$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-                                	$class = $objimport->array_import_convertvalue[0][$val]['class'];
-                                	$method = $objimport->array_import_convertvalue[0][$val]['method'];
-                                	$units = $objimport->array_import_convertvalue[0][$val]['units'];
-                                	if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '')
-                                	{
-                                		$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
-                                	} else {
-                                		$resultload = dol_include_once($file);
-                                		if (empty($resultload))
-                                		{
-                                			dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', units='.$units);
-                                			break;
-                                		}
-                                		$classinstance = new $class($this->db);
-                                		// Try the fetch from code or ref
-                                        call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
-                                        $scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
-                                        $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] = $scaleorid;
-                                        //print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
-                                        if ($classinstance->id > 0)	// we found record
-                                        {
-                                        	$newval = $scaleorid ? $scaleorid : 0;
-                                        } else {
-                                        	if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                        	else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-                                			$this->errors[$error]['type'] = 'FOREIGNKEY';
-                                			$errorforthistable++;
-                                			$error++;
-                                		}
-                                	}
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto')
-                                {
-                                    if (strtolower($newval) == 'auto')
-                                    {
-                                        $this->thirpartyobject->get_codeclient(0, 0);
-                                        $newval = $this->thirpartyobject->code_client;
-                                        //print 'code_client='.$newval;
-                                    }
-                                    if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto')
-                                {
-                                    if (strtolower($newval) == 'auto')
-                                    {
-                                        $newval = $this->thirpartyobject->get_codefournisseur(0, 1);
-                                        $newval = $this->thirpartyobject->code_fournisseur;
-                                        //print 'code_fournisseur='.$newval;
-                                    }
-                                    if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto')
-                                {
-                                    if (strtolower($newval) == 'auto')
-                                    {
-                                        $this->thirpartyobject->get_codecompta('customer');
-                                        $newval = $this->thirpartyobject->code_compta;
-                                        //print 'code_compta='.$newval;
-                                    }
-                                    if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto')
-                                {
-                                    if (strtolower($newval) == 'auto')
-                                    {
-                                        $this->thirpartyobject->get_codecompta('supplier');
-                                        $newval = $this->thirpartyobject->code_compta_fournisseur;
-                                        if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-                                        //print 'code_compta_fournisseur='.$newval;
-                                    }
-                                    if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto')
-                                {
-                                    $defaultref = '';
-                                    // TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
-                                    $obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-                                    if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
-                                    {
-                                        require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
-                                        $modTask = new $obj;
-                                        $defaultref = $modTask->getNextValue(null, null);
-                                    }
-                                    if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
-                                    $newval = $defaultref;
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'compute')
-                                {
-                                    $file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-                                    $class = $objimport->array_import_convertvalue[0][$val]['class'];
-                                    $method = $objimport->array_import_convertvalue[0][$val]['method'];
-                                    $resultload = dol_include_once($file);
-                                    if (empty($resultload))
-                                    {
-                                        dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
-                                        break;
-                                    }
-                                    $classinstance = new $class($this->db);
-                                    $res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
-                                    if ($res < 0) {
-                                        if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                        else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-                                        $this->errors[$error]['type'] = 'FOREIGNKEY';
-                                        $errorforthistable++;
-                                        $error++;
-                                    }
-                                } elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric')
-                                {
-                                    $newval = price2num($newval);
-                                }
+									if ($isidorref == 'ref') {
+										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+										$class = $objimport->array_import_convertvalue[0][$val]['class'];
+										$method = $objimport->array_import_convertvalue[0][$val]['method'];
+										$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
+										$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
+										if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] != '') {
+											$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval];
+										} else {
+											$resultload = dol_include_once($file);
+											if (empty($resultload)) {
+												dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', code='.$code);
+												break;
+											}
+											$classinstance = new $class($this->db);
+											// Try the fetch from code and ref
+											$param_array = array('', $newval, $code);
+											call_user_func_array(array($classinstance, $method), $param_array);
+											$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] = $classinstance->id;
+											if ($classinstance->id > 0)    // we found record
+											{
+												$newval = $classinstance->id;
+											} else {
+												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+												else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+												$this->errors[$error]['type'] = 'FOREIGNKEY';
+												$errorforthistable++;
+												$error++;
+											}
+										}
+									}
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'zeroifnull')
+								{
+									if (empty($newval)) $newval = '0';
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits')
+								{
+									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$val]['class'];
+									$method = $objimport->array_import_convertvalue[0][$val]['method'];
+									$units = $objimport->array_import_convertvalue[0][$val]['units'];
+									if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '')
+									{
+										$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
+									} else {
+										$resultload = dol_include_once($file);
+										if (empty($resultload))
+										{
+											dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', units='.$units);
+											break;
+										}
+										$classinstance = new $class($this->db);
+										// Try the fetch from code or ref
+										call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
+										$scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
+										$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] = $scaleorid;
+										//print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
+										if ($classinstance->id > 0)	// we found record
+										{
+											$newval = $scaleorid ? $scaleorid : 0;
+										} else {
+											if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+											else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+											$this->errors[$error]['type'] = 'FOREIGNKEY';
+											$errorforthistable++;
+											$error++;
+										}
+									}
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto')
+								{
+									if (strtolower($newval) == 'auto')
+									{
+										$this->thirpartyobject->get_codeclient(0, 0);
+										$newval = $this->thirpartyobject->code_client;
+										//print 'code_client='.$newval;
+									}
+									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto')
+								{
+									if (strtolower($newval) == 'auto')
+									{
+										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
+										$newval = $this->thirpartyobject->code_fournisseur;
+										//print 'code_fournisseur='.$newval;
+									}
+									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto')
+								{
+									if (strtolower($newval) == 'auto')
+									{
+										$this->thirpartyobject->get_codecompta('customer');
+										$newval = $this->thirpartyobject->code_compta;
+										//print 'code_compta='.$newval;
+									}
+									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto')
+								{
+									if (strtolower($newval) == 'auto')
+									{
+										$this->thirpartyobject->get_codecompta('supplier');
+										$newval = $this->thirpartyobject->code_compta_fournisseur;
+										if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+										//print 'code_compta_fournisseur='.$newval;
+									}
+									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto')
+								{
+									$defaultref = '';
+									// TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
+									$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+									if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
+									{
+										require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+										$modTask = new $obj;
+										$defaultref = $modTask->getNextValue(null, null);
+									}
+									if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
+									$newval = $defaultref;
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'compute')
+								{
+									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$val]['class'];
+									$method = $objimport->array_import_convertvalue[0][$val]['method'];
+									$resultload = dol_include_once($file);
+									if (empty($resultload))
+									{
+										dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method);
+										break;
+									}
+									$classinstance = new $class($this->db);
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+									if ($res < 0) {
+										if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+										$this->errors[$error]['type'] = 'FOREIGNKEY';
+										$errorforthistable++;
+										$error++;
+									}
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric')
+								{
+									$newval = price2num($newval);
+								}
 
-                                //print 'Val to use as insert is '.$newval.'<br>';
-						    }
+								//print 'Val to use as insert is '.$newval.'<br>';
+							}
 
-						    // Test regexp
+							// Test regexp
 							if (!empty($objimport->array_import_regex[0][$val]) && ($newval != ''))
 							{
 								// If test is "Must exist in a field@table or field@table:..."
@@ -702,13 +702,13 @@ class ImportXlsx extends ModeleImports
 										if (!empty($filter)) $tableforerror .= ':'.$filter;
 										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
-									    $errorforthistable++;
+										$errorforthistable++;
 										$error++;
 									}
 								}
 								// If test is just a static regex
 								elseif (!preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
-								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
+									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
 									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
 									$errorforthistable++;
@@ -734,33 +734,33 @@ class ImportXlsx extends ModeleImports
 				// We add hidden fields (but only if there is at least one field to add into table)
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0]))
 				{
-    				// Loop on each hidden fields to add them into listfields/listvalues
-				    foreach ($objimport->array_import_fieldshidden[0] as $key => $val)
-    				{
-    				    if (!preg_match('/^'.preg_quote($alias, '/').'\./', $key)) continue; // Not a field of current table
-    				    if ($val == 'user->id')
-    				    {
-    				        $listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-    				        $listvalues[] = $user->id;
-    				    } elseif (preg_match('/^lastrowid-/', $val))
-    				    {
-    				        $tmp = explode('-', $val);
-    				        $lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
+					// Loop on each hidden fields to add them into listfields/listvalues
+					foreach ($objimport->array_import_fieldshidden[0] as $key => $val)
+					{
+						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $key)) continue; // Not a field of current table
+						if ($val == 'user->id')
+						{
+							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+							$listvalues[] = $user->id;
+						} elseif (preg_match('/^lastrowid-/', $val))
+						{
+							$tmp = explode('-', $val);
+							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
 							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-    				        $listfields[] = $keyfield;
-                            $listvalues[] = $lastinsertid;
-    				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
-    				    } elseif (preg_match('/^const-/', $val))
-    				    {
-    				    	$tmp = explode('-', $val, 2);
-    				    	$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-    				    	$listvalues[] = "'".$tmp[1]."'";
-    				    } else {
-    				    	$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
-    				    	$this->errors[$error]['type'] = 'Import profile setup';
-    				    	$error++;
-    				    }
-    				}
+							$listfields[] = $keyfield;
+							$listvalues[] = $lastinsertid;
+							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
+						} elseif (preg_match('/^const-/', $val))
+						{
+							$tmp = explode('-', $val, 2);
+							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
+							$listvalues[] = "'".$tmp[1]."'";
+						} else {
+							$this->errors[$error]['lib'] = 'Bad value of profile setup '.$val.' for array_import_fieldshidden';
+							$this->errors[$error]['type'] = 'Import profile setup';
+							$error++;
+						}
+					}
 				}
 				//print 'listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
 
@@ -890,8 +890,8 @@ class ImportXlsx extends ModeleImports
 								$resql = $this->db->query($sql);
 								if ($resql)
 								{
-								    $last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
-								    $insertdone = true;
+									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									$insertdone = true;
 								} else {
 									//print 'E';
 									$this->errors[$error]['lib'] = $this->db->lasterror();
@@ -907,7 +907,7 @@ class ImportXlsx extends ModeleImports
 					}*/
 				}
 
-			    if ($error) break;
+				if ($error) break;
 			}
 
 			if ($updatedone) $this->nbupdate++;

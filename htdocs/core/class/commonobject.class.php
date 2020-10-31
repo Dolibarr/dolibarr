@@ -2256,12 +2256,12 @@ abstract class CommonObject
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
+				$this->error = $this->db->error();
 				return -1;
 			}
 		} else {
 			dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
-			$this->error='Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
 		}
 	}
@@ -5361,8 +5361,8 @@ abstract class CommonObject
 								$new_array_options[$key] = '';
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
-								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-								else $res = $object->fetch('', $value);					// For compatibility
+								if (is_numeric($value)) $res = $object->fetch($value); // Common case
+								else $res = $object->fetch('', $value); // For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -6821,7 +6821,7 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix];	// Value may be clean or formated later
+							$value = $this->array_options["options_".$key.$keysuffix]; // Value may be clean or formated later
 							break;
 						case "create":
 						case "edit":
@@ -8474,7 +8474,7 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		switch ($this->element){
+		switch ($this->element) {
 			case 'propal':
 				$element = 'propale';
 				break;
@@ -8482,10 +8482,10 @@ abstract class CommonObject
 				$element = 'produit';
 				break;
 			case 'order_supplier':
-				$element ='fournisseur/commande';
+				$element = 'fournisseur/commande';
 				break;
 			case 'invoice_supplier':
-				$element = 'fournisseur/facture/' . get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+				$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 				break;
 			case 'shipping':
 				$element = 'expedition/sending';
@@ -8495,8 +8495,8 @@ abstract class CommonObject
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
-		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();

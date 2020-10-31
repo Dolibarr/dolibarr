@@ -40,7 +40,7 @@ $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
 $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
+$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user

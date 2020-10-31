@@ -1677,11 +1677,11 @@ if ($action != 'dopayment')
 
 			// Buttons for all payments registration methods
 
-		    // This hook is used to add Button to newpayment.php for external payment modules (ie Payzen, ...)
-            $parameters = [
-            	'paymentmethod' => $paymentmethod
-            ];
-            $reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
+			// This hook is used to add Button to newpayment.php for external payment modules (ie Payzen, ...)
+			$parameters = [
+				'paymentmethod' => $paymentmethod
+			];
+			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 			{
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
@@ -2271,13 +2271,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		}
 	}
 	// This hook is used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
-    $parameters = [
-    	'paymentmethod' => $paymentmethod,
-    	'amount' => price2num(GETPOST("newamount"), 'MT'),
-    	'tag' => GETPOST("tag", 'alpha'),
-    	'dopayment' => GETPOST('dopayment', 'alpha')
-    ];
-    $reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+		'amount' => price2num(GETPOST("newamount"), 'MT'),
+		'tag' => GETPOST("tag", 'alpha'),
+		'dopayment' => GETPOST('dopayment', 'alpha')
+	];
+	$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
 }
 
 

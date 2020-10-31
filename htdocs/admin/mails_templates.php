@@ -274,7 +274,7 @@ if (empty($reshook))
 				if (GETPOST($keycode) == '' && $keycode != 'langcode')      $sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif ($keycode == 'fk_user') {
-					if (! $user->admin) {	// A non admin user can only edit its own template
+					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
 						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
@@ -333,7 +333,7 @@ if (empty($reshook))
 				if (GETPOST($keycode) == '' || ($keycode != 'langcode' && $keycode != 'position' && $keycode != 'private' && !GETPOST($keycode))) $sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 				elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') $sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 				elseif ($keycode == 'fk_user') {
-					if (! $user->admin) {	// A non admin user can only edit its own template
+					if (!$user->admin) {	// A non admin user can only edit its own template
 						$sql .= " ".((int) $user->id);
 					} else {
 						$sql .= " ".((int) GETPOST($keycode, 'fk_user'));
@@ -350,7 +350,7 @@ if (empty($reshook))
 			}
 
 			$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
-			if (! $user->admin) {	// A non admin user can only edit its own template
+			if (!$user->admin) {	// A non admin user can only edit its own template
 				$sql .= " AND fk_user  = ".$user->id;
 			}
 			//print $sql;exit;
@@ -371,7 +371,7 @@ if (empty($reshook))
 		$rowidcol = "rowid";
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."=".((int) $rowid);
-		if (! $user->admin) {	// A non admin user can only edit its own template
+		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user  = ".$user->id;
 		}
 		dol_syslog("delete", LOG_DEBUG);
@@ -493,7 +493,7 @@ if ($action == 'view') {
 		if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
 		if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
 		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') { $valuetoshow = $langs->trans("Code"); }
-		if ($fieldlist[$field] == 'type_template') { $valuetoshow = $langs->trans("TypeOfTemplate"); $align="center"; }
+		if ($fieldlist[$field] == 'type_template') { $valuetoshow = $langs->trans("TypeOfTemplate"); $align = "center"; }
 		if ($fieldlist[$field] == 'private') { $align = 'center'; }
 		if ($fieldlist[$field] == 'position') { $align = 'center'; }
 
@@ -795,13 +795,13 @@ if ($resql)
 
 				print "</tr>\n";
 			} else {
-			    if ($obj->module) {
-			        $tempmodulekey = $obj->module;
-			        if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
-			            $i++;
-			            continue;
-			        }
-			    }
+				if ($obj->module) {
+					$tempmodulekey = $obj->module;
+					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+						$i++;
+						continue;
+					}
+				}
 				$keyforobj = 'type_template';
 				if (!in_array($obj->$keyforobj, array_keys($elementList)))
 				{

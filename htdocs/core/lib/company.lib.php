@@ -1555,16 +1555,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			//$userstatic->id=$histo[$key]['userid'];
 			//$userstatic->login=$histo[$key]['login'];
 			//$out.=$userstatic->getLoginUrl(1);
-            if ($histo[$key]['userid'] > 0) {
-                if (isset($userlinkcache[$histo[$key]['userid']])) {
-                    $link = $userlinkcache[$histo[$key]['userid']];
-                } else {
-                    $userstatic->fetch($histo[$key]['userid']);
-                    $link = $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
-                    $userlinkcache[$histo[$key]['userid']] = $link;
-                }
-                $out .= $link;
-            }
+			if ($histo[$key]['userid'] > 0) {
+				if (isset($userlinkcache[$histo[$key]['userid']])) {
+					$link = $userlinkcache[$histo[$key]['userid']];
+				} else {
+					$userstatic->fetch($histo[$key]['userid']);
+					$link = $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
+					$userlinkcache[$histo[$key]['userid']] = $link;
+				}
+				$out .= $link;
+			}
 			$out .= '</td>';
 
 			// Type

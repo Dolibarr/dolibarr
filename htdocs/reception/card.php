@@ -421,15 +421,15 @@ if (empty($reshook))
 
 	elseif ($action == 'setdate_livraison' && $user->rights->reception->creer)
 	{
-	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
-	    $object->fetch($id);
-	    $result = $object->setDeliveryDate($user, $datedelivery);
-	    if ($result < 0)
-	    {
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
+		$object->fetch($id);
+		$result = $object->setDeliveryDate($user, $datedelivery);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Action update
@@ -849,34 +849,34 @@ if ($action == 'create')
 				print $object->showOptionals($extrafields, 'edit', $parameters);
 			}
 
-            // Incoterms
+			// Incoterms
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
-		        print '<td colspan="3" class="maxwidthonsmartphone">';
-		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''));
 				print '</td></tr>';
 			}
 
-            // Document model
+			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 			$liste = ModelePdfReception::liste_modeles($db);
 
 			if (count($liste) > 1)
 			{
-    			print "<tr><td>".$langs->trans("DefaultModel")."</td>";
-                print '<td colspan="3">';
-    			print $form->selectarray('model', $liste, $conf->global->RECEPTION_ADDON_PDF);
-                print "</td></tr>\n";
+				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
+				print '<td colspan="3">';
+				print $form->selectarray('model', $liste, $conf->global->RECEPTION_ADDON_PDF);
+				print "</td></tr>\n";
 			}
 
-            print "</table>";
+			print "</table>";
 
-            print dol_get_fiche_end();
+			print dol_get_fiche_end();
 
 
-            // Reception lines
+			// Reception lines
 			$numAsked = 0;
 			$dispatchLines = array();
 			foreach ($_POST as $key => $value)

@@ -297,7 +297,7 @@ abstract class CommonInvoice extends CommonObject
 		$table2 = 'paiement';
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
-		$field3=', p.ref_ext';
+		$field3 = ', p.ref_ext';
 		$sharedentity = 'facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 		{
@@ -305,7 +305,7 @@ abstract class CommonInvoice extends CommonObject
 			$table2 = 'paiementfourn';
 			$field = 'fk_facturefourn';
 			$field2 = 'fk_paiementfourn';
-			$field3='';
+			$field3 = '';
 			$sharedentity = 'facture_fourn';
 		}
 
@@ -327,11 +327,11 @@ abstract class CommonInvoice extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$tmp = array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$tmp = array('amount'=>$obj->amount, 'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
 				if (!empty($field3)) {
 					$tmp['ref_ext'] = $obj->ref_ext;
 				}
-				$retarray[]=$tmp;
+				$retarray[] = $tmp;
 				$i++;
 			}
 			$this->db->free($resql);
@@ -694,7 +694,7 @@ abstract class CommonInvoice extends CommonObject
 			} else {
 				$sql .= ' WHERE fk_facture = '.$this->id;
 			}
-			$sql .= ' AND ext_payment_id IS NULL';			// To exclude record done for some online payments
+			$sql .= ' AND ext_payment_id IS NULL'; // To exclude record done for some online payments
 			$sql .= ' AND traite = 0';
 
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);

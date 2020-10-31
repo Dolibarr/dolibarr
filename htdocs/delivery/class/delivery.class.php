@@ -67,19 +67,19 @@ class Delivery extends CommonObject
 	 */
 	public $picto = 'sending';
 
-    /**
-     * @var int draft status
-     */
-    public $draft;
+	/**
+	 * @var int draft status
+	 */
+	public $draft;
 
-    /**
-     * @var int thirdparty id
-     */
-    public $socid;
+	/**
+	 * @var int thirdparty id
+	 */
+	public $socid;
 
-    /**
-     * @var string ref custome
-     */
+	/**
+	 * @var string ref custome
+	 */
 	public $ref_customer;
 
 	/**
@@ -97,9 +97,9 @@ class Delivery extends CommonObject
 	 */
 	public $date_valid;
 
-    /**
-     * @var string model pdf
-     */
+	/**
+	 * @var string model pdf
+	 */
 	public $model_pdf;
 
 
@@ -336,7 +336,7 @@ class Delivery extends CommonObject
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;	// deprecated
+				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->origin               = $obj->origin; // May be 'shipping'
 				$this->origin_id            = $obj->origin_id; // May be id of shipping
 
@@ -1012,14 +1012,14 @@ class Delivery extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-    public function setDeliveryDate($user, $delivery_date)
+	public function setDeliveryDate($user, $delivery_date)
 	{
 		if ($user->rights->expedition->creer)
 		{
@@ -1099,33 +1099,33 @@ class Delivery extends CommonObject
  */
 class DeliveryLine extends CommonObjectLine
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
-     * @var string ID to identify managed object
-     */
-    public $element = 'deliverydet';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'deliverydet';
 
-    /**
-     * @var string Name of table without prefix where object is stored
-     */
-    public $table_element = 'deliverydet';
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'deliverydet';
 
-    // From llx_expeditiondet
-    public $qty;
-    public $qty_asked;
-    public $qty_shipped;
-    public $price;
-    public $fk_product;
-    public $origin_id;
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
+	public $price;
+	public $fk_product;
+	public $origin_id;
 
-    /**
-     * @var string delivery note lines label
-     */
-    public $label;
+	/**
+	 * @var string delivery note lines label
+	 */
+	public $label;
 
 	/**
 	 * @var string product description

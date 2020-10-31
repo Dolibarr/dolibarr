@@ -1203,7 +1203,7 @@ class FormFile
 					{
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
-						if (! preg_match('/\/$/', $section_dir)) $section_dir.='/';
+						if (!preg_match('/\/$/', $section_dir)) $section_dir .= '/';
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
@@ -1303,7 +1303,7 @@ class FormFile
 						if ($useinecm == 1 || $useinecm == 5)	// ECM manual tree only
 						{
 							// $section is inside $param
-							$newparam.=preg_replace('/&file=.*$/', '', $param);		// We don't need param file=
+							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
 							print '<a class="editfielda" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}

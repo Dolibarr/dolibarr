@@ -105,8 +105,8 @@ $coldisplay++;
 	if (is_object($hookmanager))
 	{
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	    $parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
-	    $reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
+		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
 	// Do not allow editing during a situation cycle
@@ -142,7 +142,7 @@ $coldisplay++;
 	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
-	    $coldisplay++;
+		$coldisplay++;
 		?>
 		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
@@ -161,7 +161,7 @@ $coldisplay++;
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-	    $coldisplay++;
+		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
@@ -191,7 +191,7 @@ $coldisplay++;
 	<?php
 	if ($conf->global->PRODUCT_USE_UNITS)
 	{
-	    $coldisplay++;
+		$coldisplay++;
 		print '<td class="left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
@@ -217,10 +217,10 @@ $coldisplay++;
 	}
 	if (!empty($usemargins))
 	{
-        if (!empty($user->rights->margins->creer))
-        {
-            $coldisplay++;
-        	?>
+		if (!empty($user->rights->margins->creer))
+		{
+			$coldisplay++;
+			?>
         <td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
@@ -231,7 +231,7 @@ $coldisplay++;
 		</td>
 		<?php }
 
-        if ($user->rights->margins->creer) {
+		if ($user->rights->margins->creer) {
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
 				$margin_rate = (isset($_POST["np_marginRate"]) ?GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
@@ -307,20 +307,20 @@ if (!empty($extrafields))
 <script>
 
 <?php
-if (! empty($usemargins) && $user->rights->margins->creer)
+if (!empty($usemargins) && $user->rights->margins->creer)
 {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
 	<?php
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
 	}
-	if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
@@ -404,9 +404,9 @@ jQuery(document).ready(function()
 	});
 
     <?php
-    if (!empty($conf->margin->enabled))
-    {
-        ?>
+	if (!empty($conf->margin->enabled))
+	{
+		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -470,8 +470,8 @@ jQuery(document).ready(function()
 		}
 		}, 'json');
         <?php
-    }
-    ?>
+	}
+	?>
 });
 
 </script>

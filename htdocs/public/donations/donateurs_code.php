@@ -35,7 +35,7 @@ if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined
  */
 function llxHeaderVierge()
 {
-    print '<html><title>Export agenda cal</title><body>';
+	print '<html><title>Export agenda cal</title><body>';
 }
 /**
  * Header function
@@ -44,7 +44,7 @@ function llxHeaderVierge()
  */
 function llxFooterVierge()
 {
-    print '</body></html>';
+	print '</body></html>';
 }
 
 require '../../main.inc.php';

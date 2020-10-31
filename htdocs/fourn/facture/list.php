@@ -505,7 +505,7 @@ if ($resql)
 		'validate'=>$langs->trans("Validate"),
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		//'builddoc'=>$langs->trans("PDFMerge"),
-	    //'presend'=>$langs->trans("SendByMail"),
+		//'presend'=>$langs->trans("SendByMail"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -653,7 +653,7 @@ if ($resql)
 				FactureFournisseur::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 				FactureFournisseur::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 		);
-        /*
+		/*
 		if (! empty($conf->global->INVOICE_USE_SITUATION))
 		{
 			$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
@@ -969,12 +969,12 @@ if ($resql)
 			$facturestatic->type = $obj->type;
 
 
-            //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
-            if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-                if ($facturestatic->isCreditNoteUsed()) {
-                    $remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();
-                }
-            }
+			//If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
+			if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+				if ($facturestatic->isCreditNoteUsed()) {
+					$remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();
+				}
+			}
 
 			print '<tr class="oddeven">';
 			if (!empty($arrayfields['f.ref']['checked']))
@@ -1308,16 +1308,16 @@ if ($resql)
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
 
-    // Show list of available documents
-    $urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-    $urlsource .= str_replace('&amp;', '&', $param);
+	// Show list of available documents
+	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
 
-    $filedir = $diroutputmassaction;
-    $genallowed = $user->rights->facture->lire;
-    $delallowed = $user->rights->facture->creer;
-    $title = '';
+	$filedir = $diroutputmassaction;
+	$genallowed = $user->rights->facture->lire;
+	$delallowed = $user->rights->facture->creer;
+	$title = '';
 
-    print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {
 	dol_print_error($db);
 }

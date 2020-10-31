@@ -139,13 +139,13 @@ $h++;
 print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 if ($action == 'edit') {
-    print '<form method="POST">';
+	print '<form method="POST">';
 }
 
 
 if ($action != 'edit') {
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 }
 print '<table class="border centpercent tableforfield">';
 print '<tr>';
@@ -173,7 +173,7 @@ print '</table>';
 
 
 if ($action != 'edit') {
-    print '</div>';
+	print '</div>';
 }
 
 print dol_get_fiche_end();

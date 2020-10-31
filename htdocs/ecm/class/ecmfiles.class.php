@@ -67,7 +67,7 @@ class EcmFiles extends CommonObject
 	 */
 	public $entity;
 
-	public $filename;			// Note: Into ecm database record, the entry $filename never ends with .noexe
+	public $filename; // Note: Into ecm database record, the entry $filename never ends with .noexe
 	public $filepath;
 	public $fullpath_orig;
 
@@ -346,7 +346,7 @@ class EcmFiles extends CommonObject
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if ($relativepath) {
-			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath);		// We must never have the .noexe into the database
+			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath); // We must never have the .noexe into the database
 			$sql .= " AND t.filepath = '".$this->db->escape(dirname($relativepath))."'";
 			$filename = basename($relativepathwithnoexe);
 			if ($filename != '*') {
@@ -563,7 +563,7 @@ class EcmFiles extends CommonObject
 		}
 		if (isset($this->filepath)) {
 			$this->filepath = trim($this->filepath);
-			$this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath);		// Remove last /
+			$this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath); // Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
 			$this->fullpath_orig = trim($this->fullpath_orig);

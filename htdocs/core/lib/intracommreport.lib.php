@@ -29,26 +29,26 @@
  */
 function intracommReportAdminPrepareHead()
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    $langs->load("intracommreport");
+	$langs->load("intracommreport");
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/intracommreport/admin/intracommreport.php';
-    $head[$h][1] = $langs->trans("Parameters");
-    $head[$h][2] = 'general';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/intracommreport/admin/intracommreport.php';
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'general';
+	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-    // $this->tabs = array('entity:-tabname); to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport_admin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->tabs = array('entity:-tabname); to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport_admin');
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport_admin', 'remove');
-    return $head;
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport_admin', 'remove');
+	return $head;
 }
 
 /**
@@ -60,24 +60,24 @@ function intracommReportAdminPrepareHead()
  */
 function intracommReportPrepareHead($object)
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    $langs->load("intracommreport");
+	$langs->load("intracommreport");
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/intracommreport/card.php?rowid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
-    $head[$h][2] = 'card';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/intracommreport/card.php?rowid='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-    // $this->tabs = array('entity:-tabname); to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->tabs = array('entity:-tabname); to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport');
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport', 'remove');
-    return $head;
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'intracommreport', 'remove');
+	return $head;
 }

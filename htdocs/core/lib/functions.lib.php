@@ -1019,9 +1019,9 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 {
 	if ($removetabcrlf) {
-		return preg_replace('/[\x00-\x1F\x7F]/u', '', $str);	// /u operator makes UTF8 valid characters being ignored so are not included into the replace
+		return preg_replace('/[\x00-\x1F\x7F]/u', '', $str); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 	} else {
-		return preg_replace('/[\x00-\x08\x11-\x12\x14-\x1F\x7F]/u', '', $str);	// /u operator should make UTF8 valid characters being ignored so are not included into the replace
+		return preg_replace('/[\x00-\x08\x11-\x12\x14-\x1F\x7F]/u', '', $str); // /u operator should make UTF8 valid characters being ignored so are not included into the replace
 	}
 }
 
@@ -1097,10 +1097,10 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoreta
 function dol_strtolower($string, $encoding = "UTF-8")
 {
 	if (function_exists('mb_strtolower')) {
-        return mb_strtolower($string, $encoding);
-    } else {
-        return strtolower($string);
-    }
+		return mb_strtolower($string, $encoding);
+	} else {
+		return strtolower($string);
+	}
 }
 
 /**
@@ -1113,10 +1113,10 @@ function dol_strtolower($string, $encoding = "UTF-8")
 function dol_strtoupper($string, $encoding = "UTF-8")
 {
 	if (function_exists('mb_strtoupper')) {
-        return mb_strtoupper($string, $encoding);
-    } else {
-        return strtoupper($string);
-    }
+		return mb_strtoupper($string, $encoding);
+	} else {
+		return strtoupper($string);
+	}
 }
 
 /**
@@ -1128,11 +1128,11 @@ function dol_strtoupper($string, $encoding = "UTF-8")
  */
 function dol_ucfirst($string, $encoding = "UTF-8")
 {
-    if (function_exists('mb_substr')) {
-        return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding) . mb_substr($string, 1, null, $encoding);
-    } else {
-        return ucfirst($string);
-    }
+	if (function_exists('mb_substr')) {
+		return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding) . mb_substr($string, 1, null, $encoding);
+	} else {
+		return ucfirst($string);
+	}
 }
 
 /**
@@ -1144,11 +1144,11 @@ function dol_ucfirst($string, $encoding = "UTF-8")
  */
 function dol_ucwords($string, $encoding = "UTF-8")
 {
-    if (function_exists('mb_convert_case')) {
-        return mb_convert_case($string, MB_CASE_TITLE, $encoding);
-    } else {
-        return ucwords($string);
-    }
+	if (function_exists('mb_convert_case')) {
+		return mb_convert_case($string, MB_CASE_TITLE, $encoding);
+	} else {
+		return ucwords($string);
+	}
 }
 
 /**
@@ -2122,8 +2122,8 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 	if (empty($conf->global->MAIN_USE_OLD_FUNCTIONS_FOR_GETDATE)) {
 		//$datetimeobj = new DateTime('@'.$timestamp);
 		$datetimeobj = new DateTime();
-		$datetimeobj->setTimestamp($timestamp);	// Use local PHP server timezone
-		if ($forcetimezone) $datetimeobj->setTimezone(new DateTimeZone($forcetimezone));		//  (add timezone relative to the date entered)
+		$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
+		if ($forcetimezone) $datetimeobj->setTimezone(new DateTimeZone($forcetimezone)); //  (add timezone relative to the date entered)
 		$arrayinfo = array(
 			'year'=>((int) date_format($datetimeobj, 'Y')),
 			'mon'=>((int) date_format($datetimeobj, 'm')),
@@ -5672,7 +5672,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
 	// We remove entities BEFORE stripping (in case of a separator char is encoded and not the other, the strip will fails)
-	$temp = dol_html_entity_decode($temp, ENT_COMPAT|ENT_HTML5, $pagecodeto);
+	$temp = dol_html_entity_decode($temp, ENT_COMPAT | ENT_HTML5, $pagecodeto);
 
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
@@ -5884,7 +5884,7 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
  */
 function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
 {
-	$ret = dol_html_entity_decode($stringtodecode, ENT_COMPAT|ENT_HTML5, $pagecodeto);
+	$ret = dol_html_entity_decode($stringtodecode, ENT_COMPAT | ENT_HTML5, $pagecodeto);
 	$ret = preg_replace('/'."\r\n".'<br(\s[\sa-zA-Z_="]*)?\/?>/i', "<br>", $ret);
 	$ret = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\r\n".'/i', "\r\n", $ret);
 	$ret = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>'."\n".'/i', "\n", $ret);

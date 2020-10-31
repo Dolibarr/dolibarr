@@ -34,22 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceActionsAuto extends DolibarrTriggers
 {
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "agenda";
-        $this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
-        // 'development', 'experimental', 'dolibarr' or version
-        $this->version = self::VERSION_DOLIBARR;
-        $this->picto = 'action';
-    }
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "agenda";
+		$this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'action';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.

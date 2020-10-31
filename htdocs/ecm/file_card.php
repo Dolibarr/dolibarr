@@ -146,7 +146,7 @@ if ($action == 'update')
 	$newfile = $newdir.$newlabel;
 	$newfileformove = $newfile;
 	// If old file end with .noexe, new file must also end with .noexe
-	if (preg_match('/\.noexe$/', $oldfile) && ! preg_match('/\.noexe$/', $newfileformove)) {
+	if (preg_match('/\.noexe$/', $oldfile) && !preg_match('/\.noexe$/', $newfileformove)) {
 		$newfileformove .= '.noexe';
 	}
 	//var_dump($oldfile);var_dump($newfile);exit;

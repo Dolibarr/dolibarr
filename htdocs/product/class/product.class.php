@@ -2090,7 +2090,7 @@ class Product extends CommonObject
 				$this->customcode                    = $obj->customcode;
 				$this->country_id                    = $obj->fk_country;
 				$this->country_code = getCountry($this->country_id, 2, $this->db);
-				$this->state_id                    = $obj->fk_state;
+				$this->state_id = $obj->fk_state;
 				$this->price                        = $obj->price;
 				$this->price_ttc                    = $obj->price_ttc;
 				$this->price_min                    = $obj->price_min;
@@ -2381,9 +2381,9 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $user, $hookmanager;
 
-		$error=0;
+		$error = 0;
 
-		foreach (array('toconsume','consumed','toproduce','produced') as $role) {
+		foreach (array('toconsume', 'consumed', 'toproduce', 'produced') as $role) {
 			$this->stats_mo['customers_'.$role] = 0;
 			$this->stats_mo['nb_'.$role] = 0;
 			$this->stats_mo['qty_'.$role] = 0;
@@ -2439,7 +2439,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $user, $hookmanager;
 
-		$error=0;
+		$error = 0;
 
 		$this->stats_bom['nb_toproduce'] = 0;
 		$this->stats_bom['nb_toconsume'] = 0;
@@ -2453,7 +2453,7 @@ class Product extends CommonObject
 		$sql .= " WHERE ";
 		$sql .= " b.entity IN (".getEntity('bom').")";
 		$sql .= " AND b.fk_product =".$this->id;
-        $sql .= " GROUP BY b.rowid";
+		$sql .= " GROUP BY b.rowid";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3200,7 +3200,7 @@ class Product extends CommonObject
 	private function _get_stats($sql, $mode, $year = 0)
 	{
 		// phpcs:enable
-        $tab = array();
+		$tab = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3209,16 +3209,16 @@ class Product extends CommonObject
 			while ($i < $num)
 			{
 				$arr = $this->db->fetch_array($resql);
-                $keyfortab = (string) $arr[1];
-                if ($year == -1) {
-                	$keyfortab = substr($keyfortab, -2);
-                }
+				$keyfortab = (string) $arr[1];
+				if ($year == -1) {
+					$keyfortab = substr($keyfortab, -2);
+				}
 
-                if ($mode == 'byunit') {
-                	$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[0]; // 1st field
-                } elseif ($mode == 'bynumber') {
-                	$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
-                }
+				if ($mode == 'byunit') {
+					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[0]; // 1st field
+				} elseif ($mode == 'bynumber') {
+					$tab[$keyfortab] = (empty($tab[$keyfortab]) ? 0 : $tab[$keyfortab]) + $arr[2]; // 3rd field
+				}
 				$i++;
 			}
 		} else {
@@ -3226,26 +3226,26 @@ class Product extends CommonObject
 			return -1;
 		}
 
-        if (empty($year)) {
-            $year = strftime('%Y', time());
-            $month = strftime('%m', time());
-        } elseif ($year == -1) {
-        	$year = '';
-        	$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
-        } else {
-            $month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
-        }
+		if (empty($year)) {
+			$year = strftime('%Y', time());
+			$month = strftime('%m', time());
+		} elseif ($year == -1) {
+			$year = '';
+			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
+		} else {
+			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
+		}
 
-        $result = array();
+		$result = array();
 
-        for ($j = 0; $j < 12; $j++)
-        {
+		for ($j = 0; $j < 12; $j++)
+		{
 			// $ids is 'D', 'N', 'O', 'S', ... (First letter of month in user language)
-        	$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, 1970), "%b"), 1, 'right', 'UTF-8', 1));
+			$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, 1970), "%b"), 1, 'right', 'UTF-8', 1));
 
 			//print $idx.'-'.$year.'-'.$month.'<br>';
-            $result[$j] = array($idx, isset($tab[$year.$month]) ? $tab[$year.$month] : 0);
-            //            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
+			$result[$j] = array($idx, isset($tab[$year.$month]) ? $tab[$year.$month] : 0);
+			//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
 
 			$month = "0".($month - 1);
 			if (dol_strlen($month) == 3) {
@@ -4708,7 +4708,7 @@ class Product extends CommonObject
 		global $langs;
 		$langs->load('products');
 
-		if (isset($this->finished) && $this->finished>=0) {
+		if (isset($this->finished) && $this->finished >= 0) {
 			$sql = 'SELECT label, code FROM '.MAIN_DB_PREFIX.'c_product_nature where code='.((int) $this->finished).' AND active=1';
 			$resql = $this->db->query($sql);
 			if ($resql && $this->db->num_rows($resql) > 0) {

@@ -240,7 +240,7 @@ if (empty($reshook))
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
-				$userWrite  = $object->restrictedProjectArea($user, 'write');
+				$userWrite = $object->restrictedProjectArea($user, 'write');
 				if ($userWrite > 0 && $objecttmp->statut == 1) {
 					$result = $objecttmp->setClose($user);
 					if ($result <= 0) {

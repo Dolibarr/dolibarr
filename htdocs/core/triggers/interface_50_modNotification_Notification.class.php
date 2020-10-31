@@ -49,22 +49,22 @@ class InterfaceNotification extends DolibarrTriggers
 		'HOLIDAY_APPROVE'
 	);
 
-    /**
-     * Constructor
-     *
-     * @param DoliDB $db Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "notification";
-        $this->description = "Triggers of this module send email notifications according to Notification module setup.";
-        // 'development', 'experimental', 'dolibarr' or version
-        $this->version = self::VERSION_DOLIBARR;
-        $this->picto = 'email';
-    }
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		$this->family = "notification";
+		$this->description = "Triggers of this module send email notifications according to Notification module setup.";
+		// 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR;
+		$this->picto = 'email';
+	}
 
 	/**
 	 * Function called when a Dolibarrr business event is done.

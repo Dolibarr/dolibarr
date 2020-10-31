@@ -1010,10 +1010,10 @@ class Invoices extends DolibarrApi
         $discountcheck = new DiscountAbsolute($this->db);
         $result = $discountcheck->fetch(0, $this->invoice->id);
 
-        if ($result == 0){
+        if ($result == 0) {
             throw new RestException(404, 'Discount not found');
         }
-        if ($result < 0){
+        if ($result < 0) {
             throw new RestException(500, $discountcheck->error);
         }
 

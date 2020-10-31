@@ -39,11 +39,11 @@ $bankaccountid = GETPOST('cashdeskbank');
 switch ($action)
 {
 	default:
-	    $redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
 	case 'validate_sell':
-	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 
 		$company = new Societe($db);
 		$company->fetch($thirdpartyid);
@@ -97,9 +97,9 @@ switch ($action)
 
 			$obj_facturation->amountReturned($encaisse - $total);
 		} else {
-		    //$txtDatePaiement=$_POST['txtDatePaiement'];
-		    $datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
-		    $txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
+			//$txtDatePaiement=$_POST['txtDatePaiement'];
+			$datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
+			$txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
 			$obj_facturation->paiementLe($txtDatePaiement);
 		}
 
@@ -252,12 +252,12 @@ switch ($action)
 				}
 			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
-			    $error++;
+				$error++;
 			}
 
 			$id = $invoice->id;
 		} else {
-		    $resultcreate = $invoice->create($user, 0, 0);
+			$resultcreate = $invoice->create($user, 0, 0);
 			if ($resultcreate > 0)
 			{
 				$warehouseidtodecrease = (isset($_SESSION["CASHDESK_ID_WAREHOUSE"]) ? $_SESSION["CASHDESK_ID_WAREHOUSE"] : 0);
@@ -282,8 +282,8 @@ switch ($action)
 							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result = $mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
 							else $result = $mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
 							if ($result < 0) {
-							    setEventMessages($mouvP->error, $mouvP->errors, 'errors');
-							    $error++;
+								setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+								$error++;
 							}
 						}
 					}
@@ -303,33 +303,33 @@ switch ($action)
 				$paiement_id = $payment->create($user);
 				if ($paiement_id > 0)
 				{
-                    if (!$error)
-                    {
-                        $result = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
-                        if (!$result > 0)
-                        {
-                            $errmsg = $paiement->error;
-                            $error++;
-                        }
-                    }
+					if (!$error)
+					{
+						$result = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
+						if (!$result > 0)
+						{
+							$errmsg = $paiement->error;
+							$error++;
+						}
+					}
 
-                    if (!$error)
-                    {
-                    	if ($invoice->total_ttc == $obj_facturation->amountWithTax()
-                    		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
-                    	{
-                    		// We set status to payed
-                    		$result = $invoice->set_paid($user);
-                  			//print 'set paid';exit;
-                    	}
-                    }
+					if (!$error)
+					{
+						if ($invoice->total_ttc == $obj_facturation->amountWithTax()
+							&& $obj_facturation->getSetPaymentMode() != 'DIFF')
+						{
+							// We set status to payed
+							$result = $invoice->set_paid($user);
+				  			//print 'set paid';exit;
+						}
+					}
 				} else {
-				    setEventMessages($invoice->error, $invoice->errors, 'errors');
-				    $error++;
+					setEventMessages($invoice->error, $invoice->errors, 'errors');
+					$error++;
 				}
 			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
-			    $error++;
+				$error++;
 			}
 		}
 

@@ -37,17 +37,17 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param  DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
+	 *  @param  DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'project';
@@ -77,7 +77,7 @@ abstract class ModeleNumRefProjects
 	 *
 	 *  @return		boolean     true if module can be used
 	 */
-    public function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -87,7 +87,7 @@ abstract class ModeleNumRefProjects
 	 *
 	 *  @return     string      Texte descripif
 	 */
-    public function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("projects");
@@ -99,7 +99,7 @@ abstract class ModeleNumRefProjects
 	 *
 	 *  @return     string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("projects");
@@ -112,7 +112,7 @@ abstract class ModeleNumRefProjects
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -124,7 +124,7 @@ abstract class ModeleNumRefProjects
 	 *	@param	Project		$project	Object project
 	 *	@return	string					Valeur
 	 */
-    public function getNextValue($objsoc, $project)
+	public function getNextValue($objsoc, $project)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -135,8 +135,8 @@ abstract class ModeleNumRefProjects
 	 *
 	 *  @return     string      Valeur
 	 */
-    public function getVersion()
-    {
+	public function getVersion()
+	{
 		global $langs;
 		$langs->load("admin");
 
@@ -145,5 +145,5 @@ abstract class ModeleNumRefProjects
 		elseif ($this->version == 'dolibarr') return DOL_VERSION;
 		elseif ($this->version) return $this->version;
 		else return $langs->trans("NotAvailable");
-    }
+	}
 }

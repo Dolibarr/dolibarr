@@ -557,22 +557,22 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
-    // Show here line of result
-    print '<tr class="oddeven">';
-    foreach ($object->fields as $key => $val)
-    {
-    	$cssforfield = (empty($val['css']) ? '' : $val['css']);
-    	if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
-    	elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+	// Show here line of result
+	print '<tr class="oddeven">';
+	foreach ($object->fields as $key => $val)
+	{
+		$cssforfield = (empty($val['css']) ? '' : $val['css']);
+		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 
-    	if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-    	elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 
-    	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
-    	if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
+		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
+		if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
-        if (!empty($arrayfields['t.'.$key]['checked']))
-        {
+		if (!empty($arrayfields['t.'.$key]['checked']))
+		{
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') print $object->getLibStatut(5);
 			else print $object->showOutputField($val, $key, $object->$key, '');
@@ -583,8 +583,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}
-        }
-    }
+		}
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook

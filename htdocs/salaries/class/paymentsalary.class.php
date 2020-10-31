@@ -658,7 +658,7 @@ class PaymentSalary extends CommonObject
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 			}
 			$this->db->free($result);
 		} else {

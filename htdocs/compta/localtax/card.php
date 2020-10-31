@@ -175,38 +175,38 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
-    if (!empty($conf->banque->enabled))
-    {
+	if (!empty($conf->banque->enabled))
+	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-        $form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
-        print '</td></tr>';
+		$form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
+		print '</td></tr>';
 
-	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	    $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype");
-	    print "</td>\n";
-	    print "</tr>";
+		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+		$form->select_types_paiements(GETPOST("paiementtype"), "paiementtype");
+		print "</td>\n";
+		print "</tr>";
 
 		// Number
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
-    }
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	}
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-    print '</table>';
+	print '</table>';
 
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 
 
@@ -251,27 +251,27 @@ if ($id)
 		if ($object->fk_account > 0)
 		{
  		   	$bankline = new AccountLine($db);
-    		$bankline->fetch($object->fk_bank);
+			$bankline->fetch($object->fk_bank);
 
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<tr>';
+			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
 			print $bankline->getNomUrl(1, 0, 'showall');
-	    	print '</td>';
-	    	print '</tr>';
+			print '</td>';
+			print '</tr>';
 		}
 	}
 
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    print dol_get_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

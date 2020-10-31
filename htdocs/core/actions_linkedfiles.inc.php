@@ -29,7 +29,7 @@
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    if (!empty($_FILES))
+	if (!empty($_FILES))
 	{
 		if (is_array($_FILES['userfile']['tmp_name'])) $userfiles = $_FILES['userfile']['tmp_name'];
 		else $userfiles = array($_FILES['userfile']['tmp_name']);
@@ -192,7 +192,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	        {
 	        	// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 	        	$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
-	        	if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
+	        	if (!preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash .= '/';
 
 	        	if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
 		            $filenameto .= '.noexe';

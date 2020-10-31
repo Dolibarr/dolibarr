@@ -170,7 +170,7 @@ if ($result >= 0) {
 				if ($key === 'count')
 					continue;
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-				                                 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+												 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid') {
 						$userKey = array($userdn);
 					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets

@@ -169,12 +169,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 
 if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer)
 {
-    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-    $result = $object->setDeliveryDate($user, $datedelivery);
-    if ($result < 0)
-    {
-        $mesg = '<div class="error">'.$object->error.'</div>';
-    }
+	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+	$result = $object->setDeliveryDate($user, $datedelivery);
+	if ($result < 0)
+	{
+		$mesg = '<div class="error">'.$object->error.'</div>';
+	}
 }
 
 // Set incoterm
@@ -628,7 +628,7 @@ if ($action == 'create')    // Create. Seems to no be used
 
 			print "</table>\n";
 
-            print dol_get_fiche_end();
+			print dol_get_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
 			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';

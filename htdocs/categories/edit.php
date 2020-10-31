@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
 if ($id > 0) {
-    $result = $object->fetch($id);
+	$result = $object->fetch($id);
 }
 
 $extrafields = new ExtraFields($db);
@@ -73,23 +73,23 @@ $error = 0;
  */
 
 if ($cancel) {
-    header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-    exit;
+	header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+	exit;
 }
 
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer) {
-    $object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object);
 	$object->label          = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
 	$object->socid          = ($socid > 0 ? $socid : 0);
 	$object->visible        = $visible;
-    $object->fk_parent = $parent != -1 ? $parent : 0;
+	$object->fk_parent = $parent != -1 ? $parent : 0;
 
 
 	if (empty($object->label)) {
-	    $error++;
+		$error++;
 		$action = 'edit';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}

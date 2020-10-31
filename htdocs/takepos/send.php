@@ -66,9 +66,9 @@ if ($action == "send")
 	$receipt = ob_get_contents(); // get the contents of the output buffer
 	ob_end_clean();
 
-	$msg="<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
-	$sendto=$email;
-	$from=$mysoc->email;
+	$msg = "<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
+	$sendto = $email;
+	$from = $mysoc->email;
 	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1);
 	if ($mail->error || $mail->errors) {
 		setEventMessages($mail->error, $mail->errors, 'errors');

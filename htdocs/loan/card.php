@@ -179,7 +179,7 @@ if (empty($reshook))
 				$object->capital	        = $capital;
 				$object->nbterm		        = GETPOST("nbterm", 'int');
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
-                $object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
+				$object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -478,11 +478,11 @@ if ($id > 0)
 		// Insurance
 		if ($action == 'edit')
 		{
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
-		    print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
-		    print '</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
+			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
+			print '</td></tr>';
 		} else {
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Date start

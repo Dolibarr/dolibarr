@@ -65,12 +65,12 @@ if (!$sortfield) $sortfield = "aa.account_number";
 if (!$sortorder) $sortorder = "ASC";
 
 $arrayfields = array(
-    'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-    'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
+	'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
+	'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'aa.labelshort'=>array('label'=>$langs->trans("LabelToShow"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
-    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-    'aa.reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1),
+	'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
+	'aa.reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
@@ -93,24 +93,24 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (!empty($cancel)) $action = '';
+	if (!empty($cancel)) $action = '';
 
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-    {
-    	$search_account = "";
-    	$search_label = "";
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+	{
+		$search_account = "";
+		$search_label = "";
 		$search_labelshort = "";
 		$search_accountparent = "";
-    	$search_pcgtype = "";
+		$search_pcgtype = "";
 		$search_array_options = array();
-    }
-    if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
-    	|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS))	// a submit of form is done and chartofaccounts combo has been modified
-    {
-        if ($chartofaccounts > 0)
-        {
+	}
+	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
+		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS))	// a submit of form is done and chartofaccounts combo has been modified
+	{
+		if ($chartofaccounts > 0)
+		{
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
@@ -147,34 +147,34 @@ if (empty($reshook))
 				}
 			}
 
-            if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-                $error++;
-            }
-        } else {
-            $error++;
-        }
-    }
+			if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		} else {
+			$error++;
+		}
+	}
 
-    if ($action == 'disable') {
-    	if ($accounting->fetch($id)) {
-            $mode = GETPOST('mode', 'int');
-    		$result = $accounting->accountDeactivate($id, $mode);
-    	}
+	if ($action == 'disable') {
+		if ($accounting->fetch($id)) {
+			$mode = GETPOST('mode', 'int');
+			$result = $accounting->accountDeactivate($id, $mode);
+		}
 
-    	$action = 'update';
-    	if ($result < 0) {
-    		setEventMessages($accounting->error, $accounting->errors, 'errors');
-    	}
-    } elseif ($action == 'enable') {
-    	if ($accounting->fetch($id)) {
-            $mode = GETPOST('mode', 'int');
-    		$result = $accounting->account_activate($id, $mode);
-    	}
-    	$action = 'update';
-    	if ($result < 0) {
-    		setEventMessages($accounting->error, $accounting->errors, 'errors');
-    	}
-    }
+		$action = 'update';
+		if ($result < 0) {
+			setEventMessages($accounting->error, $accounting->errors, 'errors');
+		}
+	} elseif ($action == 'enable') {
+		if ($accounting->fetch($id)) {
+			$mode = GETPOST('mode', 'int');
+			$result = $accounting->account_activate($id, $mode);
+		}
+		$action = 'update';
+		if ($result < 0) {
+			setEventMessages($accounting->error, $accounting->errors, 'errors');
+		}
+	}
 }
 
 
@@ -273,9 +273,9 @@ if ($resql)
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 
-    if (!empty($conf->use_javascript_ajax))
-    {
-	    print '<!-- Add javascript to reload page when we click "Change plan" -->
+	if (!empty($conf->use_javascript_ajax))
+	{
+		print '<!-- Add javascript to reload page when we click "Change plan" -->
 			<script type="text/javascript">
 			$(document).ready(function () {
 		    	$("#change_chart").on("click", function (e) {
@@ -285,7 +285,7 @@ if ($resql)
 			    });
 			});
 	    	</script>';
-    }
+	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -296,48 +296,48 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    $newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
+	$newcardbutton .= dolGetButtonTitle($langs->trans("New"), $langs->trans("Addanaccount"), 'fa fa-plus-circle', './card.php?action=create');
 
-    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Box to select active chart of account
-    print $langs->trans("Selectchartofaccounts")." : ";
-    print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
-    $sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
-    $sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
-    $sql .= " WHERE a.active = 1";
-    dol_syslog('accountancy/admin/account.php $sql='.$sql);
-    print $sql;
-    $resqlchart = $db->query($sql);
-    if ($resqlchart) {
-        $numbis = $db->num_rows($resqlchart);
-        $i = 0;
-        while ($i < $numbis) {
-            $obj = $db->fetch_object($resqlchart);
+	print $langs->trans("Selectchartofaccounts")." : ";
+	print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
+	$sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
+	$sql .= " WHERE a.active = 1";
+	dol_syslog('accountancy/admin/account.php $sql='.$sql);
+	print $sql;
+	$resqlchart = $db->query($sql);
+	if ($resqlchart) {
+		$numbis = $db->num_rows($resqlchart);
+		$i = 0;
+		while ($i < $numbis) {
+			$obj = $db->fetch_object($resqlchart);
 
-            print '<option value="'.$obj->rowid.'"';
-            print ($pcgver == $obj->rowid) ? ' selected' : '';
-            print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
+			print '<option value="'.$obj->rowid.'"';
+			print ($pcgver == $obj->rowid) ? ' selected' : '';
+			print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
 
-            $i++;
-        }
-    } else dol_print_error($db);
-    print "</select>";
-    print ajax_combobox("chartofaccounts");
-    print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+			$i++;
+		}
+	} else dol_print_error($db);
+	print "</select>";
+	print ajax_combobox("chartofaccounts");
+	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
-    print '<br>';
+	print '<br>';
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-    $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-    $moreforfilter = '';
-    $massactionbutton = '';
+	$moreforfilter = '';
+	$massactionbutton = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Line for search fields
 	print '<tr class="liste_titre_filter">';
@@ -358,7 +358,7 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	if (!empty($arrayfields['aa.account_number']['checked']))	print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.label']['checked']))			print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"], "aa.label", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
@@ -422,7 +422,7 @@ if ($resql)
 				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2;	// Sotre an account number for output
+				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) $totalarray['nbfield']++;

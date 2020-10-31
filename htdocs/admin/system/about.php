@@ -188,25 +188,25 @@ print '<div class="clearboth"></div>';
 $showpromotemessage = 1;
 if ($showpromotemessage)
 {
-    $tmp = versiondolibarrarray();
-    if (is_numeric($tmp[2]))    // Not alpha, beta or rc
-    {
-        print '<br>';
-        print '<br>';
+	$tmp = versiondolibarrarray();
+	if (is_numeric($tmp[2]))    // Not alpha, beta or rc
+	{
+		print '<br>';
+		print '<br>';
 
-        if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
-        {
-            print $langs->trans("TitleExampleForMajorRelease").':<br>';
-            print '<textarea style="width:80%; min-height: 60px">';
-            print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
-            print '</textarea>';
-        } else {
-            print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
-            print '<textarea style="width:80%; min-height: 60px">';
-            print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
-            print '</textarea>';
-        }
-    }
+		if ((empty($tmp[2]) && (strpos($tmp[1], '0') === 0)) || (strpos($tmp[2], '0') === 0))
+		{
+			print $langs->trans("TitleExampleForMajorRelease").':<br>';
+			print '<textarea style="width:80%; min-height: 60px">';
+			print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
+			print '</textarea>';
+		} else {
+			print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
+			print '<textarea style="width:80%; min-height: 60px">';
+			print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
+			print '</textarea>';
+		}
+	}
 }
 
 // End of page

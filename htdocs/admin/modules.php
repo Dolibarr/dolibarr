@@ -28,7 +28,7 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (! defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -404,7 +404,7 @@ foreach ($modulesdir as $dir)
 
 									$familyposition = (empty($familyinfo[$familykey]['position']) ? 0 : $familyinfo[$familykey]['position']);
 									$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
-									if ($external && ! in_array($familykey, $listOfOfficialModuleGroups))
+									if ($external && !in_array($familykey, $listOfOfficialModuleGroups))
 									{
 										// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
 										if (is_numeric($familyposition)) {
