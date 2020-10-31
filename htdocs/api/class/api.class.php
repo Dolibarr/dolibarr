@@ -221,64 +221,7 @@ class DolibarrApi
 			}
 		}
 
-		if (!empty($object->thirdparty) && is_object($object->thirdparty))
-		{
-			$this->_cleanObjectDatas($object->thirdparty);
-		}
-
-		// Remove the $oldcopy property because it is not supported by the JSON
-		// encoder. The following error is generated when trying to serialize
-		// it: "Error encoding/decoding JSON: Type is not supported"
-		// Note: Event if this property was correctly handled by the JSON
-		// encoder, it should be ignored because keeping it would let the API
-		// have a very strange behavior: calling PUT and then GET on the same
-		// resource would give different results:
-		// PUT /objects/{id} -> returns object with oldcopy = previous version of the object
-		// GET /objects/{id} -> returns object with oldcopy empty
-		unset($object->oldcopy);
-
-		// If object has lines, remove $db property
-		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
-			$nboflines = count($object->lines);
-			for ($i = 0; $i < $nboflines; $i++)
-			{
-				$this->_cleanObjectDatas($object->lines[$i]);
-
-				unset($object->lines[$i]->contact);
-				unset($object->lines[$i]->contact_id);
-				unset($object->lines[$i]->country);
-				unset($object->lines[$i]->country_id);
-				unset($object->lines[$i]->country_code);
-				unset($object->lines[$i]->mode_reglement_id);
-				unset($object->lines[$i]->mode_reglement_code);
-				unset($object->lines[$i]->mode_reglement);
-				unset($object->lines[$i]->cond_reglement_id);
-				unset($object->lines[$i]->cond_reglement_code);
-				unset($object->lines[$i]->cond_reglement);
-				unset($object->lines[$i]->fk_delivery_address);
-				unset($object->lines[$i]->fk_projet);
-				unset($object->lines[$i]->fk_project);
-				unset($object->lines[$i]->thirdparty);
-				unset($object->lines[$i]->user);
-				unset($object->lines[$i]->model_pdf);
-				unset($object->lines[$i]->modelpdf);
-				unset($object->lines[$i]->note_public);
-				unset($object->lines[$i]->note_private);
-				unset($object->lines[$i]->fk_incoterms);
-				unset($object->lines[$i]->label_incoterms);
-				unset($object->lines[$i]->location_incoterms);
-				unset($object->lines[$i]->name);
-				unset($object->lines[$i]->lastname);
-				unset($object->lines[$i]->firstname);
-				unset($object->lines[$i]->civility_id);
-				unset($object->lines[$i]->fk_multicurrency);
-				unset($object->lines[$i]->multicurrency_code);
-				unset($object->lines[$i]->shipping_method_id);
-			}
-		}
-
-		if (!empty($object->thirdparty) && is_object($object->thirdparty))
-		{
+		if (!empty($object->thirdparty) && is_object($object->thirdparty)) {
 			$this->_cleanObjectDatas($object->thirdparty);
 		}
 		dol_syslog(print_r($object, true), LOG_NOTICE);
