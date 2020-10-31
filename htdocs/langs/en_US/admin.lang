@@ -80,6 +80,7 @@ AllowToSelectProjectFromOtherCompany=On document of a third party, can choose a 
 JavascriptDisabled=JavaScript disabled
 UsePreviewTabs=Use preview tabs
 ShowPreview=Show preview
+ShowHideDetails=Show-Hide details
 PreviewNotAvailable=Preview not available
 ThemeCurrentlyActive=Theme currently active
 CurrentTimeZone=TimeZone PHP (server)

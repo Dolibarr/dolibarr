@@ -296,8 +296,8 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
             $newsql = preg_replace('/__ENTITY__/i', (!empty($entity) ? $entity : $conf->entity), $sql);
 
-            // Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
-            if (!$silent) print '<tr><td class="tdtop">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+            // Add log of request
+            if (!$silent) print '<tr class="trforrunsql"><td class="tdtop opacitymedium">'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
             dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
 
@@ -404,12 +404,34 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
     if ($error == 0)
     {
-        if (!$silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-        if (!$silent) print '<td class="right">'.$langs->trans("OK").'</td></tr>'."\n";
+    	if (!$silent) {
+    		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+        	print '<td class="right">'.$langs->trans("OK");
+        	//if (! empty($conf->use_javascript_ajax)) {
+	        	print '<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					function init_trrunsql()
+					{
+						console.log("toggle .trforrunsql");
+						jQuery(".trforrunsql").toggle();
+					}
+					init_trrunsql();
+					jQuery(".trforrunsqlshowhide").click(function() {
+						init_trrunsql();
+					});
+				});
+				</script>';
+	        	print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+        	//}
+        	print '</td></tr>'."\n";
+    	}
         $ok = 1;
     } else {
-        if (!$silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-        if (!$silent) print '<td class="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>'."\n";
+    	if (!$silent) {
+    		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+        	print '<td class="right"><font class="error">'.$langs->trans("KO").'</font>';
+        	print '</td></tr>'."\n";
+    	}
         $ok = 0;
     }
 
