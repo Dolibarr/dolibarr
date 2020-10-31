@@ -5670,7 +5670,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
 
-	// Remove also backspaces
+	// Remove also carriage returns
 	if ($removelinefeed == 1) $temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 
 	// And double quotes
