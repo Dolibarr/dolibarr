@@ -159,7 +159,7 @@ class Diff
 	 * @param	string	$start     	the starting index
 	 * @return	array				array of diff
 	 */
-	private static function generatePartialDiff($table,	$sequence1,	$sequence2, $start)
+	private static function generatePartialDiff($table, $sequence1, $sequence2, $start)
 	{
 		//  initialise the diff
 		$diff = array();

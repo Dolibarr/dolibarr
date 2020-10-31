@@ -1040,16 +1040,16 @@ SCRIPT;
 
 						// Unit price in currency
 						if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked'])) {
-                            print '<td class="right">';
-                            print price($productfourn->fourn_multicurrency_unitprice);
-                            print '</td>'; }
+							print '<td class="right">';
+							print price($productfourn->fourn_multicurrency_unitprice);
+							print '</td>'; }
 
 						// Currency
-                        if ($conf->multicurrency->enabled) {
-                            print '<td class="right">';
-                            print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
-                            print '</td>';
-                        }
+						if ($conf->multicurrency->enabled) {
+							print '<td class="right">';
+							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
+							print '</td>';
+						}
 
 						// Discount
 						print '<td class="right">';

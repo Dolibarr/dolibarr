@@ -77,7 +77,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
 		{
 			// Clear session
 			unset($_SESSION['dol_login']);
-			$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated');	// Save message for the session page
+			$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated'); // Save message for the session page
 
 			$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 			dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -112,7 +112,7 @@ if ($action == 'buildnewpassword' && $username)
 		if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
 		{
 			$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
-			if (! $isanemail) {
+			if (!$isanemail) {
 				$message .= $langs->trans("IfLoginExistPasswordRequestSent");
 			} else {
 				$message .= $langs->trans("IfEmailExistPasswordRequestSent");
@@ -134,7 +134,7 @@ if ($action == 'buildnewpassword' && $username)
 					if ($edituser->send_password($user, $newpassword, 1) > 0)
 					{
 						$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
-						if (! $isanemail) {
+						if (!$isanemail) {
 							$message .= $langs->trans("IfLoginExistPasswordRequestSent");
 						} else {
 							$message .= $langs->trans("IfEmailExistPasswordRequestSent");

@@ -837,12 +837,12 @@ class BookKeeping extends CommonObject
 			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		// Affichage par compte comptable
-        if (!empty($option)) {
-            $sql .= ' AND t.subledger_account IS NOT NULL';
-            $sql .= ' ORDER BY t.subledger_account ASC';
-        } else {
-            $sql .= ' ORDER BY t.numero_compte ASC';
-        }
+		if (!empty($option)) {
+			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= ' ORDER BY t.subledger_account ASC';
+		} else {
+			$sql .= ' ORDER BY t.numero_compte ASC';
+		}
 
 		if (!empty($sortfield)) {
 			$sql .= ', '.$sortfield.' '.$sortorder;

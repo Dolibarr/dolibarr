@@ -52,7 +52,7 @@ class modIntracommreport extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'development';
 
-		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'intracommreport';
 
 		// Data directories to create when module is enabled
@@ -86,12 +86,12 @@ class modIntracommreport extends DolibarrModules
 		$this->boxes = array();
 
 		// Dictionaries
-		if (! isset($conf->intracommreport->enabled))
+		if (!isset($conf->intracommreport->enabled))
 		{
-			$conf->intracommreport=new stdClass();
-			$conf->intracommreport->enabled=0;
+			$conf->intracommreport = new stdClass();
+			$conf->intracommreport->enabled = 0;
 		}
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 
 		// Permissions
 		$this->rights = array();

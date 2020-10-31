@@ -114,7 +114,7 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 			break;
 		}
 
-		$echeances->lines[$i-1] = $new_echeance;
+		$echeances->lines[$i - 1] = $new_echeance;
 		$i++;
 	}
 	if ($result > 0) $db->commit();

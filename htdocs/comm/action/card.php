@@ -390,20 +390,20 @@ if (empty($reshook) && $action == 'add')
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
 				// Create reminders
-                if ($addreminder == 'on') {
-                    $actionCommReminder = new ActionCommReminder($db);
+				if ($addreminder == 'on') {
+					$actionCommReminder = new ActionCommReminder($db);
 
-                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
 
-                    $actionCommReminder->dateremind = $dateremind;
-                    $actionCommReminder->typeremind = $remindertype;
-                    $actionCommReminder->offsetunit = $offsetunit;
-                    $actionCommReminder->offsetvalue = $offsetvalue;
-                    $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
-                    $actionCommReminder->fk_actioncomm = $object->id;
-                    if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+					$actionCommReminder->dateremind = $dateremind;
+					$actionCommReminder->typeremind = $remindertype;
+					$actionCommReminder->offsetunit = $offsetunit;
+					$actionCommReminder->offsetvalue = $offsetvalue;
+					$actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+					$actionCommReminder->fk_actioncomm = $object->id;
+					if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
-                    // the notification must be created for every user assigned to the event
+					// the notification must be created for every user assigned to the event
 					foreach ($object->userassigned as $userassigned)
 					{
 						$actionCommReminder->fk_user = $userassigned['id'];
@@ -488,17 +488,17 @@ if (empty($reshook) && $action == 'update')
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority", "int");
-        $object->fulldayevent = GETPOST("fullday") ? 1 : 0;
-        $object->location    = GETPOST('location', "alphanohtml");
+		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
+		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contact_id = GETPOST("contactid", 'int');
-        if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
-            reset($object->socpeopleassigned);
-            $object->contact_id = key($object->socpeopleassigned);
-        }
+		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
+			reset($object->socpeopleassigned);
+			$object->contact_id = key($object->socpeopleassigned);
+		}
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
@@ -951,39 +951,39 @@ if ($action == 'create')
 	// Title
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
-    // Full day
-    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
+	// Full day
+	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
 
-    $datep = ($datep ? $datep : $object->datep);
-    if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
-    $datef = ($datef ? $datef : $object->datef);
-    if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
-    if (empty($datef) && !empty($datep))
-    {
-    	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
-    		$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
-    	}
-    }
+	$datep = ($datep ? $datep : $object->datep);
+	if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
+	$datef = ($datef ? $datef : $object->datef);
+	if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
+	if (empty($datef) && !empty($datep))
+	{
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
+			$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
+		}
+	}
 
-    // Date start
+	// Date start
 	print '<tr><td class="nowrap">';
 	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
 	print ' - ';
 	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
 	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
-        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart'); // Empty value not allowed for start date and hours if "todo"
-    } else {
-        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
-    }
-    print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
+		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart'); // Empty value not allowed for start date and hours if "todo"
+	} else {
+		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
+	}
+	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
 	//print ' - ';
-    if (GETPOST("afaire") == 1) {
-    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
-    } else {
-    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
-    }
-    print '</td></tr>';
+	if (GETPOST("afaire") == 1) {
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+	} else {
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+	}
+	print '</td></tr>';
 
 	// Date end
 	/*print '<tr><td>';

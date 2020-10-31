@@ -745,11 +745,11 @@ if (!is_array($x_coll) || !is_array($x_paye))
 	}
 
 	// Total to pay
-	print '<tr><td colspan="'.($span+2).'"></td></tr>';
+	print '<tr><td colspan="'.($span + 2).'"></td></tr>';
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.($span+1).'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+	print '<td class="liste_total" colspan="'.($span + 1).'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 

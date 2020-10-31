@@ -1129,7 +1129,7 @@ function dol_strtoupper($string, $encoding = "UTF-8")
 function dol_ucfirst($string, $encoding = "UTF-8")
 {
 	if (function_exists('mb_substr')) {
-		return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding) . mb_substr($string, 1, null, $encoding);
+		return mb_strtoupper(mb_substr($string, 0, 1, $encoding), $encoding).mb_substr($string, 1, null, $encoding);
 	} else {
 		return ucfirst($string);
 	}

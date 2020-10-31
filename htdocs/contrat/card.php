@@ -1488,8 +1488,8 @@ if ($action == 'create')
 				// Line in view mode
 				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
 				{
-				    $moreparam = '';
-				    if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') $moreparam = 'style="display: none;"';
+					$moreparam = '';
+					if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $objp->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') $moreparam = 'style="display: none;"';
 					print '<tr class="tdtop oddeven" '.$moreparam.'>';
 					// Label
 					if ($objp->fk_product > 0)
@@ -1733,8 +1733,8 @@ if ($action == 'create')
 
 			if ($object->statut > 0)
 			{
-                $moreparam = '';
-                if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->lines[$cursorline - 1]->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') $moreparam = 'style="display: none;"';
+				$moreparam = '';
+				if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->lines[$cursorline - 1]->statut == ContratLigne::STATUS_CLOSED && $action != 'showclosedlines') $moreparam = 'style="display: none;"';
 				print '<tr class="oddeven" '.$moreparam.'>';
 				print '<td class="tdhrthin" colspan="'.($conf->margin->enabled ? 7 : 6).'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
@@ -2092,16 +2092,16 @@ if ($action == 'create')
 					//}
 				}
 
-                if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->nbofservicesclosed > 0)
-                {
-                    if ($action == 'showclosedlines') print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
-                    else print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
-                }
+				if (!empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->nbofservicesclosed > 0)
+				{
+					if ($action == 'showclosedlines') print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
+				}
 
-                // Clone
-                if ($user->rights->contrat->creer) {
-                	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
-                }
+				// Clone
+				if ($user->rights->contrat->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
+				}
 
 				// On peut supprimer entite si
 				// - Droit de creer + mode brouillon (erreur creation)

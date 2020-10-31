@@ -32,17 +32,17 @@ class IntracommReport extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='intracommreport';
+	public $element = 'intracommreport';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='intracommreport';
+	public $table_element = 'intracommreport';
 
 	/**
 	 * @var int Field with ID of parent key if this field has a parent
 	 */
-	public $fk_element='fk_intracommreport';
+	public $fk_element = 'fk_intracommreport';
 
 	/**
 	 * @var string declaration number
@@ -422,7 +422,7 @@ class IntracommReport extends CommonObject
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
-		header('Content-Length: ' . filesize($fname));
+		header('Content-Length: '.filesize($fname));
 		readfile($fname);
 		exit;
 	}

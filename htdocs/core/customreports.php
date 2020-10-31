@@ -483,7 +483,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
 			$tmpval = preg_replace('/\-average$/', '', $val);
 			$sql .= 'AVG('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
 		} elseif (preg_match('/\-min$/', $val)) {
-			$tmpval  = preg_replace('/\-min$/', '', $val);
+			$tmpval = preg_replace('/\-min$/', '', $val);
 			$sql .= 'MIN('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
 		} elseif (preg_match('/\-max$/', $val)) {
 			$tmpval = preg_replace('/\-max$/', '', $val);

@@ -145,79 +145,79 @@ if (empty($conf->use_javascript_ajax))
 {
 	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
 } else {
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
-    print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
-    print "</tr>\n";
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
+	print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
+	print "</tr>\n";
 
-    // Modules
-    foreach ($modules as $const => $desc)
-    {
-        // Si condition non remplie, on ne propose pas l'option
-        if (!$conditions[$const]) continue;
+	// Modules
+	foreach ($modules as $const => $desc)
+	{
+		// Si condition non remplie, on ne propose pas l'option
+		if (!$conditions[$const]) continue;
 
-        print '<tr class="oddeven">';
-        print '<td width="16">'.img_object("", $picto[$const]).'</td>';
-        print '<td>'.$langs->trans($desc).'</td>';
-        print '<td class="center" width="100">';
-        $constante = 'FCKEDITOR_ENABLE_'.$const;
-        $value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
-        if ($value == 0)
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-        } elseif ($value == 1)
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
-        }
+		print '<tr class="oddeven">';
+		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
+		print '<td>'.$langs->trans($desc).'</td>';
+		print '<td class="center" width="100">';
+		$constante = 'FCKEDITOR_ENABLE_'.$const;
+		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
+		if ($value == 0)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		} elseif ($value == 1)
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+		}
 
-        print "</td>";
-        print '</tr>';
-    }
+		print "</td>";
+		print '</tr>';
+	}
 
-    print '</table>'."\n";
+	print '</table>'."\n";
 
 	print '<br>'."\n";
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	// Skins
-    show_skin(null, 1);
-    print '<br>'."\n";
+	show_skin(null, 1);
+	print '<br>'."\n";
 
-    $listofmodes = array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
-    $linkstomode = '';
-    foreach ($listofmodes as $newmode)
-    {
-        if ($linkstomode) $linkstomode .= ' - ';
-        $linkstomode .= '<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
-        if ($mode == $newmode) $linkstomode .= '<strong>';
-        $linkstomode .= $newmode;
-        if ($mode == $newmode) $linkstomode .= '</strong>';
-        $linkstomode .= '</a>';
-    }
-    $linkstomode .= '';
+	$listofmodes = array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
+	$linkstomode = '';
+	foreach ($listofmodes as $newmode)
+	{
+		if ($linkstomode) $linkstomode .= ' - ';
+		$linkstomode .= '<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+		if ($mode == $newmode) $linkstomode .= '<strong>';
+		$linkstomode .= $newmode;
+		if ($mode == $newmode) $linkstomode .= '</strong>';
+		$linkstomode .= '</a>';
+	}
+	$linkstomode .= '';
 	print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
-    print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
-    if ($mode != 'Full_inline')
-    {
-        $uselocalbrowser = true;
-        $readonly = ($mode == 'dolibarr_readonly' ? 1 : 0);
-        $editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
-        $editor->Create();
-    } else {
-        print '<div style="border: 1px solid #888;" contenteditable="true">';
-        print $conf->global->FCKEDITOR_TEST;
-        print '</div>';
-    }
-    print '<br><div class="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
-    print '<div id="divforlog"></div>';
-    print '</form>'."\n";
+	print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
+	if ($mode != 'Full_inline')
+	{
+		$uselocalbrowser = true;
+		$readonly = ($mode == 'dolibarr_readonly' ? 1 : 0);
+		$editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
+		$editor->Create();
+	} else {
+		print '<div style="border: 1px solid #888;" contenteditable="true">';
+		print $conf->global->FCKEDITOR_TEST;
+		print '</div>';
+	}
+	print '<br><div class="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
+	print '<div id="divforlog"></div>';
+	print '</form>'."\n";
 
-    // Add env of ckeditor
-    // This is to show how CKEditor detect browser to understand why editor is disabled or not. To help debug.
-    /*
+	// Add env of ckeditor
+	// This is to show how CKEditor detect browser to understand why editor is disabled or not. To help debug.
+	/*
 	    print '<br><script language="javascript">
 	    function jsdump(obj, id) {
 		    var out = \'\';

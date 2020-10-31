@@ -1440,7 +1440,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			}
 
 			// Intracomm report
-			if (! empty($conf->intracommreport->enabled))
+			if (!empty($conf->intracommreport->enabled))
 			{
 				$newmenu->add("/intracommreport/list.php?leftmenu=intracommreport", $langs->trans("MenuIntracommReport"), 0, $user->rights->intracommreport->read, '', $mainmenu, 'intracommreport', 1);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/intracommreport/', $leftmenu)) {

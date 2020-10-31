@@ -501,9 +501,9 @@ if (empty($reshook))
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		if ($action == 'settitle') $object->title = trim(GETPOST('title', 'alpha'));
-		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'none'));				// Must allow 'name <email>'
-		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'none'));		// Must allow 'name <email>'
-		elseif ($action == 'setemail_errorsto') $object->email_errorsto = trim(GETPOST('email_errorsto', 'none'));	// Must allow 'name <email>'
+		elseif ($action == 'setemail_from') $object->email_from = trim(GETPOST('email_from', 'none')); // Must allow 'name <email>'
+		elseif ($action == 'setemail_replyto') $object->email_replyto = trim(GETPOST('email_replyto', 'none')); // Must allow 'name <email>'
+		elseif ($action == 'setemail_errorsto') $object->email_errorsto = trim(GETPOST('email_errorsto', 'none')); // Must allow 'name <email>'
 		elseif ($action == 'settitle' && empty($object->title)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
 		} elseif ($action == 'setfrom' && empty($object->email_from)) {

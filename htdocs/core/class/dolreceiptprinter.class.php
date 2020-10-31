@@ -868,7 +868,7 @@ class dolReceiptPrinter extends Printer
 	public function initPrinter($printerid)
 	{
 		global $conf;
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector"){
+		if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);
 			return;

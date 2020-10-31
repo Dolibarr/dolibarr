@@ -606,60 +606,60 @@ class Shipments extends DolibarrApi
     }
     */
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
-     * Clean sensible object datas
-     *
-     * @param   Object  $object     Object to clean
-     * @return  Object              Object with cleaned properties
-     */
-    protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
-        $object = parent::_cleanObjectDatas($object);
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
 
-        unset($object->thirdparty); // id already returned
+		unset($object->thirdparty); // id already returned
 
-        unset($object->note);
-        unset($object->address);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);
+		unset($object->note);
+		unset($object->address);
+		unset($object->barcode_type);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+		unset($object->barcode_type_coder);
 
-        if (!empty($object->lines) && is_array($object->lines))
-        {
-            foreach ($object->lines as $line)
-            {
-                unset($line->tva_tx);
-                unset($line->vat_src_code);
-                unset($line->total_ht);
-                unset($line->total_ttc);
-                unset($line->total_tva);
-                unset($line->total_localtax1);
-                unset($line->total_localtax2);
-                unset($line->remise_percent);
-            }
-        }
+		if (!empty($object->lines) && is_array($object->lines))
+		{
+			foreach ($object->lines as $line)
+			{
+				unset($line->tva_tx);
+				unset($line->vat_src_code);
+				unset($line->total_ht);
+				unset($line->total_ttc);
+				unset($line->total_tva);
+				unset($line->total_localtax1);
+				unset($line->total_localtax2);
+				unset($line->remise_percent);
+			}
+		}
 
-        return $object;
-    }
+		return $object;
+	}
 
-    /**
-     * Validate fields before create or update object
-     *
-     * @param   array           $data   Array with data to verify
-     * @return  array
-     * @throws  RestException
-     */
-    private function _validate($data)
-    {
-        $shipment = array();
-        foreach (Shipments::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $shipment[$field] = $data[$field];
-        }
-        return $shipment;
-    }
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException
+	 */
+	private function _validate($data)
+	{
+		$shipment = array();
+		foreach (Shipments::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$shipment[$field] = $data[$field];
+		}
+		return $shipment;
+	}
 }

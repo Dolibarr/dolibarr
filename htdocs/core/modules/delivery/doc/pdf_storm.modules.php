@@ -422,8 +422,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					$pdf->SetTextColor(0, 0, 0);
 
 					// Define size of image if we need it
-					$imglinesize=array();
-					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
+					$imglinesize = array();
+					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 
 					$pdf->setTopMargin($tab_top_newpage);

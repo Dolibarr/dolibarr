@@ -257,7 +257,7 @@ if (empty($backtourl))
 	elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($file);
 	elseif (in_array($modulepart, array('medias'))) {
 		$section_dir = dirname($file);
-		if (! preg_match('/\/$/', $section_dir)) $section_dir.='/';
+		if (!preg_match('/\/$/', $section_dir)) $section_dir .= '/';
 		$backtourl = DOL_URL_ROOT."/website/index.php?action=file_manager&website=".$website.'&section_dir='.urlencode($section_dir);
 	}
 	// Generic case that should work for everybody else
