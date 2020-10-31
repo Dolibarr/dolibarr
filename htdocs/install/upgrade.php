@@ -146,11 +146,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
     if ($db->connected)
     {
         print '<tr><td class="nowrap">';
-        print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
+        print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.$langs->trans("OK").'</td></tr>'."\n";
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("OK"));
         $ok = 1;
     } else {
-        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>\n";
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->transnoentities("Error")."</td></tr>\n";
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok = 0;
     }
@@ -160,11 +160,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         if ($db->database_selected)
         {
             print '<tr><td class="nowrap">';
-            print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
+            print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.$langs->trans("OK")."</td></tr>\n";
             dolibarr_install_syslog("upgrade: Database connection successful: ".$dolibarr_main_db_name);
             $ok = 1;
         } else {
-            print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
+            print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->trans("Error")."</td></tr>\n";
             dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
             $ok = 0;
         }
@@ -354,7 +354,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	        {
 	        	if (in_array($dir.$file, $listoffileprocessed)) continue;
 
-	        	print '<tr><td colspan="2"><hr></td></tr>';
+	        	print '<tr><td colspan="2"><hr style="border-color: #ccc; border-top-style: none;"></td></tr>';
 	            print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 	            // Run sql script

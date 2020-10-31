@@ -710,8 +710,7 @@ class Documents extends DolibarrApi
 		}
 
 		$fhandle = @fopen($destfiletmp, 'w');
-		if ($fhandle)
-		{
+		if ($fhandle) {
 			$nbofbyteswrote = fwrite($fhandle, $newfilecontent);
 			fclose($fhandle);
 			@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
@@ -720,8 +719,7 @@ class Documents extends DolibarrApi
 		}
 
 		$result = dol_move($destfiletmp, $destfile, 0, $overwriteifexists, 1);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$destfile."'");
 		}
 

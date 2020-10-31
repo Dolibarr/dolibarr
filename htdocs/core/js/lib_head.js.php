@@ -1135,7 +1135,7 @@ $(document).ready(function() {
 	if (window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
-		jQuery(".side-nav-vert, .side-nav").hide();
+		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
 
 	}

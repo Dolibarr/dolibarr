@@ -884,6 +884,8 @@ Miscellaneous=Miscellaneous
 Calendar=Calendar
 GroupBy=Group by...
 ViewFlatList=View flat list
+ViewAccountList=View ledger
+ViewSubAccountList=View subaccount ledger
 RemoveString=Remove string '%s'
 SomeTranslationAreUncomplete=Some of the languages offered may be only partially translated or may contain errors. Please help to correct your language by registering at <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> to add your improvements.
 DirectDownloadLink=Direct download link (public/external)
