@@ -866,11 +866,9 @@ class CurrencyRate extends CommonObjectLine
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 		$sql .= ' rate='.$this->rate;
-		if (!empty($this->date_sync))
-		$sql .= ', date_sync=\''.$this->date_sync.'\'';
-		if (!empty($this->fk_multicurrency))
-		$sql .= ', fk_multicurrency='.$this->fk_multicurrency;
-		$sql .= ' WHERE rowid=' . $this->id;
+		if (!empty($this->date_sync)) $sql .= ", date_sync='".$this->db->idate($this->date_sync)."'";
+		if (!empty($this->fk_multicurrency)) $sql .= ', fk_multicurrency='.$this->fk_multicurrency;
+		$sql .= ' WHERE rowid='.$this->id;
 
 		$this->db->begin();
 
