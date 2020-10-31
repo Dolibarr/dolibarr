@@ -100,7 +100,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 /*
  * Actions
  */
-if ($action == "create"){
+if ($action == "create") {
 	if (!empty($rateinput)) {
 		$currencyRate_static = new CurrencyRate($db);
 		$currency_static = new MultiCurrency($db);
@@ -133,9 +133,9 @@ if ($action == 'update'){
 		$currencyRate->fk_multicurrency = $fk_currency;
 		$currencyRate->rate = $db->escape(GETPOST('rateinput', 'int'));
 		$res = $currencyRate->update();
-		if ($res){
+		if ($res) {
 			setEventMessage($langs->trans('successUpdateRate'));
-		}else {
+		} else {
 			setEventMessage($langs->trans('errorUpdateRate'), "errors");
 		}
 	}else {
@@ -143,14 +143,14 @@ if ($action == 'update'){
 	}
 }
 
-if ($action == "deleteRate"){
+if ($action == "deleteRate") {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 
-	if ($current_rate){
+	if ($current_rate) {
 		$current_currency = new MultiCurrency($db);
 		$current_currency->fetch($current_rate->fk_multicurrency);
-		if ($current_currency){
+		if ($current_currency) {
 			$delayedhtmlcontent .= $form->formconfirm(
 				$_SERVER["PHP_SELF"].'?id_rate='.$id_rate_selected,
 				$langs->trans('DeleteLineRate'),
@@ -160,25 +160,25 @@ if ($action == "deleteRate"){
 				0,
 				1
 			);
-		}else {
+		} else {
 			dol_syslog("Multicurrency::fetch", LOG_WARNING);
 		}
-	}else {
+	} else {
 		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
 	}
 }
 
-if ($action == "confirm_delete"){
+if ($action == "confirm_delete") {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
-	if ($current_rate){
+	if ($current_rate) {
 		$result  = $current_rate->delete();
 		if ($result){
 			setEventMessage($langs->trans('successRateDelete'));
-		}else {
+		} else {
 			setEventMessage($langs->trans('errorRateDelete'), 'errors');
 		}
-	}else {
+	} else {
 		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
 		dol_syslog($langs->trans('NoCurrencyRateSelected'), LOG_WARNING);
 	}
@@ -230,7 +230,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = multicurrencyAdminPrepareHead();
-dol_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "multicurrency");
+print dol_get_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "multicurrency");
 
 // ACTION
 
@@ -262,7 +262,7 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '</form>';
 }
 
-if ($action == "updateRate"){
+if ($action == "updateRate") {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 
@@ -272,7 +272,7 @@ if ($action == "updateRate"){
 
 		if ($resultcurrentCurrency){
 			$currency_code = $curr->code;
-		}else {
+		} else {
 			$currency_code = '';
 		}
 
@@ -302,7 +302,7 @@ if ($action == "updateRate"){
 		print '</td>';
 		print '</tr></table>';
 		print '</form>';
-	}else {
+	} else {
 		dol_syslog("currency_rate:list:update", LOG_WARNING);
 	}
 }
@@ -311,11 +311,11 @@ if ($action == "updateRate"){
 $sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
 
 // Add fields from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
-$sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
 
 
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -345,14 +345,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 
-	if ($result){
+	if ($result) {
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
+		if (($page * $limit) > $nbtotalofrecords) {
+			// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
-	}else {
+	} else {
 		setEventMessage($langs->trans('No_record_on_multicurrency_rate'), 'warnings');
 	}
 }
@@ -539,8 +539,7 @@ if ($resql)
 	print "</div>";
 
 	print '</form>';
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
