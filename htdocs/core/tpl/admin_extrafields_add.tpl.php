@@ -57,17 +57,17 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
-    		{
-    			print 'jQuery("#value_choice").hide();';
-    		}
+			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
+			{
+				print 'jQuery("#value_choice").hide();';
+			}
 
-    		if (GETPOST('type', 'alpha') == "separate")
-    		{
+			if (GETPOST('type', 'alpha') == "separate")
+			{
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
-    			print 'jQuery("#value_choice").hide();';
-    		}
-    		?>
+				print 'jQuery("#value_choice").hide();';
+			}
+			?>
 
     		// Case of computed field
     		if (type == '' || type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {

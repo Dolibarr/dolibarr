@@ -53,7 +53,7 @@ if (isset($_GET['connect']))
 	} else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-        $servicestatus = 1;
+		$servicestatus = 1;
 	}
 } else {
 	if (isset($_GET['test']))
@@ -70,9 +70,9 @@ if (isset($_GET['connect']))
 
 if (empty($endpoint_secret))
 {
-    print 'Error: Setup of module Stripe not complete for mode '.$service.'. The WEBHOOK_KEY is not defined.';
-    http_response_code(400); // PHP 5.4 or greater
-    exit();
+	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The WEBHOOK_KEY is not defined.';
+	http_response_code(400); // PHP 5.4 or greater
+	exit();
 }
 
 
@@ -148,38 +148,38 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-	    $subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
-        if (!empty($user->email)) {
-            $sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
-        } else {
-            $sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-        }
-        $replyto = $sendto;
-        $sendtocc = '';
-        if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-            $sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
-        }
+		$subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
+		if (!empty($user->email)) {
+			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
+		} else {
+			$sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+		}
+		$replyto = $sendto;
+		$sendtocc = '';
+		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+			$sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+		}
 
-        $message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." should arrive in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." should arrive in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
-        $mailfile = new CMailFile(
-            $subject,
-            $sendto,
-            $replyto,
-            $message,
-            array(),
-            array(),
-            array(),
-            $sendtocc,
-            '',
-            0,
-            -1
-        );
+		$mailfile = new CMailFile(
+			$subject,
+			$sendto,
+			$replyto,
+			$message,
+			array(),
+			array(),
+			array(),
+			$sendtocc,
+			'',
+			0,
+			-1
+		);
 
-        $ret = $mailfile->sendfile();
+		$ret = $mailfile->sendfile();
 
-        http_response_code(200); // PHP 5.4 or greater
-        return 1;
+		http_response_code(200); // PHP 5.4 or greater
+		return 1;
 	} else {
 		$error++;
 		http_response_code(500); // PHP 5.4 or greater
@@ -240,7 +240,7 @@ if ($event->type == 'payout.created') {
 
 		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
-        $mailfile = new CMailFile(
+		$mailfile = new CMailFile(
 			$subject,
 			$sendto,
 			$replyto,
@@ -270,15 +270,15 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'customer.source.delete') {
 	//TODO: delete customer's source
 } elseif ($event->type == 'customer.deleted') {
-    $db->begin();
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
-    $db->query($sql);
-    $db->commit();
+	$db->begin();
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
+	$db->query($sql);
+	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 	// TODO: Redirect to paymentok.php
 } elseif ($event->type == 'payment_intent.payment_failed') {
-    // TODO: Redirect to paymentko.php
+	// TODO: Redirect to paymentko.php
 } elseif ($event->type == 'checkout.session.completed')		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 {
 	// TODO: create fees
@@ -365,10 +365,10 @@ if ($event->type == 'payout.created') {
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'charge.succeeded') {
-    // TODO: create fees
-    // TODO: Redirect to paymentok.php
+	// TODO: create fees
+	// TODO: Redirect to paymentok.php
 } elseif ($event->type == 'charge.failed') {
-    // TODO: Redirect to paymentko.php
+	// TODO: Redirect to paymentko.php
 } elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated == true)) {
 	// This event is deprecated.
 }

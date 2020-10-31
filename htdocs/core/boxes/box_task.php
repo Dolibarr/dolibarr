@@ -31,41 +31,41 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class box_task extends ModeleBoxes
 {
-    public $boxcode = "projettask";
-    public $boximg = "object_projecttask";
-    public $boxlabel;
-    public $depends = array("projet");
+	public $boxcode = "projettask";
+	public $boximg = "object_projecttask";
+	public $boxlabel;
+	public $depends = array("projet");
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
-    public $enabled = 1; // enable because fixed ;-).
+	public $param;
+	public $enabled = 1; // enable because fixed ;-).
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param = '')
-    {
-        global $conf, $user, $langs;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param = '')
+	{
+		global $conf, $user, $langs;
 
-        // Load translation files required by the page
-        $langs->loadLangs(array('boxes', 'projects'));
+		// Load translation files required by the page
+		$langs->loadLangs(array('boxes', 'projects'));
 
-        $this->boxlabel = "Tasks";
-        $this->db = $db;
+		$this->boxlabel = "Tasks";
+		$this->db = $db;
 
-        $this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
-    }
+		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
+	}
 
 	/**
 	 *  Load data for box to show them later
@@ -94,7 +94,7 @@ class box_task extends ModeleBoxes
         if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
             $filterValue = GETPOST($cookie_name);
         } elseif (!empty($_COOKIE[$cookie_name])) {
-            $filterValue = preg_replace('/[^a-z_]/', '', $_COOKIE[$cookie_name]);	// Clean cookie from evil data
+            $filterValue = preg_replace('/[^a-z_]/', '', $_COOKIE[$cookie_name]); // Clean cookie from evil data
         }
 
         if ($filterValue == 'im_task_contact') {
@@ -175,33 +175,33 @@ class box_task extends ModeleBoxes
 			$i = 1;
 			if ($result) {
 				$num = $this->db->num_rows($result);
-                while ($objp = $this->db->fetch_object($result)) {
-                    $taskstatic->id = $objp->rowid;
-                    $taskstatic->ref = $objp->ref;
-                    $taskstatic->label = $objp->label;
-                    $taskstatic->progress = $objp->progress;
-                    $taskstatic->fk_statut = $objp->fk_statut;
-                    $taskstatic->date_end = $this->db->jdate($objp->datee);
-                    $taskstatic->planned_workload = $objp->planned_workload;
-                    $taskstatic->duration_effective = $objp->duration_effective;
+				while ($objp = $this->db->fetch_object($result)) {
+					$taskstatic->id = $objp->rowid;
+					$taskstatic->ref = $objp->ref;
+					$taskstatic->label = $objp->label;
+					$taskstatic->progress = $objp->progress;
+					$taskstatic->fk_statut = $objp->fk_statut;
+					$taskstatic->date_end = $this->db->jdate($objp->datee);
+					$taskstatic->planned_workload = $objp->planned_workload;
+					$taskstatic->duration_effective = $objp->duration_effective;
 
-                    $projectstatic->id = $objp->project_id;
-                    $projectstatic->ref = $objp->project_ref;
-                    $projectstatic->title = $objp->project_title;
+					$projectstatic->id = $objp->project_id;
+					$projectstatic->ref = $objp->project_ref;
+					$projectstatic->title = $objp->project_title;
 
-                    $label = $projectstatic->getNomUrl(1).' &nbsp; '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
+					$label = $projectstatic->getNomUrl(1).' &nbsp; '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
-                    $boxcontent = getTaskProgressView($taskstatic, $label, true, false, false);
+					$boxcontent = getTaskProgressView($taskstatic, $label, true, false, false);
 
-                    $this->info_box_contents[$i][] = array(
-                        'td' => '',
-                        'text' => $boxcontent,
-                    );
+					$this->info_box_contents[$i][] = array(
+						'td' => '',
+						'text' => $boxcontent,
+					);
 					$i++;
 				}
 			} else {
-                dol_print_error($this->db);
-            }
+				dol_print_error($this->db);
+			}
 		}
 	}
 

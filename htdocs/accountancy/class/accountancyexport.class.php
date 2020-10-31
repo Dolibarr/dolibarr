@@ -55,7 +55,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_QUADRATUS = 60;
 	public static $EXPORT_TYPE_WINFIC = 70;
 	public static $EXPORT_TYPE_OPENCONCERTO = 100;
-    public static $EXPORT_TYPE_LDCOMPTA = 110;
+	public static $EXPORT_TYPE_LDCOMPTA = 110;
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_FEC = 1000;
 
@@ -111,7 +111,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
 			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
-            self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
+			self::$EXPORT_TYPE_OPENCONCERTO => $langs->trans('Modelcsv_openconcerto'),
 			self::$EXPORT_TYPE_SAGE50_SWISS => $langs->trans('Modelcsv_Sage50_Swiss'),
 			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
 			self::$EXPORT_TYPE_LDCOMPTA10 => $langs->trans('Modelcsv_LDCompta10'),
@@ -144,9 +144,9 @@ class AccountancyExport
 			self::$EXPORT_TYPE_COGILOG => 'cogilog',
 			self::$EXPORT_TYPE_AGIRIS => 'agiris',
 			self::$EXPORT_TYPE_OPENCONCERTO => 'openconcerto',
-            self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
-            self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
-            self::$EXPORT_TYPE_LDCOMPTA10 => 'ldcompta10',
+			self::$EXPORT_TYPE_SAGE50_SWISS => 'sage50ch',
+			self::$EXPORT_TYPE_LDCOMPTA => 'ldcompta',
+			self::$EXPORT_TYPE_LDCOMPTA10 => 'ldcompta10',
 			self::$EXPORT_TYPE_FEC => 'fec',
 		);
 
@@ -201,22 +201,22 @@ class AccountancyExport
 				self::$EXPORT_TYPE_AGIRIS => array(
 					'label' => $langs->trans('Modelcsv_agiris'),
 				),
-                self::$EXPORT_TYPE_OPENCONCERTO => array(
-                    'label' => $langs->trans('Modelcsv_openconcerto'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-                ),
+				self::$EXPORT_TYPE_OPENCONCERTO => array(
+					'label' => $langs->trans('Modelcsv_openconcerto'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
 				self::$EXPORT_TYPE_SAGE50_SWISS => array(
 					'label' => $langs->trans('Modelcsv_Sage50_Swiss'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
-                self::$EXPORT_TYPE_LDCOMPTA => array(
-                    'label' => $langs->trans('Modelcsv_LDCompta'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-                ),
+				self::$EXPORT_TYPE_LDCOMPTA => array(
+					'label' => $langs->trans('Modelcsv_LDCompta'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
 				self::$EXPORT_TYPE_LDCOMPTA10 => array(
-                    'label' => $langs->trans('Modelcsv_LDCompta10'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'csv',
-                ),
+					'label' => $langs->trans('Modelcsv_LDCompta10'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
 				self::$EXPORT_TYPE_FEC => array(
 					'label' => $langs->trans('Modelcsv_FEC'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
@@ -254,7 +254,7 @@ class AccountancyExport
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
-		global $db; 	// The tpl file use $db
+		global $db; // The tpl file use $db
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
 
@@ -289,21 +289,21 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_AGIRIS :
 				$this->exportAgiris($TData);
 				break;
-            case self::$EXPORT_TYPE_OPENCONCERTO :
-                $this->exportOpenConcerto($TData);
-                break;
+			case self::$EXPORT_TYPE_OPENCONCERTO :
+				$this->exportOpenConcerto($TData);
+				break;
 			case self::$EXPORT_TYPE_SAGE50_SWISS :
 				$this->exportSAGE50SWISS($TData);
 				break;
-            case self::$EXPORT_TYPE_LDCOMPTA :
-                $this->exportLDCompta($TData);
-                break;
-            case self::$EXPORT_TYPE_LDCOMPTA10 :
-                $this->exportLDCompta10($TData);
-                break;
-            case self::$EXPORT_TYPE_FEC :
-                $this->exportFEC($TData);
-                break;
+			case self::$EXPORT_TYPE_LDCOMPTA :
+				$this->exportLDCompta($TData);
+				break;
+			case self::$EXPORT_TYPE_LDCOMPTA10 :
+				$this->exportLDCompta10($TData);
+				break;
+			case self::$EXPORT_TYPE_FEC :
+				$this->exportFEC($TData);
+				break;
 			case self::$EXPORT_TYPE_CHARLEMAGNE :
 				$this->exportCharlemagne($TData);
 				break;
@@ -599,7 +599,7 @@ class AccountancyExport
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
 
 			if ($data->sens == 'D') {
-				$Tab['montant_debit']  =  str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$Tab['montant_debit']  = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			} else {
@@ -659,10 +659,10 @@ class AccountancyExport
 			print $date.$separator;
 			print $line->code_journal.$separator;
 			if (empty($line->subledger_account)) {
-                print $line->numero_compte.$separator;
-            } else {
-                print $line->subledger_account.$separator;
-            }
+				print $line->numero_compte.$separator;
+			} else {
+				print $line->subledger_account.$separator;
+			}
 			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
 			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"'.$separator;
 			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
@@ -714,36 +714,36 @@ class AccountancyExport
 		}
 	}
 
-    /**
-     * Export format : OpenConcerto
-     *
-     * @param array $objectLines data
-     * @return void
-     */
-    public function exportOpenConcerto($objectLines)
-    {
+	/**
+	 * Export format : OpenConcerto
+	 *
+	 * @param array $objectLines data
+	 * @return void
+	 */
+	public function exportOpenConcerto($objectLines)
+	{
 
-        $separator = ';';
-        $end_line = "\n";
+		$separator = ';';
+		$end_line = "\n";
 
-        foreach ($objectLines as $line) {
-            $date = dol_print_date($line->doc_date, '%d/%m/%Y');
+		foreach ($objectLines as $line) {
+			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-            print $date.$separator;
-            print $line->code_journal.$separator;
-            if (empty($line->subledger_account)) {
-                print length_accountg($line->numero_compte).$separator;
-            } else {
-                print length_accounta($line->subledger_account).$separator;
-            }
-            print $line->doc_ref.$separator;
-            print $line->label_operation.$separator;
-            print price($line->debit).$separator;
-            print price($line->credit).$separator;
+			print $date.$separator;
+			print $line->code_journal.$separator;
+			if (empty($line->subledger_account)) {
+				print length_accountg($line->numero_compte).$separator;
+			} else {
+				print length_accounta($line->subledger_account).$separator;
+			}
+			print $line->doc_ref.$separator;
+			print $line->label_operation.$separator;
+			print price($line->debit).$separator;
+			print price($line->credit).$separator;
 
-            print $end_line;
-        }
-    }
+			print $end_line;
+		}
+	}
 
 	/**
 	 * Export format : Configurable CSV
@@ -822,25 +822,25 @@ class AccountancyExport
 			print $line->piece_num.$separator;
 
 			// FEC:EcritureDate
-			print $date_document . $separator;
+			print $date_document.$separator;
 
 			// FEC:CompteNum
 			print $line->numero_compte.$separator;
 
 			// FEC:CompteLib
-			print dol_string_unaccent($line->label_compte) . $separator;
+			print dol_string_unaccent($line->label_compte).$separator;
 
 			// FEC:CompAuxNum
 			print $line->subledger_account.$separator;
 
 			// FEC:CompAuxLib
-			print dol_string_unaccent($line->subledger_label) . $separator;
+			print dol_string_unaccent($line->subledger_label).$separator;
 
 			// FEC:PieceRef
 			print $line->doc_ref.$separator;
 
 			// FEC:PieceDate
-			print dol_string_unaccent($date_creation) . $separator;
+			print dol_string_unaccent($date_creation).$separator;
 
 			// FEC:EcritureLib
 			print $line->label_operation.$separator;
@@ -858,7 +858,7 @@ class AccountancyExport
 			print $line->date_lettering.$separator;
 
 			// FEC:ValidDate
-			print $date_validation . $separator;
+			print $date_validation.$separator;
 
 			// FEC:Montantdevise
 			print $line->multicurrency_amount.$separator;
@@ -870,152 +870,152 @@ class AccountancyExport
 		}
 	}
 
-    /**
-     * Export format : SAGE50SWISS
-     *
-     * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
-     * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
-     *
-     * @param array $objectLines data
-     *
-     * @return void
-     */
-    public function exportSAGE50SWISS($objectLines)
-    {
-        // SAGE50SWISS
-        $this->separator = ',';
-        $this->end_line = "\r\n";
+	/**
+	 * Export format : SAGE50SWISS
+	 *
+	 * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
+	 * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportSAGE50SWISS($objectLines)
+	{
+		// SAGE50SWISS
+		$this->separator = ',';
+		$this->end_line = "\r\n";
 
-        // Print header line
-        print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
-        print $this->end_line;
-        $thisPieceNum = "";
-        $thisPieceAccountNr = "";
-        $aSize = count($objectLines);
-        foreach ($objectLines as $aIndex=>$line)
+		// Print header line
+		print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
+		print $this->end_line;
+		$thisPieceNum = "";
+		$thisPieceAccountNr = "";
+		$aSize = count($objectLines);
+		foreach ($objectLines as $aIndex=>$line)
 		{
-            $sammelBuchung = false;
-            if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num)
-            {
-                $sammelBuchung = true;
-            } elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
-            {
-                $sammelBuchung = true;
-            } elseif ($aIndex + 1 < $aSize
-                    && $objectLines[$aIndex + 1]->piece_num == $line->piece_num
-                    && $aIndex - 1 < $aSize
-                    && $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-                    )
-            {
-                $sammelBuchung = true;
-            }
+			$sammelBuchung = false;
+			if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num)
+			{
+				$sammelBuchung = true;
+			} elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
+			{
+				$sammelBuchung = true;
+			} elseif ($aIndex + 1 < $aSize
+					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
+					&& $aIndex - 1 < $aSize
+					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
+					)
+			{
+				$sammelBuchung = true;
+			}
 
-            //Blg
-            print $line->piece_num.$this->separator;
+			//Blg
+			print $line->piece_num.$this->separator;
 
-            // Datum
-            $date = dol_print_date($line->doc_date, '%d.%m.%Y');
-            print $date.$this->separator;
+			// Datum
+			$date = dol_print_date($line->doc_date, '%d.%m.%Y');
+			print $date.$this->separator;
 
-            // Kto
-            print length_accountg($line->numero_compte).$this->separator;
-            // S/H
-            if ($line->sens == 'D')
-            {
-                print 'S'.$this->separator;
-            } else {
-                print 'H'.$this->separator;
-            }
-            //Grp
-            print self::trunc($line->code_journal, 1).$this->separator;
-            // GKto
-            if (empty($line->code_tiers))
-            {
-                if ($line->piece_num == $thisPieceNum)
-                {
-                    print length_accounta($thisPieceAccountNr).$this->separator;
-                } else {
-                    print "div".$this->separator;
-                }
-            } else {
-                print length_accounta($line->code_tiers).$this->separator;
-            }
-            //SId
-            print $this->separator;
-            //SIdx
-            print "0".$this->separator;
-            //KIdx
-            print "0".$this->separator;
-            //BTyp
-            print "0".$this->separator;
+			// Kto
+			print length_accountg($line->numero_compte).$this->separator;
+			// S/H
+			if ($line->sens == 'D')
+			{
+				print 'S'.$this->separator;
+			} else {
+				print 'H'.$this->separator;
+			}
+			//Grp
+			print self::trunc($line->code_journal, 1).$this->separator;
+			// GKto
+			if (empty($line->code_tiers))
+			{
+				if ($line->piece_num == $thisPieceNum)
+				{
+					print length_accounta($thisPieceAccountNr).$this->separator;
+				} else {
+					print "div".$this->separator;
+				}
+			} else {
+				print length_accounta($line->code_tiers).$this->separator;
+			}
+			//SId
+			print $this->separator;
+			//SIdx
+			print "0".$this->separator;
+			//KIdx
+			print "0".$this->separator;
+			//BTyp
+			print "0".$this->separator;
 
-            //MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
-            if ($sammelBuchung)
-            {
-                print "2".$this->separator;
-            } else {
-                print "1".$this->separator;
-            }
-            // Code
-            print '""'.$this->separator;
-            // Netto
-            if ($line->montant >= 0)
-            {
-                print $line->montant.$this->separator;
-            } else {
-                print ($line->montant * -1).$this->separator;
-            }
-            // Steuer
-            print "0.00".$this->separator;
-            // FW-Betrag
-            print "0.00".$this->separator;
-            // Tx1
-            $line1 = self::toAnsi($line->label_compte, 29);
-            if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
-            {
-                $line1 = "";
-            }
-            $line2 = self::toAnsi($line->doc_ref, 29);
-            if (strlen($line1) == 0)
-            {
-                $line1 = $line2;
-                $line2 = "";
-            }
-            if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
-            {
-                $line1 = $line1.' / '.$line2;
-                $line2 = "";
-            }
+			//MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
+			if ($sammelBuchung)
+			{
+				print "2".$this->separator;
+			} else {
+				print "1".$this->separator;
+			}
+			// Code
+			print '""'.$this->separator;
+			// Netto
+			if ($line->montant >= 0)
+			{
+				print $line->montant.$this->separator;
+			} else {
+				print ($line->montant * -1).$this->separator;
+			}
+			// Steuer
+			print "0.00".$this->separator;
+			// FW-Betrag
+			print "0.00".$this->separator;
+			// Tx1
+			$line1 = self::toAnsi($line->label_compte, 29);
+			if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3)
+			{
+				$line1 = "";
+			}
+			$line2 = self::toAnsi($line->doc_ref, 29);
+			if (strlen($line1) == 0)
+			{
+				$line1 = $line2;
+				$line2 = "";
+			}
+			if (strlen($line1) > 0 && strlen($line2) > 0 && (strlen($line1) + strlen($line2)) < 27)
+			{
+				$line1 = $line1.' / '.$line2;
+				$line2 = "";
+			}
 
-            print '"'.self::toAnsi($line1).'"'.$this->separator;
-            // Tx2
-            print '"'.self::toAnsi($line2).'"'.$this->separator;
-            //PkKey
-            print "0".$this->separator;
-            //OpId
-            print $this->separator;
+			print '"'.self::toAnsi($line1).'"'.$this->separator;
+			// Tx2
+			print '"'.self::toAnsi($line2).'"'.$this->separator;
+			//PkKey
+			print "0".$this->separator;
+			//OpId
+			print $this->separator;
 
-            // Flag
-            print "0";
+			// Flag
+			print "0";
 
-            print $this->end_line;
+			print $this->end_line;
 
-            if ($line->piece_num !== $thisPieceNum)
-            {
-                $thisPieceNum = $line->piece_num;
-                $thisPieceAccountNr = $line->numero_compte;
-            }
-        }
-    }
+			if ($line->piece_num !== $thisPieceNum)
+			{
+				$thisPieceNum = $line->piece_num;
+				$thisPieceAccountNr = $line->numero_compte;
+			}
+		}
+	}
 
-    /**
-     * Export format : LD Compta version 9
-     * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
-     *
-     * @param array $objectLines data
-     *
-     * @return void
-     */
+	/**
+	 * Export format : LD Compta version 9
+	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
 	public function exportLDCompta($objectLines)
 	{
 
@@ -1168,23 +1168,23 @@ class AccountancyExport
 				{
 					$soc = $this->db->fetch_object($resql);
 
-	                $address = array('', '', '');
-                    if (strpos($soc->address, "\n") !== false) {
-	                    $address = explode("\n", $soc->address);
-	                    if (is_array($address) && count($address) > 0) {
-	                    	foreach ($address as $key=>$data) {
-			                    $address[$key] = str_replace(array("\t", "\n", "\r"), "", $data);
-			                    $address[$key] = dol_trunc($address[$key], 40, 'right', 'UTF-8', 1);
-		                    }
-	                    }
-                    } else {
-	                    $address[0] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 0, 40);
-	                    $address[1] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 41, 40);
-	                    $address[2] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 82, 40);
-                    }
+					$address = array('', '', '');
+					if (strpos($soc->address, "\n") !== false) {
+						$address = explode("\n", $soc->address);
+						if (is_array($address) && count($address) > 0) {
+							foreach ($address as $key=>$data) {
+								$address[$key] = str_replace(array("\t", "\n", "\r"), "", $data);
+								$address[$key] = dol_trunc($address[$key], 40, 'right', 'UTF-8', 1);
+							}
+						}
+					} else {
+						$address[0] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 0, 40);
+						$address[1] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 41, 40);
+						$address[2] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 82, 40);
+					}
 
 					$type_enregistrement = 'C';
-                    //TYPE
+					//TYPE
 					print $type_enregistrement.$separator;
 					//NOCL
 					print $soc->code_client.$separator;
@@ -1193,15 +1193,15 @@ class AccountancyExport
 					//LIBI
 					print $separator;
 					//TITR
-                    print $separator;
+					print $separator;
 					//RSSO
 					print $soc->nom.$separator;
 					//CAD1
-                    print  $address[0].$separator;
+					print  $address[0].$separator;
 					//CAD2
-                    print  $address[1].$separator;
+					print  $address[1].$separator;
 					//CAD3
-                    print  $address[2].$separator;
+					print  $address[2].$separator;
 					//COPO
 					print  $soc->zip.$separator;
 					//BUDI
@@ -1223,7 +1223,7 @@ class AccountancyExport
 					//COMM
 					print $separator;
 					//SIRE
-                    print str_replace(" ", "", $soc->siret).$separator;
+					print str_replace(" ", "", $soc->siret).$separator;
 					//RIBP
 					print $separator;
 					//DOBQ
@@ -1486,15 +1486,15 @@ class AccountancyExport
 	 *
 	 * @param string	$str 		Original string to encode and optionaly truncate
 	 * @param integer 	$size 		Truncate string after $size characters
-     * @return string 				String encoded in Windows-1251 charset
+	 * @return string 				String encoded in Windows-1251 charset
 	 */
 	public static function toAnsi($str, $size = -1)
-    {
+	{
 		$retVal = dol_string_nohtmltag($str, 1, 'Windows-1251');
-        if ($retVal >= 0 && $size >= 0)
-        {
-            $retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
-        }
-        return $retVal;
+		if ($retVal >= 0 && $size >= 0)
+		{
+			$retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
+		}
+		return $retVal;
 	}
 }

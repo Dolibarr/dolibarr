@@ -128,47 +128,47 @@ if (empty($reshook))
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
 	{
-	    if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
-	    {
-	        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
-	        $action = '';
-	    } else {
-	        $object = new Cronjob($db);
-	    	$job = $object->fetch($id);
+		if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
+		{
+			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
+			$action = '';
+		} else {
+			$object = new Cronjob($db);
+			$job = $object->fetch($id);
 
-	        $now = dol_now(); // Date we start
+			$now = dol_now(); // Date we start
 
-	        $resrunjob = $object->run_jobs($user->login); // Return -1 if KO, 1 if OK
-	    	if ($resrunjob < 0) {
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    	}
+			$resrunjob = $object->run_jobs($user->login); // Return -1 if KO, 1 if OK
+			if ($resrunjob < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 
-	    	// Programm next run
-	    	$res = $object->reprogram_jobs($user->login, $now);
-	    	if ($res > 0)
-	    	{
-	    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
-	    		{
-	    		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
-	    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
-	    		}
-	    		$action = '';
-	    	} else {
-	    		setEventMessages($object->error, $object->errors, 'errors');
-	    		$action = '';
-	    	}
+			// Programm next run
+			$res = $object->reprogram_jobs($user->login, $now);
+			if ($res > 0)
+			{
+				if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
+				{
+					if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+					else setEventMessages($langs->trans("JobFinished"), null, 'errors');
+				}
+				$action = '';
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			}
 
-	    	$param = '&search_status='.urlencode($search_status);
-	    	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	    	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	    	if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
-	    	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
-	    	// Add $param from extra fields
-	    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+			$param = '&search_status='.urlencode($search_status);
+			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+			if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+			if ($search_label)	  $param .= '&search_label='.urlencode($search_label);
+			if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+			// Add $param from extra fields
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '')); // Make a redirect to avoid to run twice the job when using back
-	    	exit;
-	    }
+			header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '')); // Make a redirect to avoid to run twice the job when using back
+			exit;
+		}
 	}
 
 	// Mass actions
@@ -273,13 +273,13 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -449,7 +449,7 @@ if ($num > 0)
 		print '<td>';
 		if ($obj->jobtype == 'method')
 		{
-		    $text = $langs->trans("CronClass");
+			$text = $langs->trans("CronClass");
 			$texttoshow = $langs->trans('CronModule').': '.$obj->module_name.'<br>';
 			$texttoshow .= $langs->trans('CronClass').': '.$obj->classesname.'<br>';
 			$texttoshow .= $langs->trans('CronObject').': '.$obj->objectname.'<br>';
@@ -494,8 +494,8 @@ if ($num > 0)
 		// Duration
 		print '<td class="center">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
-		    print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
-		    //print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
+			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
+			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
 		}
 		print '</td>';
 

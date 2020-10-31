@@ -13,7 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -213,8 +213,6 @@ class Propal extends CommonObject
 
 	public $labelStatus = array();
 	public $labelStatusShort = array();
-
-	public $specimen;
 
 	// Multicurrency
 	/**
@@ -1352,7 +1350,7 @@ class Propal extends CommonObject
 
 		$object->id = 0;
 		$object->ref = '';
-		$object->entity = (! empty($forceentity) ? $forceentity : $object->entity);
+		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
 		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields
@@ -1501,14 +1499,14 @@ class Propal extends CommonObject
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;	// deprecated
+				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 
 				$this->status               = (int) $obj->fk_statut;
-				$this->statut               = $this->status;		// deprecated
+				$this->statut               = $this->status; // deprecated
 				$this->statut_libelle       = $obj->statut_label;
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
@@ -2076,7 +2074,7 @@ class Propal extends CommonObject
 		return $this->setDeliveryDate($user, $delivery_date, $notrigger);
 	}
 
-    /**
+	/**
 	 *	Set delivery date
 	 *
 	 *	@param      User 	$user        		Object user that modify
@@ -2084,7 +2082,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if ko, >0 if ok
 	 */
-    public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
+	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
 		if (!empty($user->rights->propal->creer))
 		{
@@ -2143,9 +2141,9 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           			<0 if KO, >0 if OK
 	 */
-    public function set_availability($user, $id, $notrigger = 0)
+	public function set_availability($user, $id, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (!empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
 		{
 			$error = 0;
@@ -2210,9 +2208,9 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           		<0 if KO, >0 if OK
 	 */
-    public function set_demand_reason($user, $id, $notrigger = 0)
+	public function set_demand_reason($user, $id, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (!empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
 		{
 			$error = 0;
@@ -2279,9 +2277,9 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if ko, >0 if ok
 	 */
-    public function set_ref_client($user, $ref_client, $notrigger = 0)
+	public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (!empty($user->rights->propal->creer))
 		{
 			$error = 0;
@@ -2340,9 +2338,9 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
-    public function set_remise_percent($user, $remise, $notrigger = 0)
+	public function set_remise_percent($user, $remise, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if (!empty($user->rights->propal->creer))
@@ -2405,9 +2403,9 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
-    public function set_remise_absolue($user, $remise, $notrigger = 0)
+	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if (!empty($user->rights->propal->creer))
@@ -2472,7 +2470,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-    public function reopen($user, $statut, $note = '', $notrigger = 0)
+	public function reopen($user, $statut, $note = '', $notrigger = 0)
 	{
 
 		$this->statut = $statut;
@@ -2531,7 +2529,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-    public function cloture($user, $status, $note = "", $notrigger = 0)
+	public function cloture($user, $status, $note = "", $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2630,7 +2628,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int     			<0 si ko, >0 si ok
 	 */
-    public function classifyBilled(User $user, $notrigger = 0)
+	public function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -2684,15 +2682,15 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-    public function setDraft($user, $notrigger = 0)
+	public function setDraft($user, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$error = 0;
 
 		// Protection
 		if ($this->statut <= self::STATUS_DRAFT)
 		{
-		    return 0;
+			return 0;
 		}
 
 		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
@@ -2725,10 +2723,10 @@ class Propal extends CommonObject
 
 		if (!$error)
 		{
-		    $this->statut = self::STATUS_DRAFT;
-		    $this->brouillon = 1;
+			$this->statut = self::STATUS_DRAFT;
+			$this->brouillon = 1;
 
-		    $this->db->commit();
+			$this->db->commit();
 			return 1;
 		} else {
 			foreach ($this->errors as $errmsg)
@@ -2742,7 +2740,7 @@ class Propal extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return list of proposal (eventually filtered on user) into an array
 	 *
@@ -2756,9 +2754,9 @@ class Propal extends CommonObject
 	 *    @param    string	$sortorder			Sort order
 	 *    @return	int		       				-1 if KO, array with result if OK
 	 */
-    public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
+	public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user;
 
 		$ga = array();
@@ -2820,7 +2818,7 @@ class Propal extends CommonObject
 	 *
 	 *	@return	array		Array of invoices
 	 */
-    public function getInvoiceArrayList()
+	public function getInvoiceArrayList()
 	{
 		return $this->InvoiceArrayList($this->id);
 	}
@@ -2832,9 +2830,9 @@ class Propal extends CommonObject
 	 *	@param		int		$id			Id propal
 	 *	@return		array				Array of invoices id
 	 */
-    public function InvoiceArrayList($id)
+	public function InvoiceArrayList($id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$ga = array();
 		$linkedInvoices = array();
 
@@ -2914,7 +2912,7 @@ class Propal extends CommonObject
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return	int						1 if ok, otherwise if error
 	 */
-    public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2933,9 +2931,9 @@ class Propal extends CommonObject
 
 		if (!$error)
 		{
-            $main = MAIN_DB_PREFIX.'propaldet';
-            $ef = $main."_extrafields";
-            $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = ".$this->id.")";
+			$main = MAIN_DB_PREFIX.'propaldet';
+			$ef = $main."_extrafields";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_propal = ".$this->id.")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = ".$this->id;
 			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
@@ -3033,7 +3031,7 @@ class Propal extends CommonObject
 	 *  @return int                  	>0 if OK, <0 if KO
 	 *  @deprecated  use set_availability
 	 */
-    public function availability($availability_id, $notrigger = 0)
+	public function availability($availability_id, $notrigger = 0)
 	{
 		global $user;
 
@@ -3100,9 +3098,9 @@ class Propal extends CommonObject
 	 *	@return int						>0 si ok, <0 si ko
 	 *	@deprecated use set_demand_reason
 	 */
-    public function demand_reason($demand_reason_id, $notrigger = 0)
+	public function demand_reason($demand_reason_id, $notrigger = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user;
 
 		if ($this->statut >= self::STATUS_DRAFT)
@@ -3166,7 +3164,7 @@ class Propal extends CommonObject
 	 * 	@param	int		$id		Proposal id
 	 *  @return	void
 	 */
-    public function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT c.rowid, ";
 		$sql .= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
@@ -3219,12 +3217,12 @@ class Propal extends CommonObject
 	 *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-    public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Return label of a status (draft, validated, ...)
 	 *
@@ -3232,9 +3230,9 @@ class Propal extends CommonObject
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-    public function LibStatut($status, $mode = 1)
+	public function LibStatut($status, $mode = 1)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		// Init/load array of translation of status
@@ -3265,7 +3263,7 @@ class Propal extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -3273,9 +3271,9 @@ class Propal extends CommonObject
 	 *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-    public function load_board($user, $mode)
+	public function load_board($user, $mode)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		$clause = " WHERE";
@@ -3356,7 +3354,7 @@ class Propal extends CommonObject
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		global $conf, $langs;
 
@@ -3433,7 +3431,7 @@ class Propal extends CommonObject
 			{
 				$prodid = mt_rand(1, $num_prods);
 				$line->fk_product = $prodids[$prodid];
-		        $line->product_ref = 'SPECIMEN';
+				$line->product_ref = 'SPECIMEN';
 			}
 
 			$this->lines[$xnbp] = $line;
@@ -3452,9 +3450,9 @@ class Propal extends CommonObject
 	 *
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
-    public function load_state_board()
+	public function load_state_board()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user;
 
 		$this->nb = array();
@@ -3496,7 +3494,7 @@ class Propal extends CommonObject
 	 *  @param	Societe		$soc  	Object thirdparty
 	 *  @return string      		Reference libre pour la propale
 	 */
-    public function getNextNumRef($soc)
+	public function getNextNumRef($soc)
 	{
 		global $conf, $langs;
 		$langs->load("propal");
@@ -3551,10 +3549,10 @@ class Propal extends CommonObject
 	 *	@param      string	$get_params    	          Parametres added to url
 	 *  @param	    int   	$notooltip		          1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-     *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
+	 *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
 	 *	@return     string          		          String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
 	{
 		global $langs, $conf, $user;
 
@@ -3622,45 +3620,45 @@ class Propal extends CommonObject
 		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 
-        if ($addlinktonotes >= 0) {
-            $txttoshow = '';
+		if ($addlinktonotes >= 0) {
+			$txttoshow = '';
 
-            if ($addlinktonotes == 0) {
-                if (!empty($this->note_private) || !empty($this->note_public)) {
-                    $txttoshow = $langs->trans('ViewPrivateNote');
-                }
-            } elseif ($addlinktonotes == 1) {
-                if (!empty($this->note_private)) {
-                    $txttoshow .= ($user->socid > 0 ? '' : dol_string_nohtmltag($this->note_private, 1));
-                }
-            } elseif ($addlinktonotes == 2) {
-                if (!empty($this->note_public)) {
-                    $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
-                }
-            } elseif ($addlinktonotes == 3) {
-                if ($user->socid > 0) {
-                    if (!empty($this->note_public)) {
-                        $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
-                    }
-                } else {
-                    if (!empty($this->note_public)) {
-                        $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
-                    }
-                    if (!empty($this->note_private)) {
-                        if (!empty($txttoshow)) $txttoshow .= '<br><br>';
-                        $txttoshow .= dol_string_nohtmltag($this->note_private, 1);
-                    }
-                }
-            }
+			if ($addlinktonotes == 0) {
+				if (!empty($this->note_private) || !empty($this->note_public)) {
+					$txttoshow = $langs->trans('ViewPrivateNote');
+				}
+			} elseif ($addlinktonotes == 1) {
+				if (!empty($this->note_private)) {
+					$txttoshow .= ($user->socid > 0 ? '' : dol_string_nohtmltag($this->note_private, 1));
+				}
+			} elseif ($addlinktonotes == 2) {
+				if (!empty($this->note_public)) {
+					$txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+				}
+			} elseif ($addlinktonotes == 3) {
+				if ($user->socid > 0) {
+					if (!empty($this->note_public)) {
+						$txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+					}
+				} else {
+					if (!empty($this->note_public)) {
+						$txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+					}
+					if (!empty($this->note_private)) {
+						if (!empty($txttoshow)) $txttoshow .= '<br><br>';
+						$txttoshow .= dol_string_nohtmltag($this->note_private, 1);
+					}
+				}
+			}
 
-            if ($txttoshow) {
-                $result .= ' <span class="note inline-block">';
-                $result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
-                $result .= img_picto('', 'note');
-                $result .= '</a>';
-                $result .= '</span>';
-            }
-        }
+			if ($txttoshow) {
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
 
 		return $result;
 	}
@@ -3670,7 +3668,7 @@ class Propal extends CommonObject
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-    public function getLinesArray()
+	public function getLinesArray()
 	{
 		return $this->fetch_lines();
 	}
@@ -3683,7 +3681,7 @@ class Propal extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-         *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -3742,68 +3740,68 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $table_element = 'propaldet';
 
-    public $oldline;
+	public $oldline;
 
 	// From llx_propaldet
-    public $fk_propal;
-    public $fk_parent_line;
-    public $desc; // Description ligne
-    public $fk_product; // Id produit predefini
+	public $fk_propal;
+	public $fk_parent_line;
+	public $desc; // Description ligne
+	public $fk_product; // Id produit predefini
 	/**
 	 * @deprecated
 	 * @see $product_type
 	 */
-    public $fk_product_type;
+	public $fk_product_type;
 	/**
 	 * Product type.
 	 * @var int
 	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
 	 */
-    public $product_type = Product::TYPE_PRODUCT;
+	public $product_type = Product::TYPE_PRODUCT;
 
-    public $qty;
-    public $tva_tx;
-    public $subprice;
-    public $remise_percent;
-    public $fk_remise_except;
+	public $qty;
+	public $tva_tx;
+	public $subprice;
+	public $remise_percent;
+	public $fk_remise_except;
 
-    public $rang = 0;
+	public $rang = 0;
 
-    public $fk_fournprice;
-    public $pa_ht;
-    public $marge_tx;
-    public $marque_tx;
+	public $fk_fournprice;
+	public $pa_ht;
+	public $marge_tx;
+	public $marque_tx;
 
-    public $special_code; // Tag for special lines (exlusive tags)
+	public $special_code; // Tag for special lines (exlusive tags)
 	// 1: frais de port
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
-    public $info_bits = 0; // Some other info:
+	public $info_bits = 0; // Some other info:
 	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
-    public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
-    public $total_tva; // Total TVA  de la ligne toute quantite et incluant la remise ligne
-    public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
+	public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
+	public $total_tva; // Total TVA  de la ligne toute quantite et incluant la remise ligne
+	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
 
 	/**
 	 * @deprecated
 	 * @see $remise_percent, $fk_remise_except
 	 */
-    public $remise;
+	public $remise;
 	/**
 	 * @deprecated
 	 * @see $subprice
 	 */
-    public $price;
+	public $price;
 
 	// From llx_product
 	/**
 	 * @deprecated
 	 * @see $product_ref
 	 */
-    public $ref;
+	public $ref;
 	/**
 	 * Product reference
 	 * @var string
@@ -3813,7 +3811,7 @@ class PropaleLigne extends CommonObjectLine
 	 * @deprecated
 	 * @see $product_label
 	 */
-    public $libelle;
+	public $libelle;
 	/**
 	 *  Product label
 	 * @var string
@@ -3825,32 +3823,32 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $product_desc;
 
-    public $localtax1_tx; // Local tax 1
-    public $localtax2_tx; // Local tax 2
-    public $localtax1_type; // Local tax 1 type
-    public $localtax2_type; // Local tax 2 type
-    public $total_localtax1; // Line total local tax 1
-    public $total_localtax2; // Line total local tax 2
+	public $localtax1_tx; // Local tax 1
+	public $localtax2_tx; // Local tax 2
+	public $localtax1_type; // Local tax 1 type
+	public $localtax2_type; // Local tax 2 type
+	public $total_localtax1; // Line total local tax 1
+	public $total_localtax2; // Line total local tax 2
 
-    public $date_start;
-    public $date_end;
+	public $date_start;
+	public $date_end;
 
-    public $skip_update_total; // Skip update price total for special lines
+	public $skip_update_total; // Skip update price total for special lines
 
 	// Multicurrency
-    public $fk_multicurrency;
-    public $multicurrency_code;
-    public $multicurrency_subprice;
-    public $multicurrency_total_ht;
-    public $multicurrency_total_tva;
-    public $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * 	Class line Contructor
 	 *
 	 * 	@param	DoliDB	$db	Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -3861,7 +3859,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param	int		$rowid		Propal line id
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function fetch($rowid)
+	public function fetch($rowid)
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.vat_src_code, pd.tva_tx,';
 		$sql .= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
@@ -3951,7 +3949,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-    public function insert($notrigger = 0)
+	public function insert($notrigger = 0)
 	{
 		global $conf, $user;
 
@@ -3983,7 +3981,7 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva = 0;
 		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc = 0;
 
-	    // if buy price not defined, define buyprice as configured in margin admin
+		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
@@ -4090,7 +4088,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	 int  				<0 if ko, >0 if ok
 	 */
-    public function delete(User $user, $notrigger = 0)
+	public function delete(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -4141,7 +4139,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	int					<0 if ko, >0 if ok
 	 */
-    public function update($notrigger = 0)
+	public function update($notrigger = 0)
 	{
 		global $conf, $user;
 
@@ -4149,7 +4147,7 @@ class PropaleLigne extends CommonObjectLine
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
 
-		if (empty($this->id) && ! empty($this->rowid)) $this->id = $this->rowid;
+		if (empty($this->id) && !empty($this->rowid)) $this->id = $this->rowid;
 
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx = 0;
@@ -4267,9 +4265,9 @@ class PropaleLigne extends CommonObjectLine
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-    public function update_total()
+	public function update_total()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->db->begin();
 
 		// Mise a jour ligne en base

@@ -82,23 +82,23 @@ $picto = array(
 
 foreach ($modules as $const => $desc)
 {
-    if ($action == 'activate_'.strtolower($const))
-    {
-        dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
-        // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
-        if ($const == 'PRODUCTDESC' && !empty($conf->global->PRODUIT_DESC_IN_FORM))
-        {
-            dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
-        }
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    if ($action == 'disable_'.strtolower($const))
-    {
-        dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
+	if ($action == 'activate_'.strtolower($const))
+	{
+		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
+		// Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
+		if ($const == 'PRODUCTDESC' && !empty($conf->global->PRODUIT_DESC_IN_FORM))
+		{
+			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	if ($action == 'disable_'.strtolower($const))
+	{
+		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 
 if (GETPOST('save', 'alpha'))
@@ -115,7 +115,7 @@ if (GETPOST('save', 'alpha'))
 	}
 
 	$fckeditor_test = GETPOST('formtestfield');
-    if (!empty($fckeditor_test)) {
+	if (!empty($fckeditor_test)) {
 		if (!dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
@@ -124,11 +124,11 @@ if (GETPOST('save', 'alpha'))
 	}
 
 	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*

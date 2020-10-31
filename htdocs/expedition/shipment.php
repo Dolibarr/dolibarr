@@ -78,43 +78,43 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Categorisation dans projet
-    if ($action == 'classin')
-    {
-    	$object = new Commande($db);
-    	$object->fetch($id);
-    	$object->setProject(GETPOST('projectid', 'int'));
-    }
-
-    if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes')
-    {
-    	$object = new Commande($db);
-    	$object->fetch($id);
-    	$result = $object->cloture($user);
-    }
-
-    // Positionne ref commande client
-    elseif ($action == 'setref_client' && $user->rights->commande->creer) {
-        $result = $object->set_ref_client($user, GETPOST('ref_client'));
-        if ($result < 0)
-        {
-            setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
-
-    if ($action == 'setdatedelivery' && $user->rights->commande->creer)
+	// Categorisation dans projet
+	if ($action == 'classin')
 	{
-	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-
-	    $object->fetch($id);
-	    $result = $object->setDeliveryDate($user, $datedelivery);
-	    if ($result < 0)
-	    {
-	        setEventMessages($object->error, $object->errors, 'errors');
-	    }
+		$object = new Commande($db);
+		$object->fetch($id);
+		$object->setProject(GETPOST('projectid', 'int'));
 	}
-    /*
+
+	if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes')
+	{
+		$object = new Commande($db);
+		$object->fetch($id);
+		$result = $object->cloture($user);
+	}
+
+	// Positionne ref commande client
+	elseif ($action == 'setref_client' && $user->rights->commande->creer) {
+		$result = $object->set_ref_client($user, GETPOST('ref_client'));
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'setdatedelivery' && $user->rights->commande->creer)
+	{
+		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+
+		$object->fetch($id);
+		$result = $object->setDeliveryDate($user, $datedelivery);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	/*
     if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
     {
     	$object = new Commande($db);

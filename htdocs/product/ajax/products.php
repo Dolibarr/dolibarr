@@ -172,7 +172,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 	if (empty($htmlname))
 	{
 		print json_encode(array());
-	    return;
+		return;
 	}
 
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
@@ -183,7 +183,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha')))
 	{
 		print json_encode(array());
-	    return;
+		return;
 	}
 
 	// When used from jQuery, the search term is added as GET param "term".

@@ -295,7 +295,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 				$class = $classes[$val];
 				// Search in cache if load_state_board is already realized
 				$classkeyforcache = $class;
-				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product';	// ProductService use same load_state_board than Product
+				if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
 
 				if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache]))
 				{

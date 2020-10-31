@@ -180,10 +180,10 @@ $formfile = new FormFile($db);
 $objectstatic = new Fichinter($db);
 $companystatic = new Societe($db);
 if (!empty($conf->projet->enabled)) {
-    $projetstatic = new Project($db);
+	$projetstatic = new Project($db);
 }
 if (!empty($conf->contrat->enabled)) {
-    $contratstatic = new Contrat($db);
+	$contratstatic = new Contrat($db);
 }
 
 $title = $langs->trans("ListOfInterventions");
@@ -195,11 +195,11 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 $atleastonefieldinlines = 0;
 foreach ($arrayfields as $tmpkey => $tmpval)
 {
-    if (preg_match('/^fd\./', $tmpkey) && !empty($arrayfields[$tmpkey]['checked']))
-    {
-        $atleastonefieldinlines++;
-        break;
-    }
+	if (preg_match('/^fd\./', $tmpkey) && !empty($arrayfields[$tmpkey]['checked']))
+	{
+		$atleastonefieldinlines++;
+		break;
+	}
 }
 
 $sql = "SELECT";
@@ -207,10 +207,10 @@ $sql .= " f.ref, f.rowid, f.fk_statut as status, f.description, f.datec as date_
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (!empty($conf->projet->enabled)) {
-    $sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
+	$sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
 if (!empty($conf->contrat->enabled)) {
-    $sql .= ", c.rowid as contrat_id, c.ref as contrat_ref, c.ref_customer as contrat_ref_supplier, c.ref_supplier as contrat_ref_supplier";
+	$sql .= ", c.rowid as contrat_id, c.ref as contrat_ref, c.ref_customer as contrat_ref_supplier, c.ref_supplier as contrat_ref_supplier";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -222,10 +222,10 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 if (!empty($conf->projet->enabled)) {
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
 }
 if (!empty($conf->contrat->enabled)) {
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
@@ -240,10 +240,10 @@ if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
 if ($search_projet_ref) {
-    $sql .= natural_search('pr.ref', $search_projet_ref);
+	$sql .= natural_search('pr.ref', $search_projet_ref);
 }
 if ($search_contrat_ref) {
-    $sql .= natural_search('c.ref', $search_contrat_ref);
+	$sql .= natural_search('c.ref', $search_contrat_ref);
 }
 if ($search_desc) {
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
@@ -315,7 +315,7 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    //'presend'=>$langs->trans("SendByMail"),
+		//'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->ficheinter->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
@@ -383,18 +383,18 @@ if ($resql)
 		print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
 		print '</td>';
 	}
-    if (!empty($arrayfields['pr.ref']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '<input type="text" class="flat" name="search_projet_ref" value="'.$search_projet_ref.'" size="8">';
-        print '</td>';
-    }
-    if (!empty($arrayfields['c.ref']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '<input type="text" class="flat" name="search_contrat_ref" value="'.$search_contrat_ref.'" size="8">';
-        print '</td>';
-    }
+	if (!empty($arrayfields['pr.ref']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat" name="search_projet_ref" value="'.$search_projet_ref.'" size="8">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['c.ref']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat" name="search_contrat_ref" value="'.$search_contrat_ref.'" size="8">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['f.description']['checked']))
 	{
 		print '<td class="liste_titre">';
@@ -442,18 +442,18 @@ if ($resql)
 		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 		print '</td>';
 	}
-    // Fields of detail line
+	// Fields of detail line
 	if (!empty($arrayfields['fd.description']['checked']))
 	{
-	    print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	if (!empty($arrayfields['fd.date']['checked']))
 	{
-	    print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	if (!empty($arrayfields['fd.duree']['checked']))
 	{
-	    print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
@@ -550,31 +550,31 @@ if ($resql)
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
-        if (!empty($arrayfields['pr.ref']['checked']))
-        {
-            print '<td>';
-            $projetstatic->id = $obj->projet_id;
-            $projetstatic->ref = $obj->projet_ref;
-            $projetstatic->title = $obj->projet_title;
-            if ($projetstatic->id > 0) {
-                print $projetstatic->getNomUrl(1, '');
-            }
-            print '</td>';
-            if (!$i) $totalarray['nbfield']++;
-        }
-        if (!empty($arrayfields['c.ref']['checked']))
-        {
-            print '<td>';
-            $contratstatic->id = $obj->contrat_id;
-            $contratstatic->ref = $obj->contrat_ref;
-            $contratstatic->ref_customer = $obj->contrat_ref_customer;
-            $contratstatic->ref_supplier = $obj->contrat_ref_supplier;
-            if ($contratstatic->id > 0) {
-                print $contratstatic->getNomUrl(1, '');
-                print '</td>';
-            }
-            if (!$i) $totalarray['nbfield']++;
-        }
+		if (!empty($arrayfields['pr.ref']['checked']))
+		{
+			print '<td>';
+			$projetstatic->id = $obj->projet_id;
+			$projetstatic->ref = $obj->projet_ref;
+			$projetstatic->title = $obj->projet_title;
+			if ($projetstatic->id > 0) {
+				print $projetstatic->getNomUrl(1, '');
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['c.ref']['checked']))
+		{
+			print '<td>';
+			$contratstatic->id = $obj->contrat_id;
+			$contratstatic->ref = $obj->contrat_ref;
+			$contratstatic->ref_customer = $obj->contrat_ref_customer;
+			$contratstatic->ref_supplier = $obj->contrat_ref_supplier;
+			if ($contratstatic->id > 0) {
+				print $contratstatic->getNomUrl(1, '');
+				print '</td>';
+			}
+			if (!$i) $totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['f.description']['checked']))
 		{
 			print '<td>'.dol_trunc(dolGetFirstLineOfText($obj->description), 48).'</td>';
@@ -628,20 +628,20 @@ if ($resql)
 		// Fields of detail of line
 		if (!empty($arrayfields['fd.description']['checked']))
 		{
-		    print '<td>'.dolGetFirstLineOfText($obj->descriptiondetail).'</td>';
-		    if (!$i) $totalarray['nbfield']++;
+			print '<td>'.dolGetFirstLineOfText($obj->descriptiondetail).'</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['fd.date']['checked']))
 		{
-		    print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
-		    if (!$i) $totalarray['nbfield']++;
+			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
+			if (!$i) $totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['fd.duree']['checked']))
 		{
-		    print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
-		    if (!$i) $totalarray['nbfield']++;
-		    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
-		    $totalarray['val']['fd.duree'] += $obj->duree;
+			print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
+			$totalarray['val']['fd.duree'] += $obj->duree;
 		}
 		// Action column
 		print '<td class="nowrap center">';

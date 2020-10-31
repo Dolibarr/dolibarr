@@ -321,7 +321,7 @@ if (empty($reshook))
 			$object->surface_units      	 = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
-			$finished               = GETPOST('finished', 'int');
+			$finished = GETPOST('finished', 'int');
 			if ($finished > 0) {
 				$object->finished = $finished;
 			} else {
@@ -447,7 +447,7 @@ if (empty($reshook))
 				$object->volume                 = GETPOST('volume');
 				$object->volume_units           = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
 
-				$finished               = GETPOST('finished', 'int');
+				$finished = GETPOST('finished', 'int');
 				if ($finished >= 0) {
 					$object->finished = $finished;
 				} else {
@@ -2192,7 +2192,7 @@ if ($result > 0)
 $tmpcode = '';
 if (!empty($modCodeProduct->code_auto)) $tmpcode = $modCodeProduct->getNextValue($object, $object->type);
 
-$formconfirm='';
+$formconfirm = '';
 
 // Confirm delete product
 if (($action == 'delete' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))	// Output when action = clone if jmobile or no js

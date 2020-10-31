@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -336,6 +336,13 @@ abstract class CommonObject
 
 	/**
 	 * @var int Bank account ID
+	 * @deprecated
+	 * @see $fk_account
+	 */
+	public $fk_bank;
+
+	/**
+	 * @var int Bank account ID
 	 * @see SetBankAccount()
 	 */
 	public $fk_account;
@@ -436,6 +443,11 @@ abstract class CommonObject
 	public $date_modification; // Date last change (tms field)
 
 	public $next_prev_filter;
+
+	/**
+	 * @var int 1 if object is specimen
+	 */
+	public $specimen = 0;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -2245,12 +2257,12 @@ abstract class CommonObject
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setTransportMode Error '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
+				$this->error = $this->db->error();
 				return -1;
 			}
 		} else {
 			dol_syslog(get_class($this).'::setTransportMode, status of the object is incompatible');
-			$this->error='Status of the object is incompatible '.$this->statut;
+			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
 		}
 	}
@@ -5350,8 +5362,8 @@ abstract class CommonObject
 								$new_array_options[$key] = '';
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
-								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-								else $res = $object->fetch('', $value);					// For compatibility
+								if (is_numeric($value)) $res = $object->fetch($value); // Common case
+								else $res = $object->fetch('', $value); // For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -6306,7 +6318,8 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
-			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+
+			if (!preg_match('/search_/', $keyprefix) && !empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
 				$morecss .= ' widthcentpercentminusx';
 			}
 
@@ -6809,7 +6822,7 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix];	// Value may be clean or formated later
+							$value = $this->array_options["options_".$key.$keysuffix]; // Value may be clean or formated later
 							break;
 						case "create":
 						case "edit":
@@ -8462,7 +8475,7 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		switch ($this->element){
+		switch ($this->element) {
 			case 'propal':
 				$element = 'propale';
 				break;
@@ -8470,10 +8483,10 @@ abstract class CommonObject
 				$element = 'produit';
 				break;
 			case 'order_supplier':
-				$element ='fournisseur/commande';
+				$element = 'fournisseur/commande';
 				break;
 			case 'invoice_supplier':
-				$element = 'fournisseur/facture/' . get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
+				$element = 'fournisseur/facture/'.get_exdir($this->id, 2, 0, 1, $this, 'invoice_supplier');
 				break;
 			case 'shipping':
 				$element = 'expedition/sending';
@@ -8483,8 +8496,8 @@ abstract class CommonObject
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files";
-		$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
-		$sql.= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
+		$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%'";
+		$sql .= " AND filepath = '".$this->db->escape($element)."/".$this->db->escape($this->ref)."' AND entity = ".$conf->entity;
 
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();

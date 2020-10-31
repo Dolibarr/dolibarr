@@ -388,7 +388,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->note_private = $obj->note_private;
 			$this->note_public = $obj->note_public;
 			$this->model_pdf = $obj->model_pdf;
-			$this->modelpdf = $obj->model_pdf;	// deprecated
+			$this->modelpdf = $obj->model_pdf; // deprecated
 
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
@@ -2020,8 +2020,8 @@ class CommandeFournisseur extends CommonOrder
 
 		if (!$error)
 		{
-        	// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-        	$this->deleteEcmFiles();
+			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
+			$this->deleteEcmFiles();
 
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
@@ -2210,9 +2210,9 @@ class CommandeFournisseur extends CommonOrder
 
 			// TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
-            if (empty($error))
-            {
-                $this->db->begin();
+			if (empty($error))
+			{
+				$this->db->begin();
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql .= " SET fk_statut = ".$statut;
@@ -2228,10 +2228,10 @@ class CommandeFournisseur extends CommonOrder
 					$this->statut = $statut;
 					$this->actionmsg2 = $comment;
 
-                    // Call trigger
-                    $result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
-                    if ($result_trigger < 0) $error++;
-                    // End call triggers
+					// Call trigger
+					$result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
+					if ($result_trigger < 0) $error++;
+					// End call triggers
 
 					if (empty($error))
 					{

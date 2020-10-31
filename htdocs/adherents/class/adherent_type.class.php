@@ -707,7 +707,7 @@ class AdherentType extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		// Initialise parametres
 		$this->id = 0;
@@ -735,44 +735,8 @@ class AdherentType extends CommonObject
 	 */
 	public function getMailOnValid()
 	{
-		global $conf;
-
 		if (!empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid))) {
 			return $this->mail_valid;
-		}
-
-		return '';
-	}
-
-	/**
-	 *     getMailOnSubscription
-	 *
-	 *     @return string     Return mail content of type or empty
-	 */
-	public function getMailOnSubscription()
-	{
-		global $conf;
-
-		// mail_subscription not  defined so never used
-		if (!empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription))) {  // Property not yet defined
-			return $this->mail_subscription;
-		}
-
-		return '';
-	}
-
-	/**
-	 *     getMailOnResiliate
-	 *
-	 *     @return string     Return mail model content of type or empty
-	 */
-	public function getMailOnResiliate()
-	{
-		global $conf;
-
-		// NOTE mail_resiliate not defined so never used
-		if (!empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate))) {  // Property not yet defined
-			return $this->mail_resiliate;
 		}
 
 		return '';

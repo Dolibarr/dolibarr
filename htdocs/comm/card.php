@@ -487,7 +487,7 @@ if ($object->id > 0)
 		print '</tr>';
 	}
 
-    if (! empty($conf->intracommreport->enabled))
+    if (!empty($conf->intracommreport->enabled))
     {
         // Transport mode by default
         print '<tr><td class="nowrap">';
@@ -675,15 +675,15 @@ if ($object->id > 0)
 		if ($outstandingOpened != $outstandingOpenedLate && !empty($outstandingOpenedLate)) {
 			$warn = '';
 			if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpenedLate) {
-				$warn = ' ' . img_warning($langs->trans("OutstandingBillReached"));
+				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 			}
 			$text = $langs->trans("CurrentOutstandingBillLate");
-			$link = DOL_URL_ROOT . '/compta/recap-compta.php?socid=' . $object->id;
+			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 			$icon = 'bill';
-			if ($link) $boxstat .= '<a href="' . $link . '" class="boxstatsindicator thumbstat nobold nounderline">';
-			$boxstat .= '<div class="boxstats" title="' . dol_escape_htmltag($text) . '">';
-			$boxstat .= '<span class="boxstatstext">' . img_object("", $icon) . ' <span>' . $text . '</span></span><br>';
-			$boxstat .= '<span class="boxstatsindicator' . ($outstandingOpenedLate > 0 ? ' amountremaintopay' : '') . '">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency) . $warn . '</span>';
+			if ($link) $boxstat .= '<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
+			$boxstat .= '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+			$boxstat .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+			$boxstat .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 			$boxstat .= '</div>';
 			if ($link) $boxstat .= '</a>';
 		}
@@ -973,7 +973,7 @@ if ($object->id > 0)
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->statut == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_fin_validite)?$line->date_fin_validite:0) + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
+						if (((!empty($line->date_fin_validite) ? $line->date_fin_validite : 0) + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
 					}
 				}
 

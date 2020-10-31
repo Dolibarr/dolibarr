@@ -42,83 +42,83 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_einstein extends ModelePDFCommandes
 {
-    /**
-     * @var DoliDb Database handler
-     */
-    public $db;
+	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
 
 	/**
-     * @var string model name
-     */
-    public $name;
+	 * @var string model name
+	 */
+	public $name;
 
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
-
-    /**
-     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
-     */
-    public $update_main_doc_field;
+	 * @var string model description (short text)
+	 */
+	public $description;
 
 	/**
-     * @var string document type
-     */
-    public $type;
+	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
-     * @var int page_largeur
-     */
-    public $page_largeur;
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
 
-    /**
-     * @var int page_hauteur
-     */
-    public $page_hauteur;
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
 
-    /**
-     * @var array format
-     */
-    public $format;
+	/**
+	 * @var array format
+	 */
+	public $format;
 
-    /**
-     * @var int marge_gauche
-     */
+	/**
+	 * @var int marge_gauche
+	 */
 	public $marge_gauche;
 
 	/**
-     * @var int marge_droite
-     */
+	 * @var int marge_droite
+	 */
 	public $marge_droite;
 
 	/**
-     * @var int marge_haute
-     */
+	 * @var int marge_haute
+	 */
 	public $marge_haute;
 
 	/**
-     * @var int marge_basse
-     */
+	 * @var int marge_basse
+	 */
 	public $marge_basse;
 
 	/**
 	 * Issuer
 	 * @var Societe    Object that emits
 	 */
-    public $emetteur;
+	public $emetteur;
 
 
 	/**
@@ -200,21 +200,21 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->atleastonediscount = 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Function to build pdf onto disk
-     *
-     *  @param		Object		$object				Object to generate
-     *  @param		Translate	$outputlangs		Lang output object
-     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int			$hidedetails		Do not show line details
-     *  @param		int			$hidedesc			Do not show desc
-     *  @param		int			$hideref			Do not show ref
-     *  @return     int             			    1=OK, 0=KO
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param		Object		$object				Object to generate
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int			$hidedetails		Do not show line details
+	 *  @param		int			$hidedesc			Do not show desc
+	 *  @param		int			$hideref			Do not show ref
+	 *  @return     int             			    1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
@@ -235,11 +235,11 @@ class pdf_einstein extends ModelePDFCommandes
 
 		if ($conf->commande->multidir_output[$conf->entity])
 		{
-            $object->fetch_thirdparty();
+			$object->fetch_thirdparty();
 
-            $deja_regle = 0;
+			$deja_regle = 0;
 
-            // Definition of $dir and $file
+			// Definition of $dir and $file
 			if ($object->specimen)
 			{
 				$dir = $conf->commande->multidir_output[$conf->entity];
@@ -278,22 +278,22 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
 
-                if (class_exists('TCPDF'))
-                {
-                    $pdf->setPrintHeader(false);
-                    $pdf->setPrintFooter(false);
-                }
-                $pdf->SetFont(pdf_getPDFFont($outputlangs));
-                // Set path to the background PDF File
-                if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-                {
-                	$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
-                    $tplidx = $pdf->importPage(1);
-                }
+				if (class_exists('TCPDF'))
+				{
+					$pdf->setPrintHeader(false);
+					$pdf->setPrintFooter(false);
+				}
+				$pdf->SetFont(pdf_getPDFFont($outputlangs));
+				// Set path to the background PDF File
+				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+				{
+					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$tplidx = $pdf->importPage(1);
+				}
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -318,14 +318,14 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				if (empty($this->atleastonediscount))
 				{
-				    $delta = ($this->postotalht - $this->posxdiscount);
-				    $this->posxpicture += $delta;
-				    $this->posxtva += $delta;
-				    $this->posxup += $delta;
-				    $this->posxqty += $delta;
-				    $this->posxunit += $delta;
-				    $this->posxdiscount += $delta;
-				    // post of fields after are not modified, stay at same position
+					$delta = ($this->postotalht - $this->posxdiscount);
+					$this->posxpicture += $delta;
+					$this->posxtva += $delta;
+					$this->posxup += $delta;
+					$this->posxqty += $delta;
+					$this->posxunit += $delta;
+					$this->posxdiscount += $delta;
+					// post of fields after are not modified, stay at same position
 				}
 
 				// New page
@@ -376,11 +376,11 @@ class pdf_einstein extends ModelePDFCommandes
 						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
-                // Extrafields in note
-                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-                if (!empty($extranote)) {
-                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
-                }
+				// Extrafields in note
+				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+				if (!empty($extranote)) {
+					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+				}
 
 				if ($notetoshow)
 				{
@@ -537,7 +537,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$localtax2_type = $localtaxtmp_array[2];
 					}
 
-				    // retrieve global local tax
+					// retrieve global local tax
 					if ($localtax1_type && $localtax1ligne != 0)
 						$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
 					if ($localtax2_type && $localtax2ligne != 0)
@@ -629,8 +629,8 @@ class pdf_einstein extends ModelePDFCommandes
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0)
 				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
 				if (!empty($conf->global->MAIN_UMASK))
@@ -650,10 +650,10 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
-     *
+	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
@@ -662,11 +662,11 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -678,13 +678,13 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $mysoc;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
-        // If France, show VAT mention if not applicable
+		// If France, show VAT mention if not applicable
 		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj))
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -713,8 +713,8 @@ class pdf_einstein extends ModelePDFCommandes
 			$posy = $pdf->GetY() + 3;
 		}
 
-        // Check a payment mode is defined
-        /* Not used with orders
+		// Check a payment mode is defined
+		/* Not used with orders
 		if (empty($object->mode_reglement_code)
         	&& ! $conf->global->FACTURE_CHQ_NUMBER
         	&& ! $conf->global->FACTURE_RIB_NUMBER)
@@ -740,10 +740,10 @@ class pdf_einstein extends ModelePDFCommandes
             $posy=$pdf->GetY()+1;
 		}*/
 
-	    // Show planed date of delivery
-        if (!empty($object->date_livraison))
+		// Show planed date of delivery
+		if (!empty($object->date_livraison))
 		{
-            $outputlangs->load("sendings");
+			$outputlangs->load("sendings");
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("DateDeliveryPlanned").':';
@@ -753,7 +753,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$dlp = dol_print_date($object->date_livraison, "daytext", false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
-            $posy = $pdf->GetY() + 1;
+			$posy = $pdf->GetY() + 1;
 		} elseif ($object->availability_code || $object->availability)    // Show availability conditions
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -770,70 +770,70 @@ class pdf_einstein extends ModelePDFCommandes
 			$posy = $pdf->GetY() + 1;
 		}
 
-        // Show payment mode
-        if ($object->mode_reglement_code
-        	&& $object->mode_reglement_code != 'CHQ'
-           	&& $object->mode_reglement_code != 'VIR') {
-            $pdf->SetFont('', 'B', $default_font_size - 2);
-            $pdf->SetXY($this->marge_gauche, $posy);
-            $titre = $outputlangs->transnoentities("PaymentMode").':';
-            $pdf->MultiCell(80, 5, $titre, 0, 'L');
+		// Show payment mode
+		if ($object->mode_reglement_code
+			&& $object->mode_reglement_code != 'CHQ'
+		   	&& $object->mode_reglement_code != 'VIR') {
+			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("PaymentMode").':';
+			$pdf->MultiCell(80, 5, $titre, 0, 'L');
 
 			$pdf->SetFont('', '', $default_font_size - 2);
-            $pdf->SetXY($posxval, $posy);
-            $lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
-            $pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
+			$pdf->SetXY($posxval, $posy);
+			$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+			$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
-            $posy = $pdf->GetY() + 2;
-        }
-
-		// Show payment mode CHQ
-        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
-        {
-        	// Si mode reglement non force ou si force a CHQ
-	        if (!empty($conf->global->FACTURE_CHQ_NUMBER))
-	        {
-	        	$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
-
-	        	if ($conf->global->FACTURE_CHQ_NUMBER > 0)
-	            {
-	                $account = new Account($this->db);
-	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->proprio), 0, 'L', 0);
-		            $posy = $pdf->GetY() + 1;
-
-		            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
-		            {
-		                $pdf->SetXY($this->marge_gauche, $posy);
-		                $pdf->SetFont('', '', $default_font_size - $diffsizetitle);
-		                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
-			            $posy = $pdf->GetY() + 2;
-		            }
-	            }
-	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
-	            {
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', 0);
-		            $posy = $pdf->GetY() + 1;
-
-		            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
-		            {
-			            $pdf->SetXY($this->marge_gauche, $posy);
-			            $pdf->SetFont('', '', $default_font_size - $diffsizetitle);
-		                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
-			            $posy = $pdf->GetY() + 2;
-		            }
-	            }
-	        }
+			$posy = $pdf->GetY() + 2;
 		}
 
-        // If payment mode not forced or forced to VIR, show payment with BAN
-        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
-        {
+		// Show payment mode CHQ
+		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
+		{
+			// Si mode reglement non force ou si force a CHQ
+			if (!empty($conf->global->FACTURE_CHQ_NUMBER))
+			{
+				$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+
+				if ($conf->global->FACTURE_CHQ_NUMBER > 0)
+				{
+					$account = new Account($this->db);
+					$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+
+					$pdf->SetXY($this->marge_gauche, $posy);
+					$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->proprio), 0, 'L', 0);
+					$posy = $pdf->GetY() + 1;
+
+					if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
+					{
+						$pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
+						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
+						$posy = $pdf->GetY() + 2;
+					}
+				}
+				if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+				{
+					$pdf->SetXY($this->marge_gauche, $posy);
+					$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', 0);
+					$posy = $pdf->GetY() + 1;
+
+					if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
+					{
+						$pdf->SetXY($this->marge_gauche, $posy);
+						$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
+						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+						$posy = $pdf->GetY() + 2;
+					}
+				}
+			}
+		}
+
+		// If payment mode not forced or forced to VIR, show payment with BAN
+		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+		{
 			if ($object->fk_account > 0 || $object->fk_bank > 0 || !empty($conf->global->FACTURE_RIB_NUMBER))
 			{
 				$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
@@ -848,13 +848,13 @@ class pdf_einstein extends ModelePDFCommandes
 
 				$posy += 2;
 			}
-        }
+		}
 
 		return $posy;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -867,7 +867,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -885,7 +885,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Total table
-        $col1x = 120; $col2x = 170;
+		$col1x = 120; $col2x = 170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$col2x -= 20;
@@ -948,7 +948,7 @@ class pdf_einstein extends ModelePDFCommandes
 						}
 					}
 				}
-	      		//}
+		  		//}
 				//Local tax 2 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
@@ -1039,7 +1039,7 @@ class pdf_einstein extends ModelePDFCommandes
 						}
 					}
 				}
-	      		//}
+		  		//}
 				//Local tax 2 after VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
@@ -1090,8 +1090,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->SetTextColor(0, 0, 0);
 
-        $creditnoteamount = 0;
-        $depositsamount = 0;
+		$creditnoteamount = 0;
+		$depositsamount = 0;
 		//$creditnoteamount=$object->getSumCreditNotesUsed();
 		//$depositsamount=$object->getSumDepositsUsed();
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
@@ -1264,7 +1264,7 @@ class pdf_einstein extends ModelePDFCommandes
 		// Show Draft Watermark
 		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK)))
 		{
-            pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1292,8 +1292,8 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				if (is_readable($logo))
 				{
-				    $height = pdf_getHeightForLogo($logo);
-				    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+					$height = pdf_getHeightForLogo($logo);
+					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 				} else {
 					$pdf->SetTextColor(200, 0, 0);
 					$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -1370,16 +1370,16 @@ class pdf_einstein extends ModelePDFCommandes
 		// Get contact
 		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
 		{
-		    $arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
-		    if (count($arrayidcontact) > 0)
-		    {
-                $usertmp = new User($this->db);
-		        $usertmp->fetch($arrayidcontact[0]);
-                $posy += 4;
-                $pdf->SetXY($posx, $posy);
-		        $pdf->SetTextColor(0, 0, 60);
-		        $pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
-		    }
+			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
+			if (count($arrayidcontact) > 0)
+			{
+				$usertmp = new User($this->db);
+				$usertmp->fetch($arrayidcontact[0]);
+				$posy += 4;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+			}
 		}
 
 		$posy += 2;
@@ -1493,7 +1493,7 @@ class pdf_einstein extends ModelePDFCommandes
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
-     *
+	 *
 	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output

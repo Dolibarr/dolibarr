@@ -64,11 +64,11 @@ if ($action == 'setproductionmode')
 			}
 		}
 
-	    if (!$error)
-	    {
-    		header("Location: ".$_SERVER["PHP_SELF"]);
-	   	    exit;
-	    }
+		if (!$error)
+		{
+			header("Location: ".$_SERVER["PHP_SELF"]);
+	   		exit;
+		}
 	} else {
 		dol_print_error($db);
 	}
@@ -112,13 +112,13 @@ print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
 if ($production_mode)
 {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
-    print img_picto($langs->trans("Activated"), 'switch_on');
-    print '</a></td>';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
 } else {
-    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=1">';
-    print img_picto($langs->trans("Disabled"), 'switch_off');
-    print '</a></td>';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
 }
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -157,10 +157,10 @@ print '<br>';
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
 {
-    $url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-    print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 } else {
-    print $langs->trans("NotAvailableWithThisDistribution");
+	print $langs->trans("NotAvailableWithThisDistribution");
 }
 
 llxFooter();

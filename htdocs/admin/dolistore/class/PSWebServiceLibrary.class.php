@@ -68,22 +68,22 @@ class PrestaShopWebservice
 	 * @param string $url Root URL for the shop
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
-	*/
-    public function __construct($url, $key, $debug = true)
-    {
+	 */
+	public function __construct($url, $key, $debug = true)
+	{
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;
 		$this->key = $key;
 		$this->debug = $debug;
 		$this->version = 'unknown';
-    }
+	}
 
 	/**
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
-     * @return void
+	 * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
@@ -275,7 +275,7 @@ class PrestaShopWebservice
 	}
 
 	/**
- 	 * Retrieve (GET) a resource
+	 * Retrieve (GET) a resource
 	 * <p>Unique parameter must take : <br><br>
 	 * 'url' => Full URL for a GET request of Webservice (ex: http://mystore.com/api/customers/1/)<br>
 	 * OR<br>
@@ -332,7 +332,7 @@ class PrestaShopWebservice
 	}
 
 	/**
- 	 * Head method (HEAD) a resource
+	 * Head method (HEAD) a resource
 	 *
 	 * @param 	array 				$options 	Array representing resource for head request.
 	 * @return 	SimpleXMLElement 				status_code, response

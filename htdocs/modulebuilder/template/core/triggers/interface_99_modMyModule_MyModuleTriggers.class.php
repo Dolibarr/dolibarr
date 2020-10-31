@@ -103,7 +103,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		$callback = array($this, $methodName);
 		if (is_callable($callback)) {
 			dol_syslog(
-				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
+				"Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id
 			);
 
 			return call_user_func($callback, $action, $object, $user, $langs, $conf);

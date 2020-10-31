@@ -1492,7 +1492,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && !empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -2178,70 +2178,70 @@ a.tmenuimage:hover{
     <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
     <?php
-    // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-    $moduletomainmenu = array(
-        'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
-        'produit'=>'products', 'service'=>'products', 'stock'=>'products',
-        'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
-        'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
-        'fournisseur'=>'companies',
-        'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
-    );
-    $mainmenuused = 'home';
-    foreach ($conf->modules as $val)
-    {
-        $mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-    }
-    $mainmenuusedarray = array_unique(explode(',', $mainmenuused));
+	$moduletomainmenu = array(
+		'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
+		'produit'=>'products', 'service'=>'products', 'stock'=>'products',
+		'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
+		'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
+		'fournisseur'=>'companies',
+		'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
+	);
+	$mainmenuused = 'home';
+	foreach ($conf->modules as $val)
+	{
+		$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
+	}
+	$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-    $generic = 1;
-    // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-    $divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-    // Put here list of menu entries we are sure we don't want
-    $divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-    foreach ($mainmenuusedarray as $val)
-    {
-        if (empty($val) || in_array($val, $divalreadydefined)) continue;
-        if (in_array($val, $divnotrequired)) continue;
-        //print "XXX".$val;
+	$generic = 1;
+	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+	// Put here list of menu entries we are sure we don't want
+	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+	foreach ($mainmenuusedarray as $val)
+	{
+		if (empty($val) || in_array($val, $divalreadydefined)) continue;
+		if (in_array($val, $divnotrequired)) continue;
+		//print "XXX".$val;
 
-        // Search img file in module dir
-        $found = 0; $url = '';
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-    		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
-    		{
-    			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-    			$found = 1;
-    			break;
-    		}
-        }
-        // Img file not found
-        if (!$found)
-        {
-            if (!defined('DISABLE_FONT_AWSOME')) {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+		// Search img file in module dir
+		$found = 0; $url = '';
+		foreach ($conf->file->dol_document_root as $dirroot)
+		{
+			if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+			{
+				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				$found = 1;
+				break;
+			}
+		}
+		// Img file not found
+		if (!$found)
+		{
+			if (!defined('DISABLE_FONT_AWSOME')) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
  				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-                print 'div.mainmenu.'.$val.'::before {
+				print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            } else {
-                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-                $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-                print "div.mainmenu.".$val." {\n";
-                print "	background-image: url(".$url.");\n";
-                print "}\n";
-            }
-            $generic++;
-        } else {
-            print "div.mainmenu.".$val." {\n";
-            print "	background-image: url(".$url.");\n";
-            print "}\n";
-        }
-    }
-    // End of part to add more div class css
-    ?>
+			} else {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print "}\n";
+			}
+			$generic++;
+		} else {
+			print "div.mainmenu.".$val." {\n";
+			print "	background-image: url(".$url.");\n";
+			print "}\n";
+		}
+	}
+	// End of part to add more div class css
+	?>
 <?php } // End test if $dol_hide_topmenu ?>
 
 .tmenuimage {

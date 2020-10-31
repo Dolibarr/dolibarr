@@ -35,11 +35,11 @@ class RejetPrelevement
 	public $id;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $type; //prelevement or bank transfer
+	public $type; //prelevement or bank transfer
 
 
 	/**
@@ -61,16 +61,16 @@ class RejetPrelevement
 		$this->facturer = array();
 
 		$this->motifs[0] = ""; //$langs->trans("StatusMotif0");
-    	$this->motifs[1] = $langs->trans("StatusMotif1");
-    	$this->motifs[2] = $langs->trans("StatusMotif2");
-    	$this->motifs[3] = $langs->trans("StatusMotif3");
-    	$this->motifs[4] = $langs->trans("StatusMotif4");
-    	$this->motifs[5] = $langs->trans("StatusMotif5");
-    	$this->motifs[6] = $langs->trans("StatusMotif6");
-    	$this->motifs[7] = $langs->trans("StatusMotif7");
-    	$this->motifs[8] = $langs->trans("StatusMotif8");
+		$this->motifs[1] = $langs->trans("StatusMotif1");
+		$this->motifs[2] = $langs->trans("StatusMotif2");
+		$this->motifs[3] = $langs->trans("StatusMotif3");
+		$this->motifs[4] = $langs->trans("StatusMotif4");
+		$this->motifs[5] = $langs->trans("StatusMotif5");
+		$this->motifs[6] = $langs->trans("StatusMotif6");
+		$this->motifs[7] = $langs->trans("StatusMotif7");
+		$this->motifs[8] = $langs->trans("StatusMotif8");
 
-    	$this->facturer[0] = $langs->trans("NoInvoiceRefused");
+		$this->facturer[0] = $langs->trans("NoInvoiceRefused");
 		$this->facturer[1] = $langs->trans("InvoiceRefused");
 	}
 
@@ -159,13 +159,13 @@ class RejetPrelevement
 			 * PHP installs sends only the part integer negative
 			*/
 
-			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * ($this->type == 'bank-transfer' ? 1:  -1));
+			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * ($this->type == 'bank-transfer' ? 1 : -1));
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
 			$pai->num_payment = $fac->ref;
 
 			if ($pai->create($this->user) < 0) {
-                // we call with no_commit
+				// we call with no_commit
 				$error++;
 				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
 			} else {
@@ -201,7 +201,7 @@ class RejetPrelevement
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
@@ -210,7 +210,7 @@ class RejetPrelevement
 	 */
 	private function _send_email($fac)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$userid = 0;
@@ -218,7 +218,7 @@ class RejetPrelevement
 		$sql = "SELECT fk_user_demande";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		$sql .= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
-		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn=': '=').$fac->id;
+		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn=' : '=').$fac->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -306,8 +306,8 @@ class RejetPrelevement
 				{
 					$row = $this->db->fetch_row($resql);
 					if (!$amounts) {
-                        $arr[$i] = $row[0];
-                    } else {
+						$arr[$i] = $row[0];
+					} else {
 						$arr[$i] = array(
 							$row[0],
 							$row[1]

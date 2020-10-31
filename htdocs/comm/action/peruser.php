@@ -74,7 +74,7 @@ if (!$user->rights->agenda->myactions->read) accessforbidden();
 if (!$user->rights->agenda->allactions->read) $canedit = 0;
 if (!$user->rights->agenda->allactions->read || $filter == 'mine')  // If no permission to see all, we show only affected to me
 {
-    $filtert = $user->id;
+	$filtert = $user->id;
 }
 
 //$action=GETPOST('action','alpha');
@@ -92,10 +92,10 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
 {
-    $actioncode = GETPOST('search_actioncode', 'array', 3);
-    if (!count($actioncode)) $actioncode = '0';
+	$actioncode = GETPOST('search_actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
 } else {
-    $actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
@@ -129,13 +129,13 @@ if ($status == '' && !isset($_GET['status']) && !isset($_POST['status'])) $statu
 if (empty($action) && !isset($_GET['action']) && !isset($_POST['action'])) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 
 if (GETPOST('viewcal', 'alpha') && $action != 'show_day' && $action != 'show_week' && $action != 'show_peruser') {
-    $action = 'show_month'; $day = '';
+	$action = 'show_month'; $day = '';
 }                                                   // View by month
 if (GETPOST('viewweek', 'alpha') || $action == 'show_week') {
-    $action = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
+	$action = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
 }  // View by week
 if (GETPOST('viewday', 'alpha') || $action == 'show_day') {
-    $action = 'show_day'; $day = ($day ? $day : date("d"));
+	$action = 'show_day'; $day = ($day ? $day : date("d"));
 }                                  // View by day
 
 // Load translation files required by the page
@@ -151,13 +151,13 @@ $hookmanager->initHooks(array('agenda'));
 
 if ($action == 'delete_action')
 {
-    $event = new ActionComm($db);
-    $event->fetch($actionid);
-    $event->fetch_optionals();
-    $event->fetch_userassigned();
-    $event->oldcopy = clone $event;
+	$event = new ActionComm($db);
+	$event->fetch($actionid);
+	$event->fetch_optionals();
+	$event->fetch_userassigned();
+	$event->oldcopy = clone $event;
 
-    $result = $event->delete();
+	$result = $event->delete();
 }
 
 
@@ -323,8 +323,8 @@ if ($conf->use_javascript_ajax)
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action))
 	{
-    	$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
-    	$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
+		$s .= 'jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
+		$s .= 'var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
 	}
   	$s .= '});'."\n";
 	$s .= '</script>'."\n";
@@ -351,15 +351,15 @@ if ($conf->use_javascript_ajax)
 		//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
 
 		// Calendars from hooks
-	    $parameters = array(); $object = null;
+		$parameters = array(); $object = null;
 		$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
-	    if (empty($reshook))
-	    {
-			$s .= $hookmanager->resPrint;
-	    } elseif ($reshook > 1)
+		if (empty($reshook))
 		{
-	    	$s = $hookmanager->resPrint;
-	    }
+			$s .= $hookmanager->resPrint;
+		} elseif ($reshook > 1)
+		{
+			$s = $hookmanager->resPrint;
+		}
 	}
 }
 
@@ -408,7 +408,7 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec = '100000';
-    $newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
+	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
 }
 
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
@@ -457,26 +457,26 @@ $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (!empty($actioncode))
 {
-    if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
-    {
-        if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
-        elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
-        else {
-            if ($actioncode == 'AC_OTH') $sql .= " AND ca.type != 'systemauto'";
-            if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND ca.type = 'systemauto'";
-        }
-    } else {
-        if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
-        elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
-        else {
-            if (is_array($actioncode))
-            {
-  	        	$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
-            } else {
-  	        	$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-            }
-        }
-    }
+	if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	{
+		if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
+		elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
+		else {
+			if ($actioncode == 'AC_OTH') $sql .= " AND ca.type != 'systemauto'";
+			if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND ca.type = 'systemauto'";
+		}
+	} else {
+		if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
+		elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
+		else {
+			if (is_array($actioncode))
+			{
+  				$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
+			} else {
+  				$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+			}
+		}
+	}
 }
 if ($resourceid > 0) $sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql .= " AND a.fk_project=".$db->escape($pid);
@@ -486,28 +486,28 @@ if ($socid > 0) $sql .= ' AND a.fk_soc = '.$socid;
 if ($filtert > 0 || $usergroup > 0) $sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 if ($action == 'show_day')
 {
-    $sql .= " AND (";
-    $sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
-    $sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
-    $sql .= " OR ";
-    $sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
-    $sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
-    $sql .= " OR ";
-    $sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
-    $sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
-    $sql .= ')';
+	$sql .= " AND (";
+	$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
+	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
+	$sql .= " OR ";
+	$sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
+	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
+	$sql .= " OR ";
+	$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
+	$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
+	$sql .= ')';
 } else {
-    // To limit array
-    $sql .= " AND (";
-    $sql .= " (a.datep BETWEEN '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'"; // Start 2 day before $firstdaytoshow
-    $sql .= " AND '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')"; // End 2 day after $lastdaytoshow
-    $sql .= " OR ";
-    $sql .= " (a.datep2 BETWEEN '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'";
-    $sql .= " AND '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')";
-    $sql .= " OR ";
-    $sql .= " (a.datep < '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'";
-    $sql .= " AND a.datep2 > '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')";
-    $sql .= ')';
+	// To limit array
+	$sql .= " AND (";
+	$sql .= " (a.datep BETWEEN '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'"; // Start 2 day before $firstdaytoshow
+	$sql .= " AND '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')"; // End 2 day after $lastdaytoshow
+	$sql .= " OR ";
+	$sql .= " (a.datep2 BETWEEN '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'";
+	$sql .= " AND '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')";
+	$sql .= " OR ";
+	$sql .= " (a.datep < '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'";
+	$sql .= " AND a.datep2 > '".$db->idate($lastdaytoshow + (60 * 60 * 24 * 2))."')";
+	$sql .= ')';
 }
 if ($type) $sql .= " AND ca.id = ".$type;
 if ($status == '0') { $sql .= " AND a.percent = 0"; }
@@ -518,10 +518,10 @@ if ($status == 'todo') { $sql .= " AND (a.percent >= 0 AND a.percent < 100)"; }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
 {
-    $sql .= " AND (";
-    if ($filtert > 0) $sql .= "ar.fk_element = ".$filtert;
-    if ($usergroup > 0) $sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".$usergroup;
-    $sql .= ")";
+	$sql .= " AND (";
+	if ($filtert > 0) $sql .= "ar.fk_element = ".$filtert;
+	if ($usergroup > 0) $sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".$usergroup;
+	$sql .= ")";
 }
 // Sort on date
 $sql .= ' ORDER BY fk_user_action, datep'; //fk_user_action
@@ -531,105 +531,105 @@ dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-    $i = 0;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
+	$i = 0;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
 
-        // Discard auto action if option is on
-        if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->code == 'AC_OTH_AUTO')
-        {
-        	$i++;
-        	continue;
-        }
+		// Discard auto action if option is on
+		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->code == 'AC_OTH_AUTO')
+		{
+			$i++;
+			continue;
+		}
 
-        $datep = $db->jdate($obj->datep);
-        $datep2 = $db->jdate($obj->datep2);
+		$datep = $db->jdate($obj->datep);
+		$datep2 = $db->jdate($obj->datep2);
 
-        // Create a new object action
-        $event = new ActionComm($db);
-        $event->id = $obj->id;
-        $event->datep = $datep; // datep and datef are GMT date
-        $event->datef = $datep2;
-        $event->type_code = $obj->code;
-        $event->type_color = $obj->color;
-        $event->label = $obj->label;
-        $event->percentage = $obj->percent;
-        $event->authorid = $obj->fk_user_author; // user id of creator
-        $event->userownerid = $obj->fk_user_action; // user id of owner
-        $event->priority = $obj->priority;
-        $event->fulldayevent = $obj->fulldayevent;
-        $event->location = $obj->location;
-        $event->transparency = $obj->transparency;
+		// Create a new object action
+		$event = new ActionComm($db);
+		$event->id = $obj->id;
+		$event->datep = $datep; // datep and datef are GMT date
+		$event->datef = $datep2;
+		$event->type_code = $obj->code;
+		$event->type_color = $obj->color;
+		$event->label = $obj->label;
+		$event->percentage = $obj->percent;
+		$event->authorid = $obj->fk_user_author; // user id of creator
+		$event->userownerid = $obj->fk_user_action; // user id of owner
+		$event->priority = $obj->priority;
+		$event->fulldayevent = $obj->fulldayevent;
+		$event->location = $obj->location;
+		$event->transparency = $obj->transparency;
 
-        $event->fk_project = $obj->fk_project;
+		$event->fk_project = $obj->fk_project;
 
-        $event->socid = $obj->fk_soc;
-        $event->contact_id = $obj->fk_contact;
+		$event->socid = $obj->fk_soc;
+		$event->contact_id = $obj->fk_contact;
 
-        $event->fk_element = $obj->fk_element;
-        $event->elementtype = $obj->elementtype;
+		$event->fk_element = $obj->fk_element;
+		$event->elementtype = $obj->elementtype;
 
-        // Defined date_start_in_calendar and date_end_in_calendar property
-        // They are date start and end of action but modified to not be outside calendar view.
-        if ($event->percentage <= 0)
-        {
-            $event->date_start_in_calendar = $datep;
-            if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
-            else $event->date_end_in_calendar = $datep;
-        } else {
-            $event->date_start_in_calendar = $datep;
-            if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
-            else $event->date_end_in_calendar = $datep;
-        }
-        // Define ponctual property
-        if ($event->date_start_in_calendar == $event->date_end_in_calendar)
-        {
-            $event->ponctuel = 1;
-        }
+		// Defined date_start_in_calendar and date_end_in_calendar property
+		// They are date start and end of action but modified to not be outside calendar view.
+		if ($event->percentage <= 0)
+		{
+			$event->date_start_in_calendar = $datep;
+			if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
+			else $event->date_end_in_calendar = $datep;
+		} else {
+			$event->date_start_in_calendar = $datep;
+			if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
+			else $event->date_end_in_calendar = $datep;
+		}
+		// Define ponctual property
+		if ($event->date_start_in_calendar == $event->date_end_in_calendar)
+		{
+			$event->ponctuel = 1;
+		}
 
-        // Check values
-        if ($event->date_end_in_calendar < $firstdaytoshow ||
-        $event->date_start_in_calendar >= $lastdaytoshow)
-        {
-            // This record is out of visible range
-            unset($event);
-        } else {
+		// Check values
+		if ($event->date_end_in_calendar < $firstdaytoshow ||
+		$event->date_start_in_calendar >= $lastdaytoshow)
+		{
+			// This record is out of visible range
+			unset($event);
+		} else {
 			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
-        	$event->fetch_userassigned(); // This load $event->userassigned
+			$event->fetch_userassigned(); // This load $event->userassigned
 
 			if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar = $firstdaytoshow;
-            if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar = ($lastdaytoshow - 1);
+			if ($event->date_end_in_calendar >= $lastdaytoshow) $event->date_end_in_calendar = ($lastdaytoshow - 1);
 
-            // Add an entry in actionarray for each day
-            $daycursor = $event->date_start_in_calendar;
-            $annee = date('Y', $daycursor);
-            $mois = date('m', $daycursor);
-            $jour = date('d', $daycursor);
+			// Add an entry in actionarray for each day
+			$daycursor = $event->date_start_in_calendar;
+			$annee = date('Y', $daycursor);
+			$mois = date('m', $daycursor);
+			$jour = date('d', $daycursor);
 
-            // Loop on each day covered by action to prepare an index to show on calendar
-            $loop = true; $j = 0;
-            $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-            do {
-                //if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
+			// Loop on each day covered by action to prepare an index to show on calendar
+			$loop = true; $j = 0;
+			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+			do {
+				//if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
 
-                $eventarray[$daykey][] = $event;
-                $j++;
+				$eventarray[$daykey][] = $event;
+				$j++;
 
-                $daykey += 60 * 60 * 24;
-                if ($daykey > $event->date_end_in_calendar) $loop = false;
-            } while ($loop);
+				$daykey += 60 * 60 * 24;
+				if ($daykey > $event->date_end_in_calendar) $loop = false;
+			} while ($loop);
 
-            //print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
-            //print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
-        }
-        $i++;
-    }
-    $db->free($resql);
+			//print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
+			//print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
+		}
+		$i++;
+	}
+	$db->free($resql);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 $maxnbofchar = 18;
@@ -641,7 +641,7 @@ $cacheusers = array();
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file))
 {
-    include_once $color_file;
+	include_once $color_file;
 }
 if (!is_array($theme_datacolor)) $theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
@@ -750,15 +750,15 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	{
 		foreach ($eventarray as $daykey => $notused)
 		{
-		    // Get all assigned users for each event
-		    foreach ($eventarray[$daykey] as $index => $event)
-		    {
-			    $event->fetch_userassigned();
+			// Get all assigned users for each event
+			foreach ($eventarray[$daykey] as $index => $event)
+			{
+				$event->fetch_userassigned();
 				$listofuserid = $event->userassigned;
 				foreach ($listofuserid as $userid => $tmp) {
 				   	if (!in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
 				}
-		    }
+			}
 		}
 	} else {
 		/* Use this list to have for all users */
@@ -770,17 +770,17 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql) {
-		    $num = $db->num_rows($resql);
-		    $i = 0;
-		    if ($num)
-		    {
-		        while ($i < $num)
-		        {
-		            $obj = $db->fetch_object($resql);
+			$num = $db->num_rows($resql);
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
 					$usernamesid[$obj->rowid] = $obj->rowid;
 					$i++;
-		        }
-		    }
+				}
+			}
 		} else dol_print_error($db);
 	}
 	//var_dump($usernamesid);
@@ -846,7 +846,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 				continue;
 			}
 
-	        // Show days of the current week
+			// Show days of the current week
 			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
 			$tmparray = dol_getdate($curtime, 'fast');
 			$tmpday = $tmparray['mday'];
@@ -1102,13 +1102,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$busy = $event->transparency;
 							$cases1[$h][$event->id]['busy'] = $busy;
 							$cases1[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour');
-		                    if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
-			        		{
-				        		$tmpa = dol_getdate($event->date_start_in_calendar, true);
-				        		$tmpb = dol_getdate($event->date_end_in_calendar, true);
-				        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
-				        		else $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
-			        		}
+							if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
+							{
+								$tmpa = dol_getdate($event->date_start_in_calendar, true);
+								$tmpb = dol_getdate($event->date_end_in_calendar, true);
+								if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
+								else $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
+							}
 							if ($event->label) $cases1[$h][$event->id]['string'] .= ' - '.$event->label;
 							$cases1[$h][$event->id]['typecode'] = $event->type_code;
 							$cases1[$h][$event->id]['color'] = $color;
@@ -1149,12 +1149,12 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases2[$h][$event->id]['busy'] = $busy;
 							$cases2[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour');
 							if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
-			        		{
-				        		$tmpa = dol_getdate($event->date_start_in_calendar, true);
-				        		$tmpb = dol_getdate($event->date_end_in_calendar, true);
-				        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
-				        		else $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
-			        		}
+							{
+								$tmpa = dol_getdate($event->date_start_in_calendar, true);
+								$tmpb = dol_getdate($event->date_end_in_calendar, true);
+								if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
+								else $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
+							}
 							if ($event->label) $cases2[$h][$event->id]['string'] .= ' - '.$event->label;
 							$cases2[$h][$event->id]['typecode'] = $event->type_code;
 							$cases2[$h][$event->id]['color'] = $color;
@@ -1241,7 +1241,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 
 		$ids1 = '';
-        $ids2 = '';
+		$ids2 = '';
 		if (is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) $ids1 = join(',', array_keys($cases1[$h]));
 		if (is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) $ids2 = join(',', array_keys($cases2[$h]));
 

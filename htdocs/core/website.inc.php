@@ -53,7 +53,7 @@ if (!$pageid && !empty($websitepagefile))
 }
 if (!is_object($websitepage))
 {
-    $websitepage = new WebsitePage($db);
+	$websitepage = new WebsitePage($db);
 }
 // Define $weblangs
 if (!is_object($weblangs))

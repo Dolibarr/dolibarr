@@ -44,26 +44,26 @@ $langs->loadLangs(array('compta', 'bills'));
 $action						= GETPOST('action', 'alpha');
 $massaction					= GETPOST('massaction', 'alpha');
 $confirm					= GETPOST('confirm', 'alpha');
-$optioncss					= GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage				= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'salestaxeslist';
 
 $search_ref					= GETPOST('search_ref', 'alpha');
-$search_label				= GETPOST('search_label', 'alpha');
-$search_dateend_start		= dol_mktime(0, 0, 0, GETPOST('search_dateend_startmonth', 'int'), GETPOST('search_dateend_startday', 'int'), GETPOST('search_dateend_startyear', 'int'));
-$search_dateend_end			= dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 'int'), GETPOST('search_dateend_endday', 'int'), GETPOST('search_dateend_endyear', 'int'));
-$search_datepayment_start	= dol_mktime(0, 0, 0, GETPOST('search_datepayment_startmonth', 'int'), GETPOST('search_datepayment_startday', 'int'), GETPOST('search_datepayment_startyear', 'int'));
-$search_datepayment_end		= dol_mktime(23, 59, 59, GETPOST('search_datepayment_endmonth', 'int'), GETPOST('search_datepayment_endday', 'int'), GETPOST('search_datepayment_endyear', 'int'));
-$search_type				= GETPOST('search_type', 'int');
-$search_cheque				= GETPOST('search_cheque', 'alpha');
+$search_label = GETPOST('search_label', 'alpha');
+$search_dateend_start = dol_mktime(0, 0, 0, GETPOST('search_dateend_startmonth', 'int'), GETPOST('search_dateend_startday', 'int'), GETPOST('search_dateend_startyear', 'int'));
+$search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 'int'), GETPOST('search_dateend_endday', 'int'), GETPOST('search_dateend_endyear', 'int'));
+$search_datepayment_start = dol_mktime(0, 0, 0, GETPOST('search_datepayment_startmonth', 'int'), GETPOST('search_datepayment_startday', 'int'), GETPOST('search_datepayment_startyear', 'int'));
+$search_datepayment_end = dol_mktime(23, 59, 59, GETPOST('search_datepayment_endmonth', 'int'), GETPOST('search_datepayment_endday', 'int'), GETPOST('search_datepayment_endyear', 'int'));
+$search_type = GETPOST('search_type', 'int');
+$search_cheque = GETPOST('search_cheque', 'alpha');
 $search_account				= GETPOST('search_account', 'int');
 $search_amount 				= GETPOST('search_amount', 'alpha');
 
-$limit						= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield					= GETPOST('sortfield', 'alpha');
 $sortorder					= GETPOST('sortorder', 'alpha');
-$page						= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
 
-if (empty($page) || $page == -1) $page = 0;		// If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) $page = 0; // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -357,13 +357,13 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Label
-	if (!empty($arrayfields['t.label']['checked']))	{
+	if (!empty($arrayfields['t.label']['checked'])) {
 		print '<td>'.dol_trunc($obj->label, 40).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Date end period
-	if (!empty($arrayfields['t.datev']['checked']))	{
+	if (!empty($arrayfields['t.datev']['checked'])) {
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

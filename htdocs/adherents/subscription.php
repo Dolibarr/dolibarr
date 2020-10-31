@@ -550,100 +550,100 @@ if ($rowid > 0) {
 	}
 	print '</td></tr>';
 
-    print "</table>\n";
+	print "</table>\n";
 
 	print "</div></div></div>\n";
-    print '<div style="clear:both"></div>';
+	print '<div style="clear:both"></div>';
 
-    print dol_get_fiche_end();
+	print dol_get_fiche_end();
 
-    print '</form>';
+	print '</form>';
 
 
-    /*
+	/*
      * Action buttons
      */
 
-    // Button to create a new subscription if member no draft neither resiliated
-    if ($user->rights->adherent->cotisation->creer) {
-        if ($action != 'addsubscription' && $action != 'create_thirdparty') {
-            print '<div class="tabsAction">';
+	// Button to create a new subscription if member no draft neither resiliated
+	if ($user->rights->adherent->cotisation->creer) {
+		if ($action != 'addsubscription' && $action != 'create_thirdparty') {
+			print '<div class="tabsAction">';
 
-            if ($object->statut > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
-            else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
+			if ($object->statut > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 
-            print '</div>';
-        }
-    }
+			print '</div>';
+		}
+	}
 
-    /*
+	/*
      * List of subscriptions
      */
-    if ($action != 'addsubscription' && $action != 'create_thirdparty') {
-        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
-        $sql .= " c.rowid as crowid, c.subscription,";
-        $sql .= " c.datec, c.fk_type as cfk_type,";
-        $sql .= " c.dateadh as dateh,";
-        $sql .= " c.datef,";
-        $sql .= " c.fk_bank,";
-        $sql .= " b.rowid as bid,";
-        $sql .= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number, ba.currency_code";
-        $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-        $sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
+	if ($action != 'addsubscription' && $action != 'create_thirdparty') {
+		$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
+		$sql .= " c.rowid as crowid, c.subscription,";
+		$sql .= " c.datec, c.fk_type as cfk_type,";
+		$sql .= " c.dateadh as dateh,";
+		$sql .= " c.datef,";
+		$sql .= " c.fk_bank,";
+		$sql .= " b.rowid as bid,";
+		$sql .= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number, ba.currency_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+		$sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
 		$sql .= $db->order($sortfield, $sortorder);
 
-        $result = $db->query($sql);
-        if ($result) {
-            $subscriptionstatic = new Subscription($db);
+		$result = $db->query($sql);
+		if ($result) {
+			$subscriptionstatic = new Subscription($db);
 
-            $num = $db->num_rows($result);
+			$num = $db->num_rows($result);
 
-            print '<table class="noborder centpercent">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 
-            print '<tr class="liste_titre">';
-            print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
-            print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
-            print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-            if (!empty($conf->banque->enabled)) {
-            	print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-            }
-            print "</tr>\n";
+			print '<tr class="liste_titre">';
+			print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
+			print_liste_field_titre('DateCreation', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+			if (!empty($conf->banque->enabled)) {
+				print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+			}
+			print "</tr>\n";
 
-            $accountstatic = new Account($db);
-            $adh = new Adherent($db);
-            $adht = new AdherentType($db);
+			$accountstatic = new Account($db);
+			$adh = new Adherent($db);
+			$adht = new AdherentType($db);
 
-            $i = 0;
-            while ($i < $num) {
-                $objp = $db->fetch_object($result);
+			$i = 0;
+			while ($i < $num) {
+				$objp = $db->fetch_object($result);
 
-                $adh->id = $objp->rowid;
-                $adh->typeid = $objp->type;
+				$adh->id = $objp->rowid;
+				$adh->typeid = $objp->type;
 
-                $subscriptionstatic->ref = $objp->crowid;
-                $subscriptionstatic->id = $objp->crowid;
+				$subscriptionstatic->ref = $objp->crowid;
+				$subscriptionstatic->id = $objp->crowid;
 
-                $typeid = $objp->cfk_type;
-                if ($typeid > 0) {
-                    $adht->fetch($typeid);
-                }
+				$typeid = $objp->cfk_type;
+				if ($typeid > 0) {
+					$adht->fetch($typeid);
+				}
 
-                print '<tr class="oddeven">';
-                print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-                print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
-                print '<td class="center">';
-                if ($typeid > 0) {
-                    print $adht->getNomUrl(1);
-                }
-                print '</td>';
-                print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
-                print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
-                print '<td class="right">'.price($objp->subscription).'</td>';
+				print '<tr class="oddeven">';
+				print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
+				print '<td class="center">';
+				if ($typeid > 0) {
+					print $adht->getNomUrl(1);
+				}
+				print '</td>';
+				print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
+				print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
+				print '<td class="right">'.price($objp->subscription).'</td>';
 				if (!empty($conf->banque->enabled)) {
 					print '<td class="right">';
 					if ($objp->bid) {
@@ -921,123 +921,123 @@ if ($rowid > 0) {
 						}
 						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1)); // must use noentitiesnoconv to avoid to encode html into getNomUrl of product
 					}
-                    print '<br>';
-                }
-                print '</td></tr>';
+					print '<br>';
+				}
+				print '</td></tr>';
 
-                // Bank account
-                print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-                $form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2);
-                print "</td></tr>\n";
+				// Bank account
+				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
+				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2);
+				print "</td></tr>\n";
 
-                // Payment mode
-                print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-                $form->select_types_paiements(GETPOST('operation'), 'operation', '', 2);
-                print "</td></tr>\n";
+				// Payment mode
+				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2);
+				print "</td></tr>\n";
 
-                // Date of payment
-                print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                print $form->selectDate(isset($paymentdate) ? $paymentdate : -1, 'payment', 0, 0, 1, 'subscription', 1, 1);
-                print "</td></tr>\n";
+				// Date of payment
+				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+				print $form->selectDate(isset($paymentdate) ? $paymentdate : -1, 'payment', 0, 0, 1, 'subscription', 1, 1);
+				print "</td></tr>\n";
 
-                print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
-                print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-                print '</td>';
-                print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(!GETPOST('num_chq') ? '' : GETPOST('num_chq')).'"></td></tr>';
+				print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
+				print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+				print '</td>';
+				print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(!GETPOST('num_chq') ? '' : GETPOST('num_chq')).'"></td></tr>';
 
-                print '<tr class="bankswitchclass2 fieldrequireddyn"><td>'.$langs->trans('CheckTransmitter');
-                print ' <em>('.$langs->trans("ChequeMaker").')</em>';
-                print '</td>';
-                print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(!GETPOST('chqemetteur') ? '' : GETPOST('chqemetteur')).'"></td></tr>';
+				print '<tr class="bankswitchclass2 fieldrequireddyn"><td>'.$langs->trans('CheckTransmitter');
+				print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+				print '</td>';
+				print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(!GETPOST('chqemetteur') ? '' : GETPOST('chqemetteur')).'"></td></tr>';
 
-                print '<tr class="bankswitchclass2"><td>'.$langs->trans('Bank');
-                print ' <em>('.$langs->trans("ChequeBank").')</em>';
-                print '</td>';
-                print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(!GETPOST('chqbank') ? '' : GETPOST('chqbank')).'"></td></tr>';
-            }
-        }
+				print '<tr class="bankswitchclass2"><td>'.$langs->trans('Bank');
+				print ' <em>('.$langs->trans("ChequeBank").')</em>';
+				print '</td>';
+				print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(!GETPOST('chqbank') ? '' : GETPOST('chqbank')).'"></td></tr>';
+			}
+		}
 
-        print '<tr><td></td><td></td></tr>';
+		print '<tr><td></td><td></td></tr>';
 
-        print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';
-        print '<td>';
-        if (!$object->email) {
-            print $langs->trans("NoEMail");
-        } else {
-            $adht = new AdherentType($db);
-            $adht->fetch($object->typeid);
+		print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';
+		print '<td>';
+		if (!$object->email) {
+			print $langs->trans("NoEMail");
+		} else {
+			$adht = new AdherentType($db);
+			$adht->fetch($object->typeid);
 
-            // Send subscription email
-            $subject = '';
-            $msg = '';
+			// Send subscription email
+			$subject = '';
+			$msg = '';
 
-            // Send subscription email
-            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-            $formmail = new FormMail($db);
-            // Set output language
-            $outputlangs = new Translate('', $conf);
-            $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-            // Load traductions files required by page
-            $outputlangs->loadLangs(array("main", "members"));
-            // Get email content from template
-            $arraydefaultmessage = null;
-            $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+			// Send subscription email
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			// Set output language
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			// Load traductions files required by page
+			$outputlangs->loadLangs(array("main", "members"));
+			// Get email content from template
+			$arraydefaultmessage = null;
+			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
-            if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+			if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
-            if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-            	$subject = $arraydefaultmessage->topic;
-            	$msg     = $arraydefaultmessage->content;
-            }
+			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+				$subject = $arraydefaultmessage->topic;
+				$msg     = $arraydefaultmessage->content;
+			}
 
-            $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-            complete_substitutions_array($substitutionarray, $outputlangs, $object);
-            $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-            $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
-            $tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? ' checked' : '')).'>';
-            $helpcontent = '';
-            $helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
-            $helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
-            $helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
-            if ($subjecttosend) {
-                $helpcontent .= $subjecttosend."\n";
-            } else {
-                $langs->load("errors");
-                $helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
-            }
-            $helpcontent .= "<br>";
-            $helpcontent .= '<b>'.$langs->trans("MailText").'</b>:<br>';
-            if ($texttosend) {
-                $helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
-            } else {
-                $langs->load("errors");
-                $helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
-            }
-            print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
-        }
-        print '</td></tr>';
-        print '</tbody>';
-        print '</table>';
+			$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? ' checked' : '')).'>';
+			$helpcontent = '';
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
+			if ($subjecttosend) {
+				$helpcontent .= $subjecttosend."\n";
+			} else {
+				$langs->load("errors");
+				$helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
+			}
+			$helpcontent .= "<br>";
+			$helpcontent .= '<b>'.$langs->trans("MailText").'</b>:<br>';
+			if ($texttosend) {
+				$helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
+			} else {
+				$langs->load("errors");
+				$helpcontent .= '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Module310Name")).'</span>'."\n";
+			}
+			print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
+		}
+		print '</td></tr>';
+		print '</tbody>';
+		print '</table>';
 
-        print dol_get_fiche_end();
+		print dol_get_fiche_end();
 
-        print '<div class="center">';
-        print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</div>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
-        print '</form>';
+		print '</form>';
 
-        print "\n<!-- End form subscription -->\n\n";
-    }
+		print "\n<!-- End form subscription -->\n\n";
+	}
 
-    //print '</td></tr>';
-    //print '</table>';
+	//print '</td></tr>';
+	//print '</table>';
 } else {
-    $langs->load("errors");
-    print $langs->trans("ErrorRecordNotFound");
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 }
 
 // End of page

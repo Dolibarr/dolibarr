@@ -24,25 +24,25 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
-    private $project;
-    public $userid;
-    public $socid;
-    public $year;
+	private $project;
+	public $userid;
+	public $socid;
+	public $year;
 
-    /**
-     * Constructor
-     *
-     * @param   DoliDB $db     Database handler
-     */
-    public function __construct($db)
-    {
-        global $conf, $user;
+	/**
+	 * Constructor
+	 *
+	 * @param   DoliDB $db     Database handler
+	 */
+	public function __construct($db)
+	{
+		global $conf, $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        require_once 'project.class.php';
-        $this->project = new Project($this->db);
-    }
+		require_once 'project.class.php';
+		$this->project = new Project($this->db);
+	}
 
 
 	/**

@@ -162,12 +162,12 @@ class CActionComm
 
                     if ($qualified && $obj->module)
                     {
-                        if ($obj->module == 'invoice' && !$conf->facture->enabled)	$qualified=0;
-                        if ($obj->module == 'order'   && !$conf->commande->enabled) $qualified=0;
-                        if ($obj->module == 'propal'  && !$conf->propal->enabled)	  $qualified=0;
-                        if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ! $conf->supplier_invoice->enabled))	$qualified=0;
-                        if ($obj->module == 'order_supplier'   && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ! $conf->supplier_order->enabled))	$qualified=0;
-                        if ($obj->module == 'shipping' && !$conf->expedition->enabled)	 $qualified=0;
+                        if ($obj->module == 'invoice' && !$conf->facture->enabled)	$qualified = 0;
+                        if ($obj->module == 'order' && !$conf->commande->enabled) $qualified = 0;
+                        if ($obj->module == 'propal' && !$conf->propal->enabled)	  $qualified = 0;
+                        if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_invoice->enabled))	$qualified = 0;
+                        if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_order->enabled))	$qualified = 0;
+                        if ($obj->module == 'shipping' && !$conf->expedition->enabled)	 $qualified = 0;
                     }
 
                     if ($qualified)

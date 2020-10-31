@@ -443,105 +443,105 @@ class BankAccounts extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-        $sql .= " ORDER BY rowid";
+		$sql .= " ORDER BY rowid";
 
-        $result = $this->db->query($sql);
+		$result = $this->db->query($sql);
 
-        if ($result) {
-            $num = $this->db->num_rows($result);
-            for ($i = 0; $i < $num; $i++) {
-                $obj = $this->db->fetch_object($result);
-                $accountLine = new AccountLine($this->db);
-                if ($accountLine->fetch($obj->rowid) > 0) {
-                    $list[] = $this->_cleanObjectDatas($accountLine);
-                }
-            }
-        } else {
-            throw new RestException(503, 'Error when retrieving list of account lines: '.$accountLine->error);
-        }
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			for ($i = 0; $i < $num; $i++) {
+				$obj = $this->db->fetch_object($result);
+				$accountLine = new AccountLine($this->db);
+				if ($accountLine->fetch($obj->rowid) > 0) {
+					$list[] = $this->_cleanObjectDatas($accountLine);
+				}
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of account lines: '.$accountLine->error);
+		}
 
-        return $list;
-    }
+		return $list;
+	}
 
-    /**
-     * Add a line to an account
-     *
-     * @param int    $id            ID of account
-     * @param int    $date          Payment date (timestamp) {@from body} {@type timestamp}
-     * @param string $type          Payment mode (TYP,VIR,PRE,LIQ,VAD,CB,CHQ...) {@from body}
-     * @param string $label         Label {@from body}
-     * @param float  $amount        Amount (may be 0) {@from body}
-     * @param int    $category      Category
-     * @param string $cheque_number Cheque numberl {@from body}
-     * @param string $cheque_writer Name of cheque writer {@from body}
-     * @param string $cheque_bank   Bank of cheque writer {@from body}
-     * @return int  ID of line
-     *
-     * @url POST {id}/lines
-     */
-    public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '')
-    {
-        if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-            throw new RestException(401);
-        }
+	/**
+	 * Add a line to an account
+	 *
+	 * @param int    $id            ID of account
+	 * @param int    $date          Payment date (timestamp) {@from body} {@type timestamp}
+	 * @param string $type          Payment mode (TYP,VIR,PRE,LIQ,VAD,CB,CHQ...) {@from body}
+	 * @param string $label         Label {@from body}
+	 * @param float  $amount        Amount (may be 0) {@from body}
+	 * @param int    $category      Category
+	 * @param string $cheque_number Cheque numberl {@from body}
+	 * @param string $cheque_writer Name of cheque writer {@from body}
+	 * @param string $cheque_bank   Bank of cheque writer {@from body}
+	 * @return int  ID of line
+	 *
+	 * @url POST {id}/lines
+	 */
+	public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '')
+	{
+		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+			throw new RestException(401);
+		}
 
-        $account = new Account($this->db);
-        $result = $account->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'account not found');
-        }
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
 
-        $result = $account->addline(
-            $date,
-            $type,
-            $label,
-            $amount,
-            $cheque_number,
-            $category,
-            DolibarrApiAccess::$user,
-            $cheque_writer, $cheque_bank
-        );
-        if ($result < 0) {
-            throw new RestException(503, 'Error when adding line to account: '.$account->error);
-        }
-        return $result;
-    }
+		$result = $account->addline(
+			$date,
+			$type,
+			$label,
+			$amount,
+			$cheque_number,
+			$category,
+			DolibarrApiAccess::$user,
+			$cheque_writer, $cheque_bank
+		);
+		if ($result < 0) {
+			throw new RestException(503, 'Error when adding line to account: '.$account->error);
+		}
+		return $result;
+	}
 
-    /**
-     * Add a link to an account line
-     *
-     * @param int    $id    		ID of account
-     * @param int    $line_id       ID of account line
-     * @param int    $url_id        ID to set in the URL {@from body}
-     * @param string $url           URL of the link {@from body}
-     * @param string $label         Label {@from body}
-     * @param string $type          Type of link ('payment', 'company', 'member', ...) {@from body}
-     * @return int  ID of link
-     *
-     * @url POST {id}/lines/{line_id}/links
-     */
-    public function addLink($id, $line_id, $url_id, $url, $label, $type)
-    {
-        if (!DolibarrApiAccess::$user->rights->banque->modifier) {
-            throw new RestException(401);
-        }
+	/**
+	 * Add a link to an account line
+	 *
+	 * @param int    $id    		ID of account
+	 * @param int    $line_id       ID of account line
+	 * @param int    $url_id        ID to set in the URL {@from body}
+	 * @param string $url           URL of the link {@from body}
+	 * @param string $label         Label {@from body}
+	 * @param string $type          Type of link ('payment', 'company', 'member', ...) {@from body}
+	 * @return int  ID of link
+	 *
+	 * @url POST {id}/lines/{line_id}/links
+	 */
+	public function addLink($id, $line_id, $url_id, $url, $label, $type)
+	{
+		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+			throw new RestException(401);
+		}
 
-        $account = new Account($this->db);
-        $result = $account->fetch($id);
-        if (!$result) {
-            throw new RestException(404, 'account not found');
-        }
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
 
-        $accountLine = new AccountLine($this->db);
-        $result = $accountLine->fetch($line_id);
-        if (!$result) {
-            throw new RestException(404, 'account line not found');
-        }
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($line_id);
+		if (!$result) {
+			throw new RestException(404, 'account line not found');
+		}
 
-        $result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
-        if ($result < 0) {
-            throw new RestException(503, 'Error when adding link to account line: '.$account->error);
-        }
-        return $result;
-    }
+		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
+		if ($result < 0) {
+			throw new RestException(503, 'Error when adding link to account line: '.$account->error);
+		}
+		return $result;
+	}
 }

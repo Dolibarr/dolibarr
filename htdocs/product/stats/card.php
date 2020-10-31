@@ -130,46 +130,46 @@ if ($result && (!empty($id) || !empty($ref))) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
+	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
-    print dol_get_fiche_end();
+	print dol_get_fiche_end();
 }
 if (empty($id) && empty($ref)) {
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $langs->trans("Chart");
-    $head[$h][2] = 'chart';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.$type : '');
+	$head[$h][1] = $langs->trans("Chart");
+	$head[$h][2] = 'chart';
+	$h++;
 
 	$title = $langs->trans("ListProductServiceByPopularity");
-    if ((string) $type == '1') {
-    	$title = $langs->trans("ListServiceByPopularity");
-    }
-    if ((string) $type == '0') {
-    	$title = $langs->trans("ListProductByPopularity");
-    }
+	if ((string) $type == '1') {
+		$title = $langs->trans("ListServiceByPopularity");
+	}
+	if ((string) $type == '0') {
+		$title = $langs->trans("ListProductByPopularity");
+	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
-    $head[$h][1] = $langs->trans("ProductsPerPopularity");
-    $head[$h][2] = 'popularity';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
+	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	$head[$h][2] = 'popularity';
+	$h++;
 
-    print dol_get_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
+	print dol_get_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
 }
 
 
 if ($result || empty($id)) {
-    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 
 	if (empty($id)) {
-    	// Type
+		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("ProductsAndServices").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
 		print $form->selectarray('type', $array, $type);
@@ -191,7 +191,7 @@ if ($result || empty($id)) {
 	$arrayyears = array();
 	for ($year = $currentyear - 25; $year < $currentyear; $year++)
 	{
-	    $arrayyears[$year] = $year;
+		$arrayyears[$year] = $year;
 	}
 	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 	if (!in_array($currentyear, $arrayyears)) $arrayyears[$currentyear] = $currentyear;
@@ -413,7 +413,7 @@ if ($result || empty($id)) {
 }
 
 if (!$id) {
-    print dol_get_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

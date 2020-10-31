@@ -213,7 +213,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -286,9 +286,9 @@ if ($modecompta == 'CREANCES-DETTES')
 		setEventMessages(null, $AccCat->errors, 'errors');
 	} elseif (is_array($cats) && count($cats) > 0) {
 		foreach ($cats as $cat) {
-            // Loop on each group
+			// Loop on each group
 			if (!empty($cat['category_type'])) {
-                // category calculed
+				// category calculed
 				// When we enter here, $sommes was filled by group of accounts
 
 				$formula = $cat['formula'];

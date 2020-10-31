@@ -37,21 +37,21 @@ $actionsave = GETPOST("save");
 // Sauvegardes parametres
 if ($actionsave)
 {
-    $i = 0;
+	$i = 0;
 
-    $db->begin();
+	$db->begin();
 
-    $i += dolibarr_set_const($db, 'WEBSERVICES_KEY', GETPOST("WEBSERVICES_KEY"), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'WEBSERVICES_KEY', GETPOST("WEBSERVICES_KEY"), 'chaine', 0, '', $conf->entity);
 
-    if ($i >= 1)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
-        $db->rollback();
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if ($i >= 1)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -109,7 +109,7 @@ $webservices = array(
 		'actioncomm'		=> '!empty($conf->agenda->enabled)',
 		'category'			=> '!empty($conf->categorie->enabled)',
 		'project'			=> '!empty($conf->projet->enabled)',
-        'other'				=> ''
+		'other'				=> ''
 );
 
 

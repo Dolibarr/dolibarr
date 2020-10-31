@@ -100,7 +100,7 @@ class Fournisseur extends Societe
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
@@ -108,7 +108,7 @@ class Fournisseur extends Societe
 	 */
 	public function load_state_board()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $user;
 
 		$this->nb = array();
@@ -132,7 +132,7 @@ class Fournisseur extends Societe
 			{
 				$this->nb["suppliers"] = $obj->nb;
 			}
-            $this->db->free($resql);
+			$this->db->free($resql);
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -141,7 +141,7 @@ class Fournisseur extends Societe
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a supplier category
 	 *
@@ -151,7 +151,7 @@ class Fournisseur extends Societe
 	 */
 	public function CreateCategory($user, $name)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
 		$sql .= " VALUES ";
 		$sql .= " ('".$this->db->escape($name)."',1,1)";
@@ -169,7 +169,7 @@ class Fournisseur extends Societe
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return the suppliers list
 	 *
@@ -177,7 +177,7 @@ class Fournisseur extends Societe
 	 */
 	public function ListArray()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		global $user;
 

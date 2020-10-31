@@ -50,8 +50,8 @@ $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endda
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-    $q = GETPOST("q");
-    if (empty($q))
+	$q = GETPOST("q");
+	if (empty($q))
 	{
 		if (GETPOST("month")) { $date_start = dol_get_first_day($year_start, GETPOST("month"), false); $date_end = dol_get_last_day($year_start, GETPOST("month"), false); } else {
 			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
@@ -119,12 +119,12 @@ $calc = $conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
 if ($calc == 0 || $calc == 1)	// Calculate on invoice for goods and services
 {
-    $calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
-    $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-    $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-    if (!empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description .= '<br>'.$langs->trans("WarningDepositsNotIncluded");
-    $description .= $fsearch;
-    $description .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
+	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
+	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
+	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+	if (!empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description .= '<br>'.$langs->trans("WarningDepositsNotIncluded");
+	$description .= $fsearch;
+	$description .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
 	$builddate = dol_now();
 
 	$elementcust = $langs->trans("CustomersInvoices");
@@ -136,13 +136,13 @@ if ($calc == 0 || $calc == 1)	// Calculate on invoice for goods and services
 }
 if ($calc == 2) 	// Invoice for goods, payment for services
 {
-    $calcmode = $langs->trans("CalcModeLT2Debt");
-    $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-    $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-    if (!empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description .= '<br>'.$langs->trans("WarningDepositsNotIncluded");
-    $description .= $fsearch;
-    $description .= '<span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-    $builddate = dol_now();
+	$calcmode = $langs->trans("CalcModeLT2Debt");
+	$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
+	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+	if (!empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description .= '<br>'.$langs->trans("WarningDepositsNotIncluded");
+	$description .= $fsearch;
+	$description .= '<span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
+	$builddate = dol_now();
 
 	$elementcust = $langs->trans("CustomersInvoices");
 	$productcust = $langs->trans("Description");
@@ -213,16 +213,16 @@ if ($calc == 0 || $calc == 2)
 				print '<td class="nowrap">'.$intra.'</td>';
 				print '<td class="nowrap right">'.price($coll->amount).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-	            $totalamount = $totalamount + $coll->amount;
+				$totalamount = $totalamount + $coll->amount;
 				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
 				print "</tr>\n";
 				$i++;
 			}
 		}
-	    $x_coll_sum = $total;
+		$x_coll_sum = $total;
 
 		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("Total").':</td>';
-	    print '<td class="nowrap right">'.price($totalamount).'</td>';
+		print '<td class="nowrap right">'.price($totalamount).'</td>';
 		print '<td class="nowrap right">'.price($total).'</td>';
 		print '</tr>';
 	} else {
@@ -280,16 +280,16 @@ if ($calc == 0 || $calc == 1) {
 				print '<td class="nowrap">'.$intra."</td>";
 				print '<td class="nowrap right">'.price($coll->amount).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-	            $totalamount = $totalamount + $coll->amount;
+				$totalamount = $totalamount + $coll->amount;
 				$total = $total + ($local == 1 ? $coll->localtax1 : $coll->localtax2);
 				print "</tr>\n";
 				$i++;
 			}
 		}
-	    $x_paye_sum = $total;
+		$x_paye_sum = $total;
 
 		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("Total").':</td>';
-	    print '<td class="nowrap right">'.price($totalamount).'</td>';
+		print '<td class="nowrap right">'.price($totalamount).'</td>';
 		print '<td class="nowrap right">'.price($total).'</td>';
 		print '</tr>';
 	} else {
