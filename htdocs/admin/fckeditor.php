@@ -216,9 +216,8 @@ if (empty($conf->use_javascript_ajax))
     print '</form>'."\n";
 
     // Add env of ckeditor
-    // This is to show how CKEditor detect browser to understand why editor is disabled or not
-    if (1 == 2)		// Change this to enable output
-    {
+    // This is to show how CKEditor detect browser to understand why editor is disabled or not. To help debug.
+    /*
 	    print '<br><script language="javascript">
 	    function jsdump(obj, id) {
 		    var out = \'\';
@@ -232,6 +231,7 @@ if (empty($conf->use_javascript_ajax))
 	    jsdump(CKEDITOR.env, "divforlog");
 	    </script>';
     }
+    */
 }
 
 // End of page
