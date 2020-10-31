@@ -45,7 +45,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-    public function __construct()
+	public function __construct()
 	{
 		global $db, $conf;
 		$this->db = $db;
@@ -72,10 +72,10 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-    public function get($id)
+	public function get($id)
 	{
-        return $this->_fetch($id);
-    }
+		return $this->_fetch($id);
+	}
 
 	/**
 	 * Get properties of a thirdparty object by email.
@@ -91,7 +91,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getByEmail($email)
 	{
-	    return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
+		return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
 	}
 
 	/**
@@ -108,7 +108,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getByBarcode($barcode)
 	{
-	    return $this->_fetch('', '', '', $barcode);
+		return $this->_fetch('', '', '', $barcode);
 	}
 
 	/**
@@ -128,8 +128,8 @@ class Thirdparties extends DolibarrApi
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
-    {
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+	{
 		global $db;
 
 		$obj_ret = array();
@@ -144,10 +144,10 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
-    	if ($category > 0) {
+		if ($category > 0) {
 			if ($mode != 4) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
 			if (!in_array($mode, array(1, 2, 3))) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
-    	}
+		}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
@@ -158,12 +158,12 @@ class Thirdparties extends DolibarrApi
 		if ($mode == 3) $sql .= " AND t.client IN (0)";
 		if ($mode == 4) $sql .= " AND t.fournisseur IN (1)";
 
-    	// Select thirdparties of given category
-    	if ($category > 0) {
-    		if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid"; }
-    		elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid"; }
-    		else { $sql .= " AND ((c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid))"; }
-    	}
+		// Select thirdparties of given category
+		if ($category > 0) {
+			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid"; }
+			elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid"; }
+			else { $sql .= " AND ((c.fk_categorie = ".$this->db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$this->db->escape($category)." AND cc.fk_soc = t.rowid))"; }
+		}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
@@ -202,7 +202,7 @@ class Thirdparties extends DolibarrApi
 		{
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-            $i = 0;
+			$i = 0;
 			while ($i < $min)
 			{
 				$obj = $this->db->fetch_object($result);
@@ -227,7 +227,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Request datas
 	 * @return int  ID of thirdparty
 	 */
-    public function post($request_data = null)
+	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -251,7 +251,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-    public function put($id, $request_data = null)
+	public function put($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -291,7 +291,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PUT {id}/merge/{idtodelete}
 	 */
-    public function merge($id, $idtodelete)
+	public function merge($id, $idtodelete)
 	{
 		global $db, $hookmanager;
 
@@ -443,7 +443,7 @@ class Thirdparties extends DolibarrApi
 		// External modules should update their ones too
 		if (!$errors)
 		{
-            $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+			$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 				'soc_origin' => $soc_origin->id,
 				'soc_dest' => $object->id
 			), $soc_dest, $action);
@@ -499,7 +499,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id   Thirparty ID
 	 * @return integer
 	 */
-    public function delete($id)
+	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->supprimer) {
 			throw new RestException(401);
@@ -511,9 +511,9 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        $this->company->oldcopy = clone $this->company;
+		$this->company->oldcopy = clone $this->company;
 		return $this->company->delete($id);
-    }
+	}
 
 	/**
 	 * Set new price level for the given thirdparty
@@ -588,7 +588,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/categories
 	 */
-    public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
@@ -627,7 +627,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/categories/{category_id}
 	 */
-    public function addCategory($id, $category_id)
+	public function addCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -665,7 +665,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/categories/{category_id}
 	 */
-    public function deleteCategory($id, $category_id)
+	public function deleteCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -706,7 +706,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/supplier_categories
 	 */
-    public function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	public function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
@@ -745,7 +745,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/supplier_categories/{category_id}
 	 */
-    public function addSupplierCategory($id, $category_id)
+	public function addSupplierCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -783,7 +783,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/supplier_categories/{category_id}
 	 */
-    public function deleteSupplierCategory($id, $category_id)
+	public function deleteSupplierCategory($id, $category_id)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -826,7 +826,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-    public function getOutStandingProposals($id, $mode = 'customer')
+	public function getOutStandingProposals($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
@@ -870,7 +870,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-    public function getOutStandingOrder($id, $mode = 'customer')
+	public function getOutStandingOrder($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
@@ -913,7 +913,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-    public function getOutStandingInvoices($id, $mode = 'customer')
+	public function getOutStandingInvoices($id, $mode = 'customer')
 	{
 		$obj_ret = array();
 
@@ -956,7 +956,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-    public function getSalesRepresentatives($id, $mode = 0)
+	public function getSalesRepresentatives($id, $mode = 0)
 	{
 		$obj_ret = array();
 
@@ -999,7 +999,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 503
 	 */
-    public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
+	public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
 		$obj_ret = array();
 
@@ -1057,8 +1057,8 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 405
 	 */
-    public function getInvoicesQualifiedForReplacement($id)
-    {
+	public function getInvoicesQualifiedForReplacement($id)
+	{
 		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
@@ -1100,8 +1100,8 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 405
 	 */
-    public function getInvoicesQualifiedForCreditNote($id)
-    {
+	public function getInvoicesQualifiedForCreditNote($id)
+	{
 		if (!DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
@@ -1136,8 +1136,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/bankaccounts
 	 */
-    public function getCompanyBankAccount($id)
-    {
+	public function getCompanyBankAccount($id)
+	{
 		global $db, $conf;
 
 		if (!DolibarrApiAccess::$user->rights->facture->lire) {
@@ -1214,7 +1214,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/bankaccounts
 	 */
-    public function createCompanyBankAccount($id, $request_data = null)
+	public function createCompanyBankAccount($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -1257,7 +1257,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PUT {id}/bankaccounts/{bankaccount_id}
 	 */
-    public function updateCompanyBankAccount($id, $bankaccount_id, $request_data = null)
+	public function updateCompanyBankAccount($id, $bankaccount_id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -1301,8 +1301,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/bankaccounts/{bankaccount_id}
 	 */
-    public function deleteCompanyBankAccount($id, $bankaccount_id)
-    {
+	public function deleteCompanyBankAccount($id, $bankaccount_id)
+	{
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
@@ -1408,9 +1408,9 @@ class Thirdparties extends DolibarrApi
 		} else {
 			throw new RestException(500);
 		}
-    }
+	}
 
-    /**
+	/**
 	 * Get a specific gateway attached to a thirdparty (by specifying the site key)
 	 *
 	 * @param int $id ID of thirdparty
@@ -1422,8 +1422,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/gateways/
 	 */
-    public function getSocieteAccounts($id, $site = null)
-    {
+	public function getSocieteAccounts($id, $site = null)
+	{
 		global $db, $conf;
 
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
@@ -1499,7 +1499,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url POST {id}/gateways
 	 */
-    public function createSocieteAccount($id, $request_data = null)
+	public function createSocieteAccount($id, $request_data = null)
 	{
 		global $db;
 
@@ -1558,7 +1558,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PUT {id}/gateways/{site}
 	 */
-    public function putSocieteAccount($id, $site, $request_data = null)
+	public function putSocieteAccount($id, $site, $request_data = null)
 	{
 		global $db;
 
@@ -1641,7 +1641,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url PATCH {id}/gateways/{site}
 	 */
-    public function patchSocieteAccount($id, $site, $request_data = null)
+	public function patchSocieteAccount($id, $site, $request_data = null)
 	{
 		global $db;
 
@@ -1694,8 +1694,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/gateways/{site}
 	 */
-    public function deleteSocieteAccount($id, $site)
-    {
+	public function deleteSocieteAccount($id, $site)
+	{
 		global $db;
 
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
@@ -1730,8 +1730,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/gateways
 	 */
-    public function deleteSocieteAccounts($id)
-    {
+	public function deleteSocieteAccounts($id)
+	{
 		global $db;
 
 		if (!DolibarrApiAccess::$user->rights->societe->creer) {
@@ -1767,7 +1767,7 @@ class Thirdparties extends DolibarrApi
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
 	 *
@@ -1775,8 +1775,8 @@ class Thirdparties extends DolibarrApi
 	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
-    {
-        // phpcs:enable
+	{
+		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->nom); // ->name already defined and nom deprecated
@@ -1812,23 +1812,23 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-    private function _validate($data)
-    {
-        $thirdparty = array();
-        foreach (Thirdparties::$FIELDS as $field) {
-            if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $thirdparty[$field] = $data[$field];
-        }
-        return $thirdparty;
-    }
+	private function _validate($data)
+	{
+		$thirdparty = array();
+		foreach (Thirdparties::$FIELDS as $field) {
+			if (!isset($data[$field]))
+				throw new RestException(400, "$field field missing");
+			$thirdparty[$field] = $data[$field];
+		}
+		return $thirdparty;
+	}
 
-    /**
-     * Fetch properties of a thirdparty object.
-     *
-     * Return an array with thirdparty informations
-     *
-     * @param    int	$rowid      Id of third party to load
+	/**
+	 * Fetch properties of a thirdparty object.
+	 *
+	 * Return an array with thirdparty informations
+	 *
+	 * @param    int	$rowid      Id of third party to load
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$barcode    Barcode of third party to load
@@ -1840,42 +1840,42 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 * @param    string	$email   		Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
-     * @return array|mixed data without useless information
-     *
-     * @throws RestException
-    */
-    private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
-    {
-        global $conf;
-        if (!DolibarrApiAccess::$user->rights->societe->lire) {
-            throw new RestException(401);
-        }
+	 * @return array|mixed data without useless information
+	 *
+	 * @throws RestException
+	*/
+	private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	{
+		global $conf;
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+			throw new RestException(401);
+		}
 		if ($rowid == 0) {
 			$result = $this->company->initAsSpecimen();
 		} else {
 			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
 		}
-        if (!$result) {
-            throw new RestException(404, 'Thirdparty not found');
-        }
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-        if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-            $filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-            $filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-        } else {
-            $filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
-            $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
-        }
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		} else {
+			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+		}
 
-        $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
-        $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
-        $this->company->absolute_discount = price2num($absolute_discount, 'MT');
-        $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+		$absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+		$absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+		$this->company->absolute_discount = price2num($absolute_discount, 'MT');
+		$this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
-        return $this->_cleanObjectDatas($this->company);
-    }
+		return $this->_cleanObjectDatas($this->company);
+	}
 }

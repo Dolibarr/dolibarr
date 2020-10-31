@@ -562,7 +562,7 @@ class Users extends DolibarrApi
 		return $this->useraccount->delete(DolibarrApiAccess::$user);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
 	 *
@@ -571,7 +571,7 @@ class Users extends DolibarrApi
 	 */
 	protected function _cleanObjectDatas($object)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$object = parent::_cleanObjectDatas($object);
