@@ -214,8 +214,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	text-transform: uppercase;
 	font-weight: bold;
 	margin-bottom: 3px;	/* not too much space so we can add another lines */
-	opacity: 1;
-	color: var(--colortexttitlenotab);
+	opacity: 0.6;
+	/* color: var(--colortexttitlenotab); */
 }
 .info-box-text{
 	font-size: 0.92em;
