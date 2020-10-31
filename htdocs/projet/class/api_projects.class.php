@@ -146,8 +146,7 @@ class Projects extends DolibarrApi
 
         $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -162,8 +161,8 @@ class Projects extends DolibarrApi
         {
         	$num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
-            while ($i < $min)
-            {
+			$i = 0;
+            while ($i < $min) {
             	$obj = $this->db->fetch_object($result);
             	$project_static = new Project($this->db);
                 if ($project_static->fetch($obj->rowid)) {
