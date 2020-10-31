@@ -229,7 +229,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = multicurrencyAdminPrepareHead();
-dol_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "multicurrency");
+print dol_get_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "multicurrency");
 
 // ACTION
 
