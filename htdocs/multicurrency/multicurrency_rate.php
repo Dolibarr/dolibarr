@@ -50,9 +50,8 @@ $search_date_sync	= GETPOST('search_date_sync', 'alpha');
 $search_rate		= GETPOST('search_rate', 'alpha');
 $search_code		= GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-$dateinput 			= GETPOST('dateinput', 'alpha');
-$rateinput 			= GETPOST('rateinput', 'int');
-$search_tobatch 	= GETPOST('search_tobatch', 'int');
+$dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('dateinputday', 'int'), GETPOST('dateinputyear', 'int'));
+$rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
 $limit 				= GETPOST('limit', 'int')?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield 			= GETPOST("sortfield", 'alpha');
@@ -86,9 +85,9 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields=array(
-	'cr.date_sync'=>array('label'=>$langs->trans("date_sync"), 'checked'=>1),
-	'cr.rate'=>array('label'=>$langs->trans("rate"), 'checked'=>1),
-	'm.code'=>array('label'=>$langs->trans("code"), 'checked'=>1),
+	'cr.date_sync'=>array('label'=>'Date', 'checked'=>1),
+	'cr.rate'=>array('label'=>'Rate', 'checked'=>1),
+	'm.code'=>array('label'=>'Code', 'checked'=>1),
 );
 
 
@@ -112,14 +111,14 @@ if ($action == "create"){
 		$currencyRate_static->rate = $rateinput;
 
 		$result = $currencyRate_static->create(intval($fk_currency));
-		if ($result) {
-			setEventMessage($langs->trans('successRateCreate', $multicurrency_code));
+		if ($result > 0) {
+			setEventMessages($langs->trans('successRateCreate', $multicurrency_code), null);
 		} else {
 			dol_syslog("currencyRate:createRate", LOG_WARNING);
-			setEventMessage($langs->trans('successRateCreate'));
+			setEventMessages($currencyRate_static->error, $currencyRate_static->errors, 'errors');
 		}
 	} else {
-		setEventMessage($langs->trans('NoEmptyRate'), "errors");
+		setEventMessages($langs->trans('NoEmptyRate'),null, "errors");
 	}
 }
 
@@ -129,17 +128,17 @@ if ($action == 'update'){
 	if ( $result > 0){
 		$currency_static  = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
-		$currencyRate->date_sync = $db->escape(GETPOST('dateinput', 'alpha'));
+		$currencyRate->date_sync = $dateinput;
 		$currencyRate->fk_multicurrency = $fk_currency;
-		$currencyRate->rate = $db->escape(GETPOST('rateinput', 'int'));
+		$currencyRate->rate = $rateinput;
 		$res = $currencyRate->update();
 		if ($res){
-			setEventMessage($langs->trans('successUpdateRate'));
+			setEventMessages($langs->trans('successUpdateRate'), null);
 		}else {
-			setEventMessage($langs->trans('errorUpdateRate'), "errors");
+			setEventMessages($currencyRate->error, $currencyRate->errors, "errors");
 		}
 	}else {
-		setEventMessage($langs->trans(''), "warnings");
+		setEventMessages($langs->trans('Error'), null, "warnings");
 	}
 }
 
@@ -151,7 +150,7 @@ if ($action == "deleteRate"){
 		$current_currency = new MultiCurrency($db);
 		$current_currency->fetch($current_rate->fk_multicurrency);
 		if ($current_currency){
-			$delayedhtmlcontent .= $form->formconfirm(
+			$delayedhtmlcontent = $form->formconfirm(
 				$_SERVER["PHP_SELF"].'?id_rate='.$id_rate_selected,
 				$langs->trans('DeleteLineRate'),
 				$langs->trans('ConfirmDeleteLineRate', $current_rate->rate, $current_currency->name, $current_rate->date_sync),
@@ -174,12 +173,12 @@ if ($action == "confirm_delete"){
 	if ($current_rate){
 		$result  = $current_rate->delete();
 		if ($result){
-			setEventMessage($langs->trans('successRateDelete'));
+			setEventMessages($langs->trans('successRateDelete'), null);
 		}else {
-			setEventMessage($langs->trans('errorRateDelete'), 'errors');
+			setEventMessages($current_rate->error, $current_rate->errors, 'errors');
 		}
 	}else {
-		setEventMessage($langs->trans('NoCurrencyRateSelected'), "warnings");
+		setEventMessages($langs->trans('NoCurrencyRateSelected'), null, "warnings");
 		dol_syslog($langs->trans('NoCurrencyRateSelected'), LOG_WARNING);
 	}
 }
@@ -244,13 +243,15 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
 	print '<table><tr>';
 
-	print ' <td>' . $langs->trans('date') . '</td>';
-	print ' <td><input class="minwidth200" name="dateinput" value="' . dol_escape_htmltag($dateinput) . '" type="date"></td>';
+	print ' <td>' . $langs->trans('Date') . '</td>';
+	print ' <td>';
+	print $form->selectDate($dateinput, 'dateinput');
+	print '</td>';
 
-	print ' <td>' . $langs->trans('Codemulticurrency') . '</td>';
+	print '<td> ' . $langs->trans('Currency') . '</td>';
 	print '<td>' . $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
 
-	print ' <td>' . $langs->trans('rate') . '</td>';
+	print ' <td>' . $langs->trans('Rate') . '</td>';
 	print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($rateinput) . '"></td>';
 
 	print '<td>';
@@ -260,6 +261,8 @@ if ($action!= "updateRate" && $action!= "deleteRate" ) {
 
 	print '</tr></table>';
 	print '</form>';
+
+	print '<br>';
 }
 
 if ($action == "updateRate"){
@@ -282,15 +285,17 @@ if ($action == "updateRate"){
 		print '</tr></table>';
 
 		$form = new Form($db);
-		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formulaire">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formtoupdaterate">';
 		print '<table><tr>';
-		print ' <td>' . $langs->trans('date') . '</td>';
-		print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($current_rate->date_sync)) .'" type="date"></td>';
+		print ' <td>' . $langs->trans('Date') . '</td>';
+		print '<td>';
+		print $form->selectDate($current_rate->date_sync, 'dateinput');
+		print '</td>';
 
-		print '<td>' . $langs->trans('Codemulticurrency') . '</td>';
+		print '<td> ' . $langs->trans('Currency') . '</td>';
 		print '<td>' . $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0, " code != '".$conf->currency."'", true) . '</td>';
 
-		print '<td>' . $langs->trans('rate') . '</td>';
+		print '<td>' . $langs->trans('Rate') . '</td>';
 		print '<td><input class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($current_rate->rate) . '" type="text"></td>';
 
 		print '<td>';
@@ -309,28 +314,23 @@ if ($action == "updateRate"){
 
 
 $sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
-
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .=" INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
-
-
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-
-if ($search_date_sync)     $sql .= natural_search('cr.date_sync', $search_date_sync);
-if ($search_rate)   $sql .= natural_search('cr.rate', $search_rate);
+if ($search_date_sync) $sql .= natural_search('cr.date_sync', $search_date_sync);
+if ($search_rate) $sql .= natural_search('cr.rate', $search_rate);
 if ($search_code) $sql .= natural_search('m.code', $search_code);
-
-$sql.= ' WHERE m.code != \''.$conf->currency. '\'';
+$sql.= " WHERE m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= " GROUP BY cr.rowid, cr.date_sync, cr.rate, m.code, cr.entity ";
+$sql.= " GROUP BY cr.rowid, cr.date_sync, cr.rate, m.code, cr.entity, m.code, m.name";
 
 // Add fields from hooks
 $parameters=array();
@@ -377,12 +377,11 @@ if ($resql)
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-
 	if ($user->admin) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -522,7 +521,7 @@ if ($resql)
 		{
 			$selected=0;
 			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'" class="like-link " style="margin-right:15px;important">' . img_picto('edit', 'edit') . '</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'" class="like-link " style="margin-right:15px;important">' . img_picto('edit', 'edit') . '</a>';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'" class="like-link" style="margin-right:45px;important">' . img_picto('delete', 'delete') . '</a>';
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
 		}
