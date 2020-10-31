@@ -224,7 +224,6 @@ class DolibarrApi
 		if (!empty($object->thirdparty) && is_object($object->thirdparty)) {
 			$this->_cleanObjectDatas($object->thirdparty);
 		}
-		dol_syslog(print_r($object, true), LOG_NOTICE);
 		return $object;
 	}
 
