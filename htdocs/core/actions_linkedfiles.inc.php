@@ -103,7 +103,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         $ret = dol_delete_file($file, 0, 0, 0, (is_object($object) ? $object : null));
         if (!empty($fileold)) dol_delete_file($fileold, 0, 0, 0, (is_object($object) ? $object : null)); // Delete file using old path
 
-        // Si elle existe, on efface la vignette
+        // If it exists, remove thumb.
+        $regs = array();
         if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs))
         {
 	        $photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
@@ -124,9 +125,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         } else {
             setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
         }
-    }
-    elseif ($linkid)	// delete of external link
-    {
+    } elseif ($linkid) {	// delete of external link
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
         $link = new Link($db);
         $link->fetch($linkid);
@@ -189,6 +188,10 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 	{
 		$filenamefrom = dol_sanitizeFileName(GETPOST('renamefilefrom', 'alpha'), '_', 0); // Do not remove accents
 		$filenameto = dol_sanitizeFileName(GETPOST('renamefileto', 'alpha'), '_', 0); // Do not remove accents
+
+		// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
+		// this function is also applied when we upload and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
+		$filenameto = dol_string_nohtmltag($filenameto);
 
         if ($filenamefrom != $filenameto)
         {
