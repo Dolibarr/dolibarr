@@ -208,7 +208,7 @@ unset($objMod);
 $i = 0;
 foreach ($orders as $tmpkey => $tmpvalue)
 {
-	$tmpMod  = $modules[$tmpkey];
+	$tmpMod = $modules[$tmpkey];
 	if ($tmpMod->numero == $id)
 	{
 		$key = $i;

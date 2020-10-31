@@ -28,31 +28,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/intracommreport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","intracommreport"));
+$langs->loadLangs(array("admin", "intracommreport"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
 // Parameters INTRACOMMREPORT_* and others
-$list_DEB = array (
+$list_DEB = array(
 	'INTRACOMMREPORT_NUM_AGREMENT',
 );
 
-$list_DES = array (
+$list_DES = array(
 	'INTRACOMMREPORT_NUM_DECLARATION',
 );
 
 if ($action == 'update') {
 	$error = 0;
 
-	if (! $error)
+	if (!$error)
 	{
 		foreach ($list_DEB as $constname)
 		{
 			$constvalue = GETPOST($constname, 'alpha');
 
-			if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		}
@@ -61,7 +61,7 @@ if ($action == 'update') {
 		{
 			$constvalue = GETPOST($constname, 'alpha');
 
-			if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		}
@@ -77,7 +77,7 @@ if ($action == 'update') {
 		}
 	}
 
-	if (! $error) {
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
@@ -119,7 +119,7 @@ foreach ($list_DEB as $key)
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td>';
 
 	print '</tr>';
@@ -185,7 +185,7 @@ foreach ($list_DES as $key)
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td>';
 
 	print '</tr>';

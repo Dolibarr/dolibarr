@@ -31,8 +31,8 @@ include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_validated_projects extends ModeleBoxes
 {
-	public $boxcode="validated_project";
-	public $boximg="object_projectpub";
+	public $boxcode = "validated_project";
+	public $boximg = "object_projectpub";
 	public $boxlabel;
 	//var $depends = array("projet");
 
@@ -65,7 +65,7 @@ class box_validated_projects extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "ProjectsWithTask";
 
-		$this->hidden = ! ($user->rights->projet->lire);
+		$this->hidden = !($user->rights->projet->lire);
 
 		if ($conf->global->MAIN_FEATURES_LEVEL < 2) $this->enabled = 0;
 	}
@@ -80,11 +80,11 @@ class box_validated_projects extends ModeleBoxes
 	{
 		global $conf, $user, $langs;
 
-		$this->max=$max;
+		$this->max = $max;
 
 		$totalMnt = 0;
 		$totalnb = 0;
-		$totalnbTask=0;
+		$totalnbTask = 0;
 
 		$textHead = $langs->trans("ProjectTasksWithoutTimeSpent");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
@@ -94,27 +94,27 @@ class box_validated_projects extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 
-			$socid=0;
+			$socid = 0;
 			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
-			$projectsListId='';
-			if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			$projectsListId = '';
+			if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 			// I tried to solve sql error and performance problem, rewriting sql request but it is not clear what we want.
 			// Count of tasks without time spent for tasks we are assigned too or
 			// Count of tasks without time spent for all tasks of projects we are allowed to read (what it does) ?
 			$sql = "SELECT p.rowid, p.ref, p.fk_soc, p.dateo as startdate,";
-			$sql.= " COUNT(DISTINCT t.rowid) as tasknumber";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
-			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
+			$sql .= " COUNT(DISTINCT t.rowid) as tasknumber";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet AS p";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
 			// TODO Replace -1, -2, -3 with ID used for type of contat project_task into llx_c_type_contact. Once done, we can switch widget as stable.
-			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid AND fk_c_type_contact IN (-1, -2, -3)";
-			$sql.= " WHERE p.fk_statut = 1"; // Only open projects
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid AND fk_c_type_contact IN (-1, -2, -3)";
+			$sql .= " WHERE p.fk_statut = 1"; // Only open projects
 			if ($projectsListId) $sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only project we ara allowed
-			$sql.= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
-			$sql.= " GROUP BY p.rowid, p.ref, p.fk_soc, p.dateo";
-			$sql.= " ORDER BY p.dateo ASC";
+			$sql .= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
+			$sql .= " GROUP BY p.rowid, p.ref, p.fk_soc, p.dateo";
+			$sql .= " ORDER BY p.dateo ASC";
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -138,7 +138,7 @@ class box_validated_projects extends ModeleBoxes
 				);
 				$i++;
 
-				while ($i < min($num+1, $max+1)) {
+				while ($i < min($num + 1, $max + 1)) {
 					$objp = $this->db->fetch_object($result);
 
 					$projectstatic->id = $objp->rowid;
@@ -183,7 +183,7 @@ class box_validated_projects extends ModeleBoxes
 					);
 					$i++;
 				}
-			}else {
+			} else {
 				dol_print_error($this->db);
 			}
 		}

@@ -290,8 +290,8 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-     * @param   Object  $object     Object to clean
-     * @return  Object              Object with cleaned properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

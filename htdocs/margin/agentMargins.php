@@ -61,7 +61,7 @@ $enddatemonth   = GETPOST('enddatemonth', 'int');
 $enddateyear    = GETPOST('enddateyear', 'int');
 
 if (!empty($startdatemonth))
-	$startdate  = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
+	$startdate = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
 if (!empty($enddatemonth))
 	$enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
 

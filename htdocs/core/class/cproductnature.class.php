@@ -51,12 +51,12 @@ class CProductNature // extends CommonObject
 	/**
 	 * @var string element
 	 */
-	public $element='cproductnbature';
+	public $element = 'cproductnbature';
 
 	/**
 	 * @var string table element
 	 */
-	public $table_element='c_product_nature';
+	public $table_element = 'c_product_nature';
 
 	/**
 	 * @var int ID
@@ -108,7 +108,7 @@ class CProductNature // extends CommonObject
 		$sql .= "label,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)) .",";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)).",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
@@ -151,7 +151,7 @@ class CProductNature // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql_where = array();
 		if ($id)   $sql_where[] = " t.rowid = ".$id;
-		if ($code>=0) $sql_where[] = " t.code = ". ((int) $code);
+		if ($code >= 0) $sql_where[] = " t.code = ".((int) $code);
 		if (count($sql_where) > 0) {
 			$sql .= ' WHERE '.implode(' AND ', $sql_where);
 		}

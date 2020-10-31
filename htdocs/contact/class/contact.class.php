@@ -378,15 +378,15 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql .= " ".$this->db->escape($this->socid).",";
 		else $sql .= "null,";
 		$sql .= "'".$this->db->escape($this->lastname)."',";
-        $sql .= "'".$this->db->escape($this->firstname)."',";
-        $sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
+		$sql .= "'".$this->db->escape($this->firstname)."',";
+		$sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
 		$sql .= " ".$this->db->escape($this->priv).",";
 		$sql .= " 0,";
 		$sql .= " ".$this->db->escape($this->statut).",";
-        $sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
-        $sql .= " ".$this->db->escape($this->entity).",";
-        $sql .= "'".$this->db->escape($this->ref_ext)."',";
-        $sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
+		$sql .= " ".$this->db->escape($this->entity).",";
+		$sql .= "'".$this->db->escape($this->ref_ext)."',";
+		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);

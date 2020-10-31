@@ -622,7 +622,7 @@ if (!empty($date_start) && !empty($date_stop))
 		if (empty($TData))
 		{
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td>';
-			if (! empty($conf->multicurrency->enabled)) {
+			if (!empty($conf->multicurrency->enabled)) {
 				print '<td></td>';
 			}
 			print '</tr>';
@@ -743,7 +743,7 @@ if (!empty($date_start) && !empty($date_stop))
 					$totalVAT_debit -= $data['amount_vat'];
 				}
 
-				if (! empty($conf->multicurrency->enabled)) {
+				if (!empty($conf->multicurrency->enabled)) {
 					print '<td class="center">'.$data['currency']."</td>\n";
 				}
 
@@ -757,7 +757,7 @@ if (!empty($date_start) && !empty($date_stop))
 			print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
 			print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
 			print '<td colspan="4"></td>';
-			if (! empty($conf->multicurrency->enabled)) {
+			if (!empty($conf->multicurrency->enabled)) {
 				print '<td></td>';
 			}
 			print "</tr>\n";
@@ -768,7 +768,7 @@ if (!empty($date_start) && !empty($date_stop))
 			print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
 			print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
 			print '<td colspan="4"></td>';
-			if (! empty($conf->multicurrency->enabled)) {
+			if (!empty($conf->multicurrency->enabled)) {
 				print '<td></td>';
 			}
 			print "</tr>\n";
@@ -779,7 +779,7 @@ if (!empty($date_start) && !empty($date_stop))
 			print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
 			print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
 			print '<td colspan="4"></td>';
-			if (! empty($conf->multicurrency->enabled)) {
+			if (!empty($conf->multicurrency->enabled)) {
 				print '<td></td>';
 			}
 			print "</tr>\n";

@@ -571,7 +571,7 @@ function createInvoice($authentication, $invoice)
 		$res = $soc->fetch($new_invoice->socid);
 		if ($res > 0) {
 			$new_invoice->mode_reglement_id = !empty($invoice['payment_mode_id']) ? $invoice['payment_mode_id'] : $soc->mode_reglement_id;
-			$new_invoice->cond_reglement_id  = $soc->cond_reglement_id;
+			$new_invoice->cond_reglement_id = $soc->cond_reglement_id;
 		}
 		else $new_invoice->mode_reglement_id = $invoice['payment_mode_id'];
 

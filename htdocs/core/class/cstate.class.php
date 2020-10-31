@@ -167,9 +167,9 @@ class Cstate // extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				$this->code_departement = $obj->code_departement;    //deprecated
+				$this->code_departement = $obj->code_departement; //deprecated
 				$this->code = $obj->code_departement;
-				$this->nom = $obj->nom;   //deprecated
+				$this->nom = $obj->nom; //deprecated
 				$this->name = $obj->nom;
 				$this->active = $obj->active;
 			}

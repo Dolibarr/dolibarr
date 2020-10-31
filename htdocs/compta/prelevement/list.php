@@ -189,9 +189,9 @@ if ($result)
 	print '</td>';
 	print '</tr>';
 
-	$columntitle= "WithdrawalsReceipts";
+	$columntitle = "WithdrawalsReceipts";
 	if ($type == 'bank-transfer') {
-		$columntitle= "BankTransferReceipts";
+		$columntitle = "BankTransferReceipts";
 	}
 
 	print '<tr class="liste_titre">';
