@@ -2871,7 +2871,7 @@ if (!function_exists("llxFooter"))
 				    					  version: '<?php echo (float) DOL_VERSION; ?>',
 				    					  entity: '<?php echo (int) $conf->entity; ?>',
 				    					  dbtype: '<?php echo dol_escape_js($db->type); ?>',
-				    					  country_code: '<?php echo dol_escape_js($mysoc->country_code); ?>',
+				    					  country_code: '<?php echo $mysoc->country_code ? dol_escape_js($mysoc->country_code) : 'unknown'; ?>',
 				    					  php_version: '<?php echo dol_escape_js(phpversion()); ?>',
 				    					  os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
 				    					  distrib: '<?php echo $distrib ? dol_escape_js($distrib) : 'unknown'; ?>'
