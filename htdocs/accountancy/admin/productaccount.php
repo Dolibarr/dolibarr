@@ -618,7 +618,7 @@ if ($result)
 			if (empty($defaultvalue)) $defaultvalue = $compta_prodbuy;
 			$codesell = length_accountg($obj->accountancy_code_buy);
 			if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
-			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1);
+			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		}  elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
 			// Accounting account buy intra (In EEC)
@@ -628,7 +628,7 @@ if ($result)
 			$codesell = length_accountg($obj->accountancy_code_buy_intra);
 			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
 			if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
-			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1);
+			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		}  elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
 			// Accounting account buy export (Out of EEC)
@@ -638,7 +638,7 @@ if ($result)
 			$codesell = length_accountg($obj->accountancy_code_buy_export);
 			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
 			if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
-			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1);
+			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
 			// Accounting account sell
@@ -648,7 +648,7 @@ if ($result)
 			$codesell = length_accountg($obj->accountancy_code_sell);
 			//var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
 			if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
-			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1);
+			print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
             // Accounting account sell intra (In EEC)
@@ -658,7 +658,7 @@ if ($result)
             $codesell = length_accountg($obj->accountancy_code_sell_intra);
             //var_dump($defaultvalue.' - '.$codesell.' - '.$compta_prodsell);
             if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
-            print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1);
+            print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
             print '</td>';
         } else {
             // Accounting account sell export (Out of EEC)
@@ -667,13 +667,13 @@ if ($result)
             if (empty($defaultvalue)) $defaultvalue = $compta_prodsell;
             $codesell = length_accountg($obj->accountancy_code_sell_export);
             if (!empty($obj->aaid)) $defaultvalue = ''; // Do not suggest default new value is code is already valid
-            print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1);
+            print $form->select_account($defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
             print '</td>';
         }
 
 		// Checkbox select
 		print '<td class="center">';
-		print '<input type="checkbox" class="checkforselect" name="chk_prod[]" value="'.$obj->rowid.'"/></td>';
+		print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" value="'.$obj->rowid.'"/></td>';
 		print "</tr>";
 		$i++;
 	}
@@ -697,7 +697,17 @@ if ($result)
 	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
 	            else jQuery("#changeaccount").attr(\'class\',\'button\');
         	}
-        	jQuery(".checkforselect, #checkallactions").click(function() {
+
+        	jQuery(".checkforselect").change(function() {
+        		init_savebutton();
+        	});
+        	jQuery(".productforselect").change(function() {
+				console.log($(this).attr("id")+" "+$(this).val());
+				if ($(this).val() && $(this).val() != -1) {
+					$(".productforselect"+$(this).attr("id")).prop(\'checked\', true);
+				} else {
+					$(".productforselect"+$(this).attr("id")).prop(\'checked\', false);
+				}
         		init_savebutton();
         	});
 
