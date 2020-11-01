@@ -1466,9 +1466,9 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     	{
     	    // Default prices or
     	    // Log of previous customer prices
-    	    $backbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+    	    $backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
 
-    		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPrice"), 0, $_SERVER["PHP_SELF"], '', '', '', $backbutton, 0, $num, 'title_accountancy.png');
+    		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPriceLog"), 0, $_SERVER["PHP_SELF"], '', '', '', $backbutton, 0, $num, 'title_accountancy.png');
     		else print_barre_liste($langs->trans("PriceByCustomerLog"), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, $num, 'title_accountancy.png');
     	    //if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_barre_liste($langs->trans("DefaultPrice"),'','','','','',$backbutton, 0, 0, 'title_accountancy.png');
     		//else print_barre_liste($langs->trans("PriceByCustomerLog"),'','','','','','', 0, 0, 'title_accountancy.png');
@@ -2100,7 +2100,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		    print img_info($langs->trans('PriceByCustomerLog'));
 		    print '</a>';
 		    print ' ';
-		    print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
+		    print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
 		    print img_edit('default', 0, 'style="vertical-align: middle;"');
 		    print '</a>';
 		    print ' &nbsp; ';
@@ -2186,11 +2186,11 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';
 					print ' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;id='.$object->id.'&amp;lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
