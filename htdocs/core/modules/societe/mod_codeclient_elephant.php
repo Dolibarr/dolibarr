@@ -143,7 +143,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			"ErrorCantUseRazIfNoYearInMask",
 			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
 		);
-		if ($type == 0 || $type == -1) {
+		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
 			if (!$examplecust) {
 				$examplecust = $langs->trans('NotConfigured');
@@ -153,7 +153,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				$examplecust = $langs->trans($examplecust);
 			}
 		}
-		if ($type == 1 || $type == -1) {
+		if ($type != 0) {
 			$examplesup = $this->getNextValue($objsoc, 1);
 			if (!$examplesup) {
 				$examplesup = $langs->trans('NotConfigured');
