@@ -160,7 +160,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			}
 			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
-				$examplesup = $langs->trans($examplecust);
+				$examplesup = $langs->trans($examplesup);
 			}
 		}
 
