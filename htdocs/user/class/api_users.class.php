@@ -86,7 +86,9 @@ class Users extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_user as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
-		if ($user_ids) $sql .= " AND t.rowid IN (".$user_ids.")";
+		if ($user_ids) {
+			$sql .= " AND t.rowid IN (".$user_ids.")";
+		}
 
 		// Select products of given category
 		if ($category > 0) {
@@ -95,10 +97,8 @@ class Users extends DolibarrApi
 		}
 
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -107,8 +107,7 @@ class Users extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -118,13 +117,11 @@ class Users extends DolibarrApi
 
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$user_static = new User($this->db);
 				if ($user_static->fetch($obj->rowid)) {
@@ -158,13 +155,11 @@ class Users extends DolibarrApi
 		//}
 
 		$result = $this->useraccount->fetch($id);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -194,13 +189,11 @@ class Users extends DolibarrApi
 		//}
 
 		$result = $this->useraccount->fetch('', $login);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -230,13 +223,11 @@ class Users extends DolibarrApi
 		//}
 
 		$result = $this->useraccount->fetch('', '', '', 0, -1, $email);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -301,13 +292,12 @@ class Users extends DolibarrApi
 	    if (!isset($request_data["lastname"]))
 	         throw new RestException(400, "lastname field missing");*/
 		//assign field values
-		foreach ($request_data as $field => $value)
-		{
+		foreach ($request_data as $field => $value) {
 			  $this->useraccount->$field = $value;
 		}
 
 		if ($this->useraccount->create(DolibarrApiAccess::$user) < 0) {
-			 throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
+			throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
 		}
 		return $this->useraccount->id;
 	}
@@ -329,13 +319,11 @@ class Users extends DolibarrApi
 		//}
 
 		$result = $this->useraccount->fetch($id);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'Account not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -356,8 +344,7 @@ class Users extends DolibarrApi
 
 		// If there is no error, update() returns the number of affected
 		// rows so if the update is a no op, the return value is zezo.
-		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0)
-		{
+		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->useraccount->error);
@@ -419,18 +406,15 @@ class Users extends DolibarrApi
 			//throw new RestException(401);
 		//}
 		$result = $this->useraccount->fetch($id);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
-		{
+		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
 			$entity = (!empty($entity) ? $entity : $conf->entity);
 		} else {
 			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
@@ -439,8 +423,7 @@ class Users extends DolibarrApi
 		}
 
 		$result = $this->useraccount->SetInGroup($group, $entity);
-		if (!($result > 0))
-		{
+		if (!($result > 0)) {
 			throw new RestException(500, $this->useraccount->error);
 		}
 
@@ -480,10 +463,8 @@ class Users extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($group_ids) $sql .= " AND t.rowid IN (".$group_ids.")";
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -492,8 +473,7 @@ class Users extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -545,11 +525,10 @@ class Users extends DolibarrApi
 			throw new RestException(401, "You are not allowed to read groups");
 		}
 
-				$group_static = new UserGroup($this->db);
-				$result = $group_static->fetch($group, '', $load_members);
+		$group_static = new UserGroup($this->db);
+		$result = $group_static->fetch($group, '', $load_members);
 
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'Group not found');
 		}
 
@@ -568,13 +547,11 @@ class Users extends DolibarrApi
 			//throw new RestException(401);
 		//}
 		$result = $this->useraccount->fetch($id);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->useraccount->oldcopy = clone $this->useraccount;
@@ -636,8 +613,7 @@ class Users extends DolibarrApi
 		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read))
 			|| (!empty($conf->hrm->enabled) && !empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
 
-		if (!$canreadsalary)
-		{
+		if (!$canreadsalary) {
 			unset($object->salary);
 			unset($object->salaryextra);
 			unset($object->thm);

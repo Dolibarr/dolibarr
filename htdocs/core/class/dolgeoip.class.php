@@ -92,10 +92,13 @@ class DolGeoIP
 		} elseif (function_exists('geoip_open'))
 		{
 			$this->gi = geoip_open($datfile, GEOIP_STANDARD);
-		} else {
+		}
+		elseif (function_exists('geoip_country_code_by_name')) {
 			$this->gi = 'NOGI'; // We are using embedded php geoip functions
 			//print 'function_exists(geoip_country_code_by_name))='.function_exists('geoip_country_code_by_name');
 			//print geoip_database_info();
+		} else {
+		    $this->gi = ''; // For avoid error
 		}
 	}
 

@@ -1288,7 +1288,7 @@ abstract class CommonDocGenerator
 		if (!empty($fields))
 		{
 			// Sort extrafields by rank
-			uasort($fields, function($a, $b) {
+			uasort($fields, function ($a, $b) {
 				return  ($a->rank > $b->rank) ? 1 : -1;
 			});
 
