@@ -300,7 +300,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($this->useraccount->create(DolibarrApiAccess::$user) < 0) {
-			 throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
+			throw new RestException(500, 'Error creating', array_merge(array($this->useraccount->error), $this->useraccount->errors));
 		}
 		return $this->useraccount->id;
 	}
