@@ -138,56 +138,39 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
-		if ($type == 0 || $type == -1)
-		{
+		$errmsg = array(
+			"ErrorBadMask",
+			"ErrorCantUseRazIfNoYearInMask",
+			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
+		);
+		if ($type == 0 || $type == -1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
-			if (!$examplecust)
-			{
+			if (!$examplecust) {
 				$examplecust = $langs->trans('NotConfigured');
 			}
-			if ($examplecust == "ErrorBadMask")
-			{
-				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
-			}
-			if ($examplecust == "ErrorCantUseRazIfNoYearInMask")
-			{
-				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
-			}
-			if ($examplecust == "ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
-			{
+			if (in_array($examplecust, $errmsg)) {
 				$langs->load("errors");
 				$examplecust = $langs->trans($examplecust);
 			}
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type == 1 || $type == -1) {
 			$examplesup = $this->getNextValue($objsoc, 1);
-			if (!$examplesup)
-			{
+			if (!$examplesup) {
 				$examplesup = $langs->trans('NotConfigured');
 			}
-			if ($examplesup == "ErrorBadMask")
-			{
+			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
-			}
-			if ($examplesup == "ErrorCantUseRazIfNoYearInMask")
-			{
-				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
-			}
-			if ($examplesup == "ErrorCantUseRazInStartedYearIfNoYearMonthInMask")
-			{
-				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
+				$examplesup = $langs->trans($examplecust);
 			}
 		}
 
-		if ($type == 0) return $examplecust;
-		if ($type == 1) return $examplesup;
-		return $examplecust.'<br>'.$examplesup;
+		if ($type == 0) {
+			return $examplecust;
+		} elseif ($type == 1) {
+			return $examplesup;
+		} else {
+			return $examplecust.'<br>'.$examplesup;
+		}
 	}
 
 	/**
