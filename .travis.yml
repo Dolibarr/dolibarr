@@ -171,15 +171,20 @@ before_script:
 
   - |
     echo "Versions information"
+    echo
     # Check PHP
     echo "PHP version"
     php -i | head -
-    # Check PHP CodeSniffer installation
+    # Check Parallel-lin version
+    echo "Parallel-lint version"
+    which parallel-lint
+    parallel-lint -V
+    # Check PHP CodeSniffer version
     echo "PHPCS version"
     which phpcs
     phpcs --version | head -
     phpcs -i | head -
-    # Check PHPUnit installation
+    # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
     phpunit --version | head -
