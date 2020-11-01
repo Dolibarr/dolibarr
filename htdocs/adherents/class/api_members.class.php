@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
  * Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2020	Thibault FOUCART<support@ptibogxiv.net>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,9 +84,9 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param     int     $thirdparty ID of third party
+	 * @param     int     $thirdparty 	ID of third party
 	 *
-	 * @return array|mixed Data without useless information
+	 * @return Object 					Data without useless information
 	 *
 	 * @url GET thirdparty/{thirdparty}
 	 *
@@ -118,7 +119,7 @@ class Members extends DolibarrApi
 	 *
 	 * @param  string $email            Email of third party
 	 *
-	 * @return array|mixed Data without useless information
+	 * @return Object 					Data without useless information
 	 *
 	 * @url GET thirdparty/email/{email}
 	 *
@@ -155,9 +156,9 @@ class Members extends DolibarrApi
 	 *
 	 * Return an array with member informations
 	 *
-	 * @param  string $barcode            Barcode of third party
+	 * @param  string $barcode      	Barcode of third party
 	 *
-	 * @return array|mixed Data without useless information
+	 * @return Object 					Data without useless information
 	 *
 	 * @url GET thirdparty/barcode/{barcode}
 	 *
@@ -301,7 +302,7 @@ class Members extends DolibarrApi
 	 *
 	 * @param int   $id             ID of member to update
 	 * @param array $request_data   Datas
-	 * @return int
+	 * @return Object				Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
