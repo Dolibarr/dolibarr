@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - admin
+# Dolibarr language file  admin.lang  de_DE - Source file is en_US - admin
 Foundation=Stiftung
 Version=Version
 Publisher=Verfasser
@@ -1634,9 +1634,11 @@ FCKeditorForMailing= WYSIWIG Erstellung/Bearbeitung von E-Mails
 FCKeditorForUserSignature=WYSIWIG Erstellung/Bearbeitung von Benutzer-Signaturen
 FCKeditorForMail=WYSIWYG-Erstellung/Bearbeitung für alle E-Mails (außer Werkzeuge->eMailing)
 FCKeditorForTicket=WYSIWYG-Erstellung/Bearbeitung von Tickets
+
 ##### Stock #####
-StockSetup=Lagerverwaltung Einstellungen
+StockSetup = Lagerverwaltung Einstellungen
 IfYouUsePointOfSaleCheckModule=Wenn Sie das standardmäßig bereitgestellte POS-Modul oder ein externes Modul verwenden, wird dieses Setup möglicherweise von Ihrem POS-Modul ignoriert. Die meisten POS-Module sind standardmäßig so konzipiert, dass sie sofort eine Rechnung erstellen und den Lagerbestand unabhängig von den hier angegebenen Optionen verringern. Wenn Sie also bei der Registrierung eines Verkaufs an Ihrem POS eine Bestandsreduzierung benötigen oder nicht, überprüfen Sie auch die Einrichtung Ihres POS-Moduls.
+
 ##### Menu #####
 MenuDeleted=Menü gelöscht
 Menus=Menüs
@@ -1645,9 +1647,9 @@ NotTopTreeMenuPersonalized=Personalisierte Menüs die nicht mit dem Top-Menü ve
 NewMenu=Neues Menü
 Menu=Menüauswahl
 MenuHandler=Menü-Handler
-MenuModule=Quellmodul
-HideUnauthorizedMenu= Hide unbefugte Menüs (grau)
-DetailId=Menü ID
+MenuModule = Quellmodul
+HideUnauthorizedMenu = verberge unbefugte Menüs (grau)
+DetailId = Menü ID
 DetailMenuHandler=Menü-Handler für die Anzeige des neuen Menüs
 DetailMenuModule=Modulname falls Menüeintrag aus einem Modul stimmt
 DetailType=Art des Menüs (Top oder Links)
@@ -1664,6 +1666,7 @@ ModifMenu=Menü bearbeiten
 DeleteMenu=Menüeintrag löschen
 ConfirmDeleteMenu=Möchten Sie diesen Menüeintrag <b>%s</b> wirklich löschen?
 FailedToInitializeMenu=Menü konnte nicht erstellt werden
+
 ##### Tax #####
 TaxSetup=Steuer-, Sozialabgaben- und Dividendenmodul-Einstellungen
 OptionVatMode=USt. fällig
@@ -1686,6 +1689,7 @@ YourCompanyDoesNotUseVAT=Ihr Unternehmen wurde so definiert, dass keine Mehrwert
 AccountancyCode=Kontierungs-Code
 AccountancyCodeSell=Verkaufskonto-Code
 AccountancyCodeBuy=Einkaufskonto-Code
+
 ##### Agenda #####
 AgendaSetup=Aufgaben/Termine-Modul Einstellungen
 PasswordTogetVCalExport=Passwort für den VCal-Export
@@ -1699,15 +1703,17 @@ AGENDA_REMINDER_EMAIL=Aktiviere Terminbenachrichtigungen <b>via E-Mail</b> (Die 
 AGENDA_REMINDER_BROWSER=Ereigniserinnerung aktivieren <b> im Browser des Benutzers </b> (Wenn das Ereignisdatum erreicht ist, kann jeder Benutzer dies in der Frage zur Browserbestätigung ablehnen.)
 AGENDA_REMINDER_BROWSER_SOUND=Aktiviere Tonbenachrichtigung
 AGENDA_SHOW_LINKED_OBJECT=Verknüpfte Objekte in Agenda anzeigen
+
 ##### Clicktodial #####
-ClickToDialSetup=Click-to-Dial Moduleinstellungen
-ClickToDialUrlDesc=URL, die bei einem Klick auf das Telefonsymbol aufgerufen werden soll. In dieser URL können die folgenden Tags verwendet werden: <br><b>__PHONETO__</b> Telefonnummer des Angerufenen<br><b>__PHONEFROM__</b> Telefonnummer des Anrufers (Ihre)<br><b>__LOGIN__</b> Ihren Benutzernamen für Click-to-Dial (siehe Benutzerdaten)<br><b>__PASS__</b> Ihr Click-to-Dial-Passwort (siehe Benutzerdaten).
+ClickToDialSetup = Click-to-Dial Moduleinstellungen
+ClickToDialUrlDesc = URL, die bei einem Klick auf das Telefonsymbol aufgerufen werden soll. In dieser URL können die folgenden Tags verwendet werden: <br><b>__PHONETO__</b> Telefonnummer des Angerufenen<br><b>__PHONEFROM__</b> Telefonnummer des Anrufers (Ihre)<br><b>__LOGIN__</b> Ihren Benutzernamen für Click-to-Dial (siehe Benutzerdaten)<br><b>__PASS__</b> Ihr Click-to-Dial-Passwort (siehe Benutzerdaten).
 ClickToDialDesc=This module change phone numbers, when using a desktop computer, into clickable links. A click will call the number. This can be used to start the phone call when using a soft phone on your desktop or when using a CTI system based on SIP protocol for example. Note: When using a smartphone, phone numbers are always clickable.
-ClickToDialUseTelLink=Nur einen Link "Tel:" bei Telefonnummern verwenden
+ClickToDialUseTelLink = Nur einen Link "Tel:" bei Telefonnummern verwenden
 ClickToDialUseTelLinkDesc=Benutzen Sie diese Methode, wenn Ihre Benutzer ein Software-Telefon oder ein Interface für ein Telefon auf demselben Computer wie der Browser installiert haben. Dieses Telefon/Interface wird aufgerufen, wenn Sie auf einen Link klicken, der mit "tel:" beginnt. Wenn Sie eine vollständige Server-Lösung nutzen wollen (ohne lokale Software-Installation), wählen Sie hier "Nein" und füllen das nächste Feld.
+
 ##### Point Of Sale (CashDesk) #####
-CashDesk=Kasse
-CashDeskSetup=Kassenmoduleinstellungen
+CashDesk = Kasse (POS)
+CashDeskSetup = Kassenmoduleinstellungen
 CashDeskThirdPartyForSell=Standardpartner für Kassenverkäufe
 CashDeskBankAccountForSell=Standard-Bargeldkonto für Kassenverkäufe (erforderlich)
 CashDeskBankAccountForCheque=Standardfinanzkonto für Scheckeinlösungen
@@ -1721,25 +1727,29 @@ CashDeskYouDidNotDisableStockDecease=Sie haben die Reduzierung der Lagerbeständ
 CashDeskForceDecreaseStockLabel=Eine Bestandsreduktion für Produktposten wurde erzwungen.
 CashDeskForceDecreaseStockDesc=Verringern Sie zuerst ausgehend vom ältesten Mindesthaltbarkeitsdatum oder Verbrauchsdatum.
 CashDeskReaderKeyCodeForEnter=Schlüsselcode für "Enter" im Barcodeleser definiert (Beispiel: 13)
+
 ##### Bookmark #####
-BookmarkSetup=Favoriten-Moduleinstellungen
-BookmarkDesc=Dieses Modul ermöglicht die Verwaltung von Favoriten. Außerdem können Sie hiermit Verknüpfungen zu internen und externen Seiten im linken Menü anlegen.
-NbOfBoomarkToShow=Maximale Anzeigeanzahl Favoriten im linken Menü
+BookmarkSetup = Favoriten Moduleinstellungen
+BookmarkDesc = Dieses Modul ermöglicht die Verwaltung von Favoriten. Außerdem können Sie hiermit Verknüpfungen zu internen und externen Seiten im linken Menü anlegen.
+NbOfBoomarkToShow = Maximale Anzeigeanzahl Favoriten im linken Menü
+
 ##### WebServices #####
 WebServicesSetup=Webservices-Moduleinstellungen
 WebServicesDesc=Über Aktivierung dieses Moduls können Sie dolibarr zur Anbindung an externe Webservices konfigurieren
 WSDLCanBeDownloadedHere=Die WSDL-Datei der verfügbaren Webservices können Sie hier herunterladen
 EndPointIs=SOAP-Clients müssen ihre Anfragen an den Dolibarr Endpunkt verfügbar unter URL senden
+
 ##### API ####
-ApiSetup=Modul API - Einstellungen
+ApiSetup = Modul API - Einstellungen
 ApiDesc=Wenn dieses Modul aktiviert ist, wird Dolibarr zum REST Server für diverse web services.
 ApiProductionMode=Echtbetrieb aktivieren (dadurch wird ein Cache für Service-Management aktiviert)
 ApiExporerIs=Sie können das API unter dieser URL anschauen/testen
 OnlyActiveElementsAreExposed=Nur Elemente aus aktiven Modulen sind ungeschützt
 ApiKey=Schlüssel für API
 WarningAPIExplorerDisabled=Der API-Explorer wurde deaktiviert. Der API-Explorer ist nicht notwendig um die API-Dienste zu bieten. Es ist ein Werkzeug für Entwickler zu finden / Test-REST-APIs. Wenn Sie dieses Tool benötigen, gehen Sie in Setup von Modul-API REST um es zu aktivieren.
+
 ##### Bank #####
-BankSetupModule=Bankmoduleinstellungen
+BankSetupModule = Bank Moduleinstellungen
 FreeLegalTextOnChequeReceipts=Freitext für Scheckbelege
 BankOrderShow=Anzeige Reihenfolge der Bankkonten für Länder mit &quot;detaillierten Bank-Nummer&quot;
 BankOrderGlobal=General
@@ -1747,8 +1757,10 @@ BankOrderGlobalDesc=Allgemeine Anzeige-Reihenfolge
 BankOrderES=Spanisch
 BankOrderESDesc=Spanische Anzeigereihenfolge
 ChequeReceiptsNumberingModule=Modul zur Nummerierung von Belegen prüfen
+
 ##### Multicompany #####
 MultiCompanySetup=Einstellungen des Modul Mandanten
+
 ##### Suppliers #####
 SuppliersSetup=Einrichtung des Lieferantenmoduls
 SuppliersCommandModel=Vollständige Bestellvorlage
@@ -1756,6 +1768,7 @@ SuppliersCommandModelMuscadet=Vollständige Bestellvorlage (alte Implementierung
 SuppliersInvoiceModel=Vollständige Vorlage der Lieferantenrechnung
 SuppliersInvoiceNumberingModel=Lieferantenrechnungen Zähl-Modell
 IfSetToYesDontForgetPermission=Wenn ein Wert ungleich Null festgelegt ist, vergessen Sie nicht, Berechtigungen für Gruppen oder Benutzer bereitzustellen, die für die zweite Genehmigung zugelassen sind
+
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP-Maxmind Moduleinstellungen
 PathToGeoIPMaxmindCountryDataFile=Pfad zu der Datei, welche die Maxmind IP-zu-Land Umwandlungs-Informationen enthält.<br>Beispiele:<br>/usr/local/share/GeoIP/GeoIP.dat<br>/usr/share/GeoIP/GeoIP.dat<br>/usr/share/GeoIP/GeoLite2-Country.mmdb
@@ -1763,6 +1776,7 @@ NoteOnPathLocation=Bitte beachten Sie, dass Ihre IP-Länder-Datei in einem von P
 YouCanDownloadFreeDatFileTo=Eine <b>kostenlose Demo-Version</b> der Maxmind-GeoIP Datei finden Sie hier: %s
 YouCanDownloadAdvancedDatFileTo=Eine <b>vollständigere Version mit Updates</b> der Maxmind-GeoIP Datei können Sie hier herunterladen: %s
 TestGeoIPResult=Test einer Umwandlung IP -> Staat
+
 ##### Projects #####
 ProjectsNumberingModules=Projektnumerierungsmodul
 ProjectsSetup=Projekteinstellungenmodul
@@ -1770,11 +1784,13 @@ ProjectsModelModule=Projektvorlagenmodul
 TasksNumberingModules=Modul zur Numerierung von Aufgaben
 TaskModelModule=Vorlage für Arbeitsberichte
 UseSearchToSelectProject=Warte auf Tastendruck, bevor der Inhalt der Projekt-Combo-Liste geladen wird<br> Dies kann die Leistung verbessern, wenn Sie eine große Zahl von Partnern haben, verschlechtert aber die Nutzungsfreundlichkeit.
+
 ##### ECM (GED) #####
+
 ##### Fiscal Year #####
 AccountingPeriods=Buchhaltungs Perioden
 AccountingPeriodCard=Buchhaltungs Periode
-NewFiscalYear=Neues Buchhaltungsperiode
+NewFiscalYear=Neue Buchhaltungsperiode
 OpenFiscalYear=Öffne Buchhaltungsperiode
 CloseFiscalYear=Buchhaltungs Periode schliessen
 DeleteFiscalYear=Buchhaltungs Periode löschen
