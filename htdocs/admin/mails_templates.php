@@ -164,8 +164,6 @@ $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToUser'));
 if ($conf->adherent->enabled && $user->rights->adherent->lire) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToMember'));
-	$elementList['member_subscription'] = img_picto('', 'object_member', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToMemberOnSubscription'));
-	$elementList['member_resiliate'] = img_picto('', 'object_member', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToMemberOnResiliate'));
 }
 if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="paddingright"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
