@@ -20,9 +20,6 @@
 		"wiki" : "https://wiki.dolibarr.org",
 		"source" : "https://github.com/Dolibarr/dolibarr"
 	},
-	"config" : {
-		"vendor-dir" : "htdocs/includes"
-	},
 	"require" : {
 		"php" : ">=5.6.0",
 		"ext-curl" : "*",
