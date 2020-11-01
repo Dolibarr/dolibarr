@@ -310,6 +310,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model = $object->model_pdf;
+
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);

@@ -664,6 +664,7 @@ if (empty($reshook))
 						$outputlangs->load('products');
 					}
 					$model = $object->model_pdf;
+
 					$ret = $object->fetch($id); // Reload to get new records
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
