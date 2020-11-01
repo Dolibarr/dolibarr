@@ -36,7 +36,7 @@ create table llx_facturedet
   localtax1_type			 	varchar(10)	 NULL, 				 	-- localtax1 type
   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
   localtax2_type			 	varchar(10)	 NULL, 				 	-- localtax2 type
-  qty							real,								-- Quantity (exemple 2)
+  qty							real,								-- Quantity (exemple 2). Note: for credit note, the price is negative, not the quantity. Like for discount, price is negative, not quantity.
   remise_percent				real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise						real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)
   fk_remise_except				integer    NULL,					-- Lien vers table des remises fixes
