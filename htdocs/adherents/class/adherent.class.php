@@ -74,17 +74,17 @@ class Adherent extends CommonObject
 	public $login;
 
 	/**
-	 * @var Clear password in memory
+	 * @var string Clear password in memory
 	 */
 	public $pass;
 
 	/**
-	  * @var Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	  * @var string Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
 	  */
 	public $pass_indatabase;
 
 	/**
-	 * @var Encrypted password in database (always defined)
+	 * @var string Encrypted password in database (always defined)
 	 */
 	public $pass_indatabase_crypted;
 
