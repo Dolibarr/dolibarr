@@ -249,6 +249,8 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->expedition->dir_output."/sending";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;

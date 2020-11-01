@@ -275,6 +275,8 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->supplier_proposal->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;

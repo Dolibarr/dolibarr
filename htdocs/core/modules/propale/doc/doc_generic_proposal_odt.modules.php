@@ -227,7 +227,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Propale		$object				Object source to build document
+	 *	@param		Propal		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -276,6 +276,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					return -1;
 				}
 			}
+
+			$object->fetch_thirdparty();
 
 			$dir = $conf->propal->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);

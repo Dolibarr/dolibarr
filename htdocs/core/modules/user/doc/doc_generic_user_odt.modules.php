@@ -257,6 +257,8 @@ class doc_generic_user_odt extends ModelePDFUser
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->user->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;

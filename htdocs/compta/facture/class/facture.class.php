@@ -2523,7 +2523,7 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		// Check parameters
-		if ($this->type == self::TYPE_REPLACEMENT)		// si facture de remplacement
+		if ($this->type == self::TYPE_REPLACEMENT)		// if this is a replacement invoice
 		{
 			// Controle que facture source connue
 			if ($this->fk_facture_source <= 0)
@@ -2533,7 +2533,7 @@ class Facture extends CommonInvoice
 				return -10;
 			}
 
-			// Charge la facture source a remplacer
+			// Load source invoice that has been replaced
 			$facreplaced = new Facture($this->db);
 			$result = $facreplaced->fetch($this->fk_facture_source);
 			if ($result <= 0)
@@ -2543,7 +2543,7 @@ class Facture extends CommonInvoice
 				return -11;
 			}
 
-			// Controle que facture source non deja remplacee par une autre
+			// Check that source invoice not already replaced by another one.
 			$idreplacement = $facreplaced->getIdReplacingInvoice('validated');
 			if ($idreplacement && $idreplacement != $this->id)
 			{
@@ -4397,15 +4397,14 @@ class Facture extends CommonInvoice
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param  null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $langs;
 
-		$langs->load("bills");
-		$outputlangs->load("products");
+		$outputlangs->loadLangs(array("bills", "products"));
 
 		if (!dol_strlen($modele))
 		{

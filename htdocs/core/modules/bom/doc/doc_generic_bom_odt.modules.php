@@ -237,6 +237,8 @@ class doc_generic_bom_odt extends ModelePDFBom
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;

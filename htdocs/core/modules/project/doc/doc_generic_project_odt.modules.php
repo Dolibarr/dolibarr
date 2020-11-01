@@ -513,6 +513,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->projet->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;

@@ -244,6 +244,8 @@ class doc_generic_mo_odt extends ModelePDFMo
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
