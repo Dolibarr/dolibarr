@@ -293,6 +293,8 @@ $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
+$amount = array();
+
 dol_syslog("casoc", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {

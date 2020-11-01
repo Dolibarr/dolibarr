@@ -236,6 +236,9 @@ if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
 
+$amount = array();
+
+dol_syslog("cabyuser", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
