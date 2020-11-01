@@ -179,6 +179,11 @@ class Adherent extends CommonObject
 	public $phone_perso;
 
 	/**
+	 * @var string Professional Phone number
+	 */
+	public $phone_pro;
+
+	/**
 	 * @var string Mobile phone number
 	 */
 	public $phone_mobile;
