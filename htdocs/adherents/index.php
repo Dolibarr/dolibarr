@@ -284,10 +284,10 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-$sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql .= " a.gender, a.email, a.photo, a.morphy,";
-$sql .= " a.tms as datem, datefin as date_end_subscription,";
-$sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription";
+$sql .= " a.tms as datem, a.datefin as date_end_subscription,";
+$sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql .= " WHERE a.entity IN (".getEntity('adherent').")";
 $sql .= " AND a.fk_adherent_type = ta.rowid";
@@ -306,7 +306,7 @@ if ($resql) {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			print '<tr class="oddeven">';
+
 			$staticmember->id = $obj->rowid;
 			$staticmember->ref = $obj->rowid;
 			$staticmember->lastname = $obj->lastname;
@@ -315,6 +315,9 @@ if ($resql) {
 			$staticmember->email = $obj->email;
 			$staticmember->photo = $obj->photo;
 			$staticmember->morphy = $obj->morphy;
+			$staticmember->statut = $obj->status;
+			$staticmember->need_subscription = $obj->need_subscription;
+			$staticmember->datefin = $db->jdate($obj->date_end_subscription);
 			if (!empty($obj->fk_soc)) {
 				$staticmember->fk_soc = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
@@ -322,12 +325,16 @@ if ($resql) {
 			} else {
 				$staticmember->name = $obj->company;
 			}
+
 			$statictype->id = $obj->typeid;
 			$statictype->label = $obj->label;
+			$statictype->subscription = $obj->need_subscription;
+
+			print '<tr class="oddeven">';
 			print '<td class="nowraponall">'.$staticmember->getNomUrl(-1, 32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription == 'yes' ? 1 : 0), $db->jdate($obj->date_end_subscription), 3).'</td>';
+			print '<td class="right">'.$staticmember->getLibStatut(3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -344,12 +351,14 @@ if ($resql) {
  */
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-$sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql .= " a.gender, a.email, a.photo, a.morphy,";
 $sql .= " a.datefin as date_end_subscription,";
+$sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription,";
 $sql .= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.subscription";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."subscription as c";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta, ".MAIN_DB_PREFIX."subscription as c";
 $sql .= " WHERE a.entity IN (".getEntity('adherent').")";
+$sql .= " AND a.fk_adherent_type = ta.rowid";
 $sql .= " AND c.fk_adherent = a.rowid";
 $sql .= $db->order("c.tms", "DESC");
 $sql .= $db->plimit($max, 0);
@@ -366,9 +375,7 @@ if ($resql) {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			print '<tr class="oddeven">';
-			$subscriptionstatic->id = $obj->cid;
-			$subscriptionstatic->ref = $obj->cid;
+
 			$staticmember->id = $obj->rowid;
 			$staticmember->ref = $obj->rowid;
 			$staticmember->lastname = $obj->lastname;
@@ -377,6 +384,9 @@ if ($resql) {
 			$staticmember->email = $obj->email;
 			$staticmember->photo = $obj->photo;
 			$staticmember->morphy = $obj->morphy;
+			$staticmember->statut = $obj->status;
+			$staticmember->need_subscription = $obj->need_subscription;
+			$staticmember->datefin = $db->jdate($obj->date_end_subscription);
 			if (!empty($obj->fk_soc)) {
 				$staticmember->fk_soc = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
@@ -384,6 +394,11 @@ if ($resql) {
 			} else {
 				$staticmember->name = $obj->company;
 			}
+
+			$subscriptionstatic->id = $obj->cid;
+			$subscriptionstatic->ref = $obj->cid;
+
+			print '<tr class="oddeven">';
 			print '<td class="nowraponall">'.$subscriptionstatic->getNomUrl(1).'</td>';
 			print '<td class="nowraponall">'.$staticmember->getNomUrl(-1, 32, 'subscription').'</td>';
 			print '<td class="nowraponall">'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';

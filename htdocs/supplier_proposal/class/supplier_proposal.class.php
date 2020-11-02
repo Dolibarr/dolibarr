@@ -2485,15 +2485,15 @@ class SupplierProposal extends CommonObject
 		$url = '';
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierProposal").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierProposal").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_fourn)) $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_fourn;
 		if (!empty($this->total_ht)) $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_tva)) $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 		if (!empty($this->total_ttc)) $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-		if (isset($this->status)) {
-		   	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		if ($option == '') {
 			$url = DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$this->id.$get_params;

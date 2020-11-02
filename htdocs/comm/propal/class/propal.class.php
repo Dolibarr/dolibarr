@@ -3564,7 +3564,10 @@ class Propal extends CommonObject
 
 		if ($user->rights->propal->lire)
 		{
-			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Proposal").'</u>';
+			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Proposal").'</u>';
+			if (isset($this->statut)) {
+				$label .= ' '.$this->getLibStatut(5);
+			}
 			if (!empty($this->ref))
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!empty($this->ref_client))
@@ -3575,10 +3578,6 @@ class Propal extends CommonObject
 				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
 			if (!empty($this->total_ttc))
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-			if (isset($this->statut)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-			}
-
 
 			if ($option == '') {
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id.$get_params;

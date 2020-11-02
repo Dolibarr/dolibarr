@@ -1102,7 +1102,10 @@ class Project extends CommonObject
 		}
 
 		$label = '';
-		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u>'.$langs->trans("Project").'</u>';
+		if ($option != 'nolink') $label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Project").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
@@ -1118,9 +1121,6 @@ class Project extends CommonObject
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
 		if ($moreinpopup) $label .= '<br>'.$moreinpopup;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		$url = '';
 		if ($option != 'nolink')

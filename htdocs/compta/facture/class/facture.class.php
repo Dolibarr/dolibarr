@@ -1417,11 +1417,14 @@ class Facture extends CommonInvoice
 		$label = '';
 
 		if ($user->rights->facture->lire) {
-			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Invoice").'</u>';
-			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
-			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-			if ($this->type == self::TYPE_SITUATION)   $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
+			if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+			if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+			if ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+			if ($this->type == self::TYPE_SITUATION)   $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
+			if (isset($this->statut) && isset($this->alreadypaid)) {
+				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+			}
 			if (!empty($this->ref))
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			if (!empty($this->ref_client))
@@ -1439,9 +1442,6 @@ class Facture extends CommonInvoice
 			if (!empty($this->total_ttc))
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			if ($moretitle) $label .= ' - '.$moretitle;
-			if (isset($this->statut) && isset($this->alreadypaid)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);
-			}
 		}
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');

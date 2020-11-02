@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,10 +635,6 @@ class Fichinter extends CommonObject
 				$this->statut = 1;
 				$this->brouillon = 0;
 				$this->date_validation = $now;
-			}
-
-			if (!$error)
-			{
 				$this->db->commit();
 				return 1;
 			} else {
@@ -765,11 +761,11 @@ class Fichinter extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Intervention").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
 		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+			$label .= ' '.$this->getLibStatut(5);
 		}
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 
@@ -970,14 +966,13 @@ class Fichinter extends CommonObject
 			}
 		}
 
-		if (!$error)
-				{
-				$main = MAIN_DB_PREFIX.'fichinterdet';
-				$ef = $main."_extrafields";
-				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".$this->id.")";
+		if (!$error) {
+			$main = MAIN_DB_PREFIX.'fichinterdet';
+			$ef = $main."_extrafields";
+			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".$this->id.")";
 
-				$resql = $this->db->query($sql);
-				if (!$resql) $error++;
+			$resql = $this->db->query($sql);
+			if (!$resql) $error++;
 		}
 
 		if (!$error)
