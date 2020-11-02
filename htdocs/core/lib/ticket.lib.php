@@ -831,7 +831,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
  * @param int $key key
  * @return string
  */
-function getTicketTimelineIcon($actionstatic, $histo, $key)
+function getTicketTimelineIcon($actionstatic, &$histo, $key)
 {
 	global $conf, $langs;
 	$out = '<!-- timeline icon -->'."\n";
