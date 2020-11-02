@@ -8300,7 +8300,7 @@ abstract class CommonObject
 			'qty' => 123.12,
 			'note_public' => 'Public note',
 			'note_private' => 'Private note',
-			'date_creation' => (dol_now() - 3600 * 24),
+			'date_creation' => (dol_now() - 3600 * 48),
 			'date_modification' => (dol_now() - 3600 * 24),
 			'fk_user_creat' => $user->id,
 			'fk_user_modif' => $user->id,
