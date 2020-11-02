@@ -668,8 +668,8 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Other")."</td>\n";
-print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+print "<td>".$langs->trans("Parameter")."</td>\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
