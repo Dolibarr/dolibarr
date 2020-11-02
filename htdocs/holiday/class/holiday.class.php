@@ -1600,229 +1600,201 @@ class Holiday extends CommonObject
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
+		global $conf;
+
 		dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
-		if ($stringlist) {
-			$this->fetchUsersById($type, $filters);
-		} else {
-			$this->fetchUsersByDetail($type, $filters);
-		}
-	}
-
-	/**
-	 *	Get list of Users or list of vacation balance by User Id
-	 *
-	 *	@param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *	@param      string            $filters        Filters
-	 *	@return     array|string|int      			Return an array
-	 */
-	public function fetchUsersById($type = true, $filters = '')
-	{
-		global $conf;
-
-		dol_syslog(get_class($this)."::fetchUsersById", LOG_DEBUG);
-
-		if ($type)
+		if ($stringlist)
 		{
-			// If user of Dolibarr
-			$sql = "SELECT";
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " DISTINCT";
-			}
-			$sql .= " u.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+			if ($type)
 			{
-				$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-				$sql .= " WHERE ((ug.fk_user = u.rowid";
-				$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
-				$sql .= " OR u.entity = 0)"; // Show always superadmin
-			} else {
-				$sql .= " WHERE u.entity IN (".getEntity('user').")";
-			}
-			$sql .= " AND u.statut > 0";
-			if ($filters) $sql .= $filters;
-
-			$resql = $this->db->query($sql);
-
-			// Si pas d'erreur SQL
-			if ($resql) {
-				$i = 0;
-				$num = $this->db->num_rows($resql);
-				$stringlist = '';
-
-				// Boucles du listage des utilisateurs
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-
-					if ($i == 0) {
-						$stringlist .= $obj->rowid;
-					} else {
-						$stringlist .= ', '.$obj->rowid;
-					}
-
-					$i++;
+				// If user of Dolibarr
+				$sql = "SELECT";
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
 				}
-				// Retoune le tableau des utilisateurs
-				return $stringlist;
+				$sql .= " u.rowid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+				{
+					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+					$sql .= " WHERE ((ug.fk_user = u.rowid";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " OR u.entity = 0)"; // Show always superadmin
+				} else {
+					$sql .= " WHERE u.entity IN (".getEntity('user').")";
+				}
+				$sql .= " AND u.statut > 0";
+				if ($filters) $sql .= $filters;
+
+				$resql = $this->db->query($sql);
+
+				// Si pas d'erreur SQL
+				if ($resql) {
+					$i = 0;
+					$num = $this->db->num_rows($resql);
+					$stringlist = '';
+
+					// Boucles du listage des utilisateurs
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+
+						if ($i == 0) {
+							$stringlist .= $obj->rowid;
+						} else {
+							$stringlist .= ', '.$obj->rowid;
+						}
+
+						$i++;
+					}
+					// Retoune le tableau des utilisateurs
+					return $stringlist;
+				} else {
+					// Erreur SQL
+					$this->error = "Error ".$this->db->lasterror();
+					return -1;
+				}
 			} else {
-				// Erreur SQL
-				$this->error = "Error ".$this->db->lasterror();
-				return -1;
+				// We want only list of vacation balance for user ids
+				$sql = "SELECT DISTINCT cpu.fk_user";
+				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
+				$sql .= " WHERE cpu.fk_user = u.rowid";
+				if ($filters) $sql .= $filters;
+
+				$resql = $this->db->query($sql);
+
+				// Si pas d'erreur SQL
+				if ($resql) {
+					$i = 0;
+					$num = $this->db->num_rows($resql);
+					$stringlist = '';
+
+					// Boucles du listage des utilisateurs
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+
+						if ($i == 0) {
+							$stringlist .= $obj->fk_user;
+						} else {
+							$stringlist .= ', '.$obj->fk_user;
+						}
+
+						$i++;
+					}
+					// Retoune le tableau des utilisateurs
+					return $stringlist;
+				} else {
+					// Erreur SQL
+					$this->error = "Error ".$this->db->lasterror();
+					return -1;
+				}
 			}
 		} else {
-			// We want only list of vacation balance for user ids
-			$sql = "SELECT DISTINCT cpu.fk_user";
-			$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
-			$sql .= " WHERE cpu.fk_user = u.rowid";
-			if ($filters) $sql .= $filters;
+			// Si faux donc return array
+			// List for Dolibarr users
+			if ($type)
+			{
+								// If user of Dolibarr
+				$sql = "SELECT";
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$sql .= " DISTINCT";
+				}
+				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-			$resql = $this->db->query($sql);
-
-			// Si pas d'erreur SQL
-			if ($resql) {
-				$i = 0;
-				$num = $this->db->num_rows($resql);
-				$stringlist = '';
-
-				// Boucles du listage des utilisateurs
-				while ($i < $num)
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				{
-					$obj = $this->db->fetch_object($resql);
+					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+					$sql .= " WHERE ((ug.fk_user = u.rowid";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+					$sql .= " OR u.entity = 0)"; // Show always superadmin
+				} else {
+					$sql .= " WHERE u.entity IN (".getEntity('user').")";
+				}
 
-					if ($i == 0) {
-						$stringlist .= $obj->fk_user;
-					} else {
-						$stringlist .= ', '.$obj->fk_user;
+				$sql .= " AND u.statut > 0";
+				if ($filters) $sql .= $filters;
+
+				$resql = $this->db->query($sql);
+
+				// Si pas d'erreur SQL
+				if ($resql)
+				{
+					$i = 0;
+					$tab_result = $this->holiday;
+					$num = $this->db->num_rows($resql);
+
+					// Boucles du listage des utilisateurs
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+
+						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
+						$tab_result[$i]['name'] = $obj->lastname; // deprecated
+						$tab_result[$i]['lastname'] = $obj->lastname;
+						$tab_result[$i]['firstname'] = $obj->firstname;
+						$tab_result[$i]['gender'] = $obj->gender;
+						$tab_result[$i]['status'] = $obj->statut;
+						$tab_result[$i]['employee'] = $obj->employee;
+						$tab_result[$i]['photo'] = $obj->photo;
+						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
+						//$tab_result[$i]['type'] = $obj->type;
+						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+
+						$i++;
 					}
-
-					$i++;
+					// Retoune le tableau des utilisateurs
+					return $tab_result;
+				} else {
+					// Erreur SQL
+					$this->errors[] = "Error ".$this->db->lasterror();
+					return -1;
 				}
-				// Retoune le tableau des utilisateurs
-				return $stringlist;
 			} else {
-				// Erreur SQL
-				$this->error = "Error ".$this->db->lasterror();
-				return -1;
-			}
-		}
-	}
+				// List of vacation balance users
+				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
+				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
+				$sql .= " WHERE cpu.fk_user = u.rowid";
+				if ($filters) $sql .= $filters;
 
-	/**
-	 *	Get list of Users or list of vacation balance by detail
-	 *
-	 *	@param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *	@param      string            $filters        Filters
-	 *	@return     array|string|int      			Return an array
-	 */
-	public function fetchUsersByDetail($type = true, $filters = '')
-	{
-		global $conf;
+				$resql = $this->db->query($sql);
 
-		dol_syslog(get_class($this)."::fetchUsersByDetail", LOG_DEBUG);
-
-		// List for Dolibarr users
-		if ($type)
-		{
-			// If user of Dolibarr
-			$sql = "SELECT";
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " DISTINCT";
-			}
-			$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
-			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-			{
-				$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-				$sql .= " WHERE ((ug.fk_user = u.rowid";
-				$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
-				$sql .= " OR u.entity = 0)"; // Show always superadmin
-			} else {
-				$sql .= " WHERE u.entity IN (".getEntity('user').")";
-			}
-
-			$sql .= " AND u.statut > 0";
-			if ($filters) $sql .= $filters;
-
-			$resql = $this->db->query($sql);
-
-			// Si pas d'erreur SQL
-			if ($resql)
-			{
-				$i = 0;
-				$tab_result = $this->holiday;
-				$num = $this->db->num_rows($resql);
-
-				// Boucles du listage des utilisateurs
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($resql);
-
-					$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
-					$tab_result[$i]['name'] = $obj->lastname; // deprecated
-					$tab_result[$i]['lastname'] = $obj->lastname;
-					$tab_result[$i]['firstname'] = $obj->firstname;
-					$tab_result[$i]['gender'] = $obj->gender;
-					$tab_result[$i]['status'] = $obj->statut;
-					$tab_result[$i]['employee'] = $obj->employee;
-					$tab_result[$i]['photo'] = $obj->photo;
-					$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
-					//$tab_result[$i]['type'] = $obj->type;
-					//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
-
-					$i++;
-				}
-				// Retoune le tableau des utilisateurs
-				return $tab_result;
-			} else {
-				// Erreur SQL
-				$this->errors[] = "Error ".$this->db->lasterror();
-				return -1;
-			}
-		} else {
-			// List of vacation balance users
-			$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
-			$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
-			$sql .= " WHERE cpu.fk_user = u.rowid";
-			if ($filters) $sql .= $filters;
-
-			$resql = $this->db->query($sql);
-
-			// Si pas d'erreur SQL
-			if ($resql)
-			{
-				$i = 0;
-				$tab_result = $this->holiday;
-				$num = $this->db->num_rows($resql);
-
-				// Boucles du listage des utilisateurs
-				while ($i < $num)
+				// Si pas d'erreur SQL
+				if ($resql)
 				{
-					$obj = $this->db->fetch_object($resql);
+					$i = 0;
+					$tab_result = $this->holiday;
+					$num = $this->db->num_rows($resql);
 
-					$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
-					$tab_result[$i]['name'] = $obj->lastname; // deprecated
-					$tab_result[$i]['lastname'] = $obj->lastname;
-					$tab_result[$i]['firstname'] = $obj->firstname;
-					$tab_result[$i]['gender'] = $obj->gender;
-					$tab_result[$i]['status'] = $obj->statut;
-					$tab_result[$i]['employee'] = $obj->employee;
-					$tab_result[$i]['photo'] = $obj->photo;
-					$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
+					// Boucles du listage des utilisateurs
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
 
-					$tab_result[$i]['type'] = $obj->fk_type;
-					$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
+						$tab_result[$i]['name'] = $obj->lastname; // deprecated
+						$tab_result[$i]['lastname'] = $obj->lastname;
+						$tab_result[$i]['firstname'] = $obj->firstname;
+						$tab_result[$i]['gender'] = $obj->gender;
+						$tab_result[$i]['status'] = $obj->statut;
+						$tab_result[$i]['employee'] = $obj->employee;
+						$tab_result[$i]['photo'] = $obj->photo;
+						$tab_result[$i]['fk_user'] = $obj->fk_user; // rowid of manager
 
-					$i++;
+						$tab_result[$i]['type'] = $obj->fk_type;
+						$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+
+						$i++;
+					}
+					// Retoune le tableau des utilisateurs
+					return $tab_result;
+				} else {
+					// Erreur SQL
+					$this->error = "Error ".$this->db->lasterror();
+					return -1;
 				}
-				// Retoune le tableau des utilisateurs
-				return $tab_result;
-			} else {
-				// Erreur SQL
-				$this->error = "Error ".$this->db->lasterror();
-				return -1;
 			}
 		}
 	}
@@ -1833,7 +1805,7 @@ class Holiday extends CommonObject
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"
 	 *
-	 * @return  array|int       Array of user ids
+	 * @return  array       Array of user ids
 	 */
 	public function fetch_users_approver_holiday()
 	{
@@ -1964,8 +1936,7 @@ class Holiday extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql)
 		{
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error)
@@ -2036,7 +2007,7 @@ class Holiday extends CommonObject
 				return 2;
 			}
 
-			// On liste les résultats et on les ajoute dans le tableau
+			// On liste les résultats et on les ajoutent dans le tableau
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
