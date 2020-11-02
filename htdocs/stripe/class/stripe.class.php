@@ -186,9 +186,11 @@ class Stripe extends CommonObject
 
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-						$customer = \Stripe\Customer::retrieve("$tiers");
+						//$customer = \Stripe\Customer::retrieve("$tiers");
+						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'));
 					} else {
-						$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+						//$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'), array("stripe_account" => $key));
 					}
 				} catch (Exception $e)
 				{
@@ -680,7 +682,7 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe card of a company payment mode (option to create it on Stripe if not linked yet is no more available on new Stripe API)
 	 *
-	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
+	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
@@ -711,14 +713,14 @@ class Stripe extends CommonObject
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							if (!preg_match('/^pm_/', $cardref))
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
 							{
 								$card = $cu->sources->retrieve($cardref);
 							} else {
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						} else {
-							if (!preg_match('/^pm_/', $cardref))
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
 							{
 								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
 								$card = $cu->sources->retrieve($cardref);
