@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2018	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2020	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -60,6 +60,9 @@ class Adherent extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	/**
+	 * @var string picto
+	 */
 	public $picto = 'member';
 
 
@@ -70,13 +73,19 @@ class Adherent extends CommonObject
 	 */
 	public $login;
 
-	//! Clear password in memory
+	/**
+	 * @var string Clear password in memory
+	 */
 	public $pass;
 
-	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	/**
+	  * @var string Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	  */
 	public $pass_indatabase;
 
-	//! Encrypted password in database (always defined)
+	/**
+	 * @var string Encrypted password in database (always defined)
+	 */
 	public $pass_indatabase_crypted;
 
 	/**
@@ -170,6 +179,11 @@ class Adherent extends CommonObject
 	public $phone_perso;
 
 	/**
+	 * @var string Professional Phone number
+	 */
+	public $phone_pro;
+
+	/**
 	 * @var string Mobile phone number
 	 */
 	public $phone_mobile;
@@ -184,6 +198,9 @@ class Adherent extends CommonObject
 	 */
 	public $poste;
 
+	/**
+	 * @var string mor or phy
+	 */
 	public $morphy;
 
 	public $public;
@@ -191,6 +208,10 @@ class Adherent extends CommonObject
 	// -1:brouillon, 0:resilie, >=1:valide,paye
 	// def in common object
 	//public $status;
+
+	/**
+	 * @var string photo of member
+	 */
 	public $photo;
 
 	/**
@@ -209,6 +230,9 @@ class Adherent extends CommonObject
 
 	public $datevalid;
 
+	/**
+	 * @var string gender
+	 */
 	public $gender;
 
 	public $birth;
@@ -258,7 +282,11 @@ class Adherent extends CommonObject
 	 */
 	public $entity;
 
-	public $fields = array('rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+	/**
+	 * @var array fields
+	 */
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
@@ -282,7 +310,7 @@ class Adherent extends CommonObject
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'phone_mobile' => array('type' => 'varchar(30)', 'label' => 'Phone mobile', 'enabled' => 1, 'visible' => -1, 'position' => 125),
-		'birth' => array('type' => 'date', 'label' => 'DateToBirth', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => -1, 'position' => 130),
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'public' => array('type' => 'smallint(6)', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
 		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 150),
@@ -296,9 +324,10 @@ class Adherent extends CommonObject
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 195),
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500,
-			'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', -1 => 'MemberStatusResiliatedShort')),
+		'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', -1 => 'MemberStatusResiliatedShort')),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 800),
-		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805));
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805)
+	);
 
 
 	/**
@@ -407,7 +436,8 @@ class Adherent extends CommonObject
 		$infos .= $langs->transnoentities("Public").": ".yn($this->public);
 
 		// Substitutions
-		$substitutionarray = array('__ID__' => $this->id, '__MEMBER_ID__' => $this->id, '__CIVILITY__' => $this->getCivilityLabel(),
+		$substitutionarray = array(
+			'__ID__' => $this->id, '__MEMBER_ID__' => $this->id, '__CIVILITY__' => $this->getCivilityLabel(),
 			'__FIRSTNAME__' => $msgishtml ? dol_htmlentitiesbr($this->firstname) : ($this->firstname ? $this->firstname : ''),
 			'__LASTNAME__' => $msgishtml ? dol_htmlentitiesbr($this->lastname) : ($this->lastname ? $this->lastname : ''),
 			'__FULLNAME__' => $msgishtml ? dol_htmlentitiesbr($this->getFullName($langs)) : $this->getFullName($langs),
@@ -421,7 +451,9 @@ class Adherent extends CommonObject
 			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($this->pass) : ($this->pass ? $this->pass : ''),
 			'__PHONE__' => $msgishtml ? dol_htmlentitiesbr($this->phone) : ($this->phone ? $this->phone : ''),
 			'__PHONEPRO__' => $msgishtml ? dol_htmlentitiesbr($this->phone_perso) : ($this->phone_perso ? $this->phone_perso : ''),
-			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''));
+			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''),
+			'__TYPE__' => $msgishtml ? dol_htmlentitiesbr($this->type) : ($this->type ? $this->type : '')
+		);
 
 		complete_substitutions_array($substitutionarray, $langs, $this);
 
@@ -588,8 +620,7 @@ class Adherent extends CommonObject
 		$this->town = ($this->town ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(trim($this->lastname));
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(trim($this->firstname));
+		$this->setUpperOrLowerCase();
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
 
@@ -1116,7 +1147,7 @@ class Adherent extends CommonObject
 		// Remove link to third party onto any other members
 		if ($thirdpartyid > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
-			$sql .= " WHERE fk_soc = '".$thirdpartyid."'";
+			$sql .= " WHERE fk_soc = ".((int) $thirdpartyid);
 			$sql .= " AND entity = ".$conf->entity;
 			dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1319,7 +1350,7 @@ class Adherent extends CommonObject
 
 				$this->model_pdf = $obj->model_pdf;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				if ($fetch_optionals) {
 					$this->fetch_optionals();
@@ -1723,7 +1754,7 @@ class Adherent extends CommonObject
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
 				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 
-				$invoice->generateDocument($invoice->modelpdf, $outputlangs);
+				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
 		}
 
@@ -1982,7 +2013,8 @@ class Adherent extends CommonObject
 		}
 
 		$label .= '<div class="centpercent">';
-		$label .= '<u>'.$langs->trans("Member").'</u>';
+		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
 		if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->firstname) || !empty($this->lastname)) $label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
 		if (!empty($this->company)) $label .= '<br><b>'.$langs->trans('Company').':</b> '.$this->company;
@@ -2256,8 +2288,8 @@ class Adherent extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->ADHERENT_ADDON_PDF)) {
 				$modele = $conf->global->ADHERENT_ADDON_PDF;
 			}

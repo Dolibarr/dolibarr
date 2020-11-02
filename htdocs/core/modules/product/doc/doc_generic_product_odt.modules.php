@@ -44,15 +44,15 @@ class doc_generic_product_odt extends ModelePDFProduct
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
 	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 
@@ -66,7 +66,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -111,7 +111,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors", "companies"));
+		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
 
@@ -204,7 +204,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -218,7 +218,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $product, $langs, $conf, $mysoc, $hookmanager, $user;
 
 		if (empty($srctemplatepath))
@@ -289,8 +289,8 @@ class doc_generic_product_odt extends ModelePDFProduct
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-				    $format = $conf->global->MAIN_DOC_USE_TIMING;
-				    if ($format == '1') $format = '%Y%m%d%H%M%S';
+					$format = $conf->global->MAIN_DOC_USE_TIMING;
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -317,14 +317,14 @@ class doc_generic_product_odt extends ModelePDFProduct
 				$contactobject = null;
 				if (!empty($usecontact))
 				{
-                    // On peut utiliser le nom de la societe du contact
-                    if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
-                        $socobject = $object->contact;
-                    } else {
-                        $socobject = $object->thirdparty;
-                        // if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
-                        $contactobject = $object->contact;
-                    }
+					// On peut utiliser le nom de la societe du contact
+					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+						$socobject = $object->contact;
+					} else {
+						$socobject = $object->thirdparty;
+						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
 				} else {
 					$socobject = $object->thirdparty;
 				}
@@ -352,7 +352,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    				$odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->product->dir_temp,
@@ -415,7 +415,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 						}
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -460,7 +460,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e)
 					{
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -474,7 +474,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
@@ -482,7 +482,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}

@@ -31,7 +31,7 @@ $langs->loadLangs(array('admin', 'hrm'));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -118,7 +118,7 @@ if ($object->id > 0)
 	$head = establishment_prepare_head($object);
 
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
 	// Object card
 	// ------------------------------------------------------------
@@ -175,7 +175,7 @@ if ($object->id > 0)
 
 	 print '</div>';
 
-	 dol_fiche_end();
+	 print dol_get_fiche_end();
 }
 
 

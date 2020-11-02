@@ -39,7 +39,7 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -57,18 +57,18 @@ $object = new Paiement($db);
 
 if ($action == 'setnote' && $user->rights->facture->paiement)
 {
-    $db->begin();
+	$db->begin();
 
-    $object->fetch($id);
-    $result = $object->update_note(GETPOST('note', 'none'));
-    if ($result > 0)
-    {
-        $db->commit();
-        $action = '';
-    } else {
-	    setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
-    }
+	$object->fetch($id);
+	$result = $object->update_note(GETPOST('note', 'restricthtml'));
+	if ($result > 0)
+	{
+		$db->commit();
+		$action = '';
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$db->rollback();
+	}
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->paiement)
@@ -79,29 +79,29 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	$result = $object->delete();
 	if ($result > 0)
 	{
-        $db->commit();
+		$db->commit();
 
-        if ($backtopage)
-        {
-        	header("Location: ".$backtopage);
-        	exit;
-        } else {
-        	header("Location: list.php");
-        	exit;
-        }
+		if ($backtopage)
+		{
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header("Location: list.php");
+			exit;
+		}
 	} else {
-	    $langs->load("errors");
+		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->paiement)
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
-    $object->fetch($id);
-	if ($object->valide($user) > 0)
+	$object->fetch($id);
+	if ($object->validate($user) > 0)
 	{
 		$db->commit();
 
@@ -126,7 +126,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
 	} else {
-	    $langs->load("errors");
+		$langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -135,7 +135,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
-    $res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
@@ -177,19 +177,19 @@ $form = new Form($db);
 
 $head = payment_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
-// Confirmation de la suppression du paiement
+// Confirmation of payment delete
 if ($action == 'delete')
 {
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-// Confirmation de la validation du paiement
+// Confirmation of payment validation
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
 }
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -299,14 +299,14 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
  * List of invoices
  */
 
-$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
+$sql = 'SELECT f.rowid as facid, f.ref, f.type, f.total_ttc, f.paye, f.entity, f.fk_statut, pf.amount, s.nom as name, s.rowid as socid';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql .= ' WHERE pf.fk_facture = f.rowid';
 $sql .= ' AND f.fk_soc = s.rowid';
@@ -332,9 +332,9 @@ if ($resql)
 	print '<td>'.$langs->trans('Company').'</td>';
 	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) print '<td>'.$langs->trans('Entity').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
-    print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
-    print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
-    print '<td class="right">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+	print '<td class="right">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -356,7 +356,7 @@ if ($resql)
 
 			print '<tr class="oddeven">';
 
-            // Invoice
+			// Invoice
 			print '<td>';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
@@ -376,11 +376,11 @@ if ($resql)
 			// Expected to pay
 			print '<td class="right">'.price($objp->total_ttc).'</td>';
 
-            // Amount payed
-            print '<td class="right">'.price($objp->amount).'</td>';
+			// Amount payed
+			print '<td class="right">'.price($objp->amount).'</td>';
 
-            // Remain to pay
-            print '<td class="right">'.price($remaintopay).'</td>';
+			// Remain to pay
+			print '<td class="right">'.price($remaintopay).'</td>';
 
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
@@ -408,7 +408,7 @@ if ($resql)
 
 
 /*
- * Boutons Actions
+ * Actions Buttons
  */
 
 print '<div class="tabsAction">';

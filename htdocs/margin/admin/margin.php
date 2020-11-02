@@ -33,7 +33,7 @@ $langs->loadLangs(array("admin", "bills", "margins", "stocks"));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -109,7 +109,7 @@ print load_fiche_titre($langs->trans("margesSetup"), $linkback, 'title_setup');
 
 $head = marges_admin_prepare_head();
 
-dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
+print dol_get_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -159,9 +159,9 @@ if (!empty($conf->use_javascript_ajax))
 } else {
 	if (empty($conf->global->DISPLAY_MARGIN_RATES))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -197,9 +197,9 @@ if (!empty($conf->use_javascript_ajax))
 } else {
 	if (empty($conf->global->ForceBuyingPriceIfNull))
 	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td>';
@@ -249,7 +249,7 @@ print '</form>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

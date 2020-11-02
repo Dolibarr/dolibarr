@@ -85,3 +85,7 @@ ProposalCustomerSignature=承諾書、会社印、日付、署名
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
 SignedOnly=Signed only
+IdProposal=提案番号
+IdProduct=製品番号
+PrParentLine=提案親ライン
+LineBuyPriceHT=購入価格ラインの税控除後の金額

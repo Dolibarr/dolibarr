@@ -31,14 +31,14 @@ $langs->loadLangs(array("companies", "install", "users", "other"));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -192,7 +192,7 @@ if ($savehandler == 'files')
 {
 	if (count($listofsessions))
 	{
-	    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
 	}
 }
 

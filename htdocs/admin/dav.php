@@ -29,18 +29,18 @@ require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 $langs->loadLangs(array("admin", "other", "agenda"));
 
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 
 
 $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
-    'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
-    'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
+	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
 );
 
@@ -69,7 +69,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = dav_admin_prepare_head();
 
-dol_fiche_head($head, 'webdav', '', -1, 'action');
+print dol_get_fiche_head($head, 'webdav', '', -1, 'action');
 
 if ($action == 'edit')
 {
@@ -95,7 +95,7 @@ if ($action == 'edit')
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
-		    print $langs->trans("AlwaysActive");
+			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print $form->selectyesno($key, $conf->global->$key, 1);
@@ -130,7 +130,7 @@ if ($action == 'edit')
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
-		    print $langs->trans("AlwaysActive");
+			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print yn($conf->global->$key);
@@ -148,7 +148,7 @@ if ($action == 'edit')
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 /*print '<div class="center">';
 print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";

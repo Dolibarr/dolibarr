@@ -32,7 +32,7 @@ $langs->loadLangs(array('bookmarks', 'other'));
 
 // Security check
 if (!$user->rights->bookmark->lire) {
-    restrictedArea($user, 'bookmarks');
+	restrictedArea($user, 'bookmarks');
 }
 
 $id = GETPOST("id", 'int');
@@ -149,7 +149,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -177,7 +177,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
@@ -215,15 +215,15 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	}
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', '', 0);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
@@ -251,7 +251,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 		print '</span>';
 	}
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
+	if ($action == 'edit') print '<input class="flat minwidth500" name="url" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
 	else print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
 	print '</td></tr>';
 
@@ -295,7 +295,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit')
 	{
@@ -311,13 +311,13 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	// Edit
 	if ($user->rights->bookmark->creer && $action != 'edit')
 	{
-		print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?id=".$object->id."&amp;action=edit\">".$langs->trans("Edit")."</a>\n";
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
 	if ($user->rights->bookmark->supprimer && $action != 'edit')
 	{
-		print "  <a class=\"butActionDelete\" href=\"list.php?bid=".$object->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
+		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';

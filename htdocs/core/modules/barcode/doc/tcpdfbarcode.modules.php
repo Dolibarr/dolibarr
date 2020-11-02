@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // This is to includ
 class modTcpdfbarcode extends ModeleBarCode
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**

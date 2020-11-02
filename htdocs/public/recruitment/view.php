@@ -24,6 +24,7 @@
 if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
@@ -182,7 +183,6 @@ print '<!-- Form to sign -->'."\n";
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
-$width = 0;
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
@@ -197,12 +197,10 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-	$width = 150;
 } elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-	$width = 150;
 }
 // Output html code for logo
 if ($urllogo)
@@ -210,7 +208,6 @@ if ($urllogo)
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
@@ -245,14 +242,13 @@ print '<div with="100%" id="tablepublicpayment">';
 print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 $error = 0;
-$var = false;
 $found = true;
 
 print '<br>';
 
 // Label
 print $langs->trans("Label").' : ';
-print '<b>'.$object->label.'</b><br>';
+print '<b>'.dol_escape_htmltag($object->label).'</b><br>';
 
 // Date
 print  $langs->trans("DateExpected").' : ';
@@ -267,7 +263,7 @@ print '</b><br>';
 // Remuneration
 print  $langs->trans("Remuneration").' : ';
 print '<b>';
-print $object->remuneration_suggested;
+print dol_escape_htmltag($object->remuneration_suggested);
 print '</b><br>';
 
 // Contact
@@ -284,10 +280,16 @@ if (empty($emailforcontact)) {
 }
 print '<b>';
 print $tmpuser->getFullName(-1);
-print ' - '.img_picto('', 'email', 'class="paddingrightonly"').dol_print_email($emailforcontact);
+print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
 print '</b>';
 print '</b><br>';
 
+if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
+	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+}
+if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
+	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+}
 
 print '<br>';
 
@@ -295,7 +297,7 @@ print '<br>';
 
 $text = $object->description;
 print $text;
-print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
 print '</div>'."\n";
 print "\n";

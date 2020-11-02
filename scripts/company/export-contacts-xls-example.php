@@ -23,6 +23,9 @@
  * \ingroup company
  * \brief Script file to export contacts into an Excel file
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';

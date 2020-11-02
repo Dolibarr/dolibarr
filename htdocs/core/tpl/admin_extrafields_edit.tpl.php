@@ -36,6 +36,8 @@ if (empty($conf) || !is_object($conf))
 
 $langs->load("modulebuilder");
 
+$listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php<br>Product:product/class/product.class.php<br>Project:projet/class/project.class.php<br>...';
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
@@ -54,17 +56,17 @@ $langs->load("modulebuilder");
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
-    		{
-    			print 'jQuery("#value_choice").hide();';
-    		}
+			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
+			{
+				print 'jQuery("#value_choice").hide();';
+			}
 
-    		if (GETPOST('type', 'alpha') == "separate")
-    		{
+			if (GETPOST('type', 'alpha') == "separate")
+			{
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
-    			print 'jQuery("#value_choice").hide();';
-    		}
-    		?>
+				print 'jQuery("#value_choice").hide();';
+			}
+			?>
 
     		// Case of computed field
     		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
@@ -144,7 +146,7 @@ $langs->load("modulebuilder");
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
-<?php dol_fiche_head(); ?>
+<?php print dol_get_fiche_head(); ?>
 
 <table summary="listofattributes" class="border centpercent">
 
@@ -201,9 +203,9 @@ $typewecanchangeinto = array(
 	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
 	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
+	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
 if ($size <= 255 && in_array($type, array('text', 'html'))) {
@@ -212,19 +214,19 @@ if ($size <= 255 && in_array($type, array('text', 'html'))) {
 
 if (in_array($type, array_keys($typewecanchangeinto)))
 {
-    $newarray = array();
-    print '<select id="type" class="flat type" name="type">';
-    foreach ($type2label as $key => $val)
-    {
-        $selected = '';
-        if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) $selected = ' selected="selected"';
-        if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
-        else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
-    }
-    print '</select>';
+	$newarray = array();
+	print '<select id="type" class="flat type" name="type">';
+	foreach ($type2label as $key => $val)
+	{
+		$selected = '';
+		if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) $selected = ' selected="selected"';
+		if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
+		else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+	}
+	print '</select>';
 } else {
 	print $type2label[$type];
-    print '<input type="hidden" name="type" id="type" value="'.$type.'">';
+	print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
 ?>
 </td></tr>
@@ -245,7 +247,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
     <span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
     <span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue2')?></span>
     <span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
-    <span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"), 1, 0, '', 0, 2, 'helpvalue4')?></span>
+    <span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
     <span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
     <span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>
     </td></tr>
@@ -296,7 +298,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 <?php } ?>
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>

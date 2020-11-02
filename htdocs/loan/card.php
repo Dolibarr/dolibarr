@@ -52,6 +52,8 @@ $object = new Loan($db);
 
 $hookmanager->initHooks(array('loancard', 'globalcard'));
 
+$error = 0;
+
 
 /*
  * Actions
@@ -62,7 +64,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	// Classify paid
-	if ($action == 'confirm_paid' && $confirm == 'yes')
+	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->loan->write)
 	{
 		$object->fetch($id);
 		$result = $object->set_paid($user);
@@ -75,7 +77,7 @@ if (empty($reshook))
 	}
 
 	// Delete loan
-	if ($action == 'confirm_delete' && $confirm == 'yes')
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->write)
 	{
 		$object->fetch($id);
 		$result = $object->delete($user);
@@ -129,8 +131,8 @@ if (empty($reshook))
 				$object->dateend				= $dateend;
 				$object->nbterm					= GETPOST('nbterm');
 				$object->rate = $rate;
-				$object->note_private = GETPOST('note_private', 'none');
-				$object->note_public = GETPOST('note_public', 'none');
+				$object->note_private = GETPOST('note_private', 'restricthtml');
+				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->insurance_amount = GETPOST('insurance_amount', 'int');
 
@@ -146,12 +148,12 @@ if (empty($reshook))
 				if ($id <= 0)
 				{
 					$error++;
-					setEventMessages($object->db->lastqueryerror, $object->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'create';
 				}
 			}
 		} else {
-			header("Location: index.php");
+			header("Location: list.php");
 			exit();
 		}
 	}
@@ -177,7 +179,7 @@ if (empty($reshook))
 				$object->capital	        = $capital;
 				$object->nbterm		        = GETPOST("nbterm", 'int');
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
-                $object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
+				$object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -250,7 +252,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -365,7 +367,7 @@ if ($action == 'create')
 	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -409,7 +411,7 @@ if ($id > 0)
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
 
 		// Loan card
 
@@ -476,11 +478,11 @@ if ($id > 0)
 		// Insurance
 		if ($action == 'edit')
 		{
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
-		    print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
-		    print '</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
+			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
+			print '</td></tr>';
 		} else {
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Date start
@@ -714,7 +716,7 @@ if ($id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action == 'edit')
 		{
@@ -752,13 +754,13 @@ if ($id > 0)
 				// Classify 'paid'
 				if (($object->paid == 0 || $object->paid == 2) && round($staytopay) <= 0 && $user->rights->loan->write)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid&amp;token='.newToken().'">'.$langs->trans("ClassifyPaid").'</a></div>';
 				}
 
 				// Delete
 				if (($object->paid == 0 || $object->paid == 2) && $user->rights->loan->delete)
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 				}
 
 				print "</div>";

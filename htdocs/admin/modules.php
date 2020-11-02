@@ -28,6 +28,8 @@
  *  \brief      Page to activate/disable all modules
  */
 
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -40,7 +42,7 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
 $mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common');
 if (empty($mode)) $mode = 'common';
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 //var_dump($_POST);exit;
 $value = GETPOST('value', 'alpha');
 $page_y = GETPOST('page_y', 'int');
@@ -279,7 +281,7 @@ if ($action == 'set' && $user->admin)
 
 $form = new Form($db);
 
-//$morejs  = array("/admin/dolistore/js/dolistore.js.php");
+$morejs = array();
 $morecss = array("/admin/dolistore/css/dolistore.css");
 
 // Set dir where external modules are installed
@@ -400,9 +402,9 @@ foreach ($modulesdir as $dir)
 										$arrayofwarningsext[$modName] = $objMod->warnings_activation_ext;
 									}
 
-									$familyposition = $familyinfo[$familykey]['position'];
+									$familyposition = (empty($familyinfo[$familykey]['position']) ? 0 : $familyinfo[$familykey]['position']);
 									$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
-									if ($external && ! in_array($familykey, $listOfOfficialModuleGroups))
+									if ($external && !in_array($familykey, $listOfOfficialModuleGroups))
 									{
 										// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
 										if (is_numeric($familyposition)) {
@@ -494,7 +496,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$newmode = $mode;
 	if ($newmode == 'common') $newmode = 'commonkanban';
 
-	dol_fiche_head($head, $newmode, '', -1);
+	print dol_get_fiche_head($head, $newmode, '', -1);
 
 	$moreforfilter = '<div class="valignmiddle">';
 
@@ -662,9 +664,9 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		// Version (with picto warning or not)
 		$version = $objMod->getVersion(0);
 		$versiontrans = '';
-		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), 'style="float: left"');
-		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), 'style="float: left"');
-		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), 'style="float: left"');
+		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), '', 'floatleft paddingright');
+		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), '', 'floatleft paddingright');
+		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), '', 'floatleft paddingright');
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
 		}
@@ -701,11 +703,11 @@ if ($mode == 'common' || $mode == 'commonkanban')
 				if (!empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
 			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				} else {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				}
@@ -797,7 +799,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 					}
 				}
 				$codeenabledisable .= '<!-- Message to show: '.$warningmessage.' -->'."\n";
-				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=set&amp;value='.$modName.'&amp;mode='.$mode.$param.'"';
 				if ($warningmessage) $codeenabledisable .= ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 				$codeenabledisable .= '>';
 				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -881,7 +883,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		}
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -893,7 +895,7 @@ if ($mode == 'common' || $mode == 'commonkanban')
 
 if ($mode == 'marketplace')
 {
-	dol_fiche_head($head, $mode, '', -1);
+	print dol_get_fiche_head($head, $mode, '', -1);
 
 	// Marketplace
 	print '<div class="div-table-responsive-no-min">';
@@ -914,7 +916,7 @@ if ($mode == 'marketplace')
 	print "</table>\n";
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -978,7 +980,7 @@ if ($mode == 'marketplace')
 
 if ($mode == 'deploy')
 {
-	dol_fiche_head($head, $mode, '', -1);
+	print dol_get_fiche_head($head, $mode, '', -1);
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
@@ -1134,12 +1136,12 @@ if ($mode == 'deploy')
 		}
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 if ($mode == 'develop')
 {
-	dol_fiche_head($head, $mode, '', -1);
+	print dol_get_fiche_head($head, $mode, '', -1);
 
 	// Marketplace
 	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
@@ -1151,8 +1153,6 @@ if ($mode == 'develop')
 
 	print '<tr class="oddeven" height="80">'."\n";
 	print '<td class="left">';
-	//span class="fa fa-bug"></span>
-	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
@@ -1170,7 +1170,7 @@ if ($mode == 'develop')
 
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

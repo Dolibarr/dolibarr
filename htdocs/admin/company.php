@@ -88,9 +88,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
 
-    $db->begin();
+	$db->begin();
 
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -100,7 +100,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL", GETPOST("mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB", GETPOST("web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note", 'none'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD", GETPOST("barcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	$dirforimage = $conf->mycompany->dir_output.'/logos/';
@@ -109,7 +109,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	foreach ($arrayofimages as $varforimage)
 	{
-		if ($_FILES[$varforimage]["name"] && ! preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
@@ -141,8 +141,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 						// Create thumbs of logo (Note that PDF use original file and not thumbs)
 						if ($isimage > 0)
 						{
-						    // Create thumbs
-						    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+							// Create thumbs
+							//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 							// Create small thumb, Used on logon for example
 							$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
@@ -269,8 +269,8 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumb
 
 			$reg = array();
 
-		    // Create thumbs
-			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+			// Create thumbs
+			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 			// Create small thumb. Used on logon for example
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $quality);
@@ -373,7 +373,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
@@ -400,7 +400,7 @@ print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans(
 
 // Name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM ? $conf->global->MAIN_INFO_SOCIETE_NOM : GETPOST("nom", 'nohtml')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM ? $conf->global->MAIN_INFO_SOCIETE_NOM : GETPOST("nom", 'nohtml')).'"'.(empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
@@ -472,22 +472,22 @@ print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->
 print '<div class="centpertent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
 print '</div>';
-if (!empty($mysoc->logo_mini)) {
-	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
+if (!empty($mysoc->logo_small)) {
+	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 60px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo).'">';
 		print '</div>';
 		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	} else {
 		print '<div class="inline-block valignmiddle">';
-		print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 		print '</div>';
 	}
 }
@@ -499,23 +499,23 @@ print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto
 print '<div class="centpertent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
 print '</div>';
-if (!empty($mysoc->logo_squarred_mini)) {
-	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+if (!empty($mysoc->logo_squarred_small)) {
+	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {
 		print '<div class="inline-block valignmiddle marginrightonly">';
-		print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
 		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo_squarred)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 60px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
 		print '</div>';
 		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	}
 	else {
 		print '<div class="inline-block valignmiddle">';
-		print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 		print '</div>';
 	}
 }
@@ -524,7 +524,7 @@ print '</td></tr>';
 
 // Note
 print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note', 'none') ? GETPOST('note', 'none') : $conf->global->MAIN_INFO_SOCIETE_NOTE).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $conf->global->MAIN_INFO_SOCIETE_NOTE).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
@@ -558,17 +558,17 @@ $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth200" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MANAGERS).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
-print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_GDPR).'"></td></tr>';
+print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth500" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_GDPR).'"></td></tr>';
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-print '<input name="capital" id="capital" class="minwidth100" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL).'"></td></tr>';
+print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag($conf->global->MAIN_INFO_CAPITAL).'"></td></tr>';
 
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
@@ -777,8 +777,8 @@ if ($mysoc->useLocalTax(2))
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2))
 	{
-	    print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-	    $formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
+		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
+		$formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 	}
 	print '<br><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
 	print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);

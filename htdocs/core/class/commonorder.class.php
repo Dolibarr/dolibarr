@@ -23,13 +23,14 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *      Superclass for orders classes
  */
 abstract class CommonOrder extends CommonObject
 {
-
+	use CommonIncoterm;
 }
 
 /**
@@ -37,6 +38,12 @@ abstract class CommonOrder extends CommonObject
  */
 abstract class CommonOrderLine extends CommonObjectLine
 {
+	/**
+	 * Custom label of line. Not used by default.
+	 * @deprecated
+	 */
+	public $label;
+
 	/**
 	 * Product ref
 	 * @var string
@@ -46,18 +53,18 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
 	 * @see $product_label
 	 */
 	public $libelle;
+
+	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
 
 	/**
 	 * Product label
@@ -82,7 +89,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * @deprecated
 	 * @see $subprice
 	 */
-    public $price;
+	public $price;
 
 	/**
 	 * Unit price before taxes

@@ -79,7 +79,7 @@ if ($id > 0 || !empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, 'notes', $langs->trans('Project'), -1, ($object->public ? 'projectpub' : 'project'));
 
 
 	// Project card
@@ -92,15 +92,15 @@ if ($id > 0 || !empty($ref))
 	// Thirdparty
 	if ($object->thirdparty->id > 0)
 	{
-	    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->rights->projet->all->lire)
 	{
-	    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	    $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -116,7 +116,7 @@ if ($id > 0 || !empty($ref))
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

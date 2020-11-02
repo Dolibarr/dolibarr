@@ -37,7 +37,7 @@ $langs->loadLangs(array("admin", "resource"));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans('ResourceSetup'), $linkback, 'title_setup')
 
 $head = resource_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("ResourceSingular"), -1, 'action');
+print dol_get_fiche_head($head, 'general', $langs->trans("ResourceSingular"), -1, 'action');
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -142,7 +142,7 @@ print '</form>';
 //RESOURCE_HIDE_ADD_CONTACT_USER
 //RESOURCE_HIDE_ADD_CONTACT_THIPARTY
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

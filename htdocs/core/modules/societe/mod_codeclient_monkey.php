@@ -46,9 +46,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -81,7 +81,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param	Translate	$langs	Object langs
 	 *  @return string      		Description of module
@@ -118,22 +118,22 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		global $db, $conf, $mc;
 
 		$field = '';
-        $prefix = '';
+		$prefix = '';
 		if ($type == 0) {
 			$field = 'code_client';
-            $prefix = $this->prefixcustomer;
+			$prefix = $this->prefixcustomer;
 		} elseif ($type == 1) {
 			$field = 'code_fournisseur';
-            $prefix = $this->prefixsupplier;
+			$prefix = $this->prefixsupplier;
 		} else {
-            return -1;
-        }
+			return -1;
+		}
 
-        // First, we get the max value (reponse immediate car champ indexe)
-        $posindice = strlen($prefix) + 6;
-        $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		// First, we get the max value (reponse immediate car champ indexe)
+		$posindice = strlen($prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE ".$field." LIKE '".$prefix."____-%'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -210,7 +210,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -222,12 +222,12 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$code."'";
-		else $sql .= " WHERE code_client = '".$code."'";
+		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
 
@@ -247,7 +247,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi si un code respecte la syntaxe
 	 *
@@ -256,7 +256,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function verif_syntax($code)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$res = 0;
 
 		if (dol_strlen($code) < 11)

@@ -50,7 +50,7 @@ $langs->loadLangs(array("admin", "mymodule@mymodule"));
 if (!$user->admin) accessforbidden();
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
@@ -193,7 +193,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@my
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
@@ -252,7 +252,7 @@ if ($action == 'edit')
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
@@ -321,7 +321,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								{
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&object='.strtolower($myTmpObjectKey).'&value='.$file.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
 									print img_picto($langs->trans("Disabled"), 'switch_off');
 									print '</a>';
 								}
@@ -374,7 +374,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		$def = array();
 		$sql = "SELECT nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-		$sql .= " WHERE type = '".$type."'";
+		$sql .= " WHERE type = '".$db->escape($type)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql)
@@ -451,13 +451,13 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if (in_array($name, $def))
 										{
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
 											print img_picto($langs->trans("Enabled"), 'switch_on');
 											print '</a>';
 											print '</td>';
 										} else {
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 											print "</td>";
 										}
 
@@ -468,7 +468,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										{
 											print img_picto($langs->trans("Default"), 'on');
 										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
 
@@ -518,7 +518,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

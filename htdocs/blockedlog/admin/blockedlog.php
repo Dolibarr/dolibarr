@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog"));
 
 if (!$user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 
@@ -89,7 +89,7 @@ print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLo
 if (GETPOST('withtab', 'alpha'))
 {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'blockedlog', '', -1);
+	print dol_get_fiche_head($head, 'blockedlog', '', -1);
 }
 
 
@@ -170,7 +170,7 @@ print '</table>';
 
 if (GETPOST('withtab', 'alpha'))
 {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br><br>';

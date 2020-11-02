@@ -114,16 +114,29 @@ if (!function_exists("session_id"))
 }
 
 print '</td></tr>';
+
 print '<tr><td>UTF-8 support</td><td>';
 
 if (!function_exists("utf8_encode"))
 {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
 }
 
 print '</td></tr>';
+
+print '<tr><td>MBString support</td><td>';
+
+if (!function_exists("mb_check_encoding"))
+{
+	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "mbstring");
+} else {
+	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "mbstring");
+}
+
+print '</td></tr>';
+
 print '</table>';
 
 print '<br>';
@@ -252,13 +265,18 @@ $db->close();
  */
 function getActivatedExtensions()
 {
-	$file    = getConfigFilePath();
-	$handle  = fopen(GetConfigFilePath(), "r");
+	$file    = trim(getConfigFilePath());
+	$handle  = fopen($file, "r");
 	$content = fread($handle, filesize($file));
 
 	fclose($handle);
 
 	$configLines = explode("\r", $content);
+
+	// For compatibility with LF (Line Feed)
+	if (empty($configLines) || count($configLines) < 2) {
+		$configLines = explode("\n", $content);
+	}
 
 	$extensions = array();
 	$lastLine = "";
@@ -268,10 +286,12 @@ function getActivatedExtensions()
 		$line = trim($line);
 
 		// ignore comment lines
-		if (substr($line, 0, 1) === ";")
+		if (substr($line, 0, 1) === ";" || empty($line))
 		{
 			continue;
 		}
+
+		// var_dump($line);
 
 		// extension
 		if (substr($line, 0, 9) === "extension" && substr($line, 0, 10) !== "extension_")
@@ -408,5 +428,5 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	$html .= $result ? $langs->trans("PHPSupport".$name) : $langs->trans("ErrorPHPDoesNotSupport".$name);
 	$html .= "</td>";
 
-    return $html;
+	return $html;
 }

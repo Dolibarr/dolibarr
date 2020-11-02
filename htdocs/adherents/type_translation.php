@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 $langs->loadLangs(array('members', 'languages'));
 
 $id = GETPOST('rowid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
@@ -154,19 +154,19 @@ $titre = $langs->trans("MemberType".$object->type);
 // Calculate $cnt_trans
 $cnt_trans = 0;
 if (!empty($object->multilangs)) {
-    foreach ($object->multilangs as $key => $value) {
-        $cnt_trans++;
-    }
+	foreach ($object->multilangs as $key => $value) {
+		$cnt_trans++;
+	}
 }
 
 
-dol_fiche_head($head, 'translation', $titre, 0, 'group');
+print dol_get_fiche_head($head, 'translation', $titre, 0, 'group');
 
 $linkback = '<a href="'.dol_buildpath('/adherents/type.php', 1).'">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'rowid', $linkback);
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -179,10 +179,10 @@ dol_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-    if ($user->rights->produit->creer || $user->rights->service->creer) {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
-        if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
-    }
+	if ($user->rights->produit->creer || $user->rights->service->creer) {
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+		if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+	}
 }
 
 print "\n</div>\n";
@@ -201,7 +201,7 @@ if ($action == 'edit') {
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
-			print "<br>".($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+			print '<br>'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
@@ -228,7 +228,7 @@ if ($action == 'edit') {
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
-			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
@@ -258,11 +258,11 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="rowid" value="'.GETPOST("rowid", 'int').'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
-    print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
+	print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
@@ -272,7 +272,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

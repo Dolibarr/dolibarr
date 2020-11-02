@@ -72,7 +72,6 @@ Deleted=Smazáno
 
 # Dict
 Type=Typ
-Category=Analytický kód
 Severity=Vážnost
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Automaticky přiřadit uživateli, který vytvořil lís
 TicketsAutoAssignTicketHelp=Při tvorbě vstupenky může být uživateli automaticky přiřazen lístek.
 TicketNumberingModules=Modul číslování vstupenek
 TicketNotifyTiersAtCreation=Upozornit subjekt na vytvoření
-TicketGroup=Skupina
 TicketsDisableCustomerEmail=Pokud je lístek vytvořen z veřejného rozhraní, vždy zakažte e-maily
 TicketsPublicNotificationNewMessage=Po přidání nové zprávy odešlete e-mail(y)
 TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
@@ -162,7 +160,7 @@ CreatedBy=Vytvořil
 NewTicket=Nová vstupenka
 SubjectAnswerToTicket=Odpověď na lístek
 TicketTypeRequest=Typ požadavku
-TicketCategory=Analytický kód
+TicketCategory=Skupina
 SeeTicket=Viz lístek
 TicketMarkedAsRead=Lístek byl označen jako přečtený
 TicketReadOn=Číst dál

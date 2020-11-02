@@ -35,3 +35,4 @@ TTC=Incl GST
 VAT=GST
 VATRate=GST Rate
 Check=Cheque
+CREATEInDolibarr=Record %s create

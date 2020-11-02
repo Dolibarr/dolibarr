@@ -108,7 +108,7 @@ if ($permission)
 		<?php
 		$tmpobject = $object;
 		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
-		echo $formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
+		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
@@ -117,8 +117,7 @@ if ($permission)
 	    <?php
 	}
 
-	if (empty($hideaddcontactforthirdparty))
-	{
+	if (empty($hideaddcontactforthirdparty)) {
 		?>
 
 	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
@@ -298,9 +297,9 @@ foreach ($list as $entry)
 	if ($permission)
 	{
 		$href = $_SERVER["PHP_SELF"];
-		$href .= "?id=".$object->id;
-		$href .= "&action=deletecontact";
-		$href .= "&lineid=".$entry->id;
+		$href .= '?id='.$object->id;
+		$href .= '&action=deletecontact&token='.newToken();
+		$href .= '&lineid='.$entry->id;
 
 		print "<td class='center'>";
 		print "<a href='$href'>";

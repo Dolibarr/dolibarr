@@ -104,10 +104,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $nav = '';
 if ($mode != 'sconly')
 {
-    $nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
+	$nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
 } else {
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 0);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 0);
 }
 
 if ($year) $param .= '&year='.$year;
@@ -135,7 +135,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-    if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
@@ -200,27 +200,27 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
-	        // Type payment
-    	    print '<td>';
-    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-    	    print $obj->num_payment.'</td>';
+			// Type payment
+			print '<td>';
+			if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+			print $obj->num_payment.'</td>';
 			// Account
-	    	if (!empty($conf->banque->enabled))
-		    {
-		        print '<td>';
-		        if ($obj->fk_bank > 0)
-		        {
-		        	//$accountstatic->fetch($obj->fk_bank);
-		            $accountstatic->id = $obj->bid;
-		            $accountstatic->ref = $obj->bref;
-		            $accountstatic->number = $obj->bnumber;
-		            $accountstatic->accountancy_number = $obj->account_number;
-		            $accountstatic->accountancy_journal = $obj->accountancy_journal;
-		            $accountstatic->label = $obj->blabel;
-		            print $accountstatic->getNomUrl(1);
-		        } else print '&nbsp;';
-		        print '</td>';
-		    }
+			if (!empty($conf->banque->enabled))
+			{
+				print '<td>';
+				if ($obj->fk_bank > 0)
+				{
+					//$accountstatic->fetch($obj->fk_bank);
+					$accountstatic->id = $obj->bid;
+					$accountstatic->ref = $obj->bref;
+					$accountstatic->number = $obj->bnumber;
+					$accountstatic->accountancy_number = $obj->account_number;
+					$accountstatic->accountancy_journal = $obj->accountancy_journal;
+					$accountstatic->label = $obj->blabel;
+					print $accountstatic->getNomUrl(1);
+				} else print '&nbsp;';
+				print '</td>';
+			}
 			// Paid
 			print '<td class="right">';
 			if ($obj->totalpaye) print price($obj->totalpaye);
@@ -232,13 +232,13 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$totalpaye = $totalpaye + $obj->totalpaye;
 			$i++;
 		}
-	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-	    print '<td class="liste_total right"></td>'; // A total here has no sense
-	    print '<td align="center" class="liste_total">&nbsp;</td>';
-	    print '<td align="center" class="liste_total">&nbsp;</td>';
-	    print '<td align="center" class="liste_total">&nbsp;</td>';
-        if (!empty($conf->banque->enabled)) print '<td></td>';
-	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
+		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td class="liste_total right"></td>'; // A total here has no sense
+		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td align="center" class="liste_total">&nbsp;</td>';
+		if (!empty($conf->banque->enabled)) print '<td></td>';
+		print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
 	} else {
 		dol_print_error($db);
@@ -276,11 +276,11 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$result = $db->query($sql);
 		if ($result)
 		{
-		    $num = $db->num_rows($result);
-		    $i = 0;
-		    $total = 0;
-		    print '<table class="noborder centpercent">';
-		    print '<tr class="liste_titre">';
+			$num = $db->num_rows($result);
+			$i = 0;
+			$total = 0;
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
 			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
 			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
 			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -289,72 +289,72 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 			if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-		    print "</tr>\n";
-		    $var = 1;
-		    while ($i < $num)
-		    {
-		        $obj = $db->fetch_object($result);
+			print "</tr>\n";
+			$var = 1;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
 
-		        $total = $total + $obj->amount;
+				$total = $total + $obj->amount;
 
 
-		        print '<tr class="oddeven">';
-		        print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
+				print '<tr class="oddeven">';
+				print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
 
-		        print "<td>".$obj->label."</td>\n";
+				print "<td>".$obj->label."</td>\n";
 
-		        print '<td class="right">'.price($obj->amount)."</td>";
+				print '<td class="right">'.price($obj->amount)."</td>";
 
-		        // Ref payment
+				// Ref payment
 				$tva_static->id = $obj->rowid;
 				$tva_static->ref = $obj->rowid;
-		        print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
+				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
 
-		        // Date
-		        print '<td class="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
+				// Date
+				print '<td class="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
 
-		        // Type payment
-	    	    print '<td>';
-	    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-	    	    print $obj->num_payment.'</td>';
+				// Type payment
+				print '<td>';
+				if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				print $obj->num_payment.'</td>';
 
-		    	// Account
-		    	if (!empty($conf->banque->enabled))
-			    {
-			        print '<td>';
-			        if ($obj->fk_bank > 0)
-			        {
-			        	//$accountstatic->fetch($obj->fk_bank);
-			            $accountstatic->id = $obj->bid;
-			            $accountstatic->ref = $obj->bref;
-			            $accountstatic->number = $obj->bnumber;
-			            $accountstatic->accountancy_number = $obj->account_number;
-			            $accountstatic->accountancy_journal = $obj->accountancy_journal;
-			            $accountstatic->label = $obj->blabel;
-			            print $accountstatic->getNomUrl(1);
-			        } else print '&nbsp;';
-			        print '</td>';
-			    }
+				// Account
+				if (!empty($conf->banque->enabled))
+				{
+					print '<td>';
+					if ($obj->fk_bank > 0)
+					{
+						//$accountstatic->fetch($obj->fk_bank);
+						$accountstatic->id = $obj->bid;
+						$accountstatic->ref = $obj->bref;
+						$accountstatic->number = $obj->bnumber;
+						$accountstatic->accountancy_number = $obj->account_number;
+						$accountstatic->accountancy_journal = $obj->accountancy_journal;
+						$accountstatic->label = $obj->blabel;
+						print $accountstatic->getNomUrl(1);
+					} else print '&nbsp;';
+					print '</td>';
+				}
 
-	    	    // Paid
-		    	print '<td class="right">'.price($obj->amount)."</td>";
-		        print "</tr>\n";
+				// Paid
+				print '<td class="right">'.price($obj->amount)."</td>";
+				print "</tr>\n";
 
-		        $i++;
-		    }
-		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-		    print '<td class="right">'.price($total).'</td>';
-		    print '<td>&nbsp;</td>';
-		    print '<td>&nbsp;</td>';
-		    print '<td>&nbsp;</td>';
-		    print '<td>&nbsp;</td>';
-		    print '<td class="right">'.price($total)."</td>";
-		    print "</tr>";
+				$i++;
+			}
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
+			print '<td class="right">'.price($total).'</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td class="right">'.price($total)."</td>";
+			print "</tr>";
 
-		    print "</table>";
-		    $db->free($result);
+			print "</table>";
+			$db->free($result);
 		} else {
-		    dol_print_error($db);
+			dol_print_error($db);
 		}
 	}
 }

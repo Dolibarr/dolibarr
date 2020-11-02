@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "recruitment"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -50,15 +50,15 @@ if ($action == 'setRECRUITMENT_ENABLE_PUBLIC_INTERFACE') {
 if ($action == 'update') {
 	$public = GETPOST('RECRUITMENT_ENABLE_PUBLIC_INTERFACE');
 
-    $res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
 
-    if (!$res > 0) $error++;
+	if (!$res > 0) $error++;
 
  	if (!$error) {
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -84,7 +84,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'publicurl', '', -1, '');
+print dol_get_fiche_head($head, 'publicurl', '', -1, '');
 
 
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDesc").'</span><br><br>';
@@ -93,12 +93,12 @@ print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDe
 $enabledisablehtml = $langs->trans("EnablePublicRecruitmentPages").' ';
 if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setRECRUITMENT_ENABLE_PUBLIC_INTERFACE&value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setRECRUITMENT_ENABLE_PUBLIC_INTERFACE&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
 } else {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setRECRUITMENT_ENABLE_PUBLIC_INTERFACE&value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setRECRUITMENT_ENABLE_PUBLIC_INTERFACE&token='.newToken().'&value=0'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
@@ -165,7 +165,7 @@ if (!empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {
 }
 */
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

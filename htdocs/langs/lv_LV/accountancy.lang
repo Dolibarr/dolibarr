@@ -111,7 +111,7 @@ CreateMvts=Izveidot jaunu darījumu
 UpdateMvts=Darījuma grozīšana
 ValidTransaction=Apstipriniet darījumu
 WriteBookKeeping=Reģistrēt darījumus Ledger
-Bookkeeping=Ledger
+Bookkeeping=Grāmatvedis
 AccountBalance=Konta bilance
 ObjectsRef=Avota objekta ref
 CAHTF=Kopējais pirkuma pārdevējs pirms nodokļu nomaksas
@@ -149,11 +149,12 @@ ACCOUNTING_MANAGE_ZERO=Atļaujiet pārvaldīt atšķirīgu skaitu nulles grāmat
 BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kontā
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
 ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu papildu kontam (var būt lēni, ja jums ir daudz trešo personu)
+ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
 
 ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls
 ACCOUNTING_PURCHASE_JOURNAL=Pirkuma žurnāls
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Dažādi žurnāli
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Izdevumu atskaites žurnāls
 ACCOUNTING_SOCIAL_JOURNAL=Sociālais žurnāls
 ACCOUNTING_HAS_NEW_JOURNAL=Vai jauns Vēstnesis?
 
@@ -284,6 +285,7 @@ ShowTutorial=Rādīt apmācību
 NotReconciled=Nesaskaņots
 
 ## Admin
+BindingOptions=Iesiešanas iespējas
 ApplyMassCategories=Pielietot masu sadaļas
 AddAccountFromBookKeepingWithNoCategories=Pieejamais konts vēl nav personalizētajā grupā
 CategoryDeleted=Grāmatvedības konta kategorija ir noņemta
@@ -307,7 +309,7 @@ NumberOfAccountancyMovements=Pārvietošanas skaits
 ## Export
 ExportDraftJournal=Eksporta žurnāla projekts
 Modelcsv=Eksporta modulis
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Atlasiet eksporta modeli
 Modelcsv_normal=Klasiskais eksports
 Modelcsv_CEGID=Eksports uz CEGID ekspertu kompāniju
 Modelcsv_COALA=Eksportēt Sage Coala

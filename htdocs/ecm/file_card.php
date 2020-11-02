@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
@@ -43,8 +44,8 @@ $socid = GETPOST("socid", "int");
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -61,14 +62,14 @@ if (!$sortfield) $sortfield = "label";
 $section = GETPOST("section", 'alpha');
 if (!$section)
 {
-    dol_print_error('', 'Error, section parameter missing');
-    exit;
+	dol_print_error('', 'Error, section parameter missing');
+	exit;
 }
 $urlfile = GETPOST("urlfile");
 if (!$urlfile)
 {
-    dol_print_error('', "ErrorParamNotDefined");
-    exit;
+	dol_print_error('', "ErrorParamNotDefined");
+	exit;
 }
 
 // Load ecm object
@@ -76,8 +77,8 @@ $ecmdir = new EcmDirectory($db);
 $result = $ecmdir->fetch(GETPOST("section", 'alpha'));
 if (!$result > 0)
 {
-    dol_print_error($db, $ecmdir->error);
-    exit;
+	dol_print_error($db, $ecmdir->error);
+	exit;
 }
 $relativepath = $ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
@@ -94,6 +95,10 @@ $filepathtodocument = $relativetodocument.$file->label;
 
 // Try to load object from index
 $object = new ECMFiles($db);
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $result = $object->fetch(0, '', $filepathtodocument);
 if ($result < 0)
 {
@@ -109,26 +114,26 @@ if ($result < 0)
 
 if ($cancel)
 {
-    $action = '';
-    if ($backtopage)
-    {
-        header("Location: ".$backtopage);
-        exit;
-    } else {
-    	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
-        exit;
-    }
+	$action = '';
+	if ($backtopage)
+	{
+		header("Location: ".$backtopage);
+		exit;
+	} else {
+		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
+		exit;
+	}
 }
 
 // Rename file
 if ($action == 'update')
 {
-    $error = 0;
+	$error = 0;
 
-    $oldlabel = GETPOST('urlfile', 'alpha');
-    $newlabel = GETPOST('label', 'alpha');
+	$oldlabel = GETPOST('urlfile', 'alpha');
+	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'));
 	$shareenabled = GETPOST('shareenabled', 'alpha');
-
+  
     //$db->begin();
 
     $olddir = $ecmdir->getRelativePath(0); // Relative to ecm
@@ -178,6 +183,16 @@ if ($action == 'update')
 
 		if ($object->id > 0)
 		{
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) $error++;
+			if (!$error) {
+				// Actions on extra fields
+				$result = $object->insertExtraFields();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+			}
 			// Call update to set the share key
 			$result = $object->update($user);
 			if ($result < 0)
@@ -200,23 +215,23 @@ if ($action == 'update')
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}
 		}
-    }
+	}
 
-    if (!$error)
-    {
-        $db->commit();
+	if (!$error)
+	{
+		$db->commit();
 
-        $urlfile = $newlabel;
-        // If old file end with .noexe, new file must also end with .noexe
-        if (preg_match('/\.noexe$/', $newfileformove)) {
-        	$urlfile .= '.noexe';
-        }
+		$urlfile = $newlabel;
+		// If old file end with .noexe, new file must also end with .noexe
+		if (preg_match('/\.noexe$/', $newfileformove)) {
+			$urlfile .= '.noexe';
+		}
 
-        header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
-        exit;
-    } else {
-        $db->rollback();
-    }
+		header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+		exit;
+	} else {
+		$db->rollback();
+	}
 }
 
 
@@ -242,7 +257,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 }
 
-dol_fiche_head($head, 'card', $langs->trans("File"), -1, 'generic');
+print dol_get_fiche_head($head, 'card', $langs->trans("File"), -1, 'generic');
 
 
 $s = '';
@@ -281,7 +296,7 @@ dol_banner_tab($object, '', $linkback, 0, '', '', $s);
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
@@ -362,32 +377,33 @@ if (!empty($object->share))
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
 }
-print '</td></tr>';
-
+print '</td>';
+print '</tr>';
+print $object->showOptionals($extrafields, ($action == 'edit' ? 'edit' : 'view'));
 print '</table>';
 print '</div>';
 
 print ajax_autoselect('downloadinternallink');
 print ajax_autoselect('downloadlink');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 if ($action == 'edit')
 {
-    print '<div class="center">';
-    print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
-    print '</form>';
+	print '</form>';
 }
 
 
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_file')
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
 if ($action != 'edit')
@@ -395,14 +411,14 @@ if ($action != 'edit')
 	// Actions buttons
 	print '<div class="tabsAction">';
 
-    if ($user->rights->ecm->setup)
-    {
-        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
-    }
-    /*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
+	}
+	/*
+	if ($user->rights->ecm->setup)
+	{
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

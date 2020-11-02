@@ -77,18 +77,18 @@ class UserGroup extends CommonObject
 	public $globalgroup; // Global group
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
-    public $datem;
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
+	public $datem;
 
 	public $note; // Description
 
@@ -127,15 +127,15 @@ class UserGroup extends CommonObject
 
 
 	/**
-     *    Constructor de la classe
-     *
-     *    @param   DoliDb  $db     Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-        $this->nb_rights = 0;
-    }
+	 *    Constructor de la classe
+	 *
+	 *    @param   DoliDb  $db     Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+		$this->nb_rights = 0;
+	}
 
 
 	/**
@@ -158,7 +158,7 @@ class UserGroup extends CommonObject
 			$result = $this->fetchCommon($id);
 		}
 
-		$this->name = $this->nom;	// For compatibility with field name
+		$this->name = $this->nom; // For compatibility with field name
 
 		if ($result)
 		{
@@ -386,10 +386,10 @@ class UserGroup extends CommonObject
 				$langs->load("other");
 				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
-			    // Call trigger
-			    $result = $this->call_trigger('USERGROUP_MODIFY', $user);
-			    if ($result < 0) { $error++; }
-			    // End call triggers
+				// Call trigger
+				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 		}
 
@@ -504,10 +504,10 @@ class UserGroup extends CommonObject
 				$langs->load("other");
 				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
-			    // Call trigger
-			    $result = $this->call_trigger('USERGROUP_MODIFY', $user);
-			    if ($result < 0) { $error++; }
-			    // End call triggers
+				// Call trigger
+				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 		}
 
@@ -596,10 +596,10 @@ class UserGroup extends CommonObject
 			$this->all_permissions_are_loaded = 1;
 		} else {
 			// If module defined, we flag it as loaded into cache
-		    $this->_tab_loaded[$moduletag] = 1;
+			$this->_tab_loaded[$moduletag] = 1;
 		}
 
-        return 1;
+		return 1;
 	}
 
 	/**
@@ -624,13 +624,11 @@ class UserGroup extends CommonObject
 		global $user, $conf;
 
 		$this->datec = dol_now();
-		if (empty($this->nom) && !empty($this->name)) {
-			$this->nom = $this->name;
+		if (!empty($this->name)) {
+			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
 		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
-		$entity = $this->entity;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1) $entity = $this->entity;
 
 		return $this->createCommon($user, $notrigger);
 	}
@@ -645,10 +643,8 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf;
 
-		$entity = $conf->entity;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1)
-		{
-			$entity = $this->entity;
+		if (!empty($this->name)) {
+			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
 		return $this->updateCommon($user, $notrigger);
@@ -663,10 +659,10 @@ class UserGroup extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-	    return $this->LibStatut(0, $mode);
+		return $this->LibStatut(0, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -676,10 +672,10 @@ class UserGroup extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
-	    global $langs;
-	    $langs->load('users');
-	    return '';
+		// phpcs:enable
+		global $langs;
+		$langs->load('users');
+		return '';
 	}
 
 	/**
@@ -769,9 +765,9 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-    public function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		$dn = '';
 		if ($mode == 0) $dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
@@ -788,9 +784,9 @@ class UserGroup extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-    public function _load_ldap_info()
+	public function _load_ldap_info()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$info = array();
@@ -813,22 +809,22 @@ class UserGroup extends CommonObject
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
-        }
-        if (!empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID])) {
-            $info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
-        }
+		}
+		if (!empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID])) {
+			$info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
+		}
 		return $info;
 	}
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
-     */
-    public function initAsSpecimen()
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	public function initAsSpecimen()
 	{
 		global $conf, $user, $langs;
 
@@ -842,11 +838,11 @@ class UserGroup extends CommonObject
 		$this->datec = time();
 		$this->datem = time();
 
-        // Members of this group is just me
-        $this->members = array(
-            $user->id => $user
-        );
-    }
+		// Members of this group is just me
+		$this->members = array(
+			$user->id => $user
+		);
+	}
 
 	/**
 	 *  Create a document onto disk according to template module.
@@ -856,7 +852,7 @@ class UserGroup extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-     *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

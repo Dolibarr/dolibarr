@@ -93,7 +93,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
 		$search = $this->prefix."____-%";
-		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " WHERE ref LIKE '".$db->escape($search)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -115,9 +115,9 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc    Object third party
-	 *  @param  Project $ticket Object ticket
-	 *  @return string                Value if OK, 0 if KO
+	 *  @param  Societe $objsoc    	Object third party
+	 *  @param  Ticket 	$ticket 	Object ticket
+	 *  @return string              Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{
@@ -128,7 +128,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
 		$search = $this->prefix."____-%";
-		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " WHERE ref LIKE '".$db->escape($search)."'";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);

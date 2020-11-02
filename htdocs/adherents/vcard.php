@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +40,7 @@ $result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objc
 
 
 $result = $adherent->fetch($id);
-if ($result <= 0)
-{
+if ($result <= 0) {
 	dol_print_error($adherent->error);
 	exit;
 }
@@ -48,8 +48,7 @@ if ($result <= 0)
 $physicalperson = 1;
 
 $company = new Societe($db);
-if ($adherent->socid)
-{
+if ($adherent->socid) {
 	$result = $company->fetch($adherent->socid);
 }
 
@@ -66,43 +65,41 @@ $v->setPhoneNumber($adherent->phone_pro, "TYPE=WORK;VOICE");
 $v->setPhoneNumber($adherent->phone_mobile, "TYPE=CELL;VOICE");
 $v->setPhoneNumber($adherent->fax, "TYPE=WORK;FAX");
 
-$country = $adherent->country_code ? $adherent->country : '' ;
+$country = $adherent->country_code ? $adherent->country : '';
 
 $v->setAddress("", "", $adherent->address, $adherent->town, $adherent->state, $adherent->zip, $country, "TYPE=WORK;POSTAL");
 $v->setLabel("", "", $adherent->address, $adherent->town, $adherent->state, $adherent->zip, $country, "TYPE=WORK");
 
 $v->setEmail($adherent->email);
-$v->setNote($adherent->note);
+$v->setNote($adherent->note_public);
 $v->setTitle($adherent->poste);
 
 // Data from linked company
-if ($company->id)
-{
+if ($company->id) {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (! $adherent->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (! $adherent->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (! $adherent->zip)       $v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
-
+	if (!$adherent->phone_pro) {
+		$v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+	}
+	if (!$adherent->fax) {
+		$v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+	}
+	if (!$adherent->zip) {
+		$v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+	}
 	// when company e-mail is empty, use only adherent e-mail
-	if (empty(trim($company->email)))
-	{
+	if (empty(trim($company->email))) {
 		// was set before, don't set twice
-	}
-	// when adherent e-mail is empty, use only company e-mail
-	elseif (empty(trim($adherent->email)))
-	{
+	} elseif (empty(trim($adherent->email))) {
+		// when adherent e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
-	}
-	// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
-	elseif (strtolower(end(explode("@", $adherent->email))) == strtolower(end(explode("@", $company->email))))
-	{
+	} elseif (strtolower(end(explode("@", $adherent->email))) == strtolower(end(explode("@", $company->email)))) {
+		// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
 		$v->setEmail($adherent->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
 		$v->setEmail($company->email, 'INTERNET');
-	}
-	// when e-mail of adherent and company complete different use company e-mail at first (and adherent e-mail at second)
-	else {
+	} else {
+		// when e-mail of adherent and company complete different use company e-mail at first (and adherent e-mail at second)
 		$v->setEmail($company->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
@@ -115,7 +112,9 @@ if ($company->id)
 
 // Personal informations
 $v->setPhoneNumber($adherent->phone_perso, "TYPE=HOME;VOICE");
-if ($adherent->birthday) $v->setBirthday($adherent->birthday);
+if ($adherent->birth) {
+	$v->setBirthday($adherent->birth);
+}
 
 $db->close();
 
@@ -124,7 +123,7 @@ $db->close();
 
 $output = $v->getVCard();
 
-$filename = trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
+$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
 $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 

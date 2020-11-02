@@ -39,7 +39,7 @@ $langs->loadLangs(array('projects', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
@@ -119,12 +119,12 @@ if (empty($reshook))
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 		$error = 0;
-		if (empty($_POST["ref"]))
+		if (!GETPOST('ref'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
 		}
-		if (empty($_POST["title"]))
+		if (!GETPOST('title'))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
@@ -148,13 +148,13 @@ if (empty($reshook))
 
 			$db->begin();
 
-			$object->ref             = GETPOST('ref', 'alpha');
-			$object->title           = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
-			$object->description     = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
-			$object->public          = GETPOST('public', 'alpha');
-			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
+			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
+			$object->public          = GETPOST('public', 'alphanohtml');
+			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alphanohtml'));
+			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alphanohtml'));
 			$object->date_c = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
@@ -248,10 +248,10 @@ if (empty($reshook))
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
-			$object->title        = GETPOST('title', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
-			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
+			$object->description  = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
@@ -344,7 +344,7 @@ if (empty($reshook))
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 		}
-		$result = $object->generateDocument($object->modelpdf, $outputlangs);
+		$result = $object->generateDocument($object->model_pdf, $outputlangs);
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -491,7 +491,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -529,7 +529,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	print '<tr><td class="tdtop">';
@@ -653,7 +653,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('description', GETPOST("description", 'none'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('description', GETPOST("description", 'restricthtml'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -677,7 +677,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
@@ -792,7 +792,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	if ($action == 'edit' && $userWrite > 0)
 	{
-		dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public ? 'projectpub' : 'project'));
 
 		print '<table class="border centpercent">';
 
@@ -900,18 +900,18 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print '</td>';
 			print '</tr>';
 
-		    // Opportunity probability
-		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
-            print '<span id="oldopppercent"></span>';
-		    print '</td>';
-		    print '</tr>';
+			// Opportunity probability
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
+			print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+			print '<span id="oldopppercent"></span>';
+			print '</td>';
+			print '</tr>';
 
-		    // Opportunity amount
-		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
-		    print '</tr>';
-	    }
+			// Opportunity amount
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
+			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
+			print '</tr>';
+		}
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -963,7 +963,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 		print '</table>';
 	} else {
-		dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 		// Project card
 
@@ -971,7 +971,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= $object->title;
+		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
 		if ($object->thirdparty->id > 0)
@@ -1052,10 +1052,10 @@ if ($action == 'create' && $user->rights->projet->creer)
 			if (strcmp($object->opp_amount, '')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 			print '</td></tr>';
 
-            // Opportunity Weighted Amount
-            print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
-            if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
-            print '</td></tr>';
+			// Opportunity Weighted Amount
+			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
+			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+			print '</td></tr>';
 		}
 
 		// Date start - end
@@ -1107,7 +1107,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<div class="clearboth"></div>';
 	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit' && $userWrite > 0)
 	{
@@ -1183,7 +1183,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	}
 
 	/*
-     * Boutons actions
+     * Actions Buttons
      */
 	print '<div class="tabsAction">';
 	$parameters = array();
@@ -1324,7 +1324,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			{
 				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 				{
-					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}
@@ -1352,7 +1352,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
 		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
 
-		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf);
+		print $formfile->showdocuments('project', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
