@@ -765,11 +765,11 @@ class Fichinter extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Intervention").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
 		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+			$label .= ' '.$this->getLibStatut(5);
 		}
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 

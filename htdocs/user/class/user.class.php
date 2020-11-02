@@ -2255,8 +2255,9 @@ class User extends CommonObject
 
 		// Info Login
 		$label .= '<div class="centpercent">';
-		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("User").'</u><br>';
-		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
+		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
 		if (!empty($this->login)) $label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
 		if (!empty($this->job)) $label .= '<br><b>'.$langs->trans("Job").':</b> '.$this->job;
 		$label .= '<br><b>'.$langs->trans("Email").':</b> '.$this->email;
@@ -2272,7 +2273,6 @@ class User extends CommonObject
 		}
 		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
 		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
-		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(4);
 		$label .= '</div>';
 		if ($infologin > 0)
 		{

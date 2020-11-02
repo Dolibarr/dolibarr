@@ -1982,7 +1982,11 @@ class Contrat extends CommonObject
 		$label = '';
 
 		if ($user->rights->contrat->lire) {
-			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Contract").'</u>';
+			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contract").'</u>';
+			/* Status of a contract is status of all services, so disabled
+			if (isset($this->statut)) {
+				$label .= ' '.$this->getLibStatut(5);
+			}*/
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
 			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
 			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;

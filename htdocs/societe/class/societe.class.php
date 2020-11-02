@@ -2339,19 +2339,11 @@ class Societe extends CommonObject
 		if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
-			if (($this->client) && (!empty($this->code_client))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
-				)
-			)
-			{
+			if (($this->client) && (!empty($this->code_client)) && ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2)) {
 				$code = $this->code_client.' - ';
 			}
 
-			if (($this->fournisseur) && (!empty($this->code_fournisseur))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
-				)
-			)
-			{
+			if (($this->fournisseur) && (!empty($this->code_fournisseur)) && ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 3)) {
 				$code .= $this->code_fournisseur.' - ';
 			}
 
@@ -2385,43 +2377,46 @@ class Societe extends CommonObject
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Customer").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Customer").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Prospect").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'supplier' || $option == 'category_supplier')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("Supplier").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		} elseif ($option == 'agenda')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		} elseif ($option == 'project')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		} elseif ($option == 'margin')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		} elseif ($option == 'contact')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		} elseif ($option == 'ban')
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
 		// By default
 		if (empty($linkstart))
 		{
-			$label .= img_picto('', $this->picto).' <u>'.$langs->trans("ThirdParty").'</u>';
+			$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
+		}
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
 		}
 
 		if (!empty($this->name))
@@ -2451,9 +2446,6 @@ class Societe extends CommonObject
 			$label .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (!empty($conf->accounting->enabled) && $this->fournisseur)
 			$label .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 		$label .= '</div>';
 
 		// Add type of canvas

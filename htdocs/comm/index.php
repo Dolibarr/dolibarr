@@ -137,10 +137,10 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
  * Draft customer proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc";
-	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.fk_statut as status,";
+	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
@@ -167,6 +167,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				$propalstatic->total_ht = $obj->total_ht;
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
+				$propalstatic->statut = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -203,10 +204,10 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
-	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc";
-	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
-	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.fk_statut as status,";
+	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
+	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p,";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE p.entity IN (".getEntity($supplierproposalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".SupplierProposal::STATUS_DRAFT;
@@ -232,6 +233,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$supplierproposalstatic->total_ht = $obj->total_ht;
 				$supplierproposalstatic->total_tva = $obj->total_tva;
 				$supplierproposalstatic->total_ttc = $obj->total_ttc;
+				$supplierproposalstatic->statut	 = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -267,10 +269,10 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
  * Draft customer orders
  */
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc";
-	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
-	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, c.fk_statut as status,";
+	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_DRAFT;
@@ -297,6 +299,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
+				$orderstatic->statut = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -329,13 +332,13 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 
 /*
- * Draft suppliers orders
+ * Draft purchase orders
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
-	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc";
-	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
-	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, cf.fk_statut as status,";
+	$sql .= " s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.entity, s.email";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE cf.entity IN (".getEntity($supplierorderstatic->element).")";
 	$sql .= " AND cf.fk_statut = ".CommandeFournisseur::STATUS_DRAFT;
@@ -362,6 +365,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				$supplierorderstatic->total_ht = $obj->total_ht;
 				$supplierorderstatic->total_tva = $obj->total_tva;
 				$supplierorderstatic->total_ttc = $obj->total_ttc;
+				$supplierorderstatic->statut = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;

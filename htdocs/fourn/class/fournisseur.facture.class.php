@@ -2295,10 +2295,10 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_CREDIT_NOTE) $picto .= 'a'; // Credit note
 		if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SupplierInvoice").'</u>';
-		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
-		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
+		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
+		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_supplier))

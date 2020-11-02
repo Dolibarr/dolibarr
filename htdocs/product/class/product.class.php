@@ -4427,15 +4427,32 @@ class Product extends CommonObject
 		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-		$result = '';
+		$result = ''; $label = '';
+
 		$newref = $this->ref;
-		if ($maxlength) { $newref = dol_trunc($newref, $maxlength, 'middle');
+		if ($maxlength) {
+			$newref = dol_trunc($newref, $maxlength, 'middle');
 		}
 
-		if ($this->type == Product::TYPE_PRODUCT) { $label = img_picto('', 'product').' <u>'.$langs->trans("Product").'</u>';
+		if (!empty($this->entity)) {
+			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
+			if ($this->nbphoto > 0) {
+				$label .= '<div class="photointooltip">';
+				$label .= $tmpphoto;
+				$label .= '</div><div style="clear: both;"></div>';
+			}
 		}
-		if ($this->type == Product::TYPE_SERVICE) { $label = img_picto('', 'service').' <u>'.$langs->trans("Service").'</u>';
+
+		if ($this->type == Product::TYPE_PRODUCT) {
+			$label .= img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
+		} elseif ($this->type == Product::TYPE_SERVICE) {
+			$label .= img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
 		}
+		if (isset($this->status) && isset($this->status_buy)) {
+			$label .= ' '.$this->getLibStatut(5, 0);
+			$label .= ' '.$this->getLibStatut(5, 1);
+		}
+
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
 		}
@@ -4490,16 +4507,6 @@ class Product extends CommonObject
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
-		}
-		if (isset($this->status) && isset($this->status_buy)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, 0);
-			$label .= ' '.$this->getLibStatut(5, 1);
-		}
-
-		if (!empty($this->entity)) {
-			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
-			if ($this->nbphoto > 0) { $label .= '<br>'.$tmpphoto;
-			}
 		}
 
 		$linkclose = '';

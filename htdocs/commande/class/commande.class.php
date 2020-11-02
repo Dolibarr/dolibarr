@@ -3634,7 +3634,10 @@ class Commande extends CommonOrder
 		$label = '';
 
 		if ($user->rights->commande->lire) {
-			$label = img_picto('', $this->picto).' <u>'.$langs->trans("Order").'</u>';
+			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
+			if (isset($this->statut)) {
+				$label .= ' '.$this->getLibStatut(5);
+			}
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
 			if (!empty($this->total_ht)) {
@@ -3645,9 +3648,6 @@ class Commande extends CommonOrder
 			}
 			if (!empty($this->total_ttc)) {
 				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-			}
-			if (isset($this->statut)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 			}
 		}
 

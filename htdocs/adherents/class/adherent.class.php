@@ -2013,7 +2013,8 @@ class Adherent extends CommonObject
 		}
 
 		$label .= '<div class="centpercent">';
-		$label .= '<u>'.$langs->trans("Member").'</u>';
+		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Member").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
 		if (!empty($this->ref)) $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->firstname) || !empty($this->lastname)) $label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
 		if (!empty($this->company)) $label .= '<br><b>'.$langs->trans('Company').':</b> '.$this->company;
