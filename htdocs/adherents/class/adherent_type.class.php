@@ -98,10 +98,10 @@ class AdherentType extends CommonObject
 	public $mail_valid;
 
 	/** @var string Email sent after recording a new subscription */
-	public $mail_subscription;
+	public $mail_subscription = '';
 
 	/** @var string Email sent after resiliation */
-	public $mail_resiliate;
+	public $mail_resiliate = '';
 
 	/** @var array Array of members */
 	public $members = array();
@@ -783,5 +783,4 @@ class AdherentType extends CommonObject
 
 		return '';
 	}
-
 }
