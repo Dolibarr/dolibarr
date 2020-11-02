@@ -742,9 +742,11 @@ class Stripe extends CommonObject
 					$cvc = $obj->cvn; // cvn in database, cvc for stripe
 					$cardholdername = $obj->proprio;
 
+					$remoteip = getUserRemoteIP();
+
 					$dataforcard = array(
 						"source" => array('object'=>'card', 'exp_month'=>$exp_date_month, 'exp_year'=>$exp_date_year, 'number'=>$number, 'cvc'=>$cvc, 'name'=>$cardholdername),
-						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']))
+						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$remoteip)
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -889,6 +891,8 @@ class Stripe extends CommonObject
 			$description = "INV=".$ref.".CUS=".$societe->id.".PM=stripe";
 		}
 
+		$remoteip = getUserRemoteIP();
+
 		$metadata = array(
 			"dol_id" => "".$item."",
 			"dol_type" => "".$origin."",
@@ -896,7 +900,7 @@ class Stripe extends CommonObject
 			'dol_thirdparty_name' => $societe->name,
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
-			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR'])
+			'ipaddress'=>$remoteip
 		);
 		$return = new Stripe($this->db);
 		try {
