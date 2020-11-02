@@ -46,7 +46,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
 $note = GETPOST('note', 'alpha');
 $typeid = (int) GETPOST('typeid', 'int');
-$amount = GETPOST('amount', 'alpha');
+$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 if (!$user->rights->adherent->cotisation->lire)
 	 accessforbidden();
