@@ -83,7 +83,7 @@ $(document).ready(function(){
 							<?php
 							$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
 							// remove action parameter from URL
-							$redirectURL = preg_replace('/[&?]action=[^&]*/', '', $redirectURL);
+							$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
 							?>
 							location.href = '<?php echo dol_escape_js($redirectURL); ?>';
 						} else {
