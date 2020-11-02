@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1408,18 +1408,17 @@ class User extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		$rd = array();
+		$num = 0;
 		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
 		$sql .= " WHERE bydefault = 1";
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			$rd = array();
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$rd[$i] = $row[0];
 				$i++;
@@ -1427,8 +1426,7 @@ class User extends CommonObject
 			$this->db->free($resql);
 		}
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
 			$result = $this->db->query($sql);
 
