@@ -120,6 +120,11 @@ class Establishment extends CommonObject
 	 */
 	public $fk_user_author;
 
+	/**
+	 * @var int date create
+	 */
+	public $datec;
+
 	const STATUS_OPEN = 1;
 	const STATUS_CLOSED = 0;
 
