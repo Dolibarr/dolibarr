@@ -272,7 +272,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td class="center">';
-			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorPhy");
+			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorAndPhy");
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
