@@ -24,9 +24,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $value = GETPOST('value', 'alpha');
 
-$action=GETPOST('action', 'alpha');
-$cancel=GETPOST('cancel', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -43,9 +43,9 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel)
 {
-    $action='';
-    header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
-    exit();
+	$action = '';
+	header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+	exit();
 }
 
 // None
@@ -81,13 +81,13 @@ $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label))
 
 llxHeader('', $title);
 
-$h=0;
+$h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -106,7 +106,7 @@ print '<div class="underbanner clearboth"></div>';
 <?php
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 
@@ -119,7 +119,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 ?>
 	<table class="border" style="width: 100%">
@@ -134,7 +134,7 @@ dol_fiche_head();
 	</table>
 <?php
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';

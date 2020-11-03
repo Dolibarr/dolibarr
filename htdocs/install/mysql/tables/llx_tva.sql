@@ -20,7 +20,7 @@
 create table llx_tva
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           datetime,                   -- Create date
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur

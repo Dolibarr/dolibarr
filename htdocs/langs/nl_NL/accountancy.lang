@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=De volgende stappen kunnen in de toekomst een t
 AccountancyAreaDescActionFreq=De volgende werkzaamheden worden meestal elke maand, week of dagelijks uitgevoerd bij grote bedrijven....
 
 AccountancyAreaDescJournalSetup=STAP %s: Aanmaken of controleren journaal vanuit menu %s
-AccountancyAreaDescChartModel=STAP %s: Maak rekeningschema aan vanuit menu %s
-AccountancyAreaDescChart=STAP %s: Aanmaken of controleren van het rekeningschema menu %s
+AccountancyAreaDescChartModel=STAP %s: Controleer of er een rekeningschema bestaat of maak er een vanuit het menu %s
+AccountancyAreaDescChart=STAP %s: Selecteer en/of voltooi uw rekeningoverzicht vanuit menu %s
 
 AccountancyAreaDescVat=STAP %s: Vastleggen grootboekrekeningen voor BTW registratie. Gebruik hiervoor menukeuze %s. 
 AccountancyAreaDescDefault=STAP %s: standaard grootboekrekeningen vastleggen. Gebruik hiervoor het menu-item %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Gekoppelde factuurregels
 ExpenseReportLines=Te koppelen kostenboekingen
 ExpenseReportLinesDone=Gekoppelde kostenboekingen
 IntoAccount=Koppel regel aan grootboekrekening
+TotalForAccount=Totaal grootboekrekening
 
 
 Ventilate=Koppelen
@@ -148,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Sta toe om een verschillend aantal nullen aan het einde v
 BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzetten
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Schakel concept export van het journaal in
 ACCOUNTANCY_COMBO_FOR_AUX=Combo-lijst inschakelen voor dochteronderneming-account (kan traag zijn als u veel externe partijen hebt)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Verkoopboek
 ACCOUNTING_PURCHASE_JOURNAL=Inkoopboek
@@ -168,10 +170,15 @@ DONATION_ACCOUNTINGACCOUNT=Grootboeknummer voor donaties
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grootboekrekening om abonnementen te registreren
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standaard grootboekrekening voor de gekochte producten (gebruikt indien niet gedefinieerd in de productfiche)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte producten in de EEG (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Grootboekrekening standaard voor de gekochte producten en geïmporteerd uit de EEG (gebruikt indien niet gedefinieerd in het productblad)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standaard grootboekrekening omzet producten (indien niet opgegeven bij productgegevens)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standaard grootboekrekening voor de in EEG verkochte producten (gebruikt indien niet gedefinieerd bij de productgegevens)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standaard boekhoudrekening voor de producten die worden verkocht en uitgevoerd uit de EEG (gebruikt indien niet gedefinieerd bij de productgegevens)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standaard grootboekrekening inkoop diensten (indien niet opgegeven bij dienstgegevens)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte services in EEC (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standaard grootboekrekening voor de gekochte services en geïmporteerd uit EEC (gebruikt indien niet gedefinieerd in het serviceblad)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standaard grootboekrekening omzet diensten (indien niet opgegeven bij dienstgegevens)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Standaard grootboekrekening voor de in EEG verkochte diensten (gebruikt indien niet gedefinieerd bij de servicegegevens)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Standaard grootboekrekening voor de diensten die worden verkocht en geëxporteerd uit EEG (gebruikt indien niet gedefinieerd in het serviceblad)
@@ -182,7 +189,7 @@ Docref=Reference
 LabelAccount=Label account
 LabelOperation=Werking label
 Sens=D/C
-LetteringCode=Belettering code
+LetteringCode=Aflettercode
 Lettering=Afletteren
 Codejournal=Journaal
 JournalLabel=Journaal label
@@ -228,10 +235,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Onbekende relatie
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tegenrekening relatie niet gedefinieerd of relatie onbekend. Blokkeringsfout.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Onbekend account van derden en wachtaccount niet gedefinieerd. Blokkeerfout
 PaymentsNotLinkedToProduct=Betaling niet gekoppeld aan een product / dienst
+OpeningBalance=Begin balans
+ShowOpeningBalance=Toon beginsaldo
+HideOpeningBalance=Verberg beginsaldo
+ShowSubtotalByGroup=Totaal per groep
 
 Pcgtype=Rekening hoofdgroep
-Pcgsubtype=Rekening subgroep
-PcgtypeDesc=Groep en subgroep van accounts worden gebruikt als vooraf gedefinieerde criteria voor 'filter' en 'groepering' voor sommige boekhoudrapporten. 'INCOME' of 'EXPENSE' worden bijvoorbeeld gebruikt als groepen voor accountingrekeningen van producten om het declaratie- / inkomstenrapport samen te stellen.
+PcgtypeDesc=Cluster grootboekrekeningen welke gebruikt worden als vooraf gedefinieerde 'filter'- en' groepeer'-criteria voor sommige boekhoudrapporten. 'INKOMEN' of 'UITGAVEN' worden bijvoorbeeld gebruikt als groepen voor boekhoudrekeningen van producten om het kosten- / inkomstenrapport samen te stellen.
+
+Reconcilable=Samentrekken
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
@@ -252,7 +264,7 @@ DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met
 DescClosure=Raadpleeg hier het aantal bewegingen per maand die niet zijn gevalideerd en fiscale jaren die al open zijn
 OverviewOfMovementsNotValidated=Stap 1 / Overzicht van bewegingen niet gevalideerd. (Noodzakelijk om een boekjaar af te sluiten)
 ValidateMovements=Valideer wijzigingen
-DescValidateMovements=Elke wijziging of verwijdering van schrijven, belettering en verwijderingen is verboden. Alle inzendingen voor een oefening moeten worden gevalideerd, anders is afsluiten niet mogelijk
+DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 SelectMonthAndValidate=Selecteer een maand en valideer bewerkingen
 
 ValidateHistory=Automatisch boeken
@@ -260,7 +272,7 @@ AutomaticBindingDone=Automatisch koppelen voltooid
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Boeking is niet in balans. Debet = %s | Credit = %s
-Balancing=Balancen
+Balancing=Balansen
 FicheVentilation=Koppelen card
 GeneralLedgerIsWritten=Grootboek transacties
 GeneralLedgerSomeRecordWasNotRecorded=Sommige transacties konden niet worden doorgeboekt. Als er geen andere foutmelding is, komt dit waarschijnlijk omdat ze reeds zijn doorgeboekt.
@@ -270,8 +282,10 @@ ChangeBinding=Wijzig koppeling
 Accounted=Geboekt in grootboek
 NotYetAccounted=Nog niet doorgeboekt in boekhouding
 ShowTutorial=Handleiding weergeven
+NotReconciled=Niet afgestemd
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Categorieën  a-mass toepassen
 AddAccountFromBookKeepingWithNoCategories=Beschikbare rekening nog niet in de gepersonaliseerde groep
 CategoryDeleted=Categorie van deze grootboekrekening is verwijderd
@@ -305,11 +319,13 @@ Modelcsv_quadratus=Exporteren naar Quadratus QuadraCompta
 Modelcsv_ebp=Exporteren naar EBP
 Modelcsv_cogilog=Exporteren naar Cogilog
 Modelcsv_agiris=Exporteren naar Agiris
-Modelcsv_LDCompta=Exporteren naar LD Compta (v9 en hoger) (test)
+Modelcsv_LDCompta=Exporteren voor LD Compta (v9) (test)
+Modelcsv_LDCompta10=Exporteren voor LD Compta (v10 en hoger)
 Modelcsv_openconcerto=Exporteren voor OpenConcerto (test)
 Modelcsv_configurable=Configureerbare CSV export
 Modelcsv_FEC=FEC exporteren
 Modelcsv_Sage50_Swiss=Export voor Sage 50 Zwitserland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Rekeningschema Id
 
 ## Tools - Init accounting account on product / service
@@ -322,10 +338,14 @@ OptionModeProductSell=Instellingen verkopen
 OptionModeProductSellIntra=Mode verkoop uitgevoerd in EEG
 OptionModeProductSellExport=Mode-verkopen geëxporteerd naar andere landen
 OptionModeProductBuy=Instellingen inkopen
+OptionModeProductBuyIntra=Modus voor aankopen geïmporteerd in EEC
+OptionModeProductBuyExport=Modus voor gekocht geïmporteerd uit andere landen
 OptionModeProductSellDesc=Omzet grootboekrekening bij producten
 OptionModeProductSellIntraDesc=Toon alle producten met boekhoudaccount voor verkoop in de EEG.
 OptionModeProductSellExportDesc=Toon alle producten met een rekening voor overige buitenlandse verkopen.
 OptionModeProductBuyDesc=Inkoop grootboekrekening bij producten
+OptionModeProductBuyIntraDesc=Toon alle producten met grootboekrekening voor aankopen in de EEG.
+OptionModeProductBuyExportDesc=Toon alle producten met grootboekrekening voor andere buitenlandse aankopen.
 CleanFixHistory=Verwijder tegenrekening van regels welke niet voorkomen in het rekeningschema
 CleanHistory=Verwijder alle koppelingen van gekozen boekjaar,
 PredefinedGroups=Voorgedefinieerde groepen
@@ -336,6 +356,8 @@ AccountRemovedFromGroup=Rekening uit groep verwijderd.
 SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen EEG
+SaleEECWithVAT=Verkoop in de EEG met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
+SaleEECWithoutVATNumber=Verkoop in de EEG zonder btw, maar het btw-nummer van een derde partij is niet gedefinieerd. Voor standaardverkoop vallen we terug op het product-grootboekrekening. U kunt indien nodig het btw-nummer van een derde partij of het productaccount aanpassen.
 
 ## Dictionary
 Range=Grootboeknummer van/tot

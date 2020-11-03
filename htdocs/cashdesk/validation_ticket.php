@@ -31,11 +31,11 @@ unset($_SESSION['serObjFacturation']);
 
 $hookmanager->initHooks(array('cashdeskTplTicket'));
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $obj_facturation);
 if (empty($reshook))
 {
-    require 'tpl/ticket.tpl.php';
+	require 'tpl/ticket.tpl.php';
 }
 
 

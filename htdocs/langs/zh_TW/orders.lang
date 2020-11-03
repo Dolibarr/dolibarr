@@ -141,10 +141,10 @@ OrderByEMail=電子郵件
 OrderByWWW=線上網路
 OrderByPhone=電話
 # Documents models
-PDFEinsteinDescription=A complete order model 
-PDFEratostheneDescription=A complete order model
+PDFEinsteinDescription=完整的訂單模型（Eratosthene範本的舊範本）
+PDFEratostheneDescription=完整的訂單模型
 PDFEdisonDescription=可產生一份簡單的訂單範本
-PDFProformaDescription=A complete Proforma invoice template
+PDFProformaDescription=完整的形式發票範本
 CreateInvoiceForThisCustomer=提單/記名票據
 NoOrdersToInvoice=沒有訂單可計費
 CloseProcessedOrdersAutomatically=將所有選定訂單分類為“已處理”。

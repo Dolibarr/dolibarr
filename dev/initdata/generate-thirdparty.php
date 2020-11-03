@@ -24,6 +24,10 @@
  *      \brief      Script example to inject random thirdparties (for load tests)
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -132,9 +136,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
         }
 
         print "Company ".$s." created nom=".$soc->name."\n";
-    }
-    else
-    {
+    } else {
     	print "Error: ".$soc->error."\n";
     }
 }

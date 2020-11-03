@@ -31,12 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
 
-$date_startmonth = GETPOST('date_startmonth');
-$date_startday = GETPOST('date_startday');
-$date_startyear = GETPOST('date_startyear');
-$date_endmonth = GETPOST('date_endmonth');
-$date_endday = GETPOST('date_endday');
-$date_endyear = GETPOST('date_endyear');
+$date_startday = GETPOST('date_startday', 'int');
+$date_startmonth = GETPOST('date_startmonth', 'int');
+$date_startyear = GETPOST('date_startyear', 'int');
+$date_endday = GETPOST('date_endday', 'int');
+$date_endmonth = GETPOST('date_endmonth', 'int');
+$date_endyear = GETPOST('date_endyear', 'int');
 
 $nbofyear = 4;
 
@@ -73,8 +73,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			}
 			$month_end = $month_start - 1;
 			if ($month_end < 1) $month_end = 12;
-		}
-		else $month_end = $month_start;
+		} else $month_end = $month_start;
 		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
@@ -124,11 +123,10 @@ if ($modecompta == "CREANCES-DETTES")
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesCADue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("TurnoverCollected");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -140,8 +138,7 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	$name = $langs->trans("Turnover");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
@@ -160,7 +157,7 @@ report_header($name, $namelink, $period, $periodlink, $description, $builddate, 
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -173,8 +170,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	else $sql .= " AND f.type IN (0,1,2,3,5)";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -188,19 +184,21 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
-	$sql .= " WHERE b.entity = ".$conf->entity;
+	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
 	$sql .= " AND aj.entity = ".$conf->entity;
 	$sql .= " AND b.code_journal = aj.code AND aj.nature = 2"; // @todo currently count amount in sale journal, but we need to define a category group for turnover
 }
 
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
+// TODO Add a filter on $date_start and $date_end to reduce quantity on data
 //print $sql;
+
+$minyearmonth = $maxyearmonth = 0;
 
 $result = $db->query($sql);
 if ($result)
@@ -214,14 +212,13 @@ if ($result)
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($obj->amount_ttc)
 		{
-			$minyearmonth = ($minyearmonth ?min($minyearmonth, $obj->dm) : $obj->dm);
+			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
 		}
 		$i++;
 	}
 	$db->free($result);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -256,9 +253,7 @@ if ($modecompta == 'RECETTES-DEPENSES')
 			}
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -276,9 +271,9 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
-    if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
-    if ($modecompta != 'BOOKKEEPING') print '</a>';
-    print '</td>';
+	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee + 1);
+	if ($modecompta != 'BOOKKEEPING') print '</a>';
+	print '</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
@@ -309,9 +304,17 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 	$mois_modulo = $mois; // ajout
 	if ($mois > 12) {$mois_modulo = $mois - 12; } // ajout
 
+	if ($year_start == $year_end) {
+		if ($mois > $date_endmonth && $year_end >= $date_endyear) {
+			break;
+		}
+	}
+
 	print '<tr class="oddeven">';
 
+	// Month
 	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, 2000), "%B")."</td>";
+
 	for ($annee = $year_start - 1; $annee <= $year_end; $annee++)	// We start one year before to have data to be able to make delta
 	{
 		$annee_decalage = $annee;
@@ -328,11 +331,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				{
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 					print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">'.price($cum_ht[$case], 1).'</a>';
-				}
-				else
-				{
-					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; }
-					else { print '&nbsp;'; }
+				} else {
+					if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; } else { print '&nbsp;'; }
 				}
 				print "</td>";
 			}
@@ -345,11 +345,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
 				print price($cum[$case], 1);
 				if ($modecompta != 'BOOKKEEPING') print '</a>';
-			}
-			else
-			{
-				if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; }
-				else { print '&nbsp;'; }
+			} else {
+				if ($minyearmonth < $case && $case <= max($maxyearmonth, $nowyearmonth)) { print '0'; } else { print '&nbsp;'; }
 			}
 			print "</td>";
 
@@ -379,12 +376,9 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
 				{
 					print '<td class="borderrightlight right">-</td>';
 				}
-			}
-			else
-			{
+			} else {
 				print '<td class="borderrightlight right">';
-				if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; }
-				else { print '&nbsp;'; }
+				if ($minyearmonth <= $case && $case <= $maxyearmonth) { print '-'; } else { print '&nbsp;'; }
 				print '</td>';
 			}
 
@@ -407,7 +401,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
  print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,2000),"%B")."</td>";
  for ($annee = $year_start ; $annee <= $year_end ; $annee++)
  {
- $casenow = dol_print_date(mktime(),"%Y-%m");
+ $casenow = dol_print_date(dol_now(),"%Y-%m");
  $case = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
  $caseprev = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
@@ -472,9 +466,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 		{
 			print '<td class="nowrap right">'.($total_ht[$annee] ?price($total_ht[$annee]) : "0")."</td>";
-		}
-		else
-		{
+		} else {
 			print '<td>&nbsp;</td>';
 		}
 	}
@@ -483,9 +475,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear)))
 	{
 		print '<td class="nowrap right">'.($total[$annee] ?price($total[$annee]) : "0")."</td>";
-	}
-	else
-	{
+	} else {
 		print '<td>&nbsp;</td>';
 	}
 
@@ -508,12 +498,9 @@ for ($annee = $year_start; $annee <= $year_end; $annee++)
 		{
 			print '<td class="borderrightlight right">+0%</td>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<td class="borderrightlight right">';
-		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) { print '-'; }
-		else { print '&nbsp;'; }
+		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) { print '-'; } else { print '&nbsp;'; }
 		print '</td>';
 	}
 

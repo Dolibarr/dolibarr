@@ -39,40 +39,40 @@ $hookmanager->initHooks(array('homesetup'));
 
 $form = new Form($db);
 
-$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+$wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
+if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
 {
-    $conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
-    if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
-    {
-    	$i=0;
-    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100)
-    	{
-    		$tmp=explode('|', $reg[1]);
-    		if (! empty($tmp[1])) $langs->load($tmp[1]);
-    		$conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
-    		$i++;
-    	}
+	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
+	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
+	{
+		$i = 0;
+		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100)
+		{
+			$tmp = explode('|', $reg[1]);
+			if (!empty($tmp[1])) $langs->load($tmp[1]);
+			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
+			$i++;
+		}
 
-    	print "\n<!-- Start of welcome text for setup page -->\n";
-        print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-        print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
-        print '</td></tr></table><br>';
-        print "\n<!-- End of welcome text for setup page -->\n";
-    }
+		print "\n<!-- Start of welcome text for setup page -->\n";
+		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
+		print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
+		print '</td></tr></table><br>';
+		print "\n<!-- End of welcome text for setup page -->\n";
+	}
 }
 
-print '<span class="opacitymedium">';
-print $langs->trans("SetupDescription1");
+print '<span class="opacitymedium hideonsmartphone">';
+print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
-print '</span>';
 print "<br><br>";
+print '</span>';
 
 print '<br>';
 
@@ -91,14 +91,6 @@ print '<br>';
 
 // Show info setup module
 print img_picto('', 'puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
-
-/*
-$nbofactivatedmodules=count($conf->modules);
-$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1), count($modules));
-if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-print '<br>'.$moreinfo;
-*/
-
 if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 {
 	$langs->load("errors");
@@ -117,7 +109,7 @@ print $hookmanager->resPrint;
 if (empty($reshook))
 {
 	// Show into other
-    print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
+	print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
 	print "<br>";
 
 	// Show logo

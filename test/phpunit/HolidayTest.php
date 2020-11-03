@@ -76,7 +76,11 @@ class HolidayTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -86,7 +90,11 @@ class HolidayTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -358,7 +366,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
     	$localobjecta=new Holiday($this->savdb);
 
     	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
-
-    	$localobjecta->updateBalance();
+    	$result = $localobjecta->updateBalance();
+    	$this->assertEquals($result, 1);
     }
 }

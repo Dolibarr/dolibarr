@@ -31,13 +31,13 @@ function moPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("mrp");
+	$langs->loadLangs(array("mrp", "stocks"));
 
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("ManufacturingOrder");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -50,6 +50,13 @@ function moPrepareHead($object)
 	}
 	$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbProduced.' / '.$object->qty.'</span>';
 	$head[$h][2] = 'production';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/mrp/mo_movements.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("StockMovements");
+	$nbMove = $object->countMovements();
+	$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbMove.'</span>';
+	$head[$h][2] = 'stockmovement';
 	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))

@@ -31,9 +31,9 @@ include_once 'inc.php';
 
 global $langs;
 
-$err=0;
+$err = 0;
 
-$setuplang=GETPOST("selectlang", '', 3)?GETPOST("selectlang", '', 3):(isset($_GET["lang"])?$_GET["lang"]:'auto');
+$setuplang = GETPOST("selectlang", '', 3) ?GETPOST("selectlang", '', 3) : (isset($_GET["lang"]) ? $_GET["lang"] : 'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("install", "errors"));
@@ -44,24 +44,24 @@ dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
-if (! isset($force_install_noedit))			    $force_install_noedit='';	// 1=To block vars specific to distrib, 2 to block all technical parameters
-if (! isset($force_install_type))				$force_install_type='';
-if (! isset($force_install_dbserver))			$force_install_dbserver='';
-if (! isset($force_install_port))				$force_install_port='';
-if (! isset($force_install_database))			$force_install_database='';
-if (! isset($force_install_prefix))			    $force_install_prefix='';
-if (! isset($force_install_createdatabase))	    $force_install_createdatabase='';
-if (! isset($force_install_databaselogin))		$force_install_databaselogin='';
-if (! isset($force_install_databasepass))		$force_install_databasepass='';
-if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin='';
-if (! isset($force_install_databaserootpass))	$force_install_databaserootpass='';
+if (!isset($force_install_noedit))			    $force_install_noedit = ''; // 1=To block vars specific to distrib, 2 to block all technical parameters
+if (!isset($force_install_type))				$force_install_type = '';
+if (!isset($force_install_dbserver))			$force_install_dbserver = '';
+if (!isset($force_install_port))				$force_install_port = '';
+if (!isset($force_install_database))			$force_install_database = '';
+if (!isset($force_install_prefix))			    $force_install_prefix = '';
+if (!isset($force_install_createdatabase))	    $force_install_createdatabase = '';
+if (!isset($force_install_databaselogin))		$force_install_databaselogin = '';
+if (!isset($force_install_databasepass))		$force_install_databasepass = '';
+if (!isset($force_install_databaserootlogin))	$force_install_databaserootlogin = '';
+if (!isset($force_install_databaserootpass))	$force_install_databaserootpass = '';
 // Now we load forced values from install.forced.php file.
-$useforcedwizard=false;
-$forcedfile="./install.forced.php";
-if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";	// Must be after inc.php
+$useforcedwizard = false;
+$forcedfile = "./install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile = "/etc/dolibarr/install.forced.php"; // Must be after inc.php
 if (@file_exists($forcedfile)) {
-    $useforcedwizard = true;
-    include_once $forcedfile;
+	$useforcedwizard = true;
+	include_once $forcedfile;
 }
 
 
@@ -70,25 +70,25 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
-session_start();	// To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
+session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
 
-pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
+pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
 // Test if we can run a first install process
-if (! is_writable($conffile))
+if (!is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
-    dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
-    dolibarr_install_syslog("- fileconf: end");
-    pFooter(1, $setuplang, 'jscheckparam');
-    exit;
+	print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+	dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
+	dolibarr_install_syslog("- fileconf: end");
+	pFooter(1, $setuplang, 'jscheckparam');
+	exit;
 }
 
-if (! empty($force_install_message))
+if (!empty($force_install_message))
 {
-    print '<div><br>'.$langs->trans($force_install_message).'</div>';
+	print '<div><br>'.$langs->trans($force_install_message).'</div>';
 
-    /*print '<script type="text/javascript">';
+	/*print '<script type="text/javascript">';
     print '	jQuery(document).ready(function() {
 				jQuery("#linktoshowtechnicalparam").click(function() {
 					jQuery(".hidewhenedit").hide();
@@ -209,8 +209,8 @@ if (!empty($force_install_noedit)) {
 	</tr>
 
 	<?php
-	if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
-	    ?>
+	if (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
+		?>
 	<tr>
                     <td class="label"><label for="main_force_https"><?php echo $langs->trans("ForceHttps"); ?></label></td>
                     <td class="label">
@@ -254,7 +254,7 @@ if (!empty($force_install_noedit)) {
 	<?php
 	if (!isset($dolibarr_main_db_host))
 	{
-	    $dolibarr_main_db_host = "localhost";
+		$dolibarr_main_db_host = "localhost";
 	}
 	?>
 	<tr>
@@ -264,59 +264,59 @@ if (!empty($force_install_noedit)) {
 		<td class="label">
 		<?php
 
-		$defaultype=! empty($dolibarr_main_db_type)?$dolibarr_main_db_type:($force_install_type?$force_install_type:'mysqli');
+		$defaultype = !empty($dolibarr_main_db_type) ? $dolibarr_main_db_type : ($force_install_type ? $force_install_type : 'mysqli');
 
 		$modules = array();
 		$nbok = $nbko = 0;
-		$option='';
+		$option = '';
 
 		// Scan les drivers
-		$dir=DOL_DOCUMENT_ROOT.'/core/db';
-		$handle=opendir($dir);
+		$dir = DOL_DOCUMENT_ROOT.'/core/db';
+		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-		    while (($file = readdir($handle))!==false)
-		    {
-		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i', $file, $reg))
-		        {
-		            $type=$reg[1];
-                    if ($type === 'DoliDB') continue; // Skip abstract class
-                    $class='DoliDB'.ucfirst($type);
-                    include_once $dir."/".$file;
+			while (($file = readdir($handle)) !== false)
+			{
+				if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i', $file, $reg))
+				{
+					$type = $reg[1];
+					if ($type === 'DoliDB') continue; // Skip abstract class
+					$class = 'DoliDB'.ucfirst($type);
+					include_once $dir."/".$file;
 
-                    if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
-                    if ($type == 'sqlite3') continue;   // We hide sqlite3 because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
+					if ($type == 'sqlite') continue; // We hide sqlite because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
+					if ($type == 'sqlite3') continue; // We hide sqlite3 because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
 
-		            // Version min of database
-                    $versionbasemin=explode('.', $class::VERSIONMIN);
-                    $note='('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
+					// Version min of database
+					$versionbasemin = explode('.', $class::VERSIONMIN);
+					$note = '('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
-		            // Switch to mysql if mysqli is not present
-		            if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
+					// Switch to mysql if mysqli is not present
+					if ($defaultype == 'mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';
 
-		            // Show line into list
-		            if ($type=='mysql')  { $testfunction='mysql_connect'; $testclass=''; }
-		            if ($type=='mysqli') { $testfunction='mysqli_connect'; $testclass=''; }
-		            if ($type=='pgsql')  { $testfunction='pg_connect'; $testclass=''; }
-		            if ($type=='mssql')  { $testfunction='mssql_connect'; $testclass=''; }
-		        	if ($type=='sqlite') { $testfunction=''; $testclass='PDO'; }
-		            if ($type=='sqlite3') { $testfunction=''; $testclass='SQLite3'; }
-		            $option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
-		            if ($testfunction && ! function_exists($testfunction)) $option.=' disabled';
-		            if ($testclass && ! class_exists($testclass)) $option.=' disabled';
-		            $option.='>';
-		            $option.=$type.'&nbsp; &nbsp;';
-		            if ($note) $option.=' '.$note;
-		            // Deprecated and experimental
-					if ($type=='mysql') $option.=' ' . $langs->trans("Deprecated");
-		            elseif ($type=='mssql')  $option.=' '.$langs->trans("VersionExperimental");
-		            elseif ($type=='sqlite') $option.=' '.$langs->trans("VersionExperimental");
-		            elseif ($type=='sqlite3') $option.=' '.$langs->trans("VersionExperimental");
-		            // No available
-		            elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
-		            $option.='</option>';
-		        }
-		    }
+					// Show line into list
+					if ($type == 'mysql') { $testfunction = 'mysql_connect'; $testclass = ''; }
+					if ($type == 'mysqli') { $testfunction = 'mysqli_connect'; $testclass = ''; }
+					if ($type == 'pgsql') { $testfunction = 'pg_connect'; $testclass = ''; }
+					if ($type == 'mssql') { $testfunction = 'mssql_connect'; $testclass = ''; }
+					if ($type == 'sqlite') { $testfunction = ''; $testclass = 'PDO'; }
+					if ($type == 'sqlite3') { $testfunction = ''; $testclass = 'SQLite3'; }
+					$option .= '<option value="'.$type.'"'.($defaultype == $type ? ' selected' : '');
+					if ($testfunction && !function_exists($testfunction)) $option .= ' disabled';
+					if ($testclass && !class_exists($testclass)) $option .= ' disabled';
+					$option .= '>';
+					$option .= $type.'&nbsp; &nbsp;';
+					if ($note) $option .= ' '.$note;
+					// Deprecated and experimental
+					if ($type == 'mysql') $option .= ' '.$langs->trans("Deprecated");
+					elseif ($type == 'mssql')  $option .= ' '.$langs->trans("VersionExperimental");
+					elseif ($type == 'sqlite') $option .= ' '.$langs->trans("VersionExperimental");
+					elseif ($type == 'sqlite3') $option .= ' '.$langs->trans("VersionExperimental");
+					// No available
+					elseif (!function_exists($testfunction)) $option .= ' - '.$langs->trans("FunctionNotAvailableInThisPHP");
+					$option .= '</option>';
+				}
+			}
 		}
 		?>
 			<select id="db_type"
@@ -409,13 +409,13 @@ if (!empty($force_install_noedit)) {
 			       name="db_pass"
 			       value="
 				<?php
-			    // If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
-			    $autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
-			    if (!empty($dolibarr_main_prod)) {
-				    $autofill = '';
-			    }
-			    print dol_escape_htmltag($autofill);
-			    ?>"
+				// If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
+				$autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
+				if (!empty($dolibarr_main_prod)) {
+					$autofill = '';
+				}
+				print dol_escape_htmltag($autofill);
+				?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) { print ' disabled'; } ?>
 			>
 		</td>
@@ -456,7 +456,7 @@ if (!empty($force_install_noedit)) {
 			       name="db_user_root"
 			       class="needroot"
 			       value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
-				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootlogin)) { print ' disabled'; } ?>
+				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootlogin)) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
@@ -479,20 +479,20 @@ if (!empty($force_install_noedit)) {
 			       name="db_pass_root"
 			       class="needroot"
 			       value="<?php
-			        // If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
-			        $autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
-			        if (!empty($dolibarr_main_prod)) {
-				        $autofill = '';
-			        }
-				    // Do not autofill password if instance is a production instance
-                    if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
-					    array('127.0.0.1', 'localhost', 'localhostgit'))
-			        ) {
-				        $autofill = '';
-			        }    // Do not autofill password for remote access
-			        print dol_escape_htmltag($autofill);
-			        ?>"
-				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) { print ' disabled'; /* May be removed by javascript*/ } ?>
+					// If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
+					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
+					if (!empty($dolibarr_main_prod)) {
+						$autofill = '';
+					}
+					// Do not autofill password if instance is a production instance
+					if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
+						array('127.0.0.1', 'localhost', 'localhostgit'))
+					) {
+						$autofill = '';
+					}    // Do not autofill password for remote access
+					print dol_escape_htmltag($autofill);
+					?>"
+				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootpass)) { print ' disabled'; /* May be removed by javascript*/ } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>

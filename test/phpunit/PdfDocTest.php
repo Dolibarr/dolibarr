@@ -77,7 +77,11 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -86,7 +90,11 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -165,7 +173,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
         $file=dirname(__FILE__).'/img250x50.jpg';
         $result=pdf_getHeightForLogo($file);
         print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 22);
+    	$this->assertEquals($result, 20);
         $file=dirname(__FILE__).'/img250x20.png';
         $result=pdf_getHeightForLogo($file);
         print __METHOD__." result=".$result."\n";

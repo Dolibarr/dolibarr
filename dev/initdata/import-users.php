@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       dev/initdata/import-thirdparties.php
+ *      \file       dev/initdata/import-users.php
  *		\brief      Script example to insert thirdparties from a csv file.
  *                  To purge data, you can have a look at purge-data.php
  */
@@ -142,9 +142,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     {
         print " - Error in create result code = ".$ret." - ".$object->errorsToString();
         $errorrecord++;
-    }
-	else
-	{
+    } else {
 	    print " - Creation OK with login ".$object->login." - id = ".$ret;
 	}
 
@@ -168,9 +166,7 @@ if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

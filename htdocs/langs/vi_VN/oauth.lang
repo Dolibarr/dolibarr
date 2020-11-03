@@ -28,3 +28,5 @@ OAUTH_GITHUB_NAME=Dịch vụ OAuth GitHub
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=Bảo mật của OAuth GitHub
 OAUTH_GITHUB_DESC=Chuyển đến <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">trang này</a> sau đó "Đăng ký ứng dụng mới" để tạo thông tin đăng nhập OAuth
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

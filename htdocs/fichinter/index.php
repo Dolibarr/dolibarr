@@ -57,26 +57,27 @@ if ($user->socid > 0)
 $fichinterstatic = new Fichinter($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
 llxHeader("", $langs->trans("Interventions"), $help_url);
 
-print load_fiche_titre($langs->trans("InterventionsArea"));
+print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    // Search ficheinter
-    $var = false;
-    print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></div></form><br>\n";
+	// Search ficheinter
+	$var = false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "</table></div></form><br>\n";
 }
 
 
@@ -96,84 +97,90 @@ $sql .= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    $total = 0;
-    $totalinprocess = 0;
-    $dataseries = array();
-    $vals = array();
-    $bool = false;
-    // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-    while ($i < $num)
-    {
-        $row = $db->fetch_row($resql);
-        if ($row)
-        {
-            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-            {
-                $bool = (!empty($row[2]) ?true:false);
-                if (!isset($vals[$row[1].$bool])) $vals[$row[1].$bool] = 0;
-                $vals[$row[1].$bool] += $row[0];
-                $totalinprocess += $row[0];
-            }
-            $total += $row[0];
-        }
-        $i++;
-    }
-    $db->free($resql);
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-    $listofstatus = array(0, 1, 2);
-    $bool = false;
-    foreach ($listofstatus as $status)
-    {
-        $dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
-        if ($status == 3 && !$bool) $bool = true;
-        else $bool = false;
-    }
-    if ($conf->use_javascript_ajax)
-    {
-        print '<tr class="impair"><td class="center" colspan="2">';
+	$total = 0;
+	$totalinprocess = 0;
+	$dataseries = array();
+	$vals = array();
+	$bool = false;
+	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		if ($row)
+		{
+			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
+			{
+				$bool = (!empty($row[2]) ?true:false);
+				if (!isset($vals[$row[1].$bool])) $vals[$row[1].$bool] = 0;
+				$vals[$row[1].$bool] += $row[0];
+				$totalinprocess += $row[0];
+			}
+			$total += $row[0];
+		}
+		$i++;
+	}
+	$db->free($resql);
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
-        $dolgraph->draw('idgraphstatus');
-        print $dolgraph->show($total ? 0 : 1);
-        $data = array('series'=>$dataseries);
+	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
-        print '</td></tr>';
-    }
-    $bool = false;
-    foreach ($listofstatus as $status)
-    {
-        if (!$conf->use_javascript_ajax)
-        {
-            print '<tr class="oddeven">';
-            print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
-            print '<td class="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
-            print $fichinterstatic->LibStatut($status, $bool, 3);
-            print '</a>';
-            print '</td>';
-            print "</tr>\n";
-            if ($status == 3 && !$bool) $bool = true;
-            else $bool = false;
-        }
-    }
-    //if ($totalinprocess != $total)
-    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table></div><br>";
-}
-else
-{
-    dol_print_error($db);
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
+	$listofstatus = array(0, 1, 3);
+	$bool = false;
+	foreach ($listofstatus as $status)
+	{
+		$dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
+		if ($status == 3 && !$bool) $bool = true;
+		else $bool = false;
+
+		if ($status == Fichinter::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+		if ($status == Fichinter::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+		if ($status == Fichinter::STATUS_BILLED) $colorseries[$status] = $badgeStatus4;
+		if ($status == Fichinter::STATUS_CLOSED) $colorseries[$status] = $badgeStatus6;
+	}
+	if ($conf->use_javascript_ajax)
+	{
+		print '<tr class="impair"><td class="center" colspan="2">';
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
+		$dolgraph->setShowLegend(2);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->setHeight('200');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($total ? 0 : 1);
+
+		print '</td></tr>';
+	}
+	$bool = false;
+	foreach ($listofstatus as $status)
+	{
+		if (!$conf->use_javascript_ajax)
+		{
+			print '<tr class="oddeven">';
+			print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
+			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
+			print $fichinterstatic->LibStatut($status, $bool, 3);
+			print '</a>';
+			print '</td>';
+			print "</tr>\n";
+			if ($status == 3 && !$bool) $bool = true;
+			else $bool = false;
+		}
+	}
+	//if ($totalinprocess != $total)
+	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+	print "</table></div><br>";
+} else {
+	dol_print_error($db);
 }
 
 
@@ -195,7 +202,7 @@ if (!empty($conf->ficheinter->enabled))
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
@@ -244,7 +251,7 @@ $sql .= $db->plimit($max, 0);
 $resql = $db->query($sql);
 if ($resql)
 {
-    print '<div class="div-table-responsive-no-min">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedInterventions", $max).'</th></tr>';
@@ -289,8 +296,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -315,10 +321,10 @@ if (!empty($conf->ficheinter->enabled))
 	{
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{
@@ -360,8 +366,7 @@ if (!empty($conf->ficheinter->enabled))
 		}
 
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 print '</div></div></div>';

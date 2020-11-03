@@ -8,3 +8,4 @@ LinkRemoved=Le lien %s a été supprimé
 ErrorFailedToDeleteLink= Impossible de supprimer le lien '<b>%s</b>'
 ErrorFailedToUpdateLink= Impossible de modifier le lien '<b>%s</b>'
 URLToLink=URL à lier
+OverwriteIfExists=Overwrite file if exists

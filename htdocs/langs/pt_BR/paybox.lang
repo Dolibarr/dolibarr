@@ -15,7 +15,6 @@ AccountParameter=Parametros da conta
 UsageParameter=Parametros de uso
 InformationToFindParameters=Ajuda a buscar suas %s informaçoes da conta
 PAYBOX_CGI_URL_V2=URL do Paybox CGI modulo para pagamento
-VendorName=Nome do vendedor
 CSSUrlForPaymentForm=CSS style sheet URL para modelo de pagamento
 NewPayboxPaymentReceived=Novo pagamento recebido Paybox
 NewPayboxPaymentFailed=Novo pagamento Paybox tentou, mas não conseguiu

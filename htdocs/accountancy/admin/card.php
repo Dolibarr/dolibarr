@@ -44,6 +44,8 @@ $cancel = GETPOST('cancel', 'alpha');
 $accountingaccount = GETPOST('accountingaccount', 'alpha');
 
 // Security check
+if ($user->socid > 0) accessforbidden();
+if (!$user->rights->accounting->chartofaccount) accessforbidden();
 
 
 $object = new AccountingAccount($db);
@@ -75,24 +77,19 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
 			$account_number = GETPOST('account_number', 'string');
-		}
-		else
-		{
+		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
 		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
-		}
-		else
-		{
+		} else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type', 'alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
@@ -105,24 +102,22 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			$error = 1;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		elseif ($res == - 4) {
+		} elseif ($res == - 4) {
 			$error = 2;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		elseif ($res < 0)
+		} elseif ($res < 0)
 		{
-		    $error++;
-		    setEventMessages($object->error, $object->errors, 'errors');
-		    $action = "create";
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = "create";
 		}
 		if (!$error)
 		{
-		    setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
-		    $urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
-		    header("Location: ".$urltogo);
-		    exit;
+			setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
+			$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
+			header("Location: ".$urltogo);
+			exit;
 		}
 	}
 } elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
@@ -141,24 +136,19 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
 			$account_number = GETPOST('account_number', 'string');
-		}
-		else
-		{
+		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
 		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
-		}
-		else
-		{
+		} else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type', 'alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
@@ -168,15 +158,15 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		$result = $object->update($user);
 
 		if ($result > 0) {
-		    $urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
-		    header("Location: ".$urltogo);
+			$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+			header("Location: ".$urltogo);
 			exit();
 		} else {
 			$mesg = $object->error;
 		}
 	} else {
-	    $urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
-	    header("Location: ".$urltogo);
+		$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"]."?id=".$id);
+		header("Location: ".$urltogo);
 		exit();
 	}
 } elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
@@ -220,7 +210,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -239,8 +229,8 @@ if ($action == 'create') {
 	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
 
 	// Label short
-	print '<tr><td>' . $langs->trans("LabelToShow") . '</td>';
-	print '<td><input name="labelshort" size="70" value="' . $object->labelshort . '"></td></tr>';
+	print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+	print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
 
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -260,15 +250,9 @@ if ($action == 'create') {
 	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
-	// Chart of accounts subtype
-	print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-	print '<td>';
-	print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
-	print '</td></tr>';
-
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -277,8 +261,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($id > 0 || $ref) {
+} elseif ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref, 1);
 
 	if ($result > 0) {
@@ -289,7 +272,7 @@ elseif ($id > 0 || $ref) {
 		// Edit mode
 		if ($action == 'update')
 		{
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -308,8 +291,8 @@ elseif ($id > 0 || $ref) {
 			print '<td><input name="label" size="70" value="'.$object->label.'"</td></tr>';
 
 			// Label short
-			print '<tr><td>' . $langs->trans("LabelToShow") . '</td>';
-			print '<td><input name="labelshort" size="70" value="' . $object->labelshort . '"</td></tr>';
+			print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+			print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"</td></tr>';
 
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -329,15 +312,9 @@ elseif ($id > 0 || $ref) {
 			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 			print '</td></tr>';
 
-			// Chart of accounts subtype
-			print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-			print '<td>';
-			print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
-			print '</td></tr>';
-
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -350,7 +327,7 @@ elseif ($id > 0 || $ref) {
 			// View mode
 			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'account_number', 'ref');
 
@@ -365,8 +342,8 @@ elseif ($id > 0 || $ref) {
 			print '<td colspan="2">'.$object->label.'</td></tr>';
 
 			// Label to show
-			print '<tr><td class="titlefield">' . $langs->trans("LabelToShow") . '</td>';
-			print '<td colspan="2">' . $object->labelshort . '</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("LabelToShow").'</td>';
+			print '<td colspan="2">'.$object->labelshort.'</td></tr>';
 
 			// Account parent
 			$accp = new AccountingAccount($db);
@@ -383,15 +360,11 @@ elseif ($id > 0 || $ref) {
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td colspan="2">'.$object->pcg_type.'</td></tr>';
 
-			// Chart of accounts subtype
-			print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-			print '<td colspan="2">'.$object->pcg_subtype.'</td></tr>';
-
 			print '</table>';
 
 			print '</div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			/*
 			 * Actions buttons
@@ -399,13 +372,13 @@ elseif ($id > 0 || $ref) {
 			print '<div class="tabsAction">';
 
 			if (!empty($user->rights->accounting->chartofaccount)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$id.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 			}
 
 			if (!empty($user->rights->accounting->chartofaccount)) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
 			}

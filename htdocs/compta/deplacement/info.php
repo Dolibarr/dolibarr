@@ -32,7 +32,7 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 
@@ -50,13 +50,13 @@ if ($id)
 
 	$head = trip_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
+	print dol_get_fiche_head($head, 'info', $langs->trans("TripCard"), 0, 'trip');
 
-    print '<table width="100%"><tr><td>';
-    dol_print_object_info($object);
-    print '</td></tr></table>';
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
 
-    print '</div>';
+	print '</div>';
 }
 
 // End of page

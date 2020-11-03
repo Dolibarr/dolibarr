@@ -14,7 +14,7 @@ EventsNb=事件集數量
 ListOfActions=事件清單
 EventReports=事件報表
 Location=位置
-ToUserOfGroup=給群組成員
+ToUserOfGroup=Event assigned to any user in group
 EventOnFullDay=整天事件
 MenuToDoActions=全部未完成事件
 MenuDoneActions=全部已停止事件
@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=裝運%s已歸類為開票
 ShipmentUnClassifyCloseddInDolibarr=發貨%s已分類為重新打開
 ShipmentBackToDraftInDolibarr=裝運%s回到草稿狀態
 ShipmentDeletedInDolibarr=裝運%s已刪除
+ReceptionValidatedInDolibarr=接收%s已驗證
 OrderCreatedInDolibarr=訂單 %s 已建立
 OrderValidatedInDolibarr=訂單 %s 已驗證
 OrderDeliveredInDolibarr=訂單 %s 歸類為已出貨
@@ -84,13 +85,16 @@ InterventionSentByEMail=以電子郵件發送的干預措施%s
 ProposalDeleted=提案/建議書已刪除
 OrderDeleted=訂單已刪除
 InvoiceDeleted=發票已刪除
+DraftInvoiceDeleted=發票草稿已刪除
+CONTACT_CREATEInDolibarr=Contact %s created
+CONTACT_DELETEInDolibarr=Contact %s deleted
 PRODUCT_CREATEInDolibarr=產品 %s 已建立
 PRODUCT_MODIFYInDolibarr=產品 %s 已修改
 PRODUCT_DELETEInDolibarr=產品 %s 已刪除
 HOLIDAY_CREATEInDolibarr=休假申請%s已建立
 HOLIDAY_MODIFYInDolibarr=休假申請%s已修改
 HOLIDAY_APPROVEInDolibarr=休假申請%s已核准
-HOLIDAY_VALIDATEDInDolibarr=休假申請%s已驗證
+HOLIDAY_VALIDATEInDolibarr=休假申請%s已驗證
 HOLIDAY_DELETEInDolibarr=休假申請%s已刪除
 EXPENSE_REPORT_CREATEInDolibarr=費用報表 %s 已建立
 EXPENSE_REPORT_VALIDATEInDolibarr=費用報表 %s 已驗證
@@ -111,8 +115,10 @@ BOM_CLOSEInDolibarr=物料清單(BOM)已禁用
 BOM_REOPENInDolibarr=物料清單(BOM)重新打開
 BOM_DELETEInDolibarr=物料清單(BOM)已刪除
 MRP_MO_VALIDATEInDolibarr=MO已驗證
+MRP_MO_UNVALIDATEInDolibarr=MO已設定為草稿狀態
 MRP_MO_PRODUCEDInDolibarr=MO已生產
 MRP_MO_DELETEInDolibarr=MO已刪除
+MRP_MO_CANCELInDolibarr=MO已取消
 ##### End agenda events #####
 AgendaModelModule=事件的文件範本
 DateActionStart=開始日期
@@ -123,6 +129,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> 將限制輸出非用戶<b>%s</b>擁�
 AgendaUrlOptions4=<b>logint = %s</b>將限制輸出分配給用戶<b>%s</b> （所有者和其他用戶）的操作。
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 將限制輸出為已連結專案操作 <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>排除自動事件。
+AgendaUrlOptionsIncludeHolidays=設定<b>includeholidays=1</b>以包括假期活動。
 AgendaShowBirthdayEvents=顯示連絡人生日
 AgendaHideBirthdayEvents=隱藏連絡人生日
 Busy=忙錄
@@ -150,3 +157,12 @@ EveryMonth=每月
 DayOfMonth=一個月中的某天
 DayOfWeek=星期幾
 DateStartPlusOne=開始日 +1 小時
+SetAllEventsToTodo=將所有事件設定為待辦事項
+SetAllEventsToInProgress=將所有事件設定為進行中
+SetAllEventsToFinished=將所有事件設定為已完成
+ReminderTime=Reminder period before the event
+TimeType=Duration type
+ReminderType=Callback type
+AddReminder=Create an automatic reminder notification for this event
+ErrorReminderActionCommCreation=Error creating the reminder notification for this event
+BrowserPush=Browser Notification

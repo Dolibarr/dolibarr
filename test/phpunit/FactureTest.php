@@ -74,7 +74,11 @@ class FactureTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -87,7 +91,11 @@ class FactureTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -233,7 +241,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
 				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
-                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement'
+                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen'
 			)
 		);
         $this->assertEquals($arraywithdiff, array());    // Actual, Expected
@@ -357,13 +365,11 @@ class FactureTest extends PHPUnit\Framework\TestCase
         if (get_class($oA) !== get_class($oB))
         {
             $retAr[]="Supplied objects are not of same class.";
-        }
-        else
-        {
+        } else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey)
+            foreach ($aKeys as $sKey)
             {
                 if (in_array($sKey, $fieldstoignorearray)) continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])

@@ -1,2 +1,8 @@
-To test a SEPA file:
-http://www.mesfluxdepaiement.fr/testez-vos-fichiers-sepa
+Spec for credit transfer: 
+https://docs.oracle.com/cd/E39124_01/doc.91/e60210/fields_sepa_pay_file_appx.htm#EOAEL00515
+
+To validate a SEPA file:
+xmllint --schema pain.001.001.03.xsd T200801.xml --noout
+
+To test a SEPA file: 
+https://www.mesfluxdepaiement.fr/testez-vos-fichiers-sepa 

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2020      Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,20 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class box_contacts extends ModeleBoxes
 {
-    public $boxcode = "lastcontacts";
-    public $boximg = "object_contact";
-    public $boxlabel = "BoxLastContacts";
-    public $depends = array("societe");
+	public $boxcode = "lastcontacts";
+	public $boximg = "object_contact";
+	public $boxlabel = "BoxLastContacts";
+	public $depends = array("societe");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -58,18 +59,18 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
+		$this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -83,6 +84,7 @@ class box_contacts extends ModeleBoxes
 		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
+
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
 			$sql .= ", s.nom as socname, s.name_alias, s.email as semail";
 			$sql .= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
@@ -92,7 +94,7 @@ class box_contacts extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND sp.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND sp.fk_soc = ".$user->socid;
 			$sql .= " ORDER BY sp.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
@@ -119,7 +121,7 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;
 					$contactstatic->phone_mobile = $objp->phone_mobile;
-                    $contactstatic->email = $objp->spemail;
+					$contactstatic->email = $objp->spemail;
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
@@ -128,7 +130,7 @@ class box_contacts extends ModeleBoxes
 
 					$societestatic->id = $objp->fk_soc;
 					$societestatic->name = $objp->socname;
-                    $societestatic->email = $objp->semail;
+					$societestatic->email = $objp->semail;
 					$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;

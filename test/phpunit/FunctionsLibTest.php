@@ -77,7 +77,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -88,7 +92,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -680,6 +688,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     }
 
     /**
+     * testDolAsciiCheck
+     *
+     * @return void
+     */
+    public function testDolAsciiCheck()
+    {
+    	// True
+    	$result=ascii_check('azerty');
+    	$this->assertTrue($result);
+
+    	$result=ascii_check('é');
+    	$this->assertFalse($result);
+
+    	$file=dirname(__FILE__).'/textutf8.txt';
+    	$filecontent=file_get_contents($file);
+    	$result=ascii_check($filecontent);
+    	$this->assertFalse($result);
+    }
+
+    /**
      * testDolTrunc
      *
      * @return boolean
@@ -1229,9 +1257,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         $conf->global->MAIN_START_WEEK = 0;
 
-        $tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
-        $this->assertEquals(4, $tmp['wday']);
-
         $tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
         $this->assertEquals(5, $tmp['wday']);
 
@@ -1243,12 +1268,77 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
         $this->assertEquals(5, $tmp['wday']);
 
+        $tmp=dol_getdate(1, false, "Europe/Paris");						// 1/1/1970 and 1 second = thirday
+        $this->assertEquals(1970, $tmp['year']);
+        $this->assertEquals(1, $tmp['mon']);
+        $this->assertEquals(1, $tmp['mday']);
+        $this->assertEquals(4, $tmp['wday']);
+        $this->assertEquals(0, $tmp['yday']);
+        $this->assertEquals(1, $tmp['hours']);		// We are winter, so we are GMT+1 even during summer
+        $this->assertEquals(0, $tmp['minutes']);
+        $this->assertEquals(1, $tmp['seconds']);
+
+        $tmp=dol_getdate(15638401, false, "Europe/Paris");					// 1/7/1970 and 1 second = wednesday
+        $this->assertEquals(1970, $tmp['year']);
+        $this->assertEquals(7, $tmp['mon']);
+        $this->assertEquals(1, $tmp['mday']);
+        $this->assertEquals(3, $tmp['wday']);
+        $this->assertEquals(181, $tmp['yday']);
+        $this->assertEquals(1, $tmp['hours']);		// There is no daylight in 1970, so we are GMT+1 even during summer
+        $this->assertEquals(0, $tmp['minutes']);
+        $this->assertEquals(1, $tmp['seconds']);
+
+        $tmp=dol_getdate(1593561601, false, "Europe/Paris");				// 1/7/2020 and 1 second = wednesday
+        $this->assertEquals(2020, $tmp['year']);
+        $this->assertEquals(7, $tmp['mon']);
+        $this->assertEquals(1, $tmp['mday']);
+        $this->assertEquals(3, $tmp['wday']);
+        $this->assertEquals(182, $tmp['yday']);		// 182 and not 181, due to the 29th february
+        $this->assertEquals(2, $tmp['hours']);		// There is a daylight, so we are GMT+2
+        $this->assertEquals(0, $tmp['minutes']);
+        $this->assertEquals(1, $tmp['seconds']);
+
+        $conf->global->MAIN_USE_OLD_FUNCTIONS_FOR_GETDATE = 1;
+
+        $tmp=dol_getdate(1);						// 1/1/1970 and 1 second = thirday
+        $this->assertEquals(1970, $tmp['year']);
+        $this->assertEquals(1, $tmp['mon']);
+        $this->assertEquals(1, $tmp['mday']);
+        $this->assertEquals(4, $tmp['wday']);
+        $this->assertEquals(0, $tmp['yday']);
+        // We must disable this because on CI, timezone is may be UTC or something else
+        //$this->assertEquals(1, $tmp['hours']);		// We are winter, so we are GMT+1 even during summer
+        $this->assertEquals(0, $tmp['minutes']);
+        $this->assertEquals(1, $tmp['seconds']);
+
+        $tmp=dol_getdate(15638401);					// 1/7/1970 and 1 second = wednesday
+        $this->assertEquals(1970, $tmp['year']);
+        $this->assertEquals(7, $tmp['mon']);
+        $this->assertEquals(1, $tmp['mday']);
+        $this->assertEquals(3, $tmp['wday']);
+        $this->assertEquals(181, $tmp['yday']);
+        // We must disable this because on CI, timezone is may be UTC or something else
+        //$this->assertEquals(1, $tmp['hours']);		// There is no daylight in 1970, so we are GMT+1 even during summer
+        $this->assertEquals(0, $tmp['minutes']);
+        $this->assertEquals(1, $tmp['seconds']);
+
+        $tmp=dol_getdate(1593561601);				// 1/7/2020 and 1 second = wednesday
+        $this->assertEquals(2020, $tmp['year']);
+        $this->assertEquals(7, $tmp['mon']);
+        $this->assertEquals(1, $tmp['mday']);
+        $this->assertEquals(3, $tmp['wday']);
+        $this->assertEquals(182, $tmp['yday']);		// 182 and not 181, due to the 29th february
+        // We must disable this because on CI, timezone is may be UTC or something else
+        //$this->assertEquals(2, $tmp['hours']);		// There is a daylight, so we are GMT+2
+        $this->assertEquals(0, $tmp['minutes']);
+        $this->assertEquals(1, $tmp['seconds']);
+
         return true;
     }
 
 
     /**
-     * testDolGetDate
+     * testMakeSubstitutions
      *
      * @return boolean
      */
@@ -1281,6 +1371,34 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     	$chaine='This is a not ISO string '.chr(0);
     	$result = dol_string_is_good_iso($chaine);
     	$this->assertEquals($result, 0);
+
+    	return true;
+    }
+
+
+    /**
+     * testGetUserRemoteIP
+     *
+     * @return boolean
+     */
+    public function testGetUserRemoteIP()
+    {
+    	global $conf, $langs;
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '1.2.3.4');
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4<corrupted>';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '5.6.7.8');
+
+    	$_SERVER['HTTP_X_FORWARDED_FOR']='[1:2:3:4]';
+    	$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+    	$result = getUserRemoteIP();
+    	$this->assertEquals($result, '[1:2:3:4]');
 
     	return true;
     }

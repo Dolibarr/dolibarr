@@ -26,17 +26,17 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
-$id=GETPOST('rowid')?GETPOST('rowid', 'int'):GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
+$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
@@ -44,8 +44,8 @@ $object = new PaymentExpenseReport($db);
 
 if ($id > 0)
 {
-	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
+	$result = $object->fetch($id);
+	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -61,50 +61,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensere
 	$result = $object->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/expensereport/index.php");
-        exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
-	}
-}
-
-// Create payment
-if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensereport->creer)
-{
-	$db->begin();
-
-	$result=$object->valide();
-
-	if ($result > 0)
-	{
 		$db->commit();
-
-		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $invoiceid)
-		{
-			$fac = new Facture($db);
-			$fac->fetch($invoiceid);
-
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
-			}
-		}
-
-		header('Location: card.php?id='.$object->id);
+		header("Location: ".DOL_URL_ROOT."/expensereport/index.php");
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -121,7 +81,7 @@ $form = new Form($db);
 
 $head = payment_expensereport_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 /*
  * Confirm deleting of the payment
@@ -129,15 +89,6 @@ dol_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'pay
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
-}
-
-/*
- * Confirm validation of the payment
- */
-if ($action == 'valide')
-{
-	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
 }
 
 $linkback = '';
@@ -167,41 +118,41 @@ print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2
 
 $disable_delete = 0;
 // Bank account
-if (! empty($conf->banque->enabled))
+if (!empty($conf->banque->enabled))
 {
-    if ($object->bank_account)
-    {
-    	$bankline=new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
-        if ($bankline->rappro)
-        {
-            $disable_delete = 1;
-            $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-        }
+	if ($object->bank_account)
+	{
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
+		if ($bankline->rappro)
+		{
+			$disable_delete = 1;
+			$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+		}
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
 		print $bankline->getNomUrl(1, 0, 'showconciliated');
-    	print '</td>';
-    	print '</tr>';
+		print '</td>';
+		print '</tr>';
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankAccount').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankAccount').'</td>';
 		print '<td colspan="3">';
-		$accountstatic=new Account($db);
+		$accountstatic = new Account($db);
 		$accountstatic->fetch($bankline->fk_account);
-        print $accountstatic->getNomUrl(1);
-    	print '</td>';
-    	print '</tr>';
-    }
+		print $accountstatic->getNomUrl(1);
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -209,13 +160,13 @@ dol_fiche_end();
  */
 
 $sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
-$sql.= ' WHERE per.fk_expensereport = er.rowid';
-$sql.= ' AND er.entity IN ('.getEntity('expensereport').')';
-$sql.= ' AND per.rowid = '.$id;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
+$sql .= ' WHERE per.fk_expensereport = er.rowid';
+$sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
+$sql .= ' AND per.rowid = '.$id;
 
 dol_syslog("expensereport/payment/card.php", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -243,7 +194,7 @@ if ($resql)
 
 			print '<tr class="oddeven">';
 
-			$expensereport=new ExpenseReport($db);
+			$expensereport = new ExpenseReport($db);
 			$expensereport->fetch($objp->eid);
 
 			// Expense report
@@ -280,9 +231,7 @@ if ($resql)
 	print '</div>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -297,12 +246,10 @@ if ($action == '')
 {
 	if ($user->rights->expensereport->supprimer)
 	{
-		if (! $disable_delete)
+		if (!$disable_delete)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else
-		{
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
 		}
 	}

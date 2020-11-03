@@ -30,6 +30,7 @@ Permission56005=Veure els tiquets de tots els tercers (no efectiu per als usuari
 TicketDictType=Tiquet - Tipus
 TicketDictCategory=Tiquet - Grups
 TicketDictSeverity=Tiquet - Severitats
+TicketDictResolution=Tiquet - Resolució
 TicketTypeShortBUGSOFT=Disfunció de la lògica
 TicketTypeShortBUGHARD=Disfunció de matèries
 TicketTypeShortCOM=Qüestió comercial
@@ -71,7 +72,6 @@ Deleted=Esborrat
 
 # Dict
 Type=Tipus
-Category=Codi analític
 Severity=Gravetat
 
 # Email templates
@@ -127,12 +127,15 @@ TicketsAutoAssignTicket=Assigna automàticament l'usuari que va crear el tiquet
 TicketsAutoAssignTicketHelp=Quan es crea un tiquet, l'usuari pot assignar-se automàticament al tiquet.
 TicketNumberingModules=Mòdul de numeració de tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
-TicketGroup=Grup
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
+TicketsPublicNotificationNewMessage=Enviar correu(s) electonic(s) quan s'afegeix un nou missatge
+TicketsPublicNotificationNewMessageHelp=Enviar correu(s) electrònic(s) quan un nou missatge s'afegeix des d'una interfície pública (cap a l'usuari assignat o la notificació del correu electrònic cap a (actualitzar) i/o les notificacions del correu electrònic cap a)
+TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Enviar un correu nou missatge de notificació cap a aquesta adreça si el tiquet no te usuari assignat o l'usuari no te correu electrònic.
 #
 # Index & list page
 #
-TicketsIndex=Tiquet - inici
+TicketsIndex=Àrea de tiquets
 TicketList=Llista de tiquets
 TicketAssignedToMeInfos=Aquesta pàgina mostra la llista de butlletes creada per o assignada a l'usuari actual
 NoTicketsFound=Tiquet no trobat
@@ -157,7 +160,7 @@ CreatedBy=Creat per
 NewTicket=Nou tiquet
 SubjectAnswerToTicket=Resposta de tiquet
 TicketTypeRequest=Tipus de sol·licitud
-TicketCategory=Codi analític
+TicketCategory=Grup
 SeeTicket=Consultar tiquet
 TicketMarkedAsRead=Tiquet ha estat marcat com llegit
 TicketReadOn=Segueix llegint
@@ -253,7 +256,7 @@ TicketPublicDesc=Podeu crear un tiquet d'assistència o consultar des d'una iden
 YourTicketSuccessfullySaved=S'ha desat el tiquet amb èxit!
 MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un nou tiquet amb l'ID %s i la ref. %s.
 PleaseRememberThisId=Guardeu el número de traça que us podríem demanar més tard.
-TicketNewEmailSubject=Confirmació de la creació del tiquet - Ref. %s
+TicketNewEmailSubject=Confirmació de la creació de tiquet - Ref %s (ID de l’entrada pública %s)
 TicketNewEmailSubjectCustomer=Nou tiquet de suport
 TicketNewEmailBody=Aquest és un correu electrònic automàtic per confirmar que heu registrat un nou tiquet.
 TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per confirmar que un nou tiquet acaba de ser creat al vostre compte.
@@ -272,7 +275,7 @@ Subject=Assumpte
 ViewTicket=Vista del tiquet
 ViewMyTicketList=Veure la meva llista de tiquets
 ErrorEmailMustExistToCreateTicket=Error: adreça de correu electrònic no trobada a la nostra base de dades
-TicketNewEmailSubjectAdmin=S'ha creat el nou tiquet amb ref. %s
+TicketNewEmailSubjectAdmin=S'ha creat un nou tiquet: Ref %s (ID d'entrada pública %s)
 TicketNewEmailBodyAdmin=<p>S'ha creat una entrada amb ID #%s, veure informació :</p>
 SeeThisTicketIntomanagementInterface=Consulteu el tiquet a la interfície de gestió
 TicketPublicInterfaceForbidden=La interfície pública de les entrades no estava habilitada

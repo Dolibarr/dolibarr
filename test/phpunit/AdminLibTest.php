@@ -73,7 +73,11 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -82,7 +86,11 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -157,13 +165,17 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
 		print "Enable module modExpenseReport";
 		$moduledescriptor=new modExpenseReport($db);
-		$moduledescriptor->init();
+		$result = $moduledescriptor->init();
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1, $result);
 		$conf->setValues($db);
 
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
 		print "Enable module modAPI";
 		$moduledescriptor=new modApi($db);
-		$moduledescriptor->init();
+		$result = $moduledescriptor->init();
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1, $result);
 		$conf->setValues($db);
     }
 }

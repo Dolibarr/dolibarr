@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Các bước tiếp theo nên được thực h
 AccountancyAreaDescActionFreq=Các hành động sau đây thường được thực hiện mỗi tháng, tuần hoặc ngày đối với các công ty rất lớn ...
 
 AccountancyAreaDescJournalSetup=BƯỚC %s: Tạo hoặc kiểm tra nội dung danh sách nhật ký của bạn từ menu %s
-AccountancyAreaDescChartModel=BƯỚC %s: Tạo mô hình hệ thống tài khoản từ menu %s
-AccountancyAreaDescChart=BƯỚC %s: Tạo hoặc kiểm tra nội dung hệ thống tài khoản của bạn từ menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=BƯỚC %s: Xác định tài khoản kế toán cho mỗi mức thuế VAT. Để làm điều này, sử dụng mục menu %s.
 AccountancyAreaDescDefault=BƯỚC %s: Xác định tài khoản kế toán mặc định. Đối với điều này, sử dụng mục menu %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Giới hạn dòng hóa đơn
 ExpenseReportLines=Dòng báo cáo chi phí để ràng buộc
 ExpenseReportLinesDone=Giới hạn dòng của báo cáo chi phí
 IntoAccount=Ràng buộc dòng với tài khoản kế toán
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Ràng buộc
@@ -148,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Cho phép quản lý các số không khác nhau ở cu�
 BANK_DISABLE_DIRECT_INPUT=Vô hiệu hóa ghi trực tiếp giao dịch trong tài khoản ngân hàng
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Cho phép xuất dữ liệu bản nháp trong nhật ký
 ACCOUNTANCY_COMBO_FOR_AUX=Bật danh sách kết hợp cho tài khoản công ty con (có thể chậm nếu bạn có nhiều bên thứ ba)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Nhật ký bán hàng
 ACCOUNTING_PURCHASE_JOURNAL=Nhật ký mua hàng
@@ -168,10 +170,15 @@ DONATION_ACCOUNTINGACCOUNT=Tài khoản kế toán cho đăng ký quyên góp.
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tài khoản kế toán để đăng ký tham gia
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm đã mua (được sử dụng nếu không được xác định trong bảng sản phẩm)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm đã mua trong EEC (được sử dụng nếu không được xác định trong bảng sản phẩm)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm đã mua và được nhập ra khỏi EEC (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm đã bán (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm được bán trong EEC (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Tài khoản kế toán theo mặc định cho các sản phẩm được bán và xuất ra khỏi EEC (được sử dụng nếu không được xác định trong bảng sản phẩm)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Tài khoản kế toán theo mặc định cho các dịch vụ đã mua (được sử dụng nếu không được xác định trong bảng dịch vụ)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Tài khoản kế toán theo mặc định cho các dịch vụ đã mua trong EEC (được sử dụng nếu không được xác định trong bảng dịch vụ)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Tài khoản kế toán theo mặc định cho các dịch vụ đã mua và được nhập ra khỏi EEC (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Tài khoản kế toán theo mặc định cho các dịch vụ đã bán (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Tài khoản kế toán theo mặc định cho các dịch vụ được bán trong EEC (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Tài khoản kế toán theo mặc định cho các dịch vụ được bán và xuất ra khỏi EEC (được sử dụng nếu không được xác định trong bảng dịch vụ)
@@ -224,13 +231,19 @@ ListAccounts=Danh sách các tài khoản kế toán
 UnknownAccountForThirdparty=Không biết tài khoản bên thứ ba. Chúng ta sẽ sử dụng %s
 UnknownAccountForThirdpartyBlocking=Không biết tài khoản bên thứ ba. Lỗi chặn
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tài khoản bên thứ ba không được xác định hoặc không biết bên thứ ba. Chúng ta sẽ sử dụng %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Bên thứ ba không xác định và người đăng ký không được xác định trên thanh toán. Chúng tôi sẽ giữ giá trị tài khoản subledger trống.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tài khoản bên thứ ba không được xác định hoặc không biết bên thứ ba. Lỗi chặn.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Không biết tài khoản bên thứ ba và tài khoản đang chờ không xác định. Lỗi chặn
 PaymentsNotLinkedToProduct=Thanh toán không được liên kết với bất kỳ sản phẩm/ dịch vụ nào
+OpeningBalance=Opening balance
+ShowOpeningBalance=Xem số dư 
+HideOpeningBalance=Ẩn số dư
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Nhóm tài khoản
-Pcgsubtype=Phân nhóm tài khoản
-PcgtypeDesc=Nhóm và phân nhóm của tài khoản được sử dụng làm tiêu chí 'bộ lọc' và 'nhóm' được xác định trước cho một số báo cáo kế toán. Ví dụ: 'THU NHẬP' hoặc 'CHI PHÍ' được sử dụng làm nhóm cho tài khoản kế toán của các sản phẩm để xây dựng báo cáo chi phí/ thu nhập.
+PcgtypeDesc=Nhóm tài khoản được sử dụng làm tiêu chí 'bộ lọc' và 'nhóm' được xác định trước cho một số báo cáo kế toán. Ví dụ: 'THU NHẬP' hoặc 'CHI PHÍ' được sử dụng làm nhóm cho tài khoản kế toán của các sản phẩm để xây dựng báo cáo chi phí / thu nhập.
+
+Reconcilable=Đối soát lại
 
 TotalVente=Tổng doanh thu trước thuế
 TotalMarge=Tổng  lợi nhuận bán hàng
@@ -269,8 +282,10 @@ ChangeBinding=Thay đổi ràng buộc
 Accounted=Tài khoản trên Sổ cái
 NotYetAccounted=Chưa hạch toán vào Sổ cái
 ShowTutorial=Chương trình hướng dẫn
+NotReconciled=Chưa đối chiếu
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Áp dụng cho số một lớn các danh mục
 AddAccountFromBookKeepingWithNoCategories=Tài khoản khả dụng chưa có trong nhóm được cá nhân hóa
 CategoryDeleted=Danh mục cho tài khoản kế toán đã bị xóa
@@ -304,11 +319,13 @@ Modelcsv_quadratus=Xuất dữ liệu cho Quadratus QuadraCompta
 Modelcsv_ebp=Xuất dữ liệu cho EBP
 Modelcsv_cogilog=Xuất dữ liệu Cogilog
 Modelcsv_agiris=Xuất dữ liệu cho Agiris
-Modelcsv_LDCompta=Xuất dữ liệu cho LD Compta (v9 trở lên) (Kiểm tra)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Xuất cho chuẩn LD Compta (v10 hoặc cao hơn)
 Modelcsv_openconcerto=Xuất dữ liệu cho OpenConcerto (Kiểm tra)
 Modelcsv_configurable=Xuất dữ liệu cấu hình CSV
 Modelcsv_FEC=Xuất dữ liệu FEC
 Modelcsv_Sage50_Swiss=Xuất dữ liệu cho Sage 50 Thụy Sĩ
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=ID Hệ thống tài khoản
 
 ## Tools - Init accounting account on product / service
@@ -321,10 +338,14 @@ OptionModeProductSell=Chế độ bán hàng
 OptionModeProductSellIntra=Chế độ bán hàng xuất khẩu trong EEC
 OptionModeProductSellExport=Chế độ bán hàng xuất khẩu ở các nước khác
 OptionModeProductBuy=Chế độ mua hàng
+OptionModeProductBuyIntra=Mẫu mua hàng được nhập trong EEC
+OptionModeProductBuyExport=Mẫu mua hàng được nhập từ các quốc gia khác
 OptionModeProductSellDesc=Hiển thị tất cả các sản phẩm có tài khoản kế toán để bán hàng.
 OptionModeProductSellIntraDesc=Hiển thị tất cả các sản phẩm có tài khoản kế toán để bán hàng trong EEC.
 OptionModeProductSellExportDesc=Hiển thị tất cả các sản phẩm có tài khoản kế toán để bán hàng nước ngoài khác.
 OptionModeProductBuyDesc=Hiển thị tất cả các sản phẩm có tài khoản kế toán để mua hàng.
+OptionModeProductBuyIntraDesc=Hiển thị tất cả các sản phẩm có tài khoản kế toán để mua hàng trong EEC.
+OptionModeProductBuyExportDesc=Hiển thị tất cả các sản phẩm có tài khoản kế toán cho mua hàng nước ngoài khác.
 CleanFixHistory=Xóa mã kế toán khỏi các dòng không tồn tại trong hệ thống tài khoản
 CleanHistory=Đặt lại tất cả các ràng buộc cho năm đã chọn
 PredefinedGroups=Các nhóm được xác định trước
@@ -335,6 +356,8 @@ AccountRemovedFromGroup=Tài khoản bị xóa khỏi nhóm
 SaleLocal=Bán địa phương
 SaleExport=Bán hàng xuất khẩu
 SaleEEC=Bán trong EEC
+SaleEECWithVAT=Bán trong EEC với VAT không phải là null, vì vậy chúng tôi cho rằng đây KHÔNG phải là bán hàng nội bộ và tài khoản được đề xuất là tài khoản sản phẩm tiêu chuẩn.
+SaleEECWithoutVATNumber=Bán trong EEC không có VAT nhưng ID VAT của bên thứ ba không được xác định. Chúng tôi dự phòng tài khoản sản phẩm để bán hàng tiêu chuẩn. Bạn có thể sửa ID VAT của bên thứ ba hoặc tài khoản sản phẩm nếu cần.
 
 ## Dictionary
 Range=Phạm vi tài khoản kế toán

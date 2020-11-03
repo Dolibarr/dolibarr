@@ -42,11 +42,11 @@ function marges_admin_prepare_head()
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, '', $head, $h, 'margesadmin');
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margesadmin');
 
-	complete_head_from_modules($conf, $langs, '', $head, $h, 'margesadmin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margesadmin', 'remove');
 
 	return $head;
 }
@@ -118,8 +118,8 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 {
 	global $db, $conf;
 
-	$marge_tx_ret='';
-	$marque_tx_ret='';
+	$marge_tx_ret = '';
+	$marque_tx_ret = '';
 
 	if ($fk_pa > 0 && empty($paht)) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -127,14 +127,10 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 		if ($product->fetch_product_fournisseur_price($fk_pa))
 		{
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
-		}
-		else
-		{
+		} else {
 			$paht_ret = $paht;
 		}
-	}
-	else
-	{
+	} else {
 		$paht_ret = $paht;
 	}
 
@@ -147,8 +143,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	// calcul marge
 	if ($pu_ht_remise < 0)
 		$marge = -1 * (abs($pu_ht_remise) - $paht_ret);
-	else
-		$marge = $pu_ht_remise - $paht_ret;
+	else $marge = $pu_ht_remise - $paht_ret;
 
 	// calcul taux marge
 	if ($paht_ret != 0)

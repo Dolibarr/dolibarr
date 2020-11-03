@@ -8,3 +8,4 @@ LinkRemoved=Ο σύνδεσμος %s έχει αφαιρεθεί
 ErrorFailedToDeleteLink= Απέτυχε η αφαίρεση του συνδέσμου '<b>%s</b>'
 ErrorFailedToUpdateLink= Απέτυχε η ενημέρωση του σύνδεσμο '<b>%s</b>'
 URLToLink=Διεύθυνση URL για σύνδεση
+OverwriteIfExists=Overwrite file if exists

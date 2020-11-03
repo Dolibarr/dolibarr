@@ -39,7 +39,7 @@ $mode = GETPOST('mode', 'int');
 $status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $price_level = GETPOST('price_level', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $price_by_qty_rowid = GETPOST('pbq', 'int');
 $finished = GETPOST('finished', 'int');
@@ -162,9 +162,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 	}
 
 	echo json_encode($outjson);
-}
-else
-{
+} else {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$langs->loadLangs(array("main", "products"));
@@ -174,7 +172,7 @@ else
 	if (empty($htmlname))
 	{
 		print json_encode(array());
-	    return;
+		return;
 	}
 
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
@@ -185,7 +183,7 @@ else
 	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha')))
 	{
 		print json_encode(array());
-	    return;
+		return;
 	}
 
 	// When used from jQuery, the search term is added as GET param "term".

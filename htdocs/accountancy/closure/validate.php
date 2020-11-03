@@ -42,8 +42,7 @@ if ($user->socid > 0)
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else
-{
+else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 }
@@ -64,24 +63,24 @@ $year_current = $year_start;
 
 if ($action == 'validate')
 {
-    $now = dol_now();
+	$now = dol_now();
 
-    // Update database
-    $db->begin();
-    $sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-    $sql .= " SET b.date_validated = '".$db->idate($now)."'";
-    $sql .= ' WHERE b.date_validated IS NULL';
+	// Update database
+	$db->begin();
+	$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+	$sql .= " SET b.date_validated = '".$db->idate($now)."'";
+	$sql .= ' WHERE b.date_validated IS NULL';
 
-    dol_syslog("htdocs/accountancy/closure/validate.php validate", LOG_DEBUG);
-    $resql = $db->query($sql);
-    if (!$resql1) {
-        $error++;
-        $db->rollback();
-        setEventMessages($db->lasterror(), null, 'errors');
-    } else {
-        $db->commit();
-    }
-    // End clean database
+	dol_syslog("htdocs/accountancy/closure/validate.php validate", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if (!$resql1) {
+		$error++;
+		$db->rollback();
+		setEventMessages($db->lasterror(), null, 'errors');
+	} else {
+		$db->commit();
+	}
+	// End clean database
 }
 
 
@@ -136,8 +135,8 @@ if ($resql) {
 	while ($row = $db->fetch_row($resql)) {
 		for ($i = 1; $i <= 12; $i++) {
 			print '<td class="nowrap center">'.$row[$i].'<br><br>';
-            print '<input id="cb'.$row[$i].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$row[$i].'"'.($selected ? ' checked="checked"' : '').'>';
-            print '</td>';
+			print '<input id="cb'.$row[$i].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$row[$i].'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
 		}
 		print '<td class="valigntop"><b>'.$row[13].'</b></td>';
 	}

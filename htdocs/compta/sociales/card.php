@@ -47,6 +47,11 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
+$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
+$label = GETPOST('label', 'alpha');
+$actioncode = GETPOST('actioncode');
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid = $user->socid;
@@ -123,9 +128,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		header("Location: list.php");
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -134,38 +137,29 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-	$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 	$amount = price2num(GETPOST('amount'));
-	$actioncode = GETPOST('actioncode');
 
 	if (!$dateech)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (!$dateperiod)
+	} elseif (!$dateperiod)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (!$actioncode > 0)
+	} elseif (!$actioncode > 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (empty($amount))
+	} elseif (empty($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	elseif (!is_numeric($amount))
+	} elseif (!is_numeric($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	else
-	{
+	} else {
 		$object->type = $actioncode;
 		$object->label = GETPOST('label', 'alpha');
 		$object->date_ech = $dateech;
@@ -187,32 +181,25 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-	$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 	$amount = price2num(GETPOST('amount'));
 
 	if (!$dateech)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (!$dateperiod)
+	} elseif (!$dateperiod)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (empty($amount))
+	} elseif (empty($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (!is_numeric($amount))
+	} elseif (!is_numeric($amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	else
-	{
+	} else {
 		$result = $object->fetch($id);
 
 		$object->date_ech = $dateech;
@@ -245,16 +232,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
-		}
-		else {
+		} else {
 			$object->label = $langs->trans("CopyOf").' '.$object->label;
 		}
 
 		if (GETPOST('clone_for_next_month', 'int')) {
 			$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 			$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
-		}
-		else {
+		} else {
 			$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
 			$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 			if ($newdateperiod) $object->periode = $newdateperiod;
@@ -271,18 +256,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
-			}
-			else
-			{
+			} else {
 				$id = $originalId;
 				$db->rollback();
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		dol_print_error($db, $object->error);
 	}
@@ -315,7 +296,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -389,13 +370,13 @@ if ($action == 'create')
 	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+		$form->select_comptes($fk_account, 'fk_account', 0, '', 2);
 		print '</td></tr>';
 	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -431,9 +412,7 @@ if ($id > 0)
 			if (!empty($conf->global->TAX_ADD_CLON_FOR_NEXT_MONTH_CHECKBOX))
 			{
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
-			}
-			else
-			{
+			} else {
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 			}
@@ -461,7 +440,7 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 		}
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
@@ -502,6 +481,8 @@ if ($id > 0)
 		}
 		$morehtmlref .= '</div>';
 
+		$morehtmlright = '';
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
@@ -535,9 +516,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
-		}
-		else
-		{
+		} else {
 			print dol_print_date($object->periode, "day");
 		}
 		print "</td></tr>";
@@ -548,8 +527,7 @@ if ($id > 0)
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
 			print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
 			print "</td></tr>";
-		}
-		else {
+		} else {
 			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
@@ -603,12 +581,12 @@ if ($id > 0)
 		/*
 		 * Payments
 		 */
-		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
+		$sql = "SELECT p.rowid, p.num_paiement as num_payment, datep as dp, p.amount,";
 		$sql .= " c.code as type_code,c.libelle as paiement_type,";
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
-    	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
-    	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " WHERE p.fk_charge = ".$id;
@@ -631,9 +609,9 @@ if ($id > 0)
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-		    if (!empty($conf->banque->enabled)) {
-        		print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
-    		}
+			if (!empty($conf->banque->enabled)) {
+				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
+			}
 			print '<td class="right">'.$langs->trans("Amount").'</td>';
 			print '</tr>';
 
@@ -647,7 +625,7 @@ if ($id > 0)
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 					$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
-					print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					if (!empty($conf->banque->enabled))
 					{
 						$bankaccountstatic->id = $objp->baid;
@@ -674,9 +652,7 @@ if ($id > 0)
 					$totalpaye += $objp->amount;
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';
@@ -695,9 +671,7 @@ if ($id > 0)
 			print '</div>';
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -707,7 +681,7 @@ if ($id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action == 'edit')
 		{
@@ -732,13 +706,13 @@ if ($id > 0)
 			// Reopen
 			if ($object->paye && $user->rights->tax->charges->creer)
 			{
-				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/sociales/card.php", 1).'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
 			}
 
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{
-				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 			}
 
 			// Emit payment
@@ -750,26 +724,24 @@ if ($id > 0)
 			// Classify 'paid'
 			if ($object->paye == 0 && round($resteapayer) <= 0 && $user->rights->tax->charges->creer)
 			{
-				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&amp;action=paid&amp;token='.newToken().'">'.$langs->trans("ClassifyPaid").'</a></div>';
 			}
 
 			// Clone
 			if ($user->rights->tax->charges->creer)
 			{
-				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath("/compta/sociales/card.php", 1).'?id='.$object->id.'&amp;action=clone">'.$langs->trans("ToClone")."</a></div>";
 			}
 
 			// Delete
 			if ($user->rights->tax->charges->supprimer)
 			{
-				print "<div class=\"inline-block divButAction\"><a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 			}
 
 			print "</div>";
 		}
-	}
-	else
-	{
+	} else {
 		/* Social contribution not found */
 		dol_print_error('', $object->error);
 	}

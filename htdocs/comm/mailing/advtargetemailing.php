@@ -46,9 +46,9 @@ if (!$user->rights->mailing->lire || $user->socid > 0)
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -87,9 +87,7 @@ if (empty($template_id)) {
 if ($result < 0)
 {
 	setEventMessages($advTarget->error, $advTarget->errors, 'errors');
-}
-else
-{
+} else {
 	if (!empty($advTarget->id)) {
 		$array_query = json_decode($advTarget->filtervalue, true);
 	}
@@ -147,15 +145,15 @@ if ($action == 'add') {
 			if (preg_match("/st_dt/", $key)) {
 				$dtarr = array();
 				$dtarr = explode('_', $key);
-				if (!array_key_exists('options_'.$dtarr[1].'_st_dt'.'_cnct', $array_query)) {
-					$array_query['options_'.$dtarr[1].'_st_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear'.'_cnct', 'int'));
+				if (!array_key_exists('options_'.$dtarr[1].'_st_dt_cnct', $array_query)) {
+					$array_query['options_'.$dtarr[1].'_st_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear_cnct', 'int'));
 				}
 			} elseif (preg_match("/end_dt/", $key)) {
 				// Special case for end date come with 3 inputs day, month, year
 				$dtarr = array();
 				$dtarr = explode('_', $key);
-				if (!array_key_exists('options_'.$dtarr[1].'_end_dt'.'_cnct', $array_query)) {
-					$array_query['options_'.$dtarr[1].'_end_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear'.'_cnct', 'int'));
+				if (!array_key_exists('options_'.$dtarr[1].'_end_dt_cnct', $array_query)) {
+					$array_query['options_'.$dtarr[1].'_end_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear_cnct', 'int'));
 				}
 			} else {
 				$array_query[$key] = GETPOST($key);
@@ -299,15 +297,15 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 				if (preg_match("/st_dt/", $key)) {
 					$dtarr = array();
 					$dtarr = explode('_', $key);
-					if (!array_key_exists('options_'.$dtarr[1].'_st_dt'.'_cnct', $array_query)) {
-						$array_query['options_'.$dtarr[1].'_st_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear'.'_cnct', 'int'));
+					if (!array_key_exists('options_'.$dtarr[1].'_st_dt_cnct', $array_query)) {
+						$array_query['options_'.$dtarr[1].'_st_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear_cnct', 'int'));
 					}
 				} elseif (preg_match("/end_dt/", $key)) {
 					// Special case for end date come with 3 inputs day, month, year
 					$dtarr = array();
 					$dtarr = explode('_', $key);
-					if (!array_key_exists('options_'.$dtarr[1].'_end_dt'.'_cnct', $array_query)) {
-						$array_query['options_'.$dtarr[1].'_end_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear'.'_cnct', 'int'));
+					if (!array_key_exists('options_'.$dtarr[1].'_end_dt_cnct', $array_query)) {
+						$array_query['options_'.$dtarr[1].'_end_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear_cnct', 'int'));
 						// print $array_query['cnct_options_'.$dtarr[1].'_end_dt'];
 						// 01/02/1013=1361228400
 					}
@@ -417,30 +415,30 @@ $formother = new FormOther($db);
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
+	print dol_get_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
 
 	print '<table class="border centpercent">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
 
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td>'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object, 'id', $linkback);
 	print '</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 
 	// Errors to
-	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 	// Nb of distinct emails
-	print '<tr><td width="25%">';
+	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");
 	print '</td><td colspan="3">';
 	$nbemail = ($object->nbemail ? $object->nbemail : '0');

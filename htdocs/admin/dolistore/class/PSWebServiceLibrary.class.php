@@ -68,22 +68,22 @@ class PrestaShopWebservice
 	 * @param string $url Root URL for the shop
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
-	*/
-    public function __construct($url, $key, $debug = true)
-    {
+	 */
+	public function __construct($url, $key, $debug = true)
+	{
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;
 		$this->key = $key;
 		$this->debug = $debug;
 		$this->version = 'unknown';
-    }
+	}
 
 	/**
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
-     * @return void
+	 * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
@@ -136,8 +136,9 @@ class PrestaShopWebservice
 		{
 			if (isset($curl_params[$defkey]))
 				$curl_options[$defkey] = $curl_params[$defkey];
-			else
+			else {
 				$curl_options[$defkey] = $defaultParams[$defkey];
+			}
 		}
 		foreach ($curl_params as $defkey => $defval)
 			if (!isset($curl_options[$defkey]))
@@ -236,9 +237,9 @@ class PrestaShopWebservice
 				throw new PrestaShopWebserviceException('HTTP XML response is not parsable: '.$msg);
 			}
 			return $xml;
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('HTTP response is empty');
+		}
 	}
 
 	/**
@@ -264,9 +265,7 @@ class PrestaShopWebservice
 				$url .= '&id_shop='.$options['id_shop'];
 			if (isset($options['id_group_shop']))
 				$url .= '&id_group_shop='.$options['id_group_shop'];
-		}
-		else
-		{
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
 		}
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $xml));
@@ -276,7 +275,7 @@ class PrestaShopWebservice
 	}
 
 	/**
- 	 * Retrieve (GET) a resource
+	 * Retrieve (GET) a resource
 	 * <p>Unique parameter must take : <br><br>
 	 * 'url' => Full URL for a GET request of Webservice (ex: http://mystore.com/api/customers/1/)<br>
 	 * OR<br>
@@ -323,9 +322,9 @@ class PrestaShopWebservice
 						$url_params[$k] = $options[$k];
 			if (count($url_params) > 0)
 				$url .= '?'.http_build_query($url_params);
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given ');
+		}
 
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
 		self::checkStatusCode($request['status_code']); // check the response validity
@@ -333,7 +332,7 @@ class PrestaShopWebservice
 	}
 
 	/**
- 	 * Head method (HEAD) a resource
+	 * Head method (HEAD) a resource
 	 *
 	 * @param 	array 				$options 	Array representing resource for head request.
 	 * @return 	SimpleXMLElement 				status_code, response
@@ -356,9 +355,9 @@ class PrestaShopWebservice
 						$url_params[$k] = $options[$k];
 			if (count($url_params) > 0)
 				$url .= '?'.http_build_query($url_params);
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'HEAD', CURLOPT_NOBODY => true));
 		self::checkStatusCode($request['status_code']); // check the response validity
 		return $request['header'];
@@ -387,9 +386,9 @@ class PrestaShopWebservice
 				$url .= '&id_shop='.$options['id_shop'];
 			if (isset($options['id_group_shop']))
 				$url .= '&id_group_shop='.$options['id_group_shop'];
-		}
-		else
+		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
 		self::checkStatusCode($request['status_code']); // check the response validity

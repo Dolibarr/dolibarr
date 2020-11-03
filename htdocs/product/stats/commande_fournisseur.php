@@ -44,17 +44,15 @@ if (!empty($user->socid))
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array(
-		'productstatssupplyorder'
-));
+$hookmanager->initHooks(array('productstatssupplyorder'));
 
 $mesg = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -63,7 +61,7 @@ if (!$sortorder)
 	$sortorder = "DESC";
 if (!$sortfield)
 	$sortfield = "c.date_commande";
-$search_month = GETPOST('search_month', 'aplha');
+$search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
@@ -100,32 +98,32 @@ if ($id > 0 || !empty($ref)) {
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'referers', $titre, -1, $picto);
+		print dol_get_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $shownav = 1;
-        if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		$shownav = 1;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-        print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
 
-        $nboflines = show_stats_for_company($product, $socid);
+		$nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
-        print '</div>';
-        print '<div style="clear:both"></div>';
+		print '</div>';
+		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		if ($user->rights->fournisseur->commande->lire)
@@ -172,27 +170,23 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				if (!empty($id))
-					$option .= '&amp;id='.$product->id;
-				if (!empty($search_month))
-					$option .= '&amp;search_month='.$search_month;
-				if (!empty($search_year))
-					$option .= '&amp;search_year='.$search_year;
 				if ($limit > 0 && $limit != $conf->liste_limit) $option .= '&limit='.urlencode($limit);
+				if (!empty($id)) $option .= '&id='.$product->id;
+				if (!empty($search_month)) $option .= '&search_month='.urlencode($search_month);
+				if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
 
 				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				if (!empty($sortfield))
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				if (!empty($sortorder))
 					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
-				if (!empty($page)) {
-					print '<input type="hidden" name="page" value="'.$page.'"/>';
-					$option .= '&amp;page='.$page;
-				}
 
-				print_barre_liste($langs->trans("SuppliersOrders"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
-                print '<div class="liste_titre liste_titre_bydiv centpercent">';
-                print '<div class="divsearchfield">';
+				print_barre_liste($langs->trans("SuppliersOrders"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+
+				if (!empty($page)) $option .= '&page='.urlencode($page);
+
+				print '<div class="liste_titre liste_titre_bydiv centpercent">';
+				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
@@ -204,7 +198,7 @@ if ($id > 0 || !empty($ref)) {
 				print '</div>';
 
 				$i = 0;
-                print '<div class="div-table-responsive">';
+				print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);

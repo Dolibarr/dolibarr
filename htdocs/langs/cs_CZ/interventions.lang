@@ -41,9 +41,7 @@ InterventionsArea=Oblast intervencí
 DraftFichinter=Návrhy intervence
 LastModifiedInterventions=Poslední %s modifikované intervence
 FichinterToProcess=Zpracovávané intervence
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=V návaznosti kontakt se zákazníkem
-# Modele numérotation
 PrintProductsOnFichinter=Tisk také řádky typu „produktu“ (nejen služby) na intervenční karty
 PrintProductsOnFichinterDetails=intervence generované z objednávek
 UseServicesDurationOnFichinter=Doba použití služby pro zásahy generovaných z objednávek
@@ -53,7 +51,6 @@ InterventionStatistics=Statistiky intervencí
 NbOfinterventions=Počet zásahových karet
 NumberOfInterventionsByMonth=Počet intervenčních karet podle měsíce (datum platnosti)
 AmountOfInteventionNotIncludedByDefault=Částka intervence není zahrnutá do výkazu zisku (ve většině případů se časové pásmo používá k počítání vynaloženého času). Přidejte možnost PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT na hodnotu 1 do domova-nastavení-jiné, abyste je zahrnovali.
-##### Exports #####
 InterId=intervence id
 InterRef=Intervence ref.
 InterDateCreation=Datum vytvoření intervence
@@ -65,3 +62,5 @@ InterLineId=Linka ID intervence
 InterLineDate=Řádek data intervence
 InterLineDuration=Linka trvání intervence
 InterLineDesc=Linka popis intervence
+RepeatableIntervention=Šablona intervence
+ToCreateAPredefinedIntervention=Chcete-li vytvořit předdefinovaný nebo opakující se zásah, vytvořte společný zásah a převeďte jej na intervenční šablonu

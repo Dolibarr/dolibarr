@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +36,18 @@ $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 if (!$user->admin)
 accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters ACCOUNTING_*
 $list = array(
-    'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
-    'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
-    'ACCOUNTING_SERVICE_BUY_ACCOUNT',
-    'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_BUY_ACCOUNT',
-    'ACCOUNTING_ACCOUNT_CUSTOMER',
-    'ACCOUNTING_ACCOUNT_SUPPLIER'
+	'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
+	'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+	'ACCOUNTING_SERVICE_BUY_ACCOUNT',
+	'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+	'ACCOUNTING_VAT_SOLD_ACCOUNT',
+	'ACCOUNTING_VAT_BUY_ACCOUNT',
+	'ACCOUNTING_ACCOUNT_CUSTOMER',
+	'ACCOUNTING_ACCOUNT_SUPPLIER'
 );
 
 /*
@@ -57,40 +58,52 @@ $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' :
 
 if ($action == 'update')
 {
-    $error = 0;
+	$error = 0;
 
-    $accounting_modes = array(
-        'RECETTES-DEPENSES',
-        'CREANCES-DETTES'
-    );
+	$accounting_modes = array(
+		'RECETTES-DEPENSES',
+		'CREANCES-DETTES'
+	);
 
-    $accounting_mode = GETPOST('accounting_mode', 'alpha');
+	$accounting_mode = GETPOST('accounting_mode', 'alpha');
 
 
-    if (in_array($accounting_mode, $accounting_modes)) {
-        if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    } else {
-        $error++;
-    }
+	if (in_array($accounting_mode, $accounting_modes)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	$report_include_varpay = GETPOST('ACCOUNTING_REPORTS_INCLUDE_VARPAY', 'alpha');
+	if (!empty($report_include_varpay))
+		if ($report_include_varpay == 'yes')
+			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', 1, 'chaine', 0, '', $conf->entity)) $error++;
+		if ($report_include_varpay == 'no')
+			if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', $conf->entity)) $error++;
+
+	$report_include_loan = GETPOST('ACCOUNTING_REPORTS_INCLUDE_LOAN', 'alpha');
+	if (!empty($report_include_loan))
+		if ($report_include_loan == 'yes')
+			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', 1, 'chaine', 0, '', $conf->entity)) $error++;
+		if ($report_include_loan == 'no')
+			if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', $conf->entity)) $error++;
+
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -99,9 +112,9 @@ if ($action == 'update')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ComptaSetup'), $linkback, 'title_setup');
 
 print '<br>';
@@ -157,6 +170,20 @@ foreach ($list as $key)
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td></tr>';
 }
+
+// Option to include various payment in results
+print '<tr class="oddeven value">'."\n";
+print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_VARPAY">'.$langs->trans('IncludeVarpaysInResults').'</label></td>'."\n";
+print '<td class="center">'."\n";
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_VARPAY', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY)));
+print '</td></tr>';
+
+// Option to include loan in results
+print '<tr class="oddeven value">'."\n";
+print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_LOAN">'.$langs->trans('IncludeLoansInResults').'</label></td>'."\n";
+print '<td class="center">'."\n";
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_LOAN', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN)));
+print '</td></tr>';
 
 print "</table>\n";
 
