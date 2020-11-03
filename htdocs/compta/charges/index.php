@@ -51,7 +51,7 @@ $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
-if (!$year && $mode != 'sconly') { $year = date("Y", time()); }
+if (!$year) { $year = date("Y", time()); }
 
 $search_account = GETPOST('search_account', 'int');
 
@@ -80,12 +80,10 @@ $accountstatic = new Account($db);
 llxHeader('', $langs->trans("SpecialExpensesArea"));
 
 $title = $langs->trans("SpecialExpensesArea");
-if ($mode == 'sconly') $title = $langs->trans("SocialContributionsPayments");
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($mode == 'sconly') $param = '&mode=sconly';
 if ($sortfield) $param .= '&sortfield='.$sortfield;
 if ($sortorder) $param .= '&sortorder='.$sortorder;
 
@@ -101,30 +99,18 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-$nav = '';
-if ($mode != 'sconly')
-{
-	$nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
-} else {
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 0);
-}
+$nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
 
 if ($year) $param .= '&year='.$year;
 
-if ($mode != 'sconly')
-{
-	print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
-	print "<br>";
-}
+print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
+print "<br>";
 
 if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
 	// Social contributions only
-	if ($mode != 'sconly')
-	{
-		print load_fiche_titre($langs->trans("SocialContributionsPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
-	}
+	print load_fiche_titre($langs->trans("SocialContributionsPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -249,113 +235,110 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 // VAT
 if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
-	if (!$mode || $mode != 'sconly')
+	print "<br>";
+
+	$tva = new Tva($db);
+
+	print load_fiche_titre($langs->trans("VATPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+
+	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.fk_bank,";
+	$sql .= " pct.code as payment_code,";
+	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
+	$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pv.fk_bank = b.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
+	$sql .= " WHERE pv.entity IN (".getEntity("tax").")";
+	if ($year > 0)
 	{
-		print "<br>";
+		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+	}
+	if (preg_match('/^pv\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
 
-		$tva = new Tva($db);
-
-		print load_fiche_titre($langs->trans("VATPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
-
-		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.fk_bank,";
-		$sql .= " pct.code as payment_code,";
-		$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
-		$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pv.fk_bank = b.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
-		$sql .= " WHERE pv.entity IN (".getEntity("tax").")";
-		if ($year > 0)
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$i = 0;
+		$total = 0;
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
+		if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print "</tr>\n";
+		$var = 1;
+		while ($i < $num)
 		{
-			// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-			// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-			$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-		}
-		if (preg_match('/^pv\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
+			$obj = $db->fetch_object($result);
 
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			$i = 0;
-			$total = 0;
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre">';
-			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
-			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-			print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-			if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-			print "</tr>\n";
-			$var = 1;
-			while ($i < $num)
+			$total = $total + $obj->amount;
+
+
+			print '<tr class="oddeven">';
+			print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
+
+			print "<td>".$obj->label."</td>\n";
+
+			print '<td class="right">'.price($obj->amount)."</td>";
+
+			// Ref payment
+			$tva_static->id = $obj->rowid;
+			$tva_static->ref = $obj->rowid;
+			print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
+
+			// Date
+			print '<td class="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
+
+			// Type payment
+			print '<td>';
+			if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+			print $obj->num_payment.'</td>';
+
+			// Account
+			if (!empty($conf->banque->enabled))
 			{
-				$obj = $db->fetch_object($result);
-
-				$total = $total + $obj->amount;
-
-
-				print '<tr class="oddeven">';
-				print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
-
-				print "<td>".$obj->label."</td>\n";
-
-				print '<td class="right">'.price($obj->amount)."</td>";
-
-				// Ref payment
-				$tva_static->id = $obj->rowid;
-				$tva_static->ref = $obj->rowid;
-				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
-
-				// Date
-				print '<td class="center">'.dol_print_date($db->jdate($obj->dm), 'day')."</td>\n";
-
-				// Type payment
 				print '<td>';
-				if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-				print $obj->num_payment.'</td>';
-
-				// Account
-				if (!empty($conf->banque->enabled))
+				if ($obj->fk_bank > 0)
 				{
-					print '<td>';
-					if ($obj->fk_bank > 0)
-					{
-						//$accountstatic->fetch($obj->fk_bank);
-						$accountstatic->id = $obj->bid;
-						$accountstatic->ref = $obj->bref;
-						$accountstatic->number = $obj->bnumber;
-						$accountstatic->accountancy_number = $obj->account_number;
-						$accountstatic->accountancy_journal = $obj->accountancy_journal;
-						$accountstatic->label = $obj->blabel;
-						print $accountstatic->getNomUrl(1);
-					} else print '&nbsp;';
-					print '</td>';
-				}
-
-				// Paid
-				print '<td class="right">'.price($obj->amount)."</td>";
-				print "</tr>\n";
-
-				$i++;
+					//$accountstatic->fetch($obj->fk_bank);
+					$accountstatic->id = $obj->bid;
+					$accountstatic->ref = $obj->bref;
+					$accountstatic->number = $obj->bnumber;
+					$accountstatic->accountancy_number = $obj->account_number;
+					$accountstatic->accountancy_journal = $obj->accountancy_journal;
+					$accountstatic->label = $obj->blabel;
+					print $accountstatic->getNomUrl(1);
+				} else print '&nbsp;';
+				print '</td>';
 			}
-			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-			print '<td class="right">'.price($total).'</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td class="right">'.price($total)."</td>";
-			print "</tr>";
 
-			print "</table>";
-			$db->free($result);
-		} else {
-			dol_print_error($db);
+			// Paid
+			print '<td class="right">'.price($obj->amount)."</td>";
+			print "</tr>\n";
+
+			$i++;
 		}
+		print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
+		print '<td class="right">'.price($total).'</td>';
+		print '<td>&nbsp;</td>';
+		print '<td>&nbsp;</td>';
+		print '<td>&nbsp;</td>';
+		print '<td>&nbsp;</td>';
+		print '<td class="right">'.price($total)."</td>";
+		print "</tr>";
+
+		print "</table>";
+		$db->free($result);
+	} else {
+		dol_print_error($db);
 	}
 }
 
@@ -379,73 +362,77 @@ if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1")
 
 while ($j < $numlt)
 {
-	if (!$mode || $mode != 'sconly')
+	print "<br>";
+
+	$tva = new Tva($db);
+
+	print load_fiche_titre($langs->transcountry(($j == 1 ? "LT1Payments" : "LT2Payments"), $mysoc->country_code).($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+
+
+	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
+	$sql .= " FROM ".MAIN_DB_PREFIX."localtax as pv";
+	$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".$j;
+	if ($year > 0)
 	{
-		print "<br>";
+		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+	}
+	if (preg_match('/^pv/', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
 
-		$tva = new Tva($db);
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$i = 0;
+		$total = 0;
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder);
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+		print "</tr>\n";
 
-		print load_fiche_titre($langs->transcountry(($j == 1 ? "LT1Payments" : "LT2Payments"), $mysoc->country_code).($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
-
-
-		$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
-		$sql .= " FROM ".MAIN_DB_PREFIX."localtax as pv";
-		$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".$j;
-		if ($year > 0)
+		while ($i < $num)
 		{
-			// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-			// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-			$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-		}
-		if (preg_match('/^pv/', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
+			$obj = $db->fetch_object($result);
 
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			$i = 0;
-			$total = 0;
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre">';
-			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder);
-			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pv.rowid", "", $param, '', $sortfield, $sortorder);
-			print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pv.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+			$total = $total + $obj->amount;
+
+			print '<tr class="oddeven">';
+			print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
+
+			print "<td>".$obj->label."</td>\n";
+
+			print '<td class="right">'.price($obj->amount)."</td>";
+
+			// Ref payment
+			$tva_static->id = $obj->rowid;
+			$tva_static->ref = $obj->rowid;
+			print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
+
+			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
+			print '<td class="right">'.price($obj->amount)."</td>";
 			print "</tr>\n";
 
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($result);
-
-				$total = $total + $obj->amount;
-
-				print '<tr class="oddeven">';
-				print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
-
-				print "<td>".$obj->label."</td>\n";
-
-				// Ref payment
-				$tva_static->id = $obj->rowid;
-				$tva_static->ref = $obj->rowid;
-				print '<td class="left">'.$tva_static->getNomUrl(1)."</td>\n";
-
-				print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
-				print '<td class="right">'.price($obj->amount)."</td>";
-				print "</tr>\n";
-
-				$i++;
-			}
-			print '<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total").'</td>';
-			print '<td class="right">'.price($total)."</td>";
-			print "</tr>";
-
-			print "</table>";
-			$db->free($result);
-		} else {
-			dol_print_error($db);
+			$i++;
 		}
+		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("Total").'</td>';
+		print '<td class="right">'.price($total)."</td>";
+		print '<td align="center">&nbsp;</td>';
+		print '<td align="center">&nbsp;</td>';
+		print '<td class="right">'.price($total)."</td>";
+		print "</tr>";
+
+		print "</table>";
+		$db->free($result);
+	} else {
+		dol_print_error($db);
 	}
+
 	$j++;
 }
 
@@ -454,8 +441,6 @@ while ($j < $numlt)
 /*
 if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 {
-    if (!$mode || $mode != 'sconly')
-    {
         $sal = new PaymentSalary($db);
 
         print "<br>";
@@ -557,7 +542,6 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
         } else {
             dol_print_error($db);
         }
-    }
 }
 */
 
