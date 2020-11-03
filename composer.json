@@ -33,7 +33,7 @@
 		"restler/framework" : "3.0.0-RC6",
 		"tecnickcom/tcpdf" : "6.3.2",
 		"nnnick/chartjs" : "^2.9",
-		"stripe/stripe-php" : "6.43.1",
+		"stripe/stripe-php" : "^7.61",
 		"maximebf/debugbar" : "1.15.1",
 		"symfony/var-dumper": "3"
 	},
