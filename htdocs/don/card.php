@@ -351,11 +351,12 @@ if ($action == 'create')
 			print '<td colspan="2">';
 			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
-			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 			{
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
 						var socid = $(this).val();
 				        var fac_rec = $(\'#fac_rec\').val();
 						// reload page

@@ -2891,13 +2891,15 @@ if ($action == 'create')
 		print info_admin($text, 0, 0, 0).'<br>';
 	}
 
-	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
-	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
+	print '<input name="force_cond_reglement_id" type="hidden" value="0">';
+	print '<input name="force_mode_reglement_id" type="hidden" value="0">';
+	print '<input name="force_fk_account" type="hidden" value="0">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 	print '<input type="hidden" name="originentity" value="'.GETPOST('originentity').'">';
@@ -2942,15 +2944,24 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 		print '<td colspan="2">';
 		print $form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
-		// Option to reload page to retrieve customer informations. Note, this clear other input
-		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		// Option to reload page to retrieve customer informations.
+		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 		{
 			print '<script type="text/javascript">
 			$(document).ready(function() {
 				$("#socid").change(function() {
+					/*
+					console.log("Submit page");
+					$(\'input[name="action"]\').val(\'create\');
+					$(\'input[name="force_cond_reglement_id"]\').val(\'1\');
+					$(\'input[name="force_mode_reglement_id"]\').val(\'1\');
+					$(\'input[name="force_fk_account"]\').val(\'1\');
+					$("#formtocreate").submit(); */
+
+   					// For company change, we must reuse data of comany, not input already done, so we call a GET with action=create, not a POST submit.
+					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 			        var fac_rec = $(\'#fac_rec\').val();
-					// reload page
         			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
 				});
 			});
@@ -3007,15 +3018,15 @@ if ($action == 'create')
 				}
 				print '</select>';
 				// Option to reload page to retrieve customer informations. Note, this clear other input
-				if (!empty($conf->global->RELOAD_PAGE_ON_TEMPLATE_CHANGE))
+				if (empty($conf->global->RELOAD_PAGE_ON_TEMPLATE_CHANGE_DISABLED))
 				{
 					print '<script type="text/javascript">
         			$(document).ready(function() {
         				$("#fac_rec").change(function() {
-							console.log("We changed the template invoice");
+							console.log("We have changed the template invoice - Reload page");
         					var fac_rec = $(this).val();
         			        var socid = $(\'#socid\').val();
-        					// reload page
+        					// For template invoice change, we must reuse data of template, not input already done, so we call a GET with action=create, not a POST submit.
         					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
         				});
         			});
