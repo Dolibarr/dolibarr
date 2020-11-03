@@ -8248,8 +8248,11 @@ abstract class CommonObject
 
 		$this->db->begin();
 
+		$statusfield = 'status';
+		if ($this->element == 'don' || $this->element == 'donation') $statusfield = 'fk_statut';
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET status = ".$status;
+		$sql .= " SET ".$statusfield." = ".((int) $status);
 		$sql .= " WHERE rowid = ".$this->id;
 
 		if ($this->db->query($sql))

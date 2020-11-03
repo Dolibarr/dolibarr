@@ -818,6 +818,31 @@ class Don extends CommonObject
 		}
 	}
 
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->statut != self::STATUS_CANCELED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Sum of donations
@@ -900,6 +925,7 @@ class Don extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Donation").'</u>';
 		if (!empty($this->id)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 		}
 		if ($moretitle) $label .= ' - '.$moretitle;
 
