@@ -323,12 +323,14 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 // Last modified job position
 if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
 {
-	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
+	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status, COUNT(rc.rowid) as nbapplications";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc ON rc.fk_recruitmentjobposition = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND s.fk_soc = $socid";
+	$sql .= " GROUP BY s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -343,6 +345,9 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
 		print $langs->trans("BoxTitleLatestModifiedJobPositions", $max);
+		print '</th>';
+		print '<th class="right">';
+		print $langs->trans("Applications");
 		print '</th>';
 		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentjobposition_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
@@ -361,6 +366,9 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 				print '<td class="nowrap">'.$staticrecruitmentjobposition->getNomUrl(1, '').'</td>';
 				print '<td class="right nowrap">';
 				print "</td>";
+				print '<td class="right">';
+				print $objp->nbapplications;
+				print '</td>';
 				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentjobposition->getLibStatut(3);
