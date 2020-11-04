@@ -19,7 +19,7 @@
  */
 
 /**
- * \file       cashcontrol/class/cashcontrol.class.php
+ * \file       htdocs/compta/cashcontrol/class/cashcontrol.class.php
  * \ingroup    cashdesk|takepos
  * \brief      This file is CRUD class file (Create/Read/Update/Delete) for cash fence table
  */
@@ -76,6 +76,9 @@ class CashControl extends CommonObject
 	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
 	);
 
+	/**
+	 * @var int Object Id
+	 */
 	public $id;
 	public $opening;
 	public $status;
@@ -286,7 +289,7 @@ class CashControl extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -420,8 +423,10 @@ class CashControl extends CommonObject
 		$hookmanager->initHooks(array('cashfencedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) { $result = $hookmanager->resPrint;
-		} else { $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;
