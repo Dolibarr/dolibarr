@@ -8248,8 +8248,11 @@ abstract class CommonObject
 
 		$this->db->begin();
 
+		$statusfield = 'status';
+		if ($this->element == 'don' || $this->element == 'donation') $statusfield = 'fk_statut';
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET status = ".$status;
+		$sql .= " SET ".$statusfield." = ".((int) $status);
 		$sql .= " WHERE rowid = ".$this->id;
 
 		if ($this->db->query($sql))
@@ -8285,22 +8288,31 @@ abstract class CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimenCommon()
 	{
 		global $user;
 
 		$this->id = 0;
-		if (array_key_exists('label', $this->fields)) $this->label = 'This is label';
-		if (array_key_exists('note_public', $this->fields)) $this->note_public = 'Public note';
-		if (array_key_exists('note_private', $this->fields)) $this->note_private = 'Private note';
-		if (array_key_exists('date_creation', $this->fields)) $this->date_creation = (dol_now() - 3600 * 24);
-		if (array_key_exists('date_modification', $this->fields)) $this->date_modification = (dol_now() - 3600 * 24);
-		if (array_key_exists('fk_user_creat', $this->fields)) $this->fk_user_creat = $user->id;
-		if (array_key_exists('fk_user_modif', $this->fields)) $this->fk_user_modif = $user->id;
-		if (array_key_exists('date', $this->fields)) $this->date = dol_now();
-		// ...
+		$this->specimen = 1;
+		$fields = array(
+			'label' => 'This is label',
+			'ref' => 'ABCD1234',
+			'description' => 'This is a description',
+			'qty' => 123.12,
+			'note_public' => 'Public note',
+			'note_private' => 'Private note',
+			'date_creation' => (dol_now() - 3600 * 48),
+			'date_modification' => (dol_now() - 3600 * 24),
+			'fk_user_creat' => $user->id,
+			'fk_user_modif' => $user->id,
+			'date' => dol_now(),
+		);
+		foreach ($fields as $key => $value) {
+			if (array_key_exists($key, $this->fields)) $this->{$key} = $value;
+		}
+		return 1;
 	}
 
 

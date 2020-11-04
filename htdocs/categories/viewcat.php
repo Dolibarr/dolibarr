@@ -278,13 +278,13 @@ print "<div class='tabsAction'>\n";
 
 if ($user->rights->categorie->creer)
 {
-	$socid = ($object->socid ? "&amp;socid=".$object->socid : "");
-	print "<a class='butAction' href='edit.php?id=".$object->id.$socid."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
+	$socid = ($object->socid ? "&socid=".$object->socid : "");
+	print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.$type.'">'.$langs->trans("Modify").'</a>';
 }
 
 if ($user->rights->categorie->supprimer)
 {
-	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;token='.newToken().'&amp;id=".$object->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
+    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans("Delete").'</a>';
 }
 
 print "</div>";

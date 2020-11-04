@@ -8,30 +8,29 @@ For users:
 NEW: Add module "Credit transfer SEPA" to manage payment of vendors using bank credit transfer SEPA files.
 NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable.
 NEW: Several security issues after a private bug bounty campaign. 
-NEW: #15065 Fix formatting
 NEW: #15065 Put the product label in bold in the PDF templates if configured
 NEW: Accountancy - Add chart of sub accounts
 NEW: Accountancy - Add options to disable binding on sales, purchases & expense reports independently of the modules
-NEW: Accountancy balance - Add a input to show subtotal by group
+NEW: Accountancy balance - Add a menu entry to show subtotal by group
 NEW: Accountancy - Move to real ledger, real journals, menu disposition
 NEW: Accountancy - On transfers, select the periodicity by default
 NEW: New currency rate editor.
 NEW: Add 2 rules for emailcollector: Message send/not sent from Dolibarr
-NEW: Add a counter of number of words of pages in website module
-NEW: add alert before change thirdparty in takepos
-NEW: Add a page to list Stock at a given date.
+NEW: Add a counter of number of words for pages in website module
+NEW: add alert before changing thirdparty in takepos
+NEW: Add a page to list Stock at a given date in the past.
 NEW: Add a start date to begin binding in accountancy
-NEW: Add a stat page to list popularity of products on invoices
+NEW: Add a statistics page to list popularity of products on invoices
 NEW: Add calendar selection for agenda view
-NEW: add class for ticket edition (pdf or odt)
+NEW: Support documents generation for ticket edition (pdf or odt)
 NEW: Add column payment term into list of supplier invoices.
 NEW: Add column quantity in product margin page
 NEW: Add column vat rate in page to define accounting account on product/service
 NEW: Add common list function for available app/module page
 NEW: add costprice in fields of products list
-NEW: ADDED IMPORT TOOL FOR CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
-NEW: Added incoterms to substitution array
-NEW: Add employee in expense report binding page
+NEW: Added an import profile for CUSTOMER ORDER, PO, PROPOSAL MODULE, SUPPLIER INVOICE
+NEW: Added incoterms dara into the substitution array
+NEW: Add employee link in expense report binding page
 NEW: Add export for various payment
 NEW: add extra fields labels and values in mail on create ticket
 NEW: Add extrafields support on ECM module
@@ -46,13 +45,14 @@ NEW: Add helper function for table headers with numbers
 NEW: add hooks on stats pages
 NEW: Add link to edit property from search result of website pages
 NEW: Add link to reset qty on supplier dispatch page
-NEW: add MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const to remove header in email collector
-NEW: Add Manufacturing Orders into the automatic ECM
+NEW: add MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const to remove header stored by email collector
+NEW: Add Manufacturing Orders attached files into the automatic ECM view
 NEW: add margin info in invoice list
 NEW: Add mass action to set category on a list of website pages.
 NEW: Add mass deletion for events
+NEW: Add mass deletion for draft invoices
 NEW: Add __MEMBER_TYPE__ substitution key
-NEW: Add message in error_log after detection of SQL or script injection
+NEW: Add a message in error_log after detection of SQL or script injection
 NEW: Add module Credit transfer SEPA to manage payment of supplier using
 NEW: Add more filters on monthly statement list
 NEW: Add option TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT

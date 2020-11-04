@@ -20,9 +20,9 @@
 
 /**
  *	    \file       htdocs/compta/payment_sc/card.php
- *		\ingroup    facture
- *		\brief      Onglet payment of a social contribution
- *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
+ *		\ingroup    tax
+ *		\brief      Tab with payment of a social contribution
+ *		\remarks	File similar to fourn/paiement/card.php
  */
 
 require '../../main.inc.php';
@@ -38,7 +38,7 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 // Security check
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm');
+$confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) $socid = $user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
@@ -64,7 +64,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
+		header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php");
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');

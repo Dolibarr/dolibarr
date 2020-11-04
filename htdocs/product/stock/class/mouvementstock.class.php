@@ -136,7 +136,7 @@ class MouvementStock extends CommonObject
 	 *										0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
 	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
+	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$inventorycode	Inventory code
 	 *	@param		string	$datem			Force date of movement
@@ -159,6 +159,7 @@ class MouvementStock extends CommonObject
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
 		// Clean parameters
+		$price = price2num($price, 'MU');	// Clean value for the casse we receive a float zero value, to have it a real zero value.
 		if (empty($price)) $price = 0;
 		$now = (!empty($datem) ? $datem : dol_now());
 
@@ -181,7 +182,7 @@ class MouvementStock extends CommonObject
 		$this->warehouse_id = $entrepot_id;
 		$this->qty = $qty;
 		$this->type = $type;
-		$this->price = $price;
+		$this->price = price2num($price);
 		$this->label = $label;
 		$this->inventorycode = $inventorycode;
 		$this->datem = $now;
@@ -471,7 +472,7 @@ class MouvementStock extends CommonObject
 				}
 			}
 
-			// Calculate new PMP.
+			// Calculate new AWP (PMP)
 			$newpmp = 0;
 			if (!$error)
 			{

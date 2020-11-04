@@ -68,6 +68,7 @@ class RecruitmentCandidature extends CommonObject
 	//const STATUS_INTERVIEW_SCHEDULED = 2;
 	const STATUS_CONTRACT_PROPOSED = 3;
 	const STATUS_CONTRACT_SIGNED = 5;
+	const STATUS_CONTRACT_REFUSED = 6;
 	const STATUS_REFUSED = 8;
 	const STATUS_CANCELED = 9;
 
@@ -86,7 +87,7 @@ class RecruitmentCandidature extends CommonObject
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
@@ -679,7 +680,7 @@ class RecruitmentCandidature extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_REFUSED && $this->status != self::STATUS_CANCELED && $this->status != self::STATUS_CONTRACT_REFUSED)
 		{
 			return 0;
 		}
@@ -821,13 +822,15 @@ class RecruitmentCandidature extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Received').' ('.$langs->trans("InterviewToDo").')';
 			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
 			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
+			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Received');
 			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
 			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
+			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 

@@ -957,7 +957,7 @@ if ($action == 'create')
 
 		// Title
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'">';
 		print '</td></tr>';
 
 		// Third party

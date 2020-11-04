@@ -62,7 +62,7 @@ print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVE
 print '<br>';
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled');
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
@@ -73,7 +73,7 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
 $test = empty($conf->syslog->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
@@ -84,7 +84,7 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
 $test = empty($conf->debugbar->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("DebugBar"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';

@@ -738,5 +738,7 @@ class Conf
 				}
 			}
 		}
+
+		return 0;
 	}
 }

@@ -7723,7 +7723,7 @@ class Form
             $(document).ready(function() {
                 $("#' . $cssclass.'s").click(function() {
                     if($(this).is(\':checked\')){
-                        console.log("We check all '.$cssclass.'");
+                        console.log("We check all '.$cssclass.' and trigger the change method");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
                     }
                     else

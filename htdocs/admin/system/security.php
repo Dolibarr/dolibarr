@@ -66,32 +66,40 @@ print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_
 print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0))."<br>\n";
 print '<br>';
 
+print '<br>';
 print load_fiche_titre($langs->trans("ConfigFile"), '', '');
 
 print '<strong>'.$langs->trans("dolibarr_main_prod").'</strong>: '.$dolibarr_main_prod;
+if (empty($dolibarr_main_prod)) {
+	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis");
+}
 // dolibarr_main_prod
 
+print '<br>';
 
 print '<br>';
 print '<br>';
+print load_fiche_titre($langs->trans("Permissions"), '', '');
 
-print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', '');
-
-print '<strong>'.$langs->trans("PermissionOnFileInWebRoot").'</strong>: ';
-// TODO
+print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
+// TODO Check permission are read only except for custom dir
 print 'TODO';
-
-
-print '<br>';
 print '<br>';
 
+print '<strong>'.$langs->trans("PermissionsOnFile", 'conf.php').'</strong>: ';
+// TODO Check permission on file conf.php (read only for the web user)
+print 'TODO';
+print '<br>';
 
+print '<br>';
+
+print '<br>';
 print load_fiche_titre($langs->trans("Modules"), '', '');
 
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled');
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
@@ -102,7 +110,7 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
 $test = empty($conf->syslog->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
@@ -113,14 +121,15 @@ print '<br>';
 print '<br>';
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
 $test = empty($conf->debugbar->enabled);
-if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 else {
 	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
-print '<br>';
 
+print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("SecuritySetup"), '', '');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
@@ -130,7 +139,13 @@ print '<br>';
 // TODO
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-// TODO
+print yn($conf->global->MAIN_ANTIVIRUS_COMMAND ? 1 : 0);
+if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
+	if (defined('MAIN_ANTIVIRUS_COMMAND')) {
+		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
+	}
+}
 print '<br>';
 
 print '<br>';

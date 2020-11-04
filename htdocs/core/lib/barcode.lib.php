@@ -373,11 +373,8 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	}
 
 	$chars = explode(" ", $text);
-	reset($chars);
-	while (list($n, $v) = each($chars))
-	{
-		if (trim($v))
-		{
+	foreach ($chars as $v) {
+		if (trim($v)) {
 			$inf = explode(":", $v);
 			$fontsize = $scale * ($inf[1] / 1.8);
 			$fontheight = $total_y - ($fontsize / 2.7) + 2;
@@ -387,16 +384,14 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 
 	/* output the image */
 	$mode = strtolower($mode);
-	if ($mode == 'jpg' || $mode == 'jpeg')
-	{
+	if ($mode == 'jpg' || $mode == 'jpeg') {
 		header("Content-Type: image/jpeg; name=\"barcode.jpg\"");
 		imagejpeg($im);
-	} elseif ($mode == 'gif')
-	{
+	} elseif ($mode == 'gif') {
 		header("Content-Type: image/gif; name=\"barcode.gif\"");
 		imagegif($im);
-	} elseif (!empty($filebarcode))    // To wxrite into  afile onto disk
-	{
+	} elseif (!empty($filebarcode)) {
+		// To wxrite into  afile onto disk
 		imagepng($im, $filebarcode);
 	} else {
 		header("Content-Type: image/png; name=\"barcode.png\"");

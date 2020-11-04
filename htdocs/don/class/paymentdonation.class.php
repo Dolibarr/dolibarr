@@ -622,8 +622,8 @@ class PaymentDonation extends CommonObject
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 * 	@param	int		$maxlen			Longueur max libelle
-	 *	@return	string					Chaine avec URL
+	 * 	@param	int		$maxlen			Max length
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
@@ -631,7 +631,9 @@ class PaymentDonation extends CommonObject
 
 		$result = '';
 
-		$label = $langs->trans("ShowPayment").': '.$this->ref;
+		$label = '<u>'.$langs->trans("DonationPayment").'</u>';
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		if (!empty($this->id))
 		{

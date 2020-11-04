@@ -1511,11 +1511,12 @@ if ($action == 'create')
 		print '<td>';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500');
 		// reload page to retrieve customer informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 		{
 			print '<script type="text/javascript">
 			$(document).ready(function() {
 				$("#socid").change(function() {
+					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
@@ -1832,7 +1833,7 @@ if ($action == 'create')
 	{
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(2=>$object->LibStatut($object::STATUS_SIGNED), 3=>$object->LibStatut($object::STATUS_NOTSIGNED))),
+			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 

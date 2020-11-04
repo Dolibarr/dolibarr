@@ -49,7 +49,9 @@ $langs->loadLangs(array("bills", "companies", "donations"));
 $id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$amount = GETPOST('amount');
+$confirm = GETPOST('confirm', 'alpha');
+
+$amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
@@ -65,13 +67,51 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard', 'globalcard'));
 
+$upload_dir = $conf->don->dir_output;
+$permissiontoadd = $user->rights->don->creer;
+
 
 /*
  * Actions
  */
 
+$parameters = array();
+
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+// Action reopen object
+if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
+{
+	$object->fetch($id);
+
+	$result = $object->reopen($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($object, 'generateDocument')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $object->model_pdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 if ($action == 'update')
 {
@@ -240,8 +280,6 @@ if ($action == 'set_paid')
 }
 
 // Actions to build doc
-$upload_dir = $conf->don->dir_output;
-$permissiontoadd = $user->rights->don->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -351,11 +389,12 @@ if ($action == 'create')
 			print '<td colspan="2">';
 			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
-			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 			{
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
 						var socid = $(this).val();
 				        var fac_rec = $(\'#fac_rec\').val();
 						// reload page
@@ -783,20 +822,26 @@ if (!empty($id) && $action != 'edit')
 
 	print '<div class="tabsAction">';
 
+	// Re-open
+	if ($permissiontoadd && $object->statut == $object::STATUS_CANCELED)
+	{
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
+	}
+
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
-	if ($object->statut == 0)
+	if ($object->statut == $object::STATUS_DRAFT)
 	{
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-	if (($object->statut == 0 || $object->statut == 1) && $totalpaid == 0 && $object->paid == 0)
+	if (($object->statut == $object::STATUS_DRAFT || $object->statut == $object::STATUS_VALIDATED) && $totalpaid == 0 && $object->paid == 0)
 	{
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_cancel&token='.newToken().'">'.$langs->trans("ClassifyCanceled")."</a></div>";
 	}
 
 	// Create payment
-	if ($object->statut == 1 && $object->paid == 0 && $user->rights->don->creer)
+	if ($object->statut == $object::STATUS_VALIDATED && $object->paid == 0 && $user->rights->don->creer)
 	{
 		if ($remaintopay == 0)
 		{
@@ -807,7 +852,7 @@ if (!empty($id) && $action != 'edit')
 	}
 
 	// Classify 'paid'
-	if ($object->statut == 1 && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
+	if ($object->statut == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
 	{
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 	}
@@ -815,7 +860,7 @@ if (!empty($id) && $action != 'edit')
 	// Delete
 	if ($user->rights->don->supprimer)
 	{
-		if ($object->statut == -1 || $object->statut == 0)
+		if ($object->statut == $object::STATUS_CANCELED || $object->statut == $object::STATUS_DRAFT)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
 		} else {

@@ -578,9 +578,19 @@ class PaymentSalary extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowSalaryPayment").'</u>';
-		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SalaryPayment").'</u>';
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->label)) {
+			$labeltoshow = $this->label;
+			$reg = array();
+			if (preg_match('/^\((.*)\)$/i', $this->label, $reg))
+			{
+				// Label generique car entre parentheses. On l'affiche en le traduisant
+				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
+				$labeltoshow = $langs->trans($reg[1]);
+			}
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
+		}
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 

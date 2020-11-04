@@ -50,7 +50,11 @@ if ($action == 'getlastversion')
 {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
-	$sfurl = simplexml_load_string($result['content']);
+	if (function_exists('simplexml_load_string')) {
+		$sfurl = simplexml_load_string($result['content']);
+	} else {
+		setEventMessages($langs->trans("ErrorPHPDoesNotSupport", "xml"), null, 'errors');
+	}
 }
 
 

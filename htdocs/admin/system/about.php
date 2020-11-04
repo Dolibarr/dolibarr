@@ -83,6 +83,7 @@ print '<li>';
 print '<a target="_blank" href="https://www.dolibarr.org/" rel="external">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
 // Show local site
+/*
 if (preg_match('/^fr_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
@@ -112,7 +113,7 @@ if (preg_match('/^de_/i', $langs->getDefaultLang()))
 	print '<li>';
 	print '<a target="_blank" href="https://www.dolibarr.de/" rel="external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Germany")).'</a>';
 	print '</li>';
-}
+}*/
 print '<li>';
 print '<a target="_blank" href="https://wiki.dolibarr.org/" rel="external">'.$langs->trans("OfficialWiki").'</a>';
 print '</li>';
@@ -168,7 +169,7 @@ print $langs->trans("OtherResources").':';
 print '<ul>';
 
 $url = 'https://saas.dolibarr.org'; $title = $langs->trans("OfficialWebHostingService");
-if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
+if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Solutions_Cloud_pour_Dolibarr_ERP_CRM';
 if (preg_match('/^es_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
 print '<li>';
 print '<a target="_blank" href="'.$url.'" rel="external">'.$title.'</a>';

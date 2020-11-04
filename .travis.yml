@@ -121,19 +121,31 @@ install:
 
 - |
   echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer - for $TRAVIS_PHP_VERSION"
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] \
-     [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
     composer -n require phpunit/phpunit ^5 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
                         squizlabs/php_codesniffer ^3
   fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+    composer -n require phpunit/phpunit ^6 \
+                        php-parallel-lint/php-parallel-lint ^1 \
+                        php-parallel-lint/php-console-highlighter ^0 \
+                        squizlabs/php_codesniffer ^3
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+    composer -n require phpunit/phpunit ^7 \
+                        php-parallel-lint/php-parallel-lint ^1.2 \
+                        php-parallel-lint/php-console-highlighter ^0 \
+                        squizlabs/php_codesniffer ^3
+  fi
+  # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      composer -n require --ignore-platform-reqs phpunit/phpunit ^5 \
+      composer -n require --ignore-platform-reqs phpunit/phpunit ^7 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
                                                  squizlabs/php_codesniffer ^3
-    fi
+  fi
   echo
 
 - |
@@ -165,15 +177,20 @@ before_script:
 
   - |
     echo "Versions information"
+    echo
     # Check PHP
     echo "PHP version"
     php -i | head -
-    # Check PHP CodeSniffer installation
+    # Check Parallel-lin version
+    echo "Parallel-lint version"
+    which parallel-lint
+    parallel-lint -V
+    # Check PHP CodeSniffer version
     echo "PHPCS version"
     which phpcs
     phpcs --version | head -
     phpcs -i | head -
-    # Check PHPUnit installation
+    # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
     phpunit --version | head -
@@ -409,7 +426,7 @@ script:
   php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
 
   # Enable modules not enabled into original dump
-  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e

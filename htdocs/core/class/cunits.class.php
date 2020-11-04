@@ -257,8 +257,7 @@ class CUnits // extends CommonObject
 			$this->records = array();
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
-				while ($obj = $this->db->fetch_object($resql))
-				{
+				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
 					$record->id    = $obj->rowid;

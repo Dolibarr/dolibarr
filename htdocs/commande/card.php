@@ -1582,11 +1582,12 @@ if ($action == 'create' && $usercancreate)
 		print '<td>';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
-		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
+		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED))
 		{
 			print '<script type="text/javascript">
 			$(document).ready(function() {
 				$("#socid").change(function() {
+					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();

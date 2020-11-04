@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -903,7 +903,7 @@ class User extends CommonObject
 							$this->nb_rights++;
 						}
 						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
-						if (!is_object($this->rights->$module->$perms)) {
+						if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 							$this->rights->$module->$perms = 1;
 						}
 					}
@@ -1268,7 +1268,8 @@ class User extends CommonObject
 		$this->employee = 0;
 
 		if (empty($login)) {
-			$login = strtolower(substr($contact->firstname, 0, 4)).strtolower(substr($contact->lastname, 0, 4));
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$login = dol_buildlogin($contact->lastname, $contact->firstname);
 		}
 		$this->login = $login;
 
@@ -1318,9 +1319,9 @@ class User extends CommonObject
 	 *  Create a user into database from a member object.
 	 *  If $member->fk_soc is set, it will be an external user.
 	 *
-	 *  @param	Adherent	$member		Object member source
-	 * 	@param	string		$login		Login to force
-	 *  @return int						<0 if KO, if OK, return id of created account
+	 *  @param	Adherent		$member		Object member source
+	 * 	@param	string			$login		Login to force
+	 *  @return int							<0 if KO, if OK, return id of created account
 	 */
 	public function create_from_member($member, $login = '')
 	{
@@ -1345,7 +1346,8 @@ class User extends CommonObject
 		$this->pass_crypted = $member->pass_indatabase_crypted;
 
 		if (empty($login)) {
-			$login = strtolower(substr($member->firstname, 0, 4)).strtolower(substr($member->lastname, 0, 4));
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$login = dol_buildlogin($member->lastname, $member->firstname);
 		}
 		$this->login = $login;
 
@@ -1410,6 +1412,8 @@ class User extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		$rd = array();
+		$num = 0;
 		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
 		$sql .= " WHERE bydefault = 1";
 		$sql .= " AND entity = ".$conf->entity;
@@ -1418,7 +1422,6 @@ class User extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			$rd = array();
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$rd[$i] = $row[0];
@@ -2246,8 +2249,9 @@ class User extends CommonObject
 
 		// Info Login
 		$label .= '<div class="centpercent">';
-		$label .= img_picto('', $this->picto).' <u>'.$langs->trans("User").'</u><br>';
-		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
+		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs, '');
 		if (!empty($this->login)) {
 			$label .= '<br><b>'.$langs->trans('Login').':</b> '.$this->login;
 		}
@@ -2271,7 +2275,6 @@ class User extends CommonObject
 		}
 		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
 		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
-		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(4);
 		$label .= '</div>';
 		if ($infologin > 0) {
 			$label .= '<br>';

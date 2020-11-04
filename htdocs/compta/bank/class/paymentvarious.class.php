@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,14 @@ class PaymentVarious extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string accountancy code
+	 */
 	public $accountancy_code;
 
+	/**
+	 * @var string subledger account
+	 */
 	public $subledger_account;
 
 	/**
@@ -121,6 +127,9 @@ class PaymentVarious extends CommonObject
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array fields definition
+	 */
 	public $fields = array(
 		// TODO: fill this array
 	);
@@ -182,22 +191,19 @@ class PaymentVarious extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 
-		if (!$notrigger)
-		{
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PAYMENT_VARIOUS_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -303,8 +309,7 @@ class PaymentVarious extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -348,8 +353,7 @@ class PaymentVarious extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if (!($newamount) > 0 || empty($this->datep))
-		{
+		if (!($newamount) > 0 || empty($this->datep)) {
 			return false;
 		}
 
@@ -476,8 +480,7 @@ class PaymentVarious extends CommonObject
 
 					// Update fk_bank into llx_paiement.
 					// So we know the payment which has generate the banking ecriture
-					if ($bank_line_id > 0)
-					{
+					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {
 						$this->error = $acc->error;
@@ -572,29 +575,23 @@ class PaymentVarious extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
+		if ($mode == 0) {
 			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1)
-		{
+		} elseif ($mode == 1) {
 			return $langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 2)
-		{
+		} elseif ($mode == 2) {
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 2) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 3)
-		{
+		} elseif ($mode == 3) {
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
 			elseif ($status == 2 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-		} elseif ($mode == 4)
-		{
+		} elseif ($mode == 4) {
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 2 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
-		} elseif ($mode == 5)
-		{
+		} elseif ($mode == 5) {
 			if ($status == 0 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
 			elseif ($status == 2 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
@@ -609,9 +606,10 @@ class PaymentVarious extends CommonObject
 	 *	@param  string	$option						link option
 	 *  @param  int     $save_lastsearch_value	 	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	int  	$notooltip		 			1=Disable tooltip
+	 *  @param	string  $morecss                    morecss string
 	 *	@return string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
 	{
 		global $db, $conf, $langs, $hookmanager;
 		global $langs;

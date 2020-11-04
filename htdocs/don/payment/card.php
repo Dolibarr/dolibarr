@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "banks", "companies"));
+$langs->loadLangs(array("bills", "banks", "companies", "donations"));
 
 // Security check
 $id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
@@ -70,6 +70,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 }
 
 
+
 /*
  * View
  */
@@ -81,6 +82,7 @@ $form = new Form($db);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = $h;
@@ -111,7 +113,7 @@ print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_
 print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Number
-print '<tr><td>'.$langs->trans('Number').'</td><td>'.$object->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td>'.$object->num_payment.'</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';

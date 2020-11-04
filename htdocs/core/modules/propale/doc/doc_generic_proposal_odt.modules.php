@@ -276,6 +276,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 			}
 
+			$object->fetch_thirdparty();
+
 			$dir = $conf->propal->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
