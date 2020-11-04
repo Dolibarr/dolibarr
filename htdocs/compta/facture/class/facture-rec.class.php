@@ -347,7 +347,7 @@ class FactureRec extends CommonInvoice
 						{
 							// Extrafields
 							if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
-								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
+								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->id);
 								$objectline->array_options = $facsrc->lines[$i]->array_options;
 							}
 
@@ -360,8 +360,8 @@ class FactureRec extends CommonInvoice
 					}
 				}
 
-				if (!empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
-				{
+				if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {
+					// To use new linkedObjectsIds instead of old linked_objects
 					$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
 				}
 
@@ -381,8 +381,8 @@ class FactureRec extends CommonInvoice
 									$error++;
 								}
 							}
-						} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-						{
+						} else {
+							// Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							$origin_id = $tmp_origin_id;
 							$ret = $this->add_object_linked($origin, $origin_id);
 							if (!$ret)
