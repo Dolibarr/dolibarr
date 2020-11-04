@@ -1553,7 +1553,6 @@ class Facture extends CommonInvoice
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
 				$this->type					= $obj->type;
 				$this->date					= $this->db->jdate($obj->df);
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
