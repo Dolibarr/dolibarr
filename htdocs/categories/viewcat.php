@@ -279,12 +279,12 @@ print "<div class='tabsAction'>\n";
 if ($user->rights->categorie->creer)
 {
 	$socid = ($object->socid ? "&socid=".$object->socid : "");
-	print "<a class='butAction' href='edit.php?id=".$object->id.$socid."&type=".$type."'>".$langs->trans("Modify")."</a>";
+	print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.$type.'">'.$langs->trans("Modify").'</a>';
 }
 
 if ($user->rights->categorie->supprimer)
 {
-    print "<a class='butActionDelete' href='".$_SERVER["PHP_SELF"]."?action=delete&token=".newToken()."&id=".$object->id."&type=".$type."'>".$langs->trans("Delete")."</a>";
+    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans("Delete").'</a>';
 }
 
 print "</div>";
