@@ -1833,7 +1833,7 @@ if ($action == 'create')
 	{
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(2=>$object->LibStatut($object::STATUS_SIGNED), 3=>$object->LibStatut($object::STATUS_NOTSIGNED))),
+			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 

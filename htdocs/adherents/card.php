@@ -191,6 +191,9 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$langs->load("errors");
 				setEventMessages($langs->trans($nuser->error), null, 'errors');
+			} else {
+				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+				$action = '';
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1272,7 +1275,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Confirm create user
 		if ($action == 'create_user') {
-			$login = $object->login;
+			$login = (GETPOSTISSET('login') ? GETPOST('login', 'alphanohtml') : $object->login);
 			if (empty($login)) {
 				// Full firstname and name separated with a dot : firstname.name
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -1701,13 +1704,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
-				// Delete
-				if ($user->rights->adherent->supprimer) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
-				} else {
-					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
-				}
-
 				// Action SPIP
 				if (!empty($conf->mailmanspip->enabled) && !empty($conf->global->ADHERENT_USE_SPIP)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
@@ -1718,6 +1714,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if ($isinspip == 0) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
+				}
+
+				// Delete
+				if ($user->rights->adherent->supprimer) {
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+				} else {
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 				}
 			}
 		}

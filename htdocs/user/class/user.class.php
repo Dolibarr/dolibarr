@@ -1268,7 +1268,10 @@ class User extends CommonObject
 		$this->country_id = $contact->country_id;
 		$this->employee = 0;
 
-		if (empty($login)) $login = strtolower(substr($contact->firstname, 0, 4)).strtolower(substr($contact->lastname, 0, 4));
+		if (empty($login)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$login = dol_buildlogin($contact->lastname, $contact->firstname);
+		}
 		$this->login = $login;
 
 		$this->db->begin();
@@ -1315,9 +1318,9 @@ class User extends CommonObject
 	 *  Create a user into database from a member object.
 	 *  If $member->fk_soc is set, it will be an external user.
 	 *
-	 *  @param	Adherent	$member		Object member source
-	 * 	@param	string		$login		Login to force
-	 *  @return int						<0 if KO, if OK, return id of created account
+	 *  @param	Adherent		$member		Object member source
+	 * 	@param	string			$login		Login to force
+	 *  @return int							<0 if KO, if OK, return id of created account
 	 */
 	public function create_from_member($member, $login = '')
 	{
@@ -1341,7 +1344,10 @@ class User extends CommonObject
 		$this->pass         = $member->pass;
 		$this->pass_crypted = $member->pass_indatabase_crypted;
 
-		if (empty($login)) $login = strtolower(substr($member->firstname, 0, 4)).strtolower(substr($member->lastname, 0, 4));
+		if (empty($login)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$login = dol_buildlogin($member->lastname, $member->firstname);
+		}
 		$this->login = $login;
 
 		$this->db->begin();

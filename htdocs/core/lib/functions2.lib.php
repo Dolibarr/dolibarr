@@ -1688,10 +1688,23 @@ function is_ip($ip)
  */
 function dol_buildlogin($lastname, $firstname)
 {
-	$login = strtolower(dol_string_unaccent($firstname));
-	$login .= ($login ? '.' : '');
-	$login .= strtolower(dol_string_unaccent($lastname));
-	$login = dol_string_nospecial($login, ''); // For special names
+	global $conf;
+
+	//$conf->global->MAIN_BUILD_LOGIN_RULE = 'f.lastname';
+	if (!empty($conf->global->MAIN_BUILD_LOGIN_RULE) && $conf->global->MAIN_BUILD_LOGIN_RULE == 'f.lastname') {	// f.lastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= ($login ? '.' : '');
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} else {	// firstname.lastname
+		$login = strtolower(dol_string_unaccent($firstname));
+		$login .= ($login ? '.' : '');
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	}
+
+	// TODO Add a hook to allow external modules to suggest new rules
+
 	return $login;
 }
 

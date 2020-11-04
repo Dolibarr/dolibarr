@@ -68,6 +68,7 @@ class RecruitmentCandidature extends CommonObject
 	//const STATUS_INTERVIEW_SCHEDULED = 2;
 	const STATUS_CONTRACT_PROPOSED = 3;
 	const STATUS_CONTRACT_SIGNED = 5;
+	const STATUS_CONTRACT_REFUSED = 6;
 	const STATUS_REFUSED = 8;
 	const STATUS_CANCELED = 9;
 
@@ -679,7 +680,7 @@ class RecruitmentCandidature extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_REFUSED && $this->status != self::STATUS_CANCELED && $this->status != self::STATUS_CONTRACT_REFUSED)
 		{
 			return 0;
 		}
@@ -821,13 +822,15 @@ class RecruitmentCandidature extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Received').' ('.$langs->trans("InterviewToDo").')';
 			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
 			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
+			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Received');
 			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
 			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
+			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
