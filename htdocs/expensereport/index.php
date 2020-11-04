@@ -165,8 +165,8 @@ $max = 10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, u.email, u.admin";
-$sql .= ", d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo, u.email, u.admin,";
+$sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE u.rowid = d.fk_user_author";
@@ -210,16 +210,20 @@ if ($result)
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($result);
+
 			$expensereportstatic->id = $obj->rowid;
 			$expensereportstatic->ref = $obj->ref;
+			$expensereportstatic->status = $obj->status;
+
 			$userstatic->id = $obj->uid;
 			$userstatic->admin = $obj->admin;
 			$userstatic->email = $obj->email;
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->login = $obj->login;
-			$userstatic->statut = $obj->statut;
+			$userstatic->statut = $obj->user_status;
 			$userstatic->photo = $obj->photo;
+
 			print '<tr class="oddeven">';
 			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 			print '<td>'.$userstatic->getNomUrl(-1).'</td>';
@@ -227,7 +231,7 @@ if ($result)
 			print '<td class="right">'.price($obj->total_ttc).'</td>';
 			print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 			print '<td class="right">';
-			print $expensereportstatic->LibStatut($obj->fk_status, 3);
+			print $expensereportstatic->getLibStatut(3);
 			print '</td>';
 			print '</tr>';
 
