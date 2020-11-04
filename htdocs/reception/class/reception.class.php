@@ -704,7 +704,7 @@ class Reception extends CommonObject
 	 * @param	integer		$eatby					eat-by date
 	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							<0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '')
 	{
@@ -752,6 +752,8 @@ class Reception extends CommonObject
 		$line->fk_reception = $this->id;
 
 		$this->lines[$num] = $line;
+
+		return $num;
 	}
 
 
