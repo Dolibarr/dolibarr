@@ -9,6 +9,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +141,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
-	$sql .= ", f.type";
+	$sql .= ", f.type, f.fk_statut";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
 	$sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
@@ -152,8 +153,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
-	if ($socid)
-	{
+	if ($socid) {
 		$sql .= " AND f.fk_soc = $socid";
 	}
 	// Add where from hooks
@@ -161,8 +161,8 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
-	$sql .= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type";
+	$sql .= ", s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", cc.rowid, cc.code";
 
 	// Add Group from hooks
@@ -172,8 +172,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 	$resql = $db->query($sql);
 
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -188,14 +187,12 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 		print '</th>';
 		print '</tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$companystatic = new Societe($db);
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				$facturestatic->id = $obj->rowid;
@@ -206,7 +203,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$facturestatic->total_tva = $obj->total_tva;
 				$facturestatic->total_ttc = $obj->total_ttc;
 				$facturestatic->ref_client = $obj->ref_client;
-				$facturestatic->statut =
+				$facturestatic->statut = $obj->fk_statut;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
