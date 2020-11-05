@@ -45,7 +45,7 @@ $action = GETPOST('action', 'alpha');
 $mode = $dolibarr_main_authentication;
 if (!$mode) $mode = 'http';
 
-$username = trim(GETPOST('username', 'alpha'));
+$username = htmlentities(trim(GETPOST('username', 'alpha')), ENT_QUOTES, "utf-8");
 $passwordhash = trim(GETPOST('passwordhash', 'alpha'));
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
@@ -93,7 +93,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
 if ($action == 'buildnewpassword' && $username)
 {
     $sessionkey = 'dol_antispam_value';
-    $ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+    $ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(htmlentities($_POST['code'], ENT_QUOTES, "utf-8"))));
 
     // Verify code
     if (!$ok)
