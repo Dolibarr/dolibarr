@@ -487,8 +487,8 @@ if ($resql)
 
 	if (!empty($arrayfields['cp.fk_user']['checked']))
 	{
-		$morefilter = 'AND employee = 1';
-		if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+		$morefilter = '';
+		if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 		// User
 		$disabled = 0;
