@@ -450,8 +450,7 @@ class ImportXlsx extends ModeleImports
 									$newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
 									//print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
 
-									if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
-									{
+									if ($isidorref == 'ref') {    // If value into input import file is a ref, we apply the function defined into descriptor
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 										$class = $objimport->array_import_convertvalue[0][$val]['class'];
 										$method = $objimport->array_import_convertvalue[0][$val]['method'];
@@ -506,8 +505,7 @@ class ImportXlsx extends ModeleImports
 											}
 										}
 									}
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeandlabel')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeandlabel') {
 									$isidorref = 'id';
 									if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
 									$newval = preg_replace('/^(id|ref):/i', '', $newval);
@@ -543,11 +541,9 @@ class ImportXlsx extends ModeleImports
 											}
 										}
 									}
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'zeroifnull')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'zeroifnull') {
 									if (empty($newval)) $newval = '0';
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits') {
 									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$val]['class'];
 									$method = $objimport->array_import_convertvalue[0][$val]['method'];
@@ -579,8 +575,7 @@ class ImportXlsx extends ModeleImports
 											$error++;
 										}
 									}
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto')
 									{
 										$this->thirpartyobject->get_codeclient(0, 0);
@@ -588,8 +583,7 @@ class ImportXlsx extends ModeleImports
 										//print 'code_client='.$newval;
 									}
 									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto')
 									{
 										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
@@ -597,8 +591,7 @@ class ImportXlsx extends ModeleImports
 										//print 'code_fournisseur='.$newval;
 									}
 									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto')
 									{
 										$this->thirpartyobject->get_codecompta('customer');
@@ -606,8 +599,7 @@ class ImportXlsx extends ModeleImports
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto')
 									{
 										$this->thirpartyobject->get_codecompta('supplier');
@@ -616,8 +608,7 @@ class ImportXlsx extends ModeleImports
 										//print 'code_compta_fournisseur='.$newval;
 									}
 									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto') {
 									$defaultref = '';
 									// TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
 									$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
@@ -629,8 +620,7 @@ class ImportXlsx extends ModeleImports
 									}
 									if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
 									$newval = $defaultref;
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'compute')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'compute') {
 									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$val]['class'];
 									$method = $objimport->array_import_convertvalue[0][$val]['method'];
@@ -648,9 +638,10 @@ class ImportXlsx extends ModeleImports
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
 										$errorforthistable++;
 										$error++;
+									} else {
+										$newval = $arrayrecord[($key - 1)]['val'];	//We get new value computed.
 									}
-								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric')
-								{
+								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								}
 
