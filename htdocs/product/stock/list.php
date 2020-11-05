@@ -530,7 +530,6 @@ if ($num)
 			$warehouse->{$key} = $obj->{$key};
 		}
 
-
 		// Show here line of result
 		print '<tr class="oddeven">';
 

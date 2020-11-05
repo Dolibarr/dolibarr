@@ -294,6 +294,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				$expensereportstatic->id = $obj->rowid;
 				$expensereportstatic->ref = $obj->ref;
 				$expensereportstatic->statut = $obj->status;
+				$expensereportstatic->status = $obj->status;
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;

@@ -690,12 +690,6 @@ llxHeader('', $langs->trans("UserCard"));
 
 if ($action == 'create' || $action == 'adduserldap')
 {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Affichage fiche en mode creation                                           */
-	/*                                                                            */
-	/* ************************************************************************** */
-
 	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
@@ -704,11 +698,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	if (!empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr'))
 	{
-		/*
-         * Affiche formulaire d'ajout d'un compte depuis LDAP
-         * si on est en synchro LDAP vers Dolibarr
-         */
-
+		// Show form to add an account from LDAP if sync LDAP -> Dolibarr is set
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 		if ($result >= 0)
@@ -1272,12 +1262,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	print "</form>";
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* View and edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	// View and edit mode
 	if ($id > 0)
 	{
 		$object->fetch($id, '', '', 1);
@@ -1576,10 +1561,12 @@ if ($action == 'create' || $action == 'adduserldap')
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-				$warehousestatic = new Entrepot($db);
-				$warehousestatic->fetch($object->fk_warehouse);
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $warehousestatic->getNomUrl(1);
+				if ($object->fk_warehouse > 0) {
+					$warehousestatic = new Entrepot($db);
+					$warehousestatic->fetch($object->fk_warehouse);
+					print $warehousestatic->getNomUrl(1);
+				}
 				print '</td></tr>';
 			}
 

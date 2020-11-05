@@ -206,6 +206,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$facturestatic->total_tva = $obj->total_tva;
 				$facturestatic->total_ttc = $obj->total_ttc;
 				$facturestatic->ref_client = $obj->ref_client;
+				$facturestatic->statut =
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -600,7 +601,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 	$langs->load("boxes");
 	$donationstatic = new Don($db);
 
-	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
+	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 	// Add where from hooks
@@ -648,6 +649,9 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				$donationstatic->ref = $objp->rowid;
 				$donationstatic->lastname = $objp->lastname;
 				$donationstatic->firstname = $objp->firstname;
+				$donationstatic->date = $objp->date;
+				$donationstatic->statut = $objp->status;
+				$donationstatic->status = $objp->status;
 
 				$label = $donationstatic->getFullName($langs);
 				if ($objp->societe) $label .= ($label ? ' - ' : '').$objp->societe;
@@ -657,7 +661,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire)
 				print '<td>'.$label.'</td>';
 				print '<td class="nowrap right">'.price($objp->amount).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
-				print '<td>'.$donationstatic->LibStatut($objp->fk_statut, 3).'</td>';
+				print '<td>'.$donationstatic->getLibStatut(3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -737,6 +741,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$chargestatic->ref = $obj->rowid;
 					$chargestatic->label = $obj->label;
 					$chargestatic->paye = $obj->paye;
+					$chargestatic->status = $obj->paye;
 
 					print '<tr class="oddeven">';
 					print '<td class="nowraponall">'.$chargestatic->getNomUrl(1).'</td>';
@@ -860,6 +865,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;
+				$commandestatic->statut = $obj->fk_statut;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';

@@ -1272,11 +1272,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-.widthcentpercentminusx {
-	width: calc(100% - 50px) !important;
+select.widthcentpercentminusx, input.widthcentpercentminusx {
+	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-.widthcentpercentminusxx {
+select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
