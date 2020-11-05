@@ -46,7 +46,8 @@ class InterfaceNotification extends DolibarrTriggers
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
-		'HOLIDAY_APPROVE'
+		'HOLIDAY_APPROVE',
+        'ACTION_CREATE'
 	);
 
 	/**
