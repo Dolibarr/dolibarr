@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -3218,7 +3218,7 @@ class Form
 
 		$langs->load('propal');
 
-		$sql = "SELECT rowid, code, label";
+		$sql = "SELECT rowid, code, label, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_availability';
 		$sql .= " WHERE active > 0";
 
@@ -3235,10 +3235,11 @@ class Form
 				$label = ($langs->trans("AvailabilityType".$obj->code) != ("AvailabilityType".$obj->code) ? $langs->trans("AvailabilityType".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_availability[$obj->rowid]['code'] = $obj->code;
 				$this->cache_availability[$obj->rowid]['label'] = $label;
+				$this->cache_availability[$obj->rowid]['position'] = $obj->position;
 				$i++;
 			}
 
-			$this->cache_availability = dol_sort_array($this->cache_availability, 'label', 'asc', 0, 0, 1);
+			$this->cache_availability = dol_sort_array($this->cache_availability, 'position', 'asc', 0, 0, 1);
 
 			return $num;
 		} else {
