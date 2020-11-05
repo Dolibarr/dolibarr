@@ -186,7 +186,7 @@ if (empty($reshook))
 		$object->zip = (string) GETPOST("zipcode", 'alpha');
 		$object->town = (string) GETPOST("town", 'alpha');
 		$object->country_id = (int) GETPOST("country_id", 'int');
-		$object->state_id = (int)GETPOST("state_id", 'int');
+		$object->state_id = (int) GETPOST("state_id", 'int');
 		//$object->jabberid		= GETPOST("jabberid", 'alpha');
 		//$object->skype		= GETPOST("skype", 'alpha');
 		//$object->twitter		= GETPOST("twitter", 'alpha');
