@@ -10,7 +10,7 @@ const subscribeHook = (z, bundle) => {
         action: bundle.inputData.action
     };
 
-    const url = bundle.authData.url  + '/api/index.php/zapierapi/hook';
+    const url = bundle.authData.url + '/api/index.php/zapierapi/hook';
 
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
@@ -32,7 +32,7 @@ const unsubscribeHook = (z, bundle) => {
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
-        url: bundle.authData.url  + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
+        url: bundle.authData.url + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
         method: 'DELETE',
     };
 
@@ -74,7 +74,7 @@ const getFallbackRealAction = (z, bundle) => {
     // For the test poll, you should get some real data, to aid the setup process.
     const module = bundle.inputData.module;
     const options = {
-        url: bundle.authData.url  + '/api/index.php/agendaevents/0',
+        url: bundle.authData.url + '/api/index.php/agendaevents/0',
     };
 
     return z.request(options).then((response) => [JSON.parse(response.content)]);
@@ -151,11 +151,28 @@ module.exports = {
                 type: "integer",
                 label: 'ID'
             },
-            {key: 'createdAt', type: "integer", label: 'Created At'},
-            {key: 'name', label: 'Name'},
-            {key: 'usertodo__name', label: 'UserToDo Name'},
-            {key: 'authorId', type: "integer", label: 'Author ID'},
-            {key: 'action', label: 'Action'}
+            {
+                key: 'createdAt',
+                type: "integer",
+                label: 'Created At'
+            },
+            {
+                key: 'name',
+                label: 'Name'
+            },
+            {
+                key: 'usertodo__name',
+                label: 'UserToDo Name'
+            },
+            {
+                key: 'authorId',
+                type: "integer",
+                label: 'Author ID'
+            },
+            {
+                key: 'action',
+                label: 'Action'
+            }
         ]
     }
 };

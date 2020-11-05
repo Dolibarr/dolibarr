@@ -87,13 +87,19 @@ class User extends CommonObject
 	 */
 	public $personal_email;
 
-
 	/**
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
 
-	public $job; // job position
+	/**
+	 * @var string job position
+	 */
+	public $job;
+
+	/**
+	 * @var string user signature
+	 */
 	public $signature;
 
 	/**
@@ -113,12 +119,40 @@ class User extends CommonObject
 	public $state_id; // The state/department
 	public $state_code;
 	public $state;
+
+	/**
+	 * @var string office phone
+	 */
 	public $office_phone;
+
+	/**
+	 * @var string office fax
+	 */
 	public $office_fax;
+
+	/**
+	 * @var string phone mobile
+	 */
 	public $user_mobile;
+
+	/**
+	 * @var string personal phone mobile
+	 */
 	public $personal_mobile;
+
+	/**
+	 * @var int 1 if admin 0 if standard user
+	 */
 	public $admin;
+
+	/**
+	 * @var string user login
+	 */
 	public $login;
+
+	/**
+	 * @var string user apikey
+	 */
 	public $api_key;
 
 	/**
@@ -155,9 +189,14 @@ class User extends CommonObject
 	 */
 	public $datem;
 
-	//! If this is defined, it is an external user
+	/**
+	 * @var int If this is defined, it is an external user
+	 */
 	public $socid;
-	//! If this is defined, it is a user created from a contact
+
+	/**
+	 * @var int If this is defined, it is a user created from a contact
+	 */
 	public $contact_id;
 
 	/**
@@ -170,27 +209,71 @@ class User extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int User ID of expense validator
+	 */
 	public $fk_user_expense_validator;
+
+	/**
+	 * @var int User ID of holidays validator
+	 */
 	public $fk_user_holiday_validator;
 
+	/**
+	 * @string clicktodial url
+	 */
 	public $clicktodial_url;
+
+	/**
+	 * @var string clicktodial login
+	 */
 	public $clicktodial_login;
+
+	/**
+	 * @var string clicktodial password
+	 */
 	public $clicktodial_password;
+
+	/**
+	 * @var string clicktodial poste
+	 */
 	public $clicktodial_poste;
 
 	public $datelastlogin;
 	public $datepreviouslogin;
 	public $datestartvalidity;
 	public $dateendvalidity;
+
+	/**
+	 * @var string photo filename
+	 */
 	public $photo;
 	public $lang;
 
-	public $rights; // Array of permissions user->rights->permx
-	public $all_permissions_are_loaded; // All permission are loaded
-	public $nb_rights; // Number of rights granted to the user
-	private $_tab_loaded = array(); // Cache array of already loaded permissions
+	/**
+	 * @var stdClass Class of permissions user->rights->permx
+	 */
+	public $rights;
 
-	public $conf; // To store personal config
+	/**
+	 * @var int  All permissions are loaded
+	 */
+	public $all_permissions_are_loaded;
+
+	/**
+	 * @var int Number of rights granted to the user
+	 */
+	public $nb_rights;
+
+	/**
+	 * @var array Cache array of already loaded permissions
+	 */
+	private $_tab_loaded = array();
+
+	/**
+	 * @var stdClass To store personal config
+	 */
+	public $conf;
 	public $default_values; // To store default values for user
 	public $lastsearch_values_tmp; // To store current search criterias for user
 	public $lastsearch_values; // To store last saved search criterias for user
@@ -208,7 +291,10 @@ class User extends CommonObject
 	public $salaryextra; // Monthly salary extra - Denormalized value from llx_user_employment
 	public $weeklyhours; // Weekly hours         - Denormalized value from llx_user_employment
 
-	public $color; // Define background color for user in agenda
+	/**
+	 * @var string Define background color for user in agenda
+	 */
+	public $color;
 
 	public $dateemployment; // Define date of employment by company
 	public $dateemploymentend; // Define date of employment end by company
@@ -344,13 +430,13 @@ class User extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->ref_ext 		= $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 
-				$this->ldap_sid 	= $obj->ldap_sid;
-				$this->lastname		= $obj->lastname;
+				$this->ldap_sid = $obj->ldap_sid;
+				$this->lastname = $obj->lastname;
 				$this->firstname = $obj->firstname;
 
-				$this->employee		= $obj->employee;
+				$this->employee = $obj->employee;
 
 				$this->login = $obj->login;
 				$this->gender       = $obj->gender;
