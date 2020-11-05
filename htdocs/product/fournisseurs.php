@@ -623,12 +623,8 @@ if ($id > 0 || $ref)
                     $currencycodetouse = GETPOST('multicurrency_code') ?GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
                     if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse = $conf->currency;
                     print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
-                    print '</td>';
-                    print '</tr>';
-
-                    // Currency tx
-                    print '<tr><td class="fieldrequired">'.$langs->trans("CurrencyRate").'</td>';
-                    print '<td><input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ?GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+                    print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
+                    print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ?GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
                     print '</td>';
                     print '</tr>';
 
@@ -725,7 +721,7 @@ SCRIPT;
 				print '</tr>';
 
 				// Reputation
-				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
+				print '<tr><td>'.$langs->trans("ReferenceReputation").'</td><td>';
 				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation ? $supplier_reputation : $object->supplier_reputation);
 				print '</td></tr>';
 
