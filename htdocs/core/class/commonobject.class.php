@@ -312,6 +312,7 @@ abstract class CommonObject
 	/**
 	 * @var int Delivery address ID
 	 * @see setDeliveryAddress()
+	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
