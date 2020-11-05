@@ -64,6 +64,9 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	/**
+	 * @var string picto
+	 */
 	public $picto = 'user';
 
 	public $id = 0;
@@ -73,7 +76,15 @@ class User extends CommonObject
 	public $employee;
 	public $gender;
 	public $birth;
+
+	/**
+	 * @var string email
+	 */
 	public $email;
+
+	/**
+	 * @var string personal email
+	 */
 	public $personal_email;
 
 
@@ -90,7 +101,14 @@ class User extends CommonObject
 	 */
 	public $address;
 
+	/**
+	 * @var string zip code
+	 */
 	public $zip;
+
+	/**
+	 * @var string town
+	 */
 	public $town;
 	public $state_id; // The state/department
 	public $state_code;
@@ -108,11 +126,19 @@ class User extends CommonObject
 	 */
 	public $entity;
 
-	//! Clear password in memory
+	/**
+	 * @var string Clear password in memory
+	 */
 	public $pass;
-	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+
+	/**
+	 * @var string Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	 */
 	public $pass_indatabase;
-	//! Encrypted password in database (always defined)
+
+	/**
+	 * @var string Encrypted password in database (always defined)
+	 */
 	public $pass_indatabase_crypted;
 
 	/**
@@ -285,29 +311,25 @@ class User extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON u.fk_country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON u.fk_state = d.rowid";
 
-		if ($entity < 0)
-		{
-			if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity)))
-			{
+		if ($entity < 0) {
+			if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
 				$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			}
-		} else // The fetch was forced on an entity
-		{
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		} else {// The fetch was forced on an entity
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
-			else $sql .= " WHERE u.entity IN (0, ".(($entity != '' && $entity >= 0) ? $entity : $conf->entity).")"; // search in entity provided in parameter
+			} else {
+				$sql .= " WHERE u.entity IN (0, ".(($entity != '' && $entity >= 0) ? $entity : $conf->entity).")"; // search in entity provided in parameter
+			}
 		}
 
-		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
-		{
+		if ($sid) {    // permet une recherche du user par son SID ActiveDirectory ou Samba
 			$sql .= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
-		} elseif ($login)
-		{
+		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
-		} elseif ($email)
-		{
+		} elseif ($email) {
 			$sql .= " AND u.email = '".$this->db->escape($email)."'";
 		} else {
 			$sql .= " AND u.rowid = ".$id;
