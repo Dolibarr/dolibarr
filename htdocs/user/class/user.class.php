@@ -140,9 +140,10 @@ class User extends CommonObject
 	public $fk_member;
 
 	/**
-	 * @var int User ID
+	 * @var int User ID of supervisor
 	 */
 	public $fk_user;
+
 	public $fk_user_expense_validator;
 	public $fk_user_holiday_validator;
 
