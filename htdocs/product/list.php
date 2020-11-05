@@ -1103,7 +1103,7 @@ if ($resql)
 		// Label
 		if (!empty($arrayfields['p.label']['checked']))
 		{
-			print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 80).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
