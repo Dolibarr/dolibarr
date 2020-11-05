@@ -1319,11 +1319,11 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				global $daytoparse;
 				$tmparray = dol_getdate($daytoparse, true); // detail of current day
-				$idw = $tmparray['wday'];
 
+				$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK)?0:1));
 				global $numstartworkingday, $numendworkingday;
 				$cssweekend = '';
-				if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+				if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 				{
 					$cssweekend = 'weekend';
 				}
@@ -1702,12 +1702,13 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 					global $numstartworkingday, $numendworkingday;
 					$cssweekend = '';
-					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+					if (($idw + 1 < $numstartworkingday) || ($idw + 1 > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 					{
 						$cssweekend = 'weekend';
 					}
 
 					$tableCell = '<td class="center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+					//$tableCell .= 'idw='.$idw.' '.$conf->global->MAIN_START_WEEK.' '.$numstartworkingday.'-'.$numendworkingday;
 					$placeholder = '';
 					if ($alreadyspent)
 					{
