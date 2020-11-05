@@ -107,7 +107,9 @@ if ($company->id) {
 	}
 
 	// Si adherent lie a un tiers non de type "particulier"
-	if ($adherent->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);
+	if ($company->typent_code != 'TE_PRIVATE') {
+		$v->setOrg($company->name);
+	}
 }
 
 // Personal informations

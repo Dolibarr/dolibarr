@@ -35,10 +35,6 @@ addons:
 
 php:
 - '5.6'
-- '7.0'
-- '7.1'
-- '7.2'
-- '7.3'
 - '7.4'
 - nightly
 
@@ -304,12 +300,13 @@ script:
   echo
 
 - |
-  echo "Checking coding style (excluding Pull Requests builds)"
+  echo "Checking coding style (excluding Pull Requests builds to not overload travis, excluding also for some jobs to avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  #phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .; fi
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4" ] && [ "$DB" = "mysql" ]; then
+    phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+  fi
   set +e
   echo
 

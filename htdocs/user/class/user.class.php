@@ -64,6 +64,9 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	/**
+	 * @var string picto
+	 */
 	public $picto = 'user';
 
 	public $id = 0;
@@ -73,7 +76,15 @@ class User extends CommonObject
 	public $employee;
 	public $gender;
 	public $birth;
+
+	/**
+	 * @var string email
+	 */
 	public $email;
+
+	/**
+	 * @var string personal email
+	 */
 	public $personal_email;
 
 
@@ -90,7 +101,14 @@ class User extends CommonObject
 	 */
 	public $address;
 
+	/**
+	 * @var string zip code
+	 */
 	public $zip;
+
+	/**
+	 * @var string town
+	 */
 	public $town;
 	public $state_id; // The state/department
 	public $state_code;
@@ -108,11 +126,19 @@ class User extends CommonObject
 	 */
 	public $entity;
 
-	//! Clear password in memory
+	/**
+	 * @var string Clear password in memory
+	 */
 	public $pass;
-	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+
+	/**
+	 * @var string Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	 */
 	public $pass_indatabase;
-	//! Encrypted password in database (always defined)
+
+	/**
+	 * @var string Encrypted password in database (always defined)
+	 */
 	public $pass_indatabase_crypted;
 
 	/**
@@ -140,9 +166,10 @@ class User extends CommonObject
 	public $fk_member;
 
 	/**
-	 * @var int User ID
+	 * @var int User ID of supervisor
 	 */
 	public $fk_user;
+
 	public $fk_user_expense_validator;
 	public $fk_user_holiday_validator;
 
@@ -290,8 +317,8 @@ class User extends CommonObject
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			}
-		} else // The fetch was forced on an entity
-		{
+		} else {
+			// The fetch was forced on an entity
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {

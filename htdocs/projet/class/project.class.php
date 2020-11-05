@@ -1233,7 +1233,7 @@ class Project extends CommonObject
 	 * 	@param  string	$mode		Type of permission we want to know: 'read', 'write'
 	 * 	@return	int					>0 if user has permission, <0 if user has no permission
 	 */
-	public function restrictedProjectArea($user, $mode = 'read')
+	public function restrictedProjectArea(User $user, $mode = 'read')
 	{
 		// To verify role of users
 		$userAccess = 0;
@@ -1243,7 +1243,7 @@ class Project extends CommonObject
 		} elseif ($this->public && (($mode == 'read' && !empty($user->rights->projet->lire)) || ($mode == 'write' && !empty($user->rights->projet->creer)) || ($mode == 'delete' && !empty($user->rights->projet->supprimer))))
 		{
 			$userAccess = 1;
-		} else {
+		} else {	// No access due to permission to read all projects, so we check if we are a contact of project
 			foreach (array('internal', 'external') as $source)
 			{
 				$userRole = $this->liste_contact(4, $source);
@@ -1252,7 +1252,13 @@ class Project extends CommonObject
 				$nblinks = 0;
 				while ($nblinks < $num)
 				{
-					if ($source == 'internal' && preg_match('/^PROJECT/', $userRole[$nblinks]['code']) && $user->id == $userRole[$nblinks]['id'])
+					if ($source == 'internal' && $user->id == $userRole[$nblinks]['id'])	// $userRole[$nblinks]['id'] is id of user (llx_user) for internal contacts
+					{
+						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
+						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
+						if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
+					}
+					if ($source == 'external' && $user->socid > 0 && $user->socid == $userRole[$nblinks]['socid'])	// $userRole[$nblinks]['id'] is id of contact (llx_socpeople) or external contacts
 					{
 						if ($mode == 'read' && $user->rights->projet->lire)      $userAccess++;
 						if ($mode == 'write' && $user->rights->projet->creer)     $userAccess++;
