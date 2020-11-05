@@ -659,11 +659,11 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			break;
 		case 'alpha':		// No html and no " and no ../
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
-			if (!is_array($out))
-			{
+			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
 				$out = str_replace(array('&quot;', '"', '../'), '', trim($out));
+				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;

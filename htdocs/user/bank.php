@@ -396,7 +396,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	{
 		$holiday = new Holiday($db);
 
-		$sql = "SELECT h.rowid, h.statut, h.fk_type, h.date_debut, h.date_fin, h.halfday";
+		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.fk_user = ".$object->id;
 		$sql .= " AND h.entity = ".$conf->entity;
@@ -419,17 +419,18 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			{
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$holiday->id = $objp->rowid;
 				$holiday->ref = $objp->rowid;
 				$holiday->fk_type = $objp->fk_type;
+				$holiday->statut = $objp->status;
 				$nbopenedday = num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
 
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
 				print $holiday->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut, 5).'</td></tr>';
+				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->status, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -450,7 +451,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	{
 		$exp = new ExpenseReport($db);
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_statut, e.date_debut, e.total_ttc";
+		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " WHERE e.fk_user_author = ".$object->id;
 		$sql .= " AND e.entity = ".$conf->entity;
@@ -473,16 +474,17 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			{
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$exp->id = $objp->rowid;
 				$exp->ref = $objp->ref;
 				$exp->fk_type = $objp->fk_type;
+				$exp->status = $objp->status;
 
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
 				print $exp->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
-				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->fk_statut, 5).'</td></tr>';
+				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->status, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);

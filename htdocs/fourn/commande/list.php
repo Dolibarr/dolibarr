@@ -93,7 +93,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
