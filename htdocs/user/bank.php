@@ -172,8 +172,7 @@ if ($action == 'update' && !$cancel)
 
 	$result = $account->update($user);
 
-	if (!$result)
-	{
+	if (!$result) {
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
 	} else {
@@ -183,32 +182,28 @@ if ($action == 'update' && !$cancel)
 }
 
 // update personal email
-if ($action == 'setpersonal_email')
-{
-	$object->personal_email = GETPOST('personal_email');
+if ($action == 'setpersonal_email') {
+	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 // update personal mobile
-if ($action == 'setpersonal_mobile')
-{
-	$object->personal_mobile = GETPOST('personal_mobile');
+if ($action == 'setpersonal_mobile') {
+	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 // update default_c_exp_tax_cat
-if ($action == 'setdefault_c_exp_tax_cat')
-{
+if ($action == 'setdefault_c_exp_tax_cat') {
 	$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 // update default range
-if ($action == 'setdefault_range')
-{
+if ($action == 'setdefault_range') {
 	$object->default_range = GETPOST('default_range', 'int');
 	$result = $object->update($user);
 	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
