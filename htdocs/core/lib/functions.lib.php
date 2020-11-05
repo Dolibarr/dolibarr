@@ -2490,7 +2490,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) { return ''; }
-	if ($conf->global->MAIN_PHONE_SEPAR) $separ = $conf->global->MAIN_PHONE_SEPAR;
+	if (!empty($conf->global->MAIN_PHONE_SEPAR)) $separ = $conf->global->MAIN_PHONE_SEPAR;
 	if (empty($countrycode)) $countrycode = $mysoc->country_code;
 
 	// Short format for small screens
