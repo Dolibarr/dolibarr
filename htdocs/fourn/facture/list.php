@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -505,7 +505,7 @@ if ($resql)
 	if ($option)                $param .= "&option=".urlencode($option);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
-	
+
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -617,7 +617,7 @@ if ($resql)
 		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
-	
+
 	if (!empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
