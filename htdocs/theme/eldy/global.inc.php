@@ -331,14 +331,14 @@ span.timesheetalreadyrecorded input {
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
 }
-td.weekend {
-	background-color: #eee;
-}
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
 }
 td.onholidayallday {
 	background-color: #f4eede;
+}
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
 }
 /*
 td.leftborder, td.hide0 {
