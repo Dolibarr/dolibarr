@@ -69,7 +69,7 @@ print load_fiche_titre($langs->trans("SalariesSetup"), $linkback, 'title_setup')
 
 $head = salaries_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributes', $langs->trans("Salaries"), -1, 'user');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Salaries"), -1, 'payment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
