@@ -56,9 +56,16 @@ class PaymentVarious extends CommonObject
 	 */
 	public $ref;
 
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
 	public $datep;
 	public $datev;
+
+	/**
+	 * @var int sens of operation
+	 */
 	public $sens;
 	public $amount;
 	public $type_payment;
@@ -89,6 +96,16 @@ class PaymentVarious extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_bank;
+
+	/**
+	 * @var int transaction category
+	 */
+	public $categorie_transaction;
+
+	/**
+	 * @var int Account ID
+	 */
+	public $accountid;
 
 	/**
 	 * @var int ID
