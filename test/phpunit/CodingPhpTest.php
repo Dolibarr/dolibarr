@@ -255,7 +255,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
                 //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename'].' :: '.$val[0]);
+            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['relativename']);
             //exit;
 
 
