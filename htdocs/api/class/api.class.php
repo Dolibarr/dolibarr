@@ -78,15 +78,15 @@ class DolibarrApi
 	 * @return array
 	 */
 	/* Disabled, most APIs does not share same signature for method index
-    function index()
-    {
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => __class__.' is up and running!'
-            )
-        );
-    }*/
+	function index()
+	{
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => __class__.' is up and running!'
+			)
+		);
+	}*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -221,11 +221,9 @@ class DolibarrApi
 			}
 		}
 
-		if (!empty($object->thirdparty) && is_object($object->thirdparty))
-		{
+		if (!empty($object->thirdparty) && is_object($object->thirdparty)) {
 			$this->_cleanObjectDatas($object->thirdparty);
 		}
-
 		return $object;
 	}
 

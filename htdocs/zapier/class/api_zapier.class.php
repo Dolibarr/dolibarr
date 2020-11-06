@@ -93,14 +93,13 @@ class ZapierApi extends DolibarrApi
 	 * Get list of possibles choices for module
 	 *
 	 * Return an array with hook informations
-	 * @param integer $id ID
 	 *
-	 * @return  array|mixed     data
+	 * @return  array     data
 	 *
 	 * @url GET /getmoduleschoices/
 	 * @throws  RestException
 	 */
-	public function getModulesChoices($id)
+	public function getModulesChoices()
 	{
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(401);
@@ -110,6 +109,7 @@ class ZapierApi extends DolibarrApi
 			'orders' => 'Orders',
 			'thirdparties' => 'Thirparties',
 			'contacts' => 'Contacts',
+			'users' => 'Users',
 		);
 		// $result = $this->hook->fetch($id);
 		// if (! $result ) {
@@ -244,6 +244,7 @@ class ZapierApi extends DolibarrApi
 		$fields = array(
 			'url',
 		);
+		dol_syslog("API Zapier create hook receive : " . print_r($request_data, true), LOG_DEBUG);
 		$result = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {

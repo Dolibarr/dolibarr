@@ -1851,8 +1851,11 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
-
-		$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+		if ($rowid == 0) {
+			$result = $this->company->initAsSpecimen();
+		} else {
+			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+		}
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
