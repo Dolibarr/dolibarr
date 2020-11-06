@@ -76,6 +76,8 @@ if (!$bankid)
 }
 if (empty($account->userid)) $account->userid = $object->id;
 
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+
 
 /*
  *	Actions
@@ -505,7 +507,13 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 	$morehtmlright = '';
 	if ($account->id == 0) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+		if ($permissiontoaddbankaccount) {
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+		} else {
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'NotEnoughPermission', 'fa fa-plus-circle', '', '', -2);
+		}
+	} else {
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'AlreadyOneBankAccount', 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -571,8 +579,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 		// Edit/Delete
 		print '<td class="right nowraponall">';
-		if ($user->rights->hrm->employee->write || $user->rights->user->creer) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
+		if ($permissiontoaddbankaccount) {
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}
