@@ -505,7 +505,7 @@ if ($resql)
 	if ($option)                $param .= "&option=".urlencode($option);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
-	
+
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -617,7 +617,7 @@ if ($resql)
 		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
-	
+
 	if (!empty($conf->categorie->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

@@ -123,7 +123,6 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int
-	 * @deprecated Use statuses stored in self::statut
 	 */
 	public $paye;
 

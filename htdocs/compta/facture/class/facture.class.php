@@ -144,8 +144,12 @@ class Facture extends CommonInvoice
 	public $close_code;
 	//! Commentaire si mis a paye sans paiement complet
 	public $close_note;
-	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+
+	/**
+	 * 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
+	 */
 	public $paye;
+
 	//! key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
 	//! key of pos source ('0', '1', ...)
