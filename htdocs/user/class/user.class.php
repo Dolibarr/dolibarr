@@ -142,6 +142,11 @@ class User extends CommonObject
 	public $pass_indatabase_crypted;
 
 	/**
+	 * @var string Temporary password
+	 */
+	public $pass_temp;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
