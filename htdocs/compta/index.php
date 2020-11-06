@@ -77,9 +77,6 @@ $hookmanager->initHooks(array('invoiceindex'));
 
 $now = dol_now();
 
-$facturestatic = new Facture($db);
-$facturesupplierstatic = new FactureFournisseur($db);
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $thirdpartystatic = new Societe($db);
@@ -139,6 +136,8 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
  */
 if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
+	$tmpinvoice = new Facture($db);
+
 	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
 	$sql .= ", f.type, f.fk_statut as status, f.paye";
 	$sql .= ", s.nom as name";
@@ -198,16 +197,16 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$facturestatic->id = $obj->rowid;
-				$facturestatic->ref = $obj->ref;
-				$facturestatic->date = $db->jdate($obj->date);
-				$facturestatic->type = $obj->type;
-				$facturestatic->total_ht = $obj->total_ht;
-				$facturestatic->total_tva = $obj->total_tva;
-				$facturestatic->total_ttc = $obj->total_ttc;
-				$facturestatic->ref_client = $obj->ref_client;
-				$facturestatic->statut = $obj->status;
-				$facturestatic->paye = $obj->paye;
+				$tmpinvoice->id = $obj->rowid;
+				$tmpinvoice->ref = $obj->ref;
+				$tmpinvoice->date = $db->jdate($obj->date);
+				$tmpinvoice->type = $obj->type;
+				$tmpinvoice->total_ht = $obj->total_ht;
+				$tmpinvoice->total_tva = $obj->total_tva;
+				$tmpinvoice->total_ttc = $obj->total_ttc;
+				$tmpinvoice->ref_client = $obj->ref_client;
+				$tmpinvoice->statut = $obj->status;
+				$tmpinvoice->paye = $obj->paye;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -221,7 +220,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				print '<tr class="oddeven"><td class="nowrap tdoverflowmax100">';
-				print $facturestatic->getNomUrl(1, '');
+				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
 				print '<td class="nowrap tdoverflowmax100">';
 				print $companystatic->getNomUrl(1, 'customer');
@@ -250,6 +249,8 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
+	$facturesupplierstatic = new FactureFournisseur($db);
+
 	$sql = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.fk_statut as status, f.paye";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
@@ -347,7 +348,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$langs->load("boxes");
-	$facstatic = new Facture($db);
+	$tmpinvoice = new Facture($db);
 
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
@@ -404,15 +405,15 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 					continue;
 				}
 
-				$facturestatic->ref = $obj->ref;
-				$facturestatic->id = $obj->rowid;
-				$facturestatic->total_ht = $obj->total_ht;
-				$facturestatic->total_tva = $obj->total_tva;
-				$facturestatic->total_ttc = $obj->total_ttc;
-				$facturestatic->statut = $obj->status;
-				$facturestatic->paye = $obj->paye;
-				$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
-				$facturestatic->type = $obj->type;
+				$tmpinvoice->ref = $obj->ref;
+				$tmpinvoice->id = $obj->rowid;
+				$tmpinvoice->total_ht = $obj->total_ht;
+				$tmpinvoice->total_tva = $obj->total_tva;
+				$tmpinvoice->total_ttc = $obj->total_ttc;
+				$tmpinvoice->statut = $obj->status;
+				$tmpinvoice->paye = $obj->paye;
+				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
+				$tmpinvoice->type = $obj->type;
 
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
@@ -431,10 +432,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td class="nobordernopadding nowraponall">';
-				print $facturestatic->getNomUrl(1, '');
+				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
-				if ($facturestatic->hasDelay()) {
+				if ($tmpinvoice->hasDelay()) {
 					print img_warning($langs->trans("Late"));
 				}
 				print '</td>';
@@ -442,7 +443,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+				print $formfile->getDocumentsLink($tmpinvoice->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -452,7 +453,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
-				print '<td>'.$facstatic->getLibStatut(3, $obj->am).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
@@ -935,7 +936,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
  */
 if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-	$facstatic = new Facture($db);
+	$tmpinvoice = new Facture($db);
 
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
@@ -1000,15 +1001,15 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 					continue;
 				}
 
-				$facturestatic->ref = $obj->ref;
-				$facturestatic->id = $obj->rowid;
-				$facturestatic->total_ht = $obj->total_ht;
-				$facturestatic->total_tva = $obj->total_tva;
-				$facturestatic->total_ttc = $obj->total_ttc;
-				$facturestatic->type = $obj->type;
-				$facturestatic->statut = $obj->status;
-				$facturestatic->paye = $obj->paye;
-				$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
+				$tmpinvoice->ref = $obj->ref;
+				$tmpinvoice->id = $obj->rowid;
+				$tmpinvoice->total_ht = $obj->total_ht;
+				$tmpinvoice->total_tva = $obj->total_tva;
+				$tmpinvoice->total_ttc = $obj->total_ttc;
+				$tmpinvoice->type = $obj->type;
+				$tmpinvoice->statut = $obj->status;
+				$tmpinvoice->paye = $obj->paye;
+				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
 
 				$societestatic->id = $obj->socid;
 				$societestatic->name = $obj->name;
@@ -1026,10 +1027,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="110" class="nobordernopadding nowrap">';
-				print $facturestatic->getNomUrl(1, '');
+				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
-				if ($facturestatic->hasDelay()) {
+				if ($tmpinvoice->hasDelay()) {
 					print img_warning($langs->trans("Late"));
 				}
 				print '</td>';
@@ -1037,7 +1038,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+				print $formfile->getDocumentsLink($tmpinvoice->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -1048,7 +1049,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="nowrap right">'.price($obj->am).'</td>';
-				print '<td>'.$facstatic->getLibStatut(3, $obj->am, $obj->type).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am, $obj->type).'</td>';
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
