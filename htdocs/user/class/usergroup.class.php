@@ -307,6 +307,8 @@ class UserGroup extends CommonObject
 
 		if (!empty($rid))
 		{
+			$module = $perms = $subperms = '';
+
 			// Si on a demande ajout d'un droit en particulier, on recupere
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
@@ -329,13 +331,9 @@ class UserGroup extends CommonObject
 
 			// Where pour la liste des droits a ajouter
 			$whereforadd = "id=".((int) $rid);
-			// Ajout des droits induits
+			// Find also rights that are herited to add them too
 			if ($subperms)   $whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
 			elseif ($perms) $whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
-
-			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
-			// TODO A virer quand sera gere par l'appelant
-			//if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
 		} else {
 			// Where pour la liste des droits a ajouter
 			if (!empty($allmodule))
