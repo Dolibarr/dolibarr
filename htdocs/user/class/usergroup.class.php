@@ -435,9 +435,11 @@ class UserGroup extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
+				}
 			} else {
 				$error++;
 				dol_print_error($this->db);
@@ -446,14 +448,14 @@ class UserGroup extends CommonObject
 			// Where pour la liste des droits a supprimer
 			$wherefordel = "id=".$this->db->escape($rid);
 			// Suppression des droits induits
-			if ($subperms == 'lire' || $subperms == 'read') $wherefordel .= " OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
-			if ($perms == 'lire' || $perms == 'read')    $wherefordel .= " OR (module='$module')";
+			if ($subperms == 'lire' || $subperms == 'read') $wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
+			if ($perms == 'lire' || $perms == 'read') $wherefordel .= " OR (module='".$this->db->escape($module)."')";
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
-			// Where pour la liste des droits a supprimer
+			// Add permission of the list $wherefordel
 			if (!empty($allmodule))
 			{
 				if ($allmodule == 'allmodules')
@@ -461,7 +463,7 @@ class UserGroup extends CommonObject
 					$wherefordel = 'allmodules';
 				} else {
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
-					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+					if (!empty($allperms)) $wherefordel .= " AND perms='".$this->db->escape($allperms)."'";
 				}
 			}
 		}
