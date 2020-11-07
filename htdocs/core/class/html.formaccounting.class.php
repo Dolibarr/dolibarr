@@ -140,7 +140,7 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	array	$selectids	Preselected journal code
+	 * @param	array	$selectedIds	Preselected journal code array
 	 * @param	string	$htmlname	Name of field in html form
 	 * @param	int		$nature		Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int		$showempty	Add an empty field
