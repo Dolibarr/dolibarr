@@ -425,6 +425,8 @@ class UserGroup extends CommonObject
 
 		if (!empty($rid))
 		{
+			$module = $perms = $subperms = '';
+
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
@@ -486,8 +488,12 @@ class UserGroup extends CommonObject
 				$i = 0;
 				while ($i < $num)
 				{
+					$nid = 0;
+
 					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
+					if ($obj) {
+						$nid = $obj->id;
+					}
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
 					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
@@ -567,22 +573,24 @@ class UserGroup extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
 
-				if ($perms)
-				{
-					if (!isset($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (!isset($this->rights->$module) || !is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
+					if ($perms)
 					{
-						if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if (empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
-					} else {
-						if (empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
+						if (!isset($this->rights)) $this->rights = new stdClass(); // For avoid error
+						if (!isset($this->rights->$module) || !is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+						if ($subperms)
+						{
+							if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+							if (empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+							$this->rights->$module->$perms->$subperms = 1;
+						} else {
+							if (empty($this->rights->$module->$perms)) $this->nb_rights++;
+							$this->rights->$module->$perms = 1;
+						}
 					}
 				}
 

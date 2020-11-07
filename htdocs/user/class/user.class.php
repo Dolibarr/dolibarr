@@ -642,31 +642,36 @@ class User extends CommonObject
 		$this->db->begin();
 
 		if (!empty($rid)) {
+			$module = $perms = $subperms = '';
+
 			// Si on a demande ajout d'un droit en particulier, on recupere
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql .= " AND entity = ".$entity;
+			$sql .= " WHERE id = ".((int) $rid);
+			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
+				}
 			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
 
 			// Where pour la liste des droits a ajouter
-			$whereforadd = "id=".$this->db->escape($rid);
+			$whereforadd = "id=".((int) $rid);
 			// Ajout des droits induits
 			if (!empty($subperms)) {
-				$whereforadd .= " OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
+				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
 			} elseif (!empty($perms)) {
-				$whereforadd .= " OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 			}
 		} else {
 			// On a pas demande un droit en particulier mais une liste de droits
@@ -763,6 +768,8 @@ class User extends CommonObject
 		$this->db->begin();
 
 		if (!empty($rid)) {
+			$module = $perms = $subperms = '';
+
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
@@ -773,22 +780,25 @@ class User extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
+				}
 			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
 
 			// Where pour la liste des droits a supprimer
-			$wherefordel = "id=".$this->db->escape($rid);
+			$wherefordel = "id=".((int) $rid);
 			// Suppression des droits induits
 			if ($subperms == 'lire' || $subperms == 'read') {
-				$wherefordel .= " OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
+				$wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
 			}
 			if ($perms == 'lire' || $perms == 'read') {
-				$wherefordel .= " OR (module='$module')";
+				$wherefordel .= " OR (module='".$this->db->escape($module)."')";
 			}
 		} else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
@@ -877,7 +887,7 @@ class User extends CommonObject
 	public function clearrights()
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
-		$this->rights = '';
+		$this->rights = null;
 		$this->nb_rights = 0;
 		$this->all_permissions_are_loaded = 0;
 		$this->_tab_loaded = array();
@@ -930,34 +940,37 @@ class User extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
 
-				if ($perms) {
-					if (!isset($this->rights) || !is_object($this->rights)) {
-						$this->rights = new stdClass(); // For avoid error
-					}
-					if ($module) {
-						if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
-							$this->rights->$module = new stdClass();
+					if (! empty($perms)) {
+						if (!isset($this->rights) || !is_object($this->rights)) {
+							$this->rights = new stdClass(); // For avoid error
 						}
-						if ($subperms) {
-							if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
-								$this->rights->$module->$perms = new stdClass();
+						if (! empty($module)) {
+							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
+								$this->rights->$module = new stdClass();
 							}
-							if (empty($this->rights->$module->$perms->$subperms)) {
-								$this->nb_rights++;
+							if (! empty($subperms)) {
+								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+									$this->rights->$module->$perms = new stdClass();
+								}
+								if (empty($this->rights->$module->$perms->$subperms)) {
+									$this->nb_rights++;
+								}
+								$this->rights->$module->$perms->$subperms = 1;
+							} else {
+								if (empty($this->rights->$module->$perms)) {
+									$this->nb_rights++;
+								}
+								$this->rights->$module->$perms = 1;
 							}
-							$this->rights->$module->$perms->$subperms = 1;
-						} else {
-							if (empty($this->rights->$module->$perms)) {
-								$this->nb_rights++;
-							}
-							$this->rights->$module->$perms = 1;
 						}
 					}
 				}
@@ -997,32 +1010,36 @@ class User extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
 
-				if ($perms) {
-					if (!isset($this->rights) || !is_object($this->rights)) {
-						$this->rights = new stdClass(); // For avoid error
-					}
-					if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
-						$this->rights->$module = new stdClass();
-					}
-					if ($subperms) {
-						if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
-							$this->rights->$module->$perms = new stdClass();
+					if (! empty($perms)) {
+						if (!isset($this->rights) || !is_object($this->rights)) {
+							$this->rights = new stdClass(); // For avoid error
 						}
-						if (empty($this->rights->$module->$perms->$subperms)) {
-							$this->nb_rights++;
-						}
-						$this->rights->$module->$perms->$subperms = 1;
-					} else {
-						if (empty($this->rights->$module->$perms)) {
-							$this->nb_rights++;
-						}
-						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
-						if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
-							$this->rights->$module->$perms = 1;
+						if (! empty($module)) {
+							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
+								$this->rights->$module = new stdClass();
+							}
+							if (! empty($subperms)) {
+								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+									$this->rights->$module->$perms = new stdClass();
+								}
+								if (empty($this->rights->$module->$perms->$subperms)) {
+									$this->nb_rights++;
+								}
+								$this->rights->$module->$perms->$subperms = 1;
+							} else {
+								if (empty($this->rights->$module->$perms)) {
+									$this->nb_rights++;
+								}
+								// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
+								if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+									$this->rights->$module->$perms = 1;
+								}
+							}
 						}
 					}
 				}
