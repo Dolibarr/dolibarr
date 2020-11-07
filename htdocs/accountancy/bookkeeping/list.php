@@ -85,7 +85,7 @@ $search_mvt_label = GETPOST('search_mvt_label', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
-$search_ledger_code = GETPOST('search_ledger_code', 'alpha');
+$search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_reconciled_option', 'alpha');
 
@@ -192,7 +192,7 @@ if (empty($reshook))
 		$search_accountancy_aux_code_end = '';
 		$search_mvt_label = '';
 		$search_direction = '';
-		$search_ledger_code = '';
+		$search_ledger_code = array();
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_date_creation_start = '';
@@ -267,7 +267,9 @@ if (empty($reshook))
 	}
 	if (!empty($search_ledger_code)) {
 		$filter['t.code_journal'] = $search_ledger_code;
-		$param .= '&search_ledger_code='.urlencode($search_ledger_code);
+		foreach ($search_ledger_code as $code) {
+			$param .= '&search_ledger_code[]='.urlencode($code);
+		}
 	}
 	if (!empty($search_mvt_num)) {
 		$filter['t.piece_num'] = $search_mvt_num;
@@ -447,6 +449,8 @@ if (count($filter) > 0) {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
+		} elseif ($key == 't.code_journal' && !empty($value)) {
+			$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
@@ -756,7 +760,9 @@ if (!empty($arrayfields['t.lettering_code']['checked']))
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked']))
 {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.$search_ledger_code.'"></td>';
+	print '<td class="liste_titre center">';
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 
 // Fields from hook

@@ -154,6 +154,12 @@ class modAccounting extends DolibarrModules
 				"csv",
 				"", 0, 'current', 0
 		);
+		$this->const[14] = array(
+			"ACCOUNTING_LIMIT_LIST_VENTILATION",
+			"chaine",
+			"50",
+			"", 0, 'current', 0
+		);
 
 		// Tabs
 		$this->tabs = array();
