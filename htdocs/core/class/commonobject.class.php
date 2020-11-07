@@ -7539,9 +7539,9 @@ abstract class CommonObject
 				else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
 					if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
-						if ($this->isInt($info)) {
+						if (isset($this->{$field}) && $this->isInt($info)) {
 							$queryarray[$field] = (int) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
-						} elseif ($this->isFloat($info)) {
+						} elseif (isset($this->{$field}) && $this->isFloat($info)) {
 							$queryarray[$field] = (double) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
 						}
 					} else $queryarray[$field] = null;
