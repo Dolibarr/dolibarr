@@ -3,9 +3,9 @@
 
 ## ENABLE MODULE ZAPIER ON DOLIBARR
 
-This should also enable the module API (required for authentication by Zapier service).
+This should also enable the module API (required for authentication by Zapier service and to execute action in Dolibarr by Zapier).
 
-Create the Dolibarr login that will be used by Zapier to call APIs.
+Create the Dolibarr login that will be used by Zapier to call APIs. Give the login the permissions on the action you plan to automate.
 
 
 ## CREATE A ZAPIER DEVELOPPER ACCOUNT
