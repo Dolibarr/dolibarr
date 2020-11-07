@@ -151,7 +151,7 @@ class FormAccounting extends Form
 	 * @param   int     $disabledajaxcombo Disable ajax combo box.
 	 * @return	string				String with HTML select
 	 */
-	public function multi_select_journal($selectedIds=array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
+	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -211,7 +211,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, 0, 'code_journal', '',($disabledajaxcombo ? 0 : 1));
+		$out .= Form::multiselectarray($htmlname, $options, $selected, $showempty, 0, $morecss, 0, 0, 0, 'code_journal', '', ($disabledajaxcombo ? 0 : 1));
 
 		return $out;
 	}
