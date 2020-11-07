@@ -348,6 +348,11 @@ abstract class CommonObject
 	public $fk_account;
 
 	/**
+	 * @var string	Open ID
+	 */
+	public $openid;
+
+	/**
 	 * @var string Public note
 	 * @see update_note()
 	 */
