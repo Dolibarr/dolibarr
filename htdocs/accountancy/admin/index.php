@@ -249,7 +249,7 @@ if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
 print '</tr>';
 */
 
-/*print '<tr class="oddeven">';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
 if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disabledirectinput&value=0">';
@@ -260,7 +260,7 @@ if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
-print '</tr>';*/
+print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
@@ -313,21 +313,6 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('BindingOptions').'</td>';
 print "</tr>\n";
-
-
-// TO DO Mutualize code for yes/no constants
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("").'</td>';
-if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsorttodo&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
-} else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsorttodo&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
-}
-print '</tr>';
 
 // TO DO Mutualize code for yes/no constants
 print '<tr class="oddeven">';
