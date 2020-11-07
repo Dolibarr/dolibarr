@@ -153,13 +153,16 @@ class Users extends DolibarrApi
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
 		//}
-
-		$result = $this->useraccount->fetch($id);
+		if ($id == 0) {
+			$result = $this->useraccount->initAsSpecimen();
+		} else {
+			$result = $this->useraccount->fetch($id);
+		}
 		if (!$result) {
 			throw new RestException(404, 'User not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
+		if ($id > 0 && !DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -286,11 +289,11 @@ class Users extends DolibarrApi
 		//}
 		// check mandatory fields
 		/*if (!isset($request_data["login"]))
-	        throw new RestException(400, "login field missing");
-	    if (!isset($request_data["password"]))
-	        throw new RestException(400, "password field missing");
-	    if (!isset($request_data["lastname"]))
-	         throw new RestException(400, "lastname field missing");*/
+			throw new RestException(400, "login field missing");
+		if (!isset($request_data["password"]))
+			throw new RestException(400, "password field missing");
+		if (!isset($request_data["lastname"]))
+			 throw new RestException(400, "lastname field missing");*/
 		//assign field values
 		foreach ($request_data as $field => $value) {
 			  $this->useraccount->$field = $value;
@@ -327,9 +330,10 @@ class Users extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		foreach ($request_data as $field => $value)
-		{
-			if ($field == 'id') continue;
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
 			// The status must be updated using setstatus() because it
 			// is not handled by the update() method.
 			if ($field == 'statut') {
@@ -461,7 +465,9 @@ class Users extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
-		if ($group_ids) $sql .= " AND t.rowid IN (".$group_ids.")";
+		if ($group_ids) {
+			$sql .= " AND t.rowid IN (".$group_ids.")";
+		}
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -483,13 +489,11 @@ class Users extends DolibarrApi
 
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$group_static = new UserGroup($this->db);
 				if ($group_static->fetch($obj->rowid)) {
@@ -562,8 +566,8 @@ class Users extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object    Object to clean
-	 * @return    Object    Object with cleaned properties
+	 * @param   Object	$object    	Object to clean
+	 * @return  Object    			Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -681,8 +685,9 @@ class Users extends DolibarrApi
 	{
 		$account = array();
 		foreach (Users::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$account[$field] = $data[$field];
 		}
 		return $account;

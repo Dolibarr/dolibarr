@@ -524,7 +524,7 @@ class ActionComm extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
+			$this->ref =$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
 			// Now insert assigned users
 			if (!$error)

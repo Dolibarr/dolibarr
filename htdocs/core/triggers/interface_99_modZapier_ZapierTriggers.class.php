@@ -85,8 +85,28 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
 		switch ($action) {
 			// Users
-			//case 'USER_CREATE':
-			//case 'USER_MODIFY':
+			case 'USER_CREATE':
+				$resql = $this->db->query($sql);
+				// TODO voir comment regrouper les webhooks en un post
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
+			case 'USER_MODIFY':
+				$resql = $this->db->query($sql);
+				// TODO voir comment regrouper les webhooks en un post
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			//case 'USER_NEW_PASSWORD':
 			//case 'USER_ENABLEDISABLE':
 			//case 'USER_DELETE':
@@ -123,6 +143,12 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			//case 'USERGROUP_CREATE':
 			//case 'USERGROUP_MODIFY':
 			//case 'USERGROUP_DELETE':
+
+			// Categories
+			// case 'CATEGORY_CREATE':
+			// case 'CATEGORY_MODIFY':
+			// case 'CATEGORY_DELETE':
+			// case 'CATEGORY_SET_MULTILANGS':
 
 			// Companies
 			case 'COMPANY_CREATE':
@@ -305,12 +331,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'MEMBER_RESILIATE':
 			// case 'MEMBER_DELETE':
 
-			// Categories
-			// case 'CATEGORY_CREATE':
-			// case 'CATEGORY_MODIFY':
-			// case 'CATEGORY_DELETE':
-			// case 'CATEGORY_SET_MULTILANGS':
-
 			// Projects
 			// case 'PROJECT_CREATE':
 			// case 'PROJECT_MODIFY':
@@ -325,6 +345,21 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'TASK_TIMESPENT_CREATE':
 			// case 'TASK_TIMESPENT_MODIFY':
 			// case 'TASK_TIMESPENT_DELETE':
+			case 'TICKET_CREATE':
+				$resql = $this->db->query($sql);
+				// TODO voir comment regrouper les webhooks en un post
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
+			// case 'TICKET_MODIFY':
+			// 	break;
+			// case 'TICKET_DELETE':
+			// 	break;
 
 			// Shipping
 			// case 'SHIPPING_CREATE':
@@ -439,13 +474,13 @@ function cleanObjectDatas($toclean)
 
 	// If object has linked objects, remove $db property
 	/*
-    if(isset($toclean->linkedObjects) && count($toclean->linkedObjects) > 0)  {
-        foreach($toclean->linkedObjects as $type_object => $linked_object) {
-            foreach($linked_object as $toclean2clean) {
-                $this->cleanObjectDatas($toclean2clean);
-            }
-        }
-    }*/
+	if(isset($toclean->linkedObjects) && count($toclean->linkedObjects) > 0)  {
+		foreach($toclean->linkedObjects as $type_object => $linked_object) {
+			foreach($linked_object as $toclean2clean) {
+				$this->cleanObjectDatas($toclean2clean);
+			}
+		}
+	}*/
 
 	return $toclean;
 }
@@ -453,7 +488,7 @@ function cleanObjectDatas($toclean)
 /**
  * Clean sensible object datas
  *
- * @param   object  $toclean    Object to clean
+ * @param   Object  $toclean    Object to clean
  * @return  Object              Object with cleaned properties
  */
 function cleanAgendaEventsDatas($toclean)

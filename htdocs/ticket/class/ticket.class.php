@@ -108,7 +108,7 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
- 	 * @deprecated
+	 * @deprecated
 	 */
 	public $fk_statut;
 
@@ -197,6 +197,9 @@ class Ticket extends CommonObject
 	 */
 	public $notify_tiers_at_create;
 
+	/**
+	 * @var string msgid
+	 */
 	public $email_msgid;
 
 	public $lines;
@@ -1076,7 +1079,7 @@ class Ticket extends CommonObject
 	 *     Initialise object with example values
 	 *     Id must be 0 if object instance is a specimen
 	 *
-	 *     @return void
+	 *     @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1101,6 +1104,7 @@ class Ticket extends CommonObject
 		$this->date_read = '';
 		$this->date_close = '';
 		$this->tms = '';
+		return 1;
 	}
 
 	/**

@@ -6,7 +6,7 @@ const subscribeHook = (z, bundle) => {
     const data = {
         url: bundle.targetUrl,
         event: bundle.event,
-        module: 'order',
+        module: 'ticket',
         action: bundle.inputData.action
     };
 
@@ -32,7 +32,7 @@ const unsubscribeHook = (z, bundle) => {
     // You can build requests and our client will helpfully inject all the variables
     // you need to complete. You can also register middleware to control this.
     const options = {
-        url: bundle.authData.url  + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
+        url: bundle.authData.url + '/api/index.php/zapierapi/hook/' + bundle.subscribeData.id,
         method: 'DELETE',
     };
 
@@ -40,70 +40,93 @@ const unsubscribeHook = (z, bundle) => {
     return z.request(options).then((response) => JSON.parse(response.content));
 };
 
-const getOrder = (z, bundle) => {
+const getTicket = (z, bundle) => {
     // bundle.cleanedRequest will include the parsed JSON object (if it's not a
     // test poll) and also a .querystring property with the URL's query string.
-    const order = {
+    const ticket = {
         id: bundle.cleanedRequest.id,
-        ref: bundle.cleanedRequest.ref,
-        ref_client: bundle.cleanedRequest.ref_client,
-        name: bundle.cleanedRequest.name,
+        track_id: bundle.cleanedRequest.track_id,
+        subject: bundle.cleanedRequest.subject,
+        message: bundle.cleanedRequest.message,
+        lastname: bundle.cleanedRequest.lastname,
         firstname: bundle.cleanedRequest.firstname,
-        directions: bundle.cleanedRequest.directions,
+        address: bundle.cleanedRequest.address,
+        zip: bundle.cleanedRequest.zip,
+        town: bundle.cleanedRequest.town,
+        email_from: bundle.cleanedRequest.email_from,
+        login: bundle.cleanedRequest.login,
         authorId: bundle.cleanedRequest.authorId,
         createdAt: bundle.cleanedRequest.createdAt,
-        note_public: bundle.cleanedRequest.note_public,
-        note_private: bundle.cleanedRequest.note_private,
         action: bundle.cleanedRequest.action
     };
 
-    return [order];
+    return [ticket];
 };
 
-const getFallbackRealOrder = (z, bundle) => {
+const getFallbackRealTicket = (z, bundle) => {
     // For the test poll, you should get some real data, to aid the setup process.
     const module = bundle.inputData.module;
     const options = {
-        url: bundle.authData.url  + '/api/index.php/orders/0',
+        url: bundle.authData.url + '/api/index.php/tickets/0',
     };
 
     return z.request(options).then((response) => [JSON.parse(response.content)]);
 };
 
+// const getModulesChoices = (z/*, bundle*/) => {
+//     // For the test poll, you should get some real data, to aid the setup process.
+//     const options = {
+//         url: bundle.authData.url + '/api/index.php/zapierapi/getmoduleschoices',
+//     };
+
+//     return z.request(options).then((response) => JSON.parse(response.content));
+// };
+// const getModulesChoices = () => {
+
+//     return {
+//         orders: "Order",
+//         invoices: "Invoice",
+//         thirdparties: "Thirdparty",
+//         users: "User",
+//         tickets: "Ticket",
+//         contacts: "Contacts"
+//     };
+// };
+
 // const getActionsChoices = (z, bundle) => {
 //     // For the test poll, you should get some real data, to aid the setup process.
 //     const module = bundle.inputData.module;
 //     const options = {
-//         url: bundle.authData.url  + '/api/index.php/zapierapi/getactionschoices/orders',
+//         url:  url: bundle.authData.url + '/api/index.php/zapierapi/getactionschoices/thirparty`,
 //     };
 
 //     return z.request(options).then((response) => JSON.parse(response.content));
 // };
 
-// We recommend writing your orders separate like this and rolling them
+// We recommend writing your triggers separate like this and rolling them
 // into the App definition at the end.
 module.exports = {
-    key: 'order',
+    key: 'ticket',
 
     // You'll want to provide some helpful display labels and descriptions
-    // for users. Zapier will put them into the UX.
-    noun: 'Order',
+    // for tickets. Zapier will put them into the UX.
+    noun: 'Ticket',
     display: {
-        label: 'New Order',
-        description: 'Triggers when a new order with action is done in Dolibarr.'
+        label: 'New Ticket',
+        description: 'Triggers when a new ticket action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
     operation: {
 
-        // `inputFields` can define the fields a user could provide,
+        // `inputFields` can define the fields a ticket could provide,
         // we'll pass them in as `bundle.inputData` later.
         inputFields: [
             {
                 key: 'action',
-                required: true,
                 type: 'string',
-                helpText: 'Which action of order this should trigger on.',
+                required: true,
+                helpText: 'Which action of ticket this should trigger on.',
                 choices: {
                     create: "Create",
                     modify: "Modify",
@@ -117,18 +140,26 @@ module.exports = {
         performSubscribe: subscribeHook,
         performUnsubscribe: unsubscribeHook,
 
-        perform: getOrder,
-        performList: getFallbackRealOrder,
+        perform: getTicket,
+        performList: getFallbackRealTicket,
 
         // In cases where Zapier needs to show an example record to the user, but we are unable to get a live example
         // from the API, Zapier will fallback to this hard-coded sample. It should reflect the data structure of
         // returned records, and have obviously dummy values that we can show to any user.
         sample: {
             id: 1,
+            track_id: 'Xaz123er',
+            subject: 'Subject',
+            message: 'Message',
             createdAt: 1472069465,
-            name: 'Best Spagetti Ever',
+            lastname: 'DOE',
+            firstname: 'John',
+            email: 'john@doe.com',
+            address: 'Park Avenue',
+            zip: '12345',
+            town: 'NEW-YORK',
+            email_from: 'doe.john@example;com',
             authorId: 1,
-            directions: '1. Boil Noodles\n2.Serve with sauce',
             action: 'create'
         },
 
@@ -137,13 +168,70 @@ module.exports = {
         // outputFields: () => { return []; }
         // Alternatively, a static field definition should be provided, to specify labels for the fields
         outputFields: [
-            {key: 'id', type: "integer", label: 'ID'},
-            {key: 'createdAt', type: "integer", label: 'Created At'},
-            {key: 'name', label: 'Name'},
-            {key: 'directions', label: 'Directions'},
-            {key: 'authorId', type: "integer", label: 'Author ID'},
-            {key: 'module', label: 'Module'},
-            {key: 'action', label: 'Action'}
+            {
+                key: 'id',
+                type: "integer",
+                label: 'ID'
+            },
+            {
+                key: 'track_id',
+                type: "string",
+                label: 'TrackID'
+            },
+            {
+                key: 'subject',
+                type: "string",
+                label: 'Subject'
+            },
+            {
+                key: 'message',
+                type: "string",
+                label: 'Message'
+            },
+            {
+                key: 'createdAt',
+                type: "integer",
+                label: 'Created At'
+            },
+            {
+                key: 'lastname',
+                label: 'Lastname'
+            },
+            {
+                key: 'firstname',
+                label: 'Firstname'
+            },
+            {
+                key: 'email',
+                label: 'Email'
+            },
+            {
+                key: 'address',
+                label: 'Address'
+            },
+            {
+                key: 'zip',
+                label: 'Zip'
+            },
+            {
+                key: 'town',
+                label: 'Town'
+            },
+            {
+                key: 'email_from',
+                type: 'string',
+                label: 'Email from'
+            },
+            {
+                key: 'authorId',
+                type: "integer",
+                label: 'Author ID'
+            },
+            {
+                key: 'action',
+                type: 'string',
+                label: 'Action'
+            }
         ]
     }
 };
