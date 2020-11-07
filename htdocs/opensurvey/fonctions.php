@@ -77,10 +77,9 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
+
 	print '<body id="mainbody" class="publicnewmemberform">';
-
-
 
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";

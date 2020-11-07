@@ -447,11 +447,9 @@ $db->close();
  */
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
-
 	top_httphead();
 
-	top_htmlhead($head, $title, 0, 0, array(), array('public/demo/demo.css'));
+	top_htmlhead($head, $title, 0, 0, array(), array('public/demo/demo.css'), 0, 1);
 
 	print '<body class="demobody"><div class="demobackgrounddiv">'."\n";
 }
