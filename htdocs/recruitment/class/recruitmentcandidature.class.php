@@ -1008,7 +1008,7 @@ class RecruitmentCandidature extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_recruitmentcandidature';
 
-			if ($this->modelpdf) {
+			if (!empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF)) {
 				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;

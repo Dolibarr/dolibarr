@@ -641,7 +641,8 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
 		$sql .= ", ".$this->cond_reglement_id;
 		$sql .= ", ".$this->mode_reglement_id;
-		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."', '".$this->db->escape($this->modelpdf)."'";
+		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
+		$sql .= " ".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? $this->situation_final : 0);
@@ -1056,7 +1057,8 @@ class Facture extends CommonInvoice
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
-		$facture->modelpdf          = $this->modelpdf;
+		$facture->modelpdf          = $this->modelpdf;	// deprecated
+		$facture->model_pdf         = $this->modelpdf;
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
@@ -4336,7 +4338,7 @@ class Facture extends CommonInvoice
 			$modele = 'crabe';
 			$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$this->type;
 
-			if ($this->modelpdf) {
+			if (! empty($this->modelpdf)) {
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->$thisTypeConfName)) {
 				$modele = $conf->global->$thisTypeConfName;
