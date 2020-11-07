@@ -948,7 +948,7 @@ if ($source == 'order')
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink)
 	{
-		print '<br><a href="'.$directdownloadlink.'">';
+		print '<br><a href="'.$directdownloadlink.'" rel="nofollow noopener">';
 		print img_mime($order->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
