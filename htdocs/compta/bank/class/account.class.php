@@ -1356,7 +1356,10 @@ class Account extends CommonObject
 		global $conf, $langs, $user;
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankAccount").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.$this->iban;
@@ -1374,9 +1377,6 @@ class Account extends CommonObject
 			$langs->load("accountancy");
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
 			$label .= '<br><b>'.$langs->trans('AccountancyJournal').':</b> '.$this->accountancy_journal;
-		}
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
 		$linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
