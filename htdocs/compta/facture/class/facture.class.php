@@ -642,7 +642,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".$this->cond_reglement_id;
 		$sql .= ", ".$this->mode_reglement_id;
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
-		$sql .= " ".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null");
+		$sql .= ", ".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? $this->situation_final : 0);
