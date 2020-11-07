@@ -311,25 +311,27 @@ class UserGroup extends CommonObject
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql .= " AND entity = ".$entity;
+			$sql .= " WHERE id = ".((int) $rid);
+			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
-				$module = $obj->module;
-				$perms = $obj->perms;
-				$subperms = $obj->subperms;
+				if ($obj) {
+					$module = $obj->module;
+					$perms = $obj->perms;
+					$subperms = $obj->subperms;
+				}
 			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
 
 			// Where pour la liste des droits a ajouter
-			$whereforadd = "id=".$this->db->escape($rid);
+			$whereforadd = "id=".((int) $rid);
 			// Ajout des droits induits
-			if ($subperms)   $whereforadd .= " OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			elseif ($perms) $whereforadd .= " OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			if ($subperms)   $whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
+			elseif ($perms) $whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 
 			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
 			// TODO A virer quand sera gere par l'appelant
@@ -348,7 +350,7 @@ class UserGroup extends CommonObject
 			}
 		}
 
-		// Ajout des droits de la liste whereforadd
+		// Add permission of the list $whereforadd
 		if (!empty($whereforadd))
 		{
 			//print "$module-$perms-$subperms";
