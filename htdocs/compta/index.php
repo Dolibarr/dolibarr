@@ -1049,7 +1049,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="nowrap right">'.price($obj->am).'</td>';
-				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am, $obj->type).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
