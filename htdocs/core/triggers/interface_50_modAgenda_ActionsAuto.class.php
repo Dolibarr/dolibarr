@@ -554,9 +554,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$member = $this->context['member'];
 			if (!is_object($member)) {	// This should not happen
+				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
-				$member->fetch($this->fk_adherent);
+				$member->fetch($object->fk_adherent);
 			}
 
 			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));

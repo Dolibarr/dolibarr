@@ -156,7 +156,7 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($now)."',";
+		$sql .= " VALUES (".$this->fk_adherent.", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".$this->amount.",";
@@ -174,7 +174,7 @@ class Subscription extends CommonObject
 		}
 
 		if (!$error && !$notrigger) {
-			$this->context = array('member'=>$member);
+			$this->context = array('member' => $member);
 			// Call triggers
 			$result = $this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
 			if ($result < 0) { $error++; }
