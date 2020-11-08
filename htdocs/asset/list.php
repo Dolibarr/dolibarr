@@ -339,7 +339,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "SendAssetsRef";
 $modelmail = "asset";
 $objecttmp = new Asset($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'asset'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)

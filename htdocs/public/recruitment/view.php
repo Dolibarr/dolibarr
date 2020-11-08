@@ -140,7 +140,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 $triggersendname = 'CANDIDATURE_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_CANDIDATURE_TO'; // used to know the automatic BCC to add
-$trackid = 'can'.$object->id;
+$trackid = 'recruitmentcandidature'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

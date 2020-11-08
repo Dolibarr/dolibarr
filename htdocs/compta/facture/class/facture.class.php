@@ -2442,14 +2442,14 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use
-	 *                                 	1=take in batches ordered by sellby and eatby dates
+	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use, 1=take in batches ordered by sellby and eatby dates
 	 * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$productStatic = null;
 		$warehouseStatic = null;
 		if ($batch_rule > 0) {
@@ -2494,7 +2494,7 @@ class Facture extends CommonInvoice
 		// Check parameters
 		if ($this->type == self::TYPE_REPLACEMENT)		// if this is a replacement invoice
 		{
-			// Controle que facture source connue
+			// Check that source invoice is known
 			if ($this->fk_facture_source <= 0)
 			{
 				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceReplacement"));

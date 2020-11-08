@@ -354,7 +354,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "SendHookRef";
 $modelmail = "hook";
 $objecttmp = new Hook($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'zapier'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall) {

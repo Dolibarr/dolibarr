@@ -733,6 +733,30 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
+		// If trackid is not defined, we set it
+		if (empty($object->trackid)) {
+			// See also similar list into emailcollector.class.php
+			if (preg_match('/^COMPANY_/', $action)) { $object->trackid = 'thi'.$object->id; }
+			elseif (preg_match('/^CONTACT_/', $action)) { $object->trackid = 'ctc'.$object->id; }
+			elseif (preg_match('/^CONTRACT_/', $action)) { $object->trackid = 'con'.$object->id; }
+			elseif (preg_match('/^PROPAL_/', $action)) { $object->trackid = 'pro'.$object->id; }
+			elseif (preg_match('/^ORDER_/', $action)) { $object->trackid = 'ord'.$object->id; }
+			elseif (preg_match('/^BILL_/', $action)) { $object->trackid = 'inv'.$object->id; }
+			elseif (preg_match('/^FICHINTER_/', $action)) { $object->trackid = 'int'.$object->id; }
+			elseif (preg_match('/^SHIPPING_/', $action)) { $object->trackid = 'shi'.$object->id; }
+			elseif (preg_match('/^RECEPTION_/', $action)) { $object->trackid = 'rec'.$object->id; }
+			elseif (preg_match('/^PROPOSAL_SUPPLIER/', $action)) { $object->trackid = 'spr'.$object->id; }
+			elseif (preg_match('/^ORDER_SUPPLIER_/', $action)) { $object->trackid = 'sor'.$object->id; }
+			elseif (preg_match('/^BILL_SUPPLIER_/', $action)) { $object->trackid = 'sin'.$object->id; }
+			elseif (preg_match('/^MEMBER_SUBSCRIPTION_/', $action)) { $object->trackid = 'sub'.$object->id; }
+			elseif (preg_match('/^MEMBER_/', $action)) { $object->trackid = 'mem'.$object->id; }
+			elseif (preg_match('/^PROJECT_/', $action)) { $object->trackid = 'proj'.$object->id; }
+			elseif (preg_match('/^TASK_/', $action)) { $object->trackid = 'tas'.$object->id; }
+			elseif (preg_match('/^TICKET_/', $action)) { $object->trackid = 'tic'.$object->id; }
+
+			$object->trackid = '';
+		}
+
 		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -740,7 +764,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// Add entry in event table
 		$now = dol_now();
 
-		print 'trackid = '.$action.'-'.get_class($object);
 		if (isset($_SESSION['listofnames-'.$object->trackid])) {
 			$attachs = $_SESSION['listofnames-'.$object->trackid];
 			if ($attachs && strpos($action, 'SENTBYMAIL')) {

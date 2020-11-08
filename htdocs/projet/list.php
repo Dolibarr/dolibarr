@@ -484,7 +484,7 @@ print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_
 $topicmail = "Information";
 $modelmail = "project";
 $objecttmp = new Project($db);
-$trackid = 'prj'.$object->id;
+$trackid = 'proj'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
