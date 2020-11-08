@@ -753,8 +753,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			elseif (preg_match('/^PROJECT_/', $action)) { $object->trackid = 'proj'.$object->id; }
 			elseif (preg_match('/^TASK_/', $action)) { $object->trackid = 'tas'.$object->id; }
 			elseif (preg_match('/^TICKET_/', $action)) { $object->trackid = 'tic'.$object->id; }
-
-			$object->trackid = '';
+			else $object->trackid = '';
 		}
 
 		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
