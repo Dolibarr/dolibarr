@@ -790,7 +790,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$elementid = $object->id; // id of object
 		$elementtype = $object->element;
-		$elementmodule = $object->module;
+		$elementmodule = (empty($object->module) ? '' : $object->module);
 		if ($object->element == 'subscription') {
 			$elementid = $object->fk_adherent;
 			$elementtype = 'member';
