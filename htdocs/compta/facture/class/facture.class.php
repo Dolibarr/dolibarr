@@ -756,7 +756,7 @@ class Facture extends CommonInvoice
 					$newinvoiceline->origin_id = $this->lines[$i]->id;
 
 					// Auto set date of service ?
-					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen)			// $originaldatewhen is defined when generating from recurring invoice only
+					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen)		// $originaldatewhen is defined when generating from recurring invoice only
 					{
 						$newinvoiceline->date_start = $originaldatewhen;
 					}

@@ -1895,8 +1895,6 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public $table_element = 'facturedet_rec';
 
-	public $date_start_fill;
-	public $date_end_fill;
 
 
 	/**
